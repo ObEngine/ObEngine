@@ -1,7 +1,7 @@
 #include <Engine/ResourceManager.hpp>
 #include <Graphics/DrawUtils.hpp>
-#include <Graphics/Sprite.hpp>
 #include <Graphics/Exceptions.hpp>
+#include <Graphics/Sprite.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <System/Window.hpp>
@@ -463,13 +463,15 @@ namespace obe::Graphics
         result["transform"]
             = vili::object { { "x", m_positionTransformer.getXTransformerName() },
                   { "y", m_positionTransformer.getYTransformerName() } };
-        if (!m_visible) {
+        if (!m_visible)
+        {
             result["visible"] = m_visible;
         }
         const Color& color = m_sprite.getColor();
-        if (color != Color::White) {
+        if (color != Color::White)
+        {
             result["color"] = vili::object { { "r", color.r }, { "g", color.g },
-                      { "b", color.b }, { "a", color.a } };
+                { "b", color.b }, { "a", color.a } };
         }
         return result;
     }
@@ -481,12 +483,12 @@ namespace obe::Graphics
 
         std::string spriteUnits = "SceneUnits";
         std::string spritePath;
-        if (!data["path"].is_null())
+        if (data.contains("path"))
             spritePath = data["path"];
         Transform::UnitVector spritePos(0, 0);
         Transform::UnitVector spriteSize(1, 1);
         obe::Transform::Referential referentialPos;
-        if (!data["rect"].is_null())
+        if (data.contains("rect"))
         {
             vili::node& rect = data.at("rect");
             if (rect.contains("unit"))
@@ -501,10 +503,11 @@ namespace obe::Graphics
             spritePos = spritePos.to<Transform::Units::SceneUnits>();
             spriteSize = spriteSize.to<Transform::Units::SceneUnits>();
             if (rect.contains("referential"))
-                referentialPos = obe::Transform::Referential::FromString(rect.at("referential"));
-
+                referentialPos
+                    = obe::Transform::Referential::FromString(rect.at("referential"));
         }
-        const double spriteRot = data["rotation"].is_null() ? 0.f : data["rotation"].as<vili::number>();
+        const double spriteRot
+            = data["rotation"].is_null() ? 0.f : data["rotation"].as<vili::number>();
         const int layer = data["layer"].is_null() ? 1 : data["layer"].as<vili::integer>();
         const int zdepth
             = data["zdepth"].is_null() ? 1 : data["zdepth"].as<vili::integer>();
@@ -513,13 +516,13 @@ namespace obe::Graphics
             ? m_antiAliasing
             : data["antiAliasing"].as<bool>();
 
-        if (!data["transform"].is_null())
+        if (data.contains("transform"))
         {
-            if (!data["transform"]["x"].is_null())
+            if (data.at("transform").contains("x"))
             {
                 spriteXTransformer = data["transform"]["x"];
             }
-            if (!data["transform"]["y"].is_null())
+            if (data.at("transform").contains("y"))
             {
                 spriteYTransformer = data["transform"]["y"];
             }
@@ -533,10 +536,12 @@ namespace obe::Graphics
                 const double r = data["color"]["r"].as<vili::number>();
                 const double g = data["color"]["g"].as<vili::number>();
                 const double b = data["color"]["b"].as<vili::number>();
-                const double a = data["color"]["a"].is_null() ? 255 : data["color"]["a"].as<vili::number>();
+                const double a = data["color"]["a"].is_null()
+                    ? 255
+                    : data["color"]["a"].as<vili::number>();
                 color.fromRgb(r, g, b, a);
             }
-            else if (data["color"].is<vili::object>()  && !data["color"]["H"].is_null())
+            else if (data["color"].is<vili::object>() && !data["color"]["H"].is_null())
             {
                 const int H = data["color"]["H"].as<vili::integer>();
                 const double S = data["color"]["S"].as<vili::number>();
@@ -550,13 +555,13 @@ namespace obe::Graphics
             else
             {
                 throw Exceptions::InvalidSpriteColorType(
-                    vili::to_string(data["color"].type()), data["color"].dump(), EXC_INFO);
+                    vili::to_string(data["color"].type()), data["color"].dump(),
+                    EXC_INFO);
             }
         }
 
-        const bool visible = data["visible"].is_null()
-            ? m_visible
-            : data["visible"].as<bool>();
+        const bool visible
+            = data["visible"].is_null() ? m_visible : data["visible"].as<bool>();
 
         this->setAntiAliasing(antiAliasing);
 

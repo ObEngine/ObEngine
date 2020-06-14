@@ -1,50 +1,56 @@
-#include <Bindings/Animation/Animation.hpp>
-#include <Bindings/Animation/Easing/Easing.hpp>
-#include <Bindings/Animation/Exceptions/Exceptions.hpp>
-#include <Bindings/Audio/Audio.hpp>
-#include <Bindings/Audio/Exceptions/Exceptions.hpp>
 #include <Bindings/BindingTree.hpp>
 #include <Bindings/Bindings.hpp>
-#include <Bindings/Bindings/Bindings.hpp>
-#include <Bindings/Collision/Collision.hpp>
-#include <Bindings/Component/Component.hpp>
-#include <Bindings/Component/Exceptions/Exceptions.hpp>
-#include <Bindings/Config/Config.hpp>
-#include <Bindings/Debug/Debug.hpp>
-#include <Bindings/Engine/Engine.hpp>
-#include <Bindings/Engine/Exceptions/Exceptions.hpp>
+#include <Bindings/Config.hpp>
 #include <Bindings/Exceptions.hpp>
-#include <Bindings/Graphics/Canvas/Canvas.hpp>
-#include <Bindings/Graphics/Exceptions/Exceptions.hpp>
-#include <Bindings/Graphics/Graphics.hpp>
-#include <Bindings/Graphics/Shapes/Shapes.hpp>
-#include <Bindings/Graphics/Utils/Utils.hpp>
-#include <Bindings/Input/Exceptions/Exceptions.hpp>
-#include <Bindings/Input/Input.hpp>
-#include <Bindings/Modes/Modes.hpp>
-#include <Bindings/Network/Network.hpp>
-#include <Bindings/Obe/obe.hpp>
-#include <Bindings/Scene/Exceptions/Exceptions.hpp>
-#include <Bindings/Scene/Scene.hpp>
-#include <Bindings/Script/DataBridge/ViliLuaBridge.hpp>
-#include <Bindings/Script/Exceptions/Exceptions.hpp>
-#include <Bindings/Script/Script.hpp>
-#include <Bindings/System/Constraints/Constraints.hpp>
-#include <Bindings/System/Exceptions/Exceptions.hpp>
-#include <Bindings/System/Loaders/Loaders.hpp>
-#include <Bindings/System/Package/Package.hpp>
-#include <Bindings/System/System.hpp>
-#include <Bindings/System/Workspace/Workspace.hpp>
-#include <Bindings/Time/Time.hpp>
-#include <Bindings/Transform/Transform.hpp>
-#include <Bindings/Triggers/Triggers.hpp>
-#include <Bindings/Types/Types.hpp>
-#include <Bindings/Utils/Exec/Exec.hpp>
-#include <Bindings/Utils/File/File.hpp>
-#include <Bindings/Utils/Math/Math.hpp>
-#include <Bindings/Utils/String/String.hpp>
-#include <Bindings/Utils/Utils.hpp>
-#include <Bindings/Utils/Vector/Vector.hpp>
+#include <Bindings/obe/Animation/Animation.hpp>
+#include <Bindings/obe/Animation/Easing/Easing.hpp>
+#include <Bindings/obe/Animation/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/Audio/Audio.hpp>
+#include <Bindings/obe/Audio/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/Bindings/Bindings.hpp>
+#include <Bindings/obe/Collision/Collision.hpp>
+#include <Bindings/obe/Component/Component.hpp>
+#include <Bindings/obe/Component/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/Config/Config.hpp>
+#include <Bindings/obe/Config/Templates/Templates.hpp>
+#include <Bindings/obe/Debug/Debug.hpp>
+#include <Bindings/obe/Engine/Engine.hpp>
+#include <Bindings/obe/Engine/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/Graphics/Canvas/Canvas.hpp>
+#include <Bindings/obe/Graphics/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/Graphics/Graphics.hpp>
+#include <Bindings/obe/Graphics/Shapes/Shapes.hpp>
+#include <Bindings/obe/Graphics/Utils/Utils.hpp>
+#include <Bindings/obe/Input/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/Input/Input.hpp>
+#include <Bindings/obe/Network/Network.hpp>
+#include <Bindings/obe/Scene/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/Scene/Scene.hpp>
+#include <Bindings/obe/Script/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/Script/Script.hpp>
+#include <Bindings/obe/Script/ViliLuaBridge/ViliLuaBridge.hpp>
+#include <Bindings/obe/System/Constraints/Constraints.hpp>
+#include <Bindings/obe/System/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/System/Loaders/Loaders.hpp>
+#include <Bindings/obe/System/Package/Package.hpp>
+#include <Bindings/obe/System/System.hpp>
+#include <Bindings/obe/System/Workspace/Workspace.hpp>
+#include <Bindings/obe/Time/Time.hpp>
+#include <Bindings/obe/Transform/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/Transform/Transform.hpp>
+#include <Bindings/obe/Triggers/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/Triggers/Triggers.hpp>
+#include <Bindings/obe/Types/Types.hpp>
+#include <Bindings/obe/Utils/Exec/Exec.hpp>
+#include <Bindings/obe/Utils/File/File.hpp>
+#include <Bindings/obe/Utils/Math/Math.hpp>
+#include <Bindings/obe/Utils/String/String.hpp>
+#include <Bindings/obe/Utils/Vector/Vector.hpp>
+#include <Bindings/obe/obe.hpp>
+#include <Bindings/vili/exceptions/exceptions.hpp>
+#include <Bindings/vili/parser/parser.hpp>
+#include <Bindings/vili/utils/string/string.hpp>
+#include <Bindings/vili/vili.hpp>
 #include <sol/sol.hpp>
 namespace obe::Bindings
 {
@@ -52,7 +58,7 @@ namespace obe::Bindings
     {
         BindingTree BindTree("ObEngine");
         BindTree.add("obe", InitTreeNodeAsTable("obe"));
-        BindTree.add("obe", InitTreeNodeAsTable("obe"));
+        BindTree.add("vili", InitTreeNodeAsTable("vili"));
         BindTree["obe"].add("Animation", InitTreeNodeAsTable("obe.Animation"));
         BindTree["obe"].add("Audio", InitTreeNodeAsTable("obe.Audio"));
         BindTree["obe"].add("Collision", InitTreeNodeAsTable("obe.Collision"));
@@ -69,10 +75,12 @@ namespace obe::Bindings
         BindTree["obe"].add("Transform", InitTreeNodeAsTable("obe.Transform"));
         BindTree["obe"].add("Triggers", InitTreeNodeAsTable("obe.Triggers"));
         BindTree["obe"].add("Types", InitTreeNodeAsTable("obe.Types"));
+        BindTree["vili"].add("exceptions", InitTreeNodeAsTable("vili.exceptions"));
+        BindTree["vili"].add("parser", InitTreeNodeAsTable("vili.parser"));
         BindTree["obe"].add("Bindings", InitTreeNodeAsTable("obe.Bindings"));
         BindTree["obe"].add("Debug", InitTreeNodeAsTable("obe.Debug"));
-        BindTree["obe"].add("Modes", InitTreeNodeAsTable("obe.Modes"));
         BindTree["obe"].add("Utils", InitTreeNodeAsTable("obe.Utils"));
+        BindTree["vili"].add("utils", InitTreeNodeAsTable("vili.utils"));
         BindTree["obe"]["Animation"].add(
             "Exceptions", InitTreeNodeAsTable("obe.Animation.Exceptions"));
         BindTree["obe"]["Audio"].add(
@@ -97,13 +105,19 @@ namespace obe::Bindings
             "Exceptions", InitTreeNodeAsTable("obe.System.Exceptions"));
         BindTree["obe"]["System"].add(
             "Loaders", InitTreeNodeAsTable("obe.System.Loaders"));
+        BindTree["obe"]["Transform"].add(
+            "Exceptions", InitTreeNodeAsTable("obe.Transform.Exceptions"));
+        BindTree["obe"]["Triggers"].add(
+            "Exceptions", InitTreeNodeAsTable("obe.Triggers.Exceptions"));
         BindTree["obe"]["Utils"].add("Exec", InitTreeNodeAsTable("obe.Utils.Exec"));
         BindTree["obe"]["Animation"].add(
             "Easing", InitTreeNodeAsTable("obe.Animation.Easing"));
+        BindTree["obe"]["Config"].add(
+            "Templates", InitTreeNodeAsTable("obe.Config.Templates"));
         BindTree["obe"]["Graphics"].add(
             "Utils", InitTreeNodeAsTable("obe.Graphics.Utils"));
         BindTree["obe"]["Script"].add(
-            "DataBridge", InitTreeNodeAsTable("obe.Script.DataBridge"));
+            "ViliLuaBridge", InitTreeNodeAsTable("obe.Script.ViliLuaBridge"));
         BindTree["obe"]["System"].add(
             "Package", InitTreeNodeAsTable("obe.System.Package"));
         BindTree["obe"]["System"].add(
@@ -112,6 +126,7 @@ namespace obe::Bindings
         BindTree["obe"]["Utils"].add("Math", InitTreeNodeAsTable("obe.Utils.Math"));
         BindTree["obe"]["Utils"].add("String", InitTreeNodeAsTable("obe.Utils.String"));
         BindTree["obe"]["Utils"].add("Vector", InitTreeNodeAsTable("obe.Utils.Vector"));
+        BindTree["vili"]["utils"].add("string", InitTreeNodeAsTable("vili.utils.string"));
         BindTree["obe"]["System"].add(
             "Constraints", InitTreeNodeAsTable("obe.System.Constraints"));
         BindTree["obe"]["Animation"]
@@ -163,14 +178,14 @@ namespace obe::Bindings
             &obe::Audio::Exceptions::Bindings::LoadClassAudioFileNotFound);
 
         BindTree["obe"]["Collision"]
+            .add("ClassCollisionData", &obe::Collision::Bindings::LoadClassCollisionData)
             .add("ClassPolygonalCollider",
                 &obe::Collision::Bindings::LoadClassPolygonalCollider)
             .add("ClassTrajectory", &obe::Collision::Bindings::LoadClassTrajectory)
             .add(
                 "ClassTrajectoryNode", &obe::Collision::Bindings::LoadClassTrajectoryNode)
-            .add(
-                "EnumColliderTagType", &obe::Collision::Bindings::LoadEnumColliderTagType)
-            .add("CollisionData", &obe::Collision::Bindings::LoadStructCollisionData);
+            .add("EnumColliderTagType",
+                &obe::Collision::Bindings::LoadEnumColliderTagType);
 
         BindTree["obe"]["Component"].add(
             "ClassComponentBase", &obe::Component::Bindings::LoadClassComponentBase);
@@ -203,7 +218,9 @@ namespace obe::Bindings
             .add("ClassFontNotFound",
                 &obe::Engine::Exceptions::Bindings::LoadClassFontNotFound)
             .add("ClassTextureNotFound",
-                &obe::Engine::Exceptions::Bindings::LoadClassTextureNotFound);
+                &obe::Engine::Exceptions::Bindings::LoadClassTextureNotFound)
+            .add("ClassUnitializedEngine",
+                &obe::Engine::Exceptions::Bindings::LoadClassUnitializedEngine);
 
         BindTree["obe"]["Graphics"]["Canvas"]
             .add("ClassBezier", &obe::Graphics::Canvas::Bindings::LoadClassBezier)
@@ -253,8 +270,12 @@ namespace obe::Bindings
         BindTree["obe"]["Graphics"]["Exceptions"]
             .add("ClassCanvasElementAlreadyExists",
                 &obe::Graphics::Exceptions::Bindings::LoadClassCanvasElementAlreadyExists)
+            .add("ClassImageFileNotFound",
+                &obe::Graphics::Exceptions::Bindings::LoadClassImageFileNotFound)
             .add("ClassInvalidColorName",
                 &obe::Graphics::Exceptions::Bindings::LoadClassInvalidColorName)
+            .add("ClassInvalidSpriteColorType",
+                &obe::Graphics::Exceptions::Bindings::LoadClassInvalidSpriteColorType)
             .add("ClassReadOnlyTexture",
                 &obe::Graphics::Exceptions::Bindings::LoadClassReadOnlyTexture);
 
@@ -265,10 +286,17 @@ namespace obe::Bindings
             .add("ClassText", &obe::Graphics::Shapes::Bindings::LoadClassText);
 
         BindTree["obe"]["Input"]["Exceptions"]
+            .add("ClassInputButtonAlreadyInCombination",
+                &obe::Input::Exceptions::Bindings::
+                    LoadClassInputButtonAlreadyInCombination)
             .add("ClassInputButtonInvalidOperation",
                 &obe::Input::Exceptions::Bindings::LoadClassInputButtonInvalidOperation)
             .add("ClassInvalidInputButtonState",
                 &obe::Input::Exceptions::Bindings::LoadClassInvalidInputButtonState)
+            .add("ClassInvalidInputCombinationCode",
+                &obe::Input::Exceptions::Bindings::LoadClassInvalidInputCombinationCode)
+            .add("ClassInvalidInputTypeEnumValue",
+                &obe::Input::Exceptions::Bindings::LoadClassInvalidInputTypeEnumValue)
             .add("ClassUnknownInputAction",
                 &obe::Input::Exceptions::Bindings::LoadClassUnknownInputAction)
             .add("ClassUnknownInputButton",
@@ -309,11 +337,34 @@ namespace obe::Bindings
             .add("FunctionSceneCreateGameObjectProxy",
                 &obe::Scene::Bindings::LoadFunctionSceneCreateGameObjectProxy);
 
-        BindTree["obe"]["Scene"]["Exceptions"].add("ClassChildNotInSceneNode",
-            &obe::Scene::Exceptions::Bindings::LoadClassChildNotInSceneNode);
+        BindTree["obe"]["Scene"]["Exceptions"]
+            .add("ClassChildNotInSceneNode",
+                &obe::Scene::Exceptions::Bindings::LoadClassChildNotInSceneNode)
+            .add("ClassGameObjectAlreadyExists",
+                &obe::Scene::Exceptions::Bindings::LoadClassGameObjectAlreadyExists)
+            .add("ClassMissingSceneFileBlock",
+                &obe::Scene::Exceptions::Bindings::LoadClassMissingSceneFileBlock)
+            .add("ClassSceneScriptLoadingError",
+                &obe::Scene::Exceptions::Bindings::LoadClassSceneScriptLoadingError)
+            .add("ClassUnknownCollider",
+                &obe::Scene::Exceptions::Bindings::LoadClassUnknownCollider)
+            .add("ClassUnknownGameObject",
+                &obe::Scene::Exceptions::Bindings::LoadClassUnknownGameObject)
+            .add("ClassUnknownSprite",
+                &obe::Scene::Exceptions::Bindings::LoadClassUnknownSprite);
 
-        BindTree["obe"]["Script"]["Exceptions"].add("ClassNoScriptComponent",
-            &obe::Script::Exceptions::Bindings::LoadClassNoScriptComponent);
+        BindTree["obe"]["Script"]["Exceptions"]
+            .add("ClassNoSuchComponent",
+                &obe::Script::Exceptions::Bindings::LoadClassNoSuchComponent)
+            .add("ClassObjectDefinitionBlockNotFound",
+                &obe::Script::Exceptions::Bindings::
+                    LoadClassObjectDefinitionBlockNotFound)
+            .add("ClassObjectDefinitionNotFound",
+                &obe::Script::Exceptions::Bindings::LoadClassObjectDefinitionNotFound)
+            .add("ClassScriptFileNotFound",
+                &obe::Script::Exceptions::Bindings::LoadClassScriptFileNotFound)
+            .add("ClassWrongSourceAttributeType",
+                &obe::Script::Exceptions::Bindings::LoadClassWrongSourceAttributeType);
 
         BindTree["obe"]["Script"]
             .add("ClassGameObject", &obe::Script::Bindings::LoadClassGameObject)
@@ -334,8 +385,23 @@ namespace obe::Bindings
             .add("EnumPathType", &obe::System::Bindings::LoadEnumPathType)
             .add("EnumWindowContext", &obe::System::Bindings::LoadEnumWindowContext);
 
-        BindTree["obe"]["System"]["Exceptions"].add("ClassResourceNotFound",
-            &obe::System::Exceptions::Bindings::LoadClassResourceNotFound);
+        BindTree["obe"]["System"]["Exceptions"]
+            .add("ClassInvalidMouseButtonEnumValue",
+                &obe::System::Exceptions::Bindings::LoadClassInvalidMouseButtonEnumValue)
+            .add("ClassMountablePathIndexOverflow",
+                &obe::System::Exceptions::Bindings::LoadClassMountablePathIndexOverflow)
+            .add("ClassMountFileMissing",
+                &obe::System::Exceptions::Bindings::LoadClassMountFileMissing)
+            .add("ClassPackageAlreadyInstalled",
+                &obe::System::Exceptions::Bindings::LoadClassPackageAlreadyInstalled)
+            .add("ClassPackageFileNotFound",
+                &obe::System::Exceptions::Bindings::LoadClassPackageFileNotFound)
+            .add("ClassResourceNotFound",
+                &obe::System::Exceptions::Bindings::LoadClassResourceNotFound)
+            .add("ClassUnknownPackage",
+                &obe::System::Exceptions::Bindings::LoadClassUnknownPackage)
+            .add("ClassUnknownWorkspace",
+                &obe::System::Exceptions::Bindings::LoadClassUnknownWorkspace);
 
         BindTree["obe"]["System"]["Loaders"]
             .add("GlobalTextureLoader",
@@ -362,6 +428,18 @@ namespace obe::Bindings
             .add("GlobalDays", &obe::Time::Bindings::LoadGlobalDays)
             .add("GlobalWeeks", &obe::Time::Bindings::LoadGlobalWeeks);
 
+        BindTree["obe"]["Transform"]["Exceptions"]
+            .add("ClassInvalidUnitsEnumValue",
+                &obe::Transform::Exceptions::Bindings::LoadClassInvalidUnitsEnumValue)
+            .add("ClassPolygonNotEnoughPoints",
+                &obe::Transform::Exceptions::Bindings::LoadClassPolygonNotEnoughPoints)
+            .add("ClassPolygonPointIndexOverflow",
+                &obe::Transform::Exceptions::Bindings::LoadClassPolygonPointIndexOverflow)
+            .add("ClassUnknownReferential",
+                &obe::Transform::Exceptions::Bindings::LoadClassUnknownReferential)
+            .add("ClassUnknownUnit",
+                &obe::Transform::Exceptions::Bindings::LoadClassUnknownUnit);
+
         BindTree["obe"]["Transform"]
             .add("ClassMatrix2D", &obe::Transform::Bindings::LoadClassMatrix2D)
             .add("ClassMovable", &obe::Transform::Bindings::LoadClassMovable)
@@ -374,6 +452,9 @@ namespace obe::Bindings
             .add("ClassUnitBasedObject",
                 &obe::Transform::Bindings::LoadClassUnitBasedObject)
             .add("ClassUnitVector", &obe::Transform::Bindings::LoadClassUnitVector)
+            .add("EnumRelativePositionFrom",
+                &obe::Transform::Bindings::LoadEnumRelativePositionFrom)
+            .add("EnumFlipAxis", &obe::Transform::Bindings::LoadEnumFlipAxis)
             .add("EnumUnits", &obe::Transform::Bindings::LoadEnumUnits)
             .add("FunctionStringToUnits",
                 &obe::Transform::Bindings::LoadFunctionStringToUnits)
@@ -390,6 +471,25 @@ namespace obe::Bindings
             .add("EnumCallbackSchedulerState",
                 &obe::Triggers::Bindings::LoadEnumCallbackSchedulerState);
 
+        BindTree["obe"]["Triggers"]["Exceptions"]
+            .add("ClassCallbackCreationError",
+                &obe::Triggers::Exceptions::Bindings::LoadClassCallbackCreationError)
+            .add("ClassTriggerExecutionError",
+                &obe::Triggers::Exceptions::Bindings::LoadClassTriggerExecutionError)
+            .add("ClassTriggerGroupAlreadyExists",
+                &obe::Triggers::Exceptions::Bindings::LoadClassTriggerGroupAlreadyExists)
+            .add("ClassTriggerGroupNotJoinable",
+                &obe::Triggers::Exceptions::Bindings::LoadClassTriggerGroupNotJoinable)
+            .add("ClassTriggerNamespaceAlreadyExists",
+                &obe::Triggers::Exceptions::Bindings::
+                    LoadClassTriggerNamespaceAlreadyExists)
+            .add("ClassUnknownTrigger",
+                &obe::Triggers::Exceptions::Bindings::LoadClassUnknownTrigger)
+            .add("ClassUnknownTriggerGroup",
+                &obe::Triggers::Exceptions::Bindings::LoadClassUnknownTriggerGroup)
+            .add("ClassUnknownTriggerNamespace",
+                &obe::Triggers::Exceptions::Bindings::LoadClassUnknownTriggerNamespace);
+
         BindTree["obe"]["Types"]
             .add("ClassIdentifiable", &obe::Types::Bindings::LoadClassIdentifiable)
             .add("ClassProtectedIdentifiable",
@@ -400,6 +500,54 @@ namespace obe::Bindings
 
         BindTree["obe"]["Utils"]["Exec"].add(
             "ClassRunArgsParser", &obe::Utils::Exec::Bindings::LoadClassRunArgsParser);
+
+        BindTree["vili"]
+            .add("ClassConstNodeIterator", &vili::Bindings::LoadClassConstNodeIterator)
+            .add("ClassNode", &vili::Bindings::LoadClassNode)
+            .add("ClassNodeIterator", &vili::Bindings::LoadClassNodeIterator)
+            .add("EnumNodeType", &vili::Bindings::LoadEnumNodeType)
+            .add("FunctionFromString", &vili::Bindings::LoadFunctionFromString)
+            .add("FunctionToString", &vili::Bindings::LoadFunctionToString)
+            .add("GlobalPERMISSIVECAST", &vili::Bindings::LoadGlobalPERMISSIVECAST)
+            .add("GlobalVERBOSEEXCEPTIONS", &vili::Bindings::LoadGlobalVERBOSEEXCEPTIONS)
+            .add("GlobalTrueValue", &vili::Bindings::LoadGlobalTrueValue)
+            .add("GlobalFalseValue", &vili::Bindings::LoadGlobalFalseValue)
+            .add("GlobalNullType", &vili::Bindings::LoadGlobalNullType)
+            .add("GlobalBoolType", &vili::Bindings::LoadGlobalBoolType)
+            .add("GlobalIntType", &vili::Bindings::LoadGlobalIntType)
+            .add("GlobalFloatType", &vili::Bindings::LoadGlobalFloatType)
+            .add("GlobalStringType", &vili::Bindings::LoadGlobalStringType)
+            .add("GlobalObjectType", &vili::Bindings::LoadGlobalObjectType)
+            .add("GlobalArrayType", &vili::Bindings::LoadGlobalArrayType);
+
+        BindTree["vili"]["exceptions"]
+            .add("ClassArrayIndexOverflow",
+                &vili::exceptions::Bindings::LoadClassArrayIndexOverflow)
+            .add(
+                "ClassBaseException", &vili::exceptions::Bindings::LoadClassBaseException)
+            .add("ClassDebugInfo", &vili::exceptions::Bindings::LoadClassDebugInfo)
+            .add("ClassInconsistentIndentation",
+                &vili::exceptions::Bindings::LoadClassInconsistentIndentation)
+            .add("ClassInvalidCast", &vili::exceptions::Bindings::LoadClassInvalidCast)
+            .add("ClassInvalidDataType",
+                &vili::exceptions::Bindings::LoadClassInvalidDataType)
+            .add("ClassInvalidMerge", &vili::exceptions::Bindings::LoadClassInvalidMerge)
+            .add("ClassInvalidNodeType",
+                &vili::exceptions::Bindings::LoadClassInvalidNodeType)
+            .add("ClassParsingError", &vili::exceptions::Bindings::LoadClassParsingError)
+            .add("ClassTooMuchIndentation",
+                &vili::exceptions::Bindings::LoadClassTooMuchIndentation)
+            .add("ClassUnknownChildNode",
+                &vili::exceptions::Bindings::LoadClassUnknownChildNode)
+            .add("ClassUnknownTemplate",
+                &vili::exceptions::Bindings::LoadClassUnknownTemplate);
+
+        BindTree["vili"]["parser"]
+            .add("ClassNodeInStack", &vili::parser::Bindings::LoadClassNodeInStack)
+            .add("ClassState", &vili::parser::Bindings::LoadClassState)
+            .add("FunctionFromString", &vili::parser::Bindings::LoadFunctionFromString)
+            .add("FunctionFromFile", &vili::parser::Bindings::LoadFunctionFromFile)
+            .add("GlobalErrorMessage", &vili::parser::Bindings::LoadGlobalErrorMessage);
 
         BindTree["obe"]["Animation"]["Easing"]
             .add("EnumEasingType", &obe::Animation::Easing::Bindings::LoadEnumEasingType)
@@ -464,8 +612,32 @@ namespace obe::Bindings
         BindTree["obe"]["Bindings"].add("FunctionIndexAllBindings",
             &obe::Bindings::Bindings::LoadFunctionIndexAllBindings);
 
+        BindTree["obe"]["Config"]["Templates"]
+            .add("FunctionGetAnimationTemplates",
+                &obe::Config::Templates::Bindings::LoadFunctionGetAnimationTemplates)
+            .add("FunctionGetConfigTemplates",
+                &obe::Config::Templates::Bindings::LoadFunctionGetConfigTemplates)
+            .add("FunctionGetGameObjectTemplates",
+                &obe::Config::Templates::Bindings::LoadFunctionGetGameObjectTemplates)
+            .add("FunctionGetMountTemplates",
+                &obe::Config::Templates::Bindings::LoadFunctionGetMountTemplates)
+            .add("FunctionGetSceneTemplates",
+                &obe::Config::Templates::Bindings::LoadFunctionGetSceneTemplates)
+            .add("GlobalWaitCommand",
+                &obe::Config::Templates::Bindings::LoadGlobalWaitCommand)
+            .add("GlobalPlayGroupCommand",
+                &obe::Config::Templates::Bindings::LoadGlobalPlayGroupCommand)
+            .add("GlobalSetAnimationCommand",
+                &obe::Config::Templates::Bindings::LoadGlobalSetAnimationCommand);
+
         BindTree["obe"]["Debug"]
             .add("FunctionInitLogger", &obe::Debug::Bindings::LoadFunctionInitLogger)
+            .add("FunctionTrace", &obe::Debug::Bindings::LoadFunctionTrace)
+            .add("FunctionDebug", &obe::Debug::Bindings::LoadFunctionDebug)
+            .add("FunctionInfo", &obe::Debug::Bindings::LoadFunctionInfo)
+            .add("FunctionWarn", &obe::Debug::Bindings::LoadFunctionWarn)
+            .add("FunctionError", &obe::Debug::Bindings::LoadFunctionError)
+            .add("FunctionCritical", &obe::Debug::Bindings::LoadFunctionCritical)
             .add("GlobalLog", &obe::Debug::Bindings::LoadGlobalLog);
 
         BindTree["obe"]["Graphics"]["Utils"]
@@ -476,32 +648,33 @@ namespace obe::Bindings
             .add("FunctionDrawPolygon",
                 &obe::Graphics::Utils::Bindings::LoadFunctionDrawPolygon);
 
-        BindTree["obe"]["Modes"].add(
-            "FunctionStartGame", &obe::Modes::Bindings::LoadFunctionStartGame);
-
-        BindTree["obe"]["Script"]["DataBridge"]
-            .add("FunctionDataToLua",
-                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionDataToLua)
-            .add("FunctionLuaToData",
-                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaToData)
-            .add("FunctionComplexNodeToLuaTable",
-                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionComplexNodeToLuaTable)
-            .add("FunctionDataNodeToLuaElement",
-                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionDataNodeToLuaElement)
-            .add("FunctionArrayNodeToLuaTable",
-                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionArrayNodeToLuaTable)
-            .add("FunctionLuaTableToComplexNode",
-                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaTableToComplexNode)
-            .add("FunctionLuaElementToDataNode",
-                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaElementToDataNode)
-            .add("FunctionLuaTableToArrayNode",
-                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaTableToArrayNode);
+        BindTree["obe"]["Script"]["ViliLuaBridge"]
+            .add("FunctionViliToLua",
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionViliToLua)
+            .add("FunctionLuaToVili",
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaToVili)
+            .add("FunctionViliObjectToLuaTable",
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionViliObjectToLuaTable)
+            .add("FunctionViliPrimitiveToLuaValue",
+                &obe::Script::ViliLuaBridge::Bindings::
+                    LoadFunctionViliPrimitiveToLuaValue)
+            .add("FunctionViliArrayToLuaTable",
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionViliArrayToLuaTable)
+            .add("FunctionLuaTableToViliObject",
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaTableToViliObject)
+            .add("FunctionLuaValueToViliPrimitive",
+                &obe::Script::ViliLuaBridge::Bindings::
+                    LoadFunctionLuaValueToViliPrimitive)
+            .add("FunctionLuaTableToViliArray",
+                &obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaTableToViliArray);
 
         BindTree["obe"]["System"]["Package"]
             .add("FunctionGetPackageLocation",
                 &obe::System::Package::Bindings::LoadFunctionGetPackageLocation)
             .add("FunctionPackageExists",
                 &obe::System::Package::Bindings::LoadFunctionPackageExists)
+            .add("FunctionListPackages",
+                &obe::System::Package::Bindings::LoadFunctionListPackages)
             .add("FunctionInstall", &obe::System::Package::Bindings::LoadFunctionInstall)
             .add("FunctionLoad", &obe::System::Package::Bindings::LoadFunctionLoad);
 
@@ -510,7 +683,9 @@ namespace obe::Bindings
                 &obe::System::Workspace::Bindings::LoadFunctionGetWorkspaceLocation)
             .add("FunctionWorkspaceExists",
                 &obe::System::Workspace::Bindings::LoadFunctionWorkspaceExists)
-            .add("FunctionLoad", &obe::System::Workspace::Bindings::LoadFunctionLoad);
+            .add("FunctionLoad", &obe::System::Workspace::Bindings::LoadFunctionLoad)
+            .add("FunctionListWorkspaces",
+                &obe::System::Workspace::Bindings::LoadFunctionListWorkspaces);
 
         BindTree["obe"]["Utils"]["File"]
             .add("FunctionGetDirectoryList",
@@ -574,12 +749,25 @@ namespace obe::Bindings
                 &obe::Utils::String::Bindings::LoadFunctionStartsWith)
             .add("FunctionEndsWith", &obe::Utils::String::Bindings::LoadFunctionEndsWith)
             .add("FunctionDistance", &obe::Utils::String::Bindings::LoadFunctionDistance)
+            .add("FunctionSortByDistance",
+                &obe::Utils::String::Bindings::LoadFunctionSortByDistance)
+            .add("FunctionQuote", &obe::Utils::String::Bindings::LoadFunctionQuote)
             .add("GlobalAlphabet", &obe::Utils::String::Bindings::LoadGlobalAlphabet)
             .add("GlobalNumbers", &obe::Utils::String::Bindings::LoadGlobalNumbers);
 
         BindTree["obe"]["Utils"]["Vector"]
             .add("FunctionContains", &obe::Utils::Vector::Bindings::LoadFunctionContains)
             .add("FunctionJoin", &obe::Utils::Vector::Bindings::LoadFunctionJoin);
+
+        BindTree["vili"]["utils"]["string"]
+            .add("FunctionReplace", &vili::utils::string::Bindings::LoadFunctionReplace)
+            .add("FunctionIsInt", &vili::utils::string::Bindings::LoadFunctionIsInt)
+            .add("FunctionIsFloat", &vili::utils::string::Bindings::LoadFunctionIsFloat)
+            .add("FunctionTruncateFloat",
+                &vili::utils::string::Bindings::LoadFunctionTruncateFloat)
+            .add("FunctionQuote", &vili::utils::string::Bindings::LoadFunctionQuote)
+            .add("FunctionToDouble", &vili::utils::string::Bindings::LoadFunctionToDouble)
+            .add("FunctionToLong", &vili::utils::string::Bindings::LoadFunctionToLong);
 
         BindTree["obe"]["System"]["Constraints"].add(
             "GlobalDefault", &obe::System::Constraints::Bindings::LoadGlobalDefault);

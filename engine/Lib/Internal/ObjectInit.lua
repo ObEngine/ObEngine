@@ -28,17 +28,3 @@ function LuaCore.InjectInitInjectionTable()
         This:sendInitArg(k, v);
     end
 end
-
--- Should not be here
-obe.Network.__SERVER_LIST = {};
-function obe.Network.Server(port)
-    obe.Network.__SERVER_LIST[port] = {};
-    local triggerGroupName = "TcpServer_" .. tostring(port);
-    obe.Network.__SERVER_LIST[port].server = obe.Network.TcpServer(port, Private, triggerGroupName);
-    local triggers = __PRIVATE_TRIGGERS[triggerGroupName];
-    obe.Network.__SERVER_LIST[port].triggers = triggers;
-    getmetatable(triggers).__alias_function = function(namespace, group, id)
-        return "obe.Network.__SERVER_LIST[" .. port .. "].triggers." .. id;
-    end
-    return triggers;
-end

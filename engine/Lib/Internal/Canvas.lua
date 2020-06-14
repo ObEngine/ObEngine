@@ -767,7 +767,7 @@ end
 function obe.Canvas.Canvas:Text(id)
     id = self:GenerateId(id);
     self.elements[id] = self:InstanciateMT("Text", self.internal:Text(id));
-    self.elements[id].font = "Data/Fonts/arial.ttf";
+    self.elements[id].font = "Data/Fonts/NotoSans.ttf";
     return self.elements[id];
 end
 

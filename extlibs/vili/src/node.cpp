@@ -159,6 +159,34 @@ namespace vili
         return dump_value;
     }
 
+    node node::from_type(node_type type)
+    {
+        if (type == node_type::integer)
+        {
+            return vili::integer {};
+        }
+        else if (type == node_type::number)
+        {
+            return vili::number {};
+        }
+        else if (type == node_type::boolean)
+        {
+            return vili::boolean {};
+        }
+        else if (type == node_type::string)
+        {
+            return vili::string {};
+        }
+        else if (type == node_type::array)
+        {
+           return vili::array {};
+        }
+        else if (type == node_type::object)
+        {
+           return vili::object {};
+        }
+    }
+
     node::node(int value)
     {
         m_data = static_cast<integer>(value);
@@ -269,6 +297,71 @@ namespace vili
         if (m_data.index())
             return false;
         return true;
+    }
+
+    bool node::is_integer() const
+    {
+        return is<integer>();
+    }
+
+    bool node::is_number() const
+    {
+        return is<number>();
+    }
+
+    bool node::is_numeric() const
+    {
+        return is<integer>() || is<number>();
+    }
+
+    bool node::is_boolean() const
+    {
+        return is<boolean>();
+    }
+
+    bool node::is_string() const
+    {
+        return is<string>();
+    }
+
+    bool node::is_array() const
+    {
+        return is<array>();
+    }
+
+    bool node::is_object() const
+    {
+        return is<object>();
+    }
+
+    boolean node::as_boolean() const
+    {
+        return as<boolean>();
+    }
+
+    integer node::as_integer() const
+    {
+        return as<integer>();
+    }
+
+    number node::as_number() const
+    {
+        return as<number>();
+    }
+
+    string node::as_string() const
+    {
+        return as<string>();
+    }
+
+    array node::as_array() const
+    {
+        return as<array>();
+    }
+
+    object node::as_object() const
+    {
+        return as<object>();
     }
 
     node& node::operator[](const char* key)
@@ -415,7 +508,10 @@ namespace vili
         {
             for (auto [key, val] : value.items())
             {
-                (*this)[key] = val;
+                if (this->contains(key))
+                    this->at(key).merge(val);
+                else
+                    (*this)[key] = val;
             }
         }
         else if (is<array>() && value.is<array>())

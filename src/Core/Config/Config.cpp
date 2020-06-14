@@ -1,6 +1,7 @@
 #include <Config/Config.hpp>
 #include <System/Path.hpp>
 
+#include <Config/Templates/Config.hpp>
 #include <Debug/Logger.hpp>
 
 #include <vili/parser/parser.hpp>
@@ -22,8 +23,11 @@ namespace obe::Config
         for (const std::string path : loadResult)
         {
             Debug::Log->info("Loading config file from {}", path);
-            vili::node conf = vili::parser::from_file(path);
+            vili::node conf
+                = vili::parser::from_file(path, Templates::getConfigTemplates());
+            std::cout << "Merging : " << conf.dump() << std::endl;
             this->merge(conf);
+            std::cout << "Result : " << this->dump() << std::endl;
         }
     }
 } // namespace obe::System

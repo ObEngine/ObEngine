@@ -3,7 +3,7 @@
 #include <Transform/Referential.hpp>
 
 using namespace obe::Transform;
-using Axis = Referential::Axis;
+using FlipAxis = Referential::FlipAxis;
 
 TEST_CASE("Flipping Referentials should give correct results",
     "[obe.Transform.Referential.flip]")
@@ -22,38 +22,31 @@ TEST_CASE("Flipping Referentials should give correct results",
     }
     SECTION("Flipping only horizontal axis of known referentials")
     {
-        REQUIRE(Referential::TopLeft.flip(Axis::Horizontal)
-            == Referential::TopRight);
-        REQUIRE(Referential::Top.flip(Axis::Horizontal) == Referential::Top);
-        REQUIRE(Referential::TopRight.flip(Axis::Horizontal)
-            == Referential::TopLeft);
-        REQUIRE(Referential::Left.flip(Axis::Horizontal) == Referential::Right);
-        REQUIRE(
-            Referential::Center.flip(Axis::Horizontal) == Referential::Center);
-        REQUIRE(Referential::Right.flip(Axis::Horizontal) == Referential::Left);
-        REQUIRE(Referential::BottomLeft.flip(Axis::Horizontal)
+        REQUIRE(Referential::TopLeft.flip(FlipAxis::Horizontal) == Referential::TopRight);
+        REQUIRE(Referential::Top.flip(FlipAxis::Horizontal) == Referential::Top);
+        REQUIRE(Referential::TopRight.flip(FlipAxis::Horizontal) == Referential::TopLeft);
+        REQUIRE(Referential::Left.flip(FlipAxis::Horizontal) == Referential::Right);
+        REQUIRE(Referential::Center.flip(FlipAxis::Horizontal) == Referential::Center);
+        REQUIRE(Referential::Right.flip(FlipAxis::Horizontal) == Referential::Left);
+        REQUIRE(Referential::BottomLeft.flip(FlipAxis::Horizontal)
             == Referential::BottomRight);
-        REQUIRE(
-            Referential::Bottom.flip(Axis::Horizontal) == Referential::Bottom);
-        REQUIRE(Referential::BottomRight.flip(Axis::Horizontal)
+        REQUIRE(Referential::Bottom.flip(FlipAxis::Horizontal) == Referential::Bottom);
+        REQUIRE(Referential::BottomRight.flip(FlipAxis::Horizontal)
             == Referential::BottomLeft);
     }
     SECTION("Flipping only vertical axis of known referentials")
     {
-        REQUIRE(Referential::TopLeft.flip(Axis::Vertical)
-            == Referential::BottomLeft);
-        REQUIRE(Referential::Top.flip(Axis::Vertical) == Referential::Bottom);
-        REQUIRE(Referential::TopRight.flip(Axis::Vertical)
-            == Referential::BottomRight);
-        REQUIRE(Referential::Left.flip(Axis::Vertical) == Referential::Left);
+        REQUIRE(Referential::TopLeft.flip(FlipAxis::Vertical) == Referential::BottomLeft);
+        REQUIRE(Referential::Top.flip(FlipAxis::Vertical) == Referential::Bottom);
         REQUIRE(
-            Referential::Center.flip(Axis::Vertical) == Referential::Center);
-        REQUIRE(Referential::Right.flip(Axis::Vertical) == Referential::Right);
-        REQUIRE(Referential::BottomLeft.flip(Axis::Vertical)
-            == Referential::TopLeft);
-        REQUIRE(Referential::Bottom.flip(Axis::Vertical) == Referential::Top);
-        REQUIRE(Referential::BottomRight.flip(Axis::Vertical)
-            == Referential::TopRight);
+            Referential::TopRight.flip(FlipAxis::Vertical) == Referential::BottomRight);
+        REQUIRE(Referential::Left.flip(FlipAxis::Vertical) == Referential::Left);
+        REQUIRE(Referential::Center.flip(FlipAxis::Vertical) == Referential::Center);
+        REQUIRE(Referential::Right.flip(FlipAxis::Vertical) == Referential::Right);
+        REQUIRE(Referential::BottomLeft.flip(FlipAxis::Vertical) == Referential::TopLeft);
+        REQUIRE(Referential::Bottom.flip(FlipAxis::Vertical) == Referential::Top);
+        REQUIRE(
+            Referential::BottomRight.flip(FlipAxis::Vertical) == Referential::TopRight);
     }
     SECTION("Flipping both axis of random referentials")
     {
@@ -64,8 +57,7 @@ TEST_CASE("Flipping Referentials should give correct results",
     }
 }
 
-TEST_CASE(
-    "We should be able to test the position of referentials based on criterias",
+TEST_CASE("We should be able to test the position of referentials based on criterias",
     "[obe.Transform.Referential.isOn...]")
 {
     SECTION("Testing if known referentials are on a corner")
@@ -168,21 +160,17 @@ TEST_CASE("We should be able to represent a Referential as a string",
         REQUIRE(Referential::Left.toString() == "Referential<Left>");
         REQUIRE(Referential::Center.toString() == "Referential<Center>");
         REQUIRE(Referential::Right.toString() == "Referential<Right>");
-        REQUIRE(
-            Referential::BottomLeft.toString() == "Referential<BottomLeft>");
+        REQUIRE(Referential::BottomLeft.toString() == "Referential<BottomLeft>");
         REQUIRE(Referential::Bottom.toString() == "Referential<Bottom>");
-        REQUIRE(
-            Referential::BottomRight.toString() == "Referential<BottomRight>");
+        REQUIRE(Referential::BottomRight.toString() == "Referential<BottomRight>");
     }
     SECTION("Transforming known referentials to string with custom formatter")
     {
         REQUIRE(Referential::TopLeft.toString("A({})") == "A(TopLeft)");
         REQUIRE(Referential::Top.toString("+{}") == "+Top");
         REQUIRE(Referential::TopRight.toString("/{}/") == "/TopRight/");
-        REQUIRE(Referential::Left.toString("Why did you {} me")
-            == "Why did you Left me");
-        REQUIRE(Referential::Center.toString("{} of the Earth")
-            == "Center of the Earth");
+        REQUIRE(Referential::Left.toString("Why did you {} me") == "Why did you Left me");
+        REQUIRE(Referential::Center.toString("{} of the Earth") == "Center of the Earth");
         REQUIRE(Referential::Right.toString("You were actually {}")
             == "You were actually Right");
         REQUIRE(Referential::BottomLeft.toString("1+2={}") == "1+2=BottomLeft");
@@ -192,10 +180,8 @@ TEST_CASE("We should be able to represent a Referential as a string",
     }
     SECTION("Transforming random referentials to string with default formatter")
     {
-        REQUIRE(Referential(0.123, 0.456).toString()
-            == "Referential<0.123, 0.456>");
-        REQUIRE(Referential(0.6666, 0.9999).toString()
-            == "Referential<0.6666, 0.9999>");
+        REQUIRE(Referential(0.123, 0.456).toString() == "Referential<0.123, 0.456>");
+        REQUIRE(Referential(0.6666, 0.9999).toString() == "Referential<0.6666, 0.9999>");
     }
     SECTION("Transforming random referentials to string with custom formatter")
     {
@@ -204,8 +190,7 @@ TEST_CASE("We should be able to represent a Referential as a string",
             == "Referential => 0.1234, 0.5678");
         REQUIRE(Referential(0.666, 1).toString("The devil is == {1}")
             == "The devil is == 0.666");
-        REQUIRE(
-            Referential(0.1, 0.42).toString("I wonder why {2} is the answer")
+        REQUIRE(Referential(0.1, 0.42).toString("I wonder why {2} is the answer")
             == "I wonder why 0.42 is the answer");
         REQUIRE(Referential(0.456, 0.123).toString("y = {2}, x = {1}")
             == "y = 0.123, x = 0.456");
@@ -223,18 +208,16 @@ TEST_CASE("We should be able to load a Referential from a string",
         REQUIRE(Referential::FromString("Left") == Referential::Left);
         REQUIRE(Referential::FromString("Center") == Referential::Center);
         REQUIRE(Referential::FromString("Right") == Referential::Right);
-        REQUIRE(
-            Referential::FromString("BottomLeft") == Referential::BottomLeft);
+        REQUIRE(Referential::FromString("BottomLeft") == Referential::BottomLeft);
         REQUIRE(Referential::FromString("Bottom") == Referential::Bottom);
-        REQUIRE(
-            Referential::FromString("BottomRight") == Referential::BottomRight);
+        REQUIRE(Referential::FromString("BottomRight") == Referential::BottomRight);
     }
     SECTION("Loading random referentials from a string")
     {
         REQUIRE(Referential::FromString("Referential<0.1, 0.666>")
             == Referential(0.1, 0.666));
-        REQUIRE(Referential::FromString("Referential<-0.55, -1>")
-            == Referential(-0.55, -1));
+        REQUIRE(
+            Referential::FromString("Referential<-0.55, -1>") == Referential(-0.55, -1));
         REQUIRE_THROWS(Referential::FromString("?"));
     }
 }

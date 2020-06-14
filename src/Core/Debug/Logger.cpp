@@ -32,4 +32,34 @@ namespace obe::Debug
         Log->flush_on(spdlog::level::warn);
         Log->info("Logger initialized");
     }
+
+    void trace(const std::string& content)
+    {
+        Log->trace(content);
+    }
+
+    void debug(const std::string& content)
+    {
+        Log->debug(content);
+    }
+
+    void info(const std::string& content)
+    {
+        Log->info(content);
+    }
+
+    void warn(const std::string& content)
+    {
+        Log->warn(content);
+    }
+
+    void error(const std::string& content)
+    {
+        Log->error(content);
+    }
+
+    void critical(const std::string& content)
+    {
+        Log->critical(content);
+    }
 } // namespace obe::Debug

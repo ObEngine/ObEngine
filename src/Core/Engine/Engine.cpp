@@ -37,14 +37,14 @@ namespace obe::Engine
     {
         m_input = std::make_unique<Input::InputManager>();
         m_input->init(*m_triggers);
-        m_input->configure(m_config.at("KeyBinding"));
+        m_input->configure(m_config.at("Input"));
         m_input->addContext("game");
     }
 
     void Engine::initFramerate()
     {
         m_framerate = std::make_unique<Time::FramerateManager>(*m_window);
-        m_framerate->configure(m_config.at("GameConfig"));
+        m_framerate->configure(m_config.at("Framerate"));
     }
 
     void Engine::initScript()
@@ -54,14 +54,14 @@ namespace obe::Engine
             sol::lib::package, sol::lib::os, sol::lib::coroutine, sol::lib::math,
             sol::lib::count, sol::lib::debug, sol::lib::io, sol::lib::bit32);
 
-        m_lua->safe_script_file("Lib/Internal/LuaCore.lua"_fs);
-        m_lua->safe_script_file("Lib/Internal/Environment.lua"_fs);
+        m_lua->safe_script("LuaCore = {}");
         m_lua->safe_script_file("Lib/Internal/ScriptInit.lua"_fs);
         m_lua->safe_script_file("Lib/Internal/Triggers.lua"_fs);
 
         Bindings::IndexAllBindings(*m_lua);
         m_lua->safe_script_file("Lib/Internal/Searcher.lua"_fs);
         m_lua->safe_script_file("Lib/Internal/GameInit.lua"_fs);
+        m_lua->safe_script_file("Lib/Internal/Logger.lua"_fs);
         m_lua->set_exception_handler(&lua_exception_handler);
 
         (*m_lua)["Engine"] = this;
@@ -84,7 +84,9 @@ namespace obe::Engine
 
     void Engine::initWindow()
     {
-        m_window = std::make_unique<System::Window>(System::WindowContext::GameWindow);
+        vili::node windowConfig = m_config.at("Window").at("Game");
+        Debug::Log->debug("<Engine> Window configuration : {}", windowConfig.dump());
+        m_window = std::make_unique<System::Window>(windowConfig);
     }
 
     void Engine::initCursor()
