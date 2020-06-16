@@ -156,7 +156,8 @@ namespace obe::Script
         {
             m_hasScriptEngine = true;
             m_environment = sol::environment(m_lua, sol::create, m_lua.globals());
-            m_privateKey = Utils::String::getRandomKey(Utils::String::Alphabet, 1)
+            m_privateKey = m_type + "_"
+                + Utils::String::getRandomKey(Utils::String::Alphabet, 1)
                 + Utils::String::getRandomKey(
                     Utils::String::Alphabet + Utils::String::Numbers, 11);
             m_triggers.createNamespace(m_privateKey);

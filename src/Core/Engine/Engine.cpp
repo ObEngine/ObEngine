@@ -2,6 +2,8 @@
 #include <Engine/Exceptions.hpp>
 #include <Utils/StringUtils.hpp>
 
+#include <fstream>
+
 int lua_exception_handler(lua_State* L,
     sol::optional<const std::exception&> maybe_exception, sol::string_view description)
 {
@@ -66,6 +68,7 @@ namespace obe::Engine
         m_lua->safe_script_file("Lib/Internal/GameInit.lua"_fs);
         m_lua->safe_script_file("Lib/Internal/Logger.lua"_fs);
         m_lua->set_exception_handler(&lua_exception_handler);
+        m_lua->safe_script("collectgarbage(\"generational\");");
 
         (*m_lua)["Engine"] = this;
     }
@@ -273,12 +276,17 @@ namespace obe::Engine
                 "Game.Start", errObj.what(), EXC_INFO);
         }
 
+        m_framerate->resetDeltaTime();
         while (m_window->isOpen())
         {
             m_framerate->update();
 
-            t_game->pushParameter("Update", "dt", m_framerate->getGameSpeed());
-            t_game->trigger("Update");
+            if (m_framerate->doUpdate())
+            {
+                t_game->pushParameter("Update", "dt", m_framerate->getGameSpeed());
+                t_game->trigger("Update");
+                m_framerate->resetDeltaTime();
+            }
 
             if (m_framerate->doRender())
                 t_game->trigger("Render");
@@ -286,6 +294,11 @@ namespace obe::Engine
             this->update();
             this->render();
         }
+        vili::node profiler = m_triggers->dumpProfilerResults();
+        std::ofstream profilerOutput;
+        profilerOutput.open("profiler.vili");
+        std::string dump = profiler.dump();
+        profilerOutput.write(dump.data(), dump.size());
     }
 
     Audio::AudioManager& Engine::getAudioManager()
@@ -345,7 +358,6 @@ namespace obe::Engine
 
     void Engine::render()
     {
-        m_lua->collect_garbage();
         if (m_framerate->doRender())
         {
             m_window->clear();

@@ -15,8 +15,6 @@ namespace obe::Triggers
 
     TriggerGroup::~TriggerGroup()
     {
-        Debug::Log->trace(
-            "<TriggerGroup> Deleting TriggerGroup '{}.{}'", m_fromNsp, m_name);
     }
 
     std::weak_ptr<Trigger> TriggerGroup::get(const std::string& triggerName)
@@ -113,5 +111,33 @@ namespace obe::Triggers
         const std::string& triggerName, std::function<void(const TriggerEnv&)> callback)
     {
         this->get(triggerName).lock()->onUnregister(callback);
+    }
+
+    vili::node TriggerGroup::getProfilerResults()
+    {
+        vili::node result = vili::object {};
+        for (auto& [triggerName, trigger] : m_triggerMap)
+        {
+            const std::string fullName = m_name + "." + triggerName;
+            Debug::Log->debug("Dumping {}", fullName);
+            result[fullName] = vili::object {};
+            Time::TimeUnit totalTime = 0;
+            long long int totalHits = 0;
+            result[fullName]["callbacks"] = vili::object {};
+            for (const auto itr : trigger->m_profiler)
+            {
+                result[fullName]["callbacks"][itr.first] = vili::object {};
+                result[fullName]["callbacks"][itr.first]["time"] = itr.second.time;
+                result[fullName]["callbacks"][itr.first]["hits"]
+                    = vili::integer(itr.second.hits);
+                result[fullName]["callbacks"][itr.first]["min"] = itr.second.min;
+                result[fullName]["callbacks"][itr.first]["max"] = itr.second.max;
+                totalTime += itr.second.time;
+                totalHits += itr.second.hits;
+            }
+            result[fullName]["time"] = totalTime;
+            result[fullName]["hits"] = totalHits;
+        }
+        return result;
     }
 } // namespace obe::Triggers

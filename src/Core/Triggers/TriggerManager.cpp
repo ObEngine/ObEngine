@@ -211,4 +211,20 @@ namespace obe::Triggers
         m_schedulers.push_back(std::make_unique<CallbackScheduler>(*this));
         return *m_schedulers.back().get();
     }
+
+    vili::node TriggerManager::dumpProfilerResults()
+    {
+        vili::node result = vili::object {};
+        for (auto itr : m_allTriggers)
+        {
+            Debug::Log->debug("Profiling TriggerNamespace '{}'", itr.first);
+            result[itr.first] = vili::object {};
+            for (auto itr2 : itr.second)
+            {
+                Debug::Log->debug("Namespace group {}", itr2.first);
+                result[itr.first][itr2.first] = itr2.second.lock()->getProfilerResults();
+            }
+        }
+        return result;
+    }
 } // namespace obe::Triggers

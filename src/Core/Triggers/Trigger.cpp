@@ -139,7 +139,24 @@ namespace obe::Triggers
                     rEnv.call = makeCallback(m_lua, this->getTriggerLuaTableName(), rEnv);
                 }
 
+                const Time::TimeUnit start = Time::epoch();
                 sol::protected_function_result result = rEnv.call();
+                Time::TimeUnit duration = Time::epoch() - start;
+                std::string envCallbackKey = rEnv.id + "::" + rEnv.callback;
+
+                // Profiler
+                CallbackProfiler& profiler = m_profiler[envCallbackKey];
+                profiler.time += duration;
+                ++profiler.hits;
+                if (duration < profiler.min || profiler.min == 0)
+                {
+                    profiler.min = duration;
+                }
+                if (duration > profiler.max)
+                {
+                    profiler.max = duration;
+                }
+
                 if (!result.valid())
                 {
                     const auto errObj = result.get<sol::error>();

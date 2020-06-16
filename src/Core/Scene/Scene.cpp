@@ -558,8 +558,9 @@ namespace obe::Scene
         {
             while (useId.empty() || this->doesGameObjectExists(useId))
             {
-                useId = Utils::String::getRandomKey(
-                    Utils::String::Alphabet + Utils::String::Numbers, 8);
+                useId = obj + "_"
+                    + Utils::String::getRandomKey(
+                        Utils::String::Alphabet + Utils::String::Numbers, 8);
             }
         }
         else if (this->doesGameObjectExists(useId))

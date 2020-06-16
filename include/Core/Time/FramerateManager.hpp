@@ -16,7 +16,7 @@ namespace obe::Time
     {
     private:
         System::Window& m_window;
-        sf::Clock m_deltaClock;
+        Time::TimeUnit m_deltaClock;
         double m_deltaTime = 0.0;
         double m_speedCoefficient = 1.0;
         double m_frameLimiterClock;
@@ -48,6 +48,8 @@ namespace obe::Time
          * \return true if the engine should render everything, false otherwise
          */
         [[nodiscard]] bool doRender() const;
+        [[nodiscard]] bool doUpdate() const;
+        void resetDeltaTime();
         /**
          * \brief Get the DeltaTime
          * \return A double containing the DeltaTime

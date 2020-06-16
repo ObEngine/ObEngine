@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Debug/Logger.hpp>
+#include <Time/TimeUtils.hpp>
 #include <sol/sol.hpp>
 #include <utility>
 
@@ -26,6 +27,17 @@ namespace obe::Triggers
         }
     };
 
+    class CallbackProfiler
+    {
+    public:
+        std::uint64_t hits = 0;
+        Time::TimeUnit time = 0;
+        Time::TimeUnit min = 0;
+        Time::TimeUnit max = 0;
+    };
+
+    using TriggerProfiler = std::unordered_map<std::string, CallbackProfiler>;
+
     /**
      * \brief A Class that does represents a triggerable event
      */
@@ -42,6 +54,7 @@ namespace obe::Triggers
         std::function<void(const TriggerEnv&)> m_onRegisterCallback;
         std::function<void(const TriggerEnv&)> m_onUnregisterCallback;
         sol::state_view m_lua;
+        TriggerProfiler m_profiler;
         friend class TriggerGroup;
         friend class TriggerManager;
 

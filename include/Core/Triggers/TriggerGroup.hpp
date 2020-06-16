@@ -4,6 +4,7 @@
 #include <map>
 #include <memory>
 #include <sol/sol.hpp>
+#include <vili/node.hpp>
 
 namespace obe::Triggers
 {
@@ -117,6 +118,7 @@ namespace obe::Triggers
          */
         void onUnregister(const std::string& triggerName,
             std::function<void(const TriggerEnv&)> callback);
+        vili::node getProfilerResults();
     };
 
     using TriggerGroupPtr = std::shared_ptr<TriggerGroup>;

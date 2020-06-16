@@ -103,5 +103,6 @@ namespace obe::Triggers
         void clear();
 
         CallbackScheduler& schedule();
+        vili::node dumpProfilerResults();
     };
 } // namespace obe::Triggers

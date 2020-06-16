@@ -5,7 +5,6 @@ Graphics:
     antiAliasing: true
 
 Framerate:
-    framerateLimit: true
     framerateTarget: 60
     vsync: true
 

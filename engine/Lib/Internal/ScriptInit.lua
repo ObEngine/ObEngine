@@ -30,3 +30,38 @@ function LuaCore.IsLibLoaded(lib)
     return false;
 end
 
+function count_all(f)
+	local seen = {}
+	local count_table
+	count_table = function(t)
+		if seen[t] then return end
+		f(t)
+		seen[t] = true
+        for k,v in pairs(t) do
+            print("Found", k, v, getmetatable(v));
+			if type(v) == "table" then
+				count_table(v)
+			elseif type(v) == "userdata" then
+				f(v)
+			end
+		end
+	end
+	count_table(_G)
+end
+
+function type_name(o)
+    return tostring(o);
+end
+
+function type_count()
+	local counts = {}
+	local enumerate = function (o)
+		local t = type_name(o)
+		counts[t] = (counts[t] or 0) + 1
+	end
+	count_all(enumerate)
+	return counts
+end
+
+print(inspect(type_count()));
+-- dbg();

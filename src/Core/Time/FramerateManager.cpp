@@ -18,16 +18,16 @@ namespace obe::Time
 
     void FramerateManager::configure(vili::node& config)
     {
-        if (!config["framerateTarget"].is_null())
+        if (config.contains("framerateTarget"))
         {
             m_limitFramerate = true;
             m_framerateTarget = config["framerateTarget"];
         }
-        if (!config["vsync"].is_null())
+        if (config.contains("vsync"))
         {
             m_vsyncEnabled = config["vsync"];
         }
-        if (!config["syncUpdateToRender"].is_null())
+        if (config.contains("syncUpdateToRender"))
         {
             m_syncUpdateRender = config["syncUpdateToRender"];
         }
@@ -42,8 +42,7 @@ namespace obe::Time
 
     void FramerateManager::update()
     {
-        const sf::Time timeBuffer = m_deltaClock.restart();
-        m_deltaTime = static_cast<double>(timeBuffer.asMicroseconds()) * microseconds;
+        m_deltaTime += Time::epoch() - m_deltaClock;
         if (m_limitFramerate)
         {
             if (epoch() - m_frameLimiterClock > 1)
@@ -121,5 +120,16 @@ namespace obe::Time
     bool FramerateManager::doRender() const
     {
         return (!m_limitFramerate || m_needToRender);
+    }
+
+    bool FramerateManager::doUpdate() const
+    {
+        return (!m_syncUpdateRender || !m_limitFramerate || m_needToRender);
+    }
+
+    void FramerateManager::resetDeltaTime()
+    {
+        m_deltaTime = 0;
+        m_deltaClock = Time::epoch();
     }
 } // namespace obe::Time
