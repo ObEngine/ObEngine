@@ -29,6 +29,22 @@ namespace obe::Scene
         m_sortSprites = false;
     }
 
+    void Scene::_rebuildIds()
+    {
+        for (auto& item : m_spriteArray)
+        {
+            m_spriteIds.emplace(item->getId());
+        }
+        for (auto& item : m_colliderArray)
+        {
+            m_colliderIds.emplace(item->getId());
+        }
+        for (auto& item : m_gameObjectArray)
+        {
+            m_gameObjectIds.emplace(item->getId());
+        }
+    }
+
     Scene::Scene(Triggers::TriggerManager& triggers, sol::state_view lua)
         : m_lua(lua)
         , m_triggers(triggers)
@@ -163,6 +179,9 @@ namespace obe::Scene
 
     void Scene::clear()
     {
+        m_spriteIds.clear();
+        m_colliderIds.clear();
+        m_gameObjectIds.clear();
         if (m_resources)
         {
             m_resources->clean();
@@ -204,6 +223,7 @@ namespace obe::Scene
         Debug::Log->debug("<Scene> Clearing MapScript Array");
         m_scriptArray.clear();
         Debug::Log->debug("<Scene> Scene Cleared !");
+        this->_rebuildIds();
     }
 
     vili::node Scene::dump() const
@@ -558,6 +578,7 @@ namespace obe::Scene
                     return (ptr->getId() == id);
                 }),
             m_gameObjectArray.end());
+        m_gameObjectIds.erase(id);
     }
 
     std::vector<Script::GameObject*> Scene::getAllGameObjects(
@@ -710,6 +731,7 @@ namespace obe::Scene
                                     return (Sprite->getId() == id);
                                 }),
             m_spriteArray.end());
+        m_spriteIds.erase(id);
     }
 
     void Scene::enableShowSceneNodes(bool showNodes)
@@ -803,6 +825,7 @@ namespace obe::Scene
                     return (collider->getId() == id);
                 }),
             m_colliderArray.end());
+        m_colliderIds.erase(id);
     }
 
     SceneNode& Scene::getSceneRootNode()

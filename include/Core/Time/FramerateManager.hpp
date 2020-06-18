@@ -16,10 +16,9 @@ namespace obe::Time
     {
     private:
         System::Window& m_window;
-        Time::TimeUnit m_deltaClock;
+        Time::TimeUnit m_clock;
         double m_deltaTime = 0.0;
         double m_speedCoefficient = 1.0;
-        double m_frameLimiterClock;
         bool m_limitFramerate = false;
         unsigned int m_framerateTarget;
         bool m_vsyncEnabled = true;
@@ -49,7 +48,8 @@ namespace obe::Time
          */
         [[nodiscard]] bool doRender() const;
         [[nodiscard]] bool doUpdate() const;
-        void resetDeltaTime();
+        void start();
+        void reset();
         /**
          * \brief Get the DeltaTime
          * \return A double containing the DeltaTime

@@ -25,9 +25,7 @@ namespace obe::Config
             Debug::Log->info("Loading config file from {}", path);
             vili::node conf
                 = vili::parser::from_file(path, Templates::getConfigTemplates());
-            std::cout << "Merging : " << conf.dump() << std::endl;
             this->merge(conf);
-            std::cout << "Result : " << this->dump() << std::endl;
         }
     }
 } // namespace obe::System

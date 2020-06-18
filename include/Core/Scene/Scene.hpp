@@ -61,6 +61,7 @@ namespace obe::Scene
         sol::state_view m_lua;
 
         void _reorganizeLayers();
+        void _rebuildIds();
 
     public:
         /**

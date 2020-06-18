@@ -10,7 +10,7 @@ namespace obe::Time
     FramerateManager::FramerateManager(System::Window& window)
         : m_window(window)
     {
-        m_frameLimiterClock = epoch();
+        m_clock = epoch();
         m_currentFrame = 0;
         m_frameProgression = 0;
         m_needToRender = false;
@@ -42,28 +42,16 @@ namespace obe::Time
 
     void FramerateManager::update()
     {
-        m_deltaTime += Time::epoch() - m_deltaClock;
-        if (m_limitFramerate)
+        const Time::TimeUnit sinceLastUpdate = epoch() - m_clock;
+        if (m_limitFramerate && m_syncUpdateRender
+            && sinceLastUpdate < m_reqFramerateInterval)
         {
-            if (epoch() - m_frameLimiterClock > 1)
-            {
-                m_frameLimiterClock = epoch();
-                m_currentFrame = 0;
-            }
-            m_frameProgression
-                = round((epoch() - m_frameLimiterClock) / (m_reqFramerateInterval));
-            m_needToRender = false;
-            if (m_frameProgression > m_currentFrame)
-            {
-                m_currentFrame = m_frameProgression;
-                m_needToRender = true;
-            }
-            else
-            {
-                std::this_thread::sleep_for(
-                    std::chrono::duration<double>(m_reqFramerateInterval));
-            }
+            std::this_thread::sleep_for(std::chrono::duration<double>(
+                (m_reqFramerateInterval - sinceLastUpdate) / 10.f));
         }
+        m_needToRender = true;
+        m_deltaTime = epoch() - m_clock;
+        m_clock = epoch();
     }
 
     TimeUnit FramerateManager::getDeltaTime() const
@@ -127,9 +115,13 @@ namespace obe::Time
         return (!m_syncUpdateRender || !m_limitFramerate || m_needToRender);
     }
 
-    void FramerateManager::resetDeltaTime()
+    void FramerateManager::start()
     {
-        m_deltaTime = 0;
-        m_deltaClock = Time::epoch();
+        m_clock = epoch();
+    }
+
+    void FramerateManager::reset()
+    {
+        m_needToRender = false;
     }
 } // namespace obe::Time

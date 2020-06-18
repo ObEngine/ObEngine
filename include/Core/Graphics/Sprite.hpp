@@ -100,8 +100,8 @@ namespace obe::Graphics
         std::vector<SpriteHandlePoint> m_handlePoints {};
         int m_layer = 1;
         int m_zdepth = 1;
-        std::string m_parentId = "";
-        std::string m_path = "";
+        std::string m_parentId;
+        std::string m_path;
         PositionTransformer m_positionTransformer;
         Shader* m_shader = nullptr;
         sfe::ComplexSprite m_sprite;

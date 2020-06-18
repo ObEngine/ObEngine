@@ -45,8 +45,7 @@ namespace obe::Time::Bindings
         bindFramerateManager["update"] = &obe::Time::FramerateManager::update;
         bindFramerateManager["doRender"] = &obe::Time::FramerateManager::doRender;
         bindFramerateManager["doUpdate"] = &obe::Time::FramerateManager::doUpdate;
-        bindFramerateManager["resetDeltaTime"]
-            = &obe::Time::FramerateManager::resetDeltaTime;
+        bindFramerateManager["resetDeltaTime"] = &obe::Time::FramerateManager::start;
         bindFramerateManager["getDeltaTime"] = &obe::Time::FramerateManager::getDeltaTime;
         bindFramerateManager["getGameSpeed"] = &obe::Time::FramerateManager::getGameSpeed;
         bindFramerateManager["getSpeedCoefficient"]

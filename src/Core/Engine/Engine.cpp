@@ -276,29 +276,40 @@ namespace obe::Engine
                 "Game.Start", errObj.what(), EXC_INFO);
         }
 
-        m_framerate->resetDeltaTime();
+        m_framerate->start();
+        vili::array dts;
         while (m_window->isOpen())
         {
             m_framerate->update();
 
             if (m_framerate->doUpdate())
             {
+                dts.push_back(m_framerate->getGameSpeed());
                 t_game->pushParameter("Update", "dt", m_framerate->getGameSpeed());
                 t_game->trigger("Update");
-                m_framerate->resetDeltaTime();
+                m_framerate->start();
+                this->update();
             }
 
             if (m_framerate->doRender())
+            {
                 t_game->trigger("Render");
-
-            this->update();
-            this->render();
+                this->render();
+                m_framerate->reset();
+            }
+            else
+            {
+                // m_lua->collect_garbage();
+                // m_lua->collect_garbage();
+            }
         }
         vili::node profiler = m_triggers->dumpProfilerResults();
+        profiler.emplace("dts", dts);
         std::ofstream profilerOutput;
         profilerOutput.open("profiler.vili");
         std::string dump = profiler.dump();
         profilerOutput.write(dump.data(), dump.size());
+        profilerOutput.close();
     }
 
     Audio::AudioManager& Engine::getAudioManager()
