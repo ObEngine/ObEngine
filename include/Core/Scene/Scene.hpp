@@ -1,5 +1,7 @@
 #pragma once
 
+#include <unordered_set>
+
 #include <Collision/PolygonalCollider.hpp>
 #include <Graphics/Sprite.hpp>
 #include <Scene/Camera.hpp>
@@ -38,9 +40,17 @@ namespace obe::Scene
 
         Engine::ResourceManager* m_resources = nullptr;
         std::vector<std::unique_ptr<Graphics::Sprite>> m_spriteArray;
+        std::unordered_set<std::string> m_spriteIds;
+        bool m_sortSprites = true;
+
         std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderArray;
+        std::unordered_set<std::string> m_colliderIds;
+
         std::vector<std::unique_ptr<Script::GameObject>> m_gameObjectArray;
+        std::unordered_set<std::string> m_gameObjectIds;
+
         std::vector<std::string> m_scriptArray;
+
         SceneNode m_sceneRoot;
 
         std::string m_levelFileName;
@@ -49,6 +59,8 @@ namespace obe::Scene
         Triggers::TriggerManager& m_triggers;
         Triggers::TriggerGroupPtr t_scene;
         sol::state_view m_lua;
+
+        void _reorganizeLayers();
 
     public:
         /**

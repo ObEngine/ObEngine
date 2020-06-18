@@ -9,7 +9,7 @@
 
 namespace obe::Graphics
 {
-    Graphics::Texture NullTexture;
+    static Graphics::Texture NullTexture;
     void MakeNullTexture()
     {
         sf::Image nullImage;
@@ -43,6 +43,7 @@ namespace obe::Graphics
             m_handlePoints.emplace_back(*this, ref);
         }
         m_handlePoints.emplace_back(*this);
+        m_positionTransformer = PositionTransformer("Camera", "Camera");
     }
 
     void Sprite::useTextureSize()
@@ -448,56 +449,56 @@ namespace obe::Graphics
     vili::node Sprite::dump() const
     {
         vili::node result = vili::object {};
-        result["path"] = m_path;
+        result.emplace("path", m_path);
 
         const Transform::UnitVector spritePositionRect = this->getPosition().to(m_unit);
         const Transform::UnitVector spriteSizeRect = this->getSize().to(m_unit);
-        result["rect"]
-            = vili::object { { "x", spritePositionRect.x }, { "y", spritePositionRect.y },
-                  { "width", spriteSizeRect.x }, { "height", spriteSizeRect.y },
-                  { "unit", Transform::unitsToString(m_unit) } };
+        result.emplace("rect",
+            vili::object { { "x", spritePositionRect.x }, { "y", spritePositionRect.y },
+                { "width", spriteSizeRect.x }, { "height", spriteSizeRect.y },
+                { "unit", Transform::unitsToString(m_unit) } });
 
-        result["rotation"] = m_angle;
-        result["layer"] = m_layer;
-        result["zdepth"] = m_zdepth;
-        result["transform"]
-            = vili::object { { "x", m_positionTransformer.getXTransformerName() },
-                  { "y", m_positionTransformer.getYTransformerName() } };
+        result.emplace("rotation", m_angle);
+        result.emplace("layer", m_layer);
+        result.emplace("zdepth", m_zdepth);
+        result.emplace("transform",
+            vili::object { { "x", m_positionTransformer.getXTransformerName() },
+                { "y", m_positionTransformer.getYTransformerName() } });
         if (!m_visible)
         {
-            result["visible"] = m_visible;
+            result.emplace("visible", m_visible);
         }
         const Color& color = m_sprite.getColor();
         if (color != Color::White)
         {
-            result["color"] = vili::object { { "r", color.r }, { "g", color.g },
-                { "b", color.b }, { "a", color.a } };
+            result.emplace("color",
+                vili::object { { "r", color.r }, { "g", color.g }, { "b", color.b },
+                    { "a", color.a } });
         }
         return result;
     }
 
     void Sprite::load(vili::node& data)
     {
-        std::string spriteXTransformer = "Position";
-        std::string spriteYTransformer = "Position";
-
-        std::string spriteUnits = "SceneUnits";
-        std::string spritePath;
         if (data.contains("path"))
-            spritePath = data["path"];
-        Transform::UnitVector spritePos(0, 0);
-        Transform::UnitVector spriteSize(1, 1);
-        obe::Transform::Referential referentialPos;
+        {
+            this->loadTexture(data.at("path"));
+        }
+
         if (data.contains("rect"))
         {
+            obe::Transform::Referential referentialPos;
+            Transform::UnitVector spritePos(0, 0);
+            Transform::UnitVector spriteSize(1, 1);
             vili::node& rect = data.at("rect");
             if (rect.contains("unit"))
-                spriteUnits = rect.at("unit");
-            const Transform::Units rectUnit = Transform::stringToUnits(spriteUnits);
-            spritePos.unit = rectUnit;
+            {
+                this->setWorkingUnit(Transform::stringToUnits(rect.at("unit")));
+            }
+            spritePos.unit = m_unit;
             spritePos.x = rect.at("x");
             spritePos.y = rect.at("y");
-            spriteSize.unit = rectUnit;
+            spriteSize.unit = m_unit;
             spriteSize.x = rect.at("width");
             spriteSize.y = rect.at("height");
             spritePos = spritePos.to<Transform::Units::SceneUnits>();
@@ -505,79 +506,83 @@ namespace obe::Graphics
             if (rect.contains("referential"))
                 referentialPos
                     = obe::Transform::Referential::FromString(rect.at("referential"));
+            this->setPosition(spritePos, referentialPos);
+            this->setSize(spriteSize, referentialPos);
         }
-        const double spriteRot
-            = data["rotation"].is_null() ? 0.f : data["rotation"].as<vili::number>();
-        const int layer = data["layer"].is_null() ? 1 : data["layer"].as<vili::integer>();
-        const int zdepth
-            = data["zdepth"].is_null() ? 1 : data["zdepth"].as<vili::integer>();
 
-        const bool antiAliasing = data["antiAliasing"].is_null()
-            ? m_antiAliasing
-            : data["antiAliasing"].as<bool>();
+        if (data.contains("rotation"))
+        {
+            this->setRotation(data.at("rotation"));
+        }
+
+        if (data.contains("layer"))
+        {
+            this->setLayer(data.at("layer"));
+        }
+
+        if (data.contains("zdepth"))
+        {
+            this->setZDepth(data.at("zdepth"));
+        }
+
+        if (data.contains("antiAliasing"))
+        {
+            this->setAntiAliasing(data.at("antiAliasing"));
+        }
 
         if (data.contains("transform"))
         {
-            if (data.at("transform").contains("x"))
+            std::string spriteXTransformer = "Camera";
+            std::string spriteYTransformer = "Camera";
+            vili::node& transform = data.at("transform");
+            if (transform.contains("x"))
             {
-                spriteXTransformer = data["transform"]["x"];
+                spriteXTransformer = transform.at("x");
             }
-            if (data.at("transform").contains("y"))
+            if (transform.contains("y"))
             {
-                spriteYTransformer = data["transform"]["y"];
+                spriteYTransformer = transform.at("y");
             }
+            const PositionTransformer positionTransformer(
+                spriteXTransformer, spriteYTransformer);
+            this->setPositionTransformer(positionTransformer);
         }
 
-        Color color = Color::White;
-        if (!data["color"].is_null())
+        if (data.contains("color"))
         {
-            if (data["color"].is<vili::object>() && !data["color"]["r"].is_null())
+            Color spriteColor = Color::White;
+            vili::node& color = data.at("color");
+            if (color.is<vili::object>() && color.contains("r"))
             {
-                const double r = data["color"]["r"].as<vili::number>();
-                const double g = data["color"]["g"].as<vili::number>();
-                const double b = data["color"]["b"].as<vili::number>();
-                const double a = data["color"]["a"].is_null()
-                    ? 255
-                    : data["color"]["a"].as<vili::number>();
-                color.fromRgb(r, g, b, a);
+                const double r = color.at("r").as<vili::number>();
+                const double g = color.at("g").as<vili::number>();
+                const double b = color.at("b").as<vili::number>();
+                const double a = color.contains("a") ? color.at("a") : 255.f;
+                spriteColor.fromRgb(r, g, b, a);
             }
-            else if (data["color"].is<vili::object>() && !data["color"]["H"].is_null())
+            else if (color.is<vili::object>() && color.contains("H"))
             {
-                const int H = data["color"]["H"].as<vili::integer>();
-                const double S = data["color"]["S"].as<vili::number>();
-                const double V = data["color"]["V"].as<vili::number>();
-                color.fromHsv(H, S, V);
+                const int H = color.at("H").as<vili::integer>();
+                const double S = color.at("S").as<vili::number>();
+                const double V = color.at("V").as<vili::number>();
+                spriteColor.fromHsv(H, S, V);
             }
-            else if (data["color"].is<vili::string>())
+            else if (color.is<vili::string>())
             {
-                color.fromString(data["color"]);
+                spriteColor.fromString(color);
             }
             else
             {
                 throw Exceptions::InvalidSpriteColorType(
-                    vili::to_string(data["color"].type()), data["color"].dump(),
-                    EXC_INFO);
+                    vili::to_string(color.type()), color.dump(), EXC_INFO);
             }
+            this->setColor(spriteColor);
         }
 
-        const bool visible
-            = data["visible"].is_null() ? m_visible : data["visible"].as<bool>();
-
-        this->setAntiAliasing(antiAliasing);
-
-        if (!spritePath.empty())
-            this->loadTexture(spritePath);
-        this->setRotation(spriteRot);
-        this->setPosition(spritePos, referentialPos);
-        this->setSize(spriteSize, referentialPos);
-        this->setWorkingUnit(Transform::stringToUnits(spriteUnits));
-        const PositionTransformer positionTransformer(
-            spriteXTransformer, spriteYTransformer);
-        this->setPositionTransformer(positionTransformer);
-        this->setLayer(layer);
-        this->setZDepth(zdepth);
-        this->setColor(color);
-        this->setVisible(visible);
+        if (data.contains("visible"))
+        {
+            this->setVisible(data.at("visible"));
+        }
     }
 
     void Sprite::setShader(Shader* shader)

@@ -63,5 +63,5 @@ function type_count()
 	return counts
 end
 
-print(inspect(type_count()));
+-- print(inspect(type_count()));
 -- dbg();

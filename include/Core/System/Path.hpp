@@ -25,6 +25,8 @@ namespace obe::System
         std::string m_path;
         const std::vector<MountablePath>& m_mounts;
 
+        static std::unordered_map<std::string, std::string> PathCache;
+
     public:
         /**
          * \brief Default constructor of Path

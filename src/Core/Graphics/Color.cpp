@@ -150,8 +150,8 @@ namespace obe::Graphics
     Color Color::Yellow(255, 255, 0);
     Color Color::YellowGreen(154, 205, 50);
 
-    std::unordered_map<std::string, Color> ColorNames = { { "aliceblue",
-                                                              Color::AliceBlue },
+    static std::unordered_map<std::string, Color> ColorNames = { { "aliceblue",
+                                                                     Color::AliceBlue },
         { "antiquewhite", Color::AntiqueWhite }, { "aqua", Color::Aqua },
         { "aquamarine", Color::Aquamarine }, { "azure", Color::Azure },
         { "beige", Color::Beige }, { "bisque", Color::Bisque }, { "black", Color::Black },

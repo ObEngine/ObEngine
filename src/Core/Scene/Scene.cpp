@@ -13,6 +13,22 @@
 
 namespace obe::Scene
 {
+    void Scene::_reorganizeLayers()
+    {
+        std::sort(
+            m_spriteArray.begin(), m_spriteArray.end(), [](auto& sprite1, auto& sprite2) {
+                if (sprite1->getLayer() == sprite2->getLayer())
+                {
+                    return sprite1->getZDepth() > sprite2->getZDepth();
+                }
+                else
+                {
+                    return sprite1->getLayer() > sprite2->getLayer();
+                }
+            });
+        m_sortSprites = false;
+    }
+
     Scene::Scene(Triggers::TriggerManager& triggers, sol::state_view lua)
         : m_lua(lua)
         , m_triggers(triggers)
@@ -36,7 +52,7 @@ namespace obe::Scene
         if (createId.empty())
         {
             int i = 0;
-            std::string testId = "sprite" + std::to_string(this->getColliderAmount() + i);
+            std::string testId = "sprite" + std::to_string(this->getSpriteAmount() + i);
             while (this->doesSpriteExists(testId))
             {
                 testId = "sprite" + std::to_string(this->getSpriteAmount() + i++);
@@ -52,6 +68,7 @@ namespace obe::Scene
 
             Graphics::Sprite* returnSprite = newSprite.get();
             m_spriteArray.push_back(move(newSprite));
+            m_spriteIds.insert(createId);
 
             if (addToSceneRoot)
                 m_sceneRoot.addChild(*returnSprite);
@@ -85,6 +102,7 @@ namespace obe::Scene
         {
             m_colliderArray.push_back(
                 std::make_unique<Collision::PolygonalCollider>(createId));
+            m_spriteIds.insert(createId);
             if (addToSceneRoot)
                 m_sceneRoot.addChild(*m_colliderArray.back());
             return *m_colliderArray.back().get();
@@ -190,7 +208,7 @@ namespace obe::Scene
 
     vili::node Scene::dump() const
     {
-        vili::node result;
+        vili::node result = vili::object {};
 
         // Meta
         result["Meta"] = vili::object { { "name", m_levelName } };
@@ -301,6 +319,9 @@ namespace obe::Scene
 
         if (!data["Sprites"].is_null())
         {
+            const vili::node& sprites = data.at("Sprites");
+            m_spriteArray.reserve(sprites.size());
+            m_spriteIds.reserve(sprites.size());
             for (auto [spriteId, sprite] : data.at("Sprites").items())
             {
                 this->createSprite(spriteId).load(sprite);
@@ -311,6 +332,9 @@ namespace obe::Scene
 
         if (!data["Collisions"].is_null())
         {
+            const vili::node& collisions = data.at("Collisions");
+            m_colliderArray.reserve(collisions.size());
+            m_colliderIds.reserve(collisions.size());
             for (auto [collisionId, collision] : data.at("Collisions").items())
             {
                 this->createCollider(collisionId).load(collision);
@@ -320,6 +344,8 @@ namespace obe::Scene
         if (!data["GameObjects"].is_null())
         {
             vili::node& gameObjects = data.at("GameObjects");
+            m_gameObjectArray.reserve(gameObjects.size());
+            m_gameObjectIds.reserve(gameObjects.size());
             for (auto [gameObjectId, gameObject] : gameObjects.items())
             {
                 if (!this->doesGameObjectExists(gameObjectId))
@@ -438,6 +464,7 @@ namespace obe::Scene
             }
         }
 
+        this->_reorganizeLayers();
         const Transform::UnitVector pixelCamera
             = m_camera.getPosition().to<Transform::Units::ScenePixels>();
         for (auto& sprite : m_spriteArray)
@@ -520,12 +547,7 @@ namespace obe::Scene
 
     bool Scene::doesGameObjectExists(const std::string& id)
     {
-        for (auto& gameObject : m_gameObjectArray)
-        {
-            if (gameObject->getId() == id)
-                return true;
-        }
-        return false;
+        return m_gameObjectIds.find(id) != m_gameObjectIds.end();
     }
 
     void Scene::removeGameObject(const std::string& id)
@@ -588,6 +610,7 @@ namespace obe::Scene
         }
 
         m_gameObjectArray.push_back(move(newGameObject));
+        m_gameObjectIds.insert(useId);
 
         return *m_gameObjectArray.back();
     }
@@ -599,17 +622,7 @@ namespace obe::Scene
 
     void Scene::reorganizeLayers()
     {
-        std::sort(
-            m_spriteArray.begin(), m_spriteArray.end(), [](auto& sprite1, auto& sprite2) {
-                if (sprite1->getLayer() == sprite2->getLayer())
-                {
-                    return sprite1->getZDepth() > sprite2->getZDepth();
-                }
-                else
-                {
-                    return sprite1->getLayer() > sprite2->getLayer();
-                }
-            });
+        m_sortSprites = true;
     }
 
     std::size_t Scene::getSpriteAmount() const
@@ -686,12 +699,7 @@ namespace obe::Scene
 
     bool Scene::doesSpriteExists(const std::string& id)
     {
-        for (int i = 0; i < m_spriteArray.size(); i++)
-        {
-            if (m_spriteArray[i]->getId() == id)
-                return true;
-        }
-        return false;
+        return m_spriteIds.find(id) != m_spriteIds.end();
     }
 
     void Scene::removeSprite(const std::string& id)
@@ -784,14 +792,7 @@ namespace obe::Scene
 
     bool Scene::doesColliderExists(const std::string& id)
     {
-        for (auto& collider : m_colliderArray)
-        {
-            if (collider->getId() == id)
-            {
-                return true;
-            }
-        }
-        return false;
+        return m_colliderIds.find(id) != m_colliderIds.end();
     }
 
     void Scene::removeCollider(const std::string& id)

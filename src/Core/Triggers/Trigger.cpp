@@ -42,10 +42,11 @@ namespace obe::Triggers
         m_name = name;
         m_parent = parent;
         m_enabled = startState;
-        m_fullName = this->getNamespace() + "." + this->getGroup() + "." + m_name;
-        m_lua["__TRIGGERS"][this->getTriggerLuaTableName()].get_or_create<sol::table>();
-        m_lua["__TRIGGERS"][this->getTriggerLuaTableName()]["ArgTable"]
-            .get_or_create<sol::table>();
+        m_fullName
+            = fmt::format("{}.{}.{}", this->getNamespace(), this->getGroup(), m_name);
+        sol::table triggerTable = m_lua["__TRIGGERS"][this->getTriggerLuaTableName()]
+                                      .get_or_create<sol::table>();
+        triggerTable["ArgTable"].get_or_create<sol::table>();
         Debug::Log->trace(
             "<Trigger> Creating Trigger {0} @{1}", m_fullName, fmt::ptr(this));
     }

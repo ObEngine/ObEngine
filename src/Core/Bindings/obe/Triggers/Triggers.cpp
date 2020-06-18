@@ -18,6 +18,17 @@ namespace obe::Triggers::Bindings
                 { "Ready", obe::Triggers::CallbackSchedulerState::Ready },
                 { "Done", obe::Triggers::CallbackSchedulerState::Done } });
     }
+    void LoadClassCallbackProfiler(sol::state_view state)
+    {
+        sol::table TriggersNamespace = state["obe"]["Triggers"].get<sol::table>();
+        sol::usertype<obe::Triggers::CallbackProfiler> bindCallbackProfiler
+            = TriggersNamespace.new_usertype<obe::Triggers::CallbackProfiler>(
+                "CallbackProfiler", sol::call_constructor, sol::default_constructor);
+        bindCallbackProfiler["hits"] = &obe::Triggers::CallbackProfiler::hits;
+        bindCallbackProfiler["time"] = &obe::Triggers::CallbackProfiler::time;
+        bindCallbackProfiler["min"] = &obe::Triggers::CallbackProfiler::min;
+        bindCallbackProfiler["max"] = &obe::Triggers::CallbackProfiler::max;
+    }
     void LoadClassCallbackScheduler(sol::state_view state)
     {
         sol::table TriggersNamespace = state["obe"]["Triggers"].get<sol::table>();
@@ -89,6 +100,8 @@ namespace obe::Triggers::Bindings
         bindTriggerGroup["getName"] = &obe::Triggers::TriggerGroup::getName;
         bindTriggerGroup["onRegister"] = &obe::Triggers::TriggerGroup::onRegister;
         bindTriggerGroup["onUnregister"] = &obe::Triggers::TriggerGroup::onUnregister;
+        bindTriggerGroup["getProfilerResults"]
+            = &obe::Triggers::TriggerGroup::getProfilerResults;
     }
     void LoadClassTriggerManager(sol::state_view state)
     {
@@ -117,5 +130,7 @@ namespace obe::Triggers::Bindings
         bindTriggerManager["update"] = &obe::Triggers::TriggerManager::update;
         bindTriggerManager["clear"] = &obe::Triggers::TriggerManager::clear;
         bindTriggerManager["schedule"] = &obe::Triggers::TriggerManager::schedule;
+        bindTriggerManager["dumpProfilerResults"]
+            = &obe::Triggers::TriggerManager::dumpProfilerResults;
     }
 };

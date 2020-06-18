@@ -6,6 +6,17 @@
 
 namespace obe::Script::Exceptions::Bindings
 {
+    void LoadClassInvalidScript(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Script::Exceptions::InvalidScript> bindInvalidScript
+            = ExceptionsNamespace.new_usertype<obe::Script::Exceptions::InvalidScript>(
+                "InvalidScript", sol::call_constructor,
+                sol::constructors<obe::Script::Exceptions::InvalidScript(
+                    std::string_view, std::string_view, obe::DebugInfo)>(),
+                sol::base_classes, sol::bases<obe::Exception>());
+    }
     void LoadClassNoSuchComponent(sol::state_view state)
     {
         sol::table ExceptionsNamespace

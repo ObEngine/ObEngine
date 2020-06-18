@@ -3,6 +3,7 @@
 
 namespace obe::System
 {
+    std::unordered_map<std::string, std::string> Path::PathCache;
     Path::Path()
         : m_mounts(MountablePath::Paths())
     {
@@ -59,21 +60,26 @@ namespace obe::System
 
     std::string Path::find(PathType pathType) const
     {
+        if (const auto cacheResult = PathCache.find(m_path);
+            cacheResult != PathCache.end())
+        {
+            return cacheResult->second;
+        }
         for (const MountablePath& mountedPath : m_mounts)
         {
-            if ((pathType == PathType::All || pathType == PathType::File)
-                && Utils::File::fileExists(mountedPath.basePath
-                    + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path))
+            const bool seekFile
+                = (pathType == PathType::All || pathType == PathType::File);
+            const bool seekDir
+                = (pathType == PathType::All || pathType == PathType::Directory);
+            const std::string fullPath = mountedPath.basePath
+                + ((!mountedPath.basePath.empty()) ? "/" : "") + m_path;
+            if ((seekFile && Utils::File::fileExists(fullPath))
+                || (seekDir && Utils::File::directoryExists(fullPath)))
             {
-                return mountedPath.basePath + ((!mountedPath.basePath.empty()) ? "/" : "")
-                    + this->m_path;
-            }
-            else if ((pathType == PathType::All || pathType == PathType::Directory)
-                && Utils::File::directoryExists(mountedPath.basePath
-                    + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path))
-            {
-                return mountedPath.basePath + ((!mountedPath.basePath.empty()) ? "/" : "")
-                    + this->m_path;
+                std::string result = mountedPath.basePath
+                    + ((!mountedPath.basePath.empty()) ? "/" : "") + m_path;
+                PathCache[m_path] = result;
+                return result;
             }
         }
         return "";

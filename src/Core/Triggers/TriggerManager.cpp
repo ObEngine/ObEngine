@@ -218,11 +218,12 @@ namespace obe::Triggers
         for (auto itr : m_allTriggers)
         {
             Debug::Log->debug("Profiling TriggerNamespace '{}'", itr.first);
-            result[itr.first] = vili::object {};
+            result.emplace(itr.first, vili::object {});
             for (auto itr2 : itr.second)
             {
                 Debug::Log->debug("Namespace group {}", itr2.first);
-                result[itr.first][itr2.first] = itr2.second.lock()->getProfilerResults();
+                result.at(itr.first).emplace(
+                    itr2.first, itr2.second.lock()->getProfilerResults());
             }
         }
         return result;

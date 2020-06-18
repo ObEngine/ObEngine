@@ -62,6 +62,7 @@ namespace obe::Script::Bindings
         bindGameObject["setState"] = &obe::Script::GameObject::setState;
         bindGameObject["dump"] = &obe::Script::GameObject::dump;
         bindGameObject["load"] = &obe::Script::GameObject::load;
+        bindGameObject["loadSource"] = &obe::Script::GameObject::loadSource;
         bindGameObject["deletable"] = &obe::Script::GameObject::deletable;
     }
     void LoadClassGameObjectDatabase(sol::state_view state)

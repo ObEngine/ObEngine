@@ -6,6 +6,7 @@ namespace sol
 };
 namespace obe::Script::Exceptions::Bindings
 {
+    void LoadClassInvalidScript(sol::state_view state);
     void LoadClassNoSuchComponent(sol::state_view state);
     void LoadClassObjectDefinitionBlockNotFound(sol::state_view state);
     void LoadClassObjectDefinitionNotFound(sol::state_view state);

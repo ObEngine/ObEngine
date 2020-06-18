@@ -79,4 +79,15 @@ namespace obe::Script::Exceptions
                 objectType, attributeName, realType, expectedType);
         }
     };
+
+    class InvalidScript : public Exception
+    {
+    public:
+        InvalidScript(std::string_view path, std::string_view error, DebugInfo info)
+            : Exception("InvalidScript", info)
+        {
+            this->error(
+                "Lua Error encountered while loading script at '{}' : {}", path, error);
+        }
+    };
 }

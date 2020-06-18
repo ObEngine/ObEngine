@@ -268,6 +268,7 @@ namespace obe::Script
 
         [[nodiscard]] vili::node dump() const override;
         void load(vili::node& data) override;
+        void loadSource(const std::string& path);
     };
 
     template <typename U>

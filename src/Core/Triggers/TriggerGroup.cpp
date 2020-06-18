@@ -31,7 +31,7 @@ namespace obe::Triggers
     {
         Debug::Log->debug("<TriggerGroup> Add Trigger {0} to TriggerGroup {1}.{2}",
             triggerName, m_fromNsp, m_name);
-        m_triggerMap[triggerName] = std::make_unique<Trigger>(*this, triggerName);
+        m_triggerMap.emplace(triggerName, std::make_unique<Trigger>(*this, triggerName));
         return *this;
     }
 
@@ -123,20 +123,21 @@ namespace obe::Triggers
             result[fullName] = vili::object {};
             Time::TimeUnit totalTime = 0;
             long long int totalHits = 0;
-            result[fullName]["callbacks"] = vili::object {};
+            result.at(fullName).emplace("callbacks", vili::object {});
+            vili::node& callbacks = result.at(fullName).at("callbacks");
             for (const auto itr : trigger->m_profiler)
             {
-                result[fullName]["callbacks"][itr.first] = vili::object {};
-                result[fullName]["callbacks"][itr.first]["time"] = itr.second.time;
-                result[fullName]["callbacks"][itr.first]["hits"]
-                    = vili::integer(itr.second.hits);
-                result[fullName]["callbacks"][itr.first]["min"] = itr.second.min;
-                result[fullName]["callbacks"][itr.first]["max"] = itr.second.max;
+                callbacks.emplace(itr.first, vili::object {});
+                vili::node& callback = callbacks.at(itr.first);
+                callback.emplace("time", itr.second.time);
+                callback.emplace("hits", vili::integer(itr.second.hits));
+                callback.emplace("min", itr.second.min);
+                callback.emplace("max", itr.second.max);
                 totalTime += itr.second.time;
                 totalHits += itr.second.hits;
             }
-            result[fullName]["time"] = totalTime;
-            result[fullName]["hits"] = totalHits;
+            result.at(fullName).emplace("time", totalTime);
+            result.at(fullName).emplace("hits", totalHits);
         }
         return result;
     }

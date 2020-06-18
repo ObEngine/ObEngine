@@ -6,6 +6,10 @@ namespace obe::Input
 {
     void InputManager::createInputMap()
     {
+        // Gamepad
+        std::thread gamepadLoaderThr([this]() { this->createGamepadMap(); });
+
+        // Letters
         m_inputs["A"]
             = std::make_unique<InputButton>(sf::Keyboard::A, "A", "A", InputType::Alpha);
         m_inputs["Z"]
@@ -58,6 +62,7 @@ namespace obe::Input
             = std::make_unique<InputButton>(sf::Keyboard::B, "B", "B", InputType::Alpha);
         m_inputs["N"]
             = std::make_unique<InputButton>(sf::Keyboard::N, "N", "N", InputType::Alpha);
+
         // Numeric
         m_inputs["0"] = std::make_unique<InputButton>(
             sf::Keyboard::Num0, "0", "0", InputType::Numeric);
@@ -79,6 +84,7 @@ namespace obe::Input
             sf::Keyboard::Num8, "8", "8", InputType::Numeric);
         m_inputs["9"] = std::make_unique<InputButton>(
             sf::Keyboard::Num9, "9", "9", InputType::Numeric);
+
         // Numeric pad
         m_inputs["NumPad0"] = std::make_unique<InputButton>(
             sf::Keyboard::Numpad0, "NumPad0", "0", InputType::NumericNP);
@@ -100,6 +106,7 @@ namespace obe::Input
             sf::Keyboard::Numpad8, "NumPad8", "8", InputType::NumericNP);
         m_inputs["NumPad9"] = std::make_unique<InputButton>(
             sf::Keyboard::Numpad9, "NumPad9", "9", InputType::NumericNP);
+
         // Arrows
         m_inputs["Left"] = std::make_unique<InputButton>(
             sf::Keyboard::Left, "Left", "", InputType::Arrows);
@@ -109,6 +116,7 @@ namespace obe::Input
             sf::Keyboard::Up, "Up", "", InputType::Arrows);
         m_inputs["Down"] = std::make_unique<InputButton>(
             sf::Keyboard::Down, "Down", "", InputType::Arrows);
+
         // Functions
         m_inputs["F1"] = std::make_unique<InputButton>(
             sf::Keyboard::F1, "F1", "", InputType::Functions);
@@ -134,12 +142,12 @@ namespace obe::Input
             sf::Keyboard::F11, "F11", "", InputType::Functions);
         m_inputs["F12"] = std::make_unique<InputButton>(
             sf::Keyboard::F12, "F12", "", InputType::Functions);
-        // Gamepad
-        this->createGamepadMap();
+
         // Mouse
         m_inputs["LMB"] = std::make_unique<InputButton>(sf::Mouse::Left, "LMB");
         m_inputs["RMB"] = std::make_unique<InputButton>(sf::Mouse::Right, "RMB");
         m_inputs["MMB"] = std::make_unique<InputButton>(sf::Mouse::Middle, "MMB");
+
         // Others
         m_inputs["Add"] = std::make_unique<InputButton>(
             sf::Keyboard::Add, "Add", "+", InputType::Others);
@@ -211,6 +219,7 @@ namespace obe::Input
             sf::Keyboard::Tab, "Tab", "    ", InputType::Others);
         m_inputs["Tilde"] = std::make_unique<InputButton>(
             sf::Keyboard::Tilde, "Tilde", "~", InputType::Others);
+        gamepadLoaderThr.join();
     }
 
     void InputManager::createGamepadMap()

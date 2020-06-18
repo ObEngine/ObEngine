@@ -99,6 +99,7 @@ namespace obe::Graphics
     private:
         std::vector<SpriteHandlePoint> m_handlePoints {};
         int m_layer = 1;
+        int m_zdepth = 1;
         std::string m_parentId = "";
         std::string m_path = "";
         PositionTransformer m_positionTransformer;
@@ -106,7 +107,6 @@ namespace obe::Graphics
         sfe::ComplexSprite m_sprite;
         Graphics::Texture m_texture;
         bool m_visible = true;
-        int m_zdepth = 0;
         bool m_antiAliasing = true;
 
         void resetUnit(Transform::Units unit) override;

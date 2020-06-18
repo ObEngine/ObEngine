@@ -14,6 +14,8 @@
 
 namespace obe::Script
 {
+    static std::unordered_map<std::string, sol::bytecode> ScriptCache;
+
     sol::table GameObject::access() const
     {
         if (m_hasScriptEngine)
@@ -147,13 +149,15 @@ namespace obe::Script
         Scene::Scene& scene, vili::node& obj, Engine::ResourceManager* resources)
     {
         Debug::Log->debug("<GameObject> Loading GameObject '{0}' ({1})", m_id, m_type);
-        // Script
+
         if (!obj["permanent"].is_null())
         {
             m_permanent = obj.at("permanent");
         }
-        if (!obj["Script"].is_null())
+        // Script
+        if (obj.contains("Script"))
         {
+            vili::node& script = obj.at("Script");
             m_hasScriptEngine = true;
             m_environment = sol::environment(m_lua, sol::create, m_lua.globals());
             m_privateKey = m_type + "_"
@@ -172,19 +176,11 @@ namespace obe::Script
             m_environment["__OBJECT_INIT"] = false;
             m_environment["Private"] = m_privateKey;
 
-            m_lua.safe_script_file("Lib/Internal/ObjectInit.lua"_fs, m_environment);
+            loadSource("Lib/Internal/ObjectInit.lua");
 
-            auto loadSource = [&](const std::string& path) {
-                const std::string fullPath = System::Path(path).find();
-                if (fullPath.empty())
-                {
-                    throw Exceptions::ScriptFileNotFound(m_type, m_id, path, EXC_INFO);
-                }
-                m_lua.safe_script_file(fullPath, m_environment);
-            };
-            if (!obj.at("Script")["source"].is_null())
+            if (script.contains("source"))
             {
-                const vili::node& sourceNode = obj.at("Script").at("source");
+                const vili::node& sourceNode = script.at("source");
                 if (sourceNode.is<vili::string>())
                 {
                     loadSource(sourceNode);
@@ -195,12 +191,12 @@ namespace obe::Script
                         vili::string_type, vili::to_string(sourceNode.type()), EXC_INFO);
                 }
             }
-            else if (!obj.at("Script")["sources"].is_null())
+            else if (script.contains("sources"))
             {
-                vili::node& sourceNode = obj.at("Script").at("sources");
+                vili::node& sourceNode = script.at("sources");
                 if (sourceNode.is<vili::array>())
                 {
-                    for (auto source : sourceNode)
+                    for (vili::node& source : sourceNode)
                     {
                         loadSource(source);
                     }
@@ -213,7 +209,7 @@ namespace obe::Script
             }
         }
         // Sprite
-        if (!obj["Sprite"].is_null())
+        if (obj.contains("Sprite"))
         {
             m_sprite = &scene.createSprite(m_id, false);
             m_objectNode.addChild(*m_sprite);
@@ -222,25 +218,26 @@ namespace obe::Script
                 m_environment["Object"]["Sprite"] = m_sprite;
             scene.reorganizeLayers();
         }
-        if (!obj["Animator"].is_null())
+        if (obj.contains("Animator"))
         {
             m_animator = std::make_unique<Animation::Animator>();
-            const std::string animatorPath = obj.at("Animator").at("path");
+            vili::node& animator = obj.at("Animator");
+            const std::string animatorPath = animator.at("path");
             if (m_sprite)
                 m_animator->setTarget(*m_sprite);
             if (!animatorPath.empty())
             {
                 m_animator->load(System::Path(animatorPath), resources);
             }
-            if (!obj.at("Animator")["default"].is_null())
+            if (animator.contains("default"))
             {
-                m_animator->setKey(obj.at("Animator").at("default"));
+                m_animator->setKey(animator.at("default"));
             }
             if (m_hasScriptEngine)
                 m_environment["Object"]["Animation"] = m_animator.get();
         }
         // Collider
-        if (!obj["Collider"].is_null())
+        if (obj.contains("Collider"))
         {
             m_collider = &scene.createCollider(m_id, false);
             m_objectNode.addChild(*m_collider);
@@ -451,7 +448,7 @@ namespace obe::Script
 
     vili::node GameObject::dump() const
     {
-        vili::node result;
+        vili::node result = vili::object {};
         result["type"] = this->getType();
 
         if (auto dumpFunction = this->access()["Dump"]; dumpFunction.valid())
@@ -468,5 +465,26 @@ namespace obe::Script
     void GameObject::load(vili::node& data)
     {
         // TODO: Do something
+    }
+
+    void GameObject::loadSource(const std::string& path)
+    {
+        const std::string fullPath = System::Path(path).find();
+        if (fullPath.empty())
+        {
+            throw Exceptions::ScriptFileNotFound(m_type, m_id, path, EXC_INFO);
+        }
+        if (ScriptCache.find(fullPath) == ScriptCache.end())
+        {
+            sol::load_result target = m_lua.load_file(fullPath);
+            if (!target.valid())
+            {
+                throw Exceptions::InvalidScript(
+                    fullPath, target.get<sol::error>().what(), EXC_INFO);
+            }
+            sol::protected_function bytecode = target.get<sol::protected_function>();
+            ScriptCache.emplace(fullPath, bytecode.dump());
+        }
+        m_lua.safe_script(ScriptCache.at(fullPath).as_string_view(), m_environment);
     }
 } // namespace obe::Script
