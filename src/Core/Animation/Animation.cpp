@@ -123,7 +123,7 @@ namespace obe::Animation
     {
         vili::node& currentCommand = m_code[m_codeIndex];
         Debug::Log->trace("<Animation> Executing instruction {} / {} : {}", m_codeIndex,
-            m_code.size() - 1, currentCommand.dump());
+            m_code.size() - 1);
         if (currentCommand.at("command") == Config::Templates::wait_command)
         {
             m_feedInstructions = true;
@@ -149,7 +149,8 @@ namespace obe::Animation
                 m_name, currentCommand.at("command"), EXC_INFO);
         }
         m_codeIndex++;
-        if (m_feedInstructions && m_codeIndex > m_code.size() - 1 && m_playMode != AnimationPlayMode::OneTime)
+        if (m_feedInstructions && m_codeIndex > m_code.size() - 1
+            && m_playMode != AnimationPlayMode::OneTime)
         {
             this->reset();
         }

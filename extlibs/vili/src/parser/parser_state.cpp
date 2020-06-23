@@ -50,7 +50,7 @@ namespace vili::parser
         }
         else if (m_indent_current < indent)
         {
-            if (indent - m_indent_current > 1)
+            if (indent - m_indent_current > 1 || indent > m_stack.top().indent)
             {
                 throw exceptions::too_much_indentation(indent, VILI_EXC_INFO);
             }

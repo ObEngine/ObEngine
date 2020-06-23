@@ -557,7 +557,8 @@ namespace obe::Graphics
                 const double r = color.at("r").as<vili::number>();
                 const double g = color.at("g").as<vili::number>();
                 const double b = color.at("b").as<vili::number>();
-                const double a = color.contains("a") ? color.at("a") : 255.f;
+                const double a
+                    = color.contains("a") ? color.at("a").as<vili::number>() : 255.f;
                 spriteColor.fromRgb(r, g, b, a);
             }
             else if (color.is<vili::object>() && color.contains("H"))

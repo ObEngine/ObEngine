@@ -476,13 +476,14 @@ namespace obe::Script
         }
         if (ScriptCache.find(fullPath) == ScriptCache.end())
         {
-            sol::load_result target = m_lua.load_file(fullPath);
+            const sol::load_result target = m_lua.load_file(fullPath);
             if (!target.valid())
             {
                 throw Exceptions::InvalidScript(
                     fullPath, target.get<sol::error>().what(), EXC_INFO);
             }
-            sol::protected_function bytecode = target.get<sol::protected_function>();
+            const sol::protected_function bytecode
+                = target.get<sol::protected_function>();
             ScriptCache.emplace(fullPath, bytecode.dump());
         }
         m_lua.safe_script(ScriptCache.at(fullPath).as_string_view(), m_environment);

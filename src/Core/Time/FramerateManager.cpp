@@ -43,15 +43,17 @@ namespace obe::Time
     void FramerateManager::update()
     {
         const Time::TimeUnit sinceLastUpdate = epoch() - m_clock;
-        if (m_limitFramerate && m_syncUpdateRender
-            && sinceLastUpdate < m_reqFramerateInterval)
+        if (!m_limitFramerate || sinceLastUpdate > m_reqFramerateInterval)
         {
-            std::this_thread::sleep_for(std::chrono::duration<double>(
-                (m_reqFramerateInterval - sinceLastUpdate) / 10.f));
+            m_needToRender = true;
+            m_deltaTime = epoch() - m_clock;
+            m_clock = epoch();
         }
-        m_needToRender = true;
-        m_deltaTime = epoch() - m_clock;
-        m_clock = epoch();
+        else if (!m_syncUpdateRender)
+        {
+            std::this_thread::sleep_for(
+                std::chrono::duration<double>(m_reqFramerateInterval / 20.f));
+        }
     }
 
     TimeUnit FramerateManager::getDeltaTime() const

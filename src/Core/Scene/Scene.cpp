@@ -31,6 +31,9 @@ namespace obe::Scene
 
     void Scene::_rebuildIds()
     {
+        m_spriteIds.clear();
+        m_colliderIds.clear();
+        m_gameObjectIds.clear();
         for (auto& item : m_spriteArray)
         {
             m_spriteIds.emplace(item->getId());
@@ -179,9 +182,6 @@ namespace obe::Scene
 
     void Scene::clear()
     {
-        m_spriteIds.clear();
-        m_colliderIds.clear();
-        m_gameObjectIds.clear();
         if (m_resources)
         {
             m_resources->clean();
@@ -201,6 +201,8 @@ namespace obe::Scene
                     return (!ptr->isPermanent());
                 }),
             m_gameObjectArray.end());
+        // Required for the next doesGameObjectExists
+        this->_rebuildIds();
         Debug::Log->debug("<Scene> Cleaning Sprite Array");
         m_spriteArray.erase(std::remove_if(m_spriteArray.begin(), m_spriteArray.end(),
                                 [this](const std::unique_ptr<Graphics::Sprite>& ptr) {

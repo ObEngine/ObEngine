@@ -278,6 +278,7 @@ namespace obe::Engine
 
         m_framerate->start();
         vili::array dts;
+        Time::TimeUnit start = Time::epoch();
         while (m_window->isOpen())
         {
             m_framerate->update();
@@ -287,7 +288,6 @@ namespace obe::Engine
                 dts.push_back(m_framerate->getGameSpeed());
                 t_game->pushParameter("Update", "dt", m_framerate->getGameSpeed());
                 t_game->trigger("Update");
-                m_framerate->start();
                 this->update();
             }
 
@@ -303,6 +303,14 @@ namespace obe::Engine
                 // m_lua->collect_garbage();
             }
         }
+        Time::TimeUnit totalTime = Time::epoch() - start;
+        double dtSum = 0;
+        for (auto dt : dts)
+        {
+            dtSum += dt.as<double>();
+        }
+        Debug::Log->info("Execution completed with {} ticks in {} seconds (dt sum: {})",
+            dts.size(), totalTime, dtSum);
         vili::node profiler = m_triggers->dumpProfilerResults();
         profiler.emplace("dts", dts);
         std::ofstream profilerOutput;
