@@ -332,7 +332,7 @@ namespace vili
         if (is<object>())
         {
             auto& map = std::get<object>(m_data);
-            map.emplace(key, std::forward(value));
+            map.emplace(key, std::forward<value_type>(value));
         }
         else
         {

@@ -574,18 +574,6 @@ namespace obe::Scene
             = Script::GameObjectDatabase::GetDefinitionForGameObject(obj);
         newGameObject->loadGameObject(*this, gameObjectData, m_resources);
 
-        if (newGameObject->doesHaveSprite())
-        {
-            const Transform::UnitVector zero(0, 0);
-            newGameObject->getSprite().setPosition(zero);
-            newGameObject->getSprite().setParentId(useId);
-        }
-
-        if (newGameObject->doesHaveCollider())
-        {
-            newGameObject->getCollider().setParentId(useId);
-        }
-
         m_gameObjectArray.push_back(move(newGameObject));
 
         return *m_gameObjectArray.back();
