@@ -1,5 +1,17 @@
 # Changelog
 
+## 0.4.1
+
+### Bugfixes
+
+- Fixed crash when a texture is not found
+- Added traceback when a crash happen in Scene's onLoad callback
+- Fixed corrupted return values of `getFillColor()` and `getOutlineColor` for Canvas Shapes
+- Fixed bug when there was not enough suggestions during an exception
+- Fixed invalid value forwarding in vili's node::push
+- Fixed bug that ignored the Sprite position defined in .obj.vili
+- Fixed bug that swapped GameObject id and type in `NoSuchComponent` exception
+
 ## 0.4.0
 
 ### Notes
