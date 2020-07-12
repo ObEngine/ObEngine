@@ -15,23 +15,26 @@
 
 ## Useful links
 
-- [ÖbEngine's Wiki](https://github.com/Sygmei/ObEngine/wiki)
-- [ÖbEngine's Website](https://www.obengine.io)
-- [ÖbEngine's Documentation](https://www.obengine.io/doc.html)
-- [ÖbEngine's Discord](https://discord.gg/HkM6zdT)
-- [ÖbEngine's Development Boards](https://github.com/Sygmei/ObEngine/projects)
+- :book: [ÖbEngine's Wiki](https://github.com/Sygmei/ObEngine/wiki)
+- :link: [ÖbEngine's Website](https://www.obengine.io)
+- :page_facing_up: [ÖbEngine's Documentation](https://www.obengine.io/doc.html)
+- :speech_balloon: [ÖbEngine's Discord](https://discord.gg/HkM6zdT)
+- :hammer_and_wrench: [ÖbEngine's Development Boards](https://github.com/Sygmei/ObEngine/projects)
+- :video_game: [ÖbEngine's Examples](https://github.com/ObEngine/Examples)
 
-## What the hell is ÖbEngine ?
-ÖbEngine (ÖbE is shorter) is a 2D Game Engine made on top of SFML ! I'm creating this engine in my spare time, it might not be really stable right now but I'm working on it.
+## What is ÖbEngine ?
+ÖbEngine is a 2D Game Engine made on top of SFML ! I'm working on this engine in my spare time, it might not be really stable right now but I'm working on it.
 
-## What do I need to build it ?
+## How do I build it ?
 You will need SFML :
 - [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/index-fr.php) (Display, Input, Network, Sound and much more)
 
-There are other libraries but they are included in the repository (extlibs/ folder) :
+There are other third-party libraries but they are included in the repository (`extlibs/` folder).
+Check this tutorial to learn how to build ÖbEngine : [Building ÖbEngine](https://github.com/Sygmei/ObEngine/wiki/Building-ObEngine)
 
 ### Bundled dependencies
 
+#### C++ dependencies
 |Library|Description|License|
 |-------|-----------|-------|
 |[11zip](https://github.com/Sygmei/11Zip)|minizip wrapper based on [Vili Petek's work](http://www.vilipetek.com/2013/11/22/zippingunzipping-files-in-c/)|MIT License|
@@ -45,20 +48,22 @@ There are other libraries but they are included in the repository (extlibs/ fold
 |[Vili](https://github.com/Sygmei/ViliData)|Homemade Data language (YAML-like)|MIT License|
 |[zlib & minizip](http://www.zlib.net/)|zip archives|zlib license|
 
-## How do I build it ?
-Check the following tutorial : [Building ÖbEngine](https://github.com/Sygmei/ObEngine/wiki/Building-ObEngine)
+#### Lua dependencies
+|Library|Description|License|
+|-------|-----------|-------|
+|[debugger.lua](https://github.com/slembcke/debugger.lua)|Embeddable Lua debugger|MIT License|
+|[inspect.lua](https://github.com/kikito/inspect.lua)|Human-readable representation of Lua tables|MIT License|
 
-## Could you give an example of what I can do with your engine ?
-Well, you can do approximatively everything with it as long as it's in 2D. ÖbEngine doesn't handle 3D (maybe partial 3D support in a future update).
+## What I can do with ÖbEngine ?
+You can do everything with it as long as it's in 2D. ÖbEngine doesn't handle 3D (maybe partial 3D support in a future update).
 You can do some platformers, RPGs, 2D racing games, visual novels, roguelikes, metroidvanias, etc..
 
-If you want to check out games made with ÖbEngine, you can check out those [:eggplant:**open-source projects**:eggplant:](https://github.com/Sygmei/ObEngineExamples) !
+If you want to check out games made with ÖbEngine, you can check out those [:eggplant:**open-source projects**:eggplant:](https://github.com/ObEngine/Examples) !
 
 ## Is it free ?
-Of course, you can even sell your game made with the engine, no royalties (If you want to give us some money it's okay though).
-You can also modify the sources.
-There's no need to write somewhere that your game is made with ÖbEngine (but it's nice if you do it !).
-The engine is MIT licensed so you're free to do whatever you want with the engine.
+Yes it is, completely free ! There is no premium, in-app purchase, forced splashscreen or anything. You can sell your game made with ÖbEngine with no royalties either !
+Since the engine is based on the MIT license, you can modify the sources, do anything you want with the engine as long as you keep the original license file somewhere.
+We rely exclusively on donations so if you want to support the development you can find the sponsor page [right here](https://github.com/sponsors/Sygmei) !
 
 ## On which platforms can I export my game made with ÖbEngine ?
 
@@ -71,30 +76,29 @@ The engine is MIT licensed so you're free to do whatever you want with the engin
 
 ## Give me some interesting features
 Here you go :
-- Neat map editor (With a grid for precise map edition)
+- Event-based scripting (with Lua)
+- Neat map editor
 - Animations
-- Native plugins (You can extend the engine with C++)
+- Native plugins (You can extend the engine with C++ with automatic bindings and documentation generator)
 - Canvas (You can draw stuff using a simple API)
 - Network support
-- Scriptable GameObjects
+- Scene / GameObjects system
 - Workspaces and Packages system
-- Lua scripting
-- Layering system
-- Parallax
-- Home-made data language (Vili)
+- Layering system with parallax support
 - Polygonal Collisions with full collision detection support
-- Developpement console with coloration and scripting support
+- Integrated CLI to manage your project
 - Custom package manager with online repository
-- Extendable toolkit with a lot of functionalities
 - Gamepad support
+- Bindable actions with support for complex key combinations
+- Shader support
+- Audio with many formats supported (OGG, MP3, WAV, FLAC and much more)
 
 ## Future features which are also really cool ?
-- Normal maps
-- 3D objects in 2D scene
-- Skeletal animations
+- 3D support
+- 2D skeletal animations
 - Collaborative map editor
 - Light & particle system
-- C++ GameObjects
+- Script the engine with the langage of your choice
 - Multiple windows
 - Android, iOS and HTML5 export
 - Tiled Map Editor support
@@ -105,33 +109,30 @@ Each major release will have a name based on a translation of the word "Eggplant
 
 ÖbEngine just follows [semver rules](https://semver.org/) which means any version will be tagged (X.Y.Z) with X: Major, Y: Minor and Z: Patch.
 
-### Pre-alpha versions
 |Version number|Version name|Word origin|Release date|Description|
 |--------------|------------|-----------|------------|-----------|
 |1.0.0|Melanzana|Italian|?|First production release of ÖbEngine|
 
 ## Right, can I see how does scripting looks ?
 Sure, here are some simple GameObjects :
-### Examples using console :
-#### Hello-World object
-This one is really simple, it just prints "Hello World" in the console (not the game console)
+### Hello-World object
+This one is really simple, it just prints "Hello World" in the console
 ```lua
 function Local.Init() -- Called when object is created
   print("Hello World");
 end
 ```
-### Examples with Sprites
 Every GameObject can have a Sprite associated (it's cooler when your object appears in the game right ?).
-#### Rotating goat
+### Rotating goat
 Let's imagine you want to create a rotating goat in your game, no problem :
 ```lua
 function Local.Init()
   -- Set the animation for when the goat is flying to the right (You can imagine it already right ?)
-  This:Animator():setKey("GOAT_FLYING_LEFT");
+  This.Animator:setKey("GOAT_FLYING_LEFT");
 end
 
 function Local.Update(dt) -- Local.Update is a function called every loop and dt is the DeltaTime
-  This:Sprite():rotate(dt * 45); -- Rotate of 45 degrees each second (You multiply with the DeltaTime here)
+  This.Sprite:rotate(dt * 45); -- Rotate of 45 degrees each second (You multiply with the DeltaTime here)
 end
 ```
 
@@ -140,38 +141,37 @@ The engine includes a `Canvas` lib to draw stuff in real time and using it is re
 
 ```lua
 function Local.Init()
-  canvas = obe.Canvas.Canvas(400, 400); -- Creating a 400x400 canvas
+  local canvas = obe.Canvas.Canvas(400, 400); -- Creating a 400x400 canvas
 
-  canvas:Rectangle("background")({ -- Dark grey background
+  canvas:Rectangle("background") { -- Dark grey background
       layer = 2, x = 0, y = 0, width = 250, height = 100,
       color = { r = 50, g = 50, b = 50},
-  });
+  };
 
-  canvas:Text("fstPlayer")({ -- First player's score label
+  canvas:Text("firstPlayer") { -- First player's score label
       text = "Player 1 : 0 points", size = 22
-  });
+  };
 
-  canvas:Text("scdPlayer")({ -- Second player's score label
+  canvas:Text("secondPlayer") { -- Second player's score label
       text = "Player 2 : 0 points", size = 22, y = 50
-  });
+  };
 
-  canvas:Circle("green")({ -- Small green circle
+  canvas:Circle("green") { -- Small green circle
       color = "0F0", -- Green color
       radius = 7, x = 200, y = 5
-  });
+  };
 
-  canvas:Circle("yellow")({ -- Small yellow circle
+  canvas:Circle("yellow") { -- Small yellow circle
       color = "FF0", -- Yellow color
       radius = 7, x = 217, y = 5
-  });
+  };
 
-  canvas:Circle("red")({ -- Small red circle
+  canvas:Circle("red") { -- Small red circle
       color = "F00", -- Red color
       radius = 7, x = 234, y = 5
-  });
+  };
 
-  canvas:setTarget(This:Sprite()); -- Canvas result will render in object's Sprite
-  canvas:render(); -- Drawing all the stuff !
+  canvas:render(This.Sprite()); -- Drawing all the stuff !
 end
 ```
 
@@ -193,6 +193,8 @@ Check the Wiki for more examples !
     <td align="center"><a href="https://github.com/mjopenglsdl"><img src="https://avatars1.githubusercontent.com/u/3438296?s=460&v=4" width="100px;" alt="mjopenglsdl"/><br /><sub><b>mjopenglsdl</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=mjopenglsdl" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/julio-b"><img src="https://avatars1.githubusercontent.com/u/16379308?v=4" width="100px;" alt="julio-b"/><br /><sub><b>julio-b</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=julio-b" title="Code">💻</a></td>
     <td align="center"><a href="https://github.com/ZanyMonk"><img src="https://avatars2.githubusercontent.com/u/3920186?v=4" width="100px;" alt="ZanyMonk"/><br /><sub><b>ZanyMonk</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=ZanyMonk" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Mari0nv"><img src="https://avatars3.githubusercontent.com/u/23618241?s=400&v=4" width="100px;" alt="Mari0nV"/><br /><sub><b>Mari0nV</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Mari0nV" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Darnagof"><img src="https://avatars3.githubusercontent.com/u/4027974?s=400&v=4" width="100px;" alt="Darnagof"/><br /><sub><b>Darnagof</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Darnagof" title="Code">💻</a></td>
   </tr>
 </table>
 
@@ -220,4 +222,3 @@ A big special thanks to my sponsors who are allowing me to spend more time on th
     <td align="center"><a href="https://github.com/Nowyce"><img src="https://avatars2.githubusercontent.com/u/1354475?s=460&v=4" width="100px;" alt="Nowyce"/><br /><sub><b>Nowyce</b></sub></a><br /><a href="https://github.com/Nowyce" title="Sponsor">:heart:🎃</a></td>
   </tr>
 </table>
-
