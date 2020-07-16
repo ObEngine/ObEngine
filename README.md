@@ -174,8 +174,14 @@ function Local.Init()
   canvas:render(This.Sprite()); -- Drawing all the stuff !
 end
 ```
-
 Check the Wiki for more examples !
+
+## How can I contribute ?
+Interested in contributing to ÖbEngine ? Great ! We always need help on various tasks !
+A good first step would be to join the [ÖbEngine's Discord server](https://discord.gg/HkM6zdT) to chat with us and discuss how you could contribute depending on your preferences and skills.
+Not talkative ? I understand ! You can also check the [ÖbEngine issues](https://github.com/Sygmei/ObEngine/issues) and more particularly those tagged with ["Good first issue"](https://github.com/Sygmei/ObEngine/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) or ["Help wanted"](https://github.com/Sygmei/ObEngine/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22).
+If you noticed a bug, want to ask for a feature or anything else you can always open an issue.
+If you want to go even further you can fix the bug yourself by forking ÖbEngine and making a pull request. I will personally review every pull request opened.
 
 ## Contributors / Thanks
 
