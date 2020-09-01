@@ -84,6 +84,8 @@ namespace obe::Collision
         const Transform::UnitVector& offset) const
     {
         std::vector<Transform::UnitVector> limitedMaxDistances;
+        std::vector<std::pair<PolygonalCollider*, Transform::UnitVector>> collidersInOffset;
+
         CollisionData collData;
         collData.offset = offset;
 
@@ -99,7 +101,8 @@ namespace obe::Collision
                 if (maxDist != offset && collider != this)
                 {
                     limitedMaxDistances.push_back(maxDist);
-                    collData.colliders.push_back(collider);
+                    collidersInOffset.push_back(std::make_pair(collider, maxDist));
+                    //collData.colliders.push_back(collider);
                 }
             }
         }
@@ -120,6 +123,14 @@ namespace obe::Collision
                 }
             }
             collData.offset = minDist.second;
+
+            for (auto& inOffset : collidersInOffset)
+            {
+                if (inOffset.second == minDist.second)
+                {
+                    collData.colliders.push_back(inOffset.first);
+                }
+            }
         }
         return collData;
     }
