@@ -83,7 +83,6 @@ namespace obe::Collision
     CollisionData PolygonalCollider::getMaximumDistanceBeforeCollision(
         const Transform::UnitVector& offset) const
     {
-        std::vector<Transform::UnitVector> limitedMaxDistances;
         std::vector<std::pair<PolygonalCollider*, Transform::UnitVector>> collidersInOffset;
 
         CollisionData collData;
@@ -100,30 +99,27 @@ namespace obe::Collision
                 // maxDist.x, maxDist.y);
                 if (maxDist != offset && collider != this)
                 {
-                    limitedMaxDistances.push_back(maxDist);
                     collidersInOffset.push_back(std::make_pair(collider, maxDist));
-                    //collData.colliders.push_back(collider);
                 }
             }
         }
 
         const Transform::UnitVector destPos
             = (this->getCentroid() + offset).to<Transform::Units::ScenePixels>();
-        if (!limitedMaxDistances.empty())
+        if (!collidersInOffset.empty())
         {
             std::pair<double, Transform::UnitVector> minDist(-1, Transform::UnitVector());
-            for (Transform::UnitVector& distCoordinates : limitedMaxDistances)
-            {
-                double dist = std::sqrt(std::pow(distCoordinates.x - destPos.x, 2)
-                    + std::pow(distCoordinates.y - destPos.y, 2));
+            for (auto& inOffset : collidersInOffset) {
+                double dist = std::sqrt(std::pow(inOffset.second.x - destPos.x, 2)
+                    + std::pow(inOffset.second.y - destPos.y, 2));
                 if (minDist.first == -1 || minDist.first > dist)
                 {
-                    minDist
-                        = std::pair<double, Transform::UnitVector>(dist, distCoordinates);
+                    minDist = std::pair<double, Transform::UnitVector>(
+                        dist, inOffset.second);
                 }
             }
-            collData.offset = minDist.second;
 
+            collData.offset = minDist.second;
             for (auto& inOffset : collidersInOffset)
             {
                 if (inOffset.second == minDist.second)
@@ -132,6 +128,7 @@ namespace obe::Collision
                 }
             }
         }
+
         return collData;
     }
 
