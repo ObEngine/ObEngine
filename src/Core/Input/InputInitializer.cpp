@@ -1,3 +1,5 @@
+#include <thread>
+
 #include <Input/InputManager.hpp>
 #include <SFML/Window/Joystick.hpp>
 #include <Triggers/TriggerManager.hpp>
