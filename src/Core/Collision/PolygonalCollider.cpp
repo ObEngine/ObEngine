@@ -83,7 +83,8 @@ namespace obe::Collision
     CollisionData PolygonalCollider::getMaximumDistanceBeforeCollision(
         const Transform::UnitVector& offset) const
     {
-        std::vector<Transform::UnitVector> limitedMaxDistances;
+        std::vector<std::pair<PolygonalCollider*, Transform::UnitVector>> reachableColliders;
+
         CollisionData collData;
         collData.offset = offset;
 
@@ -98,29 +99,36 @@ namespace obe::Collision
                 // maxDist.x, maxDist.y);
                 if (maxDist != offset && collider != this)
                 {
-                    limitedMaxDistances.push_back(maxDist);
-                    collData.colliders.push_back(collider);
+                    reachableColliders.emplace_back(collider, maxDist);
                 }
             }
         }
 
         const Transform::UnitVector destPos
             = (this->getCentroid() + offset).to<Transform::Units::ScenePixels>();
-        if (!limitedMaxDistances.empty())
+        if (!reachableColliders.empty())
         {
             std::pair<double, Transform::UnitVector> minDist(-1, Transform::UnitVector());
-            for (Transform::UnitVector& distCoordinates : limitedMaxDistances)
-            {
-                double dist = std::sqrt(std::pow(distCoordinates.x - destPos.x, 2)
-                    + std::pow(distCoordinates.y - destPos.y, 2));
+            for (auto& reachable : reachableColliders) {
+                double dist = std::sqrt(std::pow(reachable.second.x - destPos.x, 2)
+                    + std::pow(reachable.second.y - destPos.y, 2));
                 if (minDist.first == -1 || minDist.first > dist)
                 {
-                    minDist
-                        = std::pair<double, Transform::UnitVector>(dist, distCoordinates);
+                    minDist = std::pair<double, Transform::UnitVector>(
+                        dist, reachable.second);
                 }
             }
+
             collData.offset = minDist.second;
+            for (auto& reachable : reachableColliders)
+            {
+                if (reachable.second == minDist.second)
+                {
+                    collData.colliders.push_back(reachable.first);
+                }
+            }
         }
+
         return collData;
     }
 
