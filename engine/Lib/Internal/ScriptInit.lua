@@ -5,6 +5,7 @@ Debug = {};
 
 inspect = require("Lib/Extlibs/Inspect");
 dbg = require("Lib/Extlibs/debugger");
+try = require("Lib/Internal/Try");
 pl.List = require("Lib/Extlibs/pl/List");
 pl.String = require("Lib/Extlibs/pl/stringx");
 
