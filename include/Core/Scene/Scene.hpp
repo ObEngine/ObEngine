@@ -322,4 +322,9 @@ namespace obe::Scene
      */
     sol::function sceneCreateGameObjectProxy(
         Scene* self, const std::string& obj, const std::string& id = "");
+    /**
+    * \proxy{obe::Scene::Scene::getAllGameObjects}
+    */
+    sol::nested<std::vector<sol::table>> sceneGetAllGameObjectsProxy(
+        Scene* self, const std::string& objectType = "");
 } // namespace obe::Scene

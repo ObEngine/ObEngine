@@ -80,12 +80,11 @@ namespace obe::Scene::Bindings
             });
         bindScene["getGameObjectAmount"] = &obe::Scene::Scene::getGameObjectAmount;
         bindScene["getAllGameObjects"] = sol::overload(
-            [](obe::Scene::Scene* self) -> std::vector<obe::Script::GameObject*> {
-                return self->getAllGameObjects();
+            [](obe::Scene::Scene* self) -> sol::nested<std::vector<sol::table>> {
+                return obe::Scene::sceneGetAllGameObjectsProxy(self);
             },
-            [](obe::Scene::Scene* self,
-                const std::string& objectType) -> std::vector<obe::Script::GameObject*> {
-                return self->getAllGameObjects(objectType);
+            [](obe::Scene::Scene* self, const std::string& objectType) -> sol::nested<std::vector<sol::table>> {
+                return obe::Scene::sceneGetAllGameObjectsProxy(self, objectType);
             });
         bindScene["getGameObject"] = &obe::Scene::sceneGetGameObjectProxy;
         bindScene["doesGameObjectExists"] = &obe::Scene::Scene::doesGameObjectExists;
@@ -164,5 +163,10 @@ namespace obe::Scene::Bindings
         sol::table SceneNamespace = state["obe"]["Scene"].get<sol::table>();
         SceneNamespace.set_function(
             "sceneCreateGameObjectProxy", obe::Scene::sceneCreateGameObjectProxy);
+    }
+    void LoadFunctionSceneGetAllGameObjectsProxy(sol::state_view state)
+    {
+        sol::table SceneNamespace = state["obe"]["Scene"].get<sol::table>();
+        SceneNamespace.set_function("sceneGetAllGameObjectsProxy", obe::Scene::sceneGetAllGameObjectsProxy);
     }
 };
