@@ -52,7 +52,14 @@ namespace vili::parser
 
     vili::node from_file(std::string_view path, state parser_state)
     {
-        peg::file_input in(path);
-        return parse(in, parser_state);
+        try 
+        {
+            peg::file_input in(path);
+            return parse(in, parser_state);
+        }
+        catch (const std::system_error& e)
+        {
+            throw exceptions::file_not_found(path, VILI_EXC_INFO).nest(e);
+        }
     }
 }

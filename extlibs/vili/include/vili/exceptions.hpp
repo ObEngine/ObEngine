@@ -38,6 +38,10 @@ namespace vili::exceptions
         std::string m_message;
 
     public:
+        exception(const exception& exc)
+        {
+            m_message = exc.m_message;
+        }
         exception(debug_info info)
         {
             std::string exception_id = utils::string::replace(typeid(exception).name(),
@@ -77,7 +81,7 @@ namespace vili::exceptions
         }
 
         const char* what() const noexcept override;
-        exception_type& nest(const std::exception& exception)
+        const exception_type& nest(const std::exception& exception)
         {
             if (VERBOSE_EXCEPTIONS)
             {
@@ -206,6 +210,16 @@ namespace vili::exceptions
             : exception(info)
         {
             this->error("'{}' is not a valid node_type");
+        }
+    };
+
+    class file_not_found : public exception<file_not_found>
+    {
+    public:
+        file_not_found(std::string_view path, debug_info info)
+            : exception(info)
+        {
+            this->error("Could not open file located at '{}'", path);
         }
     };
 }
