@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.4.2
+
+### Minor changes
+
+- Removed useless method `setTarget(target)` from Canvas (replaced with `render(target)`)
+- Added default "Hello, world!" project in ÖbEngine, no more crashes when running ÖbEngine for the first time !
+- Better exception handling when loading an Animation file
+- Added Vili templates for `AnimationPlayMode` enum
+
+### Bugfixes
+
+- Fixed crash when loading a GameObject without Script component
+
 ## 0.4.1
 
 ### Bugfixes
