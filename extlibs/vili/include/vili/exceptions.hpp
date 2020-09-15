@@ -125,8 +125,9 @@ namespace vili::exceptions
     class unknown_child_node : public exception<unknown_child_node>
     {
     public:
+        std::string key;
         unknown_child_node(std::string_view key, debug_info info)
-            : exception(info)
+            : exception(info), key(key)
         {
             this->error("Tried to access non-existent child node '{}'", key);
         }

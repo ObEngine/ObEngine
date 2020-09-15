@@ -32,6 +32,10 @@ namespace obe
         std::string m_message;
 
     public:
+        Exception(const Exception& e) noexcept
+        {
+            m_message = e.m_message;
+        }
         Exception(std::string id, DebugInfo info)
         {
             m_message = fmt::format("Exception [{}] occured\n", id);
@@ -49,7 +53,7 @@ namespace obe
             m_message += fmt::format("  Hint: {}\n", hintMsg);
         }
         const char* what() const noexcept override;
-        Exception& nest(const Exception& exception)
+        Exception nest(const std::exception& exception)
         {
             m_message += "  Cause:\n";
             m_message

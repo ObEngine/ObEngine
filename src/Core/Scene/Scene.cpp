@@ -333,7 +333,8 @@ namespace obe::Scene
                         Script::GameObjectDatabase::ApplyRequirements(
                             newObject.getEnvironment(), objectRequirements);
                     }
-                    newObject.exec("LuaCore.InjectInitInjectionTable()");
+                    if (newObject.doesHaveScriptEngine())
+                        newObject.exec("LuaCore.InjectInitInjectionTable()");
                 }
                 else if (!this->getGameObject(gameObjectId).isPermanent())
                 {
