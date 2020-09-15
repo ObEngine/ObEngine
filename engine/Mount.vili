@@ -1,2 +1,3 @@
 Mount:
+    sample: Workspace { path: "SampleProject" }
     root: Path

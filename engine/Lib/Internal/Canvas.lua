@@ -804,10 +804,6 @@ function obe.Canvas.Canvas:render(target)
     self.internal:render(target);
 end
 
-function obe.Canvas.Canvas:setTarget(target)
-    self.internal:setTarget(target);
-end
-
 function obe.Canvas.Canvas:clear()
     self.elements = {};
     self.internal:clear();
