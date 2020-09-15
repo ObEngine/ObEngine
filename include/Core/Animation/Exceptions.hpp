@@ -130,4 +130,25 @@ namespace obe::Animation::Exceptions
                 easingName);
         }
     };
+
+    class MissingAnimationProperty : public Exception
+    {
+    public:
+        MissingAnimationProperty(std::string_view propertyName, DebugInfo info)
+            : Exception("MissingAnimationProperty", info)
+        {
+            this->error("Unable to retrieve property '{}' from Animation config file",
+                propertyName);
+        }
+    };
+
+    class InvalidAnimationFile : public Exception
+    {
+    public:
+        InvalidAnimationFile(std::string_view path, DebugInfo info)
+            : Exception("InvalidAnimationFile", info)
+        {
+            this->error("Error occured while loading Animation file '{}'", path);
+        }
+    };
 }
