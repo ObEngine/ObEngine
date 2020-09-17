@@ -851,4 +851,15 @@ namespace obe::Scene
     {
         return self->createGameObject(obj, id).getConstructor();
     }
+
+    sol::nested<std::vector<sol::table>> sceneGetAllGameObjectsProxy(
+        Scene* self, const std::string& objectType)
+    {
+        std::vector<sol::table> gameObjects;
+
+        for (const auto& gameObject : self->getAllGameObjects(objectType)) {
+            gameObjects.push_back(gameObject->access());
+        }
+        return gameObjects;
+    }
 } // namespace obe::Scene
