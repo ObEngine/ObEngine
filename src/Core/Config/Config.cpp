@@ -8,7 +8,6 @@
 
 namespace obe::Config
 {
-    ConfigurationManager Config;
     ConfigurationManager::ConfigurationManager()
         : vili::node(vili::object {})
     {
