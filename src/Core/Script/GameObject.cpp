@@ -399,29 +399,32 @@ namespace obe::Script
 
     void GameObject::deleteObject()
     {
-        Debug::Log->debug(
-            "GameObject::deleteObject called for '{0}' ({1})", m_id, m_type);
-        if (m_hasScriptEngine)
-            t_local->trigger("Delete");
-        this->deletable = true;
-        m_active = false;
-        if (m_hasScriptEngine)
+        if (!this->deletable)
         {
-            for (auto& triggerRef : m_registeredTriggers)
+            Debug::Log->debug(
+                "GameObject::deleteObject called for '{0}' ({1})", m_id, m_type);
+            if (m_hasScriptEngine)
+                t_local->trigger("Delete");
+            this->deletable = true;
+            m_active = false;
+            if (m_hasScriptEngine)
             {
-                if (auto trigger = triggerRef.first.lock())
+                for (auto& triggerRef : m_registeredTriggers)
                 {
-                    trigger->unregisterEnvironment(m_environment);
+                    if (auto trigger = triggerRef.first.lock())
+                    {
+                        trigger->unregisterEnvironment(m_environment);
+                    }
                 }
-            }
-            for (const auto& trigger : t_local->getTriggers())
-            {
-                m_environment["__TRIGGERS"][trigger->getTriggerLuaTableName()]
-                    = sol::lua_nil;
-            }
-            for (auto [k, _] : m_environment)
-            {
-                m_environment[k] = sol::lua_nil;
+                for (const auto& trigger : t_local->getTriggers())
+                {
+                    m_environment["__TRIGGERS"][trigger->getTriggerLuaTableName()]
+                        = sol::lua_nil;
+                }
+                for (auto [k, _] : m_environment)
+                {
+                    m_environment[k] = sol::lua_nil;
+                }
             }
         }
     }
