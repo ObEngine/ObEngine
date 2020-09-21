@@ -66,13 +66,13 @@ namespace obe::Collision
                         collData
                             = m_probe->getMaximumDistanceBeforeCollision(collData.offset);
                     }
+                    m_sceneNode.move(collData.offset);
                     auto onCollideCallback = trajectory.second->getOnCollideCallback();
                     if (collData.offset != baseOffset && onCollideCallback)
                     {
                         onCollideCallback(
                             *trajectory.second.get(), baseOffset, collData);
                     }
-                    m_sceneNode.move(collData.offset);
                 }
             }
         }
