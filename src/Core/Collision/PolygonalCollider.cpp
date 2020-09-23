@@ -357,7 +357,7 @@ namespace obe::Collision
                 else if (tag.is<vili::array>())
                 {
                     for (vili::node& item : tag)
-                        this->addTag(Collision::ColliderTagType::Rejected, item);
+                        this->addTag(type, item);
                 }
                 else
                 {
