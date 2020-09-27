@@ -47,7 +47,7 @@ namespace obe::Triggers
         TriggerGroup& m_parent;
         std::string m_name;
         std::string m_fullName;
-        std::vector<TriggerEnv> m_registeredEnvs;
+        std::vector<std::unique_ptr<TriggerEnv>> m_registeredEnvs;
         std::vector<sol::environment> m_envsToRemove;
         bool m_currentlyTriggered = false;
         bool m_enabled = false;
