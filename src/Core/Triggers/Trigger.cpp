@@ -77,7 +77,7 @@ namespace obe::Triggers
         Debug::Log->trace("<Trigger> Registering Lua Environment {0} in "
                           "Trigger {1} associated to callback {2}",
             environment.pointer(), m_name, callback);
-        m_registeredEnvs.emplace_back(id, environment, callback, active);
+        m_registeredEnvs.push_back(std::make_unique<TriggerEnv>(id, environment, callback, active));
 
         sol::table triggerRef = environment["__TRIGGERS"][this->getTriggerLuaTableName()]
                                     .get_or_create<sol::table>();
@@ -86,7 +86,7 @@ namespace obe::Triggers
         {
             Debug::Log->trace(
                 "<Trigger> Calling onRegister callback of Trigger {0}", m_fullName);
-            m_onRegisterCallback(m_registeredEnvs.back());
+            m_onRegisterCallback(*m_registeredEnvs.back());
         }
     }
 
@@ -94,16 +94,16 @@ namespace obe::Triggers
     {
         Debug::Log->trace("<Trigger> Unregistering Lua Environment {0} from Trigger {1}",
             environment.pointer(), m_fullName);
-        for (const TriggerEnv& triggerEnv : m_registeredEnvs)
+        for (const auto& triggerEnv : m_registeredEnvs)
         {
-            if (triggerEnv.environment == environment)
+            if (triggerEnv->environment == environment)
             {
                 if (m_onUnregisterCallback)
                 {
                     Debug::Log->trace("<Trigger> Calling onUnregister callback "
                                       "of Trigger {0}",
                         m_fullName);
-                    m_onUnregisterCallback(triggerEnv);
+                    m_onUnregisterCallback(*triggerEnv);
                 }
             }
         }
@@ -116,7 +116,7 @@ namespace obe::Triggers
             m_registeredEnvs.erase(
                 std::remove_if(m_registeredEnvs.begin(), m_registeredEnvs.end(),
                     [&environment](
-                        TriggerEnv& env) { return env.environment == environment; }),
+                        auto& env) { return env->environment == environment; }),
                 m_registeredEnvs.end());
         }
     }
@@ -127,7 +127,7 @@ namespace obe::Triggers
         Debug::Log->trace("<Trigger> Executing Trigger {0}", m_fullName);
         for (std::size_t i = 0; i < m_registeredEnvs.size(); i++)
         {
-            auto& rEnv = m_registeredEnvs[i];
+            auto& rEnv = *m_registeredEnvs[i];
             if (*rEnv.active)
             {
                 Debug::Log->trace("<Trigger> Calling Trigger Callback {0} on "
@@ -180,7 +180,7 @@ namespace obe::Triggers
                 m_registeredEnvs.erase(
                     std::remove_if(m_registeredEnvs.begin(), m_registeredEnvs.end(),
                         [&envToRemove](
-                            TriggerEnv& env) { return env.environment == envToRemove; }),
+                            auto& env) { return env->environment == envToRemove; }),
                     m_registeredEnvs.end());
             }
         }
