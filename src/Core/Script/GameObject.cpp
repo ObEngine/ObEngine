@@ -489,6 +489,13 @@ namespace obe::Script
                 = target.get<sol::protected_function>();
             ScriptCache.emplace(fullPath, bytecode.dump());
         }
-        m_lua.safe_script(ScriptCache.at(fullPath).as_string_view(), m_environment);
+        const std::string_view source = ScriptCache.at(fullPath).as_string_view();
+        sol::protected_function_result loadResult
+            = m_lua.safe_script(source, m_environment);
+        if (!loadResult.valid())
+        {
+            throw Exceptions::InvalidScript(
+                fullPath, loadResult.get<sol::error>().what(), EXC_INFO);
+        }
     }
 } // namespace obe::Script

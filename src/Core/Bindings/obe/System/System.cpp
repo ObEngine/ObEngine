@@ -143,7 +143,6 @@ namespace obe::System::Bindings
                 -> std::vector<std::string> { return self->findAll(pathType); });
         bindPath["toString"] = &obe::System::Path::toString;
         bindPath["operator="] = &obe::System::Path::operator=;
-        // bindPath["PathCache"] = sol::var(obe::System::Path::PathCache);
     }
     void LoadClassPlugin(sol::state_view state)
     {

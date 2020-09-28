@@ -15,6 +15,8 @@ namespace obe::Transform::Bindings
     void LoadClassReferential(sol::state_view state);
     void LoadClassUnitBasedObject(sol::state_view state);
     void LoadClassUnitVector(sol::state_view state);
+    void LoadClassScreenStruct(sol::state_view state);
+    void LoadClassViewStruct(sol::state_view state);
     void LoadEnumRelativePositionFrom(sol::state_view state);
     void LoadEnumFlipAxis(sol::state_view state);
     void LoadEnumUnits(sol::state_view state);

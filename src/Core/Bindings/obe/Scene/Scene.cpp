@@ -83,7 +83,8 @@ namespace obe::Scene::Bindings
             [](obe::Scene::Scene* self) -> sol::nested<std::vector<sol::table>> {
                 return obe::Scene::sceneGetAllGameObjectsProxy(self);
             },
-            [](obe::Scene::Scene* self, const std::string& objectType) -> sol::nested<std::vector<sol::table>> {
+            [](obe::Scene::Scene* self,
+                const std::string& objectType) -> sol::nested<std::vector<sol::table>> {
                 return obe::Scene::sceneGetAllGameObjectsProxy(self, objectType);
             });
         bindScene["getGameObject"] = &obe::Scene::sceneGetGameObjectProxy;
@@ -167,6 +168,7 @@ namespace obe::Scene::Bindings
     void LoadFunctionSceneGetAllGameObjectsProxy(sol::state_view state)
     {
         sol::table SceneNamespace = state["obe"]["Scene"].get<sol::table>();
-        SceneNamespace.set_function("sceneGetAllGameObjectsProxy", obe::Scene::sceneGetAllGameObjectsProxy);
+        SceneNamespace.set_function(
+            "sceneGetAllGameObjectsProxy", obe::Scene::sceneGetAllGameObjectsProxy);
     }
 };

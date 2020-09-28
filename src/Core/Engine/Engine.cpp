@@ -62,6 +62,7 @@ namespace obe::Engine
         m_lua->safe_script("LuaCore = {}");
         m_lua->safe_script_file("Lib/Internal/ScriptInit.lua"_fs);
         m_lua->safe_script_file("Lib/Internal/Triggers.lua"_fs);
+        m_lua->safe_script_file("Lib/Internal/Events.lua"_fs);
 
         Bindings::IndexAllBindings(*m_lua);
         m_lua->safe_script_file("Lib/Internal/Searcher.lua"_fs);
@@ -362,11 +363,6 @@ namespace obe::Engine
     Triggers::TriggerManager& Engine::getTriggerManager() const
     {
         return *m_triggers;
-    }
-
-    Event::EventNamespaceView Engine::getEventNamespace() const
-    {
-        return m_eventNamespace->getView();
     }
 
     Event::EventManager& Engine::getEventManager() const

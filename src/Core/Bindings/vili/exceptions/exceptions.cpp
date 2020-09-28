@@ -37,6 +37,18 @@ namespace vili::exceptions::Bindings
         binddebug_info["line"] = &vili::exceptions::debug_info::line;
         binddebug_info["function"] = &vili::exceptions::debug_info::function;
     }
+    void LoadClassFileNotFound(sol::state_view state)
+    {
+        sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
+        sol::usertype<vili::exceptions::file_not_found> bindfile_not_found
+            = exceptionsNamespace.new_usertype<vili::exceptions::file_not_found>(
+                "file_not_found", sol::call_constructor,
+                sol::constructors<vili::exceptions::file_not_found(
+                    std::string_view, vili::exceptions::debug_info)>(),
+                sol::base_classes,
+                sol::bases<vili::exceptions::exception<file_not_found>,
+                    vili::exceptions::base_exception>());
+    }
     void LoadClassInconsistentIndentation(sol::state_view state)
     {
         sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
