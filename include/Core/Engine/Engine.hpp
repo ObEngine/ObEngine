@@ -3,6 +3,7 @@
 #include <Audio/AudioManager.hpp>
 #include <Config/Config.hpp>
 #include <Engine/ResourceManager.hpp>
+#include <Event/EventManager.hpp>
 #include <Input/InputManager.hpp>
 #include <Scene/Scene.hpp>
 #include <System/Cursor.hpp>
@@ -19,6 +20,29 @@ namespace obe::Bindings
 
 namespace obe::Engine
 {
+    namespace Events
+    {
+        namespace Game
+        {
+            struct Start
+            {
+            };
+
+            struct Update
+            {
+                double dt;
+            };
+
+            class End
+            {
+            };
+
+            struct Render
+            {
+            };
+        }
+    }
+
     class Engine
     {
     protected:
@@ -36,14 +60,17 @@ namespace obe::Engine
         std::unique_ptr<Input::InputManager> m_input {};
         std::unique_ptr<Time::FramerateManager> m_framerate;
         std::unique_ptr<Triggers::TriggerManager> m_triggers;
+        std::unique_ptr<Event::EventManager> m_events;
+        Event::EventNamespace* m_eventNamespace;
 
         // TriggerGroups
-        Triggers::TriggerGroupPtr t_game {};
+        Event::EventGroupPtr t_game {};
 
         // Initialization
         void initConfig();
         void initLogger() const;
         void initScript();
+        void initEvents();
         void initTriggers();
         void initInput();
         void initFramerate();

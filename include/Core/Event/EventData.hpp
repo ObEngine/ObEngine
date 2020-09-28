@@ -1,6 +1,5 @@
+#pragma once
+
 namespace obe::Event
 {
-    struct EventData
-    {
-    };
 }

@@ -31,9 +31,9 @@ namespace obe::Engine
         (*m_lua)["__TRIGGERS"].get_or_create<sol::table>();
         m_triggers = std::make_unique<Triggers::TriggerManager>(*m_lua);
         m_triggers->createNamespace("Event");
-        t_game = m_triggers->createTriggerGroup("Event", "Game");
+        // t_game = m_triggers->createTriggerGroup("Event", "Game");
 
-        t_game->add("Start").trigger("Start").add("End").add("Update").add("Render");
+        // t_game->add("Start").trigger("Start").add("End").add("Update").add("Render");
     }
     void Engine::initInput()
     {
@@ -71,6 +71,20 @@ namespace obe::Engine
         m_lua->safe_script("collectgarbage(\"generational\");");
 
         (*m_lua)["Engine"] = this;
+    }
+
+    void Engine::initEvents()
+    {
+        m_events = std::make_unique<Event::EventManager>();
+        m_eventNamespace = &m_events->createNamespace("Event");
+        t_game = m_eventNamespace->createGroup("Game");
+
+        t_game->add<Events::Game::Start>();
+        t_game->add<Events::Game::End>();
+        t_game->add<Events::Game::Update>();
+        t_game->add<Events::Game::Render>();
+
+        t_game->trigger(Events::Game::Start {});
     }
 
     void Engine::initResources()
@@ -146,7 +160,7 @@ namespace obe::Engine
     {
         if (t_game)
         {
-            t_game->trigger("End");
+            t_game->trigger(Events::Game::End {});
         }
         if (m_triggers)
             m_triggers->update();
@@ -236,6 +250,7 @@ namespace obe::Engine
         this->initConfig();
         this->initLogger();
         this->initScript();
+        this->initEvents();
         this->initTriggers();
         this->initInput();
         this->initWindow();
@@ -286,14 +301,13 @@ namespace obe::Engine
             if (m_framerate->doUpdate())
             {
                 dts.push_back(m_framerate->getGameSpeed());
-                t_game->pushParameter("Update", "dt", m_framerate->getGameSpeed());
-                t_game->trigger("Update");
+                t_game->trigger(Events::Game::Update { m_framerate->getGameSpeed() });
                 this->update();
             }
 
             if (m_framerate->doRender())
             {
-                t_game->trigger("Render");
+                t_game->trigger(Events::Game::Render {});
                 this->render();
                 m_framerate->reset();
             }

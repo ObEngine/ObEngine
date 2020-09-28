@@ -2,6 +2,7 @@
 
 #include <map>
 #include <memory>
+#include <typeinfo>
 
 #include <vili/node.hpp>
 
@@ -10,6 +11,7 @@
 
 namespace obe::Event
 {
+    std::string stripEventTypename(const std::string& typeName);
     /**
      * \brief Class used to manage multiple Events
      */
@@ -18,10 +20,11 @@ namespace obe::Event
     private:
         std::string m_name;
         std::string m_identifier;
-        std::map<std::string, std::shared_ptr<Event>> m_events;
+        std::map<std::string, std::string> m_aliases;
+        std::map<std::string, std::unique_ptr<EventBase>> m_events;
         bool m_joinable = false;
-        friend class Trigger;
-        friend class TriggerManager;
+
+        std::string getEventName(const std::string& baseName);
 
     public:
         /**
@@ -42,41 +45,42 @@ namespace obe::Event
          * \return true if the EventGroup is joinable, false otherwise
          */
         [[nodiscard]] bool isJoinable() const;
+        EventBase* get(const std::string& eventName);
         /**
-         * \brief Get a Trigger contained in the EventGroup
-         * \param eventName Name of the Trigger to get
-         * \return A pointer to the Trigger if found (throws an error otherwise)
+         * \brief Get a Event contained in the EventGroup
+         * \param eventName Name of the Event to get
+         * \return A pointer to the Event if found (throws an error otherwise)
          */
-        std::weak_ptr<Event> get(const std::string& eventName);
+        template <class EventType> Event<EventType>* get();
         /**
-         * \brief Creates a new Trigger in the EventGroup
-         * \param eventName Name of the Trigger to create
+         * \brief Creates a new Event in the EventGroup
+         * \param eventName Name of the Event to create
          * \return Pointer to the EventGroup to chain calls
          */
-        EventGroup& add(const std::string& eventName);
+        template <class EventType> EventGroup& add(const std::string& eventName = "");
         /**
-         * \brief Removes a Trigger from the EventGroup
-         * \param eventName Name of the Trigger to remove
+         * \brief Removes a Event from the EventGroup
+         * \param eventName Name of the Event to remove
          * \return Pointer to the EventGroup to chain calls
          */
         EventGroup& remove(const std::string& eventName);
         /**
-         * \brief Enables a Trigger
-         * \param eventName Name of the Trigger to enable
+         * \brief Triggers a Event
+         * \param event event
          * \return Pointer to the EventGroup to chain calls
          */
-        EventGroup& trigger(const std::string& eventName, EventData data);
+        template <class EventType> EventGroup& trigger(EventType event);
         /**
-         * \brief Get the name of all Trigger contained in the EventGroup
+         * \brief Get the name of all Events contained in the EventGroup
          * \return A std::vector of std::string containing the name of all
-         * Trigger contained in the EventGroup
+         *         Event contained in the EventGroup
          */
         std::vector<std::string> getEventsNames();
         /**
-         * \brief Get all the Trigger contained in the EventGroup
-         * \return A std::vector of Trigger pointers
+         * \brief Get all the Events contained in the EventGroup
+         * \return A std::vector of Event pointers
          */
-        std::vector<Event*> getEvents();
+        std::vector<EventBase*> getEvents();
         /**
          * \brief Get the full name of the EventGroup (namespace + name)
          * \return A std::string containing the identifier of the EventGroup
@@ -89,15 +93,50 @@ namespace obe::Event
         [[nodiscard]] std::string getName() const;
 
         /**
-         * \brief Register a callback for when Trigger::register is called
+         * \brief Register a callback for when Event::addListener is called
          */
-        void onRegister(const std::string& eventName, OnListenerChange callback);
+        // void onAddListener(const std::string& eventName, OnListenerChange callback);
         /**
-         * \brief Register a callback for when Trigger::unRegister is called
+         * \brief Register a callback for when Event::removeListener is called
          */
-        void onUnregister(const std::string& eventName, OnListenerChange callback);
+        // void onRemoveListener(const std::string& eventName, OnListenerChange callback);
         vili::node getProfilerResults();
     };
 
+    template <class EventType> Event<EventType>* EventGroup::get()
+    {
+        const std::string name = this->getEventName(typeid(EventType).name());
+        return static_cast<Event<EventType>*>(m_events.at(name).get());
+    }
+
+    template <class EventType> EventGroup& EventGroup::add(const std::string& eventName)
+    {
+        std::string name = typeid(EventType).name();
+        if (!eventName.empty())
+        {
+            m_aliases[name] = eventName;
+            name = eventName;
+        }
+        else
+        {
+            const std::string strippedTypename = stripEventTypename(name);
+            m_aliases[name] = strippedTypename;
+            name = strippedTypename;
+        }
+        Debug::Log->debug(
+            "<EventGroup> Add Event '{}' to EventGroup '{}'", name, m_identifier);
+        m_events.emplace(name, std::make_unique<Event<EventType>>(m_identifier, name));
+        return *this;
+    }
+
+    template <class EventType> EventGroup& EventGroup::trigger(EventType event)
+    {
+        const std::string name = this->getEventName(typeid(event).name());
+        Debug::Log->trace("<EventGroup> Triggering Event '{}' from EventGroup '{}'", name,
+            m_identifier);
+        static_cast<Event<EventType>*>(m_events.at(name).get())->trigger(event);
+        return *this;
+    }
+
     using EventGroupPtr = std::shared_ptr<EventGroup>;
-} // namespace obe::Triggers
+} // namespace obe::Event

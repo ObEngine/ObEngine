@@ -5,33 +5,40 @@
 
 namespace obe::Event
 {
+    std::string stripEventTypename(const std::string& typeName)
+    {
+        const auto signature = Utils::String::split(typeName, "::");
+        return signature.back();
+    }
+
+    std::string EventGroup::getEventName(const std::string& baseName)
+    {
+        if (const auto alias = m_aliases.find(baseName); alias != m_aliases.end())
+        {
+            return alias->second;
+        }
+        return baseName;
+    }
+
     EventGroup::EventGroup(const std::string& eventNamespace, const std::string& name)
     {
         m_identifier = eventNamespace + "." + name;
         m_name = name;
     }
 
-    std::weak_ptr<Event> EventGroup::get(const std::string& eventName)
+    EventBase* EventGroup::get(const std::string& eventName)
     {
         if (const auto event = m_events.find(eventName); event != m_events.end())
         {
-            return event->second;
+            return event->second.get();
         }
         throw Exceptions::UnknownEvent(
             m_identifier, eventName, this->getEventsNames(), EXC_INFO);
     }
 
-    EventGroup& EventGroup::add(const std::string& eventName)
-    {
-        Debug::Log->debug("<EventGroup> Add Trigger '{}' to EventGroup '{}'", eventName,
-            m_identifier, m_name);
-        m_events.emplace(eventName, std::make_unique<Event>(*this, eventName));
-        return *this;
-    }
-
     EventGroup& EventGroup::remove(const std::string& eventName)
     {
-        Debug::Log->debug("<EventGroup> Remove Trigger '{}' from EventGroup '{}'",
+        Debug::Log->debug("<EventGroup> Remove Event '{}' from EventGroup '{}'",
             eventName, m_identifier);
         if (m_events.find(eventName) != m_events.end())
             m_events.erase(eventName);
@@ -40,14 +47,6 @@ namespace obe::Event
             throw Exceptions::UnknownEvent(
                 m_identifier, eventName, this->getEventsNames(), EXC_INFO);
         }
-        return *this;
-    }
-
-    EventGroup& EventGroup::trigger(const std::string& eventName, EventData data)
-    {
-        Debug::Log->trace(
-            "<EventGroup> Trigger '{}' from EventGroup '{}'", eventName, m_identifier);
-        this->get(eventName).lock()->execute(data);
         return *this;
     }
 
@@ -65,17 +64,19 @@ namespace obe::Event
     {
         std::vector<std::string> names;
         names.reserve(m_events.size());
-        std::transform(m_events.begin(), m_events.end(), names.begin(),
-            [](const auto& pair) { return pair.first; });
+        for (const auto& event : m_events)
+        {
+            names.push_back(event.first);
+        }
         return names;
     }
 
-    std::vector<Event*> EventGroup::getEvents()
+    std::vector<EventBase*> EventGroup::getEvents()
     {
-        std::vector<Event*> events;
-        for (auto it = m_events.begin(); it != m_events.end(); ++it)
+        std::vector<EventBase*> events;
+        for (auto& event : m_events)
         {
-            events.push_back(it->second.get());
+            events.push_back(event.second.get());
         }
         return events;
     }
@@ -90,16 +91,17 @@ namespace obe::Event
         return m_name;
     }
 
-    void EventGroup::onRegister(const std::string& triggerName, OnListenerChange callback)
+    /*void EventGroup::onAddListener(
+        const std::string& eventName, OnListenerChange callback)
     {
-        this->get(triggerName).lock()->onRegister(callback);
+        this->get(eventName).lock()->onAddListener(callback);
     }
 
-    void EventGroup::onUnregister(
-        const std::string& triggerName, OnListenerChange callback)
+    void EventGroup::onRemoveListener(
+        const std::string& eventName, OnListenerChange callback)
     {
-        this->get(triggerName).lock()->onUnregister(callback);
-    }
+        this->get(eventName).lock()->onRemoveListener(callback);
+    }*/
 
     vili::node EventGroup::getProfilerResults()
     {
@@ -113,7 +115,7 @@ namespace obe::Event
             long long int totalHits = 0;
             result.at(fullName).emplace("callbacks", vili::object {});
             vili::node& callbacks = result.at(fullName).at("callbacks");
-            for (const auto itr : event->m_profiler)
+            for (const auto itr : event->getProfiler())
             {
                 callbacks.emplace(itr.first, vili::object {});
                 vili::node& callback = callbacks.at(itr.first);
@@ -129,4 +131,4 @@ namespace obe::Event
         }
         return result;
     }
-} // namespace obe::Triggers
+} // namespace obe::Event

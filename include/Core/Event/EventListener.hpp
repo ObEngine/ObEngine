@@ -1,44 +1,43 @@
+#pragma once
+
 #include <functional>
 #include <string>
 
 #include <sol/sol.hpp>
 
+#include <Event/EventData.hpp>
+#include <Event/Exceptions.hpp>
+#include <Types/Togglable.hpp>
+#include <Utils/StringUtils.hpp>
+
 namespace obe::Event
 {
-    class EventData;
+    template <class EventType>
+    using CppEventListener = std::function<void(const EventType&)>;
 
-    class EventListener
-    {
-    private:
-        std::string m_id;
-
-    public:
-        EventListener(std::string id);
-
-        const std::string& getId() const;
-        virtual void operator()(const EventData& event) = 0;
-    };
-
-    using CppCallback = std::function<void(const EventData&)>;
-    class CppEventListener : public EventListener
-    {
-    private:
-        CppCallback m_callback;
-
-    public:
-        CppEventListener(std::string id, CppCallback callback);
-
-        void operator()(const EventData& event) override;
-    };
-
-    class LuaEventListener : public EventListener
+    class LuaEventListener
     {
     private:
         sol::protected_function m_callback;
 
     public:
-        LuaEventListener(std::string id, sol::protected_function callback);
+        LuaEventListener(sol::protected_function callback);
 
-        void operator()(const EventData& event) override;
+        template <class EventType> void operator()(const EventType& event) const;
     };
+
+    template <class EventType>
+    void LuaEventListener::operator()(const EventType& event) const
+    {
+        const sol::protected_function_result result = m_callback(event);
+        if (!result.valid())
+        {
+            const auto errObj = result.get<sol::error>();
+            const std::string errMsg = "\n        \""
+                + Utils::String::replace(errObj.what(), "\n", "\n        ") + "\"";
+            throw Exceptions::LuaExecutionError(errMsg, EXC_INFO);
+        }
+    }
+
+    using ExternalEventListener = std::variant<LuaEventListener>;
 }

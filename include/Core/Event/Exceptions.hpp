@@ -7,34 +7,30 @@ namespace obe::Event::Exceptions
     class CallbackCreationError : public Exception
     {
     public:
-        CallbackCreationError(std::string_view triggerName,
-            std::string_view environmentId, std::string_view callback,
-            std::string_view error, DebugInfo info)
+        CallbackCreationError(std::string_view eventName, std::string_view environmentId,
+            std::string_view callback, std::string_view error, DebugInfo info)
             : Exception("CallbackCreationError", info)
         {
-            this->error("Error while creating a Trigger callback"
-                        "\n     Trigger '{}'"
+            this->error("Error while creating an Event callback"
+                        "\n     Event '{}'"
                         "\n     Callback '{}'"
                         "\n     Environment '{}'"
                         "\n     Lua Error : {}",
-                triggerName, callback, environmentId, error);
+                eventName, callback, environmentId, error);
         }
     };
 
-    class TriggerExecutionError : public Exception
+    class EventExecutionError : public Exception
     {
     public:
-        TriggerExecutionError(std::string_view triggerName,
-            std::string_view environmentId, std::string_view callback,
-            std::string_view error, DebugInfo info)
-            : Exception("TriggerExecutionError", info)
+        EventExecutionError(
+            std::string_view eventName, std::string_view listenerId, DebugInfo info)
+            : Exception("EventExecutionError", info)
         {
-            this->error("Error while executing a Trigger callback"
-                        "\n     Trigger '{}'"
-                        "\n     Callback '{}'"
-                        "\n     Environment '{}'"
-                        "\n     Lua Error : {}",
-                triggerName, callback, environmentId, error);
+            this->error("Error while executing an Event callback"
+                        "\n     Event '{}'"
+                        "\n     Listener '{}'",
+                eventName, listenerId);
         }
     };
 
@@ -43,7 +39,7 @@ namespace obe::Event::Exceptions
     public:
         UnknownEvent(std::string_view eventGroup, std::string_view eventName,
             const std::vector<std::string>& existingEvents, DebugInfo info)
-            : Exception("UnknownTrigger", info)
+            : Exception("UnknownEvent", info)
         {
             this->error("Unable to find a Event named '{}' inside EventGroup '{}'",
                 eventName, eventGroup);
@@ -56,82 +52,92 @@ namespace obe::Event::Exceptions
         }
     };
 
-    class UnknownTriggerNamespace : public Exception
+    class UnknownEventNamespace : public Exception
     {
     public:
-        UnknownTriggerNamespace(std::string_view triggerNamespace,
+        UnknownEventNamespace(std::string_view eventNamespace,
             const std::vector<std::string>& existingNamespaces, DebugInfo info)
-            : Exception("UnknownTriggerNamespace", info)
+            : Exception("UnknownEventNamespace", info)
         {
-            this->error("Unable to find a TriggerNamespace named '{}'", triggerNamespace);
+            this->error("Unable to find a EventNamespace named '{}'", eventNamespace);
             std::vector<std::string> suggestions = Utils::String::sortByDistance(
-                triggerNamespace.data(), existingNamespaces, 5);
+                eventNamespace.data(), existingNamespaces, 5);
             std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
                 Utils::String::quote);
-            this->hint("Try one of the following TriggerNamespaces ({}...)",
+            this->hint("Try one of the following EventNamespaces ({}...)",
                 fmt::join(suggestions, ", "));
         }
     };
 
-    class UnknownTriggerGroup : public Exception
+    class UnknownEventGroup : public Exception
     {
     public:
-        UnknownTriggerGroup(std::string_view triggerNamespace,
-            std::string_view triggerGroup, const std::vector<std::string>& existingGroups,
-            DebugInfo info)
-            : Exception("UnknownTriggerGroup", info)
+        UnknownEventGroup(std::string_view eventNamespace, std::string_view eventGroup,
+            const std::vector<std::string>& existingGroups, DebugInfo info)
+            : Exception("UnknownEventGroup", info)
         {
             this->error(
-                "Unable to find a TriggerGroup named '{}' inside TriggerNamespace '{}'",
-                triggerGroup, triggerNamespace);
+                "Unable to find an EventGroup named '{}' inside EventNamespace '{}'",
+                eventGroup, eventNamespace);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(triggerGroup.data(), existingGroups, 5);
+                = Utils::String::sortByDistance(eventGroup.data(), existingGroups, 5);
             std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
                 Utils::String::quote);
-            this->hint("Try one of the following TriggerGroups ({}...)",
+            this->hint("Try one of the following EventGroups ({}...)",
                 fmt::join(suggestions, ", "));
         }
     };
 
-    class TriggerNamespaceAlreadyExists : public Exception
+    class EventNamespaceAlreadyExists : public Exception
     {
     public:
-        TriggerNamespaceAlreadyExists(std::string_view triggerNamespace, DebugInfo info)
-            : Exception("TriggerNamespaceAlreadyExists", info)
+        EventNamespaceAlreadyExists(std::string_view eventNamespace, DebugInfo info)
+            : Exception("EventNamespaceAlreadyExists", info)
         {
-            this->error("A TriggerNamespace named '{}' already exists", triggerNamespace);
-            this->hint("Try creating a TriggerNamespace with a different name that is "
+            this->error("An EventNamespace named '{}' already exists", eventNamespace);
+            this->hint("Try creating a EventNamespace with a different name that is "
                        "not already taken");
         }
     };
 
-    class TriggerGroupAlreadyExists : public Exception
+    class EventGroupAlreadyExists : public Exception
     {
     public:
-        TriggerGroupAlreadyExists(std::string_view triggerNamespace,
-            std::string_view triggerGroup, DebugInfo info)
-            : Exception("TriggerGroupAlreadyExists", info)
+        EventGroupAlreadyExists(
+            std::string_view eventNamespace, std::string_view eventGroup, DebugInfo info)
+            : Exception("EventGroupAlreadyExists", info)
         {
             this->error(
-                "A TriggerGroup named '{}' already exists inside TriggerNamespace '{}'",
-                triggerGroup, triggerNamespace);
-            this->hint("Try creating a TriggerGroup with a different name that is "
+                "An EventGroup named '{}' already exists inside EventNamespace '{}'",
+                eventGroup, eventNamespace);
+            this->hint("Try creating an EventGroup with a different name that is "
                        "not already taken");
         }
     };
 
-    class TriggerGroupNotJoinable : public Exception
+    class EventGroupNotJoinable : public Exception
     {
     public:
-        TriggerGroupNotJoinable(std::string_view triggerNamespace,
-            std::string_view triggerGroup, DebugInfo info)
-            : Exception("TriggerGroupNotJoinable", info)
+        EventGroupNotJoinable(
+            std::string_view eventNamespace, std::string_view eventGroup, DebugInfo info)
+            : Exception("EventGroupNotJoinable", info)
         {
-            this->error("Impossible to join TriggerGroup '{}' inside TriggerNamespace "
+            this->error("Impossible to join EventGroup '{}' inside EventNamespace "
                         "'{}' as it is defined as non-joinable",
-                triggerGroup, triggerNamespace);
-            this->hint("If you want this TriggerGroup to be able to be joined, use "
+                eventGroup, eventNamespace);
+            this->hint("If you want this EventGroup to be able to be joined, use "
                        "group.setJoinable(true) from its manager");
+        }
+    };
+
+    class LuaExecutionError : public Exception
+    {
+    public:
+        LuaExecutionError(std::string_view errorMessage, DebugInfo info)
+            : Exception("LuaExecutionError", info)
+        {
+            this->error(
+                "Lua encountered an error while executing code :\n{}", errorMessage);
         }
     };
 }
