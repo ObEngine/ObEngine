@@ -52,6 +52,11 @@ namespace obe::Event
         throw Exceptions::EventNamespaceAlreadyExists(eventNamespace, EXC_INFO);
     }
 
+    EventNamespaceView EventManager::getNamespace(const std::string& eventNamespace)
+    {
+        return m_namespaces.at(eventNamespace)->getView();
+    }
+
     CallbackScheduler& EventManager::schedule()
     {
         m_schedulers.push_back(std::make_unique<CallbackScheduler>());

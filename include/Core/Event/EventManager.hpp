@@ -34,6 +34,7 @@ namespace obe::Event
          * \brief Gets the root EventGroup
          */
         EventNamespace& createNamespace(const std::string& eventNamespace);
+        EventNamespaceView getNamespace(const std::string& eventNamespace);
 
         CallbackScheduler& schedule();
         vili::node dumpProfilerResults() const;

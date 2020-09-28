@@ -130,11 +130,6 @@ namespace obe::Engine
          * \bind{Events}
          * \asproperty
          */
-        Event::EventNamespaceView getEventNamespace() const;
-        /**
-         * \bind{Event}
-         * \asproperty
-         */
         Event::EventManager& getEventManager() const;
 
         /**
