@@ -11,6 +11,41 @@ namespace obe::Event
         return signature.back();
     }
 
+    EventGroupView::EventGroupView(const EventGroup& eventGroup)
+        : m_group(eventGroup)
+    {
+    }
+
+    std::vector<std::string> EventGroupView::getEventsNames() const
+    {
+        return m_group.getEventsNames();
+    }
+
+    std::vector<EventBase*> EventGroupView::getEvents() const
+    {
+        return m_group.getEvents();
+    }
+
+    std::string EventGroupView::getIdentifier() const
+    {
+        return m_group.getIdentifier();
+    }
+
+    std::string EventGroupView::getName() const
+    {
+        return m_group.getName();
+    }
+
+    bool EventGroupView::isJoinable() const
+    {
+        return m_group.isJoinable();
+    }
+
+    EventBase& EventGroupView::get(const std::string& eventName) const
+    {
+        return m_group.get(eventName);
+    }
+
     std::string EventGroup::getEventName(const std::string& baseName)
     {
         if (const auto alias = m_aliases.find(baseName); alias != m_aliases.end())
@@ -26,11 +61,16 @@ namespace obe::Event
         m_name = name;
     }
 
-    EventBase* EventGroup::get(const std::string& eventName)
+    EventGroupView EventGroup::getView() const
+    {
+        return EventGroupView(*this);
+    }
+
+    EventBase& EventGroup::get(const std::string& eventName) const
     {
         if (const auto event = m_events.find(eventName); event != m_events.end())
         {
-            return event->second.get();
+            return *event->second;
         }
         throw Exceptions::UnknownEvent(
             m_identifier, eventName, this->getEventsNames(), EXC_INFO);
@@ -60,7 +100,7 @@ namespace obe::Event
         return m_joinable;
     }
 
-    std::vector<std::string> EventGroup::getEventsNames()
+    std::vector<std::string> EventGroup::getEventsNames() const
     {
         std::vector<std::string> names;
         names.reserve(m_events.size());
@@ -71,7 +111,7 @@ namespace obe::Event
         return names;
     }
 
-    std::vector<EventBase*> EventGroup::getEvents()
+    std::vector<EventBase*> EventGroup::getEvents() const
     {
         std::vector<EventBase*> events;
         for (auto& event : m_events)

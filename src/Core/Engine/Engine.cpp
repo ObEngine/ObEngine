@@ -364,6 +364,16 @@ namespace obe::Engine
         return *m_triggers;
     }
 
+    Event::EventNamespaceView Engine::getEventNamespace() const
+    {
+        return m_eventNamespace->getView();
+    }
+
+    Event::EventManager& Engine::getEventManager() const
+    {
+        return *m_events;
+    }
+
     Scene::Scene& Engine::getScene() const
     {
         return *m_scene;

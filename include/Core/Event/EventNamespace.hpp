@@ -4,6 +4,31 @@
 
 namespace obe::Event
 {
+    class EventNamespace;
+
+    class EventNamespaceView
+    {
+    private:
+        const EventNamespace& m_namespace;
+
+    public:
+        EventNamespaceView(const EventNamespace& eventNamespace);
+        EventGroupView getGroup(const std::string& group) const;
+        /**
+         * \brief Get all the names of the EventGroup in the given Namespace
+         * \return A std::vector of std::string containing the names of
+         *         all contained EventGroup
+         */
+        [[nodiscard]] std::vector<std::string> getAllGroupsNames() const;
+        /**
+         * \brief Check if an EventGroup exists in the EventNamespace
+         * \param group Name of the EventGroup
+         *        to search
+         * \return true if the EventGroup exists, false otherwise
+         */
+        bool doesGroupExists(const std::string& group) const;
+    };
+
     class EventNamespace
     {
     private:
@@ -26,6 +51,7 @@ namespace obe::Event
          * \return Pointer to the newly joined EventGroup
          */
         EventGroupPtr joinGroup(const std::string& group);
+        EventGroupView getGroup(const std::string& group) const;
         /**
          * \brief Get all the names of the EventGroup in the given Namespace
          * \return A std::vector of std::string containing the names of

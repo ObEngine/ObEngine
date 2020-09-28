@@ -33,7 +33,7 @@ namespace obe::Engine
                 double dt;
             };
 
-            class End
+            struct End
             {
             };
 
@@ -126,6 +126,16 @@ namespace obe::Engine
          * \asproperty
          */
         Triggers::TriggerManager& getTriggerManager() const;
+        /**
+         * \bind{Events}
+         * \asproperty
+         */
+        Event::EventNamespaceView getEventNamespace() const;
+        /**
+         * \bind{Event}
+         * \asproperty
+         */
+        Event::EventManager& getEventManager() const;
 
         /**
          * \bind{Scene}

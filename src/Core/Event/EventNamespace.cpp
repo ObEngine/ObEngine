@@ -3,6 +3,26 @@
 
 namespace obe::Event
 {
+    EventNamespaceView::EventNamespaceView(const EventNamespace& eventNamespace)
+        : m_namespace(eventNamespace)
+    {
+    }
+
+    EventGroupView EventNamespaceView::getGroup(const std::string& group) const
+    {
+        return m_namespace.getGroup(group);
+    }
+
+    std::vector<std::string> EventNamespaceView::getAllGroupsNames() const
+    {
+        return m_namespace.getAllGroupsNames();
+    }
+
+    bool EventNamespaceView::doesGroupExists(const std::string& group) const
+    {
+        return m_namespace.doesGroupExists(group);
+    }
+
     EventNamespace::EventNamespace(const std::string& name)
         : m_name(name)
     {
@@ -39,6 +59,11 @@ namespace obe::Event
             m_name, group, this->getAllGroupsNames(), EXC_INFO);
     }
 
+    EventGroupView EventNamespace::getGroup(const std::string& group) const
+    {
+        return m_groups.at(group).lock()->getView();
+    }
+
     std::vector<std::string> EventNamespace::getAllGroupsNames() const
     {
         std::vector<std::string> allNames;
@@ -58,5 +83,10 @@ namespace obe::Event
     bool EventNamespace::doesGroupExists(const std::string& group) const
     {
         return m_groups.count(group);
+    }
+
+    EventNamespaceView EventNamespace::getView() const
+    {
+        return EventNamespaceView(*this);
     }
 }

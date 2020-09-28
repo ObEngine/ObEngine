@@ -12,6 +12,49 @@
 namespace obe::Event
 {
     std::string stripEventTypename(const std::string& typeName);
+
+    class EventGroup;
+    class EventGroupView
+    {
+    private:
+        const EventGroup& m_group;
+
+    public:
+        EventGroupView(const EventGroup& eventGroup);
+        /**
+         * \brief Get the name of all Events contained in the EventGroup
+         * \return A std::vector of std::string containing the name of all
+         *         Event contained in the EventGroup
+         */
+        [[nodiscard]] std::vector<std::string> getEventsNames() const;
+        /**
+         * \brief Get all the Events contained in the EventGroup
+         * \return A std::vector of Event pointers
+         */
+        [[nodiscard]] std::vector<EventBase*> getEvents() const;
+        /**
+         * \brief Get the full name of the EventGroup (namespace + name)
+         * \return A std::string containing the identifier of the EventGroup
+         */
+        [[nodiscard]] std::string getIdentifier() const;
+        /**
+         * \brief Get the name of the EventGroup
+         * \return A std::string containing the name of the EventGroup
+         */
+        [[nodiscard]] std::string getName() const;
+        /**
+         * \brief Get if the EventGroup is joinable or not
+         * \return true if the EventGroup is joinable, false otherwise
+         */
+        [[nodiscard]] bool isJoinable() const;
+        [[nodiscard]] EventBase& get(const std::string& eventName) const;
+        /**
+         * \brief Get a Event contained in the EventGroup
+         * \return A pointer to the Event if found (throws an error otherwise)
+         */
+        template <class EventType> Event<EventType>& get() const;
+    };
+
     /**
      * \brief Class used to manage multiple Events
      */
@@ -34,6 +77,7 @@ namespace obe::Event
          * \param name Name of the EventGroup
          */
         explicit EventGroup(const std::string& eventNamespace, const std::string& name);
+        EventGroupView getView() const;
         /**
          * \brief Sets if the EventGroup is joinable or not
          * \param joinable true if the EventGroup should be joinable, false
@@ -45,13 +89,13 @@ namespace obe::Event
          * \return true if the EventGroup is joinable, false otherwise
          */
         [[nodiscard]] bool isJoinable() const;
-        EventBase* get(const std::string& eventName);
+        [[nodiscard]] EventBase& get(const std::string& eventName) const;
         /**
          * \brief Get a Event contained in the EventGroup
          * \param eventName Name of the Event to get
          * \return A pointer to the Event if found (throws an error otherwise)
          */
-        template <class EventType> Event<EventType>* get();
+        template <class EventType>[[nodiscard]] Event<EventType>& get();
         /**
          * \brief Creates a new Event in the EventGroup
          * \param eventName Name of the Event to create
@@ -75,12 +119,12 @@ namespace obe::Event
          * \return A std::vector of std::string containing the name of all
          *         Event contained in the EventGroup
          */
-        std::vector<std::string> getEventsNames();
+        [[nodiscard]] std::vector<std::string> getEventsNames() const;
         /**
          * \brief Get all the Events contained in the EventGroup
          * \return A std::vector of Event pointers
          */
-        std::vector<EventBase*> getEvents();
+        [[nodiscard]] std::vector<EventBase*> getEvents() const;
         /**
          * \brief Get the full name of the EventGroup (namespace + name)
          * \return A std::string containing the identifier of the EventGroup
@@ -103,10 +147,15 @@ namespace obe::Event
         vili::node getProfilerResults();
     };
 
-    template <class EventType> Event<EventType>* EventGroup::get()
+    template <class EventType> Event<EventType>& EventGroupView::get() const
+    {
+        return m_group.get<EventType>();
+    }
+
+    template <class EventType> Event<EventType>& EventGroup::get()
     {
         const std::string name = this->getEventName(typeid(EventType).name());
-        return static_cast<Event<EventType>*>(m_events.at(name).get());
+        return *static_cast<Event<EventType>*>(m_events.at(name).get());
     }
 
     template <class EventType> EventGroup& EventGroup::add(const std::string& eventName)
