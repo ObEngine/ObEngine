@@ -28,3 +28,5 @@ function LuaCore.InjectInitInjectionTable()
         This:sendInitArg(k, v);
     end
 end
+
+NEvent = LuaCore.EventNamespaceHooks(Object.type .. "." .. Object.id, "Event");

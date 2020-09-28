@@ -68,8 +68,10 @@ namespace obe::Event
     {
         std::vector<std::string> allNames;
         allNames.reserve(m_groups.size());
-        std::transform(m_groups.begin(), m_groups.end(), allNames.begin(),
-            [](const auto& pair) { return pair.first; });
+        for (const auto& group : m_groups)
+        {
+            allNames.push_back(group.first);
+        }
         return allNames;
     }
 

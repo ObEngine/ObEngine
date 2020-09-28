@@ -59,8 +59,7 @@ namespace obe::Event
         m_listeners.emplace(id, listener);
     }
 
-    void EventBase::removeExternalListener(
-        const std::string& id, const ExternalEventListener& listener)
+    void EventBase::removeExternalListener(const std::string& id)
     {
         Debug::Log->trace(
             "<Event> Removing listener '{}' from Event '{}'", id, m_identifier);

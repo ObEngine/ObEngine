@@ -88,8 +88,7 @@ namespace obe::Event
          * \brief Removes a Listener from the Event
          * \param listener Listener to unregister
          */
-        void removeExternalListener(
-            const std::string& id, const ExternalEventListener& listener);
+        void removeExternalListener(const std::string& id);
         [[nodiscard]] const EventProfiler& getProfiler() const;
     };
 
@@ -133,8 +132,7 @@ namespace obe::Event
          * \brief Removes a Listener from the Event
          * \param listener Listener to unregister
          */
-        void removeListener(
-            const std::string& id, const CppEventListener<EventType>& listener);
+        void removeListener(const std::string& id);
 
         friend class EventGroup;
     };
@@ -207,8 +205,7 @@ namespace obe::Event
     }
 
     template <class EventType>
-    void Event<EventType>::removeListener(
-        const std::string& id, const CppEventListener<EventType>& listener)
+    void Event<EventType>::removeListener(const std::string& id)
     {
         Debug::Log->trace(
             "<Event> Removing listener '{}' from Event '{}'", id, m_identifier);
