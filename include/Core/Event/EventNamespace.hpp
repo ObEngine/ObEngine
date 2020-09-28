@@ -70,5 +70,6 @@ namespace obe::Event
          * \return true if the EventGroup exists, false otherwise
          */
         bool doesGroupExists(const std::string& group) const;
+        [[nodiscard]] EventNamespaceView getView() const;
     };
 }

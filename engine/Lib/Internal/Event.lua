@@ -2,16 +2,16 @@ function LuaCore.EventGroupHooks(GameObject, namespace)
     return {
         __newindex = function(table, key, value)
             if type(value) == "function" then
-                local mt = getmetatable(object);
+                local mt = getmetatable(table);
                 local alias = mt.__alias_function(namespace,
-                                                  object.triggerGroupId, index);
-                GameObject:useTrigger(namespace, object.triggerGroupId, index,
+                table.triggerGroupId, key);
+                GameObject:useTrigger(namespace, table.triggerGroupId, key,
                                       alias);
-                mt.__storage[index] = value;
+                mt.__storage[key] = value;
             elseif type(value) == "nil" then
-                local mt = getmetatable(object);
-                mt.__storage[index] = nil;
-                GameObject:removeTrigger(namespace, object.triggerGroupId, index);
+                local mt = getmetatable(table);
+                mt.__storage[key] = nil;
+                GameObject:removeTrigger(namespace, table.triggerGroupId, key);
             end
         end,
         __index = function(object, index)
