@@ -9,6 +9,19 @@
 #include <Event/Event.hpp>
 #include <Event/EventData.hpp>
 
+template <typename T> class HasId
+{
+private:
+    template <typename C> static std::true_type test(decltype(&C::id));
+    template <typename C> static std::false_type test(...);
+
+public:
+    enum
+    {
+        value = sizeof(test<T>(0)) == sizeof(std::true_type)
+    };
+};
+
 namespace obe::Event
 {
     std::string stripEventTypename(const std::string& typeName);
@@ -63,11 +76,8 @@ namespace obe::Event
     private:
         std::string m_name;
         std::string m_identifier;
-        std::map<std::string, std::string> m_aliases;
         std::map<std::string, std::unique_ptr<EventBase>> m_events;
         bool m_joinable = false;
-
-        std::string getEventName(const std::string& baseName);
 
     public:
         /**
@@ -95,25 +105,36 @@ namespace obe::Event
          * \param eventName Name of the Event to get
          * \return A pointer to the Event if found (throws an error otherwise)
          */
-        template <class EventType>[[nodiscard]] Event<EventType>& get();
+        template <class EventType>
+        [[nodiscard]] Event<EventType>& get(const std::string& eventName = "");
         /**
          * \brief Creates a new Event in the EventGroup
          * \param eventName Name of the Event to create
          * \return Pointer to the EventGroup to chain calls
          */
-        template <class EventType> EventGroup& add(const std::string& eventName = "");
+        template <class EventType>
+        typename std::enable_if<HasId<EventType>::value>::type add();
+        template <class EventType> void add(const std::string& eventName);
         /**
          * \brief Removes a Event from the EventGroup
          * \param eventName Name of the Event to remove
          * \return Pointer to the EventGroup to chain calls
          */
-        EventGroup& remove(const std::string& eventName);
+        void remove(const std::string& eventName);
         /**
          * \brief Triggers a Event
          * \param event event
          * \return Pointer to the EventGroup to chain calls
          */
-        template <class EventType> EventGroup& trigger(EventType event);
+        template <class EventType> void trigger(EventType event);
+        /**
+         * \brief Triggers a Event
+         * \param eventName name of the Event to trigger
+         * \param event event
+         * \return Pointer to the EventGroup to chain calls
+         */
+        template <class EventType>
+        void trigger(const std::string& eventName, EventType event);
         /**
          * \brief Get the name of all Events contained in the EventGroup
          * \return A std::vector of std::string containing the name of all
@@ -139,11 +160,12 @@ namespace obe::Event
         /**
          * \brief Register a callback for when Event::addListener is called
          */
-        // void onAddListener(const std::string& eventName, OnListenerChange callback);
+        void onAddListener(const std::string& eventName, OnListenerChange callback) const;
         /**
          * \brief Register a callback for when Event::removeListener is called
          */
-        // void onRemoveListener(const std::string& eventName, OnListenerChange callback);
+        void onRemoveListener(
+            const std::string& eventName, OnListenerChange callback) const;
         vili::node getProfilerResults();
     };
 
@@ -152,39 +174,53 @@ namespace obe::Event
         return m_group.get<EventType>();
     }
 
-    template <class EventType> Event<EventType>& EventGroup::get()
+    template <class EventType>
+    Event<EventType>& EventGroup::get(const std::string& eventName)
     {
-        const std::string name = this->getEventName(typeid(EventType).name());
+        std::string name;
+        if (!eventName.empty())
+        {
+            name = eventName;
+        }
+        else if constexpr (HasId<EventType>::value)
+        {
+            name = EventType::id;
+        }
         return *static_cast<Event<EventType>*>(m_events.at(name).get());
     }
 
-    template <class EventType> EventGroup& EventGroup::add(const std::string& eventName)
+    template <class EventType>
+    typename std::enable_if<HasId<EventType>::value>::type EventGroup::add()
     {
-        std::string name = typeid(EventType).name();
-        if (!eventName.empty())
+        this->add<EventType>(EventType::id.data());
+    }
+
+    template <class EventType> void EventGroup::add(const std::string& eventName)
+    {
+        if (!m_events.count(eventName))
         {
-            m_aliases[name] = eventName;
-            name = eventName;
+            Debug::Log->debug("<EventGroup> Add Event '{}' to EventGroup '{}'", eventName,
+                m_identifier);
+            m_events.emplace(
+                eventName, std::make_unique<Event<EventType>>(m_identifier, eventName));
         }
         else
         {
-            const std::string strippedTypename = stripEventTypename(name);
-            m_aliases[name] = strippedTypename;
-            name = strippedTypename;
+            throw Exceptions::EventAlreadyExists(m_identifier, eventName, EXC_INFO);
         }
-        Debug::Log->debug(
-            "<EventGroup> Add Event '{}' to EventGroup '{}'", name, m_identifier);
-        m_events.emplace(name, std::make_unique<Event<EventType>>(m_identifier, name));
-        return *this;
     }
 
-    template <class EventType> EventGroup& EventGroup::trigger(EventType event)
+    template <class EventType> void EventGroup::trigger(EventType event)
     {
-        const std::string name = this->getEventName(typeid(event).name());
-        Debug::Log->trace("<EventGroup> Triggering Event '{}' from EventGroup '{}'", name,
-            m_identifier);
-        static_cast<Event<EventType>*>(m_events.at(name).get())->trigger(event);
-        return *this;
+        this->trigger(EventType::id.data(), event);
+    }
+
+    template <class EventType>
+    void EventGroup::trigger(const std::string& eventName, EventType event)
+    {
+        Debug::Log->trace("<EventGroup> Triggering Event '{}' from EventGroup '{}'",
+            eventName, m_identifier);
+        static_cast<Event<EventType>*>(m_events.at(eventName).get())->trigger(event);
     }
 
     using EventGroupPtr = std::shared_ptr<EventGroup>;

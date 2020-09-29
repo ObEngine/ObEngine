@@ -1,15 +1,14 @@
 #include <Input/InputAction.hpp>
-#include <Triggers/TriggerManager.hpp>
 #include <Utils/VectorUtils.hpp>
 #include <utility>
 
 namespace obe::Input
 {
-    InputAction::InputAction(Triggers::TriggerGroup* triggerPtr, const std::string& id)
+    InputAction::InputAction(Event::EventGroup* actionsEvents, const std::string& id)
         : Identifiable(id)
     {
-        m_actionTrigger = triggerPtr;
-        triggerPtr->add(id);
+        e_actions = actionsEvents;
+        e_actions->add<Events::Actions::Action>(id);
     }
 
     void InputAction::addCondition(const InputCondition& condition)
@@ -75,8 +74,9 @@ namespace obe::Input
                         const InputActionEvent ev(*this, condition);
                         if (m_callback)
                             m_callback(ev);
-                        m_actionTrigger->pushParameter(m_id, "event", ev);
-                        m_actionTrigger->trigger(m_id);
+
+                        e_actions->trigger(
+                            m_id, Events::Actions::Action { *this, condition });
                     }
                 }
                 else

@@ -22,7 +22,7 @@ namespace obe::Network::Bindings
             = NetworkNamespace.new_usertype<obe::Network::NetworkHandler>(
                 "NetworkHandler", sol::call_constructor,
                 sol::constructors<obe::Network::NetworkHandler(
-                    obe::Triggers::TriggerManager&)>());
+                    obe::Event::EventNamespace&)>());
         bindNetworkHandler["handleTriggers"]
             = &obe::Network::NetworkHandler::handleTriggers;
     }
@@ -33,11 +33,11 @@ namespace obe::Network::Bindings
             = NetworkNamespace.new_usertype<obe::Network::TcpServer>("TcpServer",
                 sol::call_constructor,
                 sol::constructors<obe::Network::TcpServer(
-                                      obe::Triggers::TriggerManager&, unsigned short),
+                                      obe::Event::EventNamespace&, unsigned short),
                     obe::Network::TcpServer(
-                        obe::Triggers::TriggerManager&, unsigned short, std::string),
-                    obe::Network::TcpServer(obe::Triggers::TriggerManager&,
-                        unsigned short, std::string, std::string)>());
+                        obe::Event::EventNamespace&, unsigned short, std::string),
+                    obe::Network::TcpServer(obe::Event::EventNamespace&, unsigned short,
+                        std::string, std::string)>());
         bindTcpServer["update"] = &obe::Network::TcpServer::update;
         bindTcpServer["setBufferSize"] = &obe::Network::TcpServer::setBufferSize;
     }

@@ -2,8 +2,28 @@
 
 #include <SFML/Network.hpp>
 
-#include <Triggers/TriggerGroup.hpp>
-#include <Triggers/TriggerManager.hpp>
+#include <Event/EventGroup.hpp>
+#include <Event/EventNamespace.hpp>
+
+namespace obe::Events::Network
+{
+    struct Connected
+    {
+        static constexpr std::string_view id = "Connected";
+        const std::string ip;
+    };
+
+    struct Disconnected
+    {
+        static constexpr std::string_view id = "Disconnected";
+    };
+
+    struct DataReceived
+    {
+        static constexpr std::string_view id = "DataReceived";
+        const std::string content;
+    };
+}
 
 namespace obe::Network
 {
@@ -18,10 +38,11 @@ namespace obe::Network
         size_t m_received;
         sf::Socket::Status m_status;
         char m_data[4096];
-        Triggers::TriggerGroupPtr t_socket;
+        Event::EventGroupPtr e_network;
+        std::string m_ip;
 
     public:
-        NetworkHandler(Triggers::TriggerManager& triggers);
+        NetworkHandler(Event::EventNamespace& eventNamespace);
         void handleTriggers();
     };
 } // namespace obe::Network

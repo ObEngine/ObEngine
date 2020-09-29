@@ -22,7 +22,7 @@ namespace obe::Engine::Bindings
         bindEngine["Input"] = sol::property(&obe::Engine::Engine::getInputManager);
         bindEngine["Framerate"]
             = sol::property(&obe::Engine::Engine::getFramerateManager);
-        bindEngine["Triggers"] = sol::property(&obe::Engine::Engine::getTriggerManager);
+        bindEngine["Events"] = sol::property(&obe::Engine::Engine::getEventManager);
         bindEngine["Scene"] = sol::property(&obe::Engine::Engine::getScene);
         bindEngine["Cursor"] = sol::property(&obe::Engine::Engine::getCursor);
         bindEngine["Window"] = sol::property(&obe::Engine::Engine::getWindow);

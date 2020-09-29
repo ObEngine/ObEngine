@@ -40,4 +40,12 @@ namespace obe::Event
     }
 
     using ExternalEventListener = std::variant<LuaEventListener>;
+
+    enum class ListenerChangeState
+    {
+        Added,
+        Removed
+    };
+
+    using OnListenerChange = std::function<void(ListenerChangeState, const std::string&)>;
 }

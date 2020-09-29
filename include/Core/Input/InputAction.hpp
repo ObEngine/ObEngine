@@ -3,10 +3,10 @@
 #include <functional>
 #include <vector>
 
+#include <Event/EventGroup.hpp>
 #include <Input/InputActionEvent.hpp>
 #include <Input/InputCondition.hpp>
 #include <Time/Chronometer.hpp>
-#include <Triggers/TriggerGroup.hpp>
 #include <Types/Identifiable.hpp>
 
 namespace obe::Input
@@ -22,7 +22,7 @@ namespace obe::Input
     class InputAction : public Types::Identifiable
     {
     private:
-        Triggers::TriggerGroup* m_actionTrigger;
+        Event::EventGroup* e_actions;
         ActionCallback m_callback;
         std::vector<InputCondition> m_conditions;
         std::vector<std::string> m_contexts;
@@ -34,10 +34,10 @@ namespace obe::Input
     public:
         /**
          * \brief Creates a new InputAction
-         * \param triggerPtr Pointer to the TriggerGroup
+         * \param actionsEvents Pointer to the Actions EventGroup
          * \param id Id of the InputAction
          */
-        explicit InputAction(Triggers::TriggerGroup* triggerPtr, const std::string& id);
+        explicit InputAction(Event::EventGroup* actionsEvents, const std::string& id);
         /**
          * \brief Adds an InputCondition to the InputAction
          * \param condition An InputCondition to add to the InputAction
@@ -101,3 +101,12 @@ namespace obe::Input
         bool isEnabled() const;
     };
 } // namespace obe::Input
+
+namespace obe::Events::Actions
+{
+    struct Action
+    {
+        Input::InputAction& action;
+        Input::InputCondition& condition;
+    };
+};

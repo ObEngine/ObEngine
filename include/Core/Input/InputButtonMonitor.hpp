@@ -2,9 +2,18 @@
 
 #include <memory>
 
+#include <Event/EventGroup.hpp>
 #include <Input/InputButton.hpp>
 #include <Input/InputButtonState.hpp>
-#include <Triggers/TriggerGroup.hpp>
+
+namespace obe::Events::Keys
+{
+    struct StateChanged
+    {
+        const Input::InputButtonState state;
+        const Input::InputButtonState previousState;
+    };
+}
 
 namespace obe::Input
 {
@@ -43,6 +52,6 @@ namespace obe::Input
          * \brief Updates the InputButtonMonitor (needed to modify the linked
          *        InputButtonState)
          */
-        void update(Triggers::TriggerGroupPtr triggers);
+        void update(Event::EventGroupPtr events);
     };
 } // namespace obe::Input

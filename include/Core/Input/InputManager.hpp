@@ -4,9 +4,8 @@
 
 #include <vili/node.hpp>
 
+#include <Event/EventNamespace.hpp>
 #include <Input/InputAction.hpp>
-#include <Triggers/TriggerGroup.hpp>
-#include <Triggers/TriggerManager.hpp>
 #include <Types/Togglable.hpp>
 
 namespace obe::Input
@@ -22,22 +21,21 @@ namespace obe::Input
         std::unordered_map<std::string, std::unique_ptr<InputButton>> m_inputs;
         std::vector<std::weak_ptr<InputButtonMonitor>> m_monitors;
         std::vector<std::shared_ptr<InputButtonMonitor>> m_key_monitors;
-        Triggers::TriggerGroupPtr t_actions;
-        Triggers::TriggerGroupPtr t_inputs;
+        Event::EventGroupPtr e_actions;
+        Event::EventGroupPtr e_inputs;
         std::vector<std::shared_ptr<InputAction>> m_allActions {};
         std::vector<InputAction*> m_currentActions {};
         bool isActionCurrentlyInUse(const std::string& actionId);
         void createInputMap();
         void createGamepadMap();
-        void createTriggerGroups(Triggers::TriggerManager& triggers);
-        std::vector<std::string> getAllInputButtonNames() const;
+        void createEvents();
+        [[nodiscard]] std::vector<std::string> getAllInputButtonNames() const;
 
     public:
         /**
          * \brief Creates a new KeyboardManager
          */
-        InputManager();
-        void init(Triggers::TriggerManager& triggers);
+        InputManager(Event::EventNamespace& eventNamespace);
         /**
          * \brief Get if a KeyboardAction exists
          * \param actionId Id of the KeyboardAction to check the existence

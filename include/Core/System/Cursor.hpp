@@ -6,10 +6,52 @@
 #include <SFML/Window/Mouse.hpp>
 
 #include <Animation/Animator.hpp>
+#include <Event/EventGroup.hpp>
+#include <Event/EventNamespace.hpp>
 #include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
-#include <Triggers/TriggerGroup.hpp>
-#include <Triggers/TriggerManager.hpp>
+
+namespace obe::Events::Cursor
+{
+    struct Move
+    {
+        static constexpr std::string_view id = "Move";
+        int x;
+        int y;
+        int previousX;
+        int previousY;
+    };
+
+    struct Press
+    {
+        static constexpr std::string_view id = "Press";
+        int x;
+        int y;
+        bool left;
+        bool middle;
+        bool right;
+    };
+
+    struct Hold
+    {
+        static constexpr std::string_view id = "Hold";
+        int x;
+        int y;
+        bool left;
+        bool middle;
+        bool right;
+    };
+
+    struct Release
+    {
+        static constexpr std::string_view id = "Release";
+        int x;
+        int y;
+        bool left;
+        bool middle;
+        bool right;
+    };
+}
 
 namespace obe::System
 {
@@ -26,7 +68,7 @@ namespace obe::System
         int m_constrainedY = 0;
         bool m_visible = true;
         System::Window& m_window;
-        Triggers::TriggerGroupPtr m_cursorTriggers;
+        Event::EventGroupPtr e_cursor;
         std::function<std::pair<int, int>(Cursor*)> m_constraint;
         std::function<bool()> m_constraintCondition;
         std::map<sf::Mouse::Button, bool> m_buttonState;
@@ -35,7 +77,7 @@ namespace obe::System
         /**
          * \brief Creates a Cursor
          */
-        explicit Cursor(System::Window& window, Triggers::TriggerManager& triggers);
+        explicit Cursor(System::Window& window, Event::EventNamespace& eventNamespace);
         /**
          * \brief Gets the x Coordinate of the Cursor Position (Constrained)
          * \return An int containing the x Coordinate of the Cursor Position

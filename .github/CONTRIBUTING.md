@@ -21,6 +21,7 @@ Right now I [Sygmei](https://github.com/Sygmei) work mostly alone on the project
 - Camera : The camera of the scene
 - Collisions : Handles collisions / Polygonal Colliders
 - Coordinates : All the coordinates operations in there
+- Events : Events for the GameObjects
 - FramerateManager : Handles time / deltatime / framerate
 - Game : Plays the game
 - GameObject : An Object that can contains those components : Animator, Sprite, PolygonalCollider, Script
@@ -32,7 +33,6 @@ Right now I [Sygmei](https://github.com/Sygmei) work mostly alone on the project
 - Scene : Scene-like container
 - Script : All the Lua binding stuff in there
 - Toolkit : Nice terminal to help with project management
-- Triggers : Triggers / Events for the GameObjects
 
 ## How can I contribute
 

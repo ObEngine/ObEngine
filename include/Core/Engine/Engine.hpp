@@ -10,7 +10,6 @@
 #include <System/Plugin.hpp>
 #include <System/Window.hpp>
 #include <Time/FramerateManager.hpp>
-#include <Triggers/TriggerManager.hpp>
 #include <sol/sol.hpp>
 
 namespace obe::Bindings
@@ -18,31 +17,33 @@ namespace obe::Bindings
     void IndexAllBindings(sol::state_view state);
 }
 
+namespace obe::Events::Game
+{
+    struct Start
+    {
+        static constexpr std::string_view id = "Start";
+    };
+
+    struct Update
+    {
+        static constexpr std::string_view id = "Update";
+        double dt;
+    };
+
+    struct End
+    {
+        static constexpr std::string_view id = "End";
+    };
+
+    struct Render
+    {
+        static constexpr std::string_view id = "Render";
+    };
+
+}
+
 namespace obe::Engine
 {
-    namespace Events
-    {
-        namespace Game
-        {
-            struct Start
-            {
-            };
-
-            struct Update
-            {
-                double dt;
-            };
-
-            struct End
-            {
-            };
-
-            struct Render
-            {
-            };
-        }
-    }
-
     class Engine
     {
     protected:
@@ -59,19 +60,17 @@ namespace obe::Engine
         std::unique_ptr<ResourceManager> m_resources {};
         std::unique_ptr<Input::InputManager> m_input {};
         std::unique_ptr<Time::FramerateManager> m_framerate;
-        std::unique_ptr<Triggers::TriggerManager> m_triggers;
         std::unique_ptr<Event::EventManager> m_events;
         Event::EventNamespace* m_eventNamespace;
 
         // TriggerGroups
-        Event::EventGroupPtr t_game {};
+        Event::EventGroupPtr e_game {};
 
         // Initialization
         void initConfig();
         void initLogger() const;
         void initScript();
         void initEvents();
-        void initTriggers();
         void initInput();
         void initFramerate();
         void initResources();
@@ -83,7 +82,7 @@ namespace obe::Engine
         // Main loop
         void handleWindowEvents() const;
         void update() const;
-        void render();
+        void render() const;
 
         // Cleaning
         void clean() const;
@@ -94,7 +93,7 @@ namespace obe::Engine
         ~Engine();
 
         void init();
-        void run();
+        void run() const;
 
         /**
          * \bind{Audio}
@@ -121,11 +120,6 @@ namespace obe::Engine
          * \asproperty
          */
         Time::FramerateManager& getFramerateManager() const;
-        /**
-         * \bind{Triggers}
-         * \asproperty
-         */
-        Triggers::TriggerManager& getTriggerManager() const;
         /**
          * \bind{Events}
          * \asproperty

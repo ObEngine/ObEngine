@@ -2,7 +2,6 @@
 
 #include <Input/InputManager.hpp>
 #include <SFML/Window/Joystick.hpp>
-#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Input
 {
@@ -301,19 +300,18 @@ namespace obe::Input
         }
     }
 
-    void InputManager::createTriggerGroups(Triggers::TriggerManager& triggers)
+    void InputManager::createEvents()
     {
-        t_inputs = triggers.createTriggerGroup("Event", "Keys");
         for (auto const& [key, val] : m_inputs)
         {
             Input::InputButton* button = val.get();
-            t_inputs->add(button->getName());
-            t_inputs->onRegister(
-                button->getName(), [button, this](const Triggers::TriggerEnv& env) {
+            e_inputs->add<Events::Keys::StateChanged>(button->getName());
+            e_inputs->onAddListener(button->getName(),
+                [button, this](Event::ListenerChangeState, const std::string&) {
                     m_key_monitors.push_back(this->monitor(*button));
                 });
-            t_inputs->onUnregister(
-                button->getName(), [button, this](const Triggers::TriggerEnv& env) {
+            e_inputs->onRemoveListener(button->getName(),
+                [button, this](Event::ListenerChangeState, const std::string&) {
                     const auto position = std::find_if(m_key_monitors.begin(),
                         m_key_monitors.end(), [button](const auto& monitor) {
                             return &monitor->getButton() == button;

@@ -26,6 +26,16 @@ namespace obe::Event
         }
     }
 
+    void EventBase::onAddListener(OnListenerChange callback)
+    {
+        m_onAddListener = callback;
+    }
+
+    void EventBase::onRemoveListener(OnListenerChange callback)
+    {
+        m_onRemoveListener = callback;
+    }
+
     EventBase::EventBase(
         const std::string& parentName, const std::string& name, bool startState)
     {
@@ -57,6 +67,10 @@ namespace obe::Event
         Debug::Log->trace(
             "<Event> Adding new listener '{}' to Event '{}'", id, m_identifier);
         m_listeners.emplace(id, listener);
+        if (m_onAddListener)
+        {
+            m_onAddListener(ListenerChangeState::Added, id);
+        }
     }
 
     void EventBase::removeExternalListener(const std::string& id)
@@ -64,23 +78,14 @@ namespace obe::Event
         Debug::Log->trace(
             "<Event> Removing listener '{}' from Event '{}'", id, m_identifier);
         m_listeners.erase(id);
+        if (m_onRemoveListener)
+        {
+            m_onRemoveListener(ListenerChangeState::Removed, id);
+        }
     }
 
     const EventProfiler& EventBase::getProfiler() const
     {
         return m_profiler;
     }
-
-    /*void Event::onAddListener(OnListenerChange callback)
-    {
-        Debug::Log->trace("<Event> Add onRegister callback to Event '{}'", m_identifier);
-        m_onAddListener = callback;
-    }
-
-    void Event::onRemoveListener(OnListenerChange callback)
-    {
-        Debug::Log->trace(
-            "<Event> Add onUnregister callback to Event '{}'", m_identifier);
-        m_onRemoveListener = callback;
-    }*/
 } // namespace obe::Event

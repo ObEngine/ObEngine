@@ -34,7 +34,6 @@ namespace obe::Event
     };
 
     using EventProfiler = std::unordered_map<std::string, CallbackProfiler>;
-    // using OnListenerChange = std::function<void(const EventListener&)>;
 
     class EventBase
     {
@@ -47,11 +46,17 @@ namespace obe::Event
         bool m_triggered = false;
         bool m_enabled = true;
         EventProfiler m_profiler;
+        OnListenerChange m_onAddListener;
+        OnListenerChange m_onRemoveListener;
 
         template <class EventType> void trigger(const EventType& event);
         template <class EventType, class ListenerType>
         void callListener(const std::string& listenerId, ListenerType&& listener,
             const EventType& event);
+        void onAddListener(OnListenerChange callback);
+        void onRemoveListener(OnListenerChange callback);
+
+        friend class EventGroup;
 
     public:
         /**
@@ -108,8 +113,6 @@ namespace obe::Event
          * \brief Event callbacks
          */
         void trigger(const EventType& event);
-        // void onAddListener(OnListenerChange callback);
-        // void onRemoveListener(OnListenerChange callback);
 
     public:
         /**
@@ -202,6 +205,10 @@ namespace obe::Event
         Debug::Log->trace(
             "<Event> Adding new listener '{}' to Event '{}'", id, m_identifier);
         m_listeners.emplace(id, listener);
+        if (m_onAddListener)
+        {
+            m_onAddListener(ListenerChangeState::Added, id);
+        }
     }
 
     template <class EventType>
@@ -210,5 +217,9 @@ namespace obe::Event
         Debug::Log->trace(
             "<Event> Removing listener '{}' from Event '{}'", id, m_identifier);
         m_listeners.erase(id);
+        if (m_onRemoveListener)
+        {
+            m_onRemoveListener(ListenerChangeState::Removed, id);
+        }
     }
 } // namespace obe::Event

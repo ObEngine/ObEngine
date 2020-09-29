@@ -115,6 +115,20 @@ namespace obe::Event::Exceptions
         }
     };
 
+    class EventAlreadyExists : public Exception
+    {
+    public:
+        EventAlreadyExists(std::string_view eventGroupIdentifier,
+            std::string_view eventName, DebugInfo info)
+            : Exception("EventAlreadyExists", info)
+        {
+            this->error("An Event named '{}' already exists inside EventGroup '{}'",
+                eventName, eventGroupIdentifier);
+            this->hint("Try creating an Event with a different name that is "
+                       "not already taken");
+        }
+    };
+
     class EventGroupNotJoinable : public Exception
     {
     public:

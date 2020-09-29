@@ -4,8 +4,6 @@
 #include <Script/GameObject.hpp>
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
-#include <Triggers/Trigger.hpp>
-#include <Triggers/TriggerManager.hpp>
 #include <Utils/StringUtils.hpp>
 
 #include <utility>
@@ -91,10 +89,9 @@ namespace obe::Script
     }
 
     // GameObject
-    GameObject::GameObject(Triggers::TriggerManager& triggers, sol::state_view lua,
-        const std::string& type, const std::string& id)
+    GameObject::GameObject(
+        sol::state_view lua, const std::string& type, const std::string& id)
         : Identifiable(id)
-        , m_triggers(triggers)
         , m_lua(std::move(lua))
     {
         m_type = type;
@@ -110,7 +107,7 @@ namespace obe::Script
             if (m_hasScriptEngine)
             {
                 m_environment["__OBJECT_INIT"] = true;
-                t_local->trigger("Init");
+                // t_local->trigger("Init");
             }
         }
         else
@@ -125,8 +122,8 @@ namespace obe::Script
         if (m_hasScriptEngine)
         {
             m_environment = sol::lua_nil;
-            t_local.reset();
-            m_triggers.removeNamespace(m_privateKey);
+            // t_local.reset();
+            // m_triggers.removeNamespace(m_privateKey);
         }
     }
 
@@ -136,13 +133,7 @@ namespace obe::Script
         Debug::Log->debug("<GameObject> Sending Local.Init argument {0} to "
                           "GameObject {1} ({2}) (From Lua)",
             argName, m_id, m_type);
-        t_local->pushParameterFromLua("Init", argName, value);
-    }
-
-    void GameObject::registerTrigger(
-        std::weak_ptr<Triggers::Trigger> trg, const std::string& callbackName)
-    {
-        m_registeredTriggers.emplace_back(trg, callbackName);
+        // t_local->pushParameterFromLua("Init", argName, value);
     }
 
     void GameObject::loadGameObject(
@@ -164,12 +155,12 @@ namespace obe::Script
                 + Utils::String::getRandomKey(Utils::String::Alphabet, 1)
                 + Utils::String::getRandomKey(
                     Utils::String::Alphabet + Utils::String::Numbers, 11);
-            m_triggers.createNamespace(m_privateKey);
-            t_local = m_triggers.createTriggerGroup(m_privateKey, "Local");
+            // m_triggers.createNamespace(m_privateKey);
+            // t_local = m_triggers.createTriggerGroup(m_privateKey, "Local");
 
             m_environment["This"] = this;
 
-            t_local->add("Init").add("Delete");
+            // t_local->add("Init").add("Delete");
 
             m_environment["__OBJECT_TYPE"] = m_type;
             m_environment["__OBJECT_ID"] = m_id;
@@ -335,7 +326,7 @@ namespace obe::Script
     void GameObject::useTrigger(const std::string& trNsp, const std::string& trGrp,
         const std::string& trName, const std::string& callAlias)
     {
-        if (trName == "*")
+        /*if (trName == "*")
         {
             std::vector<std::string> allTrg
                 = m_triggers.getAllTriggersNameFromTriggerGroup(trNsp, trGrp);
@@ -381,15 +372,15 @@ namespace obe::Script
                     .lock()
                     ->registerEnvironment(m_id, m_environment, callbackName, &m_active);
             }
-        }
+        }*/
     }
 
     void GameObject::removeTrigger(const std::string& trNsp, const std::string& trGrp,
         const std::string& trName) const
     {
-        m_triggers.getTrigger(trNsp, trGrp, trName)
+        /*m_triggers.getTrigger(trNsp, trGrp, trName)
             .lock()
-            ->unregisterEnvironment(m_environment);
+            ->unregisterEnvironment(m_environment);*/
     }
 
     void GameObject::exec(const std::string& query)
@@ -403,13 +394,13 @@ namespace obe::Script
         {
             Debug::Log->debug(
                 "GameObject::deleteObject called for '{0}' ({1})", m_id, m_type);
-            if (m_hasScriptEngine)
-                t_local->trigger("Delete");
+            /*if (m_hasScriptEngine)
+                t_local->trigger("Delete");*/
             this->deletable = true;
             m_active = false;
             if (m_hasScriptEngine)
             {
-                for (auto& triggerRef : m_registeredTriggers)
+                /*for (auto& triggerRef : m_registeredTriggers)
                 {
                     if (auto trigger = triggerRef.first.lock())
                     {
@@ -420,7 +411,7 @@ namespace obe::Script
                 {
                     m_environment["__TRIGGERS"][trigger->getTriggerLuaTableName()]
                         = sol::lua_nil;
-                }
+                }*/
                 for (auto [k, _] : m_environment)
                 {
                     m_environment[k] = sol::lua_nil;
