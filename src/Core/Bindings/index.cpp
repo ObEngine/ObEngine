@@ -15,6 +15,7 @@
 #include <Bindings/obe/Config/Templates/Templates.hpp>
 #include <Bindings/obe/Debug/Debug.hpp>
 #include <Bindings/obe/Engine/Engine.hpp>
+#include <Bindings/obe/Engine/Events/Game/Game.hpp>
 #include <Bindings/obe/Engine/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Event/Event.hpp>
 #include <Bindings/obe/Event/Exceptions/Exceptions.hpp>
@@ -122,6 +123,8 @@ namespace obe::Bindings
         state["obe"]["Utils"]["Vector"].get_or_create<sol::table>();
         state["vili"]["utils"]["string"].get_or_create<sol::table>();
         state["obe"]["System"]["Constraints"].get_or_create<sol::table>();
+        state["obe"]["Engine"]["Events"].get_or_create<sol::table>();
+        state["obe"]["Engine"]["Events"]["Game"].get_or_create<sol::table>();
         obe::Animation::Bindings::LoadClassAnimation(state);
         obe::Animation::Bindings::LoadClassAnimationGroup(state);
         obe::Animation::Bindings::LoadClassAnimator(state);
