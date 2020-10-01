@@ -104,25 +104,21 @@ namespace obe::Collision
             }
         }
 
-        const Transform::UnitVector destPos
-            = (this->getCentroid() + offset).to<Transform::Units::ScenePixels>();
         if (!reachableColliders.empty())
         {
-            std::pair<double, Transform::UnitVector> minDist(-1, Transform::UnitVector());
-            for (auto& reachable : reachableColliders) {
-                double dist = std::sqrt(std::pow(reachable.second.x - destPos.x, 2)
-                    + std::pow(reachable.second.y - destPos.y, 2));
-                if (minDist.first == -1 || minDist.first > dist)
+            // Get lowest distance between this collider and a reachable collider
+            for (auto& reachable : reachableColliders)
+            {
+                if (reachable.second.magnitude() < collData.offset.to(Transform::Units::ScenePixels).magnitude())
                 {
-                    minDist = std::pair<double, Transform::UnitVector>(
-                        dist, reachable.second);
+                    collData.offset = reachable.second;
                 }
             }
 
-            collData.offset = minDist.second;
+            // Get touched colliders (=> in range of lowest distance)
             for (auto& reachable : reachableColliders)
             {
-                if (reachable.second == minDist.second)
+                if (reachable.second == collData.offset)
                 {
                     collData.colliders.push_back(reachable.first);
                 }
