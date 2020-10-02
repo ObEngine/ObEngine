@@ -1,13 +1,12 @@
 version: "{build}"
 
-os: Visual Studio 2017
+os: Visual Studio 2019
 
 platform: x64
 
 environment:
   MSVC_DEFAULT_OPTIONS: ON
-  SFML_DIR: C:\Libraries\SFML-2.5.0
-  Qt5_DIR: C:\Qt\5.11.1\msvc2017_64\lib\cmake\Qt5
+  SFML_DIR: C:\Libraries\SFML-2.5.1
 
 configuration:
   - Release
@@ -18,29 +17,24 @@ init:
 
 clone_folder: C:\projects\ObEngine
 
-branches:
-  only:
-    - master
-
 before_build:
   - cmd: cd C:\Libraries
-  - ps: Start-FileDownload "https://www.sfml-dev.org/files/SFML-2.5.0-windows-vc15-64-bit.zip"
-  - cmd: 7z.exe x SFML-2.5.0-windows-vc15-64-bit.zip
+  - ps: Start-FileDownload "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip"
+  - cmd: 7z.exe x SFML-2.5.1-windows-vc15-64-bit.zip
   - cmd: cd C:\projects\ObEngine
-  - cmd: cmake -G "Visual Studio 15 2017 Win64" -DSFML_DIR=%SFML_DIR% -DQt5_DIR=%Qt5_DIR% .
+  - cmd: cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR=%SFML_DIR% .
   - cmd: dir
 
 before_package:
   - cmd: cd C:\projects\ObEngine
   - cmd: mkdir Release
   - cmd: cd Release
-  - cmd: copy "C:\Libraries\SFML-2.5.0\bin\openal32.dll"
-  - cmd: copy "C:\Libraries\SFML-2.5.0\bin\sfml-audio-2.dll"
-  - cmd: copy "C:\Libraries\SFML-2.5.0\bin\sfml-graphics-2.dll"
-  - cmd: copy "C:\Libraries\SFML-2.5.0\bin\sfml-network-2.dll"
-  - cmd: copy "C:\Libraries\SFML-2.5.0\bin\sfml-system-2.dll"
-  - cmd: copy "C:\Libraries\SFML-2.5.0\bin\sfml-window-2.dll"
-  - cmd: copy "C:\projects\ObEngine\src\Dev\Release\ObEngineDev.exe"
+  - cmd: copy "%SFML_DIR%\bin\openal32.dll"
+  - cmd: copy "%SFML_DIR%\bin\sfml-audio-2.dll"
+  - cmd: copy "%SFML_DIR%\bin\sfml-graphics-2.dll"
+  - cmd: copy "%SFML_DIR%\bin\sfml-network-2.dll"
+  - cmd: copy "%SFML_DIR%\bin\sfml-system-2.dll"
+  - cmd: copy "%SFML_DIR%\bin\sfml-window-2.dll"
   - cmd: copy "C:\projects\ObEngine\src\Player\Release\ObEnginePlayer.exe"
   - cmd: xcopy /E "C:\projects\ObEngine\engine"
   - cmd: dir
