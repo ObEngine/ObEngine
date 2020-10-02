@@ -106,7 +106,7 @@ namespace obe::Collision
 
         if (!reachableColliders.empty())
         {
-            // Get lowest distance between this collider and a reachable collider
+            // Get lowest offset between this collider and a reachable collider
             for (auto& reachable : reachableColliders)
             {
                 if (reachable.second.magnitude() < collData.offset.to(Transform::Units::ScenePixels).magnitude())
@@ -115,7 +115,7 @@ namespace obe::Collision
                 }
             }
 
-            // Get touched colliders (=> in range of lowest distance)
+            // Get touched colliders (=> in range of lowest offset)
             for (auto& reachable : reachableColliders)
             {
                 if (reachable.second == collData.offset)
