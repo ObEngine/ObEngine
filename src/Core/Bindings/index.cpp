@@ -237,6 +237,7 @@ namespace obe::Bindings
         obe::Scene::Bindings::LoadClassSceneNode(state);
         obe::Scene::Bindings::LoadFunctionSceneGetGameObjectProxy(state);
         obe::Scene::Bindings::LoadFunctionSceneCreateGameObjectProxy(state);
+        obe::Scene::Bindings::LoadFunctionSceneGetAllGameObjectsProxy(state);
 
         obe::Scene::Exceptions::Bindings::LoadClassChildNotInSceneNode(state);
         obe::Scene::Exceptions::Bindings::LoadClassGameObjectAlreadyExists(state);
