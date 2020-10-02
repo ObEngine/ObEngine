@@ -18,7 +18,6 @@ jobs:
   variables:
     MSVC_DEFAULT_OPTIONS: ON
     SFML_DIR: D:\a\1\s\Libraries\SFML-2.5.1
-    Qt5_DIR: C:\Qt\5.11.1\msvc2017_64\lib\cmake\Qt5
   pool:
     vmImage: 'windows-2019'
   steps:
