@@ -303,4 +303,8 @@ namespace obe::Transform
     {
         return std::sqrt(std::pow(x - vec.x, 2) + std::pow(y - vec.y, 2));
     }
+    double UnitVector::magnitude() const
+    {
+        return std::sqrt(std::pow(x, 2) + std::pow(y, 2));
+    }
 } // namespace obe::Transform

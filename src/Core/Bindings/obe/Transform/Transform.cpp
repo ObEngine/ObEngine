@@ -337,6 +337,7 @@ namespace obe::Transform::Bindings
                 return self->rotate(angle, zero);
             });
         bindUnitVector["distance"] = &obe::Transform::UnitVector::distance;
+        bindUnitVector["magnitude"] = &obe::Transform::UnitVector::magnitude;
         bindUnitVector["x"] = &obe::Transform::UnitVector::x;
         bindUnitVector["y"] = &obe::Transform::UnitVector::y;
         bindUnitVector["unit"] = &obe::Transform::UnitVector::unit;

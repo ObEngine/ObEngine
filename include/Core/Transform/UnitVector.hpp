@@ -260,6 +260,10 @@ namespace obe::Transform
         [[nodiscard]] UnitVector rotate(
             double angle, UnitVector zero = UnitVector(0, 0)) const;
         [[nodiscard]] double distance(const UnitVector& vec) const;
+        /**
+         * \brief Return the length of the UnitVector
+         */
+        [[nodiscard]] double magnitude() const;
     };
 
     template <> inline UnitVector UnitVector::to<Units::ViewPercentage>() const
