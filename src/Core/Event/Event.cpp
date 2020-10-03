@@ -1,6 +1,5 @@
 #include <Event/Event.hpp>
 #include <Event/EventGroup.hpp>
-#include <Event/Exceptions.hpp>
 
 namespace obe::Event
 {

@@ -5,12 +5,6 @@
 
 namespace obe::Event
 {
-    std::string stripEventTypename(const std::string& typeName)
-    {
-        const auto signature = Utils::String::split(typeName, "::");
-        return signature.back();
-    }
-
     EventGroupView::EventGroupView(const EventGroup& eventGroup)
         : m_group(eventGroup)
     {
@@ -44,6 +38,11 @@ namespace obe::Event
     EventBase& EventGroupView::get(const std::string& eventName) const
     {
         return m_group.get(eventName);
+    }
+
+    vili::node EventGroupView::getProfilerResults() const
+    {
+        return m_group.getProfilerResults();
     }
 
     EventGroup::EventGroup(const std::string& eventNamespace, const std::string& name)
@@ -133,7 +132,7 @@ namespace obe::Event
         this->get(eventName).onRemoveListener(callback);
     }
 
-    vili::node EventGroup::getProfilerResults()
+    vili::node EventGroup::getProfilerResults() const
     {
         vili::node result = vili::object {};
         for (auto& [eventName, event] : m_events)

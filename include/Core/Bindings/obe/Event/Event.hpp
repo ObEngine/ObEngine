@@ -18,5 +18,4 @@ namespace obe::Event::Bindings
     void LoadClassScopeProfiler(sol::state_view state);
     void LoadEnumCallbackSchedulerState(sol::state_view state);
     void LoadEnumListenerChangeState(sol::state_view state);
-    void LoadFunctionStripEventTypename(sol::state_view state);
 };

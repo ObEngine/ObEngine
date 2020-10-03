@@ -5,9 +5,7 @@
 
 #include <sol/sol.hpp>
 
-#include <Event/EventData.hpp>
 #include <Event/Exceptions.hpp>
-#include <Types/Togglable.hpp>
 #include <Utils/StringUtils.hpp>
 
 namespace obe::Event

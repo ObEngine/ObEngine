@@ -85,13 +85,14 @@ namespace obe::Event
         [[nodiscard]] std::string getIdentifier() const;
         /**
          * \brief Registers a listener that will be called when the Event is triggered
+         * \param id of the listener being added
          * \param listener Listener to register
          */
         void addExternalListener(
             const std::string& id, const ExternalEventListener& listener);
         /**
          * \brief Removes a Listener from the Event
-         * \param listener Listener to unregister
+         * \param id id of the Listener to unregister
          */
         void removeExternalListener(const std::string& id);
         [[nodiscard]] const EventProfiler& getProfiler() const;
@@ -104,9 +105,6 @@ namespace obe::Event
     {
     private:
         std::map<std::string, CppEventListener<EventType>> m_listeners;
-
-        // std::function<void(const EventListener&)> m_onAddListener;
-        // std::function<void(const EventListener&)> m_onRemoveListener;
 
     protected:
         /**
@@ -127,13 +125,14 @@ namespace obe::Event
 
         /**
          * \brief Registers a listener that will be called when the Event is triggered
+         * \param id id of the Listener being added
          * \param listener Listener to register
          */
         void addListener(
             const std::string& id, const CppEventListener<EventType>& listener);
         /**
          * \brief Removes a Listener from the Event
-         * \param listener Listener to unregister
+         * \param id id of the Listener to unregister
          */
         void removeListener(const std::string& id);
 

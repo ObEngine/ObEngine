@@ -2,12 +2,10 @@
 
 #include <map>
 #include <memory>
-#include <typeinfo>
 
 #include <vili/node.hpp>
 
 #include <Event/Event.hpp>
-#include <Event/EventData.hpp>
 
 template <typename T> class HasId
 {
@@ -24,8 +22,6 @@ public:
 
 namespace obe::Event
 {
-    std::string stripEventTypename(const std::string& typeName);
-
     class EventGroup;
     class EventGroupView
     {
@@ -66,6 +62,7 @@ namespace obe::Event
          * \return A pointer to the Event if found (throws an error otherwise)
          */
         template <class EventType> Event<EventType>& get() const;
+        vili::node getProfilerResults() const;
     };
 
     /**
@@ -87,7 +84,7 @@ namespace obe::Event
          * \param name Name of the EventGroup
          */
         explicit EventGroup(const std::string& eventNamespace, const std::string& name);
-        EventGroupView getView() const;
+        [[nodiscard]] EventGroupView getView() const;
         /**
          * \brief Sets if the EventGroup is joinable or not
          * \param joinable true if the EventGroup should be joinable, false
@@ -110,7 +107,6 @@ namespace obe::Event
         /**
          * \brief Creates a new Event in the EventGroup
          * \param eventName Name of the Event to create
-         * \return Pointer to the EventGroup to chain calls
          */
         template <class EventType>
         typename std::enable_if<HasId<EventType>::value>::type add();
@@ -166,7 +162,7 @@ namespace obe::Event
          */
         void onRemoveListener(
             const std::string& eventName, OnListenerChange callback) const;
-        vili::node getProfilerResults();
+        vili::node getProfilerResults() const;
     };
 
     template <class EventType> Event<EventType>& EventGroupView::get() const

@@ -193,7 +193,6 @@ namespace obe::Bindings
         obe::Event::Bindings::LoadClassScopeProfiler(state);
         obe::Event::Bindings::LoadEnumCallbackSchedulerState(state);
         obe::Event::Bindings::LoadEnumListenerChangeState(state);
-        obe::Event::Bindings::LoadFunctionStripEventTypename(state);
 
         obe::Event::Exceptions::Bindings::LoadClassCallbackCreationError(state);
         obe::Event::Exceptions::Bindings::LoadClassEventAlreadyExists(state);

@@ -173,9 +173,4 @@ namespace obe::Event::Bindings
                 sol::constructors<obe::Event::ScopeProfiler(
                     obe::Event::CallbackProfiler&)>());
     }
-    void LoadFunctionStripEventTypename(sol::state_view state)
-    {
-        sol::table EventNamespace = state["obe"]["Event"].get<sol::table>();
-        EventNamespace.set_function("stripEventTypename", obe::Event::stripEventTypename);
-    }
 };

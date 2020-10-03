@@ -337,18 +337,6 @@ namespace obe::Script
             m_active = false;
             if (m_hasScriptEngine)
             {
-                /*for (auto& triggerRef : m_registeredTriggers)
-                {
-                    if (auto trigger = triggerRef.first.lock())
-                    {
-                        trigger->unregisterEnvironment(m_environment);
-                    }
-                }
-                for (const auto& trigger : t_local->getTriggers())
-                {
-                    m_environment["__TRIGGERS"][trigger->getTriggerLuaTableName()]
-                        = sol::lua_nil;
-                }*/
                 for (auto [k, _] : m_environment)
                 {
                     m_environment[k] = sol::lua_nil;

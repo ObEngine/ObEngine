@@ -66,17 +66,18 @@ namespace obe::Event
     vili::node EventManager::dumpProfilerResults() const
     {
         vili::node result = vili::object {};
-        /*for (auto itr : m_root->getEvents())
+        for (const auto& namespaceItr : m_namespaces)
         {
-            Debug::Log->debug("Profiling EventNamespace '{}'", itr.first);
-            result.emplace(itr.first, vili::object {});
-            for (auto itr2 : itr.second)
+            Debug::Log->debug("Profiling EventNamespace '{}'", namespaceItr.first);
+            result.emplace(namespaceItr.first, vili::object {});
+            for (auto groupName : namespaceItr.second->getAllGroupsNames())
             {
-                Debug::Log->debug("Namespace group {}", itr2.first);
-                result.at(itr.first).emplace(
-                    itr2.first, itr2.second.lock()->getProfilerResults());
+                Debug::Log->debug("Namespace group {}", groupName);
+                result.at(namespaceItr.first)
+                    .emplace(groupName,
+                        namespaceItr.second->getGroup(groupName).getProfilerResults());
             }
-        }*/
+        }
         return result;
     }
 } // namespace obe::Event
