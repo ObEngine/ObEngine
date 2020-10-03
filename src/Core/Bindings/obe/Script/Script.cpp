@@ -30,17 +30,6 @@ namespace obe::Script::Bindings
         bindGameObject["Sprite"] = sol::property(&obe::Script::GameObject::getSprite);
         bindGameObject["SceneNode"]
             = sol::property(&obe::Script::GameObject::getSceneNode);
-        bindGameObject["useTrigger"] = sol::overload(
-            [](obe::Script::GameObject* self, const std::string& trNsp,
-                const std::string& trGrp, const std::string& trName) -> void {
-                return self->useTrigger(trNsp, trGrp, trName);
-            },
-            [](obe::Script::GameObject* self, const std::string& trNsp,
-                const std::string& trGrp, const std::string& trName,
-                const std::string& callAlias) -> void {
-                return self->useTrigger(trNsp, trGrp, trName, callAlias);
-            });
-        bindGameObject["removeTrigger"] = &obe::Script::GameObject::removeTrigger;
         bindGameObject["exec"] = &obe::Script::GameObject::exec;
         bindGameObject["sendInitArg"] = &obe::Script::GameObject::sendInitArgFromLua;
         bindGameObject["loadGameObject"] = sol::overload(

@@ -168,18 +168,6 @@ namespace obe::Script
          */
         Scene::SceneNode& getSceneNode();
         /**
-         * \brief Register a non-local Trigger for the GameObject
-         * \param trNsp Namespace where the Trigger to register is
-         * \param trGrp TriggerGroup where the Trigger to register is
-         * \param trName Name of the Trigger to register
-         * \param callAlias Alias (name of the callback) associated with the
-         *        Trigger
-         */
-        void useTrigger(const std::string& trNsp, const std::string& trGrp,
-            const std::string& trName, const std::string& callAlias = "");
-        void removeTrigger(const std::string& trNsp, const std::string& trGrp,
-            const std::string& trName) const;
-        /**
          * \brief Execute a Lua String in the Lua State of the GameObject
          * \param query String to execute
          */
@@ -197,13 +185,7 @@ namespace obe::Script
          * \param argName Name of the Parameter to push
          * \param value Value of the Parameter
          */
-        void sendInitArgFromLua(const std::string& argName, sol::object value) const;
-        /**
-         * \brief Register a Trigger in the GameObject
-         * \param trg Pointer to the Trigger
-         * \param callbackName Name of the callback to call when Trigger will be
-         *        enabled
-         */
+        void sendInitArgFromLua(const std::string& argName, sol::object value);
         /**
          * \brief Loads the GameObject through the GameObject Definition File
          * \param scene Scene reference to create components
@@ -266,6 +248,6 @@ namespace obe::Script
         Debug::Log->debug(
             "<GameObject> Sending Local.Init argument {0} to GameObject {1}", argName,
             m_id);
-        // t_local->pushParameter("Init", argName, value);
+        m_environment["__INIT_ARG_TABLE"][argName] = value;
     }
 } // namespace obe::Script

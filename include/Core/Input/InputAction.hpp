@@ -23,7 +23,7 @@ namespace obe::Input
     {
     private:
         Event::EventGroup* e_actions;
-        ActionCallback m_callback;
+        ActionCallback m_callback; // TODO: Remove this, duplicate of Events
         std::vector<InputCondition> m_conditions;
         std::vector<std::string> m_contexts;
         Time::Chronometer m_interval;

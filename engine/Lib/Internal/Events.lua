@@ -29,6 +29,17 @@ function LuaCore.EventGroupHooks(id, namespace)
                         " is not defined");
             end
         end,
+        __clean = function(object)
+            local mt = getmetatable(object);
+            for key, _ in pairs(mt.__storage) do
+                mt.__storage[key] = nil;
+                Engine.Events
+                    :getNamespace(namespace)
+                    :getGroup(object.id)
+                    :get(key)
+                    :removeExternalListener(id);
+            end
+        end,
         __storage = {}
     };
 end
@@ -48,6 +59,11 @@ function LuaCore.EventNamespaceHooks(id, namespace)
             end
             error("EventGroup " .. key .. " doesn't exists in namespace " ..
                       namespace);
+        end,
+        __clean = function(object)
+            for k, _ in pairs(object) do
+                getmetatable(object[k]).__clean(object[k]);
+            end
         end
     };
     return setmetatable({}, hook_mt);
