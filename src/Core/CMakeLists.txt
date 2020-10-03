@@ -5,9 +5,12 @@ include(group_files)
 file(GLOB_RECURSE OBE_HEADERS
     ${ObEngine_SOURCE_DIR}/include/Core/*.hpp
     ${ObEngine_SOURCE_DIR}/include/Core/*.inl)
+list(REMOVE_ITEM OBE_HEADERS "${ObEngine_SOURCE_DIR}/include/Core/PreCompileHeader.hpp")
 file(GLOB_RECURSE OBE_SOURCES ${ObEngine_SOURCE_DIR}/src/Core/*.cpp)
 
 add_library(ObEngineCore ${OBE_HEADERS} ${OBE_SOURCES})
+
+target_precompile_headers(ObEngineCore PRIVATE ${ObEngine_SOURCE_DIR}/include/Core/PreCompileHeader.hpp)
 
 if (${BUILD_PLAYER} OR ${BUILD_DEV})
     target_compile_definitions(ObEngineCore PUBLIC OBE_IS_NOT_PLUGIN)
@@ -52,7 +55,9 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
 
 if (MSVC)
     if (NOT (MSVC_VERSION LESS 1920))
-        target_compile_options(ObEngineCore PRIVATE /permissive- /bigobj)
+        target_compile_options(ObEngineCore PRIVATE /permissive- /bigobj /MP)
+    else()
+        target_compile_options(ObEngineCore PRIVATE /MP)
     endif()
 endif()
 
