@@ -1,6 +1,6 @@
 #include <Debug/Logger.hpp>
+#include <Event/EventGroup.hpp>
 #include <Input/InputButtonMonitor.hpp>
-#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Input
 {
@@ -25,7 +25,7 @@ namespace obe::Input
         return m_buttonState;
     }
 
-    void InputButtonMonitor::update(Triggers::TriggerGroupPtr triggers)
+    void InputButtonMonitor::update(Event::EventGroupPtr events)
     {
         Debug::Log->trace("Updating InputMonitor of {}", m_button.getName());
         const bool keyPressed = m_button.isPressed();
@@ -54,9 +54,8 @@ namespace obe::Input
         }
         if (oldState != m_buttonState)
         {
-            triggers->pushParameter(m_button.getName(), "previousState", oldState);
-            triggers->pushParameter(m_button.getName(), "state", m_buttonState);
-            triggers->trigger(m_button.getName());
+            events->trigger(m_button.getName(),
+                Events::Keys::StateChanged { m_buttonState, oldState });
         }
     }
 

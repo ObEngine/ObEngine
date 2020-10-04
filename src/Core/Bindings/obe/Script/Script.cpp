@@ -13,7 +13,7 @@ namespace obe::Script::Bindings
         sol::usertype<obe::Script::GameObject> bindGameObject
             = ScriptNamespace.new_usertype<obe::Script::GameObject>("GameObject",
                 sol::call_constructor,
-                sol::constructors<obe::Script::GameObject(obe::Triggers::TriggerManager&,
+                sol::constructors<obe::Script::GameObject(
                     sol::state_view, const std::string&, const std::string&)>(),
                 sol::base_classes,
                 sol::bases<obe::Types::Identifiable, obe::Types::Serializable>());
@@ -30,20 +30,8 @@ namespace obe::Script::Bindings
         bindGameObject["Sprite"] = sol::property(&obe::Script::GameObject::getSprite);
         bindGameObject["SceneNode"]
             = sol::property(&obe::Script::GameObject::getSceneNode);
-        bindGameObject["useTrigger"] = sol::overload(
-            [](obe::Script::GameObject* self, const std::string& trNsp,
-                const std::string& trGrp, const std::string& trName) -> void {
-                return self->useTrigger(trNsp, trGrp, trName);
-            },
-            [](obe::Script::GameObject* self, const std::string& trNsp,
-                const std::string& trGrp, const std::string& trName,
-                const std::string& callAlias) -> void {
-                return self->useTrigger(trNsp, trGrp, trName, callAlias);
-            });
-        bindGameObject["removeTrigger"] = &obe::Script::GameObject::removeTrigger;
         bindGameObject["exec"] = &obe::Script::GameObject::exec;
         bindGameObject["sendInitArg"] = &obe::Script::GameObject::sendInitArgFromLua;
-        bindGameObject["registerTrigger"] = &obe::Script::GameObject::registerTrigger;
         bindGameObject["loadGameObject"] = sol::overload(
             [](obe::Script::GameObject* self, obe::Scene::Scene& scene,
                 vili::node& obj) -> void { return self->loadGameObject(scene, obj); },

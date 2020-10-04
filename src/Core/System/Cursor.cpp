@@ -4,7 +4,6 @@
 #include <System/Cursor.hpp>
 #include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
-#include <Triggers/TriggerManager.hpp>
 
 namespace obe::System
 {
@@ -28,9 +27,9 @@ namespace obe::System
         throw Exceptions::InvalidMouseButtonEnumValue(enumValue, EXC_INFO);
     }
 
-    Cursor::Cursor(System::Window& window, Triggers::TriggerManager& triggers)
+    Cursor::Cursor(System::Window& window, Event::EventNamespace& eventNamespace)
         : m_window(window)
-        , m_cursorTriggers(triggers.createTriggerGroup("Event", "Cursor"))
+        , e_cursor(eventNamespace.createGroup("Cursor"))
     {
         m_constraint = Constraints::Default;
         m_constraintCondition = []() { return true; };
@@ -42,10 +41,10 @@ namespace obe::System
         m_buttonState[sf::Mouse::Button::Right]
             = sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
 
-        m_cursorTriggers->add("Move");
-        m_cursorTriggers->add("Press");
-        m_cursorTriggers->add("Release");
-        m_cursorTriggers->add("Hold");
+        e_cursor->add<Events::Cursor::Move>();
+        e_cursor->add<Events::Cursor::Press>();
+        e_cursor->add<Events::Cursor::Release>();
+        e_cursor->add<Events::Cursor::Hold>();
 
         m_saveOldPos = sf::Mouse::getPosition();
     }
@@ -125,11 +124,8 @@ namespace obe::System
         m_y = mousePos.y;
         if (mousePos != m_saveOldPos)
         {
-            m_cursorTriggers->pushParameter("Move", "x", m_x);
-            m_cursorTriggers->pushParameter("Move", "y", m_y);
-            m_cursorTriggers->pushParameter("Move", "oldX", m_saveOldPos.x);
-            m_cursorTriggers->pushParameter("Move", "oldY", m_saveOldPos.y);
-            m_cursorTriggers->trigger("Move");
+            e_cursor->trigger(
+                Events::Cursor::Move { m_x, m_y, m_saveOldPos.x, m_saveOldPos.y });
             m_saveOldPos = mousePos;
         }
         std::pair<int, int> constrainedPosition;
@@ -140,47 +136,33 @@ namespace obe::System
         m_constrainedX = constrainedPosition.first;
         m_constrainedY = constrainedPosition.second;
 
-        bool hold = false;
-        bool press = false;
-        bool release = false;
-
         for (auto& state : m_buttonState)
         {
             if (sf::Mouse::isButtonPressed(state.first) && state.second)
             {
-                m_cursorTriggers->pushParameter(
-                    "Hold", MouseButtonToString(state.first), true);
-                m_cursorTriggers->pushParameter("Hold", "x", m_x);
-                m_cursorTriggers->pushParameter("Hold", "y", m_y);
-                hold = true;
+                e_cursor->trigger(Events::Cursor::Hold { m_x, m_y,
+                    state.first == sf::Mouse::Button::Left,
+                    state.first == sf::Mouse::Button::Middle,
+                    state.first == sf::Mouse::Button::Right });
             }
             if (sf::Mouse::isButtonPressed(state.first) && !state.second)
             {
-                m_cursorTriggers->pushParameter(
-                    "Press", MouseButtonToString(state.first), true);
-                m_cursorTriggers->pushParameter("Press", "x", m_x);
-                m_cursorTriggers->pushParameter("Press", "y", m_y);
+                e_cursor->trigger(Events::Cursor::Press { m_x, m_y,
+                    state.first == sf::Mouse::Button::Left,
+                    state.first == sf::Mouse::Button::Middle,
+                    state.first == sf::Mouse::Button::Right });
                 state.second = true;
-                press = true;
             }
             if (!sf::Mouse::isButtonPressed(state.first) && state.second)
             {
-                m_cursorTriggers->pushParameter(
-                    "Release", MouseButtonToString(state.first), true);
-                m_cursorTriggers->pushParameter("Release", "x", m_x);
-                m_cursorTriggers->pushParameter("Release", "y", m_y);
+                e_cursor->trigger(Events::Cursor::Release { m_x, m_y,
+                    state.first == sf::Mouse::Button::Left,
+                    state.first == sf::Mouse::Button::Middle,
+                    state.first == sf::Mouse::Button::Right });
                 state.second = false;
-                release = true;
             }
             m_buttonState[state.first] = sf::Mouse::isButtonPressed(state.first);
         }
-
-        if (hold)
-            m_cursorTriggers->trigger("Hold");
-        if (press)
-            m_cursorTriggers->trigger("Press");
-        if (release)
-            m_cursorTriggers->trigger("Release");
     }
 
     void Cursor::setConstraint(

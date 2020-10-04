@@ -4,7 +4,6 @@
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Loaders.hpp>
 #include <System/Window.hpp>
-#include <Triggers/TriggerManager.hpp>
 #include <Utils/MathUtils.hpp>
 #include <Utils/StringUtils.hpp>
 
@@ -48,16 +47,14 @@ namespace obe::Scene
         }
     }
 
-    Scene::Scene(Triggers::TriggerManager& triggers, sol::state_view lua)
+    Scene::Scene(Event::EventNamespace& eventNamespace, sol::state_view lua)
         : m_lua(lua)
-        , m_triggers(triggers)
-        , t_scene(triggers.createTriggerGroup("Event", "Scene"))
+        , e_scene(eventNamespace.createGroup("Scene"))
 
     {
-        triggers.createNamespace("Map"); // TODO: Add namespace handle
         m_showElements["SceneNodes"] = false;
 
-        t_scene->add("Loaded");
+        e_scene->add<Events::Scene::Loaded>();
     }
 
     void Scene::attachResourceManager(Engine::ResourceManager& resources)
@@ -381,7 +378,7 @@ namespace obe::Scene
                         Script::GameObjectDatabase::ApplyRequirements(
                             newObject.getEnvironment(), objectRequirements);
                     }
-                    newObject.exec("LuaCore.InjectInitInjectionTable()");
+                    // newObject.exec("LuaCore.InjectInitInjectionTable()");
                 }
                 else if (!this->getGameObject(gameObjectId).isPermanent())
                 {
@@ -418,8 +415,7 @@ namespace obe::Scene
                 }
             }
         }
-        t_scene->pushParameter("Loaded", "name", m_levelFileName);
-        t_scene->trigger("Loaded");
+        e_scene->trigger(Events::Scene::Loaded { m_levelFileName });
     }
 
     void Scene::update()
@@ -615,7 +611,7 @@ namespace obe::Scene
         }
 
         std::unique_ptr<Script::GameObject> newGameObject
-            = std::make_unique<Script::GameObject>(m_triggers, m_lua, obj, useId);
+            = std::make_unique<Script::GameObject>(m_lua, obj, useId);
         vili::node gameObjectData
             = Script::GameObjectDatabase::GetDefinitionForGameObject(obj);
         newGameObject->loadGameObject(*this, gameObjectData, m_resources);
@@ -857,7 +853,8 @@ namespace obe::Scene
     {
         std::vector<sol::table> gameObjects;
 
-        for (const auto& gameObject : self->getAllGameObjects(objectType)) {
+        for (const auto& gameObject : self->getAllGameObjects(objectType))
+        {
             gameObjects.push_back(gameObject->access());
         }
         return gameObjects;

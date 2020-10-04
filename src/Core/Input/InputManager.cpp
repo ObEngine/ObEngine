@@ -2,18 +2,17 @@
 
 #include <Input/Exceptions.hpp>
 #include <Input/InputManager.hpp>
-#include <Triggers/TriggerManager.hpp>
 #include <Utils/StringUtils.hpp>
 #include <Utils/VectorUtils.hpp>
 
 namespace obe::Input
 {
-    bool updateOrCleanMonitor(Triggers::TriggerGroupPtr triggers,
-        const std::weak_ptr<InputButtonMonitor>& element)
+    bool updateOrCleanMonitor(
+        Event::EventGroupPtr events, const std::weak_ptr<InputButtonMonitor>& element)
     {
         if (auto monitor = element.lock())
         {
-            monitor->update(triggers);
+            monitor->update(events);
             return false;
         }
         else
@@ -34,16 +33,13 @@ namespace obe::Input
         return false;
     }
 
-    InputManager::InputManager()
-        : Togglable(true)
+    InputManager::InputManager(Event::EventNamespace& eventNamespace)
+        : e_actions(eventNamespace.createGroup("Actions"))
+        , e_inputs(eventNamespace.createGroup("Keys"))
+        , Togglable(true)
     {
-    }
-
-    void InputManager::init(Triggers::TriggerManager& triggers)
-    {
-        t_actions = triggers.createTriggerGroup("Event", "Actions");
         this->createInputMap();
-        this->createTriggerGroups(triggers);
+        this->createEvents();
     }
 
     InputAction& InputManager::getAction(const std::string& actionId)
@@ -102,7 +98,7 @@ namespace obe::Input
                 m_monitors.erase(
                     std::remove_if(m_monitors.begin(), m_monitors.end(),
                         [this](const std::weak_ptr<InputButtonMonitor>& element) {
-                            return updateOrCleanMonitor(t_inputs, element);
+                            return updateOrCleanMonitor(e_inputs, element);
                         }),
                     m_monitors.end());
             }
@@ -125,7 +121,7 @@ namespace obe::Input
     {
         m_currentActions.clear();
         for (auto& action : m_allActions)
-            t_actions->remove(action->getId());
+            e_actions->remove(action->getId());
         m_allActions.clear();
     }
 
@@ -139,7 +135,7 @@ namespace obe::Input
                 if (!this->actionExists(actionName))
                 {
                     m_allActions.push_back(
-                        std::make_unique<InputAction>(t_actions.get(), actionName));
+                        std::make_unique<InputAction>(e_actions.get(), actionName));
                 }
                 else if (!Utils::Vector::contains(actionName, alreadyInFile))
                 {

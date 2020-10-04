@@ -43,6 +43,13 @@ namespace vili::parser::Bindings
         bindstate["get_template"] = &vili::parser::state::get_template;
         bindstate["root"] = &vili::parser::state::root;
     }
+    void LoadClassError(sol::state_view state)
+    {
+        sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
+        sol::usertype<vili::parser::error> binderror
+            = parserNamespace.new_usertype<vili::parser::error>(
+                "error", sol::call_constructor, sol::default_constructor);
+    }
     void LoadFunctionFromString(sol::state_view state)
     {
         sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
@@ -56,6 +63,5 @@ namespace vili::parser::Bindings
     void LoadGlobalErrorMessage(sol::state_view state)
     {
         sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
-        // parserNamespace["error_message"] = vili::parser::error_message;
     }
 };

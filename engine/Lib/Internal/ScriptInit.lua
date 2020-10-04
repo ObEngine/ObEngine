@@ -3,6 +3,8 @@ Scenes = {};
 pl = {};
 Debug = {};
 
+__ENV_ID = "[Global Environment]";
+
 inspect = require("Lib/Extlibs/Inspect");
 dbg = require("Lib/Extlibs/debugger");
 try = require("Lib/Internal/Try");

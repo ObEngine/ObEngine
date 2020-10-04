@@ -98,7 +98,7 @@ namespace vili::Bindings
         bindnode["at"] = sol::overload(
             static_cast<vili::node& (vili::node::*)(const std::string&)>(&vili::node::at),
             static_cast<vili::node& (vili::node::*)(size_t)>(&vili::node::at),
-            static_cast<const vili::node& (vili::node::*)(const std::string&)const>(
+            static_cast<const vili::node& (vili::node::*)(const std::string&) const>(
                 &vili::node::at),
             static_cast<const vili::node& (vili::node::*)(size_t) const>(
                 &vili::node::at));
@@ -107,7 +107,7 @@ namespace vili::Bindings
         bindnode["clear"] = &vili::node::clear;
         bindnode["operator std::string_view"] = &vili::node::operator std::string_view;
         bindnode["operator const std::string &"]
-            = &vili::node::operator const std::string&;
+            = &vili::node::operator const std::string &;
         bindnode["operator integer"] = &vili::node::operator integer;
         bindnode["operator int"] = &vili::node::operator int;
         bindnode["operator number"] = &vili::node::operator number;

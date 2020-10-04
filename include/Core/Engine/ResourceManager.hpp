@@ -5,9 +5,9 @@
 
 #include <SFML/Graphics/Font.hpp>
 
+#include <Event/EventGroup.hpp>
 #include <Graphics/Font.hpp>
 #include <Graphics/Texture.hpp>
-#include <Triggers/TriggerGroup.hpp>
 
 namespace obe::Engine
 {
@@ -20,7 +20,7 @@ namespace obe::Engine
     class ResourceManager
     {
     private:
-        Triggers::TriggerGroupPtr t_resources;
+        Event::EventGroupPtr e_resources;
         ResourceStore<std::shared_ptr<Graphics::Font>> m_fonts;
         ResourceStore<TexturePair> m_textures;
 

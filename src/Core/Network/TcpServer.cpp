@@ -1,13 +1,12 @@
 #include <Debug/Logger.hpp>
 #include <Network/TcpServer.hpp>
-#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Network
 {
-    TcpServer::TcpServer(Triggers::TriggerManager& triggers, unsigned short port,
+    TcpServer::TcpServer(Event::EventNamespace& eventNamespace, unsigned short port,
         std::string triggerNamespace, std::string triggerGroup)
     {
-        if (!triggerNamespace.empty())
+        /*if (!triggerNamespace.empty())
         {
             m_socketTriggers
                 = triggers.createTriggerGroup(triggerNamespace, triggerGroup);
@@ -17,12 +16,12 @@ namespace obe::Network
         m_listener.listen(port);
 
         m_clients.push_back(std::make_unique<sf::TcpSocket>());
-        m_data.resize(m_maxBufferSize);
+        m_data.resize(m_maxBufferSize);*/
     }
 
     void TcpServer::update()
     {
-        if (m_listener.accept(*m_clients.back()) == sf::Socket::Done)
+        /*if (m_listener.accept(*m_clients.back()) == sf::Socket::Done)
         {
             if (m_socketTriggers)
             {
@@ -60,7 +59,7 @@ namespace obe::Network
                     m_socketTriggers->trigger("Disconnected");
                 }
             }
-        }
+        }*/
     }
 
     void TcpServer::setBufferSize(unsigned int maxBufferSize)

@@ -49,7 +49,7 @@ namespace obe
             m_message += fmt::format("  Hint: {}\n", hintMsg);
         }
         const char* what() const noexcept override;
-        Exception& nest(const Exception& exception)
+        Exception& nest(const std::exception& exception)
         {
             m_message += "  Cause:\n";
             m_message

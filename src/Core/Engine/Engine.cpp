@@ -26,19 +26,9 @@ namespace obe::Engine
         m_config.load();
     }
 
-    void Engine::initTriggers()
-    {
-        (*m_lua)["__TRIGGERS"].get_or_create<sol::table>();
-        m_triggers = std::make_unique<Triggers::TriggerManager>(*m_lua);
-        m_triggers->createNamespace("Event");
-        t_game = m_triggers->createTriggerGroup("Event", "Game");
-
-        t_game->add("Start").trigger("Start").add("End").add("Update").add("Render");
-    }
     void Engine::initInput()
     {
-        m_input = std::make_unique<Input::InputManager>();
-        m_input->init(*m_triggers);
+        m_input = std::make_unique<Input::InputManager>(*m_eventNamespace);
         if (m_config.contains("Input"))
         {
             m_input->configure(m_config.at("Input"));
@@ -61,7 +51,7 @@ namespace obe::Engine
 
         m_lua->safe_script("LuaCore = {}");
         m_lua->safe_script_file("Lib/Internal/ScriptInit.lua"_fs);
-        m_lua->safe_script_file("Lib/Internal/Triggers.lua"_fs);
+        m_lua->safe_script_file("Lib/Internal/Events.lua"_fs);
 
         Bindings::IndexAllBindings(*m_lua);
         m_lua->safe_script_file("Lib/Internal/Searcher.lua"_fs);
@@ -71,6 +61,20 @@ namespace obe::Engine
         m_lua->safe_script("collectgarbage(\"generational\");");
 
         (*m_lua)["Engine"] = this;
+    }
+
+    void Engine::initEvents()
+    {
+        m_events = std::make_unique<Event::EventManager>();
+        m_eventNamespace = &m_events->createNamespace("Event");
+        e_game = m_eventNamespace->createGroup("Game");
+
+        e_game->add<Events::Game::Start>();
+        e_game->add<Events::Game::End>();
+        e_game->add<Events::Game::Update>();
+        e_game->add<Events::Game::Render>();
+
+        e_game->trigger(Events::Game::Start {});
     }
 
     void Engine::initResources()
@@ -97,7 +101,7 @@ namespace obe::Engine
 
     void Engine::initCursor()
     {
-        m_cursor = std::make_unique<System::Cursor>(*m_window, *m_triggers);
+        m_cursor = std::make_unique<System::Cursor>(*m_window, *m_eventNamespace);
     }
 
     void Engine::initPlugins()
@@ -123,7 +127,7 @@ namespace obe::Engine
 
     void Engine::initScene()
     {
-        m_scene = std::make_unique<Scene::Scene>(*m_triggers, *m_lua);
+        m_scene = std::make_unique<Scene::Scene>(*m_eventNamespace, *m_lua);
         m_scene->attachResourceManager(*m_resources);
     }
 
@@ -144,12 +148,12 @@ namespace obe::Engine
 
     void Engine::clean() const
     {
-        if (t_game)
+        if (e_game)
         {
-            t_game->trigger("End");
+            e_game->trigger(Events::Game::End {});
         }
-        if (m_triggers)
-            m_triggers->update();
+        if (m_events)
+            m_events->update();
         if (m_scene)
         {
             m_scene->clear();
@@ -174,9 +178,9 @@ namespace obe::Engine
             m_lua->collect_garbage();
         }
         m_resources.reset();
-        t_game.reset();
+        e_game.reset();
         m_input.reset();
-        m_triggers.reset();
+        m_events.reset();
         m_lua.reset();
     }
 
@@ -236,7 +240,7 @@ namespace obe::Engine
         this->initConfig();
         this->initLogger();
         this->initScript();
-        this->initTriggers();
+        this->initEvents();
         this->initInput();
         this->initWindow();
         this->initCursor();
@@ -247,7 +251,7 @@ namespace obe::Engine
         m_initialized = true;
     }
 
-    void Engine::run()
+    void Engine::run() const
     {
         if (!m_initialized)
             throw Exceptions::UnitializedEngine(EXC_INFO);
@@ -286,14 +290,13 @@ namespace obe::Engine
             if (m_framerate->doUpdate())
             {
                 dts.push_back(m_framerate->getGameSpeed());
-                t_game->pushParameter("Update", "dt", m_framerate->getGameSpeed());
-                t_game->trigger("Update");
+                e_game->trigger(Events::Game::Update { m_framerate->getGameSpeed() });
                 this->update();
             }
 
             if (m_framerate->doRender())
             {
-                t_game->trigger("Render");
+                e_game->trigger(Events::Game::Render {});
                 this->render();
                 m_framerate->reset();
             }
@@ -311,7 +314,7 @@ namespace obe::Engine
         }
         Debug::Log->info("Execution completed with {} ticks in {} seconds (dt sum: {})",
             dts.size(), totalTime, dtSum);
-        vili::node profiler = m_triggers->dumpProfilerResults();
+        vili::node profiler = m_events->dumpProfilerResults();
         profiler.emplace("dts", dts);
         std::ofstream profilerOutput;
         profilerOutput.open("profiler.vili");
@@ -345,9 +348,9 @@ namespace obe::Engine
         return *m_framerate;
     }
 
-    Triggers::TriggerManager& Engine::getTriggerManager() const
+    Event::EventManager& Engine::getEventManager() const
     {
-        return *m_triggers;
+        return *m_events;
     }
 
     Scene::Scene& Engine::getScene() const
@@ -370,12 +373,12 @@ namespace obe::Engine
         // Events
         this->handleWindowEvents();
         m_scene->update();
-        m_triggers->update();
+        m_events->update();
         m_input->update();
         m_cursor->update();
     }
 
-    void Engine::render()
+    void Engine::render() const
     {
         if (m_framerate->doRender())
         {

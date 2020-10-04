@@ -41,7 +41,7 @@ namespace obe::System::Bindings
             = SystemNamespace.new_usertype<obe::System::Cursor>("Cursor",
                 sol::call_constructor,
                 sol::constructors<obe::System::Cursor(
-                    obe::System::Window&, obe::Triggers::TriggerManager&)>());
+                    obe::System::Window&, obe::Event::EventNamespace&)>());
         bindCursor["getConstrainedX"] = &obe::System::Cursor::getConstrainedX;
         bindCursor["getConstrainedY"] = &obe::System::Cursor::getConstrainedY;
         bindCursor["getX"] = &obe::System::Cursor::getX;
@@ -143,7 +143,6 @@ namespace obe::System::Bindings
                 -> std::vector<std::string> { return self->findAll(pathType); });
         bindPath["toString"] = &obe::System::Path::toString;
         bindPath["operator="] = &obe::System::Path::operator=;
-        // bindPath["PathCache"] = sol::var(obe::System::Path::PathCache);
     }
     void LoadClassPlugin(sol::state_view state)
     {

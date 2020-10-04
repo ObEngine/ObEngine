@@ -52,7 +52,7 @@ namespace obe::Input::Bindings
             = InputNamespace.new_usertype<obe::Input::InputAction>("InputAction",
                 sol::call_constructor,
                 sol::constructors<obe::Input::InputAction(
-                    obe::Triggers::TriggerGroup*, const std::string&)>(),
+                    obe::Event::EventGroup*, const std::string&)>(),
                 sol::base_classes, sol::bases<obe::Types::Identifiable>());
         bindInputAction["addCondition"] = &obe::Input::InputAction::addCondition;
         bindInputAction["addContext"] = &obe::Input::InputAction::addContext;
@@ -137,9 +137,10 @@ namespace obe::Input::Bindings
         sol::table InputNamespace = state["obe"]["Input"].get<sol::table>();
         sol::usertype<obe::Input::InputManager> bindInputManager
             = InputNamespace.new_usertype<obe::Input::InputManager>("InputManager",
-                sol::call_constructor, sol::constructors<obe::Input::InputManager()>(),
+                sol::call_constructor,
+                sol::constructors<obe::Input::InputManager(
+                    obe::Event::EventNamespace&)>(),
                 sol::base_classes, sol::bases<obe::Types::Togglable>());
-        bindInputManager["init"] = &obe::Input::InputManager::init;
         bindInputManager["actionExists"] = &obe::Input::InputManager::actionExists;
         bindInputManager["addContext"] = &obe::Input::InputManager::addContext;
         bindInputManager["getAction"] = &obe::Input::InputManager::getAction;

@@ -2,7 +2,6 @@
 #include <Engine/ResourceManager.hpp>
 #include <System/Loaders.hpp>
 #include <System/Path.hpp>
-#include <Triggers/TriggerManager.hpp>
 
 namespace obe::Engine
 {

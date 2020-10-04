@@ -7,8 +7,6 @@
 #include <Debug/Logger.hpp>
 #include <Graphics/Sprite.hpp>
 #include <Scene/SceneNode.hpp>
-#include <Triggers/TriggerGroup.hpp>
-#include <Triggers/TriggerManager.hpp>
 #include <Types/Serializable.hpp>
 
 #include <sol/sol.hpp>
@@ -68,20 +66,13 @@ namespace obe::Script
     class GameObject final : public Types::Identifiable, public Types::Serializable
     {
     private:
-        Triggers::TriggerManager& m_triggers;
         bool m_permanent = false;
         std::unique_ptr<Animation::Animator> m_animator;
         Graphics::Sprite* m_sprite = nullptr;
         Collision::PolygonalCollider* m_collider = nullptr;
-        Triggers::TriggerGroupPtr t_local;
         Scene::SceneNode m_objectNode;
         sol::state_view m_lua;
         sol::environment m_environment;
-
-        std::vector<std::pair<std::weak_ptr<Triggers::Trigger>, std::string>>
-            m_registeredTriggers;
-        std::vector<std::tuple<std::string, std::string, std::string>>
-            m_registeredAliases;
 
         std::string m_type;
         std::string m_privateKey;
@@ -98,8 +89,8 @@ namespace obe::Script
          * \param type Type of the GameObject
          * \param id Id of the GameObject you want to create
          */
-        explicit GameObject(Triggers::TriggerManager& triggers, sol::state_view lua,
-            const std::string& type, const std::string& id);
+        explicit GameObject(
+            sol::state_view lua, const std::string& type, const std::string& id);
         /**
          * \brief Destructor of the GameObject
          */
@@ -177,18 +168,6 @@ namespace obe::Script
          */
         Scene::SceneNode& getSceneNode();
         /**
-         * \brief Register a non-local Trigger for the GameObject
-         * \param trNsp Namespace where the Trigger to register is
-         * \param trGrp TriggerGroup where the Trigger to register is
-         * \param trName Name of the Trigger to register
-         * \param callAlias Alias (name of the callback) associated with the
-         *        Trigger
-         */
-        void useTrigger(const std::string& trNsp, const std::string& trGrp,
-            const std::string& trName, const std::string& callAlias = "");
-        void removeTrigger(const std::string& trNsp, const std::string& trGrp,
-            const std::string& trName) const;
-        /**
          * \brief Execute a Lua String in the Lua State of the GameObject
          * \param query String to execute
          */
@@ -206,15 +185,7 @@ namespace obe::Script
          * \param argName Name of the Parameter to push
          * \param value Value of the Parameter
          */
-        void sendInitArgFromLua(const std::string& argName, sol::object value) const;
-        /**
-         * \brief Register a Trigger in the GameObject
-         * \param trg Pointer to the Trigger
-         * \param callbackName Name of the callback to call when Trigger will be
-         *        enabled
-         */
-        void registerTrigger(
-            std::weak_ptr<Triggers::Trigger> trg, const std::string& callbackName);
+        void sendInitArgFromLua(const std::string& argName, sol::object value);
         /**
          * \brief Loads the GameObject through the GameObject Definition File
          * \param scene Scene reference to create components
@@ -277,6 +248,6 @@ namespace obe::Script
         Debug::Log->debug(
             "<GameObject> Sending Local.Init argument {0} to GameObject {1}", argName,
             m_id);
-        t_local->pushParameter("Init", argName, value);
+        m_environment["__INIT_ARG_TABLE"][argName] = value;
     }
 } // namespace obe::Script

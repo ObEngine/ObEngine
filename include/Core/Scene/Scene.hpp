@@ -3,6 +3,8 @@
 #include <unordered_set>
 
 #include <Collision/PolygonalCollider.hpp>
+#include <Event/EventGroup.hpp>
+#include <Event/EventNamespace.hpp>
 #include <Graphics/Sprite.hpp>
 #include <Scene/Camera.hpp>
 #include <Scene/SceneNode.hpp>
@@ -18,6 +20,15 @@ namespace obe
     {
         class Window;
     }
+}
+
+namespace obe::Events::Scene
+{
+    struct Loaded
+    {
+        static constexpr std::string_view id = "Loaded";
+        std::string filename;
+    };
 }
 
 namespace obe::Scene
@@ -56,8 +67,7 @@ namespace obe::Scene
         std::string m_levelFileName;
         std::map<std::string, bool> m_showElements;
         OnSceneLoadCallback m_onLoadCallback;
-        Triggers::TriggerManager& m_triggers;
-        Triggers::TriggerGroupPtr t_scene;
+        Event::EventGroupPtr e_scene;
         sol::state_view m_lua;
 
         void _reorganizeLayers();
@@ -67,7 +77,7 @@ namespace obe::Scene
         /**
          * \brief Creates a new Scene
          */
-        Scene(Triggers::TriggerManager& triggers, sol::state_view lua);
+        Scene(Event::EventNamespace& events, sol::state_view lua);
 
         void attachResourceManager(Engine::ResourceManager& resources);
         /**

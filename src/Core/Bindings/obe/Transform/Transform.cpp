@@ -6,6 +6,7 @@
 #include <Transform/Rect.hpp>
 #include <Transform/Referential.hpp>
 #include <Transform/UnitBasedObject.hpp>
+#include <Transform/UnitStructures.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Transform/Units.hpp>
 
@@ -343,6 +344,26 @@ namespace obe::Transform::Bindings
         bindUnitVector["unit"] = &obe::Transform::UnitVector::unit;
         bindUnitVector["View"] = sol::var(obe::Transform::UnitVector::View);
         bindUnitVector["Screen"] = sol::var(obe::Transform::UnitVector::Screen);
+    }
+    void LoadClassScreenStruct(sol::state_view state)
+    {
+        sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
+        sol::usertype<obe::Transform::ScreenStruct> bindScreenStruct
+            = TransformNamespace.new_usertype<obe::Transform::ScreenStruct>(
+                "ScreenStruct", sol::call_constructor, sol::default_constructor);
+        bindScreenStruct["w"] = &obe::Transform::ScreenStruct::w;
+        bindScreenStruct["h"] = &obe::Transform::ScreenStruct::h;
+    }
+    void LoadClassViewStruct(sol::state_view state)
+    {
+        sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
+        sol::usertype<obe::Transform::ViewStruct> bindViewStruct
+            = TransformNamespace.new_usertype<obe::Transform::ViewStruct>(
+                "ViewStruct", sol::call_constructor, sol::default_constructor);
+        bindViewStruct["w"] = &obe::Transform::ViewStruct::w;
+        bindViewStruct["h"] = &obe::Transform::ViewStruct::h;
+        bindViewStruct["x"] = &obe::Transform::ViewStruct::x;
+        bindViewStruct["y"] = &obe::Transform::ViewStruct::y;
     }
     void LoadFunctionStringToUnits(sol::state_view state)
     {
