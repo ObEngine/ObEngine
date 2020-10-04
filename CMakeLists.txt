@@ -4,7 +4,6 @@ set(OpenGL_GL_PREFERENCE GLVND)
 project(ObEngine)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
-include(engine_git)
 
 add_subdirectory(extlibs/bezier)
 add_subdirectory(extlibs/catch)
@@ -38,7 +37,12 @@ find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
 # SFML is required by sfe (SFml Extensions)
 add_subdirectory(extlibs/sfe)
 
-configure_obengine_git()
+# Find git installation
+find_package(Git QUIET)
+if(NOT Git_FOUND)
+    set(GIT_EXECUTABLE "")
+endif()
+
 add_subdirectory(src/Core)
 
 if (BUILD_ANDROID)
