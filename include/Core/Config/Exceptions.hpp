@@ -4,10 +4,10 @@
 
 namespace obe::Config::Exceptions
 {
-    class InvalidVersionNumber : public Exception
+    class InvalidVersionFormat : public Exception
     {
     public:
-        InvalidVersionNumber(std::string_view detail, DebugInfo info)
+        InvalidVersionFormat(std::string_view detail, DebugInfo info)
             : Exception("InvalidVersionNumber", info)
         {
             this->error(

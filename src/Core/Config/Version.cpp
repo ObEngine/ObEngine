@@ -12,7 +12,7 @@ namespace obe::Config
         std::vector<std::string> parts = Utils::String::split(str, ".");
         if (parts.size() != 3)
         {
-            throw Exceptions::InvalidVersionNumber(
+            throw Exceptions::InvalidVersionFormat(
                 "Wrong number of components for version string. Expecting version "
                 "string of the form v?MAJOR.MINOR.PATCH",
                 EXC_INFO);
@@ -20,6 +20,11 @@ namespace obe::Config
         // Skip first letter from version string ( 'v' )
         if (!Utils::String::isStringNumeric(parts[0]) && parts[0].size() >= 2)
         {
+            if (parts[0][0] != 'v') {
+                throw Exceptions::InvalidVersionFormat(
+                "Wrong prefix for version string, only \"v0.1.1\" is allowed.",
+                EXC_INFO);
+            }
             parts[0] = parts[0].substr(1);
         }
 

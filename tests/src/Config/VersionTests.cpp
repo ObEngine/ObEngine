@@ -33,5 +33,6 @@ TEST_CASE("Version objects", "[obe.Config.Version]")
         CHECK(Version(3, 5, 5) == Version("v3.5.5"));
         CHECK_THROWS(Version("vv3.5.5"));
         CHECK_THROWS(Version("v3.5.5.5"));
+        CHECK_THROWS(Version("x3.5.5"));
     }
 }
