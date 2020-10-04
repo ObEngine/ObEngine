@@ -2,6 +2,10 @@ project(ObEngineCore)
 
 include(group_files)
 
+add_custom_target(ConfigureObEngineGit COMMAND ${CMAKE_COMMAND} 
+    -DGIT_EXECUTABLE=${GIT_EXECUTABLE} -DObEngine_SOURCE_DIR=${ObEngine_SOURCE_DIR} -DObEngine_BINARY_DIR=${ObEngine_BINARY_DIR} -P "${ObEngine_SOURCE_DIR}/cmake/engine_git.cmake")
+file(TOUCH "${ObEngine_BINARY_DIR}/include/Core/Config/Git.hpp")
+
 file(GLOB_RECURSE OBE_HEADERS
     ${ObEngine_SOURCE_DIR}/include/Core/*.hpp
     ${ObEngine_SOURCE_DIR}/include/Core/*.inl)
@@ -23,6 +27,7 @@ target_include_directories(ObEngineCore
         $<BUILD_INTERFACE:${ObEngine_BINARY_DIR}/include/Core>
 )
 
+add_dependencies(ObEngineCore ConfigureObEngineGit)
 target_link_libraries(ObEngineCore bezier)
 target_link_libraries(ObEngineCore elzip)
 target_link_libraries(ObEngineCore lua)
@@ -60,14 +65,3 @@ if (MSVC)
         target_compile_options(ObEngineCore PRIVATE /MP)
     endif()
 endif()
-
-function (apply_git_variables)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC OBENGINE_GIT_BRANCH="${OBENGINE_GIT_BRANCH}")
-    target_compile_definitions(${PROJECT_NAME} PUBLIC OBENGINE_GIT_HASH="${OBENGINE_GIT_COMMIT_HASH}")
-    target_compile_definitions(${PROJECT_NAME} PUBLIC OBENGINE_VERSION="${OBENGINE_VERSION}")
-endfunction()
-
-configure_file(
-    "${ObEngine_SOURCE_DIR}/include/Core/Config/Git.hpp.in"
-    "${ObEngine_BINARY_DIR}/include/Core/Config/Git.hpp"
-)
