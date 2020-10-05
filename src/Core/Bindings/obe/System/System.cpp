@@ -1,7 +1,6 @@
 #include <Bindings/obe/System/System.hpp>
 
 #include <System/Cursor.hpp>
-#include <System/Loaders.hpp>
 #include <System/MountablePath.hpp>
 #include <System/Path.hpp>
 #include <System/Plugin.hpp>
@@ -66,34 +65,6 @@ namespace obe::System::Bindings
             });
         bindCursor["isPressed"] = &obe::System::Cursor::isPressed;
     }
-    void LoadClassLoaderMultipleResult(sol::state_view state)
-    {
-        sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
-        sol::usertype<obe::System::LoaderMultipleResult> bindLoaderMultipleResult
-            = SystemNamespace.new_usertype<obe::System::LoaderMultipleResult>(
-                "LoaderMultipleResult", sol::call_constructor,
-                sol::constructors<obe::System::LoaderMultipleResult(),
-                    obe::System::LoaderMultipleResult(
-                        const std::vector<std::string>&)>());
-        bindLoaderMultipleResult["paths"] = &obe::System::LoaderMultipleResult::paths;
-        bindLoaderMultipleResult["loadCount"]
-            = &obe::System::LoaderMultipleResult::loadCount;
-        bindLoaderMultipleResult["success"] = &obe::System::LoaderMultipleResult::success;
-        bindLoaderMultipleResult["operator bool"]
-            = &obe::System::LoaderMultipleResult::operator bool;
-    }
-    void LoadClassLoaderResult(sol::state_view state)
-    {
-        sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
-        sol::usertype<obe::System::LoaderResult> bindLoaderResult
-            = SystemNamespace.new_usertype<obe::System::LoaderResult>("LoaderResult",
-                sol::call_constructor,
-                sol::constructors<obe::System::LoaderResult(),
-                    obe::System::LoaderResult(const std::string&)>());
-        bindLoaderResult["path"] = &obe::System::LoaderResult::path;
-        bindLoaderResult["success"] = &obe::System::LoaderResult::success;
-        bindLoaderResult["operator bool"] = &obe::System::LoaderResult::operator bool;
-    }
     void LoadClassMountablePath(sol::state_view state)
     {
         sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
@@ -135,12 +106,12 @@ namespace obe::System::Bindings
             [](obe::System::Path* self, obe::System::PathType pathType) -> std::string {
                 return self->find(pathType);
             });
-        bindPath["findAll"] = sol::overload(
+        /*bindPath["findAll"] = sol::overload(
             [](obe::System::Path* self) -> std::vector<std::string> {
                 return self->findAll();
             },
             [](obe::System::Path* self, obe::System::PathType pathType)
-                -> std::vector<std::string> { return self->findAll(pathType); });
+                -> std::vector<std::string> { return self->findAll(pathType); });*/
         bindPath["toString"] = &obe::System::Path::toString;
         bindPath["operator="] = &obe::System::Path::operator=;
     }

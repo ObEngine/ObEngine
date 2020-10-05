@@ -2,7 +2,6 @@
 #include <Graphics/DrawUtils.hpp>
 #include <Graphics/Exceptions.hpp>
 #include <Graphics/Sprite.hpp>
-#include <System/Loaders.hpp>
 #include <System/Path.hpp>
 #include <System/Window.hpp>
 #include <Utils/MathUtils.hpp>

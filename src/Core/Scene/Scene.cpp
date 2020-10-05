@@ -2,7 +2,6 @@
 #include <Scene/Exceptions.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/ViliLuaBridge.hpp>
-#include <System/Loaders.hpp>
 #include <System/Window.hpp>
 #include <Utils/MathUtils.hpp>
 #include <Utils/StringUtils.hpp>

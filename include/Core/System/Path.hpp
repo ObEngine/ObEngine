@@ -2,7 +2,6 @@
 
 #include <Debug/Logger.hpp>
 #include <System/Exceptions.hpp>
-#include <System/Loaders.hpp>
 #include <System/MountablePath.hpp>
 #include <Utils/FileUtils.hpp>
 
@@ -14,6 +13,31 @@ namespace obe::System
         Directory,
         File
     };
+
+    class FindResult
+    {
+    private:
+        PathType m_type = PathType::All;
+        std::string m_root;
+        std::string m_path;
+        std::string m_element;
+
+        void checkValidity() const;
+
+    public:
+        FindResult(const std::string& pathNotFound);
+        FindResult(PathType pathType, const std::string& root, const std::string& path,
+            const std::string& element);
+        [[nodiscard]] const std::string& path() const;
+        [[nodiscard]] const std::string& root() const;
+        [[nodiscard]] const std::string& element() const;
+        [[nodiscard]] bool success() const;
+        operator bool() const;
+        operator const std::string &() const;
+        operator const char*() const;
+        operator std::string_view() const;
+    };
+
     /**
      * \brief Class used to manipulate paths and dynamically load resources
      *        (Based on multiple mounted paths)
@@ -25,7 +49,7 @@ namespace obe::System
         std::string m_path;
         const std::vector<MountablePath>& m_mounts;
 
-        static std::unordered_map<std::string, std::string> PathCache;
+        static std::unordered_map<std::string, FindResult> PathCache;
 
     public:
         /**
@@ -72,8 +96,12 @@ namespace obe::System
          * \brief Finds the most prioritized file corresponding to the Path
          * \return The full path to the most prioritized file
          */
-        [[nodiscard]] std::string find(PathType pathType = PathType::All) const;
-        [[nodiscard]] std::vector<std::string> findAll(
+        [[nodiscard]] std::vector<FindResult> list(
+            PathType pathType = PathType::All) const;
+        [[nodiscard]] FindResult find(PathType pathType = PathType::All) const;
+        [[nodiscard]] FindResult find_or(
+            PathType pathType = PathType::All, const std::string& defaultPath = "") const;
+        [[nodiscard]] std::vector<FindResult> findAll(
             PathType pathType = PathType::All) const;
         /**
          * \brief Get the current path in string form
@@ -82,66 +110,7 @@ namespace obe::System
         [[nodiscard]] std::string toString() const;
 
         void operator=(const Path& path);
-
-        template <template <class ResourceType> class LoaderType, class ResourceType>
-        LoaderResult load(const LoaderType<ResourceType>& loader, ResourceType& resource,
-            bool allowFailure = false) const;
-
-        template <template <class ResourceType> class LoaderType, class ResourceType>
-        LoaderMultipleResult loadAll(const LoaderType<ResourceType>& loader,
-            ResourceType& resource, bool allowFailure = false) const;
     };
-
-    template <template <class ResourceType> class LoaderType, class ResourceType>
-    inline LoaderResult Path::load(const LoaderType<ResourceType>& loader,
-        ResourceType& resource, bool allowFailure) const
-    {
-        for (const MountablePath& mountedPath : m_mounts)
-        {
-            std::string loadPath = mountedPath.basePath
-                + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path;
-            if (Utils::File::fileExists(loadPath)
-                || Utils::File::directoryExists(loadPath))
-            {
-                Debug::Log->debug("<Path> Loading resource at : {0}", loadPath);
-                if (loader.load(resource, loadPath))
-                {
-                    return LoaderResult(loadPath);
-                }
-            }
-        }
-        if (allowFailure)
-            return LoaderResult();
-        else
-            throw Exceptions::ResourceNotFound(
-                m_path, MountablePath::StringPaths(), EXC_INFO);
-    }
-
-    template <template <class ResourceType> class LoaderType, class ResourceType>
-    inline LoaderMultipleResult Path::loadAll(const LoaderType<ResourceType>& loader,
-        ResourceType& resource, bool allowFailure) const
-    {
-        std::vector<std::string> paths;
-        for (const MountablePath& mountedPath : m_mounts)
-        {
-            std::string loadPath = mountedPath.basePath
-                + ((!mountedPath.basePath.empty()) ? "/" : "") + this->m_path;
-            if (Utils::File::fileExists(loadPath)
-                || Utils::File::directoryExists(loadPath))
-            {
-                Debug::Log->debug("<Path> Loading resource at : {0}", loadPath);
-                if (loader.load(resource, loadPath))
-                {
-                    paths.push_back(loadPath);
-                }
-            }
-        }
-        if (!allowFailure && paths.empty())
-            throw Exceptions::ResourceNotFound(
-                m_path, MountablePath::StringPaths(), EXC_INFO);
-        else
-            return LoaderMultipleResult(paths);
-    }
 } // namespace obe::System
 
 obe::System::Path operator"" _path(const char* str, std::size_t len);
