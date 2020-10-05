@@ -36,14 +36,14 @@ before_script:
 - mkdir -p ${BUILD_PKG} && cd ${BUILD_PKG}
 - echo "Installing cmake..."
 - |
-  if [ ! -d "cmake-3.10.3/" ]; then
-    wget -nv https://cmake.org/files/v3.10/cmake-3.10.3.tar.gz
-    tar xzf cmake-3.10.3.tar.gz
-    cd cmake-3.10.3/
+  if [ ! -d "cmake-3.16.9/" ]; then
+    wget -nv https://cmake.org/files/v3.16/cmake-3.16.9.tar.gz
+    tar xzf cmake-3.16.9.tar.gz
+    cd cmake-3.16.9/
     ./bootstrap > /dev/null
     make -j$(nproc) > /dev/null
   else
-    cd cmake-3.10.3/
+    cd cmake-3.16.9/
     echo "cmake build cache found"
   fi
 - sudo make install > /dev/null
