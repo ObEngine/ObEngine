@@ -69,7 +69,7 @@ function (configure_obengine_git GIT_EXECUTABLE ObEngine_SOURCE_DIR)
 
             # Get the version tag from git
             execute_process(
-                COMMAND ${GIT_EXECUTABLE} for-each-ref refs/tags --sort=-taggerdate --count=1
+                COMMAND ${GIT_EXECUTABLE} for-each-ref refs/tags --sort=-taggerdate --count=1 "--format=%(refname)"
                 WORKING_DIRECTORY ${ObEngine_SOURCE_DIR}
                 OUTPUT_VARIABLE GIT_OBENGINE_VERSION_UNFORMATTED
                 OUTPUT_STRIP_TRAILING_WHITESPACE
