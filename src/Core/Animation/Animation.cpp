@@ -4,7 +4,6 @@
 
 #include <Debug/Logger.hpp>
 #include <Engine/ResourceManager.hpp>
-#include <System/Loaders.hpp>
 #include <Utils/StringUtils.hpp>
 
 #include <vili/node.hpp>

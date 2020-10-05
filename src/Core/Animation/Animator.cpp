@@ -2,7 +2,6 @@
 #include <Animation/Exceptions.hpp>
 
 #include <Graphics/Sprite.hpp>
-#include <System/Loaders.hpp>
 #include <Utils/VectorUtils.hpp>
 
 #include <vili/parser/parser.hpp>
@@ -118,27 +117,30 @@ namespace obe::Animation
 
     void Animator::load(System::Path path, Engine::ResourceManager* resources)
     {
-        m_path = std::move(path);
+        m_path = path;
         Debug::Log->debug("<Animator> Loading Animator at {0}", m_path.toString());
-        std::vector<std::string> listDir;
-        m_path.loadAll(System::Loaders::dirPathLoader, listDir);
-        std::vector<std::string> allFiles;
-        m_path.loadAll(System::Loaders::filePathLoader, allFiles);
+        std::vector<System::FindResult> directories
+            = path.list(System::PathType::Directory);
+        std::vector<System::FindResult> files = path.list(System::PathType::File);
         vili::node animatorCfgFile;
         std::unordered_map<std::string, vili::node> animationParameters;
-        if (Utils::Vector::contains("animator.cfg.vili"s, allFiles))
+        auto foundAnimatorCfg = std::find_if(
+            files.begin(), files.end(), [](const System::FindResult& result) {
+                return result.element() == "animator.cfg.vili";
+            });
+        if (foundAnimatorCfg != files.end())
         {
             animatorCfgFile
                 = vili::parser::from_file(m_path.add("animator.cfg.vili").find());
         }
-        for (const auto& directory : listDir)
+        for (const auto& directory : directories)
         {
             std::unique_ptr<Animation> tempAnim = std::make_unique<Animation>();
             if (m_target)
             {
                 tempAnim->setAntiAliasing(m_target->getAntiAliasing());
             }
-            tempAnim->loadAnimation(m_path.add(directory), resources);
+            tempAnim->loadAnimation(System::Path(directory.path()), resources);
             /*if (animationParameters.find(directory) != animationParameters.end()
                 && animationParameters.find("all") != animationParameters.end())
             {

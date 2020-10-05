@@ -40,7 +40,6 @@
 #include <Bindings/obe/Script/ViliLuaBridge/ViliLuaBridge.hpp>
 #include <Bindings/obe/System/Constraints/Constraints.hpp>
 #include <Bindings/obe/System/Exceptions/Exceptions.hpp>
-#include <Bindings/obe/System/Loaders/Loaders.hpp>
 #include <Bindings/obe/System/Package/Package.hpp>
 #include <Bindings/obe/System/System.hpp>
 #include <Bindings/obe/System/Workspace/Workspace.hpp>
@@ -101,7 +100,6 @@ namespace obe::Bindings
         state["obe"]["Scene"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Script"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["System"]["Exceptions"].get_or_create<sol::table>();
-        state["obe"]["System"]["Loaders"].get_or_create<sol::table>();
         state["obe"]["Transform"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Utils"]["Exec"].get_or_create<sol::table>();
         state["obe"]["Events"]["Actions"].get_or_create<sol::table>();
@@ -301,8 +299,6 @@ namespace obe::Bindings
         obe::Script::Bindings::LoadClassGameObjectDatabase(state);
 
         obe::System::Bindings::LoadClassCursor(state);
-        obe::System::Bindings::LoadClassLoaderMultipleResult(state);
-        obe::System::Bindings::LoadClassLoaderResult(state);
         obe::System::Bindings::LoadClassMountablePath(state);
         obe::System::Bindings::LoadClassPath(state);
         obe::System::Bindings::LoadClassPlugin(state);
@@ -319,12 +315,6 @@ namespace obe::Bindings
         obe::System::Exceptions::Bindings::LoadClassResourceNotFound(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownPackage(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownWorkspace(state);
-
-        obe::System::Loaders::Bindings::LoadGlobalTextureLoader(state);
-        obe::System::Loaders::Bindings::LoadGlobalDataLoader(state);
-        obe::System::Loaders::Bindings::LoadGlobalFontLoader(state);
-        obe::System::Loaders::Bindings::LoadGlobalDirPathLoader(state);
-        obe::System::Loaders::Bindings::LoadGlobalFilePathLoader(state);
 
         obe::Time::Bindings::LoadClassChronometer(state);
         obe::Time::Bindings::LoadClassFramerateCounter(state);
