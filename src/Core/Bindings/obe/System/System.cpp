@@ -65,6 +65,27 @@ namespace obe::System::Bindings
             });
         bindCursor["isPressed"] = &obe::System::Cursor::isPressed;
     }
+    void LoadClassFindResult(sol::state_view state)
+    {
+        sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
+        sol::usertype<obe::System::FindResult> bindFindResult
+            = SystemNamespace.new_usertype<obe::System::FindResult>("FindResult",
+                sol::call_constructor,
+                sol::constructors<obe::System::FindResult(const std::string&),
+                    obe::System::FindResult(obe::System::PathType, const std::string&,
+                        const std::string&, const std::string&)>());
+        bindFindResult["path"] = &obe::System::FindResult::path;
+        bindFindResult["root"] = &obe::System::FindResult::root;
+        bindFindResult["element"] = &obe::System::FindResult::element;
+        bindFindResult["success"] = &obe::System::FindResult::success;
+        bindFindResult["operator bool"] = &obe::System::FindResult::operator bool;
+        bindFindResult["operator const std::string &"]
+            = &obe::System::FindResult::operator const std::string &;
+        bindFindResult["operator const char *"]
+            = &obe::System::FindResult::operator const char*;
+        bindFindResult["operator std::string_view"]
+            = &obe::System::FindResult::operator std::string_view;
+    }
     void LoadClassMountablePath(sol::state_view state)
     {
         sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
@@ -101,17 +122,26 @@ namespace obe::System::Bindings
         bindPath["add"] = &obe::System::Path::add;
         bindPath["last"] = &obe::System::Path::last;
         bindPath["getPath"] = &obe::System::Path::getPath;
-        bindPath["find"] = sol::overload(
-            [](obe::System::Path* self) -> std::string { return self->find(); },
-            [](obe::System::Path* self, obe::System::PathType pathType) -> std::string {
-                return self->find(pathType);
-            });
-        /*bindPath["findAll"] = sol::overload(
-            [](obe::System::Path* self) -> std::vector<std::string> {
-                return self->findAll();
+        bindPath["list"] = sol::overload(
+            [](obe::System::Path* self) -> std::vector<obe::System::FindResult> {
+                return self->list();
             },
             [](obe::System::Path* self, obe::System::PathType pathType)
-                -> std::vector<std::string> { return self->findAll(pathType); });*/
+                -> std::vector<obe::System::FindResult> { return self->list(pathType); });
+        bindPath["find"] = sol::overload(
+            [](obe::System::Path* self) -> obe::System::FindResult {
+                return self->find();
+            },
+            [](obe::System::Path* self, obe::System::PathType pathType)
+                -> obe::System::FindResult { return self->find(pathType); });
+        bindPath["findAll"] = sol::overload(
+            [](obe::System::Path* self) -> std::vector<obe::System::FindResult> {
+                return self->findAll();
+            },
+            [](obe::System::Path* self,
+                obe::System::PathType pathType) -> std::vector<obe::System::FindResult> {
+                return self->findAll(pathType);
+            });
         bindPath["toString"] = &obe::System::Path::toString;
         bindPath["operator="] = &obe::System::Path::operator=;
     }

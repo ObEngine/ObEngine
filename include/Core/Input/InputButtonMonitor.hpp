@@ -8,6 +8,10 @@
 
 namespace obe::Events::Keys
 {
+    /**
+     * \brief Event triggered when the state of an InputButton changes
+     * \noconstructor
+     */
     struct StateChanged
     {
         const Input::InputButtonState state;

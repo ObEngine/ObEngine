@@ -8,5 +8,6 @@ namespace obe::Bindings
 {
     void LoadClassDebugInfo(sol::state_view state);
     void LoadClassException(sol::state_view state);
+    void LoadFunctionDOSOMETHING(sol::state_view state);
     void LoadFunctionInitEngine(sol::state_view state);
 };

@@ -1,13 +1,13 @@
-#include <Bindings/BindingTree.hpp>
-#include <Bindings/Bindings.hpp>
 #include <Bindings/Config.hpp>
 #include <Bindings/Exceptions.hpp>
+#include <Bindings/Patches.hpp>
 #include <Bindings/obe/Animation/Animation.hpp>
 #include <Bindings/obe/Animation/Easing/Easing.hpp>
 #include <Bindings/obe/Animation/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Audio/Audio.hpp>
 #include <Bindings/obe/Audio/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Bindings/Bindings.hpp>
+#include <Bindings/obe/Bindings/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Collision/Collision.hpp>
 #include <Bindings/obe/Component/Component.hpp>
 #include <Bindings/obe/Component/Exceptions/Exceptions.hpp>
@@ -15,7 +15,6 @@
 #include <Bindings/obe/Config/Templates/Templates.hpp>
 #include <Bindings/obe/Debug/Debug.hpp>
 #include <Bindings/obe/Engine/Engine.hpp>
-#include <Bindings/obe/Engine/Events/Game/Game.hpp>
 #include <Bindings/obe/Engine/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Event/Event.hpp>
 #include <Bindings/obe/Event/Exceptions/Exceptions.hpp>
@@ -90,6 +89,7 @@ namespace obe::Bindings
         state["vili"]["utils"].get_or_create<sol::table>();
         state["obe"]["Animation"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Audio"]["Exceptions"].get_or_create<sol::table>();
+        state["obe"]["Bindings"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Component"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Engine"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Event"]["Exceptions"].get_or_create<sol::table>();
@@ -121,8 +121,6 @@ namespace obe::Bindings
         state["obe"]["Utils"]["Vector"].get_or_create<sol::table>();
         state["vili"]["utils"]["string"].get_or_create<sol::table>();
         state["obe"]["System"]["Constraints"].get_or_create<sol::table>();
-        state["obe"]["Engine"]["Events"].get_or_create<sol::table>();
-        state["obe"]["Engine"]["Events"]["Game"].get_or_create<sol::table>();
         obe::Animation::Bindings::LoadClassAnimation(state);
         obe::Animation::Bindings::LoadClassAnimationGroup(state);
         obe::Animation::Bindings::LoadClassAnimator(state);
@@ -152,6 +150,8 @@ namespace obe::Bindings
 
         obe::Audio::Exceptions::Bindings::LoadClassAudioFileNotFound(state);
 
+        obe::Bindings::Exceptions::Bindings::LoadClassBindingTreeNodeNotFound(state);
+
         obe::Collision::Bindings::LoadClassCollisionData(state);
         obe::Collision::Bindings::LoadClassPolygonalCollider(state);
         obe::Collision::Bindings::LoadClassTrajectory(state);
@@ -166,6 +166,7 @@ namespace obe::Bindings
 
         obe::Bindings::LoadClassDebugInfo(state);
         obe::Bindings::LoadClassException(state);
+        obe::Bindings::LoadFunctionDOSOMETHING(state);
         obe::Bindings::LoadFunctionInitEngine(state);
 
         obe::Engine::Bindings::LoadClassEngine(state);
@@ -299,6 +300,7 @@ namespace obe::Bindings
         obe::Script::Bindings::LoadClassGameObjectDatabase(state);
 
         obe::System::Bindings::LoadClassCursor(state);
+        obe::System::Bindings::LoadClassFindResult(state);
         obe::System::Bindings::LoadClassMountablePath(state);
         obe::System::Bindings::LoadClassPath(state);
         obe::System::Bindings::LoadClassPlugin(state);
@@ -394,9 +396,9 @@ namespace obe::Bindings
         vili::parser::Bindings::LoadClassNodeInStack(state);
         vili::parser::Bindings::LoadClassState(state);
         vili::parser::Bindings::LoadClassError(state);
+        vili::parser::Bindings::LoadFunctionStatePushProxy(state);
         vili::parser::Bindings::LoadFunctionFromString(state);
         vili::parser::Bindings::LoadFunctionFromFile(state);
-        vili::parser::Bindings::LoadGlobalErrorMessage(state);
 
         obe::Events::Actions::Bindings::LoadClassAction(state);
 
