@@ -116,7 +116,7 @@ namespace obe::Transform::Bindings
         bindPolygon["get"] = &obe::Transform::Polygon::get;
         bindPolygon["getBoundingBox"] = &obe::Transform::Polygon::getBoundingBox;
         bindPolygon["DefaultTolerance"]
-            = sol::var(obe::Transform::Polygon::DefaultTolerance);
+            = sol::var(&obe::Transform::Polygon::DefaultTolerance);
     }
     void LoadClassPolygonPoint(sol::state_view state)
     {
@@ -256,16 +256,17 @@ namespace obe::Transform::Bindings
             [](obe::Transform::Referential* self, const std::string& format)
                 -> std::string { return self->toString(format); });
         bindReferential["FromString"] = &obe::Transform::Referential::FromString;
-        bindReferential["TopLeft"] = sol::var(obe::Transform::Referential::TopLeft);
-        bindReferential["Top"] = sol::var(obe::Transform::Referential::Top);
-        bindReferential["TopRight"] = sol::var(obe::Transform::Referential::TopRight);
-        bindReferential["Left"] = sol::var(obe::Transform::Referential::Left);
-        bindReferential["Center"] = sol::var(obe::Transform::Referential::Center);
-        bindReferential["Right"] = sol::var(obe::Transform::Referential::Right);
-        bindReferential["BottomLeft"] = sol::var(obe::Transform::Referential::BottomLeft);
-        bindReferential["Bottom"] = sol::var(obe::Transform::Referential::Bottom);
+        bindReferential["TopLeft"] = sol::var(&obe::Transform::Referential::TopLeft);
+        bindReferential["Top"] = sol::var(&obe::Transform::Referential::Top);
+        bindReferential["TopRight"] = sol::var(&obe::Transform::Referential::TopRight);
+        bindReferential["Left"] = sol::var(&obe::Transform::Referential::Left);
+        bindReferential["Center"] = sol::var(&obe::Transform::Referential::Center);
+        bindReferential["Right"] = sol::var(&obe::Transform::Referential::Right);
+        bindReferential["BottomLeft"]
+            = sol::var(&obe::Transform::Referential::BottomLeft);
+        bindReferential["Bottom"] = sol::var(&obe::Transform::Referential::Bottom);
         bindReferential["BottomRight"]
-            = sol::var(obe::Transform::Referential::BottomRight);
+            = sol::var(&obe::Transform::Referential::BottomRight);
     }
     void LoadClassUnitBasedObject(sol::state_view state)
     {
@@ -342,8 +343,8 @@ namespace obe::Transform::Bindings
         bindUnitVector["x"] = &obe::Transform::UnitVector::x;
         bindUnitVector["y"] = &obe::Transform::UnitVector::y;
         bindUnitVector["unit"] = &obe::Transform::UnitVector::unit;
-        bindUnitVector["View"] = sol::var(obe::Transform::UnitVector::View);
-        bindUnitVector["Screen"] = sol::var(obe::Transform::UnitVector::Screen);
+        bindUnitVector["View"] = sol::var(&obe::Transform::UnitVector::View);
+        bindUnitVector["Screen"] = sol::var(&obe::Transform::UnitVector::Screen);
     }
     void LoadClassScreenStruct(sol::state_view state)
     {

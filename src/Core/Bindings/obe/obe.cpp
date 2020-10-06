@@ -1,5 +1,6 @@
 #include <Bindings/obe/obe.hpp>
 
+#include <Bindings/Patches.hpp>
 #include <Exception.hpp>
 #include <ObEngineCore.hpp>
 
@@ -26,6 +27,11 @@ namespace obe::Bindings
                 sol::constructors<obe::Exception(std::string, obe::DebugInfo)>());
         bindException["what"] = &obe::Exception::what;
         bindException["nest"] = &obe::Exception::nest;
+    }
+    void LoadFunctionDOSOMETHING(sol::state_view state)
+    {
+        sol::table obeNamespace = state["obe"].get<sol::table>();
+        obeNamespace.set_function("DOSOMETHING", obe::DOSOMETHING);
     }
     void LoadFunctionInitEngine(sol::state_view state)
     {

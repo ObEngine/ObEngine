@@ -24,8 +24,8 @@ namespace obe::Types::Bindings
         sol::table TypesNamespace = state["obe"]["Types"].get<sol::table>();
         sol::usertype<obe::Types::ProtectedIdentifiable> bindProtectedIdentifiable
             = TypesNamespace.new_usertype<obe::Types::ProtectedIdentifiable>(
-                "ProtectedIdentifiable",
-                sol::base_classes, sol::bases<obe::Types::Identifiable>());
+                "ProtectedIdentifiable", sol::base_classes,
+                sol::bases<obe::Types::Identifiable>());
     }
     void LoadClassSelectable(sol::state_view state)
     {

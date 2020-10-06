@@ -99,8 +99,6 @@ namespace obe::System
         [[nodiscard]] std::vector<FindResult> list(
             PathType pathType = PathType::All) const;
         [[nodiscard]] FindResult find(PathType pathType = PathType::All) const;
-        [[nodiscard]] FindResult find_or(
-            PathType pathType = PathType::All, const std::string& defaultPath = "") const;
         [[nodiscard]] std::vector<FindResult> findAll(
             PathType pathType = PathType::All) const;
         /**

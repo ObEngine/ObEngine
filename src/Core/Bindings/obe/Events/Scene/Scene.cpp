@@ -13,6 +13,6 @@ namespace obe::Events::Scene::Bindings
             = SceneNamespace.new_usertype<obe::Events::Scene::Loaded>(
                 "Loaded", sol::call_constructor, sol::default_constructor);
         bindLoaded["filename"] = &obe::Events::Scene::Loaded::filename;
-        // bindLoaded["id"] = sol::var(obe::Events::Scene::Loaded::id);
+        bindLoaded["id"] = sol::var(&obe::Events::Scene::Loaded::id);
     }
 };
