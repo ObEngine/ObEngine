@@ -28,11 +28,6 @@ namespace obe::Bindings
         bindException["what"] = &obe::Exception::what;
         bindException["nest"] = &obe::Exception::nest;
     }
-    void LoadFunctionDOSOMETHING(sol::state_view state)
-    {
-        sol::table obeNamespace = state["obe"].get<sol::table>();
-        obeNamespace.set_function("DOSOMETHING", obe::DOSOMETHING);
-    }
     void LoadFunctionInitEngine(sol::state_view state)
     {
         sol::table obeNamespace = state["obe"].get<sol::table>();
