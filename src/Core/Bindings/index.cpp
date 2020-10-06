@@ -166,7 +166,6 @@ namespace obe::Bindings
 
         obe::Bindings::LoadClassDebugInfo(state);
         obe::Bindings::LoadClassException(state);
-        obe::Bindings::LoadFunctionDOSOMETHING(state);
         obe::Bindings::LoadFunctionInitEngine(state);
 
         obe::Engine::Bindings::LoadClassEngine(state);
