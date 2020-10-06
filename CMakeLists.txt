@@ -70,22 +70,22 @@ if(OBE_USE_VCPKG)
 
     find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 
-    target_include_directories(ObEngine PRIVATE ${TINYDIR_INCLUDE_DIRS})
+    include_directories(${TINYDIR_INCLUDE_DIRS})
 
     if(WIN32)
-        target_link_libraries(ObEngine PRIVATE FLAC OpenAL OpenGL Vorbis)
+        link_libraries(FLAC OpenAL OpenGL Vorbis)
     else()
-        target_link_libraries(ObEngine PRIVATE X11 FLAC UDev OpenAL)
+        link_libraries(X11 FLAC UDev OpenAL)
     endif()
 
 
-    target_link_libraries(ObEngine PRIVATE ${LUA_LIBRARIES})
-    target_include_directories(ObEngine PRIVATE ${LUA_INCLUDE_DIR})
+    link_libraries(${LUA_LIBRARIES})
+    include_directories(${LUA_INCLUDE_DIR})
 
-    target_link_libraries(ObEngine PRIVATE sol2::sol2)
-    target_link_libraries(ObEngine PRIVATE fmt::fmt fmt::fmt-header-only)
-    target_link_libraries(ObEngine PRIVATE spdlog::spdlog spdlog::spdlog_header_only)
-    target_link_libraries(ObEngine PRIVATE Catch2::Catch2)
+    link_libraries(sol2::sol2)
+    link_libraries(fmt::fmt fmt::fmt-header-only)
+    link_libraries(spdlog::spdlog spdlog::spdlog_header_only)
+    link_libraries(Catch2::Catch2)
     else() # if using built-in dependencies
 
     # SFML 2.5 is minimum version
