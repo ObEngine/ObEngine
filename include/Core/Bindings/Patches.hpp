@@ -1,10 +1,5 @@
 #pragma once
 
-namespace obe
-{
-    void DOSOMETHING();
-}
-
 namespace vili
 {
     class node;

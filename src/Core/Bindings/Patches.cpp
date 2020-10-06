@@ -3,13 +3,6 @@
 #include <vili/node.hpp>
 #include <vili/parser/parser_state.hpp>
 
-namespace obe
-{
-    void DOSOMETHING()
-    {
-
-    }
-}
 
 namespace vili::parser
 {
