@@ -120,18 +120,13 @@ namespace obe::Animation
         m_path = path;
         Debug::Log->debug("<Animator> Loading Animator at {0}", m_path.toString());
         std::vector<System::FindResult> directories
-            = path.list(System::PathType::Directory);
-        std::vector<System::FindResult> files = path.list(System::PathType::File);
+            = m_path.list(System::PathType::Directory);
         vili::node animatorCfgFile;
-        std::unordered_map<std::string, vili::node> animationParameters;
-        auto foundAnimatorCfg = std::find_if(
-            files.begin(), files.end(), [](const System::FindResult& result) {
-                return result.element() == "animator.cfg.vili";
-            });
-        if (foundAnimatorCfg != files.end())
+        auto foundAnimatorCfg
+            = m_path.add("animator.cfg.vili").find(System::PathType::File);
+        if (foundAnimatorCfg.success())
         {
-            animatorCfgFile
-                = vili::parser::from_file(m_path.add("animator.cfg.vili").find());
+            animatorCfgFile = vili::parser::from_file(foundAnimatorCfg.path());
         }
         for (const auto& directory : directories)
         {
@@ -141,16 +136,18 @@ namespace obe::Animation
                 tempAnim->setAntiAliasing(m_target->getAntiAliasing());
             }
             tempAnim->loadAnimation(System::Path(directory.path()), resources);
-            /*if (animationParameters.find(directory) != animationParameters.end()
-                && animationParameters.find("all") != animationParameters.end())
+            if (!animatorCfgFile.is_null())
             {
-                // tempAnim->applyParameters(*animationParameters["all"]);
-                // tempAnim->applyParameters(*animationParameters[directory]);
+                if (animatorCfgFile.contains("all"))
+                {
+                    tempAnim->applyParameters(animatorCfgFile.at("all"));
+                }
+                if (animatorCfgFile.contains(directory.element()))
+                {
+                    tempAnim->applyParameters(animatorCfgFile.at(directory.element()));
+                }
             }
-            else if (animationParameters.find(directory) != animationParameters.end())
-                //tempAnim->applyParameters(*animationParameters[directory]);
-            else if (animationParameters.find("all") != animationParameters.end())
-                // tempAnim->applyParameters(*animationParameters["all"]);*/
+
             m_animations[tempAnim->getName()] = move(tempAnim);
         }
     }
