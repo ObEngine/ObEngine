@@ -43,6 +43,43 @@ namespace obe::Graphics::Exceptions::Bindings
                           std::string_view, obe::DebugInfo)>(),
                       sol::base_classes, sol::bases<obe::Exception>());
     }
+    void LoadClassInvalidHexFormat(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["Graphics"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Graphics::Exceptions::InvalidHexFormat> bindInvalidHexFormat
+            = ExceptionsNamespace
+                  .new_usertype<obe::Graphics::Exceptions::InvalidHexFormat>(
+                      "InvalidHexFormat", sol::call_constructor,
+                      sol::constructors<obe::Graphics::Exceptions::InvalidHexFormat(
+                          std::string_view, obe::DebugInfo)>(),
+                      sol::base_classes, sol::bases<obe::Exception>());
+    }
+    void LoadClassInvalidHsvFormat(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["Graphics"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Graphics::Exceptions::InvalidHsvFormat> bindInvalidHsvFormat
+            = ExceptionsNamespace
+                  .new_usertype<obe::Graphics::Exceptions::InvalidHsvFormat>(
+                      "InvalidHsvFormat", sol::call_constructor,
+                      sol::constructors<obe::Graphics::Exceptions::InvalidHsvFormat(
+                          const int, const double, const double, obe::DebugInfo)>(),
+                      sol::base_classes, sol::bases<obe::Exception>());
+    }
+    void LoadClassInvalidRgbFormat(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["Graphics"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Graphics::Exceptions::InvalidRgbFormat> bindInvalidRgbFormat
+            = ExceptionsNamespace
+                  .new_usertype<obe::Graphics::Exceptions::InvalidRgbFormat>(
+                      "InvalidRgbFormat", sol::call_constructor,
+                      sol::constructors<obe::Graphics::Exceptions::InvalidRgbFormat(
+                          const double, const double, const double, const double,
+                          obe::DebugInfo)>(),
+                      sol::base_classes, sol::bases<obe::Exception>());
+    }
     void LoadClassInvalidSpriteColorType(sol::state_view state)
     {
         sol::table ExceptionsNamespace
