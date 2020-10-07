@@ -238,6 +238,9 @@ namespace obe::Bindings
         obe::Graphics::Exceptions::Bindings::LoadClassCanvasElementAlreadyExists(state);
         obe::Graphics::Exceptions::Bindings::LoadClassImageFileNotFound(state);
         obe::Graphics::Exceptions::Bindings::LoadClassInvalidColorName(state);
+        obe::Graphics::Exceptions::Bindings::LoadClassInvalidHexFormat(state);
+        obe::Graphics::Exceptions::Bindings::LoadClassInvalidHsvFormat(state);
+        obe::Graphics::Exceptions::Bindings::LoadClassInvalidRgbFormat(state);
         obe::Graphics::Exceptions::Bindings::LoadClassInvalidSpriteColorType(state);
         obe::Graphics::Exceptions::Bindings::LoadClassReadOnlyTexture(state);
 
