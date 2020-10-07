@@ -84,8 +84,8 @@ if(OBE_USE_VCPKG)
     include_directories(${LUA_INCLUDE_DIR})
 
     link_libraries(sol2::sol2)
-    link_libraries(fmt::fmt fmt::fmt-header-only)
-    link_libraries(spdlog::spdlog spdlog::spdlog_header_only)
+    link_libraries(fmt::fmt)
+    link_libraries(spdlog::spdlog)
     link_libraries(Catch2::Catch2)
 else() # if using built-in dependencies
 
