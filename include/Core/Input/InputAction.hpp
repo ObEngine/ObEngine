@@ -104,6 +104,10 @@ namespace obe::Input
 
 namespace obe::Events::Actions
 {
+    /**
+     * \brief Event containing information about an Action that has been triggered
+     * \noconstructor
+     */
     struct Action
     {
         Input::InputAction& action;

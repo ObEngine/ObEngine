@@ -7,8 +7,7 @@ namespace sol
 namespace obe::System::Bindings
 {
     void LoadClassCursor(sol::state_view state);
-    void LoadClassLoaderMultipleResult(sol::state_view state);
-    void LoadClassLoaderResult(sol::state_view state);
+    void LoadClassFindResult(sol::state_view state);
     void LoadClassMountablePath(sol::state_view state);
     void LoadClassPath(sol::state_view state);
     void LoadClassPlugin(sol::state_view state);

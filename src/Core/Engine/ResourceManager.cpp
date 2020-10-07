@@ -1,6 +1,5 @@
 #include <Engine/Exceptions.hpp>
 #include <Engine/ResourceManager.hpp>
-#include <System/Loaders.hpp>
 #include <System/Path.hpp>
 
 namespace obe::Engine
@@ -80,14 +79,17 @@ namespace obe::Engine
     {
         if (m_fonts.find(path) == m_fonts.end())
         {
-            std::shared_ptr<Graphics::Font> tempFont = std::make_shared<Graphics::Font>();
-            const System::LoaderResult loadResult
-                = System::Path(path).load(System::Loaders::fontLoader, *tempFont);
-            Debug::Log->debug(
-                "[ResourceManager] Loading <Font> {} from {}", path, loadResult.path());
+            const System::FindResult findResult
+                = System::Path(path).find(System::PathType::File);
+            std::shared_ptr<Graphics::Font> newFont = std::make_shared<Graphics::Font>();
+            newFont->loadFromFile(findResult);
 
-            if (loadResult.success())
-                m_fonts[path] = move(tempFont);
+            if (findResult.success())
+            {
+                Debug::Log->debug("[ResourceManager] Loading <Font> {} from {}", path,
+                    findResult.path());
+                m_fonts[path] = move(newFont);
+            }
             else
                 throw Exceptions::FontNotFound(
                     path, System::MountablePath::StringPaths(), EXC_INFO);

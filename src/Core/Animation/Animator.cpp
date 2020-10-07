@@ -2,7 +2,6 @@
 #include <Animation/Exceptions.hpp>
 
 #include <Graphics/Sprite.hpp>
-#include <System/Loaders.hpp>
 #include <Utils/VectorUtils.hpp>
 
 #include <vili/parser/parser.hpp>
@@ -118,37 +117,37 @@ namespace obe::Animation
 
     void Animator::load(System::Path path, Engine::ResourceManager* resources)
     {
-        m_path = std::move(path);
+        m_path = path;
         Debug::Log->debug("<Animator> Loading Animator at {0}", m_path.toString());
-        std::vector<std::string> listDir;
-        m_path.loadAll(System::Loaders::dirPathLoader, listDir);
-        std::vector<std::string> allFiles;
-        m_path.loadAll(System::Loaders::filePathLoader, allFiles);
+        std::vector<System::FindResult> directories
+            = m_path.list(System::PathType::Directory);
         vili::node animatorCfgFile;
-        std::unordered_map<std::string, vili::node> animationParameters;
-        if (Utils::Vector::contains("animator.cfg.vili"s, allFiles))
+        auto foundAnimatorCfg
+            = m_path.add("animator.cfg.vili").find(System::PathType::File);
+        if (foundAnimatorCfg.success())
         {
-            animatorCfgFile
-                = vili::parser::from_file(m_path.add("animator.cfg.vili").find());
+            animatorCfgFile = vili::parser::from_file(foundAnimatorCfg.path());
         }
-        for (const auto& directory : listDir)
+        for (const auto& directory : directories)
         {
             std::unique_ptr<Animation> tempAnim = std::make_unique<Animation>();
             if (m_target)
             {
                 tempAnim->setAntiAliasing(m_target->getAntiAliasing());
             }
-            tempAnim->loadAnimation(m_path.add(directory), resources);
-            /*if (animationParameters.find(directory) != animationParameters.end()
-                && animationParameters.find("all") != animationParameters.end())
+            tempAnim->loadAnimation(System::Path(directory.path()), resources);
+            if (!animatorCfgFile.is_null())
             {
-                // tempAnim->applyParameters(*animationParameters["all"]);
-                // tempAnim->applyParameters(*animationParameters[directory]);
+                if (animatorCfgFile.contains("all"))
+                {
+                    tempAnim->applyParameters(animatorCfgFile.at("all"));
+                }
+                if (animatorCfgFile.contains(directory.element()))
+                {
+                    tempAnim->applyParameters(animatorCfgFile.at(directory.element()));
+                }
             }
-            else if (animationParameters.find(directory) != animationParameters.end())
-                //tempAnim->applyParameters(*animationParameters[directory]);
-            else if (animationParameters.find("all") != animationParameters.end())
-                // tempAnim->applyParameters(*animationParameters["all"]);*/
+
             m_animations[tempAnim->getName()] = move(tempAnim);
         }
     }

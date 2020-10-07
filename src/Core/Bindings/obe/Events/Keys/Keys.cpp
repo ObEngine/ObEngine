@@ -10,8 +10,7 @@ namespace obe::Events::Keys::Bindings
     {
         sol::table KeysNamespace = state["obe"]["Events"]["Keys"].get<sol::table>();
         sol::usertype<obe::Events::Keys::StateChanged> bindStateChanged
-            = KeysNamespace.new_usertype<obe::Events::Keys::StateChanged>(
-                "StateChanged");
+            = KeysNamespace.new_usertype<obe::Events::Keys::StateChanged>("StateChanged");
         bindStateChanged["state"] = &obe::Events::Keys::StateChanged::state;
         bindStateChanged["previousState"]
             = &obe::Events::Keys::StateChanged::previousState;

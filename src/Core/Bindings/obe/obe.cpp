@@ -1,5 +1,6 @@
 #include <Bindings/obe/obe.hpp>
 
+#include <Bindings/Patches.hpp>
 #include <Exception.hpp>
 #include <ObEngineCore.hpp>
 

@@ -3,7 +3,6 @@
 #include <Script/Exceptions.hpp>
 #include <Script/GameObject.hpp>
 #include <Script/ViliLuaBridge.hpp>
-#include <System/Loaders.hpp>
 #include <Utils/StringUtils.hpp>
 
 #include <utility>

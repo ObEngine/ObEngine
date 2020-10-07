@@ -1,13 +1,13 @@
-#include <Bindings/BindingTree.hpp>
-#include <Bindings/Bindings.hpp>
 #include <Bindings/Config.hpp>
 #include <Bindings/Exceptions.hpp>
+#include <Bindings/Patches.hpp>
 #include <Bindings/obe/Animation/Animation.hpp>
 #include <Bindings/obe/Animation/Easing/Easing.hpp>
 #include <Bindings/obe/Animation/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Audio/Audio.hpp>
 #include <Bindings/obe/Audio/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Bindings/Bindings.hpp>
+#include <Bindings/obe/Bindings/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Collision/Collision.hpp>
 #include <Bindings/obe/Component/Component.hpp>
 #include <Bindings/obe/Component/Exceptions/Exceptions.hpp>
@@ -15,7 +15,6 @@
 #include <Bindings/obe/Config/Templates/Templates.hpp>
 #include <Bindings/obe/Debug/Debug.hpp>
 #include <Bindings/obe/Engine/Engine.hpp>
-#include <Bindings/obe/Engine/Events/Game/Game.hpp>
 #include <Bindings/obe/Engine/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Event/Event.hpp>
 #include <Bindings/obe/Event/Exceptions/Exceptions.hpp>
@@ -40,7 +39,6 @@
 #include <Bindings/obe/Script/ViliLuaBridge/ViliLuaBridge.hpp>
 #include <Bindings/obe/System/Constraints/Constraints.hpp>
 #include <Bindings/obe/System/Exceptions/Exceptions.hpp>
-#include <Bindings/obe/System/Loaders/Loaders.hpp>
 #include <Bindings/obe/System/Package/Package.hpp>
 #include <Bindings/obe/System/System.hpp>
 #include <Bindings/obe/System/Workspace/Workspace.hpp>
@@ -91,6 +89,7 @@ namespace obe::Bindings
         state["vili"]["utils"].get_or_create<sol::table>();
         state["obe"]["Animation"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Audio"]["Exceptions"].get_or_create<sol::table>();
+        state["obe"]["Bindings"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Component"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Engine"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Event"]["Exceptions"].get_or_create<sol::table>();
@@ -101,7 +100,6 @@ namespace obe::Bindings
         state["obe"]["Scene"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Script"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["System"]["Exceptions"].get_or_create<sol::table>();
-        state["obe"]["System"]["Loaders"].get_or_create<sol::table>();
         state["obe"]["Transform"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Utils"]["Exec"].get_or_create<sol::table>();
         state["obe"]["Events"]["Actions"].get_or_create<sol::table>();
@@ -123,8 +121,6 @@ namespace obe::Bindings
         state["obe"]["Utils"]["Vector"].get_or_create<sol::table>();
         state["vili"]["utils"]["string"].get_or_create<sol::table>();
         state["obe"]["System"]["Constraints"].get_or_create<sol::table>();
-        state["obe"]["Engine"]["Events"].get_or_create<sol::table>();
-        state["obe"]["Engine"]["Events"]["Game"].get_or_create<sol::table>();
         obe::Animation::Bindings::LoadClassAnimation(state);
         obe::Animation::Bindings::LoadClassAnimationGroup(state);
         obe::Animation::Bindings::LoadClassAnimator(state);
@@ -153,6 +149,8 @@ namespace obe::Bindings
         obe::Audio::Bindings::LoadEnumSoundStatus(state);
 
         obe::Audio::Exceptions::Bindings::LoadClassAudioFileNotFound(state);
+
+        obe::Bindings::Exceptions::Bindings::LoadClassBindingTreeNodeNotFound(state);
 
         obe::Collision::Bindings::LoadClassCollisionData(state);
         obe::Collision::Bindings::LoadClassPolygonalCollider(state);
@@ -301,8 +299,7 @@ namespace obe::Bindings
         obe::Script::Bindings::LoadClassGameObjectDatabase(state);
 
         obe::System::Bindings::LoadClassCursor(state);
-        obe::System::Bindings::LoadClassLoaderMultipleResult(state);
-        obe::System::Bindings::LoadClassLoaderResult(state);
+        obe::System::Bindings::LoadClassFindResult(state);
         obe::System::Bindings::LoadClassMountablePath(state);
         obe::System::Bindings::LoadClassPath(state);
         obe::System::Bindings::LoadClassPlugin(state);
@@ -319,12 +316,6 @@ namespace obe::Bindings
         obe::System::Exceptions::Bindings::LoadClassResourceNotFound(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownPackage(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownWorkspace(state);
-
-        obe::System::Loaders::Bindings::LoadGlobalTextureLoader(state);
-        obe::System::Loaders::Bindings::LoadGlobalDataLoader(state);
-        obe::System::Loaders::Bindings::LoadGlobalFontLoader(state);
-        obe::System::Loaders::Bindings::LoadGlobalDirPathLoader(state);
-        obe::System::Loaders::Bindings::LoadGlobalFilePathLoader(state);
 
         obe::Time::Bindings::LoadClassChronometer(state);
         obe::Time::Bindings::LoadClassFramerateCounter(state);
@@ -404,9 +395,9 @@ namespace obe::Bindings
         vili::parser::Bindings::LoadClassNodeInStack(state);
         vili::parser::Bindings::LoadClassState(state);
         vili::parser::Bindings::LoadClassError(state);
+        vili::parser::Bindings::LoadFunctionStatePushProxy(state);
         vili::parser::Bindings::LoadFunctionFromString(state);
         vili::parser::Bindings::LoadFunctionFromFile(state);
-        vili::parser::Bindings::LoadGlobalErrorMessage(state);
 
         obe::Events::Actions::Bindings::LoadClassAction(state);
 

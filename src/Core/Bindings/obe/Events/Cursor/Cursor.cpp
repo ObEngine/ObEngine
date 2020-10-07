@@ -17,7 +17,7 @@ namespace obe::Events::Cursor::Bindings
         bindHold["left"] = &obe::Events::Cursor::Hold::left;
         bindHold["middle"] = &obe::Events::Cursor::Hold::middle;
         bindHold["right"] = &obe::Events::Cursor::Hold::right;
-        // bindHold["id"] = &obe::Events::Cursor::Hold::id;
+        bindHold["id"] = sol::var(&obe::Events::Cursor::Hold::id);
     }
     void LoadClassMove(sol::state_view state)
     {
@@ -29,7 +29,7 @@ namespace obe::Events::Cursor::Bindings
         bindMove["y"] = &obe::Events::Cursor::Move::y;
         bindMove["previousX"] = &obe::Events::Cursor::Move::previousX;
         bindMove["previousY"] = &obe::Events::Cursor::Move::previousY;
-        // bindMove["id"] = &obe::Events::Cursor::Move::id;
+        bindMove["id"] = sol::var(&obe::Events::Cursor::Move::id);
     }
     void LoadClassPress(sol::state_view state)
     {
@@ -42,7 +42,7 @@ namespace obe::Events::Cursor::Bindings
         bindPress["left"] = &obe::Events::Cursor::Press::left;
         bindPress["middle"] = &obe::Events::Cursor::Press::middle;
         bindPress["right"] = &obe::Events::Cursor::Press::right;
-        // bindPress["id"] = &obe::Events::Cursor::Press::id;
+        bindPress["id"] = sol::var(&obe::Events::Cursor::Press::id);
     }
     void LoadClassRelease(sol::state_view state)
     {
@@ -55,6 +55,6 @@ namespace obe::Events::Cursor::Bindings
         bindRelease["left"] = &obe::Events::Cursor::Release::left;
         bindRelease["middle"] = &obe::Events::Cursor::Release::middle;
         bindRelease["right"] = &obe::Events::Cursor::Release::right;
-        // bindRelease["id"] = &obe::Events::Cursor::Release::id;
+        bindRelease["id"] = sol::var(&obe::Events::Cursor::Release::id);
     }
 };

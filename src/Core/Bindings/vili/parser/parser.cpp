@@ -1,5 +1,6 @@
 #include <Bindings/vili/parser/parser.hpp>
 
+#include <Bindings/Patches.hpp>
 #include <vili/parser/grammar_errors.hpp>
 #include <vili/parser/parser.hpp>
 #include <vili/parser/parser_state.hpp>
@@ -33,7 +34,7 @@ namespace vili::parser::Bindings
         bindstate["set_active_template"] = &vili::parser::state::set_active_template;
         bindstate["open_block"] = &vili::parser::state::open_block;
         bindstate["close_block"] = &vili::parser::state::close_block;
-        // bindstate["push"] = &vili::parser::state::push;
+        bindstate["push"] = &vili::parser::state_push_proxy;
         bindstate["push_template"]
             = sol::overload(static_cast<void (vili::parser::state::*)()>(
                                 &vili::parser::state::push_template),
@@ -50,6 +51,11 @@ namespace vili::parser::Bindings
             = parserNamespace.new_usertype<vili::parser::error>(
                 "error", sol::call_constructor, sol::default_constructor);
     }
+    void LoadFunctionStatePushProxy(sol::state_view state)
+    {
+        sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
+        parserNamespace.set_function("state_push_proxy", vili::parser::state_push_proxy);
+    }
     void LoadFunctionFromString(sol::state_view state)
     {
         sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
@@ -59,9 +65,5 @@ namespace vili::parser::Bindings
     {
         sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
         parserNamespace.set_function("from_file", vili::parser::from_file);
-    }
-    void LoadGlobalErrorMessage(sol::state_view state)
-    {
-        sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
     }
 };

@@ -33,9 +33,9 @@ namespace obe::Types
     };
 
     /**
-     * \forceabstract
      * \brief Exactly like Identifiable class except you can't change the Id
      *        after creation
+     * \noconstructor
      */
     class ProtectedIdentifiable : public Identifiable
     {
