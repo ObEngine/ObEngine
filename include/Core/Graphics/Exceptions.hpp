@@ -37,6 +37,44 @@ namespace obe::Graphics::Exceptions
         }
     };
 
+    class InvalidRgbFormat : public Exception
+    {
+    public:
+        InvalidRgbFormat(const double r, const double g, const double b, const double a,
+            DebugInfo info)
+            : Exception("InvalidRgbFormat", info)
+        {
+            this->error("Invalid RGB format, values should be between 0 and 255, got "
+                        "[r={}, g={}, b={}, a={}]",
+                r, g, b, a);
+        }
+    };
+
+    class InvalidHsvFormat : public Exception
+    {
+    public:
+        InvalidHsvFormat(const int H, const double S, const double V, DebugInfo info)
+            : Exception("InvalidHsvFormat", info)
+        {
+            this->error(
+                "Invalid HSV format, values should be between 0 and 365 for Hue and 0.0 "
+                "and 1.0 for Saturation and Value, got [H={}, S={}, V={}]",
+                H, S, V);
+        }
+    };
+
+    class InvalidHexFormat : public Exception
+    {
+    public:
+        InvalidHexFormat(std::string_view hexCode, DebugInfo info)
+            : Exception("InvalidHexFormat", info)
+        {
+            this->error(
+                "Impossible to find a color with following hexadecimal code : '{}'",
+                hexCode);
+        }
+    };
+
     class CanvasElementAlreadyExists : public Exception
     {
     public:
@@ -52,10 +90,13 @@ namespace obe::Graphics::Exceptions
     class InvalidSpriteColorType : public Exception
     {
     public:
-        InvalidSpriteColorType(std::string_view type, std::string_view value, DebugInfo info)
+        InvalidSpriteColorType(
+            std::string_view type, std::string_view value, DebugInfo info)
             : Exception("InvalidSpriteColorType ", info)
         {
-            this->error("Invalid value for 'color' attribute, expected 'object' or 'string' and got '{}' (value: {})", type, value);
+            this->error("Invalid value for 'color' attribute, expected 'object' or "
+                        "'string' and got '{}' (value: {})",
+                type, value);
         }
     };
 }

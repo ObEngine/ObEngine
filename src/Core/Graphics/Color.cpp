@@ -150,8 +150,8 @@ namespace obe::Graphics
     Color Color::Yellow(255, 255, 0);
     Color Color::YellowGreen(154, 205, 50);
 
-    static std::unordered_map<std::string, Color> ColorNames = { { "aliceblue",
-                                                                     Color::AliceBlue },
+    std::unordered_map<std::string, Color> ColorNames = { { "aliceblue",
+                                                              Color::AliceBlue },
         { "antiquewhite", Color::AntiqueWhite }, { "aqua", Color::Aqua },
         { "aquamarine", Color::Aquamarine }, { "azure", Color::Azure },
         { "beige", Color::Beige }, { "bisque", Color::Bisque }, { "black", Color::Black },
@@ -287,14 +287,24 @@ namespace obe::Graphics
 
     void Color::fromRgb(const double r, const double g, const double b, const double a)
     {
+        if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255 || a < 0 || a > 255)
+        {
+            throw Exceptions::InvalidRgbFormat(r, g, b, a, EXC_INFO);
+        }
         this->r = r;
         this->g = g;
         this->b = b;
         this->a = a;
     }
 
-    void Color::fromHsv(int H, double S, double V)
+    void Color::fromHsv(const int H, const double S, const double V)
     {
+
+        if (H < 0 || H > 360 || S < 0.0 || S > 1.0 || V < 0.0 || V > 1.0)
+        {
+            throw Exceptions::InvalidHsvFormat(H, S, V, EXC_INFO);
+        }
+
         const double C = S * V;
         const double X = C * (1 - abs(fmod(H / 60.0, 2) - 1));
         const double m = V - C;
@@ -360,6 +370,12 @@ namespace obe::Graphics
         }
 
         const int size = hexCode.size();
+
+        if (size != 3 && size != 6
+            || hexCode.find_first_not_of("AaBbCcDdEeFf0123456789") != std::string::npos)
+        {
+            throw Exceptions::InvalidHexFormat(hexCode, EXC_INFO);
+        }
 
         for (unsigned int i = 0; i < 3; i++)
         {
