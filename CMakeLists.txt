@@ -37,6 +37,8 @@ if(NOT OBE_USE_VCPKG)
     # lua is required by sol
     add_subdirectory(extlibs/lua)
     add_subdirectory(extlibs/sol3)
+    
+    add_subdirectory(extlibs/tinydir)
 endif()
 
 add_subdirectory(extlibs/dynamicLinker)
@@ -47,8 +49,7 @@ add_subdirectory(extlibs/vili)
 # Audio library
 add_subdirectory(extlibs/soloud)
 
-if (APPLE OR USE_FILESYSTEM_FALLBACK AND NOT OBE_USE_VCPKG)
-    add_subdirectory(extlibs/tinydir)
+if (APPLE OR USE_FILESYSTEM_FALLBACK)
     set(USE_FILESYSTEM_FALLBACK TRUE CACHE BOOL "Use filesystem fallback" FORCE)
 endif()
 
