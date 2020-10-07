@@ -86,7 +86,7 @@ if(OBE_USE_VCPKG)
     link_libraries(fmt::fmt fmt::fmt-header-only)
     link_libraries(spdlog::spdlog spdlog::spdlog_header_only)
     link_libraries(Catch2::Catch2)
-    else() # if using built-in dependencies
+else() # if using built-in dependencies
 
     # SFML 2.5 is minimum version
     find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
