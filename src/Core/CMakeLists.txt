@@ -23,21 +23,47 @@ target_include_directories(ObEngineCore
         $<BUILD_INTERFACE:${ObEngine_BINARY_DIR}/include/Core>
 )
 
+if(OBE_USE_VCPKG)
+    if (USE_FILESYSTEM_FALLBACK)
+        target_include_directories(ObEngineCore ${TINYDIR_INCLUDE_DIRS})
+    endif()
+
+    if(WIN32)
+        target_link_libraries(ObEngineCore FLAC OpenAL OpenGL Vorbis)
+    else()
+        target_link_libraries(ObEngineCore X11 FLAC UDev OpenAL)
+    endif()
+
+
+    target_link_libraries(ObEngineCore ${LUA_LIBRARIES})
+    target_include_directories(ObEngineCore ${LUA_INCLUDE_DIR})
+
+    target_link_libraries(ObEngineCore sol2::sol2)
+    target_link_libraries(ObEngineCore fmt::fmt fmt::fmt-header-only)
+    target_link_libraries(ObEngineCore spdlog::spdlog spdlog::spdlog_header_only)
+    target_link_libraries(ObEngineCore Catch2::Catch2)
+else()
+    target_link_libraries(ObEngineCore lua)
+    target_link_libraries(ObEngineCore sol3)
+
+    target_link_libraries(ObEngineCore spdlog)
+    target_link_libraries(ObEngineCore fmt)
+    target_link_libraries(ObEngineCore sfml-graphics sfml-system sfml-network)
+    
+endif()
+
 target_link_libraries(ObEngineCore bezier)
 target_link_libraries(ObEngineCore elzip)
-target_link_libraries(ObEngineCore lua)
 target_link_libraries(ObEngineCore sfe)
 target_link_libraries(ObEngineCore vili)
 target_link_libraries(ObEngineCore dynamicLinker)
-target_link_libraries(ObEngineCore spdlog)
-target_link_libraries(ObEngineCore fmt)
-target_link_libraries(ObEngineCore sol3)
-target_link_libraries(ObEngineCore sfml-graphics sfml-system sfml-network)
 target_link_libraries(ObEngineCore Soloud)
 
 if (USE_FILESYSTEM_FALLBACK)
     message("Using filesystem fallback")
-    target_link_libraries(ObEngineCore tinydir)
+    if(NOT OBE_USE_VCPKG)
+        target_link_libraries(ObEngineCore tinydir)
+    endif()
     target_compile_definitions(ObEngineCore PUBLIC _USE_FILESYSTEM_FALLBACK)
 elseif (CMAKE_COMPILER_IS_GNUCXX)
     target_link_libraries(ObEngineCore stdc++fs)
