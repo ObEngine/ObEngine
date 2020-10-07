@@ -52,7 +52,15 @@ endfunction()
 
 function (configure_obengine_git GIT_EXECUTABLE ObEngine_SOURCE_DIR)
     message(STATUS "Configure Git variables for ÖbEngine")
-    if (NOT GIT_EXECUTABLE STREQUAL "")
+    # Check if we can use git
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} --version
+        WORKING_DIRECTORY ${ObEngine_SOURCE_DIR}
+        RESULT_VARIABLE exec_result
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+
+    if("${exec_result}" STREQUAL "0")
         execute_process(
             COMMAND ${GIT_EXECUTABLE} rev-parse --is-inside-work-tree
             WORKING_DIRECTORY ${ObEngine_SOURCE_DIR}
@@ -76,7 +84,6 @@ function (configure_obengine_git GIT_EXECUTABLE ObEngine_SOURCE_DIR)
                 OUTPUT_VARIABLE GIT_COMMIT_HASH
                 OUTPUT_STRIP_TRAILING_WHITESPACE
             )
-            message(STATUS "Git commit hash ${GIT_COMMIT_HASH}")
 
             # Get the version tag from git
             execute_process(

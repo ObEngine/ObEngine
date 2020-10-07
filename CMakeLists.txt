@@ -40,7 +40,8 @@ add_subdirectory(extlibs/sfe)
 # Find git installation
 find_package(Git QUIET)
 if(NOT Git_FOUND)
-    set(GIT_EXECUTABLE "")
+    message(WARNING "Could not find git, trying to use git from PATH")
+    set(GIT_EXECUTABLE "git")
 endif()
 
 add_subdirectory(src/Core)
