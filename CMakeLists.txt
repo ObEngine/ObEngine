@@ -3,6 +3,9 @@ set(OpenGL_GL_PREFERENCE GLVND)
 
 include(cmake/check_vcpkg.cmake)
 
+set(OBE_USE_VCPKG OFF)
+obe_check_vcpkg(OBE_USE_VCPKG)
+
 project(ObEngine)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
@@ -40,40 +43,19 @@ endif()
 add_subdirectory(extlibs/minizip)
 add_subdirectory(extlibs/elzip)
 
-# snippet taken from
-# https://github.com/microsoft/vcpkg/blob/master/ports/sfml/usage
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 
+# snippet taken from
+# https://github.com/microsoft/vcpkg/blob/master/ports/sfml/usage
 if(OBE_USE_VCPKG)
-    include(FindLua)
-
-    find_package(lua REQUIRED)
-    find_package(sol2 CONFIG REQUIRED)
-    find_package(fmt CONFIG REQUIRED)
-    find_package(spdlog CONFIG REQUIRED)
-    find_package(Catch2 CONFIG REQUIRED)
-    find_path(TINYDIR_INCLUDE_DIRS "tinydir.h")
-
-
-    include_directories(${TINYDIR_INCLUDE_DIRS})
-
     if(WIN32)
         link_libraries(FLAC OpenAL OpenGL Vorbis)
     else()
         link_libraries(X11 FLAC UDev OpenAL)
     endif()
-
-
-    link_libraries(${LUA_LIBRARIES})
-    include_directories(${LUA_INCLUDE_DIR})
-
-    link_libraries(sol2::sol2)
-    link_libraries(fmt::fmt)
-    link_libraries(spdlog::spdlog)
-    link_libraries(Catch2::Catch2)
 endif()
 
-    # SFML is required by sfe (SFml Extensions)
+# SFML is required by sfe (SFml Extensions)
 add_subdirectory(extlibs/sfe)
 
 configure_obengine_git()

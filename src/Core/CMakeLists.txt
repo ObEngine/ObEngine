@@ -24,40 +24,33 @@ target_include_directories(ObEngineCore
 )
 
 if(OBE_USE_VCPKG)
+    find_package(fmt CONFIG REQUIRED)
+    find_package(spdlog CONFIG REQUIRED)
+
+    find_package(sol2 CONFIG REQUIRED)
+    find_package(Catch2 CONFIG REQUIRED)
+
+    target_include_directories(ObEngineCore PUBLIC
+        $ENV{VCPKG_ROOT}/installed/$ENV{VCPKG_DEFAULT_TRIPLET}/include)
+
     if (USE_FILESYSTEM_FALLBACK)
         target_include_directories(ObEngineCore ${TINYDIR_INCLUDE_DIRS})
     endif()
 
-    if(WIN32)
-        target_link_libraries(ObEngineCore FLAC OpenAL OpenGL Vorbis)
-    else()
-        target_link_libraries(ObEngineCore X11 FLAC UDev OpenAL)
-    endif()
-
 
     target_link_libraries(ObEngineCore ${LUA_LIBRARIES})
-    target_include_directories(ObEngineCore ${LUA_INCLUDE_DIR})
+    target_include_directories(ObEngineCore PRIVATE ${LUA_INCLUDE_DIR})
 
-    target_link_libraries(ObEngineCore sol2::sol2)
-    target_link_libraries(ObEngineCore fmt::fmt)
-    target_link_libraries(ObEngineCore spdlog::spdlog)
-    target_link_libraries(ObEngineCore Catch2::Catch2)
+    target_link_libraries(ObEngineCore
+        sol2::sol2 fmt::fmt spdlog::spdlog Catch2::Catch2)
 else()
-    target_link_libraries(ObEngineCore lua)
-    target_link_libraries(ObEngineCore sol3)
-
-    target_link_libraries(ObEngineCore spdlog)
-    target_link_libraries(ObEngineCore fmt)
+    target_link_libraries(ObEngineCore
+        lua sol3 fmt spdlog)
     target_link_libraries(ObEngineCore sfml-graphics sfml-system sfml-network)
-    
 endif()
 
-target_link_libraries(ObEngineCore bezier)
-target_link_libraries(ObEngineCore elzip)
-target_link_libraries(ObEngineCore sfe)
-target_link_libraries(ObEngineCore vili)
-target_link_libraries(ObEngineCore dynamicLinker)
-target_link_libraries(ObEngineCore Soloud)
+target_link_libraries(ObEngineCore
+    bezier elzip sfe vili dynamicLinker Soloud)
 
 if (USE_FILESYSTEM_FALLBACK)
     message("Using filesystem fallback")
