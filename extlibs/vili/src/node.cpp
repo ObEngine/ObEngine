@@ -179,11 +179,11 @@ namespace vili
         }
         else if (type == node_type::array)
         {
-           return vili::array {};
+            return vili::array {};
         }
         else if (type == node_type::object)
         {
-           return vili::object {};
+            return vili::object {};
         }
     }
 
@@ -424,7 +424,7 @@ namespace vili
         return as<string>();
     }
 
-    node::operator const std::basic_string<char>&() const
+    node::operator const std::basic_string<char> &() const
     {
         return as<string>();
     }
@@ -452,6 +452,16 @@ namespace vili
     node::operator unsigned() const
     {
         return static_cast<unsigned>(as<integer>());
+    }
+
+    bool node::operator==(const vili::node& other) const
+    {
+        return m_data == other.m_data;
+    }
+
+    bool node::operator!=(const vili::node& other) const
+    {
+        return m_data != other.m_data;
     }
 
     std::ostream& operator<<(std::ostream& os, const node& elem)
@@ -500,11 +510,7 @@ namespace vili
 
     void node::merge(node& value)
     {
-        if (is_primitive() && value.is_primitive())
-        {
-            m_data = value.m_data;
-        }
-        else if (is<object>() && value.is<object>())
+        if (is<object>() && value.is<object>())
         {
             for (auto [key, val] : value.items())
             {
@@ -523,8 +529,7 @@ namespace vili
         }
         else
         {
-            throw exceptions::invalid_merge(
-                to_string(type()), to_string(value.type()), VILI_EXC_INFO);
+            m_data = value.m_data;
         }
     }
 

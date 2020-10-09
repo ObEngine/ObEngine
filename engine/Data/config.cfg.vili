@@ -25,4 +25,5 @@ Window:
         docked: false
 
 Debug:
-    logLevel: debug
+    Logging:
+        level: debug
