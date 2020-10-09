@@ -707,6 +707,15 @@ obe.Canvas.Bases.Text = {
             self.text.string = text;
             self:refresh();
         end,
+        __number = function(self, index, params)
+            local text = obe.Graphics.Text()
+            text.string = params.text
+            if params.color then
+                text.color = obe.Canvas.NormalizeColor(params.color)
+            end
+            table.insert(self.texts, text)
+            self:refresh()
+        end,
         size = function(self, size)
             self.shape:setCharacterSize(size);
         end,
