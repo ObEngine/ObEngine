@@ -118,14 +118,14 @@ namespace vili
          * \tparam type node_type enum value to test against the type of the underlying value of the node
          * \return true if the type is the same, false otherwise
          */
-        template <node_type type>[[nodiscard]] bool is();
+        template <node_type type>[[nodiscard]] constexpr bool is() const;
         /**
          * \nobind
          * \brief Checks if the node contains a given type
          * \tparam T type to test against the type of the underlying value of the node
          * \return true if the type is the same, false otherwise
          */
-        template <class T>[[nodiscard]] bool is() const;
+        template <class T>[[nodiscard]] constexpr bool is() const;
         /**
          * \brief Checks whether the underlying value is a primitive (boolean, integer, number, string) or not
          * \return true if the type of the node is a primitive, false otherwise
@@ -287,28 +287,38 @@ namespace vili
         void clear();
 
         operator std::string_view() const;
-        operator const std::string&() const;
+        operator const std::string &() const;
         operator integer() const;
         operator int() const;
         operator number() const;
         operator boolean() const;
         operator unsigned() const;
+
+        bool operator==(const vili::node& other) const;
+        bool operator!=(const vili::node& other) const;
     };
 
-    template <node_type type_enum> bool node::is()
+    template <node_type type_enum> constexpr bool node::is() const
     {
         return is<decltype(node_helper_t<type_enum>::type)>();
     }
 
-    template <class T> bool node::is() const
+    template <class T> constexpr bool node::is() const
     {
         return std::holds_alternative<T>(m_data);
     }
 
-    template <class T> const T& node::as() const
+    template <class T>[[nodiscard]] const T& node::as() const
     {
         if (is<T>())
             return std::get<T>(m_data);
+        if constexpr (vili::PERMISSIVE_CAST && std::is_same<T, vili::number>())
+        {
+            if (is<vili::integer>())
+            {
+                return static_cast<T>(std::get<vili::integer>(m_data));
+            }
+        }
         throw exceptions::invalid_cast(
             typeid(T).name(), to_string(type()), VILI_EXC_INFO);
     }

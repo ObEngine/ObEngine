@@ -1,14 +1,15 @@
-#include <Animation/Animation.hpp>
-#include <Animation/Exceptions.hpp>
-#include <Config/Templates/Animation.hpp>
-
-#include <Debug/Logger.hpp>
-#include <Engine/ResourceManager.hpp>
-#include <Utils/StringUtils.hpp>
-
 #include <vili/node.hpp>
 #include <vili/parser/parser.hpp>
 #include <vili/types.hpp>
+#include <vld8/validator.hpp>
+
+#include <Animation/Animation.hpp>
+#include <Animation/AnimationValidator.hpp>
+#include <Animation/Exceptions.hpp>
+#include <Config/Templates/Animation.hpp>
+#include <Debug/Logger.hpp>
+#include <Engine/ResourceManager.hpp>
+#include <Utils/StringUtils.hpp>
 
 namespace obe::Animation
 {
@@ -100,6 +101,8 @@ namespace obe::Animation
         vili::node animationConfig
             = vili::parser::from_file(path.add(path.last() + ".ani.vili").find(),
                 Config::Templates::getAnimationTemplates());
+
+        vili::validator::validate_tree(AnimationValidator(), animationConfig);
 
         // Meta
         Debug::Log->trace("  <Animation> Loading Meta block");

@@ -15,7 +15,9 @@ add_subdirectory(extlibs/fswrapper)
 add_subdirectory(extlibs/fmt)
 add_subdirectory(extlibs/spdlog)
 
+# vili is required by vili-d8
 add_subdirectory(extlibs/vili)
+add_subdirectory(extlibs/vili-d8)
 
 # lua is required by sol
 add_subdirectory(extlibs/lua)

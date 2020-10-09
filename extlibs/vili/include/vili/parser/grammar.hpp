@@ -66,7 +66,7 @@ namespace vili::parser::rules
     struct object : peg::sor<brace_based_object, indent_based_object> {};
 
     // Comments
-    struct inline_comment : peg::seq<peg::one<'#'>, peg::until<peg::eol, peg::any>> {};
+    struct inline_comment : peg::seq<peg::one<'#'>, peg::until<peg::sor<peg::eol, peg::eof>, peg::any>> {};
 
     // Templates
     struct template_keyword : peg::string<'t', 'e', 'm', 'p', 'l', 'a', 't', 'e'> {};
