@@ -12,6 +12,7 @@ namespace vili::validator::exceptions
             vili::exceptions::debug_info info)
             : vili::exceptions::exception<exception_type>(exception_name, info)
         {
+            // this is necessary because of odd inheritance rules with template classes
             this->m_message += fmt::format("  - node: {}\n", location);
         }
     };
