@@ -12,7 +12,7 @@ namespace vili::validator::exceptions
             vili::exceptions::debug_info info)
             : vili::exceptions::exception<exception_type>(exception_name, info)
         {
-            m_message += fmt::format("  - node: {}\n", location);
+            this->m_message += fmt::format("  - node: {}\n", location);
         }
     };
 
