@@ -24,7 +24,6 @@ target_include_directories(ObEngineCore
 )
 
 if(OBE_USE_VCPKG)
-    find_package(fmt CONFIG REQUIRED)
     find_package(spdlog CONFIG REQUIRED)
 
     find_package(sol2 CONFIG REQUIRED)

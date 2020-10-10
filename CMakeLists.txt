@@ -45,16 +45,6 @@ add_subdirectory(extlibs/elzip)
 
 find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
 
-# snippet taken from
-# https://github.com/microsoft/vcpkg/blob/master/ports/sfml/usage
-if(OBE_USE_VCPKG)
-    if(WIN32)
-        link_libraries(FLAC OpenAL OpenGL Vorbis)
-    else()
-        link_libraries(X11 FLAC UDev OpenAL)
-    endif()
-endif()
-
 # SFML is required by sfe (SFml Extensions)
 add_subdirectory(extlibs/sfe)
 
