@@ -309,7 +309,7 @@ namespace obe::Graphics::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Graphics::Sprite(const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Transform::UnitBasedObject, obe::Types::Selectable,
+                sol::bases<obe::Transform::UnitBasedObject,
                     obe::Transform::Rect, obe::Transform::Movable,
                     obe::Component::Component<Sprite>, obe::Component::ComponentBase,
                     obe::Types::Identifiable, obe::Types::Serializable,

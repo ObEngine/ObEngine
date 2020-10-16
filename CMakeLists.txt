@@ -26,6 +26,9 @@ add_subdirectory(extlibs/sol3)
 # Audio library
 add_subdirectory(extlibs/soloud)
 
+# ECS Library
+add_subdirectory(extlibs/entt)
+
 if (APPLE OR USE_FILESYSTEM_FALLBACK)
     add_subdirectory(extlibs/tinydir)
     set(USE_FILESYSTEM_FALLBACK TRUE CACHE BOOL "Use filesystem fallback" FORCE)

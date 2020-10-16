@@ -32,8 +32,7 @@ namespace obe::Graphics
     }
 
     Sprite::Sprite(const std::string& id)
-        : Selectable(false)
-        , Component(id)
+        : Component(id)
     {
         this->setTexture(NullTexture);
 
@@ -77,10 +76,10 @@ namespace obe::Graphics
         else
             surface.draw(m_sprite);
 
-        if (m_selected)
+        /*if (m_selected)
         {
             this->drawHandle(surface, camera);
-        }
+        }*/
     }
 
     void Sprite::attachResourceManager(Engine::ResourceManager& resources)

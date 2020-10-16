@@ -4,6 +4,8 @@
 
 #include <fstream>
 
+#include <Entities/SpriteEntity.hpp>
+
 int lua_exception_handler(lua_State* L,
     sol::optional<const std::exception&> maybe_exception, sol::string_view description)
 {
@@ -144,6 +146,8 @@ namespace obe::Engine
                 Debug::Log->info("Log Level {}", logLevel);
             }
         }
+        entt::registry registry;
+        Entities::SpriteEntity x(registry, "lol");
     }
 
     void Engine::clean() const

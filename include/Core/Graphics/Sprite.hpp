@@ -91,7 +91,6 @@ namespace obe::Graphics
      * \bind{Sprite}
      */
     class Sprite : public Transform::UnitBasedObject,
-                   public Types::Selectable,
                    public Transform::Rect,
                    public Component::Component<Sprite>,
                    public Engine::ResourceManagedObject

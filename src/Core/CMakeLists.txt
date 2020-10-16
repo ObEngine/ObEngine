@@ -32,6 +32,7 @@ target_link_libraries(ObEngineCore fmt)
 target_link_libraries(ObEngineCore sol3)
 target_link_libraries(ObEngineCore sfml-graphics sfml-system sfml-network)
 target_link_libraries(ObEngineCore Soloud)
+target_link_libraries(ObEngineCore entt)
 
 if (USE_FILESYSTEM_FALLBACK)
     message("Using filesystem fallback")
