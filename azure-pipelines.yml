@@ -69,27 +69,16 @@ steps:
     libc6 \
     libgcc1 \
     libglew-dev \
-    libgpgme11-dev -y
+    libgpgme11-dev \
+    -y
   displayName: "[Linux] Install required packages"
   condition: eq( variables['Agent.OS'], 'Linux' )
 
-- script: cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR=%SFML_DIR% -DBUILD_TESTS=ON .
-  condition: eq( variables['Agent.OS'], 'Windows_NT' )
-  displayName: "[Windows] Cmake"
 - task: VSBuild@1
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   inputs:
     solution: '**\*.sln'
   displayName: "[Windows] VS"
-
-- script: |
-    mkdir $(System.DefaultWorkingDirectory)/build
-    cd $(System.DefaultWorkingDirectory)/build
-    cmake -DBUILD_TESTS=ON ..
-    make -j6
-    ./tests/ObEngineTests
-  condition: eq( variables['Agent.OS'], 'Darwin' )
-  displayName: "[MacOs] Install packages and build mac"
 
 - script: |
     wget -nv https://www.sfml-dev.org/files/SFML-2.5.1-sources.zip
@@ -106,7 +95,10 @@ steps:
     mkdir $(System.DefaultWorkingDirectory)/build
     cd $(System.DefaultWorkingDirectory)/build
     cmake -DBUILD_TESTS=ON ..
+  displayName: "cmake build"
+- script: |
+    cd $(System.DefaultWorkingDirectory)/build
     make -j6
     ./tests/ObEngineTests
   condition: eq( variables['Agent.OS'], 'Linux' )
-  displayName: "[Linux] Install packages and build all"
+  displayName: "Run tests"
