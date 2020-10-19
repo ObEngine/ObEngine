@@ -24,7 +24,9 @@ if(NOT OBE_USE_VCPKG)
     add_subdirectory(extlibs/lua)
     add_subdirectory(extlibs/sol3)
     
-    add_subdirectory(extlibs/tinydir)
+    if (APPLE OR USE_FILESYSTEM_FALLBACK)
+        add_subdirectory(extlibs/tinydir)
+    endif()
 endif()
 
 add_subdirectory(extlibs/dynamicLinker)
@@ -43,7 +45,7 @@ endif()
 add_subdirectory(extlibs/minizip)
 add_subdirectory(extlibs/elzip)
 
-find_package(SFML COMPONENTS system window graphics CONFIG REQUIRED)
+find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
 
 # SFML is required by sfe (SFml Extensions)
 add_subdirectory(extlibs/sfe)
