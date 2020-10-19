@@ -97,8 +97,11 @@ steps:
   condition: eq( variables['Agent.OS'], 'Linux' )
   displayName: "Run tests"
 
-- task: VSBuild@1
+- script: cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR=%SFML_DIR% -DBUILD_TESTS=ON .
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  displayName: "[Windows] Cmake"
+- task: VSBuild@1
   inputs:
     solution: '**\*.sln'
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: "[Windows] VS"
