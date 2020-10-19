@@ -44,7 +44,7 @@ steps:
     brew install sfml
   condition: eq( variables['Agent.OS'], 'Darwin' )
   displayName: "[MacOs] Install packages and build."
-- script: >
+- bash: |
     sudo apt update && sudo apt-get install build-essential \
     checkinstall \
     libasound2-dev \
@@ -74,12 +74,6 @@ steps:
   displayName: "[Linux] Install required packages"
   condition: eq( variables['Agent.OS'], 'Linux' )
 
-- task: VSBuild@1
-  condition: eq( variables['Agent.OS'], 'Windows_NT' )
-  inputs:
-    solution: '**\*.sln'
-  displayName: "[Windows] VS"
-
 - script: |
     wget -nv https://www.sfml-dev.org/files/SFML-2.5.1-sources.zip
     unzip -qq SFML-2.5.1-sources.zip
@@ -102,3 +96,9 @@ steps:
     ./tests/ObEngineTests
   condition: eq( variables['Agent.OS'], 'Linux' )
   displayName: "Run tests"
+
+- task: VSBuild@1
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  inputs:
+    solution: '**\*.sln'
+  displayName: "[Windows] VS"
