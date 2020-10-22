@@ -89,10 +89,11 @@ steps:
     mkdir $(System.DefaultWorkingDirectory)/build
     cd $(System.DefaultWorkingDirectory)/build
     cmake -DBUILD_TESTS=ON ..
+    make -j6
+  condition: or(eq( variables['Agent.OS'], 'Linux' ), eq( variables['Agent.OS'], 'Darwin' ))
   displayName: "cmake build"
 - script: |
     cd $(System.DefaultWorkingDirectory)/build
-    make -j6
     ./tests/ObEngineTests
   condition: eq( variables['Agent.OS'], 'Linux' )
   displayName: "Run tests"
