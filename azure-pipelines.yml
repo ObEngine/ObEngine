@@ -45,10 +45,7 @@ steps:
   condition: eq( variables['Agent.OS'], 'Darwin' )
   displayName: "[MacOs] Install packages and build."
 - bash: |
-    sudo apt install -yq software-properties-common 
-    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test 
-    sudo apt update -qq
-    sudo apt-get install build-essential \
+    sudo apt update -qq && sudo apt-get install build-essential \
     checkinstall \
     libasound2-dev \
     libudev-dev \
@@ -73,7 +70,7 @@ steps:
     libgcc1 \
     libglew-dev \
     libgpgme11-dev \
-    -y
+    -yq
     sudo update-alternatives \
     --install /usr/bin/gcc gcc /usr/bin/gcc-7 60 \
     --slave /usr/bin/g++ g++ /usr/bin/g++-7 \
