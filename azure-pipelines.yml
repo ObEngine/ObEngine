@@ -45,7 +45,10 @@ steps:
   condition: eq( variables['Agent.OS'], 'Darwin' )
   displayName: "[MacOs] Install packages and build."
 - bash: |
-    sudo apt update && sudo apt-get install build-essential \
+    sudo apt install -yq software-properties-common 
+    sudo apt update
+    sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test 
+    sudo apt-get install build-essential \
     checkinstall \
     libasound2-dev \
     libudev-dev \
@@ -90,7 +93,7 @@ steps:
     cd $(System.DefaultWorkingDirectory)/build
     cmake -DBUILD_TESTS=ON ..
     make -j6
-  condition: or(eq( variables['Agent.OS'], 'Linux' ), eq( variables['Agent.OS'], 'Darwin' ))
+  condition: or(eq( variables['Agent.OS'], 'Darwin', 'Linux' ))
   displayName: "cmake build"
 - script: |
     cd $(System.DefaultWorkingDirectory)/build
