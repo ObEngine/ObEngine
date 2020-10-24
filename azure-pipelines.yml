@@ -93,7 +93,7 @@ steps:
     cd $(System.DefaultWorkingDirectory)/build
     cmake -DBUILD_TESTS=ON ..
     make -j6
-  condition: or(eq( variables['Agent.OS'], 'Darwin', 'Linux' ))
+  condition: or(eq( variables['Agent.OS'], 'Linux' ), eq( variables['Agent.OS'], 'Darwin' ))
   displayName: "cmake build"
 - script: |
     cd $(System.DefaultWorkingDirectory)/build
