@@ -2,6 +2,7 @@
 
 #include <Animation/Animation.hpp>
 #include <Animation/AnimationGroup.hpp>
+#include <Animation/AnimationValidator.hpp>
 #include <Animation/Animator.hpp>
 #include <Animation/Tweening.hpp>
 
@@ -155,5 +156,11 @@ namespace obe::Animation::Bindings
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
         AnimationNamespace.set_function(
             "stringToAnimationPlayMode", obe::Animation::stringToAnimationPlayMode);
+    }
+    void LoadFunctionAnimationValidator(sol::state_view state)
+    {
+        sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
+        AnimationNamespace.set_function(
+            "AnimationValidator", obe::Animation::AnimationValidator);
     }
 };

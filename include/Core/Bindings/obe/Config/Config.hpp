@@ -7,4 +7,5 @@ namespace sol
 namespace obe::Config::Bindings
 {
     void LoadClassConfigurationManager(sol::state_view state);
+    void LoadFunctionConfigValidator(sol::state_view state);
 };

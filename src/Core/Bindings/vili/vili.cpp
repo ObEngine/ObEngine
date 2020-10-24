@@ -113,6 +113,7 @@ namespace vili::Bindings
         bindnode["operator number"] = &vili::node::operator number;
         bindnode["operator boolean"] = &vili::node::operator boolean;
         bindnode["operator unsigned"] = &vili::node::operator unsigned;
+        bindnode[sol::meta_function::equal_to] = &vili::node::operator==;
         bindnode["from_type"] = &vili::node::from_type;
         state.script_file("Lib/Internal/Vili.lua"_fs);
     }
