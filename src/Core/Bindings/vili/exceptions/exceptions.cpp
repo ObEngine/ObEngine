@@ -24,6 +24,7 @@ namespace vili::exceptions::Bindings
         sol::usertype<vili::exceptions::base_exception> bindbase_exception
             = exceptionsNamespace.new_usertype<vili::exceptions::base_exception>(
                 "base_exception", sol::call_constructor, sol::default_constructor);
+        bindbase_exception["what"] = &vili::exceptions::base_exception::what;
     }
     void LoadClassDebugInfo(sol::state_view state)
     {
@@ -146,6 +147,7 @@ namespace vili::exceptions::Bindings
                 sol::base_classes,
                 sol::bases<vili::exceptions::exception<unknown_child_node>,
                     vili::exceptions::base_exception>());
+        bindunknown_child_node["key"] = &vili::exceptions::unknown_child_node::key;
     }
     void LoadClassUnknownTemplate(sol::state_view state)
     {
@@ -158,5 +160,11 @@ namespace vili::exceptions::Bindings
                 sol::base_classes,
                 sol::bases<vili::exceptions::exception<unknown_template>,
                     vili::exceptions::base_exception>());
+    }
+    void LoadFunctionIndentString(sol::state_view state)
+    {
+        sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
+        exceptionsNamespace.set_function(
+            "indent_string", vili::exceptions::indent_string);
     }
 };

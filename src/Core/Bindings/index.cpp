@@ -129,6 +129,7 @@ namespace obe::Bindings
         obe::Animation::Bindings::LoadEnumAnimationStatus(state);
         obe::Animation::Bindings::LoadEnumAnimatorTargetScaleMode(state);
         obe::Animation::Bindings::LoadFunctionStringToAnimationPlayMode(state);
+        obe::Animation::Bindings::LoadFunctionAnimationValidator(state);
 
         obe::Animation::Exceptions::Bindings::LoadClassAnimationGroupTextureIndexOverflow(
             state);
@@ -163,6 +164,7 @@ namespace obe::Bindings
         obe::Component::Exceptions::Bindings::LoadClassComponentIdAlreadyTaken(state);
 
         obe::Config::Bindings::LoadClassConfigurationManager(state);
+        obe::Config::Bindings::LoadFunctionConfigValidator(state);
 
         obe::Bindings::LoadClassDebugInfo(state);
         obe::Bindings::LoadClassException(state);
@@ -394,6 +396,7 @@ namespace obe::Bindings
         vili::exceptions::Bindings::LoadClassTooMuchIndentation(state);
         vili::exceptions::Bindings::LoadClassUnknownChildNode(state);
         vili::exceptions::Bindings::LoadClassUnknownTemplate(state);
+        vili::exceptions::Bindings::LoadFunctionIndentString(state);
 
         vili::parser::Bindings::LoadClassNodeInStack(state);
         vili::parser::Bindings::LoadClassState(state);
@@ -432,7 +435,6 @@ namespace obe::Bindings
         vili::parser::rules::Bindings::LoadClassChar_(state);
         vili::parser::rules::Bindings::LoadClassCloseArray(state);
         vili::parser::rules::Bindings::LoadClassCloseObject(state);
-        vili::parser::rules::Bindings::LoadClassCommaOrNewline(state);
         vili::parser::rules::Bindings::LoadClassData(state);
         vili::parser::rules::Bindings::LoadClassDigits(state);
         vili::parser::rules::Bindings::LoadClassElement(state);
@@ -455,6 +457,7 @@ namespace obe::Bindings
         vili::parser::rules::Bindings::LoadClassNumber(state);
         vili::parser::rules::Bindings::LoadClassObject(state);
         vili::parser::rules::Bindings::LoadClassObjectElements(state);
+        vili::parser::rules::Bindings::LoadClassObjectSeparator(state);
         vili::parser::rules::Bindings::LoadClassOpenArray(state);
         vili::parser::rules::Bindings::LoadClassOpenObject(state);
         vili::parser::rules::Bindings::LoadClassSign(state);
