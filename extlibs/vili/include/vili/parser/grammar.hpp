@@ -60,8 +60,8 @@ namespace vili::parser::rules
     struct indent_based_object : peg::eol {};
     struct open_object : peg::one<'{'> {};
     struct close_object : peg::one<'}'> {};
-    struct comma_or_newline : peg::pad<peg::sor<peg::one<','>, peg::eol>, peg::space> {};
-    struct object_elements : peg::list_must<inline_node, comma_or_newline> {};
+    struct object_separator : peg::one<','> {};
+    struct object_elements : peg::list_must<inline_node, object_separator, peg::space> {};
     struct brace_based_object : peg::seq<open_object, peg::pad_opt<object_elements, peg::space>, peg::must<close_object>> {};
     struct object : peg::sor<brace_based_object, indent_based_object> {};
 
