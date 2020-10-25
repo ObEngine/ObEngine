@@ -79,11 +79,9 @@ namespace obe::Event::Bindings
         bindEventGroup["getView"] = &obe::Event::EventGroup::getView;
         bindEventGroup["setJoinable"] = &obe::Event::EventGroup::setJoinable;
         bindEventGroup["isJoinable"] = &obe::Event::EventGroup::isJoinable;
-        bindEventGroup["get"]
-            = static_cast<obe::Event::EventBase& (
-                                obe::Event::EventGroup::*)(const std::string&) const>(
-                                &obe::Event::EventGroup::get);
-
+        bindEventGroup["get"] = sol::overload(static_cast<obe::Event::EventBase& (
+                obe::Event::EventGroup::*)(const std::string&) const>(
+            &obe::Event::EventGroup::get));
         bindEventGroup["remove"] = &obe::Event::EventGroup::remove;
         bindEventGroup["getEventsNames"] = &obe::Event::EventGroup::getEventsNames;
         bindEventGroup["getEvents"] = &obe::Event::EventGroup::getEvents;
@@ -108,9 +106,9 @@ namespace obe::Event::Bindings
         bindEventGroupView["getIdentifier"] = &obe::Event::EventGroupView::getIdentifier;
         bindEventGroupView["getName"] = &obe::Event::EventGroupView::getName;
         bindEventGroupView["isJoinable"] = &obe::Event::EventGroupView::isJoinable;
-        bindEventGroupView["get"] = static_cast<obe::Event::EventBase& (
+        bindEventGroupView["get"] = sol::overload(static_cast<obe::Event::EventBase& (
                 obe::Event::EventGroupView::*)(const std::string&) const>(
-                &obe::Event::EventGroupView::get);
+            &obe::Event::EventGroupView::get));
         bindEventGroupView["getProfilerResults"]
             = &obe::Event::EventGroupView::getProfilerResults;
     }

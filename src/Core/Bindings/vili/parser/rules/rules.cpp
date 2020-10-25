@@ -77,13 +77,6 @@ namespace vili::parser::rules::Bindings
             = rulesNamespace.new_usertype<vili::parser::rules::close_object>(
                 "close_object", sol::call_constructor, sol::default_constructor);
     }
-    void LoadClassCommaOrNewline(sol::state_view state)
-    {
-        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::comma_or_newline> bindcomma_or_newline
-            = rulesNamespace.new_usertype<vili::parser::rules::comma_or_newline>(
-                "comma_or_newline", sol::call_constructor, sol::default_constructor);
-    }
     void LoadClassData(sol::state_view state)
     {
         sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
@@ -237,6 +230,13 @@ namespace vili::parser::rules::Bindings
         sol::usertype<vili::parser::rules::object_elements> bindobject_elements
             = rulesNamespace.new_usertype<vili::parser::rules::object_elements>(
                 "object_elements", sol::call_constructor, sol::default_constructor);
+    }
+    void LoadClassObjectSeparator(sol::state_view state)
+    {
+        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
+        sol::usertype<vili::parser::rules::object_separator> bindobject_separator
+            = rulesNamespace.new_usertype<vili::parser::rules::object_separator>(
+                "object_separator", sol::call_constructor, sol::default_constructor);
     }
     void LoadClassOpenArray(sol::state_view state)
     {
