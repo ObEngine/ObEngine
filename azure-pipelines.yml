@@ -103,7 +103,7 @@ steps:
 - script: |
     cd $(System.DefaultWorkingDirectory)/build
     ./tests/ObEngineTests
-  condition: eq( variables['Agent.OS'], 'Linux' )
+  condition: or(eq( variables['Agent.OS'], 'Linux' ), eq( variables['Agent.OS'], 'Darwin' ))
   displayName: "Run tests"
 
 - script: cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR=%SFML_DIR% -DBUILD_TESTS=ON .
