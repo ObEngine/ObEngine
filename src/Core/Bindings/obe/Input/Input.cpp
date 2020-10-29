@@ -1,7 +1,6 @@
 #include <Bindings/obe/Input/Input.hpp>
 
 #include <Input/InputAction.hpp>
-#include <Input/InputActionEvent.hpp>
 #include <Input/InputButton.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <Input/InputButtonState.hpp>
@@ -58,7 +57,6 @@ namespace obe::Input::Bindings
         bindInputAction["addContext"] = &obe::Input::InputAction::addContext;
         bindInputAction["check"] = &obe::Input::InputAction::check;
         bindInputAction["clearConditions"] = &obe::Input::InputAction::clearConditions;
-        bindInputAction["connect"] = &obe::Input::InputAction::connect;
         bindInputAction["getContexts"] = &obe::Input::InputAction::getContexts;
         bindInputAction["getInterval"] = &obe::Input::InputAction::getInterval;
         bindInputAction["getRepeat"] = &obe::Input::InputAction::getRepeat;
@@ -70,18 +68,6 @@ namespace obe::Input::Bindings
         bindInputAction["enable"] = &obe::Input::InputAction::enable;
         bindInputAction["disable"] = &obe::Input::InputAction::disable;
         bindInputAction["isEnabled"] = &obe::Input::InputAction::isEnabled;
-    }
-    void LoadClassInputActionEvent(sol::state_view state)
-    {
-        sol::table InputNamespace = state["obe"]["Input"].get<sol::table>();
-        sol::usertype<obe::Input::InputActionEvent> bindInputActionEvent
-            = InputNamespace.new_usertype<obe::Input::InputActionEvent>(
-                "InputActionEvent", sol::call_constructor,
-                sol::constructors<obe::Input::InputActionEvent(
-                    obe::Input::InputAction&, obe::Input::InputCondition&)>());
-        bindInputActionEvent["getAction"] = &obe::Input::InputActionEvent::getAction;
-        bindInputActionEvent["getCondition"]
-            = &obe::Input::InputActionEvent::getCondition;
     }
     void LoadClassInputButton(sol::state_view state)
     {
