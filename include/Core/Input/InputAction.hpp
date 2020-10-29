@@ -4,17 +4,12 @@
 #include <vector>
 
 #include <Event/EventGroup.hpp>
-#include <Input/InputActionEvent.hpp>
 #include <Input/InputCondition.hpp>
 #include <Time/Chronometer.hpp>
 #include <Types/Identifiable.hpp>
 
 namespace obe::Input
 {
-    /**
-     * \brief Function callback type for InputAction
-     */
-    using ActionCallback = std::function<void(const InputActionEvent& event)>;
 
     /**
      * \brief Action triggered by one or more Keyboard key(s)
@@ -23,7 +18,6 @@ namespace obe::Input
     {
     private:
         Event::EventGroup* e_actions;
-        ActionCallback m_callback; // TODO: Remove this, duplicate of Events
         std::vector<InputCondition> m_conditions;
         std::vector<std::string> m_contexts;
         Time::Chronometer m_interval;
@@ -57,12 +51,6 @@ namespace obe::Input
          * \brief Clears all the InputCondition of the InputAction
          */
         void clearConditions();
-        /**
-         * \brief Adds a new Callback
-         * \param callback A function that will be called when the Action is
-         *        triggered
-         */
-        void connect(ActionCallback callback);
         /**
          * \brief Get all the contexts the InputAction is in
          * \return A std::vector of std::string containing all the contexts

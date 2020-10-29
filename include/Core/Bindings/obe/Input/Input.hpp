@@ -7,7 +7,6 @@ namespace sol
 namespace obe::Input::Bindings
 {
     void LoadClassInputAction(sol::state_view state);
-    void LoadClassInputActionEvent(sol::state_view state);
     void LoadClassInputButton(sol::state_view state);
     void LoadClassInputButtonMonitor(sol::state_view state);
     void LoadClassInputCondition(sol::state_view state);

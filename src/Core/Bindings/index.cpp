@@ -260,7 +260,6 @@ namespace obe::Bindings
         obe::Input::Exceptions::Bindings::LoadClassUnknownInputButton(state);
 
         obe::Input::Bindings::LoadClassInputAction(state);
-        obe::Input::Bindings::LoadClassInputActionEvent(state);
         obe::Input::Bindings::LoadClassInputButton(state);
         obe::Input::Bindings::LoadClassInputButtonMonitor(state);
         obe::Input::Bindings::LoadClassInputCondition(state);
