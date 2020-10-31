@@ -32,7 +32,13 @@ steps:
     DestinationFolder: '$(System.DefaultWorkingDirectory)'
     requireAuthentication: false
   displayName: "[Windows] Download SFML file"
-
+- task: DownloadFile@1
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  inputs:
+    FileUrl: 'https://github.com/OpenCppCoverage/OpenCppCoverage/releases/download/release-0.9.9.0/OpenCppCoverageSetup-x64-0.9.9.0.exe'
+    DestinationFolder: '$(System.DefaultWorkingDirectory)'
+    requireAuthentication: false
+  displayName: "[Windows] Download OpenCppCoverage"
 - task: ExtractFiles@1
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   inputs:
@@ -114,3 +120,6 @@ steps:
     solution: '**\*.sln'
   condition: eq( variables['Agent.OS'], 'Windows_NT' )
   displayName: "[Windows] VS"
+- script: OpenCppCoverage.exe -- ObEnginePlayer.exe arg1 arg2
+  condition: eq( variables['Agent.OS'], 'Windows_NT' )
+  displayName: "[Windows] OpenCppCoverage"
