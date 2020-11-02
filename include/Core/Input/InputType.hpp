@@ -45,7 +45,8 @@ namespace obe::Input
         /**
          * \brief All Gamepad Axis (Joysticks, triggers)
          */
-        GamepadAxis
+        GamepadAxis,
+        ScrollWheel
     };
 
     std::string inputTypeToString(InputType type);

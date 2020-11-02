@@ -171,7 +171,7 @@ namespace obe::Collision
          * \brief Loads the PolygonalCollider from a ComplexNode
          * \param data ComplexNode containing the data of the PolygonalCollider
          */
-        void load(vili::node& data) override;
+        void load(const vili::node& data) override;
         /**
          * \brief Removes a Tag of the Collider
          * \param tagType List you want to remove a Collider from (Tag /

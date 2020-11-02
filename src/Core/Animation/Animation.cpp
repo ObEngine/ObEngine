@@ -206,28 +206,28 @@ namespace obe::Animation
             m_name, groupName, this->getAllAnimationGroupName(), EXC_INFO);
     }
 
-    void Animation::loadMeta(vili::node& meta)
+    void Animation::loadMeta(const vili::node& meta)
     {
         m_name = meta.at("name");
         Debug::Log->trace("    <Animation> Animation name = '{}'", m_name);
-        if (!meta["clock"].is_null())
+        if (meta.contains("clock"))
         {
             m_delay = meta.at("clock");
             Debug::Log->trace("    <Animation> Animation clock = {}", m_delay);
         }
-        if (!meta["mode"].is_null())
+        if (meta.contains("mode"))
         {
             m_playMode = stringToAnimationPlayMode(meta.at("mode"));
             Debug::Log->trace("    <Animation> Animation play-mode = '{}'", m_playMode);
         }
     }
 
-    void Animation::loadImages(
-        vili::node& images, const System::Path& path, Engine::ResourceManager* resources)
+    void Animation::loadImages(const vili::node& images, const System::Path& path,
+        Engine::ResourceManager* resources)
     {
-        vili::node& imageList = images.at("images");
+        const vili::node& imageList = images.at("images");
         std::string model;
-        if (!images["model"].is_null())
+        if (images.contains("model"))
         {
             model = images.at("model");
             Debug::Log->trace(
@@ -279,7 +279,7 @@ namespace obe::Animation
         }
     }
 
-    void Animation::loadGroups(vili::node& groups)
+    void Animation::loadGroups(const vili::node& groups)
     {
         for (auto [groupName, group] : groups.items())
         {
@@ -293,7 +293,7 @@ namespace obe::Animation
                     m_textures[currentTexture.as<vili::integer>()]);
             }
 
-            if (!group["clock"].is_null())
+            if (group.contains("clock"))
             {
                 const unsigned int delay = group.at("clock");
                 Debug::Log->trace("      <Animation> Setting group delay to {}", delay);
@@ -309,9 +309,9 @@ namespace obe::Animation
         }
     }
 
-    void Animation::loadCode(vili::node& code)
+    void Animation::loadCode(const vili::node& code)
     {
-        for (vili::node& command : code.at("code"))
+        for (const vili::node& command : code.at("code"))
         {
             Debug::Log->trace("    <Animation> Parsing Animation command '{}'", command);
             m_code.push_back(command);
@@ -323,7 +323,7 @@ namespace obe::Animation
     void Animation::applyParameters(vili::node& parameters)
     {
         // TODO: Re-implement texture offset in a better way
-        if (!parameters["priority"].is_null())
+        if (parameters.contains("priority"))
             m_priority = parameters.at("priority");
     }
 

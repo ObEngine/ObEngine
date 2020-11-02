@@ -105,11 +105,11 @@ namespace obe::Animation
         void updateCurrentGroup();
         void setActiveAnimationGroup(const std::string& groupName);
 
-        void loadMeta(vili::node& meta);
-        void loadImages(vili::node& images, const System::Path& path,
+        void loadMeta(const vili::node& meta);
+        void loadImages(const vili::node& images, const System::Path& path,
             Engine::ResourceManager* resources);
-        void loadGroups(vili::node& groups);
-        void loadCode(vili::node& code);
+        void loadGroups(const vili::node& groups);
+        void loadCode(const vili::node& code);
 
     public:
         /**

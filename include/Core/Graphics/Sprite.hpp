@@ -231,7 +231,7 @@ namespace obe::Graphics
          * \brief Loads the Sprite from a ComplexNode
          * \param data ComplexNode containing the data of the Sprite
          */
-        void load(vili::node& data) override;
+        void load(const vili::node& data) override;
         /**
          * \brief The Sprite will load the Texture at the given path
          * \param path A std::string containing the path of the texture to load

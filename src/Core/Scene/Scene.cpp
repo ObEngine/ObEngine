@@ -286,11 +286,11 @@ namespace obe::Scene
         return result;
     }
 
-    void Scene::load(vili::node& data)
+    void Scene::load(const vili::node& data)
     {
-        if (!data["Meta"].is_null())
+        if (data.contains("Meta"))
         {
-            vili::node& meta = data.at("Meta");
+            const vili::node& meta = data.at("Meta");
             m_levelName = meta.at("name");
         }
         else
@@ -298,14 +298,14 @@ namespace obe::Scene
 
         if (data.contains("View"))
         {
-            vili::node& view = data.at("View");
+            const vili::node& view = data.at("View");
             m_camera.setSize(view.at("size"));
             double x = 0.f;
             double y = 0.f;
             Transform::Units unit = Transform::Units::SceneUnits;
             if (view.contains("position"))
             {
-                vili::node& position = view.at("position");
+                const vili::node& position = view.at("position");
                 if (position.contains("x"))
                 {
                     x = position["x"];
@@ -335,7 +335,7 @@ namespace obe::Scene
         else
             throw Exceptions::MissingSceneFileBlock(m_levelFileName, "View", EXC_INFO);
 
-        if (!data["Sprites"].is_null())
+        if (data.contains("Sprites"))
         {
             const vili::node& sprites = data.at("Sprites");
             m_spriteArray.reserve(sprites.size());
@@ -348,7 +348,7 @@ namespace obe::Scene
 
         this->reorganizeLayers();
 
-        if (!data["Collisions"].is_null())
+        if (data.contains("Collisions"))
         {
             const vili::node& collisions = data.at("Collisions");
             m_colliderArray.reserve(collisions.size());
@@ -359,9 +359,9 @@ namespace obe::Scene
             }
         }
 
-        if (!data["GameObjects"].is_null())
+        if (data.contains("GameObjects"))
         {
-            vili::node& gameObjects = data.at("GameObjects");
+            const vili::node& gameObjects = data.at("GameObjects");
             m_gameObjectArray.reserve(gameObjects.size());
             m_gameObjectIds.reserve(gameObjects.size());
             for (auto [gameObjectId, gameObject] : gameObjects.items())
@@ -371,9 +371,9 @@ namespace obe::Scene
                     const std::string gameObjectType = gameObject.at("type");
                     Script::GameObject& newObject
                         = this->createGameObject(gameObjectType, gameObjectId);
-                    if (!gameObject["Requires"].is_null())
+                    if (gameObject.contains("Requires"))
                     {
-                        vili::node& objectRequirements = gameObject.at("Requires");
+                        const vili::node& objectRequirements = gameObject.at("Requires");
                         Script::GameObjectDatabase::ApplyRequirements(
                             newObject.getEnvironment(), objectRequirements);
                     }
@@ -388,10 +388,10 @@ namespace obe::Scene
             }
         }
 
-        if (!data["Script"].is_null())
+        if (data.contains("Script"))
         {
-            vili::node& script = data.at("Script");
-            if (!script["source"].is_null())
+            const vili::node& script = data.at("Script");
+            if (script.contains("source"))
             {
                 std::string source = System::Path(script.at("source")).find();
                 const sol::protected_function_result result
@@ -405,15 +405,22 @@ namespace obe::Scene
                 }
                 m_scriptArray.push_back(script.at("source"));
             }
-            else if (!script["sources"].is_null())
+            else if (script.contains("sources"))
             {
-                for (vili::node& scriptName : script.at("sources"))
+                for (const vili::node& scriptName : script.at("sources"))
                 {
                     m_lua.safe_script_file(System::Path(scriptName).find());
                     m_scriptArray.push_back(scriptName);
                 }
             }
         }
+
+        if (data.contains("Tiles"))
+        {
+            m_tiles = std::make_unique<Tiles::TileScene>();
+            m_tiles->load(data.at("Tiles"));
+        }
+
         e_scene->trigger(Events::Scene::Loaded { m_levelFileName });
     }
 
@@ -491,6 +498,8 @@ namespace obe::Scene
                 sprite->draw(surface, pixelCamera);
             }
         }
+
+        m_tiles->draw(surface, m_camera);
 
         if (m_showElements["SceneNodes"])
         {

@@ -237,6 +237,9 @@ namespace vili
         node& operator[](const char* key);
         node& operator[](const std::string& key);
         node& operator[](size_t index);
+        const node& operator[](const char* key) const;
+        const node& operator[](const std::string& key) const;
+        const node& operator[](size_t index) const;
 
         void push(const node& value);
         /**

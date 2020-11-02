@@ -53,7 +53,8 @@ namespace obe::Script
          * \param obj GameObject to applies the requirements to
          * \param requires ComplexNode containing the Requirements
          */
-        static void ApplyRequirements(sol::environment environment, vili::node& requires);
+        static void ApplyRequirements(
+            sol::environment environment, const vili::node& requires);
         /**
          * \brief Clears the GameObjectDatabase (cache reload)
          */
@@ -238,7 +239,7 @@ namespace obe::Script
         void setState(bool state);
 
         [[nodiscard]] vili::node dump() const override;
-        void load(vili::node& data) override;
+        void load(const vili::node& data) override;
         void loadSource(const std::string& path);
     };
 

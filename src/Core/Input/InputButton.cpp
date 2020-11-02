@@ -11,6 +11,11 @@ namespace obe::Input
         return os;
     }
 
+    void InputButton::setMouseWheelDelta(int delta)
+    {
+        m_wheelDelta = delta;
+    }
+
     InputButton::InputButton(sf::Keyboard::Key key, const std::string& name,
         const std::string& returnChar, InputType type)
     {
@@ -48,6 +53,14 @@ namespace obe::Input
         m_returnChar = "";
         m_name = name;
         m_detectAxis = detect;
+    }
+
+    InputButton::InputButton(MouseWheelScrollDirection direction, const std::string& name)
+    {
+        m_type = InputType::ScrollWheel;
+        m_button = direction;
+        m_returnChar = "";
+        m_name = name;
     }
 
     sf::Keyboard::Key InputButton::getKey() const
@@ -93,11 +106,15 @@ namespace obe::Input
                 ? axisValue < m_detectAxis.second
                 : axisValue > m_detectAxis.second;
         }
+        if (m_type == InputType::ScrollWheel)
+        {
+            return m_wheelDelta != 0;
+        }
 
         return sf::Keyboard::isKeyPressed(std::get<sf::Keyboard::Key>(m_button));
     }
 
-    float InputButton::getAxisPosition()
+    float InputButton::getAxisPosition() const
     {
         if (m_type == InputType::GamepadAxis)
             return sf::Joystick::getAxisPosition(
@@ -105,5 +122,10 @@ namespace obe::Input
         else
             throw Exceptions::InputButtonInvalidOperation(
                 inputTypeToString(m_type), "GetAxisPosition", EXC_INFO);
+    }
+
+    int InputButton::getWheelDelta() const
+    {
+        return m_wheelDelta;
     }
 } // namespace obe::Input

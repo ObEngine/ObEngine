@@ -384,6 +384,21 @@ namespace vili
         return this->at(index);
     }
 
+    const node & node::operator[](const char *key) const
+    {
+        return this->at(key);
+    }
+
+    const node & node::operator[](const std::string &key) const
+    {
+        return this->at(key);
+    }
+
+    const node & node::operator[](size_t index) const
+    {
+        return this->at(index);
+    }
+
     size_t node::size() const
     {
         if (is<array>())

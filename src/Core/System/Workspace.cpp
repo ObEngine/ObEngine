@@ -20,8 +20,8 @@ namespace obe::System::Workspace
 
     bool WorkspaceExists(const std::string& workspaceName)
     {
-        return !vili::parser::from_file("Workspace/Workspaces.vili")[workspaceName]
-                    .is_null();
+        return vili::parser::from_file("Workspace/Workspaces.vili")
+            .contains(workspaceName);
     }
 
     bool Load(const std::string& workspaceName, const unsigned int priority)

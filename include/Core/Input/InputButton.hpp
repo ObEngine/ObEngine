@@ -9,8 +9,23 @@
 
 #include <Input/InputType.hpp>
 
+namespace obe
+{
+    namespace Engine
+    {
+        class Engine;
+    }
+}
+
 namespace obe::Input
 {
+    enum class MouseWheelScrollDirection
+    {
+        Up,
+        Down,
+        Left,
+        Right
+    };
     /**
      * \brief Trigger condition on an AxisButton input
      * \bind{AxisThresholdDirection}
@@ -42,13 +57,17 @@ namespace obe::Input
     {
     private:
         std::variant<sf::Keyboard::Key, sf::Mouse::Button, unsigned int,
-            sf::Joystick::Axis>
+            sf::Joystick::Axis, MouseWheelScrollDirection>
             m_button;
         std::pair<AxisThresholdDirection, float> m_detectAxis;
         unsigned int m_gamepadIndex = 0;
         std::string m_name;
         std::string m_returnChar;
         InputType m_type;
+
+        int m_wheelDelta = 0;
+        void setMouseWheelDelta(int delta);
+        friend obe::Engine::Engine;
 
     public:
         /**
@@ -85,12 +104,16 @@ namespace obe::Input
          */
         InputButton(unsigned int gamepadIndex, sf::Joystick::Axis gamepadAxis,
             std::pair<AxisThresholdDirection, float> detect, const std::string& name);
+
+        InputButton(MouseWheelScrollDirection direction, const std::string& name);
         /**
          * \brief Get Axis Position value if InputButton is an axis (throws
          *        error otherwise)
          * \return Return value of GetAxisPosition
          */
-        float getAxisPosition();
+        [[nodiscard]] float getAxisPosition() const;
+
+        [[nodiscard]] int getWheelDelta() const;
         /**
          * \brief Get the SFML Keyboard Key
          * \return SFML Keyboard Key

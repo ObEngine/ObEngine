@@ -8,7 +8,7 @@
  */
 namespace obe::Script::ViliLuaBridge
 {
-    sol::lua_value viliToLua(vili::node& convert);
+    sol::lua_value viliToLua(const vili::node& convert);
     vili::node luaToVili(sol::object convert);
     /**
      * \brief Adds a converted Vili ComplexAttribute to a Lua Table
@@ -19,7 +19,7 @@ namespace obe::Script::ViliLuaBridge
      * \param convert The Vili Node you
      *        want to get the data from
      */
-    sol::lua_value viliObjectToLuaTable(vili::node& convert);
+    sol::lua_value viliObjectToLuaTable(const vili::node& convert);
     /**
      * \brief Add a Vili BaseAttribute in a Lua Table
      *        The key of the newly converted element in the table will be the
@@ -29,7 +29,7 @@ namespace obe::Script::ViliLuaBridge
      * \param convert The Vili BaseAttribute you want to add in the
      *        Lua Table
      */
-    sol::lua_value viliPrimitiveToLuaValue(vili::node& convert);
+    sol::lua_value viliPrimitiveToLuaValue(const vili::node& convert);
     /**
      * \brief Adds a converted Vili ListAttribute to a Lua Table.
      *        Index of the List will start at 0 (unlike default Lua lists which
@@ -40,7 +40,7 @@ namespace obe::Script::ViliLuaBridge
      * \param convert The Vili ComplexAttribute you want
      *        to get the data from
      */
-    sol::lua_value viliArrayToLuaTable(vili::node& convert);
+    sol::lua_value viliArrayToLuaTable(const vili::node& convert);
     /**
      * \brief Converts a Lua Table to a Vili ComplexAttribute
      * \param id Id of the newly created ComplexAttribute

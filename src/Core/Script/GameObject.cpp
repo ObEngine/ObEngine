@@ -31,14 +31,14 @@ namespace obe::Script
     vili::node GameObjectDatabase::allRequires = vili::object {};
     vili::node GameObjectDatabase::GetRequirementsForGameObject(const std::string& type)
     {
-        if (allRequires[type].is_null())
+        if (!allRequires.contains(type))
         {
             vili::node getGameObjectFile
                 = vili::parser::from_file(System::Path("Data/GameObjects/")
                                               .add(type)
                                               .add(type + ".obj.vili")
                                               .find());
-            if (!getGameObjectFile["Requires"].is_null())
+            if (getGameObjectFile.contains("Requires"))
             {
                 vili::node& requiresData = getGameObjectFile.at("Requires");
                 allRequires[type] = requiresData;
@@ -51,7 +51,7 @@ namespace obe::Script
 
     vili::node GameObjectDatabase::GetDefinitionForGameObject(const std::string& type)
     {
-        if (allDefinitions[type].is_null())
+        if (!allDefinitions.contains(type))
         {
             const std::string objectDefinitionPath = System::Path("Data/GameObjects/")
                                                          .add(type)
@@ -61,7 +61,7 @@ namespace obe::Script
                 throw Exceptions::ObjectDefinitionNotFound(type, EXC_INFO);
             vili::node getGameObjectFile = vili::parser::from_file(
                 objectDefinitionPath, Config::Templates::getGameObjectTemplates());
-            if (!getGameObjectFile[type].is_null())
+            if (getGameObjectFile.contains(type))
             {
                 vili::node& definitionData = getGameObjectFile.at(type);
                 allDefinitions[type] = definitionData;
@@ -73,10 +73,9 @@ namespace obe::Script
     }
 
     void GameObjectDatabase::ApplyRequirements(
-        sol::environment environment, vili::node& requires)
+        sol::environment environment, const vili::node& requirements)
     {
-        environment["__INIT_ARG_TABLE"]
-            = ViliLuaBridge::viliToLua(requires);
+        environment["__INIT_ARG_TABLE"] = ViliLuaBridge::viliToLua(requirements);
     }
 
     void GameObjectDatabase::Clear()
@@ -122,8 +121,7 @@ namespace obe::Script
         }
     }
 
-    void GameObject::sendInitArgFromLua(
-        const std::string& argName, sol::object value)
+    void GameObject::sendInitArgFromLua(const std::string& argName, sol::object value)
     {
         Debug::Log->debug("<GameObject> Sending Local.Init argument {0} to "
                           "GameObject {1} ({2}) (From Lua)",
@@ -136,7 +134,7 @@ namespace obe::Script
     {
         Debug::Log->debug("<GameObject> Loading GameObject '{0}' ({1})", m_id, m_type);
 
-        if (!obj["permanent"].is_null())
+        if (obj.contains("permanent"))
         {
             m_permanent = obj.at("permanent");
         }
@@ -380,7 +378,7 @@ namespace obe::Script
         return result;
     }
 
-    void GameObject::load(vili::node& data)
+    void GameObject::load(const vili::node& data)
     {
         // TODO: Do something
     }
