@@ -1,5 +1,6 @@
 #include <cmath>
 
+#include <Collision/Exceptions.hpp>
 #include <Collision/PolygonalCollider.hpp>
 #include <Debug/Logger.hpp>
 #include <Graphics/DrawUtils.hpp>
@@ -8,6 +9,21 @@
 
 namespace obe::Collision
 {
+    std::string colliderTagTypeToString(ColliderTagType tagType)
+    {
+        switch (tagType)
+        {
+        case ColliderTagType::Tag:
+            return "Tag";
+        case ColliderTagType::Accepted:
+            return "Accepted";
+        case ColliderTagType::Rejected:
+            return "Rejected";
+        default:;
+        };
+        return "";
+    }
+
     bool pointsCompare(
         const Transform::UnitVector& first, const Transform::UnitVector& second)
     {
@@ -83,7 +99,8 @@ namespace obe::Collision
     CollisionData PolygonalCollider::getMaximumDistanceBeforeCollision(
         const Transform::UnitVector& offset) const
     {
-        std::vector<std::pair<PolygonalCollider*, Transform::UnitVector>> reachableColliders;
+        std::vector<std::pair<PolygonalCollider*, Transform::UnitVector>>
+            reachableColliders;
 
         CollisionData collData;
         collData.offset = offset;
@@ -109,7 +126,8 @@ namespace obe::Collision
             // Get lowest offset between this collider and a reachable collider
             for (auto& reachable : reachableColliders)
             {
-                if (reachable.second.magnitude() < collData.offset.to(Transform::Units::ScenePixels).magnitude())
+                if (reachable.second.magnitude()
+                    < collData.offset.to(Transform::Units::ScenePixels).magnitude())
                 {
                     collData.offset = reachable.second;
                 }
@@ -153,7 +171,8 @@ namespace obe::Collision
         m_tags.at(tagType).clear();
     }
 
-    CollisionData PolygonalCollider::doesCollide(const Transform::UnitVector& offset) const
+    CollisionData PolygonalCollider::doesCollide(
+        const Transform::UnitVector& offset) const
     {
         CollisionData collData;
         collData.offset = offset;
@@ -341,31 +360,40 @@ namespace obe::Collision
         return result;
     }
 
-    void PolygonalCollider::load(vili::node& data)
+    void PolygonalCollider::load(const vili::node& data)
     {
-        auto addTagHelper = [this](ColliderTagType type, vili::node& tag) {
-            if (!tag.is_null())
+        auto addTagHelper = [this](ColliderTagType type, const vili::node& tag) {
+            if (tag.is<vili::string>())
             {
-                if (tag.is<vili::string>())
+                this->addTag(type, tag);
+            }
+            else if (tag.is<vili::array>())
+            {
+                for (const vili::node& item : tag)
                 {
-                    this->addTag(type, tag);
-                }
-                else if (tag.is<vili::array>())
-                {
-                    for (vili::node& item : tag)
+                    if (item.is<vili::string>())
+                    {
                         this->addTag(type, item);
+                    }
+                    else
+                    {
+                        throw Exceptions::InvalidTagFormat(m_id,
+                            colliderTagTypeToString(type), vili::to_string(item.type()),
+                            EXC_INFO);
+                    }
                 }
-                else
-                {
-                    // TODO: Raise exception
-                }
+            }
+            else
+            {
+                throw Exceptions::InvalidTagFormat(m_id, colliderTagTypeToString(type),
+                    vili::to_string(tag.type()), EXC_INFO);
             }
         };
         const std::string pointsUnit = data.at("unit");
         bool completePoint = true;
         double pointBuffer = 0;
         const Transform::Units pBaseUnit = Transform::stringToUnits(pointsUnit);
-        for (vili::node& colliderPoint : data["points"])
+        for (const vili::node& colliderPoint : data.at("points"))
         {
             const Transform::UnitVector pVector2 = Transform::UnitVector(
                 colliderPoint["x"], colliderPoint["y"], pBaseUnit);
@@ -373,9 +401,18 @@ namespace obe::Collision
         }
         this->setWorkingUnit(pBaseUnit);
 
-        addTagHelper(ColliderTagType::Tag, data["tag"]);
-        addTagHelper(ColliderTagType::Accepted, data["accept"]);
-        addTagHelper(ColliderTagType::Rejected, data["reject"]);
+        if (data.contains("tag"))
+        {
+            addTagHelper(ColliderTagType::Tag, data["tag"]);
+        }
+        if (data.contains("accept"))
+        {
+            addTagHelper(ColliderTagType::Accepted, data["accept"]);
+        }
+        if (data.contains("reject"))
+        {
+            addTagHelper(ColliderTagType::Rejected, data["reject"]);
+        }
     }
 
     bool PolygonalCollider::checkTags(const PolygonalCollider& collider) const

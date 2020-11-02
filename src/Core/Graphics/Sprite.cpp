@@ -477,7 +477,7 @@ namespace obe::Graphics
         return result;
     }
 
-    void Sprite::load(vili::node& data)
+    void Sprite::load(const vili::node& data)
     {
         if (data.contains("path"))
         {
@@ -489,7 +489,7 @@ namespace obe::Graphics
             obe::Transform::Referential referentialPos;
             Transform::UnitVector spritePos(0, 0);
             Transform::UnitVector spriteSize(1, 1);
-            vili::node& rect = data.at("rect");
+            const vili::node& rect = data.at("rect");
             if (rect.contains("unit"))
             {
                 this->setWorkingUnit(Transform::stringToUnits(rect.at("unit")));
@@ -533,7 +533,7 @@ namespace obe::Graphics
         {
             std::string spriteXTransformer = "Camera";
             std::string spriteYTransformer = "Camera";
-            vili::node& transform = data.at("transform");
+            const vili::node& transform = data.at("transform");
             if (transform.contains("x"))
             {
                 spriteXTransformer = transform.at("x");
@@ -550,7 +550,7 @@ namespace obe::Graphics
         if (data.contains("color"))
         {
             Color spriteColor = Color::White;
-            vili::node& color = data.at("color");
+            const vili::node& color = data.at("color");
             if (color.is<vili::object>() && color.contains("r"))
             {
                 const double r = color.at("r").as<vili::number>();

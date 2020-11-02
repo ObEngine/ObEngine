@@ -187,13 +187,48 @@ namespace obe::Engine
     void Engine::handleWindowEvents() const
     {
         sf::Event event;
+        m_input->getInput("MouseWheelUp").setMouseWheelDelta(0);
+        m_input->getInput("MouseWheelDown").setMouseWheelDelta(0);
+        m_input->getInput("MouseWheelLeft").setMouseWheelDelta(0);
+        m_input->getInput("MouseWheelRight").setMouseWheelDelta(0);
         while (m_window->pollEvent(event))
         {
+            if (event.type == sf::Event::MouseWheelScrolled)
+            {
+                if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
+                {
+                    if (event.mouseWheelScroll.delta < 0)
+                    {
+                        m_input->getInput("MouseWheelUp")
+                            .setMouseWheelDelta(event.mouseWheelScroll.delta);
+                    }
+                    else if (event.mouseWheelScroll.delta > 0)
+                    {
+                        m_input->getInput("MouseWheelDown")
+                            .setMouseWheelDelta(event.mouseWheelScroll.delta);
+                    }
+                }
+                else if (event.mouseWheelScroll.wheel == sf::Mouse::HorizontalWheel)
+                {
+                    if (event.mouseWheelScroll.delta < 0)
+                    {
+                        m_input->getInput("MouseWheelLeft")
+                            .setMouseWheelDelta(event.mouseWheelScroll.delta);
+                    }
+                    else if (event.mouseWheelScroll.delta > 0)
+                    {
+                        m_input->getInput("MouseWheelRight")
+                            .setMouseWheelDelta(event.mouseWheelScroll.delta);
+                    }
+                }
+            }
             switch (event.type)
             {
             case sf::Event::Closed:
                 m_window->close();
                 break;
+            case sf::Event::MouseWheelScrolled:
+                [[fallthrough]];
             case sf::Event::MouseButtonPressed:
                 [[fallthrough]];
             case sf::Event::MouseButtonReleased:

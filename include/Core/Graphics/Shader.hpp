@@ -28,7 +28,7 @@ namespace obe::Graphics
          * \brief Loads the Shader from a Vili Node
          * \param data Vili Node containing the data of the Shader
          */
-        void load(vili::node& data) override;
+        void load(const vili::node& data) override;
         void loadShader(const std::string& path);
     };
 } // namespace obe::Graphics

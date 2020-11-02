@@ -19,6 +19,6 @@ namespace obe::Types
          * \brief Loads an object from a ComplexNode
          * \param data ComplexNode containing the data of the object
          */
-        virtual void load(vili::node& data) = 0;
+        virtual void load(const vili::node& data) = 0;
     };
 } // namespace obe::Types

@@ -21,8 +21,7 @@ namespace obe::System::Package
 
     bool PackageExists(const std::string& packageName)
     {
-        return !vili::parser::from_file("Package/Packages.vili"_fs)[packageName]
-                    .is_null();
+        return vili::parser::from_file("Package/Packages.vili"_fs).contains(packageName);
     }
 
     std::vector<std::string> ListPackages()

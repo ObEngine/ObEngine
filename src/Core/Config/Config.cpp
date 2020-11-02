@@ -16,13 +16,15 @@ namespace obe::Config
             "Divide|End|Equal|Escape|Home|Insert|LAlt|LBracket|LControl|LShift|Menu|"
             "Multiply|PageDown|PageUp|Pause|Period|Quote|RAlt|RBracket|RControl|Return|"
             "RShift|RSystem|Semicolon|Slash|Space|Subtract|Tab|Tilde|Left|Right|Up|Down|"
-            "LMB|MMB|RMB|NumPad[0-9]|F(1[0-2]|[1-9])|[A-Z]|[0-9]))(\\s*\\+\\s*(Idle|Hold|"
+            "LMB|MMB|RMB|MouseWheelLeft|MouseWheelRight|MouseWheelUp|MouseWheelDown|"
+            "NumPad[0-9]|F(1[0-2]|[1-9])|[A-Z]|[0-9]))(\\s*\\+\\s*(Idle|Hold|"
             "Pressed|Released)\\s*:\\s*(Add|Backslash|Backspace|Comma|Dash|Delete|Divide|"
             "End|"
             "Equal|Escape|Home|Insert|LAlt|LBracket|LControl|LShift|Menu|Multiply|"
             "PageDown|PageUp|Pause|Period|Quote|RAlt|RBracket|RControl|Return|RShift|"
             "RSystem|Semicolon|Slash|Space|Subtract|Tab|Tilde|Left|Right|Up|Down|LMB|MMB|"
-            "RMB|NumPad[0-9]|F(1[0-2]|[1-9])|[A-Z]|[0-9]))*");
+            "RMB|MouseWheelLeft|MouseWheelRight|MouseWheelUp|MouseWheelDown|NumPad[0-9]|"
+            "F(1[0-2]|[1-9])|[A-Z]|[0-9]))*");
 
         // clang-format off
         vili::node ResolutionDimension = vili::object {

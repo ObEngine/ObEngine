@@ -23,7 +23,7 @@ namespace obe::Graphics
         vili::node result;
         return result;
     }
-    void Shader::load(vili::node& data)
+    void Shader::load(const vili::node& data)
     {
     }
 } // namespace obe::Graphics

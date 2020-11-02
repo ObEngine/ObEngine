@@ -149,6 +149,16 @@ namespace obe::Input
         m_inputs["RMB"] = std::make_unique<InputButton>(sf::Mouse::Right, "RMB");
         m_inputs["MMB"] = std::make_unique<InputButton>(sf::Mouse::Middle, "MMB");
 
+        // Scroll Wheel
+        m_inputs["MouseWheelLeft"] = std::make_unique<InputButton>(
+            Input::MouseWheelScrollDirection::Left, "MouseWheelLeft");
+        m_inputs["MouseWheelRight"] = std::make_unique<InputButton>(
+            Input::MouseWheelScrollDirection::Left, "MouseWheelRight");
+        m_inputs["MouseWheelUp"] = std::make_unique<InputButton>(
+            Input::MouseWheelScrollDirection::Left, "MouseWheelUp");
+        m_inputs["MouseWheelDown"] = std::make_unique<InputButton>(
+            Input::MouseWheelScrollDirection::Left, "MouseWheelDown");
+
         // Others
         m_inputs["Add"] = std::make_unique<InputButton>(
             sf::Keyboard::Add, "Add", "+", InputType::Others);

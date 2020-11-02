@@ -85,6 +85,7 @@ namespace obe::Input::Bindings
                         std::pair<obe::Input::AxisThresholdDirection, float>,
                         const std::string&)>());
         bindInputButton["getAxisPosition"] = &obe::Input::InputButton::getAxisPosition;
+        bindInputButton["getWheelDelta"] = &obe::Input::InputButton::getWheelDelta;
         bindInputButton["getKey"] = &obe::Input::InputButton::getKey;
         bindInputButton["getName"] = &obe::Input::InputButton::getName;
         bindInputButton["getType"] = &obe::Input::InputButton::getType;

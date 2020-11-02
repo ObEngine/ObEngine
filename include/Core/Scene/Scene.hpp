@@ -9,6 +9,7 @@
 #include <Scene/Camera.hpp>
 #include <Scene/SceneNode.hpp>
 #include <Script/GameObject.hpp>
+#include <Tiles/Tileset.hpp>
 
 #include <sol/sol.hpp>
 
@@ -61,6 +62,7 @@ namespace obe::Scene
         std::unordered_set<std::string> m_gameObjectIds;
 
         std::vector<std::string> m_scriptArray;
+        std::unique_ptr<Tiles::TileScene> m_tiles;
 
         SceneNode m_sceneRoot;
 
@@ -111,7 +113,7 @@ namespace obe::Scene
          * \return
          */
         [[nodiscard]] vili::node dump() const override;
-        void load(vili::node& data) override;
+        void load(const vili::node& data) override;
         /**
          * \brief Updates all elements in the Scene
          */
