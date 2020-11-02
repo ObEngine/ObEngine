@@ -311,7 +311,7 @@ namespace obe::Graphics
         }
         else if (data.is<vili::object>() && data.contains("H"))
         {
-            const int H = data.at("H").as<vili::integer>();
+            const double H = data.at("H").as<vili::number>();
             const double S = data.at("S").as<vili::number>();
             const double V = data.at("V").as<vili::number>();
             this->fromHsv(H, S, V);
@@ -366,7 +366,7 @@ namespace obe::Graphics
         this->type = ColorType::Rgba;
     }
 
-    void Color::fromHsv(const int H, const double S, const double V)
+    void Color::fromHsv(const double H, const double S, const double V)
     {
 
         if (H < 0 || H > 360 || S < 0.0 || S > 1.0 || V < 0.0 || V > 1.0)
@@ -505,25 +505,23 @@ namespace obe::Graphics
             res.H = 0;
             return res;
         }
-        double Hs = 0;
         if (Rs >= max)
         {
-            Hs = (Gs - Bs) / delta;
+            res.H = (Gs - Bs) / delta;
         }
         else if (Gs >= max)
         {
-            Hs = 2.0 + (Bs - Rs) / delta;
+            res.H = 2.0 + (Bs - Rs) / delta;
         }
         else
         {
-            Hs = 4.0 + (Rs - Gs) / delta;
+            res.H = 4.0 + (Rs - Gs) / delta;
         }
 
-        Hs *= 60.0;
+        res.H *= 60.0;
 
-        if (Hs < 0.0)
-            Hs += 360.0;
-        res.H = int(Hs + 0.5);
+        if (res.H < 0.0)
+            res.H += 360.0;
         return res;
     }
 
@@ -548,12 +546,12 @@ namespace obe::Graphics
 
     std::string Color::toString() const
     {
-        std::string res;
-        res = toNamed();
-        if (res == "") {
-            res = toHex();
+        const std::string name = toNamed();
+        if (name.empty())
+        {
+            return toHex();
         }
-        return res;
+        return name;
     }
 
     bool Color::operator==(const Color& color) const
@@ -679,8 +677,8 @@ namespace obe::Graphics
 
     std::ostream& operator<<(std::ostream& os, const Color& color)
     {
-        os << "Color(" << int(color.r) << ", " << int(color.g) << ", " << int(color.b)
-           << ", " << int(color.a) << ")";
+        os << "Color(" << int(color.r + 0.5) << ", " << int(color.g + 0.5) << ", " << int(color.b + 0.5)
+           << ", " << int(color.a + 0.5) << ")";
         return os;
     }
 } // namespace obe::Graphics

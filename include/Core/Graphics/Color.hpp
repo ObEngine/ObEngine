@@ -9,8 +9,7 @@ namespace obe::Graphics
 {
     struct Hsv
     {
-        int H;
-        double S, V;
+        double H, S, V;
     };
 
     enum class ColorType
@@ -48,7 +47,7 @@ namespace obe::Graphics
         bool fromName(std::string name, bool strict = true);
         void fromHex(std::string hexCode);
         void fromRgb(double r, double g, double b, double a = 255);
-        void fromHsv(int H, double S, double V);
+        void fromHsv(double H, double S, double V);
 
         [[nodiscard]] uint32_t toInteger() const;
 
