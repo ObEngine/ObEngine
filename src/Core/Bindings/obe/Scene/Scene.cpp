@@ -140,6 +140,7 @@ namespace obe::Scene::Bindings
         bindScene["getLevelFile"] = &obe::Scene::Scene::getLevelFile;
         bindScene["enableShowSceneNodes"] = &obe::Scene::Scene::enableShowSceneNodes;
         bindScene["getSceneNodeByPosition"] = &obe::Scene::Scene::getSceneNodeByPosition;
+        bindScene["getTiles"] = &obe::Scene::Scene::getTiles;
     }
     void LoadClassSceneNode(sol::state_view state)
     {

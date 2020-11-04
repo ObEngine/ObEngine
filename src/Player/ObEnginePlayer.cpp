@@ -36,6 +36,7 @@ int main(int argc, char** argv)
         Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
     // Modes::startGame();
 
+#undef _DEBUG
 #if defined _DEBUG || defined _NDEBUG || defined NDEBUG
     Modes::startGame();
 #else
