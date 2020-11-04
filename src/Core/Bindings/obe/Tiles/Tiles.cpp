@@ -55,6 +55,7 @@ namespace obe::Tiles::Bindings
                 const std::string&, int32_t, uint32_t, uint32_t, uint32_t, uint32_t,
                 const std::vector<uint32_t>&)>(),
             sol::base_classes, sol::bases<obe::Graphics::Renderable>());
+        bindTileLayer["getId"] = &obe::Tiles::TileLayer::getId;
         bindTileLayer["build"] = &obe::Tiles::TileLayer::build;
         bindTileLayer["draw"] = &obe::Tiles::TileLayer::draw;
         bindTileLayer["setTile"] = &obe::Tiles::TileLayer::setTile;
@@ -69,6 +70,7 @@ namespace obe::Tiles::Bindings
                 sol::bases<obe::Types::Serializable>());
         bindTileScene["dump"] = &obe::Tiles::TileScene::dump;
         bindTileScene["load"] = &obe::Tiles::TileScene::load;
+        bindTileScene["getLayer"] = &obe::Tiles::TileScene::getLayer;
         bindTileScene["getRenderables"] = &obe::Tiles::TileScene::getRenderables;
     }
     void LoadClassTilePosition(sol::state_view state)
