@@ -4,6 +4,7 @@
 #include <Graphics/Font.hpp>
 #include <Graphics/PositionTransformers.hpp>
 #include <Graphics/RenderTarget.hpp>
+#include <Graphics/Renderable.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Sprite.hpp>
 #include <Graphics/Text.hpp>
@@ -251,6 +252,21 @@ namespace obe::Graphics::Bindings
         bindPositionTransformer[sol::meta_function::call]
             = &obe::Graphics::PositionTransformer::operator();
     }
+    void LoadClassRenderable(sol::state_view state)
+    {
+        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
+        sol::usertype<obe::Graphics::Renderable> bindRenderable
+            = GraphicsNamespace.new_usertype<obe::Graphics::Renderable>("Renderable");
+        bindRenderable["getLayer"] = &obe::Graphics::Renderable::getLayer;
+        bindRenderable["getZDepth"] = &obe::Graphics::Renderable::getZDepth;
+        bindRenderable["isVisible"] = &obe::Graphics::Renderable::isVisible;
+        bindRenderable["setLayer"] = &obe::Graphics::Renderable::setLayer;
+        bindRenderable["setZDepth"] = &obe::Graphics::Renderable::setZDepth;
+        bindRenderable["setVisible"] = &obe::Graphics::Renderable::setVisible;
+        bindRenderable["show"] = &obe::Graphics::Renderable::show;
+        bindRenderable["hide"] = &obe::Graphics::Renderable::hide;
+        bindRenderable["draw"] = &obe::Graphics::Renderable::draw;
+    }
     void LoadClassRenderTarget(sol::state_view state)
     {
         sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
@@ -311,14 +327,13 @@ namespace obe::Graphics::Bindings
                 sol::base_classes,
                 sol::bases<obe::Transform::UnitBasedObject, obe::Types::Selectable,
                     obe::Transform::Rect, obe::Transform::Movable,
-                    obe::Component::Component<Sprite>, obe::Component::ComponentBase,
-                    obe::Types::Identifiable, obe::Types::Serializable,
-                    obe::Engine::ResourceManagedObject>());
+                    obe::Graphics::Renderable, obe::Component::Component<Sprite>,
+                    obe::Component::ComponentBase, obe::Types::Identifiable,
+                    obe::Types::Serializable, obe::Engine::ResourceManagedObject>());
         bindSprite["drawHandle"] = &obe::Graphics::Sprite::drawHandle;
         bindSprite["dump"] = &obe::Graphics::Sprite::dump;
         bindSprite["getColor"] = &obe::Graphics::Sprite::getColor;
         bindSprite["getHandlePoint"] = &obe::Graphics::Sprite::getHandlePoint;
-        bindSprite["getLayer"] = &obe::Graphics::Sprite::getLayer;
         bindSprite["getParentId"] = &obe::Graphics::Sprite::getParentId;
         bindSprite["getPath"] = &obe::Graphics::Sprite::getPath;
         bindSprite["getPositionTransformer"]
@@ -331,15 +346,12 @@ namespace obe::Graphics::Bindings
         bindSprite["getTexture"] = &obe::Graphics::Sprite::getTexture;
         bindSprite["getXScaleFactor"] = &obe::Graphics::Sprite::getXScaleFactor;
         bindSprite["getYScaleFactor"] = &obe::Graphics::Sprite::getYScaleFactor;
-        bindSprite["getZDepth"] = &obe::Graphics::Sprite::getZDepth;
         bindSprite["getAntiAliasing"] = &obe::Graphics::Sprite::getAntiAliasing;
         bindSprite["hasShader"] = &obe::Graphics::Sprite::hasShader;
-        bindSprite["isVisible"] = &obe::Graphics::Sprite::isVisible;
         bindSprite["load"] = &obe::Graphics::Sprite::load;
         bindSprite["loadTexture"] = &obe::Graphics::Sprite::loadTexture;
         bindSprite["rotate"] = &obe::Graphics::Sprite::rotate;
         bindSprite["setColor"] = &obe::Graphics::Sprite::setColor;
-        bindSprite["setLayer"] = &obe::Graphics::Sprite::setLayer;
         bindSprite["setParentId"] = &obe::Graphics::Sprite::setParentId;
         bindSprite["setPositionTransformer"]
             = &obe::Graphics::Sprite::setPositionTransformer;
@@ -350,8 +362,6 @@ namespace obe::Graphics::Bindings
         bindSprite["setTexture"] = &obe::Graphics::Sprite::setTexture;
         bindSprite["setTextureRect"] = &obe::Graphics::Sprite::setTextureRect;
         bindSprite["setTranslationOrigin"] = &obe::Graphics::Sprite::setTranslationOrigin;
-        bindSprite["setVisible"] = &obe::Graphics::Sprite::setVisible;
-        bindSprite["setZDepth"] = &obe::Graphics::Sprite::setZDepth;
         bindSprite["setAntiAliasing"] = &obe::Graphics::Sprite::setAntiAliasing;
         bindSprite["useTextureSize"] = &obe::Graphics::Sprite::useTextureSize;
         bindSprite["draw"] = &obe::Graphics::Sprite::draw;

@@ -64,12 +64,18 @@ namespace vili::Bindings
         bindnode["as_string"] = &vili::node::as_string;
         bindnode["as_array"] = &vili::node::as_array;
         bindnode["as_object"] = &vili::node::as_object;
-        bindnode[sol::meta_function::index] = sol::overload(
-            static_cast<vili::node& (vili::node::*)(const char*)>(
-                &vili::node::operator[]),
-            static_cast<vili::node& (vili::node::*)(const std::string&)>(
-                &vili::node::operator[]),
-            static_cast<vili::node& (vili::node::*)(size_t)>(&vili::node::operator[]));
+        bindnode[sol::meta_function::index]
+            = sol::overload(static_cast<vili::node& (vili::node::*)(const char*)>(
+                                &vili::node::operator[]),
+                static_cast<vili::node& (vili::node::*)(const std::string&)>(
+                    &vili::node::operator[]),
+                static_cast<vili::node& (vili::node::*)(size_t)>(&vili::node::operator[]),
+                static_cast<const vili::node& (vili::node::*)(const char*) const>(
+                    &vili::node::operator[]),
+                static_cast<const vili::node& (vili::node::*)(const std::string&) const>(
+                    &vili::node::operator[]),
+                static_cast<const vili::node& (vili::node::*)(size_t) const>(
+                    &vili::node::operator[]));
         bindnode["push"] = &vili::node::push;
         bindnode["insert"]
             = sol::overload(static_cast<void (vili::node::*)(size_t, const vili::node&)>(

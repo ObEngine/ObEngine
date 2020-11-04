@@ -23,6 +23,11 @@ namespace obe::Tiles
         m_layer = layer;
     }
 
+    std::string TileLayer::getId() const
+    {
+        return m_id;
+    }
+
     void TileLayer::build()
     {
         m_cache.clear();
@@ -75,7 +80,7 @@ namespace obe::Tiles
                     const uint32_t firstTileId = tileset.getFirstTileId();
                     sf::VertexArray& vertices = m_cache[tileset.getFirstTileId()];
                     sf::Vertex* quad = &vertices[quadCounters[firstTileId] * 4];
-                    m_positions[TilePosition { x, y }] = quad;
+                    // m_positions[TilePosition { x, y }] = quad;
 
                     const uint32_t tileWidth = tileset.getTileWidth();
                     const uint32_t tileHeight = tileset.getTileHeight();
