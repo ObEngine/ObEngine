@@ -45,6 +45,17 @@ namespace obe::Tiles
         this->build();
     }
 
+    TileLayer& TileScene::getLayer(const std::string& id) const
+    {
+        for (const auto& layer : m_layers)
+        {
+            if (layer->getId() == id)
+            {
+                return *layer;
+            }
+        }
+    }
+
     std::vector<Graphics::Renderable*> TileScene::getRenderables() const
     {
         std::vector<Graphics::Renderable*> result;

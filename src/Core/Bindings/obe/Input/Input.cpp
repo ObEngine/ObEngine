@@ -12,6 +12,16 @@
 
 namespace obe::Input::Bindings
 {
+    void LoadEnumMouseWheelScrollDirection(sol::state_view state)
+    {
+        sol::table InputNamespace = state["obe"]["Input"].get<sol::table>();
+        InputNamespace.new_enum<obe::Input::MouseWheelScrollDirection>(
+            "MouseWheelScrollDirection",
+            { { "Up", obe::Input::MouseWheelScrollDirection::Up },
+                { "Down", obe::Input::MouseWheelScrollDirection::Down },
+                { "Left", obe::Input::MouseWheelScrollDirection::Left },
+                { "Right", obe::Input::MouseWheelScrollDirection::Right } });
+    }
     void LoadEnumAxisThresholdDirection(sol::state_view state)
     {
         sol::table InputNamespace = state["obe"]["Input"].get<sol::table>();
@@ -42,7 +52,8 @@ namespace obe::Input::Bindings
                 { "Mouse", obe::Input::InputType::Mouse },
                 { "Others", obe::Input::InputType::Others },
                 { "GamepadButton", obe::Input::InputType::GamepadButton },
-                { "GamepadAxis", obe::Input::InputType::GamepadAxis } });
+                { "GamepadAxis", obe::Input::InputType::GamepadAxis },
+                { "ScrollWheel", obe::Input::InputType::ScrollWheel } });
     }
     void LoadClassInputAction(sol::state_view state)
     {
@@ -83,7 +94,9 @@ namespace obe::Input::Bindings
                         unsigned int, unsigned int, const std::string&),
                     obe::Input::InputButton(unsigned int, sf::Joystick::Axis,
                         std::pair<obe::Input::AxisThresholdDirection, float>,
-                        const std::string&)>());
+                        const std::string&),
+                    obe::Input::InputButton(
+                        obe::Input::MouseWheelScrollDirection, const std::string&)>());
         bindInputButton["getAxisPosition"] = &obe::Input::InputButton::getAxisPosition;
         bindInputButton["getWheelDelta"] = &obe::Input::InputButton::getWheelDelta;
         bindInputButton["getKey"] = &obe::Input::InputButton::getKey;

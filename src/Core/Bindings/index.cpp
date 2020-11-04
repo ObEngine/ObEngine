@@ -9,6 +9,7 @@
 #include <Bindings/obe/Bindings/Bindings.hpp>
 #include <Bindings/obe/Bindings/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Collision/Collision.hpp>
+#include <Bindings/obe/Collision/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Component/Component.hpp>
 #include <Bindings/obe/Component/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Config/Config.hpp>
@@ -42,6 +43,8 @@
 #include <Bindings/obe/System/Package/Package.hpp>
 #include <Bindings/obe/System/System.hpp>
 #include <Bindings/obe/System/Workspace/Workspace.hpp>
+#include <Bindings/obe/Tiles/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/Tiles/Tiles.hpp>
 #include <Bindings/obe/Time/Time.hpp>
 #include <Bindings/obe/Transform/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Transform/Transform.hpp>
@@ -77,6 +80,7 @@ namespace obe::Bindings
         state["obe"]["Scene"].get_or_create<sol::table>();
         state["obe"]["Script"].get_or_create<sol::table>();
         state["obe"]["System"].get_or_create<sol::table>();
+        state["obe"]["Tiles"].get_or_create<sol::table>();
         state["obe"]["Time"].get_or_create<sol::table>();
         state["obe"]["Transform"].get_or_create<sol::table>();
         state["obe"]["Types"].get_or_create<sol::table>();
@@ -90,6 +94,7 @@ namespace obe::Bindings
         state["obe"]["Animation"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Audio"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Bindings"]["Exceptions"].get_or_create<sol::table>();
+        state["obe"]["Collision"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Component"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Engine"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Event"]["Exceptions"].get_or_create<sol::table>();
@@ -100,6 +105,7 @@ namespace obe::Bindings
         state["obe"]["Scene"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Script"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["System"]["Exceptions"].get_or_create<sol::table>();
+        state["obe"]["Tiles"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Transform"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Utils"]["Exec"].get_or_create<sol::table>();
         state["obe"]["Events"]["Actions"].get_or_create<sol::table>();
@@ -158,6 +164,8 @@ namespace obe::Bindings
         obe::Collision::Bindings::LoadClassTrajectory(state);
         obe::Collision::Bindings::LoadClassTrajectoryNode(state);
         obe::Collision::Bindings::LoadEnumColliderTagType(state);
+
+        obe::Collision::Exceptions::Bindings::LoadClassInvalidTagFormat(state);
 
         obe::Component::Bindings::LoadClassComponentBase(state);
 
@@ -222,6 +230,7 @@ namespace obe::Bindings
         obe::Graphics::Bindings::LoadClassColor(state);
         obe::Graphics::Bindings::LoadClassFont(state);
         obe::Graphics::Bindings::LoadClassPositionTransformer(state);
+        obe::Graphics::Bindings::LoadClassRenderable(state);
         obe::Graphics::Bindings::LoadClassRenderTarget(state);
         obe::Graphics::Bindings::LoadClassRichText(state);
         obe::Graphics::Bindings::LoadClassShader(state);
@@ -264,6 +273,7 @@ namespace obe::Bindings
         obe::Input::Bindings::LoadClassInputButtonMonitor(state);
         obe::Input::Bindings::LoadClassInputCondition(state);
         obe::Input::Bindings::LoadClassInputManager(state);
+        obe::Input::Bindings::LoadEnumMouseWheelScrollDirection(state);
         obe::Input::Bindings::LoadEnumAxisThresholdDirection(state);
         obe::Input::Bindings::LoadEnumInputButtonState(state);
         obe::Input::Bindings::LoadEnumInputType(state);
@@ -320,6 +330,17 @@ namespace obe::Bindings
         obe::System::Exceptions::Bindings::LoadClassResourceNotFound(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownPackage(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownWorkspace(state);
+
+        obe::Tiles::Exceptions::Bindings::LoadClassTilePositionOutsideLayer(state);
+        obe::Tiles::Exceptions::Bindings::LoadClassUnknownTileset(state);
+        obe::Tiles::Exceptions::Bindings::LoadClassUnknownTileId(state);
+
+        obe::Tiles::Bindings::LoadClassTileset(state);
+        obe::Tiles::Bindings::LoadClassTilesetCollection(state);
+        obe::Tiles::Bindings::LoadClassTileLayer(state);
+        obe::Tiles::Bindings::LoadClassTileScene(state);
+        obe::Tiles::Bindings::LoadClassTilePosition(state);
+        obe::Tiles::Bindings::LoadClassTilePositionHash(state);
 
         obe::Time::Bindings::LoadClassChronometer(state);
         obe::Time::Bindings::LoadClassFramerateCounter(state);

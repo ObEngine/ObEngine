@@ -37,7 +37,7 @@ namespace obe::Tiles
     class TileLayer : public Graphics::Renderable
     {
     private:
-        std::unordered_map<TilePosition, sf::Vertex*, TilePositionHash> m_positions;
+        // std::unordered_map<TilePosition, sf::Vertex*, TilePositionHash> m_positions;
         std::unordered_map<uint32_t, sf::VertexArray> m_cache;
         const TilesetCollection& m_tilesets;
 
@@ -54,6 +54,8 @@ namespace obe::Tiles
         TileLayer(const TilesetCollection& tilesets, const std::string& id, int32_t layer,
             uint32_t x, uint32_t y, uint32_t width, uint32_t height,
             const std::vector<uint32_t>& data);
+
+        std::string getId() const;
 
         void build();
         /**

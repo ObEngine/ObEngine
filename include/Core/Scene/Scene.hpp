@@ -323,6 +323,7 @@ namespace obe::Scene
         void enableShowSceneNodes(bool showNodes);
         [[nodiscard]] SceneNode* getSceneNodeByPosition(
             const Transform::UnitVector& position) const;
+        const Tiles::TileScene& getTiles() const;
     };
 
     /**

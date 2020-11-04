@@ -30,7 +30,8 @@ namespace obe::Tiles
     public:
         vili::node dump() const;
         void load(const vili::node& data) override;
-        
+
+        TileLayer& getLayer(const std::string& id) const;
         std::vector<Graphics::Renderable*> getRenderables() const;
     };
 }

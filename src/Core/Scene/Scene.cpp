@@ -376,7 +376,8 @@ namespace obe::Scene
                     const std::string gameObjectType = gameObject.at("type");
                     Script::GameObject& newObject
                         = this->createGameObject(gameObjectType, gameObjectId);
-                    if (gameObject.contains("Requires") && newObject.doesHaveScriptEngine())
+                    if (gameObject.contains("Requires")
+                        && newObject.doesHaveScriptEngine())
                     {
                         const vili::node& objectRequirements = gameObject.at("Requires");
                         Script::GameObjectDatabase::ApplyRequirements(
@@ -771,6 +772,11 @@ namespace obe::Scene
             }
         }
         return nullptr;
+    }
+
+    const Tiles::TileScene& Scene::getTiles() const
+    {
+        return *m_tiles;
     }
 
     std::pair<Collision::PolygonalCollider*, int> Scene::getColliderPointByPosition(

@@ -11,6 +11,7 @@ namespace obe::Input::Bindings
     void LoadClassInputButtonMonitor(sol::state_view state);
     void LoadClassInputCondition(sol::state_view state);
     void LoadClassInputManager(sol::state_view state);
+    void LoadEnumMouseWheelScrollDirection(sol::state_view state);
     void LoadEnumAxisThresholdDirection(sol::state_view state);
     void LoadEnumInputButtonState(sol::state_view state);
     void LoadEnumInputType(sol::state_view state);
