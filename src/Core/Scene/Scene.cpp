@@ -13,18 +13,25 @@ namespace obe::Scene
 {
     void Scene::_reorganizeLayers()
     {
-        std::sort(
-            m_spriteArray.begin(), m_spriteArray.end(), [](auto& sprite1, auto& sprite2) {
-                if (sprite1->getLayer() == sprite2->getLayer())
+        m_renderCache.clear();
+        for (const auto& sprite : m_spriteArray)
+        {
+            m_renderCache.push_back(sprite.get());
+        }
+        std::vector<Graphics::Renderable*> tileLayers = m_tiles->getRenderables();
+        m_renderCache.insert(m_renderCache.end(), tileLayers.begin(), tileLayers.end());
+        std::sort(m_renderCache.begin(), m_renderCache.end(),
+            [](const auto& renderable1, const auto& renderable2) {
+                if (renderable1->getLayer() == renderable2->getLayer())
                 {
-                    return sprite1->getZDepth() > sprite2->getZDepth();
+                    return renderable1->getZDepth() > renderable2->getZDepth();
                 }
                 else
                 {
-                    return sprite1->getLayer() > sprite2->getLayer();
+                    return renderable1->getLayer() > renderable2->getLayer();
                 }
             });
-        m_sortSprites = false;
+        m_sortRenderables = false;
     }
 
     void Scene::_rebuildIds()
@@ -346,8 +353,6 @@ namespace obe::Scene
             }
         }
 
-        this->reorganizeLayers();
-
         if (data.contains("Collisions"))
         {
             const vili::node& collisions = data.at("Collisions");
@@ -371,7 +376,7 @@ namespace obe::Scene
                     const std::string gameObjectType = gameObject.at("type");
                     Script::GameObject& newObject
                         = this->createGameObject(gameObjectType, gameObjectId);
-                    if (gameObject.contains("Requires"))
+                    if (gameObject.contains("Requires") && newObject.doesHaveScriptEngine())
                     {
                         const vili::node& objectRequirements = gameObject.at("Requires");
                         Script::GameObjectDatabase::ApplyRequirements(
@@ -420,6 +425,8 @@ namespace obe::Scene
             m_tiles = std::make_unique<Tiles::TileScene>();
             m_tiles->load(data.at("Tiles"));
         }
+
+        this->reorganizeLayers();
 
         e_scene->trigger(Events::Scene::Loaded { m_levelFileName });
     }
@@ -475,7 +482,7 @@ namespace obe::Scene
 
     void Scene::draw(Graphics::RenderTarget surface)
     {
-        for (auto it = m_spriteArray.begin(); it != m_spriteArray.end(); ++it)
+        /*for (auto it = m_spriteArray.begin(); it != m_spriteArray.end(); ++it)
         {
             if (it->get()->m_layerChanged)
             {
@@ -486,20 +493,18 @@ namespace obe::Scene
                 this->reorganizeLayers();
                 break;
             }
-        }
+        }*/
 
         this->_reorganizeLayers();
-        const Transform::UnitVector pixelCamera
-            = m_camera.getPosition().to<Transform::Units::ScenePixels>();
-        for (auto& sprite : m_spriteArray)
+        for (const auto& renderable : m_renderCache)
         {
-            if (sprite->isVisible())
+            if (renderable->isVisible())
             {
-                sprite->draw(surface, pixelCamera);
+                renderable->draw(surface, m_camera);
             }
         }
 
-        m_tiles->draw(surface, m_camera);
+        // m_tiles->draw(surface, m_camera);
 
         if (m_showElements["SceneNodes"])
         {
@@ -649,7 +654,7 @@ namespace obe::Scene
 
     void Scene::reorganizeLayers()
     {
-        m_sortSprites = true;
+        m_sortRenderables = true;
     }
 
     std::size_t Scene::getSpriteAmount() const
