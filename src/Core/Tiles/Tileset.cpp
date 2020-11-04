@@ -1,21 +1,29 @@
 #include <Tiles/Exceptions.hpp>
 #include <Tiles/Tileset.hpp>
+#include <set>
+
+#include <SFML/Graphics/Sprite.hpp>
+
+#include "Debug/Logger.hpp"
 
 namespace obe::Tiles
 {
-    Tileset::Tileset(const std::string& id, const std::string& imagePath,
-        uint32_t columns, uint32_t tileWidth, uint32_t tileHeight, uint32_t margin,
-        uint32_t spacing)
+    Tileset::Tileset(const std::string& id, uint32_t firstTileId, uint32_t tileCount,
+        const std::string& imagePath, uint32_t columns, uint32_t tileWidth,
+        uint32_t tileHeight, uint32_t margin, uint32_t spacing)
         : Identifiable(id)
     {
         m_imagePath = imagePath;
         m_columns = columns;
         m_tileWidth = tileWidth;
         m_tileHeight = tileHeight;
+        m_firstTileId = firstTileId;
+        m_count = tileCount;
         m_margin = margin;
         m_spacing = spacing;
 
         m_image.loadFromFile(m_imagePath);
+        // m_image.setAntiAliasing(true);
         m_imageWidth = m_image.getSize().to<Transform::Units::ScenePixels>().x;
         m_imageHeight = m_image.getSize().to<Transform::Units::ScenePixels>().y;
     }
@@ -75,95 +83,51 @@ namespace obe::Tiles
         return m_image;
     }
 
-    TileLayer::TileLayer(const std::string& id, uint32_t x, uint32_t y, uint32_t width,
-        uint32_t height, const std::vector<uint32_t>& data)
-        : id(id)
-        , x(x)
-        , y(y)
-        , width(width)
-        , height(height)
-        , data(data)
+    TilesetCollection::TilesetCollection()
     {
     }
 
-    void TileScene::buildCache()
+    void TilesetCollection::addTileset(uint32_t firstTileId, const std::string& id,
+        const std::string& source, uint32_t columns, uint32_t width, uint32_t height,
+        uint32_t count)
     {
-        m_cache.clear();
-        for (const auto& layer : m_layers)
-        {
-            m_cache.push_back(buildLayer(*layer));
-        }
+        m_tilesets.push_back(std::make_unique<Tileset>(
+            id, firstTileId, count, source, columns, width, height));
+        std::sort(m_tilesets.begin(), m_tilesets.end(),
+            [](const std::unique_ptr<Tileset>& tileset1,
+                const std::unique_ptr<Tileset>& tileset2) {
+                return tileset1->getFirstTileId() > tileset2->getFirstTileId();
+            });
     }
 
-    sf::VertexArray TileScene::buildLayer(const TileLayer& layer)
+    const Tileset& TilesetCollection::tilesetFromId(const std::string& id) const
     {
-        sf::VertexArray vertices;
-        vertices.setPrimitiveType(sf::Quads);
-        vertices.resize(layer.width * layer.height * 4);
-
-        for (unsigned int x = 0; x < layer.width; ++x)
+        for (const auto& tileset : m_tilesets)
         {
-            for (unsigned int y = 0; y < layer.height; ++y)
+            if (tileset->getId() == id)
             {
-                const uint32_t tileId = layer.data[x + y * layer.width];
-                sf::Vertex* quad = &vertices[(x + y * layer.width) * 4];
-                if (tileId)
-                {
-                    const Tileset& tileset = this->tilesetFromTileId(tileId);
-
-                    const uint32_t tileWidth = tileset.getTileWidth();
-                    const uint32_t tileHeight = tileset.getTileHeight();
-
-                    const int textureX
-                        = (tileId - 1) % (tileset.getImageWidth() / tileWidth);
-                    const int textureY
-                        = (tileId - 1) / (tileset.getImageWidth() / tileWidth);
-
-                    quad[0].position = sf::Vector2f(x * tileWidth, y * tileHeight);
-                    quad[1].position = sf::Vector2f((x + 1) * tileWidth, y * tileHeight);
-                    quad[2].position
-                        = sf::Vector2f((x + 1) * tileWidth, (y + 1) * tileHeight);
-                    quad[3].position = sf::Vector2f(x * tileWidth, (y + 1) * tileHeight);
-
-                    quad[0].texCoords
-                        = sf::Vector2f(textureX * tileWidth, textureY * tileHeight);
-                    quad[1].texCoords
-                        = sf::Vector2f((textureX + 1) * tileWidth, textureY * tileHeight);
-                    quad[2].texCoords = sf::Vector2f(
-                        (textureX + 1) * tileWidth, (textureY + 1) * tileHeight);
-                    quad[3].texCoords
-                        = sf::Vector2f(textureX * tileWidth, (textureY + 1) * tileHeight);
-                }
-                else
-                {
-                    quad[0].position = sf::Vector2f(x * m_tileWidth, y * m_tileHeight);
-                    quad[1].position
-                        = sf::Vector2f((x + 1) * m_tileWidth, y * m_tileHeight);
-                    quad[2].position
-                        = sf::Vector2f((x + 1) * m_tileWidth, (y + 1) * m_tileHeight);
-                    quad[3].position
-                        = sf::Vector2f(x * m_tileWidth, (y + 1) * m_tileHeight);
-
-                    quad[0].color = sf::Color::Transparent;
-                    quad[1].color = sf::Color::Transparent;
-                    quad[2].color = sf::Color::Transparent;
-                    quad[3].color = sf::Color::Transparent;
-                }
+                return *tileset;
             }
         }
-        return vertices;
+        std::vector<std::string> tilesetsIds;
+        tilesetsIds.reserve(m_tilesets.size());
+        for (const auto& tileset : m_tilesets)
+        {
+            tilesetsIds.push_back(tileset->getId());
+        }
+        throw Exceptions::UnknownTileset(id, tilesetsIds, EXC_INFO);
     }
 
-    Tileset& TileScene::tilesetFromTileId(uint32_t tileId) const
+    const Tileset& TilesetCollection::tilesetFromTileId(uint32_t tileId) const
     {
         Tileset* lastTileset = nullptr;
-        for (const auto& [key, value] : m_tilesets)
+        for (const auto& tileset : m_tilesets)
         {
-            if (tileId > key)
+            if (tileId >= tileset->getFirstTileId())
             {
-                return *value;
+                return *tileset;
             }
-            lastTileset = value.get();
+            lastTileset = tileset.get();
         }
         uint32_t maxTileId = 0;
         if (lastTileset)
@@ -171,63 +135,11 @@ namespace obe::Tiles
             maxTileId = lastTileset->getLastTileId();
         }
         std::map<std::string, std::pair<uint32_t, uint32_t>> tilesetIds;
-        for (const auto& [key, value] : m_tilesets)
+        for (const auto& tileset : m_tilesets)
         {
-            tilesetIds[value->getId()]
-                = std::make_pair(value->getFirstTileId(), value->getLastTileId());
+            tilesetIds[tileset->getId()]
+                = std::make_pair(tileset->getFirstTileId(), tileset->getLastTileId());
         }
         throw Exceptions::UnknownTileId(tileId, maxTileId, tilesetIds, EXC_INFO);
-    }
-
-    vili::node TileScene::dump() const
-    {
-        return vili::object {};
-    }
-
-    void TileScene::load(const vili::node& data)
-    {
-        m_tileWidth = data["tileWidth"];
-        m_tileHeight = data["tileHeight"];
-        const vili::node& layers = data["layers"];
-        for (const auto& [layerId, layer] : layers.items())
-        {
-            std::vector<uint32_t> tiles;
-            tiles.reserve(layer["tiles"].size());
-            for (const uint32_t tile : layer["tiles"])
-            {
-                tiles.push_back(tile);
-            }
-            m_layers.push_back(std::make_unique<TileLayer>(
-                layerId, layer["x"], layer["y"], layer["width"], layer["height"], tiles));
-        }
-        const vili::node& tilesets = data["sources"];
-        for (const auto& [tilesetId, tileset] : tilesets.items())
-        {
-            m_tilesets[tileset["firstTileId"]] = std::make_unique<Tileset>(tilesetId,
-                tileset["image"]["path"], tileset["columns"], tileset["tile"]["width"],
-                tileset["tile"]["height"]);
-        }
-        this->buildCache();
-    }
-
-    void TileScene::draw(Graphics::RenderTarget surface, const Scene::Camera& camera)
-    {
-        sf::RenderStates states;
-
-        for (const auto& layer : m_cache)
-        {
-            states.transform = sf::Transform::Identity;
-
-            const Transform::UnitVector pixelCamera
-                = camera.getPosition().to<Transform::Units::ScenePixels>();
-            states.transform.translate(-pixelCamera.x, -pixelCamera.y);
-            const Transform::UnitVector cameraSize = camera.getSize();
-            states.transform.scale(cameraSize.y / 2, cameraSize.y / 2);
-
-            states.texture = &m_tilesets.begin()->second->getTexture().
-                              operator const sf::Texture &();
-
-            surface.draw(layer, states);
-        }
     }
 }

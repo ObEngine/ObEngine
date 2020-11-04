@@ -53,21 +53,23 @@ namespace obe::Graphics
         this->setSize(initialSpriteSize);
     }
 
-    void Sprite::draw(RenderTarget surface, const Transform::UnitVector& camera)
+    void Sprite::draw(RenderTarget& surface, const Scene::Camera& camera)
     {
+        const Transform::UnitVector pixelCamera
+            = camera.getPosition().to<Transform::Units::ScenePixels>();
         std::array<sf::Vertex, 4> vertices;
 
         vertices[0] = toSfVertex(m_positionTransformer(
-            Rect::getPosition(Transform::Referential::TopLeft), camera, m_layer)
+            Rect::getPosition(Transform::Referential::TopLeft), pixelCamera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
         vertices[1] = toSfVertex(m_positionTransformer(
-            Rect::getPosition(Transform::Referential::BottomLeft), camera, m_layer)
+            Rect::getPosition(Transform::Referential::BottomLeft), pixelCamera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
         vertices[2] = toSfVertex(m_positionTransformer(
-            Rect::getPosition(Transform::Referential::TopRight), camera, m_layer)
+            Rect::getPosition(Transform::Referential::TopRight), pixelCamera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
         vertices[3] = toSfVertex(m_positionTransformer(
-            Rect::getPosition(Transform::Referential::BottomRight), camera, m_layer)
+            Rect::getPosition(Transform::Referential::BottomRight), pixelCamera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
 
         m_sprite.setVertices(vertices);
@@ -139,18 +141,6 @@ namespace obe::Graphics
         return m_texture;
     }
 
-    void Sprite::setLayer(int layer)
-    {
-        m_layer = layer;
-        m_layerChanged = true;
-    }
-
-    void Sprite::setZDepth(int zdepth)
-    {
-        m_zdepth = zdepth;
-        m_layerChanged = true;
-    }
-
     void Sprite::setAntiAliasing(bool antiAliasing)
     {
         if (antiAliasing != m_antiAliasing && !m_path.empty())
@@ -179,11 +169,12 @@ namespace obe::Graphics
         m_sprite.setScalingOrigin(x, y);
     }
 
-    void Sprite::drawHandle(
-        RenderTarget surface, const Transform::UnitVector& camera) const
+    void Sprite::drawHandle(RenderTarget& surface, const Scene::Camera& camera) const
     {
+        const Transform::UnitVector pixelCamera
+            = camera.getPosition().to<Transform::Units::ScenePixels>();
         const Transform::UnitVector position
-            = m_positionTransformer(m_position, camera, m_layer)
+            = m_positionTransformer(m_position, pixelCamera, m_layer)
                   .to<Transform::Units::ScenePixels>();
         Rect::draw(surface, position.x, position.y);
     }
@@ -282,16 +273,6 @@ namespace obe::Graphics
         return m_sprite.getGlobalBounds().height;
     }
 
-    int Sprite::getLayer() const
-    {
-        return m_layer;
-    }
-
-    int Sprite::getZDepth() const
-    {
-        return m_zdepth;
-    }
-
     bool Sprite::getAntiAliasing() const
     {
         return m_antiAliasing;
@@ -314,16 +295,6 @@ namespace obe::Graphics
         rect.setPosition(Transform::UnitVector(m_sprite.getGlobalBounds().left,
             m_sprite.getGlobalBounds().top, Transform::Units::ScenePixels));
         return rect;
-    }
-
-    void Sprite::setVisible(bool visible)
-    {
-        m_visible = visible;
-    }
-
-    bool Sprite::isVisible() const
-    {
-        return m_visible;
     }
 
     std::string Sprite::getParentId() const

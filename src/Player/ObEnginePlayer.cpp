@@ -35,6 +35,10 @@ int main(int argc, char** argv)
     Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
         Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
     // Modes::startGame();
+
+#if defined _DEBUG || defined _NDEBUG || defined NDEBUG
+    Modes::startGame();
+#else
     try
     {
         Modes::startGame();
@@ -44,5 +48,6 @@ int main(int argc, char** argv)
         Debug::Log->error(e.what());
         Debug::Log->error("Error occured while running ObEngine");
     }
+#endif
     return 0;
 }

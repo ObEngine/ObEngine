@@ -2,6 +2,9 @@
 
 #include <unordered_set>
 
+#include <sol/sol.hpp>
+#include <vili/node.hpp>
+
 #include <Collision/PolygonalCollider.hpp>
 #include <Event/EventGroup.hpp>
 #include <Event/EventNamespace.hpp>
@@ -9,11 +12,7 @@
 #include <Scene/Camera.hpp>
 #include <Scene/SceneNode.hpp>
 #include <Script/GameObject.hpp>
-#include <Tiles/Tileset.hpp>
-
-#include <sol/sol.hpp>
-
-#include <vili/node.hpp>
+#include <Tiles/Scene.hpp>
 
 namespace obe
 {
@@ -53,7 +52,6 @@ namespace obe::Scene
         Engine::ResourceManager* m_resources = nullptr;
         std::vector<std::unique_ptr<Graphics::Sprite>> m_spriteArray;
         std::unordered_set<std::string> m_spriteIds;
-        bool m_sortSprites = true;
 
         std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderArray;
         std::unordered_set<std::string> m_colliderIds;
@@ -72,6 +70,8 @@ namespace obe::Scene
         Event::EventGroupPtr e_scene;
         sol::state_view m_lua;
 
+        bool m_sortRenderables = true;
+        std::vector<Graphics::Renderable*> m_renderCache;
         void _reorganizeLayers();
         void _rebuildIds();
 

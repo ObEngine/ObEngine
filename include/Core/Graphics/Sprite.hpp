@@ -6,7 +6,9 @@
 #include <Engine/ResourceManager.hpp>
 #include <Graphics/Color.hpp>
 #include <Graphics/PositionTransformers.hpp>
+#include <Graphics/Renderable.hpp>
 #include <Graphics/Shader.hpp>
+#include <Scene/Camera.hpp>
 #include <Transform/Rect.hpp>
 #include <Transform/Referential.hpp>
 #include <Transform/UnitBasedObject.hpp>
@@ -93,20 +95,18 @@ namespace obe::Graphics
     class Sprite : public Transform::UnitBasedObject,
                    public Types::Selectable,
                    public Transform::Rect,
+                   public Renderable,
                    public Component::Component<Sprite>,
                    public Engine::ResourceManagedObject
     {
     private:
         std::vector<SpriteHandlePoint> m_handlePoints {};
-        int m_layer = 1;
-        int m_zdepth = 1;
         std::string m_parentId;
         std::string m_path;
         PositionTransformer m_positionTransformer;
         Shader* m_shader = nullptr;
         sfe::ComplexSprite m_sprite;
         Graphics::Texture m_texture;
-        bool m_visible = true;
         bool m_antiAliasing = true;
 
         void resetUnit(Transform::Units unit) override;
@@ -116,7 +116,6 @@ namespace obe::Graphics
          * \nobind
          */
         static constexpr std::string_view ComponentType = "Sprite";
-        bool m_layerChanged = false;
         /**
          * \brief Creates a new Sprite with the given Id
          * \param id A std::string containing the Id of the Sprite
@@ -127,7 +126,7 @@ namespace obe::Graphics
          * \param surface RenderSurface where to render the handle
          * \param camera contains the offset for drawing the handle
          */
-        void drawHandle(RenderTarget surface, const Transform::UnitVector& camera) const;
+        void drawHandle(RenderTarget& surface, const Scene::Camera& camera) const;
         /**
          * \brief Dumps the content of the Sprite to a ComplexNode
          * \param target ComplexNode where to serialize the Sprite
@@ -151,12 +150,6 @@ namespace obe::Graphics
          */
         SpriteHandlePoint* getHandlePoint(
             Transform::UnitVector& cameraPosition, int posX, int posY);
-        /**
-         * \brief Get the layer of the Sprite
-         * \return An int containing the Layer where the sprite is (Higher layer
-         *         is behind lower ones)
-         */
-        [[nodiscard]] int getLayer() const;
         /**
          * \brief Get the Id of the parent
          * \return A std::string containing the id of the parent
@@ -214,19 +207,8 @@ namespace obe::Graphics
          *         otherwise
          */
         [[nodiscard]] int getYScaleFactor() const;
-        /**
-         * \brief Get the Z-depth of the Sprite
-         * \return An int containing the z-depth where the sprite is (Higher
-         *         z-depth is behind lower ones)
-         */
-        [[nodiscard]] int getZDepth() const;
         [[nodiscard]] bool getAntiAliasing() const;
         [[nodiscard]] bool hasShader() const;
-        /**
-         * \brief Get the visibility of the Sprite
-         * \return true if the Sprite is visible, false otherwise
-         */
-        [[nodiscard]] bool isVisible() const;
         /**
          * \brief Loads the Sprite from a ComplexNode
          * \param data ComplexNode containing the data of the Sprite
@@ -249,12 +231,6 @@ namespace obe::Graphics
          *        (Color::White is default normal color)
          */
         void setColor(const Color& color);
-        /**
-         * \brief Set the layer of the Sprite
-         * \param layer Layer where to put the sprite (Higher layer is behind
-         * lower ones)
-         */
-        void setLayer(int layer);
         /**
          * \brief Set a new parent id
          * \param parent The id of the parent to apply to the Sprite
@@ -298,25 +274,13 @@ namespace obe::Graphics
          *        the Sprite
          */
         void setTranslationOrigin(int x, int y);
-        /**
-         * \brief Set the visibility of the Sprite
-         * \param visible If visible is equal to true, the Sprite will be
-         *        visible, if visible is equal to false, it won't be visible
-         */
-        void setVisible(bool visible);
-        /**
-         * \brief Set the Z-Depth of the Sprite (SubLayers)
-         * \param zdepth z-depth of the Sprite (Higher z-depth is behind lower
-         *        ones)
-         */
-        void setZDepth(int zdepth);
         void setAntiAliasing(bool antiAliasing);
         /**
          * \brief Reset internal Sprite Rect using texture size
          */
         void useTextureSize();
 
-        void draw(RenderTarget surface, const Transform::UnitVector& camera);
+        void draw(RenderTarget& surface, const Scene::Camera& camera) override;
         void attachResourceManager(Engine::ResourceManager& resources) override;
         [[nodiscard]] std::string_view type() const override;
     };

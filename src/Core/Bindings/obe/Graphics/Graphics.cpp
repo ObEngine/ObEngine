@@ -358,7 +358,6 @@ namespace obe::Graphics::Bindings
         bindSprite["attachResourceManager"]
             = &obe::Graphics::Sprite::attachResourceManager;
         bindSprite["type"] = &obe::Graphics::Sprite::type;
-        bindSprite["m_layerChanged"] = &obe::Graphics::Sprite::m_layerChanged;
     }
     void LoadClassSpriteHandlePoint(sol::state_view state)
     {
