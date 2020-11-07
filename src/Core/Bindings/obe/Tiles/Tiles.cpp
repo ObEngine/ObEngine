@@ -1,5 +1,6 @@
 #include <Bindings/obe/Tiles/Tiles.hpp>
 
+#include <Tiles/Animation.hpp>
 #include <Tiles/Layer.hpp>
 #include <Tiles/Scene.hpp>
 #include <Tiles/Tileset.hpp>
@@ -8,6 +9,20 @@
 
 namespace obe::Tiles::Bindings
 {
+    void LoadClassAnimatedTile(sol::state_view state)
+    {
+        sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
+        sol::usertype<obe::Tiles::AnimatedTile> bindAnimatedTile
+            = TilesNamespace.new_usertype<obe::Tiles::AnimatedTile>("AnimatedTile",
+                sol::call_constructor,
+                sol::constructors<obe::Tiles::AnimatedTile(const obe::Tiles::Tileset&,
+                    std::vector<uint32_t>, std::vector<obe::Time::TimeUnit>)>());
+        bindAnimatedTile["attachQuad"] = &obe::Tiles::AnimatedTile::attachQuad;
+        bindAnimatedTile["start"] = &obe::Tiles::AnimatedTile::start;
+        bindAnimatedTile["stop"] = &obe::Tiles::AnimatedTile::stop;
+        bindAnimatedTile["getId"] = &obe::Tiles::AnimatedTile::getId;
+        bindAnimatedTile["update"] = &obe::Tiles::AnimatedTile::update;
+    }
     void LoadClassTileset(sol::state_view state)
     {
         sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
@@ -52,8 +67,8 @@ namespace obe::Tiles::Bindings
         sol::usertype<obe::Tiles::TileLayer> bindTileLayer = TilesNamespace.new_usertype<
             obe::Tiles::TileLayer>("TileLayer", sol::call_constructor,
             sol::constructors<obe::Tiles::TileLayer(const obe::Tiles::TilesetCollection&,
-                const std::string&, int32_t, uint32_t, uint32_t, uint32_t, uint32_t,
-                const std::vector<uint32_t>&)>(),
+                const obe::Tiles::AnimatedTiles&, const std::string&, int32_t, uint32_t,
+                uint32_t, uint32_t, uint32_t, const std::vector<uint32_t>&)>(),
             sol::base_classes, sol::bases<obe::Graphics::Renderable>());
         bindTileLayer["getId"] = &obe::Tiles::TileLayer::getId;
         bindTileLayer["build"] = &obe::Tiles::TileLayer::build;
@@ -70,27 +85,38 @@ namespace obe::Tiles::Bindings
                 sol::bases<obe::Types::Serializable>());
         bindTileScene["dump"] = &obe::Tiles::TileScene::dump;
         bindTileScene["load"] = &obe::Tiles::TileScene::load;
+        bindTileScene["update"] = &obe::Tiles::TileScene::update;
         bindTileScene["getLayer"] = &obe::Tiles::TileScene::getLayer;
+        bindTileScene["getAnimatedTiles"] = &obe::Tiles::TileScene::getAnimatedTiles;
         bindTileScene["getRenderables"] = &obe::Tiles::TileScene::getRenderables;
     }
-    void LoadClassTilePosition(sol::state_view state)
+    void LoadClassTextureQuadsIndex(sol::state_view state)
     {
         sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
-        sol::usertype<obe::Tiles::TilePosition> bindTilePosition
-            = TilesNamespace.new_usertype<obe::Tiles::TilePosition>(
-                "TilePosition", sol::call_constructor, sol::default_constructor);
-        bindTilePosition[sol::meta_function::less_than]
-            = &obe::Tiles::TilePosition::operator<;
-        bindTilePosition["x"] = &obe::Tiles::TilePosition::x;
-        bindTilePosition["y"] = &obe::Tiles::TilePosition::y;
+        sol::usertype<obe::Tiles::TextureQuadsIndex> bindTextureQuadsIndex
+            = TilesNamespace.new_usertype<obe::Tiles::TextureQuadsIndex>(
+                "TextureQuadsIndex", sol::call_constructor, sol::default_constructor);
+        bindTextureQuadsIndex["transform"] = &obe::Tiles::TextureQuadsIndex::transform;
+        bindTextureQuadsIndex["q0"] = &obe::Tiles::TextureQuadsIndex::q0;
+        bindTextureQuadsIndex["q1"] = &obe::Tiles::TextureQuadsIndex::q1;
+        bindTextureQuadsIndex["q2"] = &obe::Tiles::TextureQuadsIndex::q2;
+        bindTextureQuadsIndex["q3"] = &obe::Tiles::TextureQuadsIndex::q3;
     }
-    void LoadClassTilePositionHash(sol::state_view state)
+    void LoadClassTileInfo(sol::state_view state)
     {
         sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
-        sol::usertype<obe::Tiles::TilePositionHash> bindTilePositionHash
-            = TilesNamespace.new_usertype<obe::Tiles::TilePositionHash>(
-                "TilePositionHash", sol::call_constructor, sol::default_constructor);
-        bindTilePositionHash[sol::meta_function::call]
-            = &obe::Tiles::TilePositionHash::operator();
+        sol::usertype<obe::Tiles::TileInfo> bindTileInfo
+            = TilesNamespace.new_usertype<obe::Tiles::TileInfo>(
+                "TileInfo", sol::call_constructor, sol::default_constructor);
+        bindTileInfo["flippedHorizontally"] = &obe::Tiles::TileInfo::flippedHorizontally;
+        bindTileInfo["flippedVertically"] = &obe::Tiles::TileInfo::flippedVertically;
+        bindTileInfo["flippedDiagonally"] = &obe::Tiles::TileInfo::flippedDiagonally;
+        bindTileInfo["tileId"] = &obe::Tiles::TileInfo::tileId;
+    }
+
+    void LoadFunctionGetTileInfo(sol::state_view state)
+    {
+        sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
+        TilesNamespace.set_function("getTileInfo", obe::Tiles::getTileInfo);
     }
 };

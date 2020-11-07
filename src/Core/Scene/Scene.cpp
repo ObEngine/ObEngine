@@ -478,6 +478,7 @@ namespace obe::Scene
                         return false;
                     }),
                 m_gameObjectArray.end());
+            m_tiles->update();
         }
     }
 

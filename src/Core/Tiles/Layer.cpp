@@ -1,18 +1,131 @@
 #include <set>
 
+#include <Debug/Logger.hpp>
 #include <Tiles/Exceptions.hpp>
 #include <Tiles/Layer.hpp>
 
 namespace obe::Tiles
 {
-    const unsigned FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
-    const unsigned FLIPPED_VERTICALLY_FLAG = 0x40000000;
-    const unsigned FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+    void TextureQuadsIndex::transform(const TileInfo& info)
+    {
+        if (info.flippedDiagonally)
+        {
+            std::swap(q0, q2);
+        }
+        if (info.flippedHorizontally)
+        {
+            std::swap(q0, q1);
+            std::swap(q2, q3);
+        }
+        if (info.flippedVertically)
+        {
+            std::swap(q0, q3);
+            std::swap(q1, q2);
+        }
+    }
 
-    TileLayer::TileLayer(const TilesetCollection& tilesets, const std::string& id,
-        int32_t layer, uint32_t x, uint32_t y, uint32_t width, uint32_t height,
-        const std::vector<uint32_t>& data)
+    void applyTextureQuadsTransforms(const TileInfo& info, TextureQuadsIndex& quads)
+    {
+        if (info.flippedDiagonally)
+        {
+            std::swap(quads.q0, quads.q2);
+        }
+        if (info.flippedHorizontally)
+        {
+            std::swap(quads.q0, quads.q1);
+            std::swap(quads.q2, quads.q3);
+        }
+        if (info.flippedVertically)
+        {
+            std::swap(quads.q0, quads.q3);
+            std::swap(quads.q1, quads.q2);
+        }
+    }
+
+    void TileLayer::buildTile(uint32_t x, uint32_t y, uint32_t tileId)
+    {
+        if (!tileId)
+            return;
+
+        const uint32_t tileIndex = x + y * m_width;
+
+        const TileInfo tileInfo = getTileInfo(tileId);
+
+        const Tileset& tileset = m_tilesets.tilesetFromTileId(tileInfo.tileId);
+        const uint32_t firstTileId = tileset.getFirstTileId();
+        sf::VertexArray& vertices = m_cache[tileset.getFirstTileId()];
+        sf::Vertex* quad = &vertices[(x + y * m_width) * 4];
+        for (auto& animation : m_animations)
+        {
+            if (animation->getId() == tileInfo.tileId)
+            {
+                animation->attachQuad(quad);
+            }
+        }
+        m_positions[tileIndex] = quad;
+
+        const uint32_t tileWidth = tileset.getTileWidth();
+        const uint32_t tileHeight = tileset.getTileHeight();
+
+        const int textureX
+            = (tileInfo.tileId - firstTileId) % (tileset.getImageWidth() / tileWidth);
+        const int textureY
+            = (tileInfo.tileId - firstTileId) / (tileset.getImageWidth() / tileWidth);
+
+        TextureQuadsIndex quads;
+        quads.transform(tileInfo);
+
+        quad[0].position = sf::Vector2f(x * tileWidth, y * tileHeight);
+        quad[1].position = sf::Vector2f((x + 1) * tileWidth, y * tileHeight);
+        quad[2].position = sf::Vector2f((x + 1) * tileWidth, (y + 1) * tileHeight);
+        quad[3].position = sf::Vector2f(x * tileWidth, (y + 1) * tileHeight);
+
+        quad[quads.q0].texCoords
+            = sf::Vector2f(textureX * tileWidth, textureY * tileHeight);
+        quad[quads.q1].texCoords
+            = sf::Vector2f((textureX + 1) * tileWidth, textureY * tileHeight);
+        quad[quads.q2].texCoords
+            = sf::Vector2f((textureX + 1) * tileWidth, (textureY + 1) * tileHeight);
+        quad[quads.q3].texCoords
+            = sf::Vector2f(textureX * tileWidth, (textureY + 1) * tileHeight);
+    }
+
+    void TileLayer::updateQuad(sf::Vertex* quad, uint32_t tileId) const
+    {
+        if (!tileId)
+            return;
+
+        const TileInfo tileInfo = getTileInfo(tileId);
+        const Tileset& tileset = m_tilesets.tilesetFromTileId(tileInfo.tileId);
+
+        const uint32_t firstTileId = tileset.getFirstTileId();
+
+        const uint32_t tileWidth = tileset.getTileWidth();
+        const uint32_t tileHeight = tileset.getTileHeight();
+
+        const int textureX
+            = (tileId - firstTileId) % (tileset.getImageWidth() / tileWidth);
+        const int textureY
+            = (tileId - firstTileId) / (tileset.getImageWidth() / tileWidth);
+
+        TextureQuadsIndex quads;
+        quads.transform(tileInfo);
+
+        quad[quads.q0].texCoords
+            = sf::Vector2f(textureX * tileWidth, textureY * tileHeight);
+        quad[quads.q1].texCoords
+            = sf::Vector2f((textureX + 1) * tileWidth, textureY * tileHeight);
+        quad[quads.q2].texCoords
+            = sf::Vector2f((textureX + 1) * tileWidth, (textureY + 1) * tileHeight);
+        quad[quads.q3].texCoords
+            = sf::Vector2f(textureX * tileWidth, (textureY + 1) * tileHeight);
+    }
+
+    TileLayer::TileLayer(const TilesetCollection& tilesets,
+        const AnimatedTiles animations, const std::string& id, int32_t layer, uint32_t x,
+        uint32_t y, uint32_t width, uint32_t height, const std::vector<uint32_t>& data)
         : m_tilesets(tilesets)
+        , m_animations(animations)
         , m_id(id)
         , m_x(x)
         , m_y(y)
@@ -30,103 +143,23 @@ namespace obe::Tiles
 
     void TileLayer::build()
     {
+        Debug::Log->info("<TileLayer> Building Layer '{}' @{} with animation @{}", m_id,
+            fmt::ptr(this), fmt::ptr(&m_animations));
         m_cache.clear();
-        std::unordered_map<uint32_t, uint32_t> differentTilesets;
-        std::unordered_map<uint32_t, uint32_t> quadCounters;
-
-        for (auto tile : m_data)
+        for (const uint32_t firstTileId : m_tilesets.getTilesetsFirstTilesIds())
         {
-            tile &= ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG
-                | FLIPPED_DIAGONALLY_FLAG);
-            if (tile)
-            {
-                const uint32_t firstTileId
-                    = m_tilesets.tilesetFromTileId(tile).getFirstTileId();
-                if (differentTilesets.count(firstTileId))
-                {
-                    differentTilesets[firstTileId]++;
-                }
-                else
-                {
-                    m_cache[firstTileId] = sf::VertexArray {};
-                    differentTilesets.emplace(firstTileId, 1);
-                    quadCounters.emplace(firstTileId, 0);
-                }
-            }
-        }
-
-        for (auto& [firstTileId, vertices] : m_cache)
-        {
-            vertices.setPrimitiveType(sf::Quads);
-            vertices.resize(differentTilesets[firstTileId] * 4 + 1);
+            m_cache[firstTileId] = sf::VertexArray {};
+            m_cache[firstTileId].setPrimitiveType(sf::Quads);
+            m_cache[firstTileId].resize(m_width * m_height * 4);
         }
 
         for (unsigned int x = 0; x < m_width; ++x)
         {
             for (unsigned int y = 0; y < m_height; ++y)
             {
-                uint32_t tileId = m_data[x + y * m_width];
-                if (tileId)
-                {
-                    const bool flipped_horizontally
-                        = (tileId & FLIPPED_HORIZONTALLY_FLAG);
-                    const bool flipped_vertically = (tileId & FLIPPED_VERTICALLY_FLAG);
-                    const bool flipped_diagonally = (tileId & FLIPPED_DIAGONALLY_FLAG);
-
-                    tileId &= ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG
-                        | FLIPPED_DIAGONALLY_FLAG);
-
-                    const Tileset& tileset = m_tilesets.tilesetFromTileId(tileId);
-                    const uint32_t firstTileId = tileset.getFirstTileId();
-                    sf::VertexArray& vertices = m_cache[tileset.getFirstTileId()];
-                    sf::Vertex* quad = &vertices[quadCounters[firstTileId] * 4];
-                    // m_positions[TilePosition { x, y }] = quad;
-
-                    const uint32_t tileWidth = tileset.getTileWidth();
-                    const uint32_t tileHeight = tileset.getTileHeight();
-
-                    const int textureX
-                        = (tileId - firstTileId) % (tileset.getImageWidth() / tileWidth);
-                    const int textureY
-                        = (tileId - firstTileId) / (tileset.getImageWidth() / tileWidth);
-
-                    uint8_t quad0 = 0;
-                    uint8_t quad1 = 1;
-                    uint8_t quad2 = 2;
-                    uint8_t quad3 = 3;
-
-                    if (flipped_diagonally)
-                    {
-                        std::swap(quad0, quad2);
-                    }
-                    if (flipped_horizontally)
-                    {
-                        std::swap(quad0, quad1);
-                        std::swap(quad2, quad3);
-                    }
-                    if (flipped_vertically)
-                    {
-                        std::swap(quad0, quad3);
-                        std::swap(quad1, quad2);
-                    }
-
-                    quad[0].position = sf::Vector2f(x * tileWidth, y * tileHeight);
-                    quad[1].position = sf::Vector2f((x + 1) * tileWidth, y * tileHeight);
-                    quad[2].position
-                        = sf::Vector2f((x + 1) * tileWidth, (y + 1) * tileHeight);
-                    quad[3].position = sf::Vector2f(x * tileWidth, (y + 1) * tileHeight);
-
-                    quad[quad0].texCoords
-                        = sf::Vector2f(textureX * tileWidth, textureY * tileHeight);
-                    quad[quad1].texCoords
-                        = sf::Vector2f((textureX + 1) * tileWidth, textureY * tileHeight);
-                    quad[quad2].texCoords = sf::Vector2f(
-                        (textureX + 1) * tileWidth, (textureY + 1) * tileHeight);
-                    quad[quad3].texCoords
-                        = sf::Vector2f(textureX * tileWidth, (textureY + 1) * tileHeight);
-
-                    quadCounters[firstTileId]++;
-                }
+                const uint32_t tileIndex = x + y * m_width;
+                const uint32_t tileId = m_data[tileIndex];
+                buildTile(x, y, tileId);
             }
         }
     }
@@ -165,12 +198,33 @@ namespace obe::Tiles
 
     void TileLayer::setTile(uint32_t x, uint32_t y, uint32_t tileId)
     {
+        Debug::Log->info("<TileLayer> Set Tile at Layer '{}' @{} with animation @{}",
+            m_id, fmt::ptr(this), fmt::ptr(&m_animations));
         if (x > m_width || y > m_height)
         {
             throw Exceptions::TilePositionOutsideLayer(x, y, m_width, m_height, EXC_INFO);
         }
-        m_data[x + y * m_width] = tileId;
-        this->build(); // TODO: Optimize this
+        const uint32_t tileIndex = x + y * m_width;
+        const uint32_t oldTileId = m_data[tileIndex];
+        m_data[tileIndex] = tileId;
+        if (!oldTileId)
+        {
+            this->buildTile(x, y, tileId);
+            return;
+        }
+        sf::Vertex* quad = m_positions[tileIndex];
+        for (auto& animation : m_animations)
+        {
+            if (animation->getId() == oldTileId)
+            {
+                animation->dettachQuad(quad);
+            }
+        }
+        if (oldTileId && !tileId)
+        {
+            return;
+        }
+        this->updateQuad(quad, tileId);
     }
 
     uint32_t TileLayer::getTile(uint32_t x, uint32_t y)
