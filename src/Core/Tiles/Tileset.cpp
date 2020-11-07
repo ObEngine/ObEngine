@@ -142,4 +142,19 @@ namespace obe::Tiles
         }
         throw Exceptions::UnknownTileId(tileId, maxTileId, tilesetIds, EXC_INFO);
     }
+
+    const size_t TilesetCollection::size() const
+    {
+        return m_tilesets.size();
+    }
+
+    std::vector<uint32_t> TilesetCollection::getTilesetsFirstTilesIds() const
+    {
+        std::vector<uint32_t> firstTilesIds;
+        for (const auto& tileset : m_tilesets)
+        {
+            firstTilesIds.push_back(tileset->getFirstTileId());
+        }
+        return firstTilesIds;
+    }
 }

@@ -331,16 +331,18 @@ namespace obe::Bindings
         obe::System::Exceptions::Bindings::LoadClassUnknownPackage(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownWorkspace(state);
 
-        obe::Tiles::Exceptions::Bindings::LoadClassTilePositionOutsideLayer(state);
-        obe::Tiles::Exceptions::Bindings::LoadClassUnknownTileset(state);
-        obe::Tiles::Exceptions::Bindings::LoadClassUnknownTileId(state);
-
+        obe::Tiles::Bindings::LoadClassAnimatedTile(state);
         obe::Tiles::Bindings::LoadClassTileset(state);
         obe::Tiles::Bindings::LoadClassTilesetCollection(state);
         obe::Tiles::Bindings::LoadClassTileLayer(state);
         obe::Tiles::Bindings::LoadClassTileScene(state);
-        obe::Tiles::Bindings::LoadClassTilePosition(state);
-        obe::Tiles::Bindings::LoadClassTilePositionHash(state);
+        obe::Tiles::Bindings::LoadClassTextureQuadsIndex(state);
+        obe::Tiles::Bindings::LoadClassTileInfo(state);
+        obe::Tiles::Bindings::LoadFunctionGetTileInfo(state);
+
+        obe::Tiles::Exceptions::Bindings::LoadClassTilePositionOutsideLayer(state);
+        obe::Tiles::Exceptions::Bindings::LoadClassUnknownTileset(state);
+        obe::Tiles::Exceptions::Bindings::LoadClassUnknownTileId(state);
 
         obe::Time::Bindings::LoadClassChronometer(state);
         obe::Time::Bindings::LoadClassFramerateCounter(state);

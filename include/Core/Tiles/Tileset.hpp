@@ -56,5 +56,7 @@ namespace obe::Tiles
             uint32_t count);
         [[nodiscard]] const Tileset& tilesetFromId(const std::string& id) const;
         [[nodiscard]] const Tileset& tilesetFromTileId(uint32_t tileId) const;
+        [[nodiscard]] const size_t size() const;
+        [[nodiscard]] std::vector<uint32_t> getTilesetsFirstTilesIds() const;
     };
 } // namespace obe::Scene
