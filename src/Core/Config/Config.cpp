@@ -201,6 +201,6 @@ namespace obe::Config
                 = vili::parser::from_file(path, Templates::getConfigTemplates());
             this->merge(conf);
         }
-        vili::validator::validate_tree(ConfigValidator(), *this);
+        // vili::validator::validate_tree(ConfigValidator(), *this);
     }
 } // namespace obe::System

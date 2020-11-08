@@ -34,11 +34,11 @@ namespace obe::Tiles
                 tileset["image"]["path"], tileset["columns"], tileset["tile"]["width"],
                 tileset["tile"]["height"], tileset["tilecount"]);
 
+            const Tileset& currentTileset = m_tilesets.tilesetFromId(tilesetId);
             if (tileset.contains("animations"))
             {
                 for (const vili::node& animation : tileset.at("animations"))
                 {
-                    const Tileset& animationTileset = m_tilesets.tilesetFromId(tilesetId);
                     std::vector<Time::TimeUnit> sleeps;
                     std::vector<uint32_t> tileIds;
                     for (const vili::node& frame : animation.at("frames"))
@@ -49,8 +49,31 @@ namespace obe::Tiles
                         tileIds.push_back(frame.at("tileid").as<vili::integer>()
                             + tileset.at("firstTileId").as<vili::integer>());
                     }
-                    m_animatedTiles.push_back(std::make_unique<AnimatedTile>(
-                        animationTileset, tileIds, sleeps));
+                    m_animatedTiles.push_back(
+                        std::make_unique<AnimatedTile>(currentTileset, tileIds, sleeps));
+                }
+            }
+            if (tileset.contains("collisions"))
+            {
+                for (const vili::node& collision : tileset.at("collisions"))
+                {
+                    const std::string collisionId
+                        = std::to_string(collision.at("id").as<vili::integer>()
+                            + tileset.at("firstTileId").as<vili::integer>());
+                    std::unique_ptr<Collision::PolygonalCollider> model
+                        = std::make_unique<Collision::PolygonalCollider>(collisionId);
+                    int i = 0;
+                    for (const vili::node& point : collision.at("points"))
+                    {
+                        model->addPoint(Transform::UnitVector(
+                            point.at("x"), point.at("y"), Transform::Units::ScenePixels));
+                        Transform::PolygonPoint pointDbg = model->get(i);
+                        Debug::Log->info("  - BUILD[{}] P{} = ({}, {})", collisionId, i,
+                            pointDbg.x, pointDbg.y);
+                        i++;
+                    }
+
+                    m_colliderModels.push_back(std::move(model));
                 }
             }
         }
@@ -66,9 +89,8 @@ namespace obe::Tiles
             {
                 tiles.push_back(tile);
             }
-            m_layers.push_back(std::make_unique<TileLayer>(m_tilesets, animations,
-                layerId, layer["layer"], layer["x"], layer["y"], layer["width"],
-                layer["height"], tiles));
+            m_layers.push_back(std::make_unique<TileLayer>(*this, layerId, layer["layer"],
+                layer["x"], layer["y"], layer["width"], layer["height"], tiles));
         }
 
         this->build();
@@ -110,12 +132,27 @@ namespace obe::Tiles
         return animations;
     }
 
+    const TilesetCollection& TileScene::getTilesets() const
+    {
+        return m_tilesets;
+    }
+
     std::vector<Graphics::Renderable*> TileScene::getRenderables() const
     {
         std::vector<Graphics::Renderable*> result;
         for (const auto& layer : m_layers)
         {
             result.push_back(layer.get());
+        }
+        return result;
+    }
+
+    std::vector<Collision::PolygonalCollider*> TileScene::getColliderModels() const
+    {
+        std::vector<Collision::PolygonalCollider*> result;
+        for (const auto& collider : m_colliderModels)
+        {
+            result.push_back(collider.get());
         }
         return result;
     }

@@ -19,7 +19,7 @@ namespace obe::Transform::Exceptions
     {
     public:
         PolygonPointIndexOverflow(
-            void* polygon, std::size_t index, std::size_t maximum, DebugInfo info)
+            const void* polygon, std::size_t index, std::size_t maximum, DebugInfo info)
             : Exception("PolygonPointIndexOverflow", info)
         {
             this->error("Tried to access PolygonPoint at index {} of Polygon at address "

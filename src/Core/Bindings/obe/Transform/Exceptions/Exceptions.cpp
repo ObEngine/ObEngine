@@ -40,7 +40,7 @@ namespace obe::Transform::Exceptions::Bindings
                 obe::Transform::Exceptions::PolygonPointIndexOverflow>(
                 "PolygonPointIndexOverflow", sol::call_constructor,
                 sol::constructors<obe::Transform::Exceptions::PolygonPointIndexOverflow(
-                    void*, std::size_t, std::size_t, obe::DebugInfo)>(),
+                    const void*, std::size_t, std::size_t, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::Exception>());
     }
     void LoadClassUnknownReferential(sol::state_view state)

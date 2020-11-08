@@ -91,6 +91,19 @@ namespace obe::Transform
         return m_points.size();
     }
 
+    Polygon::Polygon(const Polygon& polygon)
+    {
+        m_angle = polygon.m_angle;
+        m_position = polygon.m_position;
+        m_unit = polygon.m_unit;
+        size_t index = 0;
+        for (const auto& point : polygon.m_points)
+        {
+            m_points.push_back(std::make_unique<Transform::PolygonPoint>(
+                *this, index++, Transform::UnitVector(point->x, point->y, point->unit)));
+        }
+    }
+
     void Polygon::addPoint(const Transform::UnitVector& position, int pointIndex)
     {
         const Transform::UnitVector pVec = position.to<Transform::Units::SceneUnits>();
@@ -348,11 +361,11 @@ namespace obe::Transform
                 = position.to<Transform::Units::SceneUnits>();
             const Transform::UnitVector addPosition = pVec - *m_points[0];
 
-            m_points[0]->set(pVec);
             for (auto& point : m_points)
             {
                 *point += addPosition;
             }
+            m_points[0]->set(pVec);
         }
     }
 
@@ -378,6 +391,15 @@ namespace obe::Transform
     }
 
     PolygonPoint& Polygon::get(point_index_t i)
+    {
+        if (i < m_points.size())
+            return *m_points[i];
+        else
+            throw Exceptions::PolygonPointIndexOverflow(
+                this, i, m_points.size(), EXC_INFO);
+    }
+
+    const PolygonPoint& Polygon::get(point_index_t i) const
     {
         if (i < m_points.size())
             return *m_points[i];

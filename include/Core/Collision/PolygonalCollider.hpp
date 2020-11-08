@@ -80,6 +80,7 @@ namespace obe::Collision
          *        example)
          */
         explicit PolygonalCollider(const std::string& id);
+        explicit PolygonalCollider(const PolygonalCollider& collider);
         // Tags
         /**
          * \brief Adds a Tag to the Collider

@@ -3,6 +3,7 @@
 #include <Tiles/Animation.hpp>
 #include <Tiles/Layer.hpp>
 #include <Tiles/Scene.hpp>
+#include <Tiles/Tile.hpp>
 #include <Tiles/Tileset.hpp>
 
 #include <Bindings/Config.hpp>
@@ -18,6 +19,7 @@ namespace obe::Tiles::Bindings
                 sol::constructors<obe::Tiles::AnimatedTile(const obe::Tiles::Tileset&,
                     std::vector<uint32_t>, std::vector<obe::Time::TimeUnit>)>());
         bindAnimatedTile["attachQuad"] = &obe::Tiles::AnimatedTile::attachQuad;
+        bindAnimatedTile["dettachQuad"] = &obe::Tiles::AnimatedTile::dettachQuad;
         bindAnimatedTile["start"] = &obe::Tiles::AnimatedTile::start;
         bindAnimatedTile["stop"] = &obe::Tiles::AnimatedTile::stop;
         bindAnimatedTile["getId"] = &obe::Tiles::AnimatedTile::getId;
@@ -60,16 +62,20 @@ namespace obe::Tiles::Bindings
             = &obe::Tiles::TilesetCollection::tilesetFromId;
         bindTilesetCollection["tilesetFromTileId"]
             = &obe::Tiles::TilesetCollection::tilesetFromTileId;
+        bindTilesetCollection["size"] = &obe::Tiles::TilesetCollection::size;
+        bindTilesetCollection["getTilesetsFirstTilesIds"]
+            = &obe::Tiles::TilesetCollection::getTilesetsFirstTilesIds;
     }
     void LoadClassTileLayer(sol::state_view state)
     {
         sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
-        sol::usertype<obe::Tiles::TileLayer> bindTileLayer = TilesNamespace.new_usertype<
-            obe::Tiles::TileLayer>("TileLayer", sol::call_constructor,
-            sol::constructors<obe::Tiles::TileLayer(const obe::Tiles::TilesetCollection&,
-                const obe::Tiles::AnimatedTiles&, const std::string&, int32_t, uint32_t,
-                uint32_t, uint32_t, uint32_t, const std::vector<uint32_t>&)>(),
-            sol::base_classes, sol::bases<obe::Graphics::Renderable>());
+        sol::usertype<obe::Tiles::TileLayer> bindTileLayer
+            = TilesNamespace.new_usertype<obe::Tiles::TileLayer>("TileLayer",
+                sol::call_constructor,
+                sol::constructors<obe::Tiles::TileLayer(const obe::Tiles::TileScene&,
+                    const std::string&, int32_t, uint32_t, uint32_t, uint32_t, uint32_t,
+                    std::vector<uint32_t>)>(),
+                sol::base_classes, sol::bases<obe::Graphics::Renderable>());
         bindTileLayer["getId"] = &obe::Tiles::TileLayer::getId;
         bindTileLayer["build"] = &obe::Tiles::TileLayer::build;
         bindTileLayer["draw"] = &obe::Tiles::TileLayer::draw;
@@ -88,7 +94,9 @@ namespace obe::Tiles::Bindings
         bindTileScene["update"] = &obe::Tiles::TileScene::update;
         bindTileScene["getLayer"] = &obe::Tiles::TileScene::getLayer;
         bindTileScene["getAnimatedTiles"] = &obe::Tiles::TileScene::getAnimatedTiles;
+        bindTileScene["getTilesets"] = &obe::Tiles::TileScene::getTilesets;
         bindTileScene["getRenderables"] = &obe::Tiles::TileScene::getRenderables;
+        bindTileScene["getColliderModels"] = &obe::Tiles::TileScene::getColliderModels;
     }
     void LoadClassTextureQuadsIndex(sol::state_view state)
     {
@@ -113,10 +121,20 @@ namespace obe::Tiles::Bindings
         bindTileInfo["flippedDiagonally"] = &obe::Tiles::TileInfo::flippedDiagonally;
         bindTileInfo["tileId"] = &obe::Tiles::TileInfo::tileId;
     }
-
     void LoadFunctionGetTileInfo(sol::state_view state)
     {
         sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
         TilesNamespace.set_function("getTileInfo", obe::Tiles::getTileInfo);
+    }
+    void LoadFunctionStripTileFlags(sol::state_view state)
+    {
+        sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
+        TilesNamespace.set_function("stripTileFlags", obe::Tiles::stripTileFlags);
+    }
+    void LoadFunctionApplyTextureQuadsTransforms(sol::state_view state)
+    {
+        sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
+        TilesNamespace.set_function(
+            "applyTextureQuadsTransforms", obe::Tiles::applyTextureQuadsTransforms);
     }
 };

@@ -31,8 +31,9 @@ namespace obe::Collision::Bindings
         sol::usertype<obe::Collision::PolygonalCollider> bindPolygonalCollider
             = CollisionNamespace.new_usertype<obe::Collision::PolygonalCollider>(
                 "PolygonalCollider", sol::call_constructor,
-                sol::constructors<obe::Collision::PolygonalCollider(
-                    const std::string&)>(),
+                sol::constructors<obe::Collision::PolygonalCollider(const std::string&),
+                    obe::Collision::PolygonalCollider(
+                        const obe::Collision::PolygonalCollider&)>(),
                 sol::base_classes,
                 sol::bases<obe::Transform::Polygon, obe::Transform::UnitBasedObject,
                     obe::Transform::Movable, obe::Types::Selectable,
