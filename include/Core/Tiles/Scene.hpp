@@ -25,6 +25,7 @@ namespace obe::Tiles
 
         std::vector<std::unique_ptr<TileLayer>> m_layers;
         std::vector<std::unique_ptr<AnimatedTile>> m_animatedTiles;
+        std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderModels;
         TilesetCollection m_tilesets;
 
         void build();
@@ -37,6 +38,8 @@ namespace obe::Tiles
 
         TileLayer& getLayer(const std::string& id) const;
         AnimatedTiles getAnimatedTiles() const;
+        const TilesetCollection& getTilesets() const;
         std::vector<Graphics::Renderable*> getRenderables() const;
+        std::vector<Collision::PolygonalCollider*> getColliderModels() const;
     };
 }

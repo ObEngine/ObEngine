@@ -9,6 +9,8 @@
 
 #include <vili/parser/parser.hpp>
 
+#include <Event/Exceptions.hpp>
+
 namespace obe::Script
 {
     static std::unordered_map<std::string, sol::bytecode> ScriptCache;
@@ -103,7 +105,17 @@ namespace obe::Script
             if (m_hasScriptEngine)
             {
                 m_environment["__OBJECT_INIT"] = true;
-                m_environment["__CALL_INIT"]();
+                sol::protected_function initFunc
+                    = m_environment["__CALL_INIT"].get<sol::protected_function>();
+                const sol::protected_function_result initResult = initFunc();
+                if (!initResult.valid())
+                {
+                    const auto errObj = initResult.get<sol::error>();
+                    const std::string errMsg = "\n        \""
+                        + Utils::String::replace(errObj.what(), "\n", "\n        ")
+                        + "\"";
+                    throw Event::Exceptions::LuaExecutionError(errMsg, EXC_INFO);
+                }
             }
         }
         else

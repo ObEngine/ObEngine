@@ -113,7 +113,13 @@ namespace obe::Transform::Bindings
         bindPolygon["setPositionFromCentroid"]
             = &obe::Transform::Polygon::setPositionFromCentroid;
         bindPolygon[sol::meta_function::index] = &obe::Transform::Polygon::operator[];
-        bindPolygon["get"] = &obe::Transform::Polygon::get;
+        bindPolygon["get"] = sol::overload(
+            static_cast<obe::Transform::PolygonPoint& (
+                obe::Transform::Polygon::*)(obe::Transform::point_index_t)>(
+                &obe::Transform::Polygon::get),
+            static_cast<const obe::Transform::PolygonPoint& (
+                obe::Transform::Polygon::*)(obe::Transform::point_index_t) const>(
+                &obe::Transform::Polygon::get));
         bindPolygon["getBoundingBox"] = &obe::Transform::Polygon::getBoundingBox;
         bindPolygon["DefaultTolerance"]
             = sol::var(&obe::Transform::Polygon::DefaultTolerance);

@@ -68,6 +68,8 @@ namespace obe::Transform
 
     public:
         static constexpr double DefaultTolerance = 0.02;
+        Polygon() = default;
+        Polygon(const Polygon& polygon);
         /**
          * \brief Adds a new Point to the Polygon at Position (x, y)
          * \param position Coordinate of the Position where to add the new Point
@@ -189,6 +191,7 @@ namespace obe::Transform
         void setPositionFromCentroid(const Transform::UnitVector& position);
         PolygonPoint& operator[](point_index_t i);
         PolygonPoint& get(point_index_t i);
+        const PolygonPoint& get(point_index_t i) const;
         [[nodiscard]] Rect getBoundingBox() const;
     };
 } // namespace obe::Transform

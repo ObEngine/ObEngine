@@ -339,6 +339,8 @@ namespace obe::Bindings
         obe::Tiles::Bindings::LoadClassTextureQuadsIndex(state);
         obe::Tiles::Bindings::LoadClassTileInfo(state);
         obe::Tiles::Bindings::LoadFunctionGetTileInfo(state);
+        obe::Tiles::Bindings::LoadFunctionStripTileFlags(state);
+        obe::Tiles::Bindings::LoadFunctionApplyTextureQuadsTransforms(state);
 
         obe::Tiles::Exceptions::Bindings::LoadClassTilePositionOutsideLayer(state);
         obe::Tiles::Exceptions::Bindings::LoadClassUnknownTileset(state);

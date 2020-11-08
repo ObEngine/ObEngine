@@ -87,6 +87,18 @@ namespace obe::Collision
     {
     }
 
+    PolygonalCollider::PolygonalCollider(const PolygonalCollider& collider)
+        : Selectable(false)
+        , Component(collider.getId())
+        , Polygon(collider)
+    {
+        m_parentId = collider.m_parentId;
+        m_tags = collider.m_tags;
+        m_angle = collider.m_angle;
+        m_unit = collider.m_unit;
+        m_position = collider.m_position;
+    }
+
     std::string_view PolygonalCollider::type() const
     {
         return ComponentType;

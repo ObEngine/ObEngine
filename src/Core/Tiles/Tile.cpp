@@ -26,4 +26,40 @@ namespace obe::Tiles
             & ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG
                 | FLIPPED_DIAGONALLY_FLAG);
     }
+
+    void TextureQuadsIndex::transform(const TileInfo& info)
+    {
+        if (info.flippedDiagonally)
+        {
+            std::swap(q0, q2);
+        }
+        if (info.flippedHorizontally)
+        {
+            std::swap(q0, q1);
+            std::swap(q2, q3);
+        }
+        if (info.flippedVertically)
+        {
+            std::swap(q0, q3);
+            std::swap(q1, q2);
+        }
+    }
+
+    void applyTextureQuadsTransforms(const TileInfo& info, TextureQuadsIndex& quads)
+    {
+        if (info.flippedDiagonally)
+        {
+            std::swap(quads.q0, quads.q2);
+        }
+        if (info.flippedHorizontally)
+        {
+            std::swap(quads.q0, quads.q1);
+            std::swap(quads.q2, quads.q3);
+        }
+        if (info.flippedVertically)
+        {
+            std::swap(quads.q0, quads.q3);
+            std::swap(quads.q1, quads.q2);
+        }
+    }
 }

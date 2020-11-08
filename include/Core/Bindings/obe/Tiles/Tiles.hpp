@@ -14,4 +14,6 @@ namespace obe::Tiles::Bindings
     void LoadClassTextureQuadsIndex(sol::state_view state);
     void LoadClassTileInfo(sol::state_view state);
     void LoadFunctionGetTileInfo(sol::state_view state);
+    void LoadFunctionStripTileFlags(sol::state_view state);
+    void LoadFunctionApplyTextureQuadsTransforms(sol::state_view state);
 };
