@@ -1,5 +1,6 @@
 #pragma once
 
+#include <iostream>
 #include <string>
 #include <variant>
 
@@ -118,7 +119,7 @@ namespace vili
          * \tparam type node_type enum value to test against the type of the underlying value of the node
          * \return true if the type is the same, false otherwise
          */
-        template <node_type type>[[nodiscard]] constexpr bool is() const;
+        template <node_type type> [[nodiscard]] constexpr bool is() const;
         /**
          * \nobind
          * \brief Checks if the node contains a given type
@@ -192,7 +193,10 @@ namespace vili
          * \throw invalid_cast exception when the type of the underlying value is not the same as T
          * \return const reference to the value of the node (of type T)
          */
-        template <class T> const T& as() const;
+        template <class T>
+        [[nodiscard]] std::enable_if_t<!std::is_floating_point_v<T> || !vili::PERMISSIVE_CAST, const T&> as() const;
+        template <class T>
+        [[nodiscard]] std::enable_if_t<std::is_floating_point_v<T> && vili::PERMISSIVE_CAST, T> as() const;
 
         /**
          * \brief Returns the node as a boolean
@@ -311,17 +315,28 @@ namespace vili
         return std::holds_alternative<T>(m_data);
     }
 
-    template <class T>[[nodiscard]] const T& node::as() const
+    template <class T>
+    [[nodiscard]] std::enable_if_t<!std::is_floating_point_v<T> || !vili::PERMISSIVE_CAST, const T &> node::as() const
     {
         if (is<T>())
             return std::get<T>(m_data);
-        if constexpr (vili::PERMISSIVE_CAST && std::is_same<T, vili::number>())
+
+        throw exceptions::invalid_cast(typeid(T).name(), to_string(type()), VILI_EXC_INFO);
+    }
+
+    template <class T>
+    [[nodiscard]] std::enable_if_t<std::is_floating_point_v<T> && vili::PERMISSIVE_CAST, T> node::as() const {
+        if (is<T>())
+            return std::get<T>(m_data);
+
+        if constexpr (vili::PERMISSIVE_CAST && std::is_floating_point_v<T>)
         {
             if (is<vili::integer>())
             {
-                return static_cast<T>(std::get<vili::integer>(m_data));
+                return T(std::get<vili::integer>(m_data));
             }
         }
+
         throw exceptions::invalid_cast(
             typeid(T).name(), to_string(type()), VILI_EXC_INFO);
     }

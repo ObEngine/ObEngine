@@ -65,6 +65,11 @@ namespace obe::Tiles
         {
             if (collider->getId() == std::to_string(tileInfo.tileId))
             {
+                Debug::Log->info("Collider points");
+                for (const auto& point : collider->getAllPoints())
+                {
+                    Debug::Log->info("  - Point x: {}, y: {}", point->x, point->y);
+                }
                 m_colliders.push_back(
                     std::make_unique<Collision::PolygonalCollider>(*collider));
                 Transform::Rect boundingBox = m_colliders.back()->getBoundingBox();
