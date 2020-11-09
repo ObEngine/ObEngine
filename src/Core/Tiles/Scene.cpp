@@ -109,6 +109,18 @@ namespace obe::Tiles
         }
     }
 
+    void TileScene::clear()
+    {
+        m_tilesets.clear();
+        m_layers.clear();
+        m_animatedTiles.clear();
+        m_colliderModels.clear();
+        m_width = 0;
+        m_height = 0;
+        m_tileWidth = 0;
+        m_tileHeight = 0;
+    }
+
     TileLayer& TileScene::getLayer(const std::string& id) const
     {
         for (const auto& layer : m_layers)

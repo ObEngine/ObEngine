@@ -35,6 +35,7 @@ namespace obe::Tiles
         void load(const vili::node& data) override;
 
         void update();
+        void clear();
 
         TileLayer& getLayer(const std::string& id) const;
         AnimatedTiles getAnimatedTiles() const;

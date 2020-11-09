@@ -157,4 +157,9 @@ namespace obe::Tiles
         }
         return firstTilesIds;
     }
+
+    void TilesetCollection::clear()
+    {
+        m_tilesets.clear();
+    }
 }

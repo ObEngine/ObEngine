@@ -229,6 +229,8 @@ namespace obe::Scene
         m_scriptArray.clear();
         Debug::Log->debug("<Scene> Scene Cleared !");
         this->_rebuildIds();
+        if (m_tiles)
+            m_tiles->clear();
     }
 
     vili::node Scene::dump() const
@@ -478,7 +480,8 @@ namespace obe::Scene
                         return false;
                     }),
                 m_gameObjectArray.end());
-            m_tiles->update();
+            if (m_tiles)
+                m_tiles->update();
         }
     }
 
