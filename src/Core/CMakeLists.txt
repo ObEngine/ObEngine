@@ -2,6 +2,9 @@ project(ObEngineCore)
 
 include(group_files)
 
+add_custom_target(ConfigureObEngineGit COMMAND ${CMAKE_COMMAND} 
+    -DGIT_EXECUTABLE=${GIT_EXECUTABLE} -DObEngine_SOURCE_DIR=${ObEngine_SOURCE_DIR} -DObEngine_BINARY_DIR=${ObEngine_BINARY_DIR} -P "${ObEngine_SOURCE_DIR}/cmake/engine_git.cmake")
+
 file(GLOB_RECURSE OBE_HEADERS
     ${ObEngine_SOURCE_DIR}/include/Core/*.hpp
     ${ObEngine_SOURCE_DIR}/include/Core/*.inl)
@@ -37,19 +40,15 @@ if(OBE_USE_VCPKG)
     endif()
 
 
-    target_link_libraries(ObEngineCore ${LUA_LIBRARIES})
-    target_include_directories(ObEngineCore PRIVATE ${LUA_INCLUDE_DIR})
-
-    target_link_libraries(ObEngineCore
+    target_link_libraries(ObEngineCore ${LUA_LIBRARIES}
+        ConfigureObEngineGit bezier elzip sfe vili dynamicLinker Soloud
         sol2::sol2 fmt::fmt spdlog::spdlog Catch2::Catch2)
+    target_include_directories(ObEngineCore PRIVATE ${LUA_INCLUDE_DIR})
 else()
     target_link_libraries(ObEngineCore
         lua sol3 fmt spdlog)
     target_link_libraries(ObEngineCore sfml-graphics sfml-system sfml-network)
-endif()
-
-target_link_libraries(ObEngineCore
-    bezier elzip sfe vili dynamicLinker Soloud)
+endif()    
 
 if (USE_FILESYSTEM_FALLBACK)
     message("Using filesystem fallback")
