@@ -124,7 +124,7 @@ namespace obe::Scene
         {
             m_colliderArray.push_back(
                 std::make_unique<Collision::PolygonalCollider>(createId));
-            m_spriteIds.insert(createId);
+            m_colliderIds.insert(createId);
             if (addToSceneRoot)
                 m_sceneRoot.addChild(*m_colliderArray.back());
             return *m_colliderArray.back().get();

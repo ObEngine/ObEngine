@@ -295,7 +295,7 @@ namespace obe::Animation
 
             if (group.contains("clock"))
             {
-                const unsigned int delay = group.at("clock");
+                vili::number delay = group.at("clock");
                 Debug::Log->trace("      <Animation> Setting group delay to {}", delay);
                 m_groups[groupName]->setDelay(delay);
             }
