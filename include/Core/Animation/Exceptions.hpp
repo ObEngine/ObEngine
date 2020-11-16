@@ -130,4 +130,14 @@ namespace obe::Animation::Exceptions
                 easingName);
         }
     };
+
+    class UnknownTargetScaleMode : public Exception
+    {
+    public:
+        UnknownTargetScaleMode(std::string_view targetScaleMode, DebugInfo info)
+            : Exception("UnknownTargetScaleMode", info)
+        {
+            this->error("TargetScaleMode '{}' does not exists", targetScaleMode);
+        }
+    };
 }

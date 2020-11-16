@@ -26,6 +26,7 @@ namespace obe::Animation
         // Animation texture will keep its size, ignoring target's size
         TextureSize
     };
+    AnimatorTargetScaleMode stringToAnimatorTargetScaleMode(const std::string& targetScaleMode);
 
     /**
      * \brief A Class that will manage a set of Animation

@@ -215,8 +215,15 @@ namespace obe::Script
             m_animator = std::make_unique<Animation::Animator>();
             vili::node& animator = obj.at("Animator");
             const std::string animatorPath = animator.at("path");
+            Animation::AnimatorTargetScaleMode scaleMode
+                = Animation::AnimatorTargetScaleMode::Fit;
+            if (animator.contains("scaling"))
+            {
+                scaleMode = Animation::stringToAnimatorTargetScaleMode(
+                    animator.at("scaling"));
+            }
             if (m_sprite)
-                m_animator->setTarget(*m_sprite);
+                m_animator->setTarget(*m_sprite, scaleMode);
             if (!animatorPath.empty())
             {
                 m_animator->load(System::Path(animatorPath), resources);
@@ -250,10 +257,10 @@ namespace obe::Script
                 {
                     if (!m_animator->getKey().empty())
                         m_animator->update();
-                    if (m_sprite)
+                    /*if (m_sprite)
                     {
                         m_sprite->setTexture(m_animator->getTexture());
-                    }
+                    }*/
                 }
             }
             else

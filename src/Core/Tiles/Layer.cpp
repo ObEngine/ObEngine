@@ -59,6 +59,7 @@ namespace obe::Tiles
             if (animation->getId() == tileInfo.tileId)
             {
                 animation->attachQuad(quad);
+                break;
             }
         }
         for (auto& collider : m_scene.getColliderModels())
@@ -72,13 +73,15 @@ namespace obe::Tiles
                 }
                 m_colliders.push_back(
                     std::make_unique<Collision::PolygonalCollider>(*collider));
-                Transform::Rect boundingBox = m_colliders.back()->getBoundingBox();
+                const Transform::Rect boundingBox = m_colliders.back()->getBoundingBox();
                 Transform::UnitVector offset
                     = m_colliders.back()->get(0) - boundingBox.getPosition();
+                offset += boundingBox.getPosition();
                 m_colliders.back()->setPosition(
                     Transform::UnitVector(x * tileset.getTileWidth(),
                         y * tileset.getTileHeight(), Transform::Units::ScenePixels)
                     + offset);
+                break;
             }
         }
         m_positions[tileIndex] = quad;
