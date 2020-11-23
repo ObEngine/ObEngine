@@ -133,6 +133,60 @@ namespace obe::Transform
         return m_size.y;
     }
 
+    std::optional<Rect> Rect::intersects(const Rect& rect) const
+    {
+        const auto r1MinX = std::min(m_position.x, m_position.x + m_size.x);
+        const auto r1MaxX = std::max(m_position.x, m_position.x + m_size.x);
+        const auto r1MinY = std::min(m_position.y, m_position.y + m_size.y);
+        const auto r1MaxY = std::max(m_position.y, m_position.y + m_size.y);
+
+        const auto r2MinX
+            = std::min(rect.m_position.x, rect.m_position.x + rect.m_size.x);
+        const auto r2MaxX
+            = std::max(rect.m_position.x, rect.m_position.x + rect.m_size.x);
+        const auto r2MinY
+            = std::min(rect.m_position.y, rect.m_position.y + rect.m_size.y);
+        const auto r2MaxY
+            = std::max(rect.m_position.y, rect.m_position.y + rect.m_size.y);
+
+        const auto intersectionLeft = std::max(r1MinX, r2MinX);
+        const auto intersectionTop = std::max(r1MinY, r2MinY);
+        const auto intersectionRight = std::min(r1MaxX, r2MaxX);
+        const auto intersectionBottom = std::min(r1MaxY, r2MaxY);
+
+        if ((intersectionLeft < intersectionRight)
+            && (intersectionTop < intersectionBottom))
+        {
+            Rect intersection;
+            intersection.setPosition(
+                UnitVector(intersectionLeft, intersectionTop, m_position.unit));
+            intersection.setSize(UnitVector(intersectionRight - intersectionLeft,
+                intersectionBottom - intersectionTop, m_size.unit));
+            return std::make_optional(intersection);
+        }
+        else
+        {
+            return std::nullopt;
+        }
+    }
+
+    bool Rect::contains(const Rect& rect) const
+    {
+        return contains(rect.getPosition(Referential::TopLeft))
+            && contains(rect.getPosition(Referential::BottomRight));
+    }
+
+    bool Rect::contains(const UnitVector& position) const
+    {
+        const auto minX = std::min(m_position.x, m_position.x + m_size.x);
+        const auto maxX = std::max(m_position.x, m_position.x + m_size.x);
+        const auto minY = std::min(m_position.y, m_position.y + m_size.y);
+        const auto maxY = std::max(m_position.y, m_position.y + m_size.y);
+
+        return (position.x >= minX) && (position.x < maxX) && (position.y >= minY)
+            && (position.y < maxY);
+    }
+
     void Rect::setPointPosition(const UnitVector& position, const Referential& ref)
     {
         const UnitVector oppositePointPosition = this->getPosition(ref.flip());

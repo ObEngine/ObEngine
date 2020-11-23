@@ -94,6 +94,11 @@ namespace obe::Collision
     {
         m_parentId = collider.m_parentId;
         m_tags = collider.m_tags;
+        if (collider.m_tags.at(ColliderTagType::Tag).size() >= 1
+            && collider.m_tags.at(ColliderTagType::Tag)[0] == "Spike")
+        {
+            1;
+        }
         m_angle = collider.m_angle;
         m_unit = collider.m_unit;
         m_position = collider.m_position;

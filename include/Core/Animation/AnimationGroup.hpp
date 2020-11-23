@@ -24,7 +24,7 @@ namespace obe::Animation
         /**
          * \brief The current frame index of the AnimationGroup
          */
-        std::size_t m_index = 0;
+        std::size_t m_index = -1;
         /**
          * \brief The list that contains pointers to all textures in the
          *        AnimationGroup

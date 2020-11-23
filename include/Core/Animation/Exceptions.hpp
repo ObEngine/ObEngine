@@ -91,7 +91,7 @@ namespace obe::Animation::Exceptions
             const std::vector<std::string>& animations, DebugInfo info)
             : Exception("UnknownAnimation", info)
         {
-            this->error("Animator '{}' doesn't have any Animation named '{}'");
+            this->error("Animator '{}' doesn't have any Animation named '{}'", animatorPath, animation);
             this->hint(
                 "Try one of the following animations ({})", fmt::join(animations, ", "));
         }

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include <Graphics/RenderTarget.hpp>
 #include <Transform/Movable.hpp>
 #include <Transform/Referential.hpp>
@@ -140,18 +142,22 @@ namespace obe::Transform
         /**
          * \asproperty
          */
-        double x() const;
+        [[nodiscard]] double x() const;
         /**
          * \asproperty
          */
-        double y() const;
+        [[nodiscard]] double y() const;
         /**
          * \asproperty
          */
-        double width() const;
+        [[nodiscard]] double width() const;
         /**
          * \asproperty
          */
-        double height() const;
+        [[nodiscard]] double height() const;
+
+        [[nodiscard]] std::optional<Rect> intersects(const Rect& rect) const;
+        [[nodiscard]] bool contains(const Rect& rect) const;
+        [[nodiscard]] bool contains(const UnitVector& position) const;
     };
 } // namespace obe::Transform

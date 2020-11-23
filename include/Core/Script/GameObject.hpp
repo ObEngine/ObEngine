@@ -173,6 +173,7 @@ namespace obe::Script
          * \param query String to execute
          */
         void exec(const std::string& query);
+        void initFromVili(const vili::node& data);
         /**
          * \brief Send a parameter to the Local.Init trigger
          * \tparam U Template Type of the Parameter

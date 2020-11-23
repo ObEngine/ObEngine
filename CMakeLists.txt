@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
+
 set(OpenGL_GL_PREFERENCE GLVND)
+add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 
 project(ObEngine)
 

@@ -5,12 +5,18 @@
 
 namespace obe::Tiles
 {
-    void updateQuad(sf::Vertex* quad, const Tileset& tileset, uint32_t tileId)
+    void updateQuad(sf::Vertex* quad, const Tileset& tileset, uint32_t tileId, TileInfo additionalTileInfo)
     {
         if (!tileId)
             return;
 
-        const TileInfo tileInfo = getTileInfo(tileId);
+        TileInfo tileInfo = getTileInfo(tileId);
+        tileInfo.flippedDiagonally
+            = tileInfo.flippedDiagonally ^ additionalTileInfo.flippedDiagonally;
+        tileInfo.flippedHorizontally
+            = tileInfo.flippedHorizontally ^ additionalTileInfo.flippedHorizontally;
+        tileInfo.flippedVertically
+            = tileInfo.flippedVertically ^ additionalTileInfo.flippedVertically;
 
         const uint32_t firstTileId = tileset.getFirstTileId();
 
@@ -43,14 +49,16 @@ namespace obe::Tiles
     {
     }
 
-    void AnimatedTile::attachQuad(sf::Vertex* quad)
+    void AnimatedTile::attachQuad(sf::Vertex* quad, TileInfo tileInfo)
     {
-        m_quads.push_back(quad);
+        m_quads.emplace_back(quad, tileInfo);
     }
 
     void AnimatedTile::dettachQuad(sf::Vertex* quad)
     {
-        m_quads.erase(std::remove(m_quads.begin(), m_quads.end(), quad), m_quads.end());
+        m_quads.erase(std::remove_if(m_quads.begin(), m_quads.end(),
+                          [&quad](const std::pair<sf::Vertex*, TileInfo>& item) { return item.first == quad; }),
+            m_quads.end());
     }
 
     void AnimatedTile::start()
@@ -81,7 +89,7 @@ namespace obe::Tiles
             m_clock = Time::epoch();
             for (auto& quad : m_quads)
             {
-                updateQuad(quad, m_tileset, m_tileIds[m_index]);
+                updateQuad(quad.first, m_tileset, m_tileIds[m_index], quad.second);
             }
         }
     }

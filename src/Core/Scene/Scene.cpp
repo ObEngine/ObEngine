@@ -18,8 +18,13 @@ namespace obe::Scene
         {
             m_renderCache.push_back(sprite.get());
         }
-        std::vector<Graphics::Renderable*> tileLayers = m_tiles->getRenderables();
-        m_renderCache.insert(m_renderCache.end(), tileLayers.begin(), tileLayers.end());
+        if (m_tiles)
+        {
+            std::vector<Graphics::Renderable*> tileLayers = m_tiles->getRenderables();
+            m_renderCache.insert(
+                m_renderCache.end(), tileLayers.begin(), tileLayers.end());
+        }
+        
         std::sort(m_renderCache.begin(), m_renderCache.end(),
             [](const auto& renderable1, const auto& renderable2) {
                 if (renderable1->getLayer() == renderable2->getLayer())
@@ -425,7 +430,7 @@ namespace obe::Scene
 
         if (data.contains("Tiles"))
         {
-            m_tiles = std::make_unique<Tiles::TileScene>();
+            m_tiles = std::make_unique<Tiles::TileScene>(*this);
             m_tiles->load(data.at("Tiles"));
         }
 

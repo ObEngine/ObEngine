@@ -104,9 +104,9 @@ namespace obe::Animation
 
     void Animator::setKey(const std::string& key)
     {
-        Debug::Log->trace("<Animator> Set Animation Key {0} for Animator at {1} {2}", key,
+        Debug::Log->trace("<Animator> Set Animation Key '{0}' for Animator at {1} {2}", key,
             m_path.toString(), m_animations.size());
-        if (!m_animations.empty() && m_animations.find(key) == m_animations.end())
+        if (m_animations.find(key) == m_animations.end())
         {
             throw Exceptions::UnknownAnimation(
                 m_path.toString(), key, this->getAllAnimationName(), EXC_INFO);
