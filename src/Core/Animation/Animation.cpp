@@ -125,7 +125,7 @@ namespace obe::Animation
     {
         vili::node& currentCommand = m_code[m_codeIndex];
         Debug::Log->trace("<Animation> Executing instruction {} / {} : {}", m_codeIndex,
-            m_code.size() - 1);
+            m_code.size() - 1, currentCommand.dump());
         if (currentCommand.at("command") == Config::Templates::wait_command)
         {
             m_feedInstructions = true;
@@ -167,7 +167,7 @@ namespace obe::Animation
         {
             Debug::Log->trace(
                 "        <Animation> AnimationGroup '{}' is over", m_currentGroupName);
-            if (m_codeIndex < m_code.size() - 1)
+            if (m_codeIndex < m_code.size())
             {
                 Debug::Log->trace("    <Animation> Restarting code execution");
                 m_feedInstructions = true;

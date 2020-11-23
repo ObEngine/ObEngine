@@ -8,22 +8,22 @@
 
 namespace obe::Graphics
 {
+    static sf::Image NullImage;
     static Graphics::Texture NullTexture;
     void MakeNullTexture()
     {
-        sf::Image nullImage;
-        nullImage.create(100, 100, sf::Color::Transparent);
-        for (unsigned int i = 0; i < nullImage.getSize().x; i++)
+        NullImage.create(100, 100, sf::Color::Transparent);
+        for (unsigned int i = 0; i < NullImage.getSize().x; i++)
         {
-            for (unsigned int j = 0; j < nullImage.getSize().y; j++)
+            for (unsigned int j = 0; j < NullImage.getSize().y; j++)
             {
-                if (i == 0 || j == 0 || i == nullImage.getSize().x - 1
-                    || j == nullImage.getSize().y - 1 || i == j
-                    || i == ((nullImage.getSize().x - 1) - j))
-                    nullImage.setPixel(i, j, sf::Color::Red);
+                if (i == 0 || j == 0 || i == NullImage.getSize().x - 1
+                    || j == NullImage.getSize().y - 1 || i == j
+                    || i == ((NullImage.getSize().x - 1) - j))
+                    NullImage.setPixel(i, j, sf::Color::Red);
             }
         }
-        NullTexture.loadFromImage(nullImage);
+        NullTexture.loadFromImage(NullImage);
     }
 
     sf::Vertex toSfVertex(const Transform::UnitVector& uv)

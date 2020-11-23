@@ -2,6 +2,7 @@
 
 #include <Debug/Logger.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
+#include <Scene/Scene.hpp>
 #include <Tiles/Exceptions.hpp>
 #include <Tiles/Layer.hpp>
 #include <Tiles/Scene.hpp>
@@ -58,7 +59,7 @@ namespace obe::Tiles
         {
             if (animation->getId() == tileInfo.tileId)
             {
-                animation->attachQuad(quad);
+                animation->attachQuad(quad, tileInfo);
                 break;
             }
         }
@@ -82,6 +83,21 @@ namespace obe::Tiles
                         y * tileset.getTileHeight(), Transform::Units::ScenePixels)
                     + offset);
                 break;
+            }
+        }
+        for (const auto& gameObject : m_scene.getGameObjectsModels())
+        {
+            if (gameObject.at("tileId").as<vili::integer>() == tileInfo.tileId)
+            {
+                std::string gameObjectId = Utils::String::replace(gameObject.at("id"), "{index}", std::to_string(m_scene.getScene().getGameObjectAmount()));
+                vili::node requirements = gameObject.at("Requires");
+                Transform::UnitVector gameObjectPosition(x * tileset.getTileWidth(),
+                    y * tileset.getTileHeight(), Transform::Units::ScenePixels);
+                requirements["x"] = requirements["x"].as_number() + gameObjectPosition.x;
+                requirements["y"] = requirements["y"].as_number() + gameObjectPosition.y;
+                m_scene.getScene()
+                    .createGameObject(gameObject.at("type"), gameObjectId)
+                    .initFromVili(requirements);
             }
         }
         m_positions[tileIndex] = quad;
@@ -124,6 +140,7 @@ namespace obe::Tiles
                 animation->dettachQuad(quad);
             }
         }
+        // TODO: Clear collision and GameObjects when necessary
         this->clearQuad(quad);
         m_positions.erase(tileIndex);
     }
@@ -239,10 +256,10 @@ namespace obe::Tiles
 
             surface.draw(layer, states);
         }
-        for (const auto& collider : m_colliders)
+        /*for (const auto& collider : m_colliders)
         {
             drawCollider(surface, camera, *collider);
-        }
+        }*/
     }
 
     void TileLayer::setTile(uint32_t x, uint32_t y, uint32_t tileId)

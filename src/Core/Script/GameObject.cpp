@@ -336,6 +336,14 @@ namespace obe::Script
         m_lua.safe_script(query, m_environment);
     }
 
+    void GameObject::initFromVili(const vili::node& data)
+    {
+        Debug::Log->debug("<GameObject> Sending Local.Init table to "
+                          "GameObject {1} ({2}) (From Vili)",
+            m_id, m_type);
+        m_environment["__INIT_ARG_TABLE"] = ViliLuaBridge::viliToLua(data);
+    }
+
     void GameObject::deleteObject()
     {
         if (!this->deletable)

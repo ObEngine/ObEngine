@@ -1,5 +1,6 @@
 #include <Bindings/obe/Tiles/Tiles.hpp>
 
+#include <Scene/Scene.hpp>
 #include <Tiles/Animation.hpp>
 #include <Tiles/Layer.hpp>
 #include <Tiles/Scene.hpp>
@@ -87,7 +88,9 @@ namespace obe::Tiles::Bindings
         sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
         sol::usertype<obe::Tiles::TileScene> bindTileScene
             = TilesNamespace.new_usertype<obe::Tiles::TileScene>("TileScene",
-                sol::call_constructor, sol::default_constructor, sol::base_classes,
+                sol::call_constructor,
+                sol::constructors<obe::Tiles::TileScene(Scene::Scene&)>(),
+                sol::base_classes,
                 sol::bases<obe::Types::Serializable>());
         bindTileScene["dump"] = &obe::Tiles::TileScene::dump;
         bindTileScene["load"] = &obe::Tiles::TileScene::load;

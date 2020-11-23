@@ -1,3 +1,4 @@
+#include <Scene/Scene.hpp>
 #include <Tiles/Layer.hpp>
 #include <Tiles/Scene.hpp>
 
@@ -13,6 +14,11 @@ namespace obe::Tiles
         {
             layer->build();
         }
+    }
+
+    TileScene::TileScene(Scene::Scene& scene)
+        : m_scene(scene)
+    {
     }
 
     vili::node TileScene::dump() const
@@ -74,6 +80,13 @@ namespace obe::Tiles
                     }
 
                     m_colliderModels.push_back(std::move(model));
+                }
+            }
+            if (tileset.contains("objects"))
+            {
+                for (const vili::node& gameObject : tileset.at("objects"))
+                {
+                    m_gameObjectsModels.push_back(gameObject);
                 }
             }
         }
@@ -167,5 +180,15 @@ namespace obe::Tiles
             result.push_back(collider.get());
         }
         return result;
+    }
+
+    const std::vector<vili::node>& TileScene::getGameObjectsModels() const
+    {
+        return m_gameObjectsModels;
+    }
+
+    Scene::Scene& TileScene::getScene() const
+    {
+        return m_scene;
     }
 }
