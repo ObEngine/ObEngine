@@ -18,6 +18,9 @@ namespace obe::Scene
     class Scene;
 }
 
+/**
+ * \additionalinclude{Scene/Scene.hpp}
+ */
 namespace obe::Tiles
 {
     class TileScene : public Types::Serializable
@@ -52,6 +55,11 @@ namespace obe::Tiles
         std::vector<Graphics::Renderable*> getRenderables() const;
         std::vector<Collision::PolygonalCollider*> getColliderModels() const;
         const std::vector<vili::node>& getGameObjectsModels() const;
+
+        uint32_t getWidth() const;
+        uint32_t getHeight() const;
+        uint32_t getTileWidth() const;
+        uint32_t getTileHeight() const;
 
         Scene::Scene& getScene() const;
     };

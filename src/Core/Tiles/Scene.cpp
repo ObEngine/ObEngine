@@ -187,6 +187,26 @@ namespace obe::Tiles
         return m_gameObjectsModels;
     }
 
+    uint32_t TileScene::getWidth() const
+    {
+        return m_width;
+    }
+
+    uint32_t TileScene::getHeight() const
+    {
+        return m_height;
+    }
+
+    uint32_t TileScene::getTileWidth() const
+    {
+        return m_tileWidth;
+    }
+
+    uint32_t TileScene::getTileHeight() const
+    {
+        return m_tileHeight;
+    }
+
     Scene::Scene& TileScene::getScene() const
     {
         return m_scene;

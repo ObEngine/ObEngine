@@ -136,6 +136,7 @@ namespace obe::Bindings
         obe::Animation::Bindings::LoadEnumAnimatorTargetScaleMode(state);
         obe::Animation::Bindings::LoadFunctionStringToAnimationPlayMode(state);
         obe::Animation::Bindings::LoadFunctionAnimationValidator(state);
+        obe::Animation::Bindings::LoadFunctionStringToAnimatorTargetScaleMode(state);
 
         obe::Animation::Exceptions::Bindings::LoadClassAnimationGroupTextureIndexOverflow(
             state);
@@ -149,6 +150,7 @@ namespace obe::Bindings
         obe::Animation::Exceptions::Bindings::LoadClassUnknownAnimationPlayMode(state);
         obe::Animation::Exceptions::Bindings::LoadClassUnknownEasingFromEnum(state);
         obe::Animation::Exceptions::Bindings::LoadClassUnknownEasingFromString(state);
+        obe::Animation::Exceptions::Bindings::LoadClassUnknownTargetScaleMode(state);
 
         obe::Audio::Bindings::LoadClassAudioManager(state);
         obe::Audio::Bindings::LoadClassSound(state);

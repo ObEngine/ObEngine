@@ -64,7 +64,10 @@ namespace obe::Transform::Bindings
         sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
         sol::usertype<obe::Transform::Polygon> bindPolygon
             = TransformNamespace.new_usertype<obe::Transform::Polygon>("Polygon",
-                sol::call_constructor, sol::default_constructor, sol::base_classes,
+                sol::call_constructor,
+                sol::constructors<obe::Transform::Polygon(),
+                    obe::Transform::Polygon(const obe::Transform::Polygon&)>(),
+                sol::base_classes,
                 sol::bases<obe::Transform::UnitBasedObject, obe::Transform::Movable>());
         bindPolygon["addPoint"] = sol::overload(
             [](obe::Transform::Polygon* self, const obe::Transform::UnitVector& position)
@@ -229,6 +232,12 @@ namespace obe::Transform::Bindings
         bindRect["y"] = sol::property(&obe::Transform::Rect::y);
         bindRect["width"] = sol::property(&obe::Transform::Rect::width);
         bindRect["height"] = sol::property(&obe::Transform::Rect::height);
+        bindRect["intersects"] = &obe::Transform::Rect::intersects;
+        bindRect["contains"] = sol::overload(
+            static_cast<bool (obe::Transform::Rect::*)(const obe::Transform::Rect&)
+                    const>(&obe::Transform::Rect::contains),
+            static_cast<bool (obe::Transform::Rect::*)(const obe::Transform::UnitVector&)
+                    const>(&obe::Transform::Rect::contains));
     }
     void LoadClassReferential(sol::state_view state)
     {
