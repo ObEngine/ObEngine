@@ -163,4 +163,10 @@ namespace obe::Animation::Bindings
         AnimationNamespace.set_function(
             "AnimationValidator", obe::Animation::AnimationValidator);
     }
+    void LoadFunctionStringToAnimatorTargetScaleMode(sol::state_view state)
+    {
+        sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
+        AnimationNamespace.set_function("stringToAnimatorTargetScaleMode",
+            obe::Animation::stringToAnimatorTargetScaleMode);
+    }
 };

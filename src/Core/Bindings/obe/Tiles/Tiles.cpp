@@ -19,7 +19,14 @@ namespace obe::Tiles::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Tiles::AnimatedTile(const obe::Tiles::Tileset&,
                     std::vector<uint32_t>, std::vector<obe::Time::TimeUnit>)>());
-        bindAnimatedTile["attachQuad"] = &obe::Tiles::AnimatedTile::attachQuad;
+        bindAnimatedTile["attachQuad"] = sol::overload(
+            [](obe::Tiles::AnimatedTile* self, sf::Vertex* quad) -> void {
+                return self->attachQuad(quad);
+            },
+            [](obe::Tiles::AnimatedTile* self, sf::Vertex* quad,
+                obe::Tiles::TileInfo tileInfo) -> void {
+                return self->attachQuad(quad, tileInfo);
+            });
         bindAnimatedTile["dettachQuad"] = &obe::Tiles::AnimatedTile::dettachQuad;
         bindAnimatedTile["start"] = &obe::Tiles::AnimatedTile::start;
         bindAnimatedTile["stop"] = &obe::Tiles::AnimatedTile::stop;
@@ -66,6 +73,7 @@ namespace obe::Tiles::Bindings
         bindTilesetCollection["size"] = &obe::Tiles::TilesetCollection::size;
         bindTilesetCollection["getTilesetsFirstTilesIds"]
             = &obe::Tiles::TilesetCollection::getTilesetsFirstTilesIds;
+        bindTilesetCollection["clear"] = &obe::Tiles::TilesetCollection::clear;
     }
     void LoadClassTileLayer(sol::state_view state)
     {
@@ -89,17 +97,24 @@ namespace obe::Tiles::Bindings
         sol::usertype<obe::Tiles::TileScene> bindTileScene
             = TilesNamespace.new_usertype<obe::Tiles::TileScene>("TileScene",
                 sol::call_constructor,
-                sol::constructors<obe::Tiles::TileScene(Scene::Scene&)>(),
-                sol::base_classes,
-                sol::bases<obe::Types::Serializable>());
+                sol::constructors<obe::Tiles::TileScene(obe::Scene::Scene&)>(),
+                sol::base_classes, sol::bases<obe::Types::Serializable>());
         bindTileScene["dump"] = &obe::Tiles::TileScene::dump;
         bindTileScene["load"] = &obe::Tiles::TileScene::load;
         bindTileScene["update"] = &obe::Tiles::TileScene::update;
+        bindTileScene["clear"] = &obe::Tiles::TileScene::clear;
         bindTileScene["getLayer"] = &obe::Tiles::TileScene::getLayer;
         bindTileScene["getAnimatedTiles"] = &obe::Tiles::TileScene::getAnimatedTiles;
         bindTileScene["getTilesets"] = &obe::Tiles::TileScene::getTilesets;
         bindTileScene["getRenderables"] = &obe::Tiles::TileScene::getRenderables;
         bindTileScene["getColliderModels"] = &obe::Tiles::TileScene::getColliderModels;
+        bindTileScene["getGameObjectsModels"]
+            = &obe::Tiles::TileScene::getGameObjectsModels;
+        bindTileScene["getWidth"] = &obe::Tiles::TileScene::getWidth;
+        bindTileScene["getHeight"] = &obe::Tiles::TileScene::getHeight;
+        bindTileScene["getTileWidth"] = &obe::Tiles::TileScene::getTileWidth;
+        bindTileScene["getTileHeight"] = &obe::Tiles::TileScene::getTileHeight;
+        bindTileScene["getScene"] = &obe::Tiles::TileScene::getScene;
     }
     void LoadClassTextureQuadsIndex(sol::state_view state)
     {

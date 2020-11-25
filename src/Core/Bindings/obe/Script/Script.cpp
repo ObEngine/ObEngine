@@ -31,6 +31,7 @@ namespace obe::Script::Bindings
         bindGameObject["SceneNode"]
             = sol::property(&obe::Script::GameObject::getSceneNode);
         bindGameObject["exec"] = &obe::Script::GameObject::exec;
+        bindGameObject["initFromVili"] = &obe::Script::GameObject::initFromVili;
         bindGameObject["sendInitArg"] = &obe::Script::GameObject::sendInitArgFromLua;
         bindGameObject["loadGameObject"] = sol::overload(
             [](obe::Script::GameObject* self, obe::Scene::Scene& scene,

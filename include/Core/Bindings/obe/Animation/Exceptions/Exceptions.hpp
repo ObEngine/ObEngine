@@ -16,4 +16,5 @@ namespace obe::Animation::Exceptions::Bindings
     void LoadClassUnknownAnimationPlayMode(sol::state_view state);
     void LoadClassUnknownEasingFromEnum(sol::state_view state);
     void LoadClassUnknownEasingFromString(sol::state_view state);
+    void LoadClassUnknownTargetScaleMode(sol::state_view state);
 };

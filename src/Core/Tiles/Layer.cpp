@@ -72,16 +72,21 @@ namespace obe::Tiles
                 {
                     Debug::Log->info("  - Point x: {}, y: {}", point->x, point->y);
                 }
-                m_colliders.push_back(
-                    std::make_unique<Collision::PolygonalCollider>(*collider));
-                const Transform::Rect boundingBox = m_colliders.back()->getBoundingBox();
+                m_colliders[tileIndex] = std::make_unique<Collision::PolygonalCollider>(*collider);
+                const Transform::Rect boundingBox
+                    = m_colliders.at(tileIndex)->getBoundingBox();
                 Transform::UnitVector offset
-                    = m_colliders.back()->get(0) - boundingBox.getPosition();
+                    = m_colliders.at(tileIndex)->get(0) - boundingBox.getPosition();
                 offset += boundingBox.getPosition();
-                m_colliders.back()->setPosition(
+                // TODO: Fix this horrible code
+                // TODO: I mean, really, fix this
+                auto cameraSizeBackup = m_scene.getScene().getCamera().getSize().y / 2;
+                m_scene.getScene().getCamera().setSize(1);
+                m_colliders.at(tileIndex)->setPosition(
                     Transform::UnitVector(x * tileset.getTileWidth(),
                         y * tileset.getTileHeight(), Transform::Units::ScenePixels)
                     + offset);
+                m_scene.getScene().getCamera().setSize(cameraSizeBackup);
                 break;
             }
         }
@@ -140,6 +145,11 @@ namespace obe::Tiles
                 animation->dettachQuad(quad);
             }
         }
+        if (const auto tileCollision = m_colliders.find(tileIndex); tileCollision != m_colliders.end())
+        {
+            m_colliders.erase(tileCollision);
+        }
+        
         // TODO: Clear collision and GameObjects when necessary
         this->clearQuad(quad);
         m_positions.erase(tileIndex);
@@ -256,10 +266,10 @@ namespace obe::Tiles
 
             surface.draw(layer, states);
         }
-        /*for (const auto& collider : m_colliders)
+        for (const auto& collider : m_colliders)
         {
-            drawCollider(surface, camera, *collider);
-        }*/
+            drawCollider(surface, camera, *collider.second);
+        }
     }
 
     void TileLayer::setTile(uint32_t x, uint32_t y, uint32_t tileId)

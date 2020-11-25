@@ -133,4 +133,16 @@ namespace obe::Animation::Exceptions::Bindings
                     std::string_view, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::Exception>());
     }
+    void LoadClassUnknownTargetScaleMode(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["Animation"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Animation::Exceptions::UnknownTargetScaleMode>
+            bindUnknownTargetScaleMode = ExceptionsNamespace.new_usertype<
+                obe::Animation::Exceptions::UnknownTargetScaleMode>(
+                "UnknownTargetScaleMode", sol::call_constructor,
+                sol::constructors<obe::Animation::Exceptions::UnknownTargetScaleMode(
+                    std::string_view, obe::DebugInfo)>(),
+                sol::base_classes, sol::bases<obe::Exception>());
+    }
 };

@@ -59,18 +59,32 @@ namespace obe::Graphics
             = camera.getPosition().to<Transform::Units::ScenePixels>();
         std::array<sf::Vertex, 4> vertices;
 
+        /*auto size = Rect::getSize();
+        if (m_positionTransformer.getXTransformerName() == "Parallax" && m_positionTransformer.getYTransformerName() == "Parallax")
+        {
+            Rect::setSize(size * camera.getSize().y * (m_layer * 0.1), Transform::Referential::TopLeft);
+        }*/
+
         vertices[0] = toSfVertex(m_positionTransformer(
             Rect::getPosition(Transform::Referential::TopLeft), pixelCamera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
         vertices[1] = toSfVertex(m_positionTransformer(
-            Rect::getPosition(Transform::Referential::BottomLeft), pixelCamera, m_layer)
+            Rect::getPosition(Transform::Referential::BottomLeft), pixelCamera,
+            m_layer)
                                      .to<Transform::Units::ScenePixels>());
         vertices[2] = toSfVertex(m_positionTransformer(
             Rect::getPosition(Transform::Referential::TopRight), pixelCamera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
         vertices[3] = toSfVertex(m_positionTransformer(
-            Rect::getPosition(Transform::Referential::BottomRight), pixelCamera, m_layer)
+            Rect::getPosition(Transform::Referential::BottomRight), pixelCamera,
+            m_layer)
                                      .to<Transform::Units::ScenePixels>());
+
+        /*if (m_positionTransformer.getXTransformerName() == "Parallax"
+            && m_positionTransformer.getYTransformerName() == "Parallax")
+        {
+            Rect::setSize(size, Transform::Referential::TopLeft);
+        }*/
 
         m_sprite.setVertices(vertices);
 

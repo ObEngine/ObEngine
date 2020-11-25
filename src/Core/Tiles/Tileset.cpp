@@ -5,6 +5,7 @@
 #include <SFML/Graphics/Sprite.hpp>
 
 #include "Debug/Logger.hpp"
+#include "System/Path.hpp"
 
 namespace obe::Tiles
 {
@@ -22,7 +23,7 @@ namespace obe::Tiles
         m_margin = margin;
         m_spacing = spacing;
 
-        m_image.loadFromFile(m_imagePath);
+        m_image.loadFromFile(System::Path(m_imagePath).find());
         // m_image.setAntiAliasing(true);
         m_imageWidth = m_image.getSize().to<Transform::Units::ScenePixels>().x;
         m_imageHeight = m_image.getSize().to<Transform::Units::ScenePixels>().y;
