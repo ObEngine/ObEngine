@@ -21,6 +21,7 @@ namespace obe::Animation
         ValueTweening& from(double from);
         ValueTweening& to(double to);
         ValueTweening& ease(const Easing::EasingFunction& easing);
+        bool done() const;
         double step(double dt);
     };
 }

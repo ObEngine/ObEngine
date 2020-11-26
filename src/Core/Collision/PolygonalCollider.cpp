@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 
 #include <Collision/Exceptions.hpp>
@@ -94,11 +95,6 @@ namespace obe::Collision
     {
         m_parentId = collider.m_parentId;
         m_tags = collider.m_tags;
-        if (collider.m_tags.at(ColliderTagType::Tag).size() >= 1
-            && collider.m_tags.at(ColliderTagType::Tag)[0] == "Spike")
-        {
-            1;
-        }
         m_angle = collider.m_angle;
         m_unit = collider.m_unit;
         m_position = collider.m_position;
@@ -241,6 +237,21 @@ namespace obe::Collision
     {
         const Transform::Units pxUnit = Transform::Units::ScenePixels;
         const Transform::UnitVector tOffset = offset.to(pxUnit);
+        Transform::Rect fromBoundingBox = this->getBoundingBox();
+        Transform::Rect toBoundingBox = fromBoundingBox;
+        toBoundingBox.move(offset);
+        const Transform::UnitVector minXY(
+            std::min(fromBoundingBox.x(), toBoundingBox.x()),
+            std::min(fromBoundingBox.y(), toBoundingBox.y()));
+        const Transform::UnitVector maxXY(
+            std::max(fromBoundingBox.x(), toBoundingBox.x()),
+            std::max(fromBoundingBox.y(), toBoundingBox.y()));
+        fromBoundingBox.setPosition(minXY);
+        fromBoundingBox.setSize(maxXY);
+        if (!fromBoundingBox.intersects(collider.getBoundingBox()))
+        {
+            return tOffset;
+        }
         bool inFront = false;
         Transform::UnitVector minDep;
         const auto calcMinDistanceDep = [this](const Transform::PolygonPath& sol1,
@@ -326,6 +337,12 @@ namespace obe::Collision
     bool PolygonalCollider::doesCollide(
         PolygonalCollider& collider, const Transform::UnitVector& offset) const
     {
+        Transform::Rect boundingBox = this->getBoundingBox();
+        boundingBox.move(offset);
+        if (!boundingBox.intersects(collider.getBoundingBox()))
+        {
+            return false;
+        }
         std::vector<Transform::UnitVector> pSet1;
         pSet1.reserve(m_points.size());
         std::vector<Transform::UnitVector> pSet2;
