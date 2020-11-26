@@ -33,6 +33,11 @@ namespace obe::Animation
         return *this;
     }
 
+    bool ValueTweening::done() const
+    {
+        return (m_current / m_duration) >= 1;
+    }
+
     double ValueTweening::step(double dt)
     {
         m_current += dt;
