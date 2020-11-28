@@ -72,7 +72,8 @@ namespace obe::Tiles
                 {
                     Debug::Log->info("  - Point x: {}, y: {}", point->x, point->y);
                 }
-                m_colliders[tileIndex] = std::make_unique<Collision::PolygonalCollider>(*collider);
+                m_colliders[tileIndex] = &m_scene.getScene().createCollider();
+                (*m_colliders[tileIndex]) = *collider;
                 const Transform::Rect boundingBox
                     = m_colliders.at(tileIndex)->getBoundingBox();
                 Transform::UnitVector offset
@@ -147,6 +148,7 @@ namespace obe::Tiles
         }
         if (const auto tileCollision = m_colliders.find(tileIndex); tileCollision != m_colliders.end())
         {
+            m_scene.getScene().removeCollider(tileCollision->second->getId());
             m_colliders.erase(tileCollision);
         }
         

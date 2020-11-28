@@ -68,7 +68,8 @@ namespace obe::Tiles
                             + tileset.at("firstTileId").as<vili::integer>());
                     std::unique_ptr<Collision::PolygonalCollider> model
                         = std::make_unique<Collision::PolygonalCollider>(collisionId);
-                    int i = 0;
+                    model->load(collision);
+                    /*int i = 0;
                     for (const vili::node& point : collision.at("points"))
                     {
                         model->addPoint(Transform::UnitVector(
@@ -77,8 +78,7 @@ namespace obe::Tiles
                         Debug::Log->info("  - BUILD[{}] P{} = ({}, {})", collisionId, i,
                             pointDbg.x, pointDbg.y);
                         i++;
-                    }
-
+                    }*/
                     m_colliderModels.push_back(std::move(model));
                 }
             }
