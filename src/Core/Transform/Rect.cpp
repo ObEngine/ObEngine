@@ -178,13 +178,14 @@ namespace obe::Transform
 
     bool Rect::contains(const UnitVector& position) const
     {
+        const UnitVector converted_position = position.to(m_position.unit);
         const auto minX = std::min(m_position.x, m_position.x + m_size.x);
         const auto maxX = std::max(m_position.x, m_position.x + m_size.x);
         const auto minY = std::min(m_position.y, m_position.y + m_size.y);
         const auto maxY = std::max(m_position.y, m_position.y + m_size.y);
 
-        return (position.x >= minX) && (position.x < maxX) && (position.y >= minY)
-            && (position.y < maxY);
+        return (converted_position.x >= minX) && (converted_position.x < maxX)
+            && (converted_position.y >= minY) && (converted_position.y < maxY);
     }
 
     void Rect::setPointPosition(const UnitVector& position, const Referential& ref)

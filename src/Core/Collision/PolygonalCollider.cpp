@@ -100,6 +100,25 @@ namespace obe::Collision
         m_position = collider.m_position;
     }
 
+    void PolygonalCollider::operator=(const PolygonalCollider& collider)
+    {
+        m_angle = collider.m_angle;
+        m_position = collider.m_position;
+        m_unit = collider.m_unit;
+        size_t index = 0;
+        for (const auto& point : collider.m_points)
+        {
+            m_points.push_back(std::make_unique<Transform::PolygonPoint>(
+                *this, index++, Transform::UnitVector(point->x, point->y, point->unit)));
+        }
+
+        m_parentId = collider.m_parentId;
+        m_tags = collider.m_tags;
+        m_angle = collider.m_angle;
+        m_unit = collider.m_unit;
+        m_position = collider.m_position;
+    }
+
     std::string_view PolygonalCollider::type() const
     {
         return ComponentType;

@@ -23,7 +23,7 @@ namespace obe::Tiles
         std::unordered_map<uint32_t, sf::Vertex*> m_positions;
         std::unordered_map<uint32_t, sf::VertexArray> m_cache;
         const TileScene& m_scene;
-        std::unordered_map<uint32_t, std::unique_ptr<Collision::PolygonalCollider>> m_colliders;
+        std::unordered_map<uint32_t, Collision::PolygonalCollider*> m_colliders;
 
         std::string m_id;
         uint32_t m_x;
