@@ -73,7 +73,7 @@ namespace obe::Transform
     double PolygonSegment::getAngle() const
     {
         const double deltaX = second.x - first.x;
-        const double deltaY = second.y - first.y;
+        const double deltaY = first.y - second.y; // inverse y to get angle in counterclockwise direction
         return (std::atan2(deltaY, deltaX) * 180.0 / Utils::Math::pi);
     }
 
