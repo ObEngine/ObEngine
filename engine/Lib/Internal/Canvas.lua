@@ -746,7 +746,7 @@ function obe.Canvas.Canvas:GenerateId(id)
         error("CanvasElement '" .. tostring(id) .. "' already exists !");
     end
     while id == nil or self.internal:get(id) ~= nil do
-        id = obe.String.getRandomKey(obe.String.Alphabet .. obe.String.Numbers, 12);
+        id = obe.Utils.String.getRandomKey(obe.Utils.String.Alphabet .. obe.Utils.String.Numbers, 12);
     end
     return id;
 end
