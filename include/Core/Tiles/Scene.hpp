@@ -49,18 +49,18 @@ namespace obe::Tiles
         void update();
         void clear();
 
-        TileLayer& getLayer(const std::string& id) const;
-        AnimatedTiles getAnimatedTiles() const;
-        const TilesetCollection& getTilesets() const;
-        std::vector<Graphics::Renderable*> getRenderables() const;
-        std::vector<Collision::PolygonalCollider*> getColliderModels() const;
-        const std::vector<vili::node>& getGameObjectsModels() const;
+        [[nodiscard]] TileLayer& getLayer(const std::string& id) const;
+        [[nodiscard]] AnimatedTiles getAnimatedTiles() const;
+        [[nodiscard]] const TilesetCollection& getTilesets() const;
+        [[nodiscard]] std::vector<Graphics::Renderable*> getRenderables() const;
+        [[nodiscard]] std::vector<Collision::PolygonalCollider*> getColliderModels() const;
+        [[nodiscard]] const std::vector<vili::node>& getGameObjectsModels() const;
 
-        uint32_t getWidth() const;
-        uint32_t getHeight() const;
-        uint32_t getTileWidth() const;
-        uint32_t getTileHeight() const;
+        [[nodiscard]] uint32_t getWidth() const;
+        [[nodiscard]] uint32_t getHeight() const;
+        [[nodiscard]] uint32_t getTileWidth() const;
+        [[nodiscard]] uint32_t getTileHeight() const;
 
-        Scene::Scene& getScene() const;
+        [[nodiscard]] Scene::Scene& getScene() const;
     };
 }

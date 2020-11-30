@@ -144,6 +144,7 @@ namespace obe::Tiles
             if (animation->getId() == oldTileId)
             {
                 animation->dettachQuad(quad);
+                break;
             }
         }
         if (const auto tileCollision = m_colliders.find(tileIndex); tileCollision != m_colliders.end())
@@ -152,7 +153,7 @@ namespace obe::Tiles
             m_colliders.erase(tileCollision);
         }
         
-        // TODO: Clear collision and GameObjects when necessary
+        // TODO: Clear GameObjects when necessary
         this->clearQuad(quad);
         m_positions.erase(tileIndex);
     }
@@ -282,11 +283,11 @@ namespace obe::Tiles
         }
         const uint32_t tileIndex = x + y * m_width;
         const uint32_t oldTileId = m_data[tileIndex];
-        m_data[tileIndex] = tileId;
         if (oldTileId)
         {
             this->clearTile(x, y);
         }
+        m_data[tileIndex] = tileId;
         this->buildTile(x, y, tileId);
     }
 

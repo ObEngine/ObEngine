@@ -140,8 +140,6 @@ namespace obe::Tiles
         {
             if (layer->getId() == id)
             {
-                Debug::Log->info("GetLayer TileScene @{} with Animations @{}",
-                    fmt::ptr(this), fmt::ptr(&m_animatedTiles));
                 return *layer;
             }
         }
