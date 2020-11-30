@@ -146,8 +146,6 @@ namespace obe::Engine
                 Debug::Log->info("Log Level {}", logLevel);
             }
         }
-        entt::registry registry;
-        Entities::SpriteEntity x(registry, "lol");
     }
 
     void Engine::clean() const
@@ -253,6 +251,13 @@ namespace obe::Engine
         this->initResources();
         this->initScene();
         m_initialized = true;
+
+        m_entities.push_back(std::make_unique<Entities::SpriteEntity>(m_registry, "lol"));
+        m_entities.back()->load(vili::object { { "path", "Sprites/ballon.png" },
+            { "visible", true }, { "rotation", 45 },
+            { "rect",
+                vili::object {
+                    { "x", 0 }, { "y", 0 }, { "width", 1 }, { "height", 1 } } } });
     }
 
     void Engine::run() const
@@ -287,6 +292,7 @@ namespace obe::Engine
         m_framerate->start();
         vili::array dts;
         Time::TimeUnit start = Time::epoch();
+
         while (m_window->isOpen())
         {
             m_framerate->update();
@@ -302,6 +308,9 @@ namespace obe::Engine
             {
                 e_game->trigger(Events::Game::Render {});
                 this->render();
+                Graphics::RenderTarget target = m_window->getTarget();
+                Debug::Log->info("Calling Draw System");
+                m_window->display();
                 m_framerate->reset();
             }
             else
@@ -388,6 +397,8 @@ namespace obe::Engine
         {
             m_window->clear();
             m_scene->draw(m_window->getTarget());
+            Graphics::RenderTarget target = m_window->getTarget();
+            Entities::drawSystem(m_registry, m_scene->getCamera(), target);
 
             m_window->display();
         }

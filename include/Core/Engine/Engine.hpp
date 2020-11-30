@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Entities/Entity.hpp"
+
 #include <Audio/AudioManager.hpp>
 #include <Config/Config.hpp>
 #include <Engine/ResourceManager.hpp>
@@ -10,6 +12,7 @@
 #include <System/Plugin.hpp>
 #include <System/Window.hpp>
 #include <Time/FramerateManager.hpp>
+#include <entt/entity/registry.hpp>
 #include <sol/sol.hpp>
 
 namespace obe::Bindings
@@ -48,6 +51,8 @@ namespace obe::Engine
     {
     protected:
         bool m_initialized = false;
+        entt::registry m_registry;
+        std::vector<std::unique_ptr<Entities::EntityBase>> m_entities;
         std::vector<std::unique_ptr<System::Plugin>> m_plugins;
         std::unique_ptr<sol::state> m_lua;
         std::unique_ptr<Scene::Scene> m_scene;

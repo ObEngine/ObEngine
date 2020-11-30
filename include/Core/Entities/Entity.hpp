@@ -20,7 +20,22 @@ namespace obe::Entities
         (func(num<Is> {}), ...);
     }
 
-    template <class... ComponentTypes> class Entity
+    class EntityBase
+    {
+    protected:
+        entt::registry& m_registry;
+        entt::entity m_entity;
+
+    public:
+        EntityBase(entt::registry& registry, const std::string& id);
+        virtual ~EntityBase();
+
+        [[nodiscard]] entt::entity entity() const;
+        [[nodiscard]] virtual vili::node dump() const = 0;
+        virtual void load(const vili::node& data) = 0;
+    };
+
+    template <class... ComponentTypes> class Entity : public EntityBase
     {
     private:
         template <class ComponentType> void buildSingle(ComponentType component);
@@ -29,20 +44,14 @@ namespace obe::Entities
         template <class ComponentType> void buildSingle();
         template <class... ComponentPack> void build();
 
-    protected:
-        entt::registry& m_registry;
-        entt::entity m_entity;
-
     public:
         Entity(entt::registry& registry, const std::string& id);
         Entity(entt::registry& registry, const std::string& id,
             ComponentTypes... components);
-        virtual ~Entity();
+        ~Entity() override = default;
 
-        [[nodiscard]] entt::entity entity() const;
-
-        [[nodiscard]] virtual vili::node dump() const = 0;
-        virtual void load(const vili::node& data) = 0;
+        [[nodiscard]] vili::node dump() const override = 0;
+        void load(const vili::node& data) override = 0;
     };
 
     template <class... Types>
@@ -79,29 +88,16 @@ namespace obe::Entities
 
     template <class... ComponentTypes>
     Entity<ComponentTypes...>::Entity(entt::registry& registry, const std::string& id)
-        : m_registry(registry)
+        : EntityBase(registry, id)
     {
-        m_entity = registry.create();
-        buildSingle<Types::Identifiable>(Types::Identifiable(id));
         build<ComponentTypes...>();
     }
 
     template <class... ComponentTypes>
     Entity<ComponentTypes...>::Entity(
         entt::registry& registry, const std::string& id, ComponentTypes... components)
-        : Entity(registry, id)
+        : EntityBase(registry, id)
     {
         build<ComponentTypes...>(components...);
-    }
-
-    template <class... ComponentTypes> Entity<ComponentTypes...>::~Entity()
-    {
-        m_registry.destroy(m_entity);
-    }
-
-    template <class... ComponentTypes>
-    entt::entity Entity<ComponentTypes...>::entity() const
-    {
-        return m_entity;
     }
 }
