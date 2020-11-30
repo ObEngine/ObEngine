@@ -236,7 +236,7 @@ namespace obe::Collision
     bool PolygonalCollider::doesHaveAnyTag(
         ColliderTagType tagType, const std::vector<std::string>& tags) const
     {
-        if (m_tags.size() == 0)
+        if (m_tags.empty())
             return false;
         for (const std::string& tag : tags)
         {

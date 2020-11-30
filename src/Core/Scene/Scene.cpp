@@ -551,8 +551,9 @@ namespace obe::Scene
     std::vector<Collision::PolygonalCollider*> Scene::getAllColliders() const
     {
         std::vector<Collision::PolygonalCollider*> allColliders;
-        for (auto& collider : m_colliderArray)
+        for (const auto& collider : m_colliderArray)
             allColliders.push_back(collider.get());
+        Debug::Log->info("All colliders : {}", allColliders.size());
         return allColliders;
     }
 
