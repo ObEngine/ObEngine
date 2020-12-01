@@ -69,6 +69,7 @@ namespace obe::Tiles
             {
                 m_colliders[tileIndex] = &m_scene.getScene().createCollider();
                 (*m_colliders[tileIndex]) = *collider;
+                m_colliders[tileIndex]->setParentId("tile_" + std::to_string(tileInfo.tileId));
                 const Transform::Rect boundingBox
                     = m_colliders.at(tileIndex)->getBoundingBox();
                 Transform::UnitVector offset
@@ -205,6 +206,7 @@ namespace obe::Tiles
         , m_data(std::move(data))
     {
         m_layer = layer;
+        m_visible = true;
     }
 
     std::string TileLayer::getId() const
