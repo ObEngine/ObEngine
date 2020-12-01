@@ -47,6 +47,9 @@ namespace obe::Audio
         void setPitch(float pitch);
         [[nodiscard]] float getPitch() const;
 
+        void setSpeed(float speed) const;
+        [[nodiscard]] float getSpeed() const;
+
         [[nodiscard]] SoundStatus getStatus() const;
 
         [[nodiscard]] double getOffset() const;

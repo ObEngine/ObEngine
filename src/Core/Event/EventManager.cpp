@@ -39,6 +39,7 @@ namespace obe::Event
         m_namespaces.clear(); // TODO: Clean EventNamespaces
         m_chrono.reset();
         m_chrono.start();
+        m_schedulers.clear();
     }
 
     EventNamespace& EventManager::createNamespace(const std::string& eventNamespace)

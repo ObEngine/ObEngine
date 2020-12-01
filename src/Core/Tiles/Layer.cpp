@@ -67,11 +67,6 @@ namespace obe::Tiles
         {
             if (collider->getId() == std::to_string(tileInfo.tileId))
             {
-                Debug::Log->info("Collider points");
-                for (const auto& point : collider->getAllPoints())
-                {
-                    Debug::Log->info("  - Point x: {}, y: {}", point->x, point->y);
-                }
                 m_colliders[tileIndex] = &m_scene.getScene().createCollider();
                 (*m_colliders[tileIndex]) = *collider;
                 const Transform::Rect boundingBox
@@ -269,10 +264,10 @@ namespace obe::Tiles
 
             surface.draw(layer, states);
         }
-        for (const auto& collider : m_colliders)
+        /*for (const auto& collider : m_colliders)
         {
             drawCollider(surface, camera, *collider.second);
-        }
+        }*/
     }
 
     void TileLayer::setTile(uint32_t x, uint32_t y, uint32_t tileId)
