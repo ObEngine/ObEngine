@@ -153,7 +153,10 @@ namespace obe::Engine
             e_game->trigger(Events::Game::End {});
         }
         if (m_events)
+        {
+            m_events->clear();
             m_events->update();
+        }   
         if (m_scene)
         {
             m_scene->clear();

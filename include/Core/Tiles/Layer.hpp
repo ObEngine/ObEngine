@@ -30,7 +30,6 @@ namespace obe::Tiles
         uint32_t m_y;
         uint32_t m_width;
         uint32_t m_height;
-        bool m_visible = true;
         double m_opacity = 1.0;
         std::vector<uint32_t> m_data;
 
