@@ -59,6 +59,17 @@ namespace obe::Audio
     {
         return m_pitch;
     }
+
+    void Sound::setSpeed(float speed) const
+    {
+        m_manager.setRelativePlaySpeed(m_handle, speed);
+    }
+
+    float Sound::getSpeed() const
+    {
+        return m_manager.getRelativePlaySpeed(m_handle);
+    }
+
     SoundStatus Sound::getStatus() const
     {
         if (!m_manager.isValidVoiceHandle(m_handle))
