@@ -136,12 +136,16 @@ namespace obe::Engine
         if (m_config.contains("Debug"))
         {
             vili::node debug = m_config.at("Debug");
-            if (debug.contains("logLevel"))
+            if (debug.contains("Logging"))
             {
-                const unsigned int logLevel = debug.at("logLevel");
-                const auto level = static_cast<spdlog::level::level_enum>(logLevel);
-                Debug::Log->set_level(level);
-                Debug::Log->info("Log Level {}", logLevel);
+                vili::node logging = debug.at("Logging");
+                if (logging.contains("level"))
+                {
+                    const unsigned int logLevel = logging.at("level");
+                    const auto level = static_cast<spdlog::level::level_enum>(logLevel);
+                    Debug::Log->set_level(level);
+                    Debug::Log->info("Log Level {}", logLevel);
+                }
             }
         }
     }
@@ -152,11 +156,6 @@ namespace obe::Engine
         {
             e_game->trigger(Events::Game::End {});
         }
-        if (m_events)
-        {
-            m_events->clear();
-            m_events->update();
-        }   
         if (m_scene)
         {
             m_scene->clear();
@@ -171,19 +170,34 @@ namespace obe::Engine
 
     void Engine::purge()
     {
+        Debug::Log->debug("Cleaning Window");
         m_window.reset();
+        Debug::Log->debug("Cleaning Cursor");
         m_cursor.reset();
+        Debug::Log->debug("Cleaning Framerate");
         m_framerate.reset();
+        Debug::Log->debug("Cleaning Scene");
         m_scene.reset();
+        Debug::Log->debug("Running Lua State Garbage Collection");
         if (m_lua)
         {
             m_lua->collect_garbage();
             m_lua->collect_garbage();
         }
+        Debug::Log->debug("Cleaning ResourceManager");
         m_resources.reset();
+        Debug::Log->debug("Cleaning Game Events");
         e_game.reset();
+        Debug::Log->debug("Cleaning InputManager");
         m_input.reset();
+        Debug::Log->debug("Cleaning Events");
+        if (m_events)
+        {
+            m_events->clear();
+            m_events->update();
+        }
         m_events.reset();
+        Debug::Log->debug("Cleaning Lua State");
         m_lua.reset();
     }
 

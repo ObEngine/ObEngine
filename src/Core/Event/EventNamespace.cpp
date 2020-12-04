@@ -28,14 +28,33 @@ namespace obe::Event
     {
     }
 
+    class EventGroupPtrDeleter
+    {
+    private:
+        EventNamespace* m_eventNamespace;
+        EventGroup* m_group;
+    public:
+        EventGroupPtrDeleter(EventNamespace* eventNamespace);
+        void operator()(EventGroup* ptr) const;
+    };
+
+    void EventGroupPtrDeleter::operator()(EventGroup* ptr) const
+    {
+        m_eventNamespace->removeGroup(ptr);
+    }
+
+    EventGroupPtrDeleter::EventGroupPtrDeleter(EventNamespace* eventNamespace) : m_eventNamespace(eventNamespace)
+    {
+    }
+
+
     EventGroupPtr EventNamespace::createGroup(const std::string& group)
     {
         Debug::Log->debug(
             "<EventNamespace> Creating EventGroup '{}' in Namespace '{}'", group, m_name);
         if (!m_groups.count(group))
         {
-            EventGroupPtr newGroup(new EventGroup(m_name, group),
-                [this](EventGroup* ptr) { this->removeGroup(ptr); });
+            EventGroupPtr newGroup(new EventGroup(m_name, group), EventGroupPtrDeleter(this));
             m_groups.emplace(group, newGroup);
             return newGroup;
         }
