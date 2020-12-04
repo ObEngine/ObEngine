@@ -144,10 +144,9 @@ namespace vili::utils::string
         return data_out;
 #else
         long long data_out = 0;
-        const char* str = input.data();
-        while (*str)
+        for (char current_digit : input)
         {
-            data_out = data_out * 10 + (*str++ - '0');
+            data_out = data_out * 10 + (current_digit - '0');
         }
         return data_out;
 #endif
