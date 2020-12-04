@@ -53,6 +53,7 @@ namespace obe::System::Bindings
         bindCursor["setVisible"] = &obe::System::Cursor::setVisible;
         bindCursor["isVisible"] = &obe::System::Cursor::isVisible;
         bindCursor["getPosition"] = &obe::System::Cursor::getPosition;
+        bindCursor["getScenePosition"] = &obe::System::Cursor::getScenePosition;
         bindCursor["update"] = &obe::System::Cursor::update;
         bindCursor["setConstraint"] = sol::overload(
             [](obe::System::Cursor* self,
@@ -182,6 +183,7 @@ namespace obe::System::Bindings
         bindWindow["setTitle"] = &obe::System::Window::setTitle;
         bindWindow["setVerticalSyncEnabled"]
             = &obe::System::Window::setVerticalSyncEnabled;
+        bindWindow["setIcon"] = &obe::System::Window::setIcon;
         bindWindow["setView"] = &obe::System::Window::setView;
         bindWindow["getTarget"] = &obe::System::Window::getTarget;
         bindWindow["getWindow"] = &obe::System::Window::getWindow;

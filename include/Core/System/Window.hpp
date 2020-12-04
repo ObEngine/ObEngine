@@ -4,6 +4,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/Image.hpp>
 #include <vili/node.hpp>
 
 #include <Graphics/Color.hpp>
@@ -26,6 +27,7 @@ namespace obe::System
         int m_style;
         std::string m_title;
         sf::RenderWindow m_window;
+        sf::Image m_icon;
         Graphics::Color m_background = Graphics::Color(0, 0, 0);
 
     public:
@@ -52,6 +54,7 @@ namespace obe::System
         void setTitle(const std::string& title);
         void setVerticalSyncEnabled(bool enabled);
         void setView(const sf::View& view);
+        void setIcon(const std::string& path);
 
         Graphics::RenderTarget getTarget();
         sf::RenderWindow& getWindow();

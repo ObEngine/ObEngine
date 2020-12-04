@@ -117,6 +117,16 @@ namespace obe::System
             m_constrainedX, m_constrainedY, Transform::Units::ScenePixels);
     }
 
+    Transform::UnitVector Cursor::getScenePosition() const
+    {
+        const sf::Vector2i pixelPos(m_constrainedX, m_constrainedY);
+
+        // TODO: Is it suitable behaviour ?
+        const sf::Vector2f worldPos = m_window.getWindow().mapPixelToCoords(pixelPos);
+        return Transform::UnitVector(
+            worldPos.x, worldPos.y, Transform::Units::ScenePixels);
+    }
+
     void Cursor::update()
     {
         const sf::Vector2i mousePos = sf::Mouse::getPosition(m_window.getWindow());

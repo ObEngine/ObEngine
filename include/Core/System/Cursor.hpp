@@ -129,6 +129,7 @@ namespace obe::System
         [[nodiscard]] bool isVisible() const;
 
         [[nodiscard]] Transform::UnitVector getPosition() const;
+        [[nodiscard]] Transform::UnitVector getScenePosition() const;
         /**
          * \brief Updates the Cursor
          */
