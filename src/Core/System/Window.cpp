@@ -1,4 +1,5 @@
 #include <SFML/Window/WindowStyle.hpp>
+#include <SFML/Graphics/Texture.hpp>
 
 #include <System/Path.hpp>
 #include <System/Window.hpp>
@@ -130,6 +131,16 @@ namespace obe::System
     void Window::setView(const sf::View& view)
     {
         m_window.setView(view);
+    }
+
+    void Window::setIcon(const std::string& path)
+    {
+        const std::string& realPath = System::Path(path).find();
+        sf::Texture iconTexture;
+        iconTexture.loadFromFile(realPath);
+        m_icon = iconTexture.copyToImage();
+        
+        m_window.setIcon(32, 32, m_icon.getPixelsPtr());
     }
 
     Graphics::RenderTarget Window::getTarget()
