@@ -32,8 +32,21 @@ namespace obe::Event
 
     void EventBase::onRemoveListener(OnListenerChange callback)
     {
-        m_onRemoveListener = callback;
+        m_onRemoveListener = std::move(callback);
     }
+
+    void EventBase::collectGarbage()
+    {
+        Debug::Log->trace("EventListeners Garbage Collection for Event {} [External]", m_identifier);
+        for (const std::string& listenerId : m_garbageCollector)
+        {
+            Debug::Log->trace("  - Garbage Collecting listener {}",
+                listenerId);
+            m_listeners.erase(listenerId);
+        }
+        m_garbageCollector.clear();
+    }
+
 
     EventBase::EventBase(
         const std::string& parentName, const std::string& name, bool startState)
@@ -76,7 +89,10 @@ namespace obe::Event
     {
         Debug::Log->trace(
             "<Event> Removing listener '{}' from Event '{}'", id, m_identifier);
-        m_listeners.erase(id);
+        if (m_garbageLock)
+            m_garbageCollector.push_back(id);
+        else
+            m_listeners.erase(id);
         if (m_onRemoveListener)
         {
             m_onRemoveListener(ListenerChangeState::Removed, id);

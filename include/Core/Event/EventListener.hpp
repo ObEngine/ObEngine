@@ -5,6 +5,7 @@
 
 #include <sol/sol.hpp>
 
+#include <Debug/Logger.hpp>
 #include <Event/Exceptions.hpp>
 #include <Utils/StringUtils.hpp>
 
@@ -33,7 +34,10 @@ namespace obe::Event
             const auto errObj = result.get<sol::error>();
             const std::string errMsg = "\n        \""
                 + Utils::String::replace(errObj.what(), "\n", "\n        ") + "\"";
-            throw Exceptions::LuaExecutionError(errMsg, EXC_INFO);
+            const auto exception = Exceptions::LuaExecutionError(errMsg, EXC_INFO);
+            Debug::Log->debug(exception.what());
+
+            throw exception;
         }
     }
 
