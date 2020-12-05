@@ -39,6 +39,7 @@ namespace obe::Event
     {
     private:
         std::map<std::string, ExternalEventListener> m_listeners;
+        std::vector<std::string> m_garbageCollector;
 
     protected:
         std::string m_name;
@@ -55,6 +56,8 @@ namespace obe::Event
             const EventType& event);
         void onAddListener(OnListenerChange callback);
         void onRemoveListener(OnListenerChange callback);
+        bool m_garbageLock = false;
+        void collectGarbage();
 
         friend class EventGroup;
 
@@ -105,12 +108,14 @@ namespace obe::Event
     {
     private:
         std::map<std::string, CppEventListener<EventType>> m_listeners;
+        std::vector<std::string> m_garbageCollector;
 
     protected:
         /**
          * \brief Event callbacks
          */
         void trigger(const EventType& event);
+        void collectGarbage();
 
     public:
         /**
@@ -141,7 +146,7 @@ namespace obe::Event
 
     template <class EventType> void EventBase::trigger(const EventType& event)
     {
-        for (const auto listener : m_listeners)
+        for (const auto& listener : m_listeners)
         {
             Debug::Log->trace("<Event> Calling Event Listener '{}' from Event '{}'",
                 listener.first, m_identifier);
@@ -173,12 +178,13 @@ namespace obe::Event
     template <class EventType> void Event<EventType>::trigger(const EventType& event)
     {
         Debug::Log->trace("<Event> Executing Event '{}'", m_identifier);
+        m_garbageLock = true;
 
         if (m_enabled)
         {
             m_triggered = true;
 
-            for (const auto listener : m_listeners)
+            for (const auto& listener : m_listeners)
             {
                 Debug::Log->trace("<Event> Calling Event Listener '{}' from Event '{}'",
                     listener.first, m_identifier);
@@ -186,8 +192,24 @@ namespace obe::Event
                 this->callListener(listener.first, listener.second, event);
             }
             EventBase::trigger<EventType>(event);
+            this->collectGarbage();
+            EventBase::collectGarbage();
             m_triggered = false;
         }
+
+        m_garbageLock = false;
+    }
+
+    template <class EventType>
+    void Event<EventType>::collectGarbage()
+    {
+        Debug::Log->trace(
+            "EventListeners Garbage Collection for Event {}", m_identifier);
+        for (const std::string& listenerId : m_garbageCollector)
+        {
+            m_listeners.erase(listenerId);
+        }
+        m_garbageCollector.clear();
     }
 
     template <class EventType>
@@ -215,7 +237,11 @@ namespace obe::Event
     {
         Debug::Log->trace(
             "<Event> Removing listener '{}' from Event '{}'", id, m_identifier);
-        m_listeners.erase(id);
+
+        if (m_garbageLock)
+            m_garbageCollector.push_back(id);
+        else
+            m_listeners.erase(id);
         if (m_onRemoveListener)
         {
             m_onRemoveListener(ListenerChangeState::Removed, id);
