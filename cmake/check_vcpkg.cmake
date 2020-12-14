@@ -1,9 +1,11 @@
-function(obe_check_vcpkg OBE_USE_VCPKG)
+function(obe_check_vcpkg ${OBE_USE_VCPKG})
     option(USE_VCPKG "Use vcpkg to handle some of the dependencies" OFF)
     if(USE_VCPKG AND DEFINED ENV{VCPKG_ROOT} AND NOT DEFINED CMAKE_TOOLCHAIN_FILE)
         set(OBE_USE_VCPKG ON)
         set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
             CACHE STRING "")
+    else()
+        set(CMAKE_TOOLCHAIN_FILE CACHE STRING "" FORCE)
     endif()
 
     if(${OBE_USE_VCPKG})
