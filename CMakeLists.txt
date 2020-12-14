@@ -11,8 +11,13 @@ project(ObEngine)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 add_subdirectory(extlibs/bezier)
-
-if(NOT OBE_USE_VCPKG)
+if(OBE_USE_VCPKG)
+    find_package(fmt CONFIG REQUIRED)
+    find_package(spdlog CONFIG REQUIRED)
+    find_package(lua CONFIG REQUIRED)
+    find_package(sol2 CONFIG REQUIRED)
+    find_package(Catch2 CONFIG REQUIRED)
+else()
     add_subdirectory(extlibs/catch)
 
     # fmtlib is required by spdlog
@@ -27,13 +32,9 @@ if(NOT OBE_USE_VCPKG)
         add_subdirectory(extlibs/tinydir)
     endif()
 endif()
-
 add_subdirectory(extlibs/dynamicLinker)
 add_subdirectory(extlibs/fswrapper)
-
 add_subdirectory(extlibs/vili)
-
-# Audio library
 add_subdirectory(extlibs/soloud)
 
 if (APPLE OR USE_FILESYSTEM_FALLBACK)
