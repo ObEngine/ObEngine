@@ -1,30 +1,43 @@
 cmake_minimum_required(VERSION 3.16)
 set(OpenGL_GL_PREFERENCE GLVND)
 
+include(cmake/check_vcpkg.cmake)
+
+set(OBE_USE_VCPKG OFF)
+obe_check_vcpkg(OBE_USE_VCPKG)
+
 project(ObEngine)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 
 add_subdirectory(extlibs/bezier)
-add_subdirectory(extlibs/catch)
+if(OBE_USE_VCPKG)
+    find_package(fmt CONFIG REQUIRED)
+    find_package(spdlog CONFIG REQUIRED)
+    find_package(lua CONFIG REQUIRED)
+    find_package(sol2 CONFIG REQUIRED)
+    find_package(Catch2 CONFIG REQUIRED)
+else()
+    add_subdirectory(extlibs/catch)
+
+    # fmtlib is required by spdlog
+    add_subdirectory(extlibs/fmt)
+    add_subdirectory(extlibs/spdlog)
+
+    # lua is required by sol
+    add_subdirectory(extlibs/lua)
+    add_subdirectory(extlibs/sol3)
+    
+    if (APPLE OR USE_FILESYSTEM_FALLBACK)
+        add_subdirectory(extlibs/tinydir)
+    endif()
+endif()
 add_subdirectory(extlibs/dynamicLinker)
 add_subdirectory(extlibs/fswrapper)
-
-# fmtlib is required by spdlog
-add_subdirectory(extlibs/fmt)
-add_subdirectory(extlibs/spdlog)
-
 add_subdirectory(extlibs/vili)
-
-# lua is required by sol
-add_subdirectory(extlibs/lua)
-add_subdirectory(extlibs/sol3)
-
-# Audio library
 add_subdirectory(extlibs/soloud)
 
 if (APPLE OR USE_FILESYSTEM_FALLBACK)
-    add_subdirectory(extlibs/tinydir)
     set(USE_FILESYSTEM_FALLBACK TRUE CACHE BOOL "Use filesystem fallback" FORCE)
 endif()
 
@@ -32,8 +45,8 @@ endif()
 add_subdirectory(extlibs/minizip)
 add_subdirectory(extlibs/elzip)
 
-# SFML 2.5 is minimum version
 find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
+
 # SFML is required by sfe (SFml Extensions)
 add_subdirectory(extlibs/sfe)
 
