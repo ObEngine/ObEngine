@@ -87,14 +87,3 @@ if (MSVC)
         target_compile_options(ObEngineCore PRIVATE /MP)
     endif()
 endif()
-
-function (apply_git_variables)
-    target_compile_definitions(${PROJECT_NAME} PUBLIC OBENGINE_GIT_BRANCH="${OBENGINE_GIT_BRANCH}")
-    target_compile_definitions(${PROJECT_NAME} PUBLIC OBENGINE_GIT_HASH="${OBENGINE_GIT_COMMIT_HASH}")
-    target_compile_definitions(${PROJECT_NAME} PUBLIC OBENGINE_VERSION="${OBENGINE_VERSION}")
-endfunction()
-
-configure_file(
-    "${ObEngine_SOURCE_DIR}/include/Core/Config/Git.hpp.in"
-    "${ObEngine_BINARY_DIR}/include/Core/Config/Git.hpp"
-)
