@@ -20,19 +20,19 @@ namespace vili
     std::string to_string(node_type type)
     {
         if (type == node_type::null)
-            return null_type.data();
+            return null_typename.data();
         if (type == node_type::integer)
-            return int_type.data();
+            return integer_typename.data();
         if (type == node_type::number)
-            return float_type.data();
+            return number_typename.data();
         if (type == node_type::string)
-            return string_type.data();
+            return string_typename.data();
         if (type == node_type::boolean)
-            return bool_type.data();
+            return boolean_typename.data();
         if (type == node_type::array)
-            return array_type.data();
+            return array_typename.data();
         if (type == node_type::object)
-            return object_type.data();
+            return object_typename.data();
         return "";
     }
 
@@ -44,31 +44,31 @@ namespace vili
 
     node_type from_string(std::string_view type)
     {
-        if (type == null_type)
+        if (type == null_typename)
         {
             return node_type::null;
         }
-        else if (type == bool_type)
+        else if (type == boolean_typename)
         {
             return node_type::boolean;
         }
-        else if (type == int_type)
+        else if (type == integer_typename)
         {
             return node_type::integer;
         }
-        else if (type == float_type)
+        else if (type == number_typename)
         {
             return node_type::number;
         }
-        else if (type == string_type)
+        else if (type == string_typename)
         {
             return node_type::string;
         }
-        else if (type == array_type)
+        else if (type == array_typename)
         {
             return node_type::array;
         }
-        else if (type == object_type)
+        else if (type == object_typename)
         {
             return node_type::object;
         }
