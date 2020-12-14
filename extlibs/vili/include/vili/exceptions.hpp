@@ -8,6 +8,7 @@
 #include <fmt/format.h>
 
 #include <vili/config.hpp>
+#include <vili/types.hpp>
 #include <vili/utils.hpp>
 
 namespace vili::exceptions
@@ -224,6 +225,26 @@ namespace vili::exceptions
             : exception("file_not_found", info)
         {
             this->error("Could not open file located at '{}'", path);
+        }
+    };
+
+    class integer_dump_error : public exception<integer_dump_error>
+    {
+    public:
+        integer_dump_error(vili::integer value, debug_info info)
+            : exception("integer_dump_error", info)
+        {
+            this->error("Could not dump integer value : [{}]", value);
+        }
+    };
+
+    class number_dump_error : public exception<number_dump_error>
+    {
+    public:
+        number_dump_error(vili::number value, debug_info info)
+            : exception("number_dump_error", info)
+        {
+            this->error("Could not dump number value : [{}]", value);
         }
     };
 }

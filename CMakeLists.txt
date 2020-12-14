@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.8)
 
 set(OpenGL_GL_PREFERENCE GLVND)
-add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
 
 project(ObEngine)
 
@@ -56,6 +55,7 @@ if (NOT DEFINED BUILD_PLAYER)
 endif()
 
 if (WIN32)
+    add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
     file(GLOB OBENGINE_ICON ${CMAKE_SOURCE_DIR}/resources/resource.rc)
 else()
     set(OBENGINE_ICON "")

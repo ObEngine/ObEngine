@@ -10,13 +10,13 @@ namespace vili
 {
     constexpr std::string_view true_value = "true";
     constexpr std::string_view false_value = "false";
-    constexpr std::string_view null_type = "null";
-    constexpr std::string_view bool_type = "boolean";
-    constexpr std::string_view int_type = "integer";
-    constexpr std::string_view float_type = "number";
-    constexpr std::string_view string_type = "string";
-    constexpr std::string_view object_type = "object";
-    constexpr std::string_view array_type = "array";
+    constexpr std::string_view null_typename = "null";
+    constexpr std::string_view boolean_typename = "boolean";
+    constexpr std::string_view integer_typename = "integer";
+    constexpr std::string_view number_typename = "number";
+    constexpr std::string_view string_typename = "string";
+    constexpr std::string_view object_typename = "object";
+    constexpr std::string_view array_typename = "array";
 
     class node;
 

@@ -196,6 +196,15 @@ namespace vili
         template <class T>
         [[nodiscard]] std::enable_if_t<!std::is_floating_point_v<T> || !vili::PERMISSIVE_CAST, const T&> as() const;
         template <class T>
+        /**
+         * \nobind
+         * \brief Returns the node as the underlying type
+         *        This overload is only used when vili has to convert an integer to a floating point number
+         *        and therefore can't return a const reference from the internal variant
+         * \tparam T type you want to cast the node to
+         * \throw invalid_cast exception when the type of the underlying value is not the same as T
+         * \return value of the node (of type T)
+         */
         [[nodiscard]] std::enable_if_t<std::is_floating_point_v<T> && vili::PERMISSIVE_CAST, T> as() const;
 
         /**
@@ -237,19 +246,47 @@ namespace vili
 
         /**
          * \brief Access element at given key
+         * \param key key of the children to access
+         * \return reference to the children at given key
          */
         node& operator[](const char* key);
+        /**
+         * \brief Access element at given key
+         * \param key key of the children to access
+         * \return reference to the children at given key
+         */
         node& operator[](const std::string& key);
+        /**
+         * \brief Access element at given index
+         * \param index index of the children to access
+         * \return reference to the children at given index
+         */
         node& operator[](size_t index);
+        /**
+         * \brief Access element at given key
+         * \param key key of the children to access
+         * \return reference to the children at given key
+         */
         const node& operator[](const char* key) const;
+        /**
+         * \brief Access element at given key
+         * \param key key of the children to access
+         * \return reference to the children at given key
+         */
         const node& operator[](const std::string& key) const;
+        /**
+         * \brief Access element at given index
+         * \param index index of the children to access
+         * \return reference to the children at given index
+         */
         const node& operator[](size_t index) const;
 
         void push(const node& value);
         /**
          * \nobind
          */
-        template <class value_type> void emplace(size_t index, value_type&& value);
+        template <class value_type>
+        void emplace(size_t index, value_type&& value);
         /**
          * \nobind
          */
@@ -258,7 +295,7 @@ namespace vili
         void insert(size_t index, const node& value);
         void insert(const std::string& key, node value);
         void merge(node& value);
-        bool contains(const std::string& key) const;
+        [[nodiscard]] bool contains(const std::string& key) const;
 
         void erase(size_t index);
         void erase(size_t begin, size_t end);
@@ -270,16 +307,16 @@ namespace vili
         node_iterator begin();
         node_iterator end();
 
-        const_node_iterator begin() const;
-        const_node_iterator end() const;
+        [[nodiscard]] const_node_iterator begin() const;
+        [[nodiscard]] const_node_iterator end() const;
 
         object& items();
-        const object& items() const;
+        [[nodiscard]] const object& items() const;
 
         node& at(const std::string& key);
         node& at(size_t index);
-        const node& at(const std::string& key) const;
-        const node& at(size_t index) const;
+        [[nodiscard]] const node& at(const std::string& key) const;
+        [[nodiscard]] const node& at(size_t index) const;
 
         /**
          * \nobind
@@ -350,7 +387,8 @@ namespace vili
         }
         else
         {
-            throw exceptions::invalid_cast(array_type, to_string(type()), VILI_EXC_INFO);
+            throw exceptions::invalid_cast(
+                array_typename, to_string(type()), VILI_EXC_INFO);
         }
     }
 
@@ -364,7 +402,8 @@ namespace vili
         }
         else
         {
-            throw exceptions::invalid_cast(object_type, to_string(type()), VILI_EXC_INFO);
+            throw exceptions::invalid_cast(
+                object_typename, to_string(type()), VILI_EXC_INFO);
         }
     }
 

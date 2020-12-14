@@ -112,9 +112,9 @@ namespace vili::parser
     /**
      * \nobind
      * \brief Message that will be printed when the parser
-     *        find an invalid line
+     *        find an invalid block
      */
-    template <> inline constexpr auto error_message<rules::line> = "invalid line";
+    template <> inline constexpr auto error_message<rules::block> = "invalid block";
     /**
      * \nobind
      * \brief Message that will be printed when the parser

@@ -94,7 +94,7 @@ namespace obe::Input
          * \brief Updates the InputAction
          */
         void update();
-        std::vector<InputButton*> getInvolvedButtons() const;
+        [[nodiscard]] std::vector<InputButton*> getInvolvedButtons() const;
 
         void enable(const std::vector<InputButtonMonitorPtr>& monitors);
         void disable();
