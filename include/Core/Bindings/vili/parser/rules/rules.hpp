@@ -33,7 +33,6 @@ namespace vili::parser::rules::Bindings
     void LoadClassInlineElement(sol::state_view state);
     void LoadClassInlineNode(sol::state_view state);
     void LoadClassInteger(sol::state_view state);
-    void LoadClassLine(sol::state_view state);
     void LoadClassNode(sol::state_view state);
     void LoadClassNumber(sol::state_view state);
     void LoadClassObject(sol::state_view state);

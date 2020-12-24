@@ -365,7 +365,7 @@ namespace vili::validator
             else
             {
                 throw exceptions::validator_constraint_type_mismatch(location, "items",
-                    vili::object_type, vili::to_string(items_validator.type()),
+                    vili::object_typename, vili::to_string(items_validator.type()),
                     VILI_EXC_INFO);
             }
         }
@@ -408,54 +408,54 @@ namespace vili::validator
         validate_validator(location, validator);
         const std::string_view validator_expect_type = validator.at("type");
 
-        if (validator_expect_type == vili::int_type)
+        if (validator_expect_type == vili::integer_typename)
         {
             validate_integer(location, validator, input);
         }
-        else if (validator_expect_type == vili::float_type)
+        else if (validator_expect_type == vili::number_typename)
         {
             validate_number(location, validator, input);
         }
-        else if (validator_expect_type == vili::bool_type)
+        else if (validator_expect_type == vili::boolean_typename)
         {
             validate_boolean(location, validator, input);
         }
-        else if (validator_expect_type == vili::string_type)
+        else if (validator_expect_type == vili::string_typename)
         {
             validate_string(location, validator, input);
         }
-        else if (validator_expect_type == vili::array_type)
+        else if (validator_expect_type == vili::array_typename)
         {
             validate_array(location, validator, input);
         }
-        else if (validator_expect_type == vili::object_type)
+        else if (validator_expect_type == vili::object_typename)
         {
             validate_object(location, validator, input);
         }
         else if (validator_expect_type == "any")
         {
             const std::string input_type = vili::to_string(input.type());
-            if (input_type == vili::int_type)
+            if (input_type == vili::integer_typename)
             {
                 validate_integer(location, validator, input);
             }
-            else if (input_type == vili::float_type)
+            else if (input_type == vili::number_typename)
             {
                 validate_number(location, validator, input);
             }
-            else if (input_type == vili::bool_type)
+            else if (input_type == vili::boolean_typename)
             {
                 validate_boolean(location, validator, input);
             }
-            else if (input_type == vili::string_type)
+            else if (input_type == vili::string_typename)
             {
                 validate_string(location, validator, input);
             }
-            else if (input_type == vili::array_type)
+            else if (input_type == vili::array_typename)
             {
                 validate_array(location, validator, input);
             }
-            else if (input_type == vili::object_type)
+            else if (input_type == vili::object_typename)
             {
                 validate_object(location, validator, input);
             }

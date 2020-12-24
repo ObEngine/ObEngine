@@ -8,10 +8,10 @@ namespace obe::Transform
      */
     struct ViewStruct
     {
-        double w;
-        double h;
-        double x;
-        double y;
+        double w = 1;
+        double h = 1;
+        double x = 0;
+        double y = 0;
     };
 
     /**

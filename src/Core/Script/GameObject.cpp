@@ -180,7 +180,7 @@ namespace obe::Script
                 else
                 {
                     throw Exceptions::WrongSourceAttributeType(m_type, "source",
-                        vili::string_type, vili::to_string(sourceNode.type()), EXC_INFO);
+                        vili::string_typename, vili::to_string(sourceNode.type()), EXC_INFO);
                 }
             }
             else if (script.contains("sources"))
@@ -196,7 +196,7 @@ namespace obe::Script
                 else
                 {
                     throw Exceptions::WrongSourceAttributeType(m_type, "sources",
-                        vili::array_type, vili::to_string(sourceNode.type()), EXC_INFO);
+                        vili::array_typename, vili::to_string(sourceNode.type()), EXC_INFO);
                 }
             }
         }

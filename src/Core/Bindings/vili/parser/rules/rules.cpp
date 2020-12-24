@@ -196,13 +196,6 @@ namespace vili::parser::rules::Bindings
             = rulesNamespace.new_usertype<vili::parser::rules::integer>(
                 "integer", sol::call_constructor, sol::default_constructor);
     }
-    void LoadClassLine(sol::state_view state)
-    {
-        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::line> bindline
-            = rulesNamespace.new_usertype<vili::parser::rules::line>(
-                "line", sol::call_constructor, sol::default_constructor);
-    }
     void LoadClassNode(sol::state_view state)
     {
         sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();

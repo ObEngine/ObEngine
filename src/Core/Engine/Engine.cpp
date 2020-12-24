@@ -244,6 +244,9 @@ namespace obe::Engine
             case sf::Event::Closed:
                 m_window->close();
                 break;
+            case sf::Event::Resized:
+                m_window->setWindowSize(event.size.width, event.size.height);
+                break;
             case sf::Event::MouseWheelScrolled:
                 [[fallthrough]];
             case sf::Event::MouseButtonPressed:
@@ -436,7 +439,6 @@ namespace obe::Engine
         {
             m_window->clear();
             m_scene->draw(m_window->getTarget());
-
             m_window->display();
         }
     }
