@@ -112,4 +112,15 @@ namespace obe::System::Exceptions
                 fmt::join(suggestions, ", "));
         }
     };
+
+    class UnknownStretchMode : public Exception
+    {
+    public:
+        UnknownStretchMode(std::string_view stretchMode, DebugInfo info)
+            : Exception("UnknownWorkspace", info)
+        {
+            this->error("Stretch mode '{}' does not exist", stretchMode);
+            this->hint("Maybe you meant to get one of these modes : (None, Center, Fit, Stretch, KeepWidth, KeepHeight)");
+        }
+    };
 }

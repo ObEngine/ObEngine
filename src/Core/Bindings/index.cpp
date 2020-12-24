@@ -478,7 +478,6 @@ namespace obe::Bindings
         vili::parser::rules::Bindings::LoadClassInlineElement(state);
         vili::parser::rules::Bindings::LoadClassInlineNode(state);
         vili::parser::rules::Bindings::LoadClassInteger(state);
-        vili::parser::rules::Bindings::LoadClassLine(state);
         vili::parser::rules::Bindings::LoadClassNode(state);
         vili::parser::rules::Bindings::LoadClassNumber(state);
         vili::parser::rules::Bindings::LoadClassObject(state);

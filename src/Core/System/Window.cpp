@@ -1,5 +1,6 @@
-#include <SFML/Window/WindowStyle.hpp>
+#include <SFML/Graphics/Sprite.hpp>
 #include <SFML/Graphics/Texture.hpp>
+#include <SFML/Window/WindowStyle.hpp>
 
 #include <System/Path.hpp>
 #include <System/Window.hpp>
@@ -7,33 +8,167 @@
 
 namespace obe::System
 {
+    StretchMode stringToStretchMode(const std::string& stretchMode)
+    {
+        if (stretchMode == "None")
+        {
+            return StretchMode::None;
+        }
+        else if (stretchMode == "Center")
+        {
+            return StretchMode::Center;
+        }
+        else if (stretchMode == "Fit")
+        {
+            return StretchMode::Fit;
+        }
+        else if (stretchMode == "Stretch")
+        {
+            return StretchMode::Stretch;
+        }
+        else
+        {
+            throw Exceptions::UnknownStretchMode(stretchMode, EXC_INFO);
+        }
+    }
+
+    void Window::applyView()
+    {
+        const float fWidth = static_cast<float>(m_width);
+        const float fHeight = static_cast<float>(m_height);
+        const float fRenderWidth = static_cast<float>(m_renderWidth);
+        const float fRenderHeight = static_cast<float>(m_renderHeight);
+        if (m_width != m_renderWidth || m_height != m_renderHeight)
+        {
+            if (m_stretch == StretchMode::None) { }
+            else if (m_stretch == StretchMode::Center)
+            {
+                m_view.setSize(fRenderWidth, fRenderHeight);
+
+                const float xOffset = ((fWidth - fRenderWidth) / 2) / fWidth;
+                const float yOffset = ((fHeight - fRenderHeight) / 2) / fHeight;
+                const float viewportWidth = fRenderWidth / fWidth;
+                const float viewportHeight = fRenderHeight / fHeight;
+                m_view.setViewport(
+                    sf::FloatRect(xOffset, yOffset, viewportWidth, viewportHeight));
+                m_view.setCenter(m_renderWidth / 2, m_renderHeight / 2);
+                m_window.setView(m_view);
+            }
+            else if (m_stretch == StretchMode::Stretch)
+            {
+                m_view.setSize(fRenderWidth, fRenderHeight);
+                m_view.setViewport(sf::FloatRect(0, 0, 1, 1));
+                m_view.setCenter(fRenderWidth / 2.f, fRenderHeight / 2.f);
+                m_window.setView(m_view);
+            }
+            else if (m_stretch == StretchMode::Fit)
+            {
+                float expectedWidth = (fHeight / fRenderHeight) * fRenderWidth;
+                float expectedHeight;
+                if (expectedWidth > fWidth)
+                {
+                    expectedWidth = 1;
+                    expectedHeight = ((fRenderHeight / fRenderWidth) * fWidth) / fHeight;
+                }
+                else
+                {
+                    expectedWidth = ((fRenderWidth / fRenderHeight) * fHeight) / fWidth;
+                    expectedHeight = 1;
+                }
+                const float xOffset = (1 - expectedWidth) / 2;
+                const float yOffset = (1 - expectedHeight) / 2;
+
+                m_view.setSize(fRenderWidth, fRenderHeight);
+                m_view.setViewport(
+                    sf::FloatRect(xOffset, yOffset, expectedWidth, expectedHeight));
+                m_view.setCenter(fRenderWidth / 2.f, fRenderHeight / 2.f);
+                m_window.setView(m_view);
+            }
+        }
+    }
+
     Window::Window(vili::node configuration)
     {
+        const auto screenSize = sf::VideoMode::getDesktopMode();
+
+        unsigned int windowWidth = 0;
+        unsigned int windowHeight = 0;
+        unsigned int renderWidth = 0;
+        unsigned int renderHeight = 0;
+
         if (configuration.contains("width"))
         {
             if (configuration.at("width").is<vili::integer>())
-                m_width = configuration.at("width");
+                windowWidth = configuration.at("width");
             else if (configuration.at("width").is<vili::string>())
             {
                 if (configuration.at("width").as<vili::string>() == "fill")
-                    m_width = Transform::UnitVector::Screen.w;
+                    windowWidth = screenSize.width;
             }
         }
         else
-            m_width = Transform::UnitVector::Screen.w;
+            windowWidth = screenSize.width;
 
         if (configuration.contains("height"))
         {
             if (configuration.at("height").is<vili::integer>())
-                m_height = configuration.at("height");
+                windowHeight = configuration.at("height");
             else if (configuration.at("height").is<vili::string>())
             {
                 if (configuration.at("height").as<vili::string>() == "fill")
-                    m_height = Transform::UnitVector::Screen.h;
+                    windowHeight = screenSize.height;
             }
         }
         else
-            m_height = Transform::UnitVector::Screen.h;
+            windowHeight = screenSize.height;
+
+        if (configuration.contains("render"))
+        {
+            const vili::node& render = configuration.at("render");
+
+            if (render.contains("width"))
+            {
+                if (render.at("width").is<vili::integer>())
+                    renderWidth = render.at("width");
+                else if (render.at("width").is<vili::string>())
+                {
+                    if (render.at("width").as<vili::string>() == "fill")
+                        renderWidth = screenSize.width;
+                    else if (render.at("width").as<vili::string>() == "window")
+                        renderWidth = windowWidth;
+                }
+            }
+            else
+                renderWidth = windowWidth;
+
+            if (render.contains("height"))
+            {
+                if (render.at("height").is<vili::integer>())
+                    renderHeight = render.at("height");
+                else if (render.at("height").is<vili::string>())
+                {
+                    if (render.at("height").as<vili::string>() == "fill")
+                        renderHeight = screenSize.height;
+                    else if (render.at("height").as<vili::string>() == "window")
+                        renderHeight = windowHeight;
+                }
+            }
+            else
+                renderHeight = windowHeight;
+
+            if (render.contains("stretch"))
+            {
+                m_stretch = stringToStretchMode(render.at("stretch"));
+            }
+        }
+        else
+        {
+            renderWidth = windowWidth;
+            renderHeight = windowHeight;
+        }
+
+        this->setWindowSize(windowWidth, windowHeight);
+        this->setRenderSize(renderWidth, renderHeight);
 
         bool fullscreen = true;
         bool closeable = true;
@@ -69,9 +204,11 @@ namespace obe::System
 
     void Window::create()
     {
-        Transform::UnitVector::Init(m_width, m_height);
+        Transform::UnitVector::Init(m_renderWidth, m_renderHeight);
         m_window.create(sf::VideoMode(m_width, m_height), m_title, m_style);
         m_window.setKeyRepeatEnabled(false);
+
+        this->applyView();
     }
 
     void Window::clear()
@@ -100,11 +237,29 @@ namespace obe::System
         m_window.draw(vertices, vertexCount, type, states);
     }
 
-    Transform::UnitVector Window::getSize() const
+    Transform::UnitVector Window::getRenderSize() const
+    {
+        return Transform::UnitVector(
+            m_renderWidth, m_renderHeight, Transform::Units::ScenePixels);
+    }
+
+    Transform::UnitVector Window::getWindowSize() const
     {
         const sf::Vector2u windowSize = m_window.getSize();
         return Transform::UnitVector(
             windowSize.x, windowSize.y, Transform::Units::ScenePixels);
+    }
+
+    Transform::UnitVector Window::getScreenSize() const
+    {
+        const auto screenSize = sf::VideoMode::getDesktopMode();
+        return Transform::UnitVector(
+            screenSize.width, screenSize.height, Transform::Units::ScenePixels);
+    }
+
+    Transform::UnitVector Window::getSize() const
+    {
+        return this->getRenderSize();
     }
 
     bool Window::isOpen() const
@@ -170,11 +325,25 @@ namespace obe::System
 
     void Window::setSize(const unsigned int width, const unsigned int height)
     {
-        Transform::UnitVector::Screen.w = width;
-        Transform::UnitVector::Screen.h = height;
-        m_width = width;
-        m_height = height;
+        this->setWindowSize(width, height);
+        this->setRenderSize(width, height);
+    }
+
+    void Window::setWindowSize(unsigned width, unsigned height)
+    {
         m_window.setSize(sf::Vector2u(width, height));
         this->setView(sf::View(sf::FloatRect(0, 0, width, height)));
+        m_width = width;
+        m_height = height;
+        this->applyView();
+    }
+
+    void Window::setRenderSize(unsigned width, unsigned height)
+    {
+        Transform::UnitVector::Screen.w = width;
+        Transform::UnitVector::Screen.h = height;
+        m_renderWidth = width;
+        m_renderHeight = height;
+        this->applyView();
     }
 } // namespace obe::System

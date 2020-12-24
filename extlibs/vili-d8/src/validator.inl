@@ -15,7 +15,7 @@ namespace vili::validator
     {
         if constexpr (vili::PERMISSIVE_CAST)
         {
-            if (input_type == vili::int_type && validator_type == vili::float_type)
+            if (input_type == vili::integer_typename && validator_type == vili::number_typename)
             {
                 return true;
             }
