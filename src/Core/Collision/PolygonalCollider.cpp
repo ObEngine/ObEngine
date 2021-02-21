@@ -137,7 +137,34 @@ namespace obe::Collision
         CollisionData collData;
         collData.offset = offset;
 
+        //AABB filtering
+        Transform::Rect col_bb = this->getBoundingBox();
+        Transform::Rect aabb;
+        aabb.setSize(col_bb.getSize() + Transform::UnitVector(abs(offset.x), abs(offset.y)));
+        if (offset.x >= 0 && offset.y >= 0)
+        {
+            aabb.setPosition(col_bb.getPosition(Transform::Referential::TopLeft), Transform::Referential::TopLeft);
+        }
+        else if (offset.x >= 0 && offset.y < 0)
+        {
+            aabb.setPosition(col_bb.getPosition(Transform::Referential::BottomLeft), Transform::Referential::BottomLeft);
+        }
+        else if (offset.x < 0 && offset.y >= 0)
+        {
+            aabb.setPosition(col_bb.getPosition(Transform::Referential::TopRight), Transform::Referential::TopRight);
+        }
+        else // offset.x < 0 && offset.y < 0
+        {
+            aabb.setPosition(col_bb.getPosition(Transform::Referential::BottomRight), Transform::Referential::BottomRight);
+        }
+        std::vector<PolygonalCollider*> collidersToCheck;
         for (auto& collider : Pool)
+        {
+            if (aabb.doesOverlap(collider->getBoundingBox()))
+                collidersToCheck.push_back(collider);
+        }
+
+        for (auto& collider : collidersToCheck)
         {
             if (checkTags(*collider))
             {

@@ -42,6 +42,25 @@ namespace obe::Transform
             m_angle = Utils::Math::normalize(m_angle, 0, 360);
     }
 
+    bool Rect::doesOverlap(const Rect& other)
+    {
+        if (this->getPosition(Transform::Referential::TopLeft).x
+                >= other.getPosition(Transform::Referential::BottomRight).x
+            || this->getPosition(Transform::Referential::BottomRight).x
+                <= other.getPosition(Transform::Referential::TopLeft).x)
+        {
+            return false;
+        }
+        if (this->getPosition(Transform::Referential::TopLeft).y
+                >= other.getPosition(Transform::Referential::BottomRight).y
+            || this->getPosition(Transform::Referential::BottomRight).y
+                <= other.getPosition(Transform::Referential::TopLeft).y)
+        {
+            return false;
+        }
+        return true;
+    }
+
     void Rect::transformRef(
         UnitVector& vec, const Referential& ref, ConversionType type) const
     {

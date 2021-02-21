@@ -135,6 +135,10 @@ namespace obe::Transform
         void setRotation(double angle, Transform::UnitVector origin);
         void rotate(double angle, Transform::UnitVector origin);
         /**
+        * \brief todo
+        */
+        bool doesOverlap(const Rect& other);
+        /**
          * \brief Draws the Rect for debug purposes <REMOVE>
          */
         void draw(Graphics::RenderTarget surface, int x, int y) const;
