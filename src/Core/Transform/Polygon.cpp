@@ -365,7 +365,6 @@ namespace obe::Transform
             {
                 *point += addPosition;
             }
-            m_points[0]->set(pVec);
         }
     }
 
