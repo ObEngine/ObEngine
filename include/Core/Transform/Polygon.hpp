@@ -76,7 +76,7 @@ namespace obe::Transform
          * \param pointIndex Index where to insert the new Point, Use pointIndex
          *        = -1 <DefaultArg> to insert at the end (between last and first Point)
          */
-        void addPoint(const Transform::UnitVector& position, int pointIndex = -1);
+        virtual void addPoint(const Transform::UnitVector& position, int pointIndex = -1);
         /**
          * \brief Finds the closest Line from the given Position
          * \param position Position used to get the closest Line
@@ -174,7 +174,7 @@ namespace obe::Transform
          * \param angle Angle to add to the PolygonalCollider
          * \param origin Origin to rotate all the points around
          */
-        void rotate(float angle, Transform::UnitVector origin);
+        virtual void rotate(float angle, Transform::UnitVector origin);
         /**
          * \brief Sets the new position of the Polygon (using the point at index 0)
          * \param position UnitVector containing the new Position of the
@@ -187,11 +187,11 @@ namespace obe::Transform
          * \param angle Angle to set to the PolygonalCollider
          * \param origin Origin to rotate all the points around
          */
-        void setRotation(float angle, Transform::UnitVector origin);
-        void setPositionFromCentroid(const Transform::UnitVector& position);
+        virtual void setRotation(float angle, Transform::UnitVector origin);
+        virtual void setPositionFromCentroid(const Transform::UnitVector& position);
         PolygonPoint& operator[](point_index_t i);
         PolygonPoint& get(point_index_t i);
         const PolygonPoint& get(point_index_t i) const;
-        [[nodiscard]] Rect getBoundingBox() const;
+        [[nodiscard]] virtual Rect getBoundingBox() const;
     };
 } // namespace obe::Transform

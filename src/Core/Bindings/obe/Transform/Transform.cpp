@@ -227,6 +227,7 @@ namespace obe::Transform::Bindings
         bindRect["getRotation"] = &obe::Transform::Rect::getRotation;
         bindRect["setRotation"] = &obe::Transform::Rect::setRotation;
         bindRect["rotate"] = &obe::Transform::Rect::rotate;
+        bindRect["doesOverlap"] = &obe::Transform::Rect::doesOverlap;
         bindRect["draw"] = &obe::Transform::Rect::draw;
         bindRect["x"] = sol::property(&obe::Transform::Rect::x);
         bindRect["y"] = sol::property(&obe::Transform::Rect::y);

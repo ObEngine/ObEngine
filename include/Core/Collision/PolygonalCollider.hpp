@@ -66,6 +66,15 @@ namespace obe::Collision
             { ColliderTagType::Rejected, {} },
         };
 
+        /*
+        * \brief Cached bounding box, used for AABB filtering
+        */
+        mutable Transform::Rect m_boundingBox;
+        /*
+        * \brief If true, the bounding box is recalculated at next getBoundingBox() call
+        */
+        mutable bool m_updateBoundingBox = true;
+
         void resetUnit(Transform::Units unit) override;
         [[nodiscard]] bool checkTags(const PolygonalCollider& collider) const;
 
@@ -188,5 +197,15 @@ namespace obe::Collision
          */
         void setParentId(const std::string& parent);
         [[nodiscard]] std::string_view type() const override;
+        /*
+        * \brief Returns the cached bounding box. Recalculates it if necessary.
+        */
+        [[nodiscard]] Transform::Rect getBoundingBox() const override;
+        void addPoint(const Transform::UnitVector& position, int pointIndex = -1) override;
+        void move(const Transform::UnitVector& position) override;
+        void rotate(float angle, Transform::UnitVector origin) override;
+        void setPosition(const Transform::UnitVector& position) override;
+        void setRotation(float angle, Transform::UnitVector origin) override;
+        void setPositionFromCentroid(const Transform::UnitVector& position) override;
     };
 } // namespace obe::Collision

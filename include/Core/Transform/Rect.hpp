@@ -135,7 +135,9 @@ namespace obe::Transform
         void setRotation(double angle, Transform::UnitVector origin);
         void rotate(double angle, Transform::UnitVector origin);
         /**
-        * \brief todo
+        * \brief Checks if the Rect overlap a specified Rect
+        * \param other The other Rect to check
+        * \return true if the Rect overlap the other Rect, false otherwise
         */
         bool doesOverlap(const Rect& other);
         /**

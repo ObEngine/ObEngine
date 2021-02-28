@@ -76,6 +76,24 @@ namespace obe::Collision::Bindings
         bindPolygonalCollider["setParentId"]
             = &obe::Collision::PolygonalCollider::setParentId;
         bindPolygonalCollider["type"] = &obe::Collision::PolygonalCollider::type;
+        bindPolygonalCollider["getBoundingBox"]
+            = &obe::Collision::PolygonalCollider::getBoundingBox;
+        bindPolygonalCollider["addPoint"] = sol::overload(
+            [](obe::Collision::PolygonalCollider* self,
+                const obe::Transform::UnitVector& position) -> void {
+                return self->addPoint(position);
+            },
+            [](obe::Collision::PolygonalCollider* self,
+                const obe::Transform::UnitVector& position,
+                int pointIndex) -> void { return self->addPoint(position, pointIndex); });
+        bindPolygonalCollider["move"] = &obe::Collision::PolygonalCollider::move;
+        bindPolygonalCollider["rotate"] = &obe::Collision::PolygonalCollider::rotate;
+        bindPolygonalCollider["setPosition"]
+            = &obe::Collision::PolygonalCollider::setPosition;
+        bindPolygonalCollider["setRotation"]
+            = &obe::Collision::PolygonalCollider::setRotation;
+        bindPolygonalCollider["setPositionFromCentroid"]
+            = &obe::Collision::PolygonalCollider::setPositionFromCentroid;
     }
     void LoadClassTrajectory(sol::state_view state)
     {

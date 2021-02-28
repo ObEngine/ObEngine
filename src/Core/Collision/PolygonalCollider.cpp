@@ -124,6 +124,54 @@ namespace obe::Collision
         return ComponentType;
     }
 
+    Transform::Rect PolygonalCollider::getBoundingBox() const
+    {
+        if (m_updateBoundingBox) {
+            m_boundingBox = Transform::Polygon::getBoundingBox();
+            m_updateBoundingBox = false;
+        }
+        return m_boundingBox;
+    }
+
+    void PolygonalCollider::addPoint(
+        const Transform::UnitVector& position, int pointIndex)
+    {
+        Transform::Polygon::addPoint(position, pointIndex);
+        m_updateBoundingBox = true;
+    }
+
+    void PolygonalCollider::move(const Transform::UnitVector& position)
+    {
+        Transform::Polygon::move(position);
+        m_boundingBox.move(position);
+    }
+
+    void PolygonalCollider::rotate(float angle, Transform::UnitVector origin)
+    {
+        Transform::Polygon::rotate(angle, origin);
+        m_updateBoundingBox = true;
+    }
+
+    void PolygonalCollider::setPosition(const Transform::UnitVector& position)
+    {
+        const Transform::UnitVector diff = position - this->getPosition();
+        Transform::Polygon::setPosition(position);
+        m_boundingBox.move(diff);
+    }
+
+    void PolygonalCollider::setRotation(float angle, Transform::UnitVector origin)
+    {
+        Transform::Polygon::setRotation(angle, origin);
+        m_updateBoundingBox = true;
+    }
+
+    void PolygonalCollider::setPositionFromCentroid(const Transform::UnitVector& position)
+    {
+        const Transform::UnitVector oldPos = this->getPosition();
+        Transform::Polygon::setPositionFromCentroid(position);
+        m_boundingBox.move(oldPos - this->getPosition());
+    }
+
     void PolygonalCollider::resetUnit(Transform::Units unit)
     {
     }
@@ -138,24 +186,24 @@ namespace obe::Collision
         collData.offset = offset;
 
         //AABB filtering
-        Transform::Rect col_bb = this->getBoundingBox();
+        const Transform::Rect colBBox = this->getBoundingBox();
         Transform::Rect aabb;
-        aabb.setSize(col_bb.getSize() + Transform::UnitVector(abs(offset.x), abs(offset.y)));
+        aabb.setSize(colBBox.getSize() + Transform::UnitVector(abs(offset.x), abs(offset.y)));
         if (offset.x >= 0 && offset.y >= 0)
         {
-            aabb.setPosition(col_bb.getPosition(Transform::Referential::TopLeft), Transform::Referential::TopLeft);
+            aabb.setPosition(colBBox.getPosition(Transform::Referential::TopLeft), Transform::Referential::TopLeft);
         }
         else if (offset.x >= 0 && offset.y < 0)
         {
-            aabb.setPosition(col_bb.getPosition(Transform::Referential::BottomLeft), Transform::Referential::BottomLeft);
+            aabb.setPosition(colBBox.getPosition(Transform::Referential::BottomLeft), Transform::Referential::BottomLeft);
         }
         else if (offset.x < 0 && offset.y >= 0)
         {
-            aabb.setPosition(col_bb.getPosition(Transform::Referential::TopRight), Transform::Referential::TopRight);
+            aabb.setPosition(colBBox.getPosition(Transform::Referential::TopRight), Transform::Referential::TopRight);
         }
         else // offset.x < 0 && offset.y < 0
         {
-            aabb.setPosition(col_bb.getPosition(Transform::Referential::BottomRight), Transform::Referential::BottomRight);
+            aabb.setPosition(colBBox.getPosition(Transform::Referential::BottomRight), Transform::Referential::BottomRight);
         }
         std::vector<PolygonalCollider*> collidersToCheck;
         for (auto& collider : Pool)
@@ -235,7 +283,40 @@ namespace obe::Collision
     {
         CollisionData collData;
         collData.offset = offset;
+
+        //AABB filtering
+        const Transform::Rect colBBox = this->getBoundingBox();
+        Transform::Rect aabb;
+        aabb.setSize(
+            colBBox.getSize() + Transform::UnitVector(abs(offset.x), abs(offset.y)));
+        if (offset.x >= 0 && offset.y >= 0)
+        {
+            aabb.setPosition(colBBox.getPosition(Transform::Referential::TopLeft),
+                Transform::Referential::TopLeft);
+        }
+        else if (offset.x >= 0 && offset.y < 0)
+        {
+            aabb.setPosition(colBBox.getPosition(Transform::Referential::BottomLeft),
+                Transform::Referential::BottomLeft);
+        }
+        else if (offset.x < 0 && offset.y >= 0)
+        {
+            aabb.setPosition(colBBox.getPosition(Transform::Referential::TopRight),
+                Transform::Referential::TopRight);
+        }
+        else // offset.x < 0 && offset.y < 0
+        {
+            aabb.setPosition(colBBox.getPosition(Transform::Referential::BottomRight),
+                Transform::Referential::BottomRight);
+        }
+        std::vector<PolygonalCollider*> collidersToCheck;
         for (auto& collider : Pool)
+        {
+            if (aabb.doesOverlap(collider->getBoundingBox()))
+                collidersToCheck.push_back(collider);
+        }
+
+        for (auto& collider : collidersToCheck)
         {
             if (collider != this && checkTags(*collider))
             {
