@@ -27,7 +27,7 @@ namespace obe::Config
             "F(1[0-2]|[1-9])|[A-Z]|[0-9]))*");
 
         // clang-format off
-        vili::node ResolutionDimension = vili::object {
+        vili::node ResolutionDimensionValidator = vili::object {
             {"type", "union"},
             {
                 "types", vili::array {
@@ -47,8 +47,8 @@ namespace obe::Config
             {"type", "object"},
             {
                 "properties", vili::object {
-                    {"width", ResolutionDimension},
-                    {"height", ResolutionDimension},
+                    {"width", ResolutionDimensionValidator},
+                    {"height", ResolutionDimensionValidator},
                     {
                         "fullscreen", vili::object {
                             {"type", "boolean"}
@@ -82,6 +82,11 @@ namespace obe::Config
             }
         };
 
+        vili::object InputActionValidator = vili::object {
+            {"type", "string"},
+            {"regex", actionRe}
+        };
+
         return vili::object {
             {
                 "Input", vili::object {
@@ -92,8 +97,16 @@ namespace obe::Config
                             {"type", "object"},
                             {
                                 "items", vili::object {
-                                    {"type", "string"},
-                                    {"regex", actionRe}
+                                    {"type", "union"},
+                                    {
+                                        "types", vili::array {
+                                            InputActionValidator,
+                                            vili::object {
+                                                {"type", "array"},
+                                                {"items", InputActionValidator}
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -201,6 +214,6 @@ namespace obe::Config
                 = vili::parser::from_file(path, Templates::getConfigTemplates());
             this->merge(conf);
         }
-        // vili::validator::validate_tree(ConfigValidator(), *this);
+        vili::validator::validate_tree(ConfigValidator(), *this);
     }
 } // namespace obe::System

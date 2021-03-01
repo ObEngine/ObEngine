@@ -102,7 +102,7 @@ namespace obe::Animation
             = vili::parser::from_file(path.add(path.last() + ".ani.vili").find(),
                 Config::Templates::getAnimationTemplates());
 
-        // vili::validator::validate_tree(AnimationValidator(), animationConfig);
+        vili::validator::validate_tree(AnimationValidator(), animationConfig);
 
         // Meta
         Debug::Log->trace("  <Animation> Loading Meta block");

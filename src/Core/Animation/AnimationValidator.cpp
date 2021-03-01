@@ -88,7 +88,7 @@ namespace obe::Animation
                                     },
                                     {
                                         "clock", vili::object {
-                                            {"type", "float"},
+                                            {"type", "number"},
                                             {"optional", true}
                                         }
                                     }

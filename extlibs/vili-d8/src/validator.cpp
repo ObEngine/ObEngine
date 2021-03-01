@@ -73,6 +73,8 @@ namespace vili::validator
                     validator.at("exclusive_max").dump(), input.dump(), VILI_EXC_INFO);
             }
         }
+
+        return true;
     }
 
     vili::node validate_number(
@@ -138,6 +140,8 @@ namespace vili::validator
                     validator.at("exclusive_max").dump(), input.dump(), VILI_EXC_INFO);
             }
         }
+
+        return true;
     }
 
     vili::node validate_boolean(
@@ -242,6 +246,8 @@ namespace vili::validator
             validate_node(
                 join_path(location, std::to_string(i)), validator.at(i), input.at(i));
         }
+
+        return true;
     }
 
     vili::node validate_array(
@@ -317,6 +323,8 @@ namespace vili::validator
                     VILI_EXC_INFO);
             }
         }
+
+        return true;
     }
 
     vili::node validate_object(
@@ -369,6 +377,8 @@ namespace vili::validator
                     VILI_EXC_INFO);
             }
         }
+
+        return true;
     }
 
     vili::node validate_union(
