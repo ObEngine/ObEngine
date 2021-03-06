@@ -4,7 +4,7 @@
 #include <Graphics/Sprite.hpp>
 #include <Utils/VectorUtils.hpp>
 
-#include <vili/parser/parser.hpp>
+#include <vili/parser.hpp>
 
 using namespace std::string_literals;
 
