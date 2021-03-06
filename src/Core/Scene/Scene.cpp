@@ -631,7 +631,7 @@ namespace obe::Scene
         else if (this->doesGameObjectExists(useId))
         {
             throw Exceptions::GameObjectAlreadyExists(
-                m_levelFileName, this->getGameObject(useId).getId(), useId, EXC_INFO);
+                m_levelFileName, this->getGameObject(useId).getType(), useId, EXC_INFO);
         }
 
         std::unique_ptr<Script::GameObject> newGameObject

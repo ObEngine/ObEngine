@@ -162,6 +162,11 @@ namespace obe::Event
     void EventBase::callListener(
         const std::string& listenerId, ListenerType&& listener, const EventType& event)
     {
+        if (std::find(m_garbageCollector.begin(), m_garbageCollector.end(), listenerId)
+            != m_garbageCollector.end())
+        {
+            return;
+        }
         CallbackProfiler& profiler = m_profiler[listenerId];
         ScopeProfiler scopeProfiler(profiler);
         try
