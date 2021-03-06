@@ -40,6 +40,8 @@ namespace obe::Collision::Bindings
                     obe::Component::Component<PolygonalCollider>,
                     obe::Component::ComponentBase, obe::Types::Identifiable,
                     obe::Types::Serializable>());
+        bindPolygonalCollider["operator="]
+            = &obe::Collision::PolygonalCollider::operator=;
         bindPolygonalCollider["addTag"] = &obe::Collision::PolygonalCollider::addTag;
         bindPolygonalCollider["clearTags"]
             = &obe::Collision::PolygonalCollider::clearTags;

@@ -64,6 +64,18 @@ namespace vili::exceptions::Bindings
                       sol::bases<vili::exceptions::exception<inconsistent_indentation>,
                           vili::exceptions::base_exception>());
     }
+    void LoadClassIntegerDumpError(sol::state_view state)
+    {
+        sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
+        sol::usertype<vili::exceptions::integer_dump_error> bindinteger_dump_error
+            = exceptionsNamespace.new_usertype<vili::exceptions::integer_dump_error>(
+                "integer_dump_error", sol::call_constructor,
+                sol::constructors<vili::exceptions::integer_dump_error(
+                    vili::integer, vili::exceptions::debug_info)>(),
+                sol::base_classes,
+                sol::bases<vili::exceptions::exception<integer_dump_error>,
+                    vili::exceptions::base_exception>());
+    }
     void LoadClassInvalidCast(sol::state_view state)
     {
         sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
@@ -110,6 +122,18 @@ namespace vili::exceptions::Bindings
                     std::string_view, vili::exceptions::debug_info)>(),
                 sol::base_classes,
                 sol::bases<vili::exceptions::exception<invalid_node_type>,
+                    vili::exceptions::base_exception>());
+    }
+    void LoadClassNumberDumpError(sol::state_view state)
+    {
+        sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
+        sol::usertype<vili::exceptions::number_dump_error> bindnumber_dump_error
+            = exceptionsNamespace.new_usertype<vili::exceptions::number_dump_error>(
+                "number_dump_error", sol::call_constructor,
+                sol::constructors<vili::exceptions::number_dump_error(
+                    vili::number, vili::exceptions::debug_info)>(),
+                sol::base_classes,
+                sol::bases<vili::exceptions::exception<number_dump_error>,
                     vili::exceptions::base_exception>());
     }
     void LoadClassParsingError(sol::state_view state)

@@ -149,8 +149,8 @@ namespace obe::Animation::Bindings
         bindValueTweening["from"] = &obe::Animation::ValueTweening::from;
         bindValueTweening["to"] = &obe::Animation::ValueTweening::to;
         bindValueTweening["ease"] = &obe::Animation::ValueTweening::ease;
-        bindValueTweening["step"] = &obe::Animation::ValueTweening::step;
         bindValueTweening["done"] = &obe::Animation::ValueTweening::done;
+        bindValueTweening["step"] = &obe::Animation::ValueTweening::step;
     }
     void LoadFunctionStringToAnimationPlayMode(sol::state_view state)
     {

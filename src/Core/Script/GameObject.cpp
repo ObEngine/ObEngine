@@ -7,7 +7,7 @@
 
 #include <utility>
 
-#include <vili/parser/parser.hpp>
+#include <vili/parser.hpp>
 
 #include <Event/Exceptions.hpp>
 

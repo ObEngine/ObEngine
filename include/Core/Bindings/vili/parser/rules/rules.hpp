@@ -11,15 +11,18 @@ namespace vili::parser::rules::Bindings
     void LoadClassArray(sol::state_view state);
     void LoadClassArrayElements(sol::state_view state);
     void LoadClassArraySeparator(sol::state_view state);
+    void LoadClassBlock(sol::state_view state);
     void LoadClassBoolean(sol::state_view state);
     void LoadClassBraceBasedObject(sol::state_view state);
     void LoadClassChar_(sol::state_view state);
     void LoadClassCloseArray(sol::state_view state);
     void LoadClassCloseObject(sol::state_view state);
+    void LoadClassComment(sol::state_view state);
     void LoadClassData(sol::state_view state);
     void LoadClassDigits(sol::state_view state);
     void LoadClassElement(sol::state_view state);
     void LoadClassEmptyLine(sol::state_view state);
+    void LoadClassEndline(sol::state_view state);
     void LoadClassEscaped(sol::state_view state);
     void LoadClassEscapedChar(sol::state_view state);
     void LoadClassFalse_(sol::state_view state);
@@ -33,6 +36,8 @@ namespace vili::parser::rules::Bindings
     void LoadClassInlineElement(sol::state_view state);
     void LoadClassInlineNode(sol::state_view state);
     void LoadClassInteger(sol::state_view state);
+    void LoadClassMultilineComment(sol::state_view state);
+    void LoadClassMultilineCommentBlock(sol::state_view state);
     void LoadClassNode(sol::state_view state);
     void LoadClassNumber(sol::state_view state);
     void LoadClassObject(sol::state_view state);
@@ -41,6 +46,7 @@ namespace vili::parser::rules::Bindings
     void LoadClassOpenArray(sol::state_view state);
     void LoadClassOpenObject(sol::state_view state);
     void LoadClassSign(sol::state_view state);
+    void LoadClassSpaceOrComment(sol::state_view state);
     void LoadClassString(sol::state_view state);
     void LoadClassStringContent(sol::state_view state);
     void LoadClassStringDelimiter(sol::state_view state);

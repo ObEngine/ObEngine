@@ -33,6 +33,15 @@ namespace obe::System::Bindings
             { { "GameWindow", obe::System::WindowContext::GameWindow },
                 { "EditorWindow", obe::System::WindowContext::EditorWindow } });
     }
+    void LoadEnumStretchMode(sol::state_view state)
+    {
+        sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
+        SystemNamespace.new_enum<obe::System::StretchMode>("StretchMode",
+            { { "None", obe::System::StretchMode::None },
+                { "Center", obe::System::StretchMode::Center },
+                { "Stretch", obe::System::StretchMode::Stretch },
+                { "Fit", obe::System::StretchMode::Fit } });
+    }
     void LoadClassCursor(sol::state_view state)
     {
         sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
@@ -176,19 +185,30 @@ namespace obe::System::Bindings
         bindWindow["clear"] = &obe::System::Window::clear;
         bindWindow["close"] = &obe::System::Window::close;
         bindWindow["display"] = &obe::System::Window::display;
+        bindWindow["getRenderSize"] = &obe::System::Window::getRenderSize;
+        bindWindow["getWindowSize"] = &obe::System::Window::getWindowSize;
+        bindWindow["getScreenSize"] = &obe::System::Window::getScreenSize;
         bindWindow["getSize"] = &obe::System::Window::getSize;
         bindWindow["isOpen"] = &obe::System::Window::isOpen;
         bindWindow["pollEvent"] = &obe::System::Window::pollEvent;
         bindWindow["setSize"] = &obe::System::Window::setSize;
+        bindWindow["setWindowSize"] = &obe::System::Window::setWindowSize;
+        bindWindow["setRenderSize"] = &obe::System::Window::setRenderSize;
         bindWindow["setTitle"] = &obe::System::Window::setTitle;
         bindWindow["setVerticalSyncEnabled"]
             = &obe::System::Window::setVerticalSyncEnabled;
-        bindWindow["setIcon"] = &obe::System::Window::setIcon;
         bindWindow["setView"] = &obe::System::Window::setView;
+        bindWindow["setIcon"] = &obe::System::Window::setIcon;
         bindWindow["getTarget"] = &obe::System::Window::getTarget;
         bindWindow["getWindow"] = &obe::System::Window::getWindow;
         bindWindow["getClearColor"] = &obe::System::Window::getClearColor;
         bindWindow["setClearColor"] = &obe::System::Window::setClearColor;
         bindWindow["setMouseCursorVisible"] = &obe::System::Window::setMouseCursorVisible;
+    }
+    void LoadFunctionStringToStretchMode(sol::state_view state)
+    {
+        sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
+        SystemNamespace.set_function(
+            "stringToStretchMode", obe::System::stringToStretchMode);
     }
 };

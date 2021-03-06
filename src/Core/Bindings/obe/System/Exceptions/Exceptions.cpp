@@ -90,6 +90,18 @@ namespace obe::System::Exceptions::Bindings
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::Exception>());
     }
+    void LoadClassUnknownStretchMode(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["System"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::System::Exceptions::UnknownStretchMode> bindUnknownStretchMode
+            = ExceptionsNamespace
+                  .new_usertype<obe::System::Exceptions::UnknownStretchMode>(
+                      "UnknownStretchMode", sol::call_constructor,
+                      sol::constructors<obe::System::Exceptions::UnknownStretchMode(
+                          std::string_view, obe::DebugInfo)>(),
+                      sol::base_classes, sol::bases<obe::Exception>());
+    }
     void LoadClassUnknownWorkspace(sol::state_view state)
     {
         sol::table ExceptionsNamespace

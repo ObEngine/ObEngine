@@ -42,6 +42,13 @@ namespace vili::parser::rules::Bindings
             = rulesNamespace.new_usertype<vili::parser::rules::array_separator>(
                 "array_separator", sol::call_constructor, sol::default_constructor);
     }
+    void LoadClassBlock(sol::state_view state)
+    {
+        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
+        sol::usertype<vili::parser::rules::block> bindblock
+            = rulesNamespace.new_usertype<vili::parser::rules::block>(
+                "block", sol::call_constructor, sol::default_constructor);
+    }
     void LoadClassBoolean(sol::state_view state)
     {
         sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
@@ -77,6 +84,13 @@ namespace vili::parser::rules::Bindings
             = rulesNamespace.new_usertype<vili::parser::rules::close_object>(
                 "close_object", sol::call_constructor, sol::default_constructor);
     }
+    void LoadClassComment(sol::state_view state)
+    {
+        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
+        sol::usertype<vili::parser::rules::comment> bindcomment
+            = rulesNamespace.new_usertype<vili::parser::rules::comment>(
+                "comment", sol::call_constructor, sol::default_constructor);
+    }
     void LoadClassData(sol::state_view state)
     {
         sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
@@ -104,6 +118,13 @@ namespace vili::parser::rules::Bindings
         sol::usertype<vili::parser::rules::empty_line> bindempty_line
             = rulesNamespace.new_usertype<vili::parser::rules::empty_line>(
                 "empty_line", sol::call_constructor, sol::default_constructor);
+    }
+    void LoadClassEndline(sol::state_view state)
+    {
+        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
+        sol::usertype<vili::parser::rules::endline> bindendline
+            = rulesNamespace.new_usertype<vili::parser::rules::endline>(
+                "endline", sol::call_constructor, sol::default_constructor);
     }
     void LoadClassEscaped(sol::state_view state)
     {
@@ -196,6 +217,22 @@ namespace vili::parser::rules::Bindings
             = rulesNamespace.new_usertype<vili::parser::rules::integer>(
                 "integer", sol::call_constructor, sol::default_constructor);
     }
+    void LoadClassMultilineComment(sol::state_view state)
+    {
+        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
+        sol::usertype<vili::parser::rules::multiline_comment> bindmultiline_comment
+            = rulesNamespace.new_usertype<vili::parser::rules::multiline_comment>(
+                "multiline_comment", sol::call_constructor, sol::default_constructor);
+    }
+    void LoadClassMultilineCommentBlock(sol::state_view state)
+    {
+        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
+        sol::usertype<vili::parser::rules::multiline_comment_block>
+            bindmultiline_comment_block
+            = rulesNamespace.new_usertype<vili::parser::rules::multiline_comment_block>(
+                "multiline_comment_block", sol::call_constructor,
+                sol::default_constructor);
+    }
     void LoadClassNode(sol::state_view state)
     {
         sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
@@ -251,6 +288,13 @@ namespace vili::parser::rules::Bindings
         sol::usertype<vili::parser::rules::sign> bindsign
             = rulesNamespace.new_usertype<vili::parser::rules::sign>(
                 "sign", sol::call_constructor, sol::default_constructor);
+    }
+    void LoadClassSpaceOrComment(sol::state_view state)
+    {
+        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
+        sol::usertype<vili::parser::rules::space_or_comment> bindspace_or_comment
+            = rulesNamespace.new_usertype<vili::parser::rules::space_or_comment>(
+                "space_or_comment", sol::call_constructor, sol::default_constructor);
     }
     void LoadClassString(sol::state_view state)
     {

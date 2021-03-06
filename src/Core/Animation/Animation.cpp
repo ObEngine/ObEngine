@@ -1,5 +1,5 @@
 #include <vili/node.hpp>
-#include <vili/parser/parser.hpp>
+#include <vili/parser.hpp>
 #include <vili/types.hpp>
 #include <vld8/validator.hpp>
 
