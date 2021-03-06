@@ -7,7 +7,7 @@
 #include <Utils/StringUtils.hpp>
 
 #include <vili/node.hpp>
-#include <vili/parser/parser.hpp>
+#include <vili/parser.hpp>
 
 namespace obe::Scene
 {

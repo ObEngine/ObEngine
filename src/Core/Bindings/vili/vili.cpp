@@ -166,39 +166,39 @@ namespace vili::Bindings
         sol::table viliNamespace = state["vili"].get<sol::table>();
         viliNamespace["false_value"] = vili::false_value;
     }
-    void LoadGlobalNullType(sol::state_view state)
+    void LoadGlobalNullTypename(sol::state_view state)
     {
         sol::table viliNamespace = state["vili"].get<sol::table>();
-        viliNamespace["null_type"] = vili::null_typename;
+        viliNamespace["null_typename"] = vili::null_typename;
     }
-    void LoadGlobalBoolType(sol::state_view state)
+    void LoadGlobalBooleanTypename(sol::state_view state)
     {
         sol::table viliNamespace = state["vili"].get<sol::table>();
-        viliNamespace["bool_type"] = vili::boolean_typename;
+        viliNamespace["boolean_typename"] = vili::boolean_typename;
     }
-    void LoadGlobalIntType(sol::state_view state)
+    void LoadGlobalIntegerTypename(sol::state_view state)
     {
         sol::table viliNamespace = state["vili"].get<sol::table>();
-        viliNamespace["int_type"] = vili::integer_typename;
+        viliNamespace["integer_typename"] = vili::integer_typename;
     }
-    void LoadGlobalFloatType(sol::state_view state)
+    void LoadGlobalNumberTypename(sol::state_view state)
     {
         sol::table viliNamespace = state["vili"].get<sol::table>();
-        viliNamespace["float_type"] = vili::number_typename;
+        viliNamespace["number_typename"] = vili::number_typename;
     }
-    void LoadGlobalStringType(sol::state_view state)
+    void LoadGlobalStringTypename(sol::state_view state)
     {
         sol::table viliNamespace = state["vili"].get<sol::table>();
-        viliNamespace["string_type"] = vili::string_typename;
+        viliNamespace["string_typename"] = vili::string_typename;
     }
-    void LoadGlobalObjectType(sol::state_view state)
+    void LoadGlobalObjectTypename(sol::state_view state)
     {
         sol::table viliNamespace = state["vili"].get<sol::table>();
-        viliNamespace["object_type"] = vili::object_typename;
+        viliNamespace["object_typename"] = vili::object_typename;
     }
-    void LoadGlobalArrayType(sol::state_view state)
+    void LoadGlobalArrayTypename(sol::state_view state)
     {
         sol::table viliNamespace = state["vili"].get<sol::table>();
-        viliNamespace["array_type"] = vili::array_typename;
+        viliNamespace["array_typename"] = vili::array_typename;
     }
 };

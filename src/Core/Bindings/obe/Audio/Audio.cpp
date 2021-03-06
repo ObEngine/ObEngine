@@ -49,10 +49,10 @@ namespace obe::Audio::Bindings
         bindSound["play"] = &obe::Audio::Sound::play;
         bindSound["pause"] = &obe::Audio::Sound::pause;
         bindSound["stop"] = &obe::Audio::Sound::stop;
-        bindSound["setSpeed"] = &obe::Audio::Sound::setSpeed;
-        bindSound["getSpeed"] = &obe::Audio::Sound::getSpeed;
         bindSound["setPitch"] = &obe::Audio::Sound::setPitch;
         bindSound["getPitch"] = &obe::Audio::Sound::getPitch;
+        bindSound["setSpeed"] = &obe::Audio::Sound::setSpeed;
+        bindSound["getSpeed"] = &obe::Audio::Sound::getSpeed;
         bindSound["getStatus"] = &obe::Audio::Sound::getStatus;
         bindSound["getOffset"] = &obe::Audio::Sound::getOffset;
         bindSound["setOffset"] = &obe::Audio::Sound::setOffset;

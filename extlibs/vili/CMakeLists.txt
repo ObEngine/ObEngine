@@ -9,20 +9,22 @@ set(VILI_HEADERS
     include/vili/config.hpp
     include/vili/exceptions.hpp
     include/vili/node.hpp
+    include/vili/parser.hpp
     include/vili/types.hpp
     include/vili/utils.hpp
+    include/vili/writer.hpp
     include/vili/parser/actions.hpp
     include/vili/parser/grammar.hpp
     include/vili/parser/grammar_errors.hpp
     include/vili/parser/parser_state.hpp
-    include/vili/parser/parser.hpp
 )
 set(VILI_SOURCES
     src/node.cpp
+    src/parser.cpp
     src/types.cpp
     src/utils.cpp
+    src/writer.cpp
     src/parser/parser_state.cpp
-    src/parser/parser.cpp
 )
 
 add_library(vili ${VILI_HEADERS} ${VILI_SOURCES})

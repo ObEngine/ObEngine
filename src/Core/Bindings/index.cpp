@@ -60,6 +60,7 @@
 #include <Bindings/vili/parser/rules/rules.hpp>
 #include <Bindings/vili/utils/string/string.hpp>
 #include <Bindings/vili/vili.hpp>
+#include <Bindings/vili/writer/writer.hpp>
 #include <sol/sol.hpp>
 namespace obe::Bindings
 {
@@ -86,6 +87,7 @@ namespace obe::Bindings
         state["obe"]["Types"].get_or_create<sol::table>();
         state["vili"]["exceptions"].get_or_create<sol::table>();
         state["vili"]["parser"].get_or_create<sol::table>();
+        state["vili"]["writer"].get_or_create<sol::table>();
         state["obe"]["Bindings"].get_or_create<sol::table>();
         state["obe"]["Debug"].get_or_create<sol::table>();
         state["obe"]["Utils"].get_or_create<sol::table>();
@@ -323,6 +325,8 @@ namespace obe::Bindings
         obe::System::Bindings::LoadEnumMountablePathType(state);
         obe::System::Bindings::LoadEnumPathType(state);
         obe::System::Bindings::LoadEnumWindowContext(state);
+        obe::System::Bindings::LoadEnumStretchMode(state);
+        obe::System::Bindings::LoadFunctionStringToStretchMode(state);
 
         obe::System::Exceptions::Bindings::LoadClassInvalidMouseButtonEnumValue(state);
         obe::System::Exceptions::Bindings::LoadClassMountablePathIndexOverflow(state);
@@ -331,6 +335,7 @@ namespace obe::Bindings
         obe::System::Exceptions::Bindings::LoadClassPackageFileNotFound(state);
         obe::System::Exceptions::Bindings::LoadClassResourceNotFound(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownPackage(state);
+        obe::System::Exceptions::Bindings::LoadClassUnknownStretchMode(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownWorkspace(state);
 
         obe::Tiles::Bindings::LoadClassAnimatedTile(state);
@@ -401,23 +406,25 @@ namespace obe::Bindings
         vili::Bindings::LoadGlobalVERBOSEEXCEPTIONS(state);
         vili::Bindings::LoadGlobalTrueValue(state);
         vili::Bindings::LoadGlobalFalseValue(state);
-        vili::Bindings::LoadGlobalNullType(state);
-        vili::Bindings::LoadGlobalBoolType(state);
-        vili::Bindings::LoadGlobalIntType(state);
-        vili::Bindings::LoadGlobalFloatType(state);
-        vili::Bindings::LoadGlobalStringType(state);
-        vili::Bindings::LoadGlobalObjectType(state);
-        vili::Bindings::LoadGlobalArrayType(state);
+        vili::Bindings::LoadGlobalNullTypename(state);
+        vili::Bindings::LoadGlobalBooleanTypename(state);
+        vili::Bindings::LoadGlobalIntegerTypename(state);
+        vili::Bindings::LoadGlobalNumberTypename(state);
+        vili::Bindings::LoadGlobalStringTypename(state);
+        vili::Bindings::LoadGlobalObjectTypename(state);
+        vili::Bindings::LoadGlobalArrayTypename(state);
 
         vili::exceptions::Bindings::LoadClassArrayIndexOverflow(state);
         vili::exceptions::Bindings::LoadClassBaseException(state);
         vili::exceptions::Bindings::LoadClassDebugInfo(state);
         vili::exceptions::Bindings::LoadClassFileNotFound(state);
         vili::exceptions::Bindings::LoadClassInconsistentIndentation(state);
+        vili::exceptions::Bindings::LoadClassIntegerDumpError(state);
         vili::exceptions::Bindings::LoadClassInvalidCast(state);
         vili::exceptions::Bindings::LoadClassInvalidDataType(state);
         vili::exceptions::Bindings::LoadClassInvalidMerge(state);
         vili::exceptions::Bindings::LoadClassInvalidNodeType(state);
+        vili::exceptions::Bindings::LoadClassNumberDumpError(state);
         vili::exceptions::Bindings::LoadClassParsingError(state);
         vili::exceptions::Bindings::LoadClassTooMuchIndentation(state);
         vili::exceptions::Bindings::LoadClassUnknownChildNode(state);
@@ -456,15 +463,18 @@ namespace obe::Bindings
         vili::parser::rules::Bindings::LoadClassArray(state);
         vili::parser::rules::Bindings::LoadClassArrayElements(state);
         vili::parser::rules::Bindings::LoadClassArraySeparator(state);
+        vili::parser::rules::Bindings::LoadClassBlock(state);
         vili::parser::rules::Bindings::LoadClassBoolean(state);
         vili::parser::rules::Bindings::LoadClassBraceBasedObject(state);
         vili::parser::rules::Bindings::LoadClassChar_(state);
         vili::parser::rules::Bindings::LoadClassCloseArray(state);
         vili::parser::rules::Bindings::LoadClassCloseObject(state);
+        vili::parser::rules::Bindings::LoadClassComment(state);
         vili::parser::rules::Bindings::LoadClassData(state);
         vili::parser::rules::Bindings::LoadClassDigits(state);
         vili::parser::rules::Bindings::LoadClassElement(state);
         vili::parser::rules::Bindings::LoadClassEmptyLine(state);
+        vili::parser::rules::Bindings::LoadClassEndline(state);
         vili::parser::rules::Bindings::LoadClassEscaped(state);
         vili::parser::rules::Bindings::LoadClassEscapedChar(state);
         vili::parser::rules::Bindings::LoadClassFalse_(state);
@@ -478,6 +488,8 @@ namespace obe::Bindings
         vili::parser::rules::Bindings::LoadClassInlineElement(state);
         vili::parser::rules::Bindings::LoadClassInlineNode(state);
         vili::parser::rules::Bindings::LoadClassInteger(state);
+        vili::parser::rules::Bindings::LoadClassMultilineComment(state);
+        vili::parser::rules::Bindings::LoadClassMultilineCommentBlock(state);
         vili::parser::rules::Bindings::LoadClassNode(state);
         vili::parser::rules::Bindings::LoadClassNumber(state);
         vili::parser::rules::Bindings::LoadClassObject(state);
@@ -486,6 +498,7 @@ namespace obe::Bindings
         vili::parser::rules::Bindings::LoadClassOpenArray(state);
         vili::parser::rules::Bindings::LoadClassOpenObject(state);
         vili::parser::rules::Bindings::LoadClassSign(state);
+        vili::parser::rules::Bindings::LoadClassSpaceOrComment(state);
         vili::parser::rules::Bindings::LoadClassString(state);
         vili::parser::rules::Bindings::LoadClassStringContent(state);
         vili::parser::rules::Bindings::LoadClassStringDelimiter(state);
@@ -502,6 +515,18 @@ namespace obe::Bindings
         vili::parser::rules::Bindings::LoadClassUnicode(state);
         vili::parser::rules::Bindings::LoadClassViliGrammar(state);
         vili::parser::rules::Bindings::LoadClassXdigit(state);
+
+        vili::writer::Bindings::LoadClassDumpOptions(state);
+        vili::writer::Bindings::LoadEnumDelimiterNewlinePolicy(state);
+        vili::writer::Bindings::LoadEnumCommaSpacingPolicy(state);
+        vili::writer::Bindings::LoadEnumObjectStyle(state);
+        vili::writer::Bindings::LoadFunctionDumpInteger(state);
+        vili::writer::Bindings::LoadFunctionDumpNumber(state);
+        vili::writer::Bindings::LoadFunctionDumpBoolean(state);
+        vili::writer::Bindings::LoadFunctionDumpString(state);
+        vili::writer::Bindings::LoadFunctionDumpArray(state);
+        vili::writer::Bindings::LoadFunctionDumpObject(state);
+        vili::writer::Bindings::LoadFunctionDump(state);
 
         obe::Animation::Easing::Bindings::LoadEnumEasingType(state);
         obe::Animation::Easing::Bindings::LoadFunctionLinear(state);

@@ -1,5 +1,5 @@
 #include <elzip/elzip.hpp>
-#include <vili/parser/parser.hpp>
+#include <vili/parser.hpp>
 
 #include <System/Package.hpp>
 #include <System/Path.hpp>

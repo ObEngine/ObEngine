@@ -1,4 +1,4 @@
-#include <vili/parser/parser.hpp>
+#include <vili/parser.hpp>
 
 #include <Debug/Logger.hpp>
 #include <System/MountablePath.hpp>

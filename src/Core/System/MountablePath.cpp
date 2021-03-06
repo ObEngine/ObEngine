@@ -7,7 +7,7 @@
 #include <System/Path.hpp>
 #include <System/Workspace.hpp>
 
-#include <vili/parser/parser.hpp>
+#include <vili/parser.hpp>
 
 namespace obe::System
 {

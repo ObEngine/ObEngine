@@ -13,5 +13,6 @@ namespace obe::System::Exceptions::Bindings
     void LoadClassPackageFileNotFound(sol::state_view state);
     void LoadClassResourceNotFound(sol::state_view state);
     void LoadClassUnknownPackage(sol::state_view state);
+    void LoadClassUnknownStretchMode(sol::state_view state);
     void LoadClassUnknownWorkspace(sol::state_view state);
 };

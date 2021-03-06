@@ -16,11 +16,11 @@ namespace vili::Bindings
     void LoadGlobalVERBOSEEXCEPTIONS(sol::state_view state);
     void LoadGlobalTrueValue(sol::state_view state);
     void LoadGlobalFalseValue(sol::state_view state);
-    void LoadGlobalNullType(sol::state_view state);
-    void LoadGlobalBoolType(sol::state_view state);
-    void LoadGlobalIntType(sol::state_view state);
-    void LoadGlobalFloatType(sol::state_view state);
-    void LoadGlobalStringType(sol::state_view state);
-    void LoadGlobalObjectType(sol::state_view state);
-    void LoadGlobalArrayType(sol::state_view state);
+    void LoadGlobalNullTypename(sol::state_view state);
+    void LoadGlobalBooleanTypename(sol::state_view state);
+    void LoadGlobalIntegerTypename(sol::state_view state);
+    void LoadGlobalNumberTypename(sol::state_view state);
+    void LoadGlobalStringTypename(sol::state_view state);
+    void LoadGlobalObjectTypename(sol::state_view state);
+    void LoadGlobalArrayTypename(sol::state_view state);
 };

@@ -104,9 +104,7 @@ namespace obe::Scene::Bindings
                 return self->createSprite(id, addToSceneRoot);
             });
         bindScene["getSpriteAmount"] = &obe::Scene::Scene::getSpriteAmount;
-        bindScene["getAllSprites"] = [](obe::Scene::Scene* self) {
-            return sol::as_table(self->getAllSprites());
-        };
+        bindScene["getAllSprites"] = &obe::Scene::Scene::getAllSprites;
         bindScene["getSpritesByLayer"] = &obe::Scene::Scene::getSpritesByLayer;
         bindScene["getSpriteByPosition"] = &obe::Scene::Scene::getSpriteByPosition;
         bindScene["getSprite"] = &obe::Scene::Scene::getSprite;
@@ -125,9 +123,7 @@ namespace obe::Scene::Bindings
                 return self->createCollider(id, addToSceneRoot);
             });
         bindScene["getColliderAmount"] = &obe::Scene::Scene::getColliderAmount;
-        bindScene["getAllColliders"] = [](obe::Scene::Scene* self) {
-            return sol::as_table(self->getAllColliders());
-        };
+        bindScene["getAllColliders"] = &obe::Scene::Scene::getAllColliders;
         bindScene["getColliderPointByPosition"]
             = &obe::Scene::Scene::getColliderPointByPosition;
         bindScene["getColliderByCentroidPosition"]
