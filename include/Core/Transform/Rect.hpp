@@ -135,12 +135,6 @@ namespace obe::Transform
         void setRotation(double angle, Transform::UnitVector origin);
         void rotate(double angle, Transform::UnitVector origin);
         /**
-        * \brief Checks if the Rect overlap a specified Rect
-        * \param other The other Rect to check
-        * \return true if the Rect overlap the other Rect, false otherwise
-        */
-        bool doesOverlap(const Rect& other);
-        /**
          * \brief Draws the Rect for debug purposes <REMOVE>
          */
         void draw(Graphics::RenderTarget surface, int x, int y) const;
@@ -161,7 +155,12 @@ namespace obe::Transform
          * \asproperty
          */
         [[nodiscard]] double height() const;
-
+        /**
+        * \brief Checks if the Rect intersects a specified Rect
+        * \param other The other Rect to check
+        * \return true if the Rect intersects the other Rect, false otherwise
+        */
+        [[nodiscard]] bool doesIntersects(const Rect& rect) const;
         [[nodiscard]] std::optional<Rect> intersects(const Rect& rect) const;
         [[nodiscard]] bool contains(const Rect& rect) const;
         [[nodiscard]] bool contains(const UnitVector& position) const;

@@ -227,12 +227,12 @@ namespace obe::Transform::Bindings
         bindRect["getRotation"] = &obe::Transform::Rect::getRotation;
         bindRect["setRotation"] = &obe::Transform::Rect::setRotation;
         bindRect["rotate"] = &obe::Transform::Rect::rotate;
-        bindRect["doesOverlap"] = &obe::Transform::Rect::doesOverlap;
         bindRect["draw"] = &obe::Transform::Rect::draw;
         bindRect["x"] = sol::property(&obe::Transform::Rect::x);
         bindRect["y"] = sol::property(&obe::Transform::Rect::y);
         bindRect["width"] = sol::property(&obe::Transform::Rect::width);
         bindRect["height"] = sol::property(&obe::Transform::Rect::height);
+        bindRect["doesIntersects"] = &obe::Transform::Rect::doesIntersects;
         bindRect["intersects"] = &obe::Transform::Rect::intersects;
         bindRect["contains"] = sol::overload(
             static_cast<bool (obe::Transform::Rect::*)(const obe::Transform::Rect&)

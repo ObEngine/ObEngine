@@ -42,25 +42,6 @@ namespace obe::Transform
             m_angle = Utils::Math::normalize(m_angle, 0, 360);
     }
 
-    bool Rect::doesOverlap(const Rect& other)
-    {
-        if (this->getPosition(Transform::Referential::TopLeft).x
-                >= other.getPosition(Transform::Referential::BottomRight).x
-            || this->getPosition(Transform::Referential::BottomRight).x
-                <= other.getPosition(Transform::Referential::TopLeft).x)
-        {
-            return false;
-        }
-        if (this->getPosition(Transform::Referential::TopLeft).y
-                >= other.getPosition(Transform::Referential::BottomRight).y
-            || this->getPosition(Transform::Referential::BottomRight).y
-                <= other.getPosition(Transform::Referential::TopLeft).y)
-        {
-            return false;
-        }
-        return true;
-    }
-
     void Rect::transformRef(
         UnitVector& vec, const Referential& ref, ConversionType type) const
     {
@@ -150,6 +131,25 @@ namespace obe::Transform
     double Rect::height() const
     {
         return m_size.y;
+    }
+
+    bool Rect::doesIntersects(const Rect& rect) const
+    {
+        const auto r1MinX = std::min(m_position.x, m_position.x + m_size.x);
+        const auto r1MaxX = std::max(m_position.x, m_position.x + m_size.x);
+        const auto r1MinY = std::min(m_position.y, m_position.y + m_size.y);
+        const auto r1MaxY = std::max(m_position.y, m_position.y + m_size.y);
+
+        const auto r2MinX
+            = std::min(rect.m_position.x, rect.m_position.x + rect.m_size.x);
+        const auto r2MaxX
+            = std::max(rect.m_position.x, rect.m_position.x + rect.m_size.x);
+        const auto r2MinY
+            = std::min(rect.m_position.y, rect.m_position.y + rect.m_size.y);
+        const auto r2MaxY
+            = std::max(rect.m_position.y, rect.m_position.y + rect.m_size.y);
+
+        return !(r2MinX > r1MaxX || r2MaxX < r1MinX || r2MinY > r1MaxY || r2MaxY < r1MinY);
     }
 
     std::optional<Rect> Rect::intersects(const Rect& rect) const

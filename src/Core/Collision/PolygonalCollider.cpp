@@ -208,7 +208,7 @@ namespace obe::Collision
         std::vector<PolygonalCollider*> collidersToCheck;
         for (auto& collider : Pool)
         {
-            if (aabb.doesOverlap(collider->getBoundingBox()))
+            if (aabb.doesIntersects(collider->getBoundingBox()))
                 collidersToCheck.push_back(collider);
         }
 
@@ -312,7 +312,7 @@ namespace obe::Collision
         std::vector<PolygonalCollider*> collidersToCheck;
         for (auto& collider : Pool)
         {
-            if (aabb.doesOverlap(collider->getBoundingBox()))
+            if (aabb.doesIntersects(collider->getBoundingBox()))
                 collidersToCheck.push_back(collider);
         }
 
@@ -364,21 +364,6 @@ namespace obe::Collision
     {
         const Transform::Units pxUnit = Transform::Units::ScenePixels;
         const Transform::UnitVector tOffset = offset.to(pxUnit);
-        Transform::Rect fromBoundingBox = this->getBoundingBox();
-        Transform::Rect toBoundingBox = fromBoundingBox;
-        toBoundingBox.move(offset);
-        const Transform::UnitVector minXY(
-            std::min(fromBoundingBox.x(), toBoundingBox.x()),
-            std::min(fromBoundingBox.y(), toBoundingBox.y()));
-        const Transform::UnitVector maxXY(
-            std::max(fromBoundingBox.x(), toBoundingBox.x()),
-            std::max(fromBoundingBox.y(), toBoundingBox.y()));
-        fromBoundingBox.setPosition(minXY);
-        fromBoundingBox.setSize(maxXY);
-        if (!fromBoundingBox.intersects(collider.getBoundingBox()))
-        {
-            return tOffset;
-        }
         bool inFront = false;
         Transform::UnitVector minDep;
         const auto calcMinDistanceDep = [this](const Transform::PolygonPath& sol1,
