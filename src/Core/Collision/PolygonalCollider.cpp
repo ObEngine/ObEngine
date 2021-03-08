@@ -309,13 +309,13 @@ namespace obe::Collision
         std::vector<PolygonalCollider*> collidersToCheck;
         for (auto& collider : Pool)
         {
-            if (aabb.doesIntersects(collider->getBoundingBox()))
+            if (collider != this && aabb.doesIntersects(collider->getBoundingBox()))
                 collidersToCheck.push_back(collider);
         }
 
         for (auto& collider : collidersToCheck)
         {
-            if (collider != this && checkTags(*collider))
+            if (checkTags(*collider))
             {
                 if (this->doesCollide(*collider, offset))
                 {
@@ -446,12 +446,6 @@ namespace obe::Collision
     bool PolygonalCollider::doesCollide(
         PolygonalCollider& collider, const Transform::UnitVector& offset) const
     {
-        Transform::Rect boundingBox = this->getBoundingBox();
-        boundingBox.move(offset);
-        if (!boundingBox.intersects(collider.getBoundingBox()))
-        {
-            return false;
-        }
         std::vector<Transform::UnitVector> pSet1;
         pSet1.reserve(m_points.size());
         std::vector<Transform::UnitVector> pSet2;
