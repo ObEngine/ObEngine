@@ -208,7 +208,7 @@ namespace obe::Collision
         std::vector<PolygonalCollider*> collidersToCheck;
         for (auto& collider : Pool)
         {
-            if (aabb.doesIntersects(collider->getBoundingBox()))
+            if (collider != this && aabb.doesIntersects(collider->getBoundingBox()))
                 collidersToCheck.push_back(collider);
         }
 
@@ -221,10 +221,7 @@ namespace obe::Collision
                 // Debug::Log->warn("Maximum distance before collision from {}
                 // with {} is ({}, {})", this->getId(), collider->getId(),
                 // maxDist.x, maxDist.y);
-                if (maxDist != offset && collider != this)
-                {
-                    reachableColliders.emplace_back(collider, maxDist);
-                }
+                if (maxDist != offset) reachableColliders.emplace_back(collider, maxDist);
             }
         }
 
