@@ -31,8 +31,9 @@
 *And by the way, it is pronounced* | ˈɒb ˈendʒɪn |, *the umlaut on the Ö is just there because it looks like a surprised face, it doesn't influence the pronounciation.*
 
 ## How do I build it ?
-You will need SFML :
-- [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/index-fr.php) (Display, Input, Network, Sound and much more)
+- You will need [SFML 2.5.1](https://www.sfml-dev.org/download/sfml/2.5.1/index-fr.php) (Display, Input, Network, Sound and much more)
+
+- You may also need alsa-lib (if you're on Linux)
 
 There are other third-party libraries but they are included in the repository (`extlibs/` folder).
 Check this tutorial to learn how to build ÖbEngine : [Building ÖbEngine](https://github.com/Sygmei/ObEngine/wiki/Building-ObEngine)
