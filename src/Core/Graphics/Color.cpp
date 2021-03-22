@@ -245,13 +245,6 @@ namespace obe::Graphics
         this->fromString(nameOrHex);
     }
 
-    Color::Color(const Color& color)
-    {
-        r = color.r;
-        g = color.g;
-        b = color.b;
-        a = color.a;
-    }
 
     Color::Color(const sf::Color& color)
     {
