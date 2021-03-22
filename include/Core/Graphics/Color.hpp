@@ -21,7 +21,6 @@ namespace obe::Graphics
         Color();
         Color(double r, double g, double b, double a = 255);
         explicit Color(const std::string& nameOrHex);
-        Color(const Color& color);
         Color(const sf::Color& color);
 
         void fromString(std::string string);
