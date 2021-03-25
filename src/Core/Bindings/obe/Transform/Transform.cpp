@@ -233,7 +233,7 @@ namespace obe::Transform::Bindings
         bindRect["width"] = sol::property(&obe::Transform::Rect::width);
         bindRect["height"] = sol::property(&obe::Transform::Rect::height);
         bindRect["doesIntersects"] = &obe::Transform::Rect::doesIntersects;
-        bindRect["intersects"] = &obe::Transform::Rect::intersects;
+        bindRect["getIntersection"] = &obe::Transform::Rect::getIntersection;
         bindRect["contains"] = sol::overload(
             static_cast<bool (obe::Transform::Rect::*)(const obe::Transform::Rect&)
                     const>(&obe::Transform::Rect::contains),

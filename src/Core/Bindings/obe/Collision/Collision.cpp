@@ -50,8 +50,8 @@ namespace obe::Collision::Bindings
                 obe::Collision::PolygonalCollider::*)(const obe::Transform::UnitVector&)
                     const>(&obe::Collision::PolygonalCollider::doesCollide),
             static_cast<bool (obe::Collision::PolygonalCollider::*)(
-                obe::Collision::PolygonalCollider&, const obe::Transform::UnitVector&)
-                    const>(&obe::Collision::PolygonalCollider::doesCollide));
+                obe::Collision::PolygonalCollider&, const obe::Transform::UnitVector&,
+                const bool) const>(&obe::Collision::PolygonalCollider::doesCollide));
         bindPolygonalCollider["doesHaveAnyTag"]
             = &obe::Collision::PolygonalCollider::doesHaveAnyTag;
         bindPolygonalCollider["doesHaveTag"]
@@ -65,8 +65,8 @@ namespace obe::Collision::Bindings
                     const>(
                 &obe::Collision::PolygonalCollider::getMaximumDistanceBeforeCollision),
             static_cast<obe::Transform::UnitVector (obe::Collision::PolygonalCollider::*)(
-                obe::Collision::PolygonalCollider&, const obe::Transform::UnitVector&)
-                    const>(
+                obe::Collision::PolygonalCollider&, const obe::Transform::UnitVector&,
+                const bool) const>(
                 &obe::Collision::PolygonalCollider::getMaximumDistanceBeforeCollision));
         bindPolygonalCollider["getParentId"]
             = &obe::Collision::PolygonalCollider::getParentId;

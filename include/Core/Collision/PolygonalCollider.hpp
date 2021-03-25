@@ -119,7 +119,7 @@ namespace obe::Collision
          * \return true if the two polygons intersects, false otherwise
          */
         bool doesCollide(
-            PolygonalCollider& collider, const Transform::UnitVector& offset) const;
+            PolygonalCollider& collider, const Transform::UnitVector& offset, const bool doAABBfilter) const;
         /**
          * \brief Check if the Collider contains one of the Tag in parameter
          * \param tagType List from where you want to check the Tags existence
@@ -171,7 +171,8 @@ namespace obe::Collision
          * \return The maximum distance the Collider can travel before colliding
          */
         Transform::UnitVector getMaximumDistanceBeforeCollision(
-            PolygonalCollider& collider, const Transform::UnitVector& offset) const;
+            PolygonalCollider& collider, const Transform::UnitVector& offset,
+            const bool doAABBfilter) const;
         /**
          * \brief Get the Id of the parent of the Collider (When used in a
          *        GameObject) \return A std::string containing the Id of the parent of

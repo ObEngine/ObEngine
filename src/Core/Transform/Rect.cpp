@@ -152,7 +152,7 @@ namespace obe::Transform
         return !(r2MinX > r1MaxX || r2MaxX < r1MinX || r2MinY > r1MaxY || r2MaxY < r1MinY);
     }
 
-    std::optional<Rect> Rect::intersects(const Rect& rect) const
+    std::optional<Rect> Rect::getIntersection(const Rect& rect) const
     {
         const auto r1MinX = std::min(m_position.x, m_position.x + m_size.x);
         const auto r1MaxX = std::max(m_position.x, m_position.x + m_size.x);
