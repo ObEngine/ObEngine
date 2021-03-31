@@ -1,7 +1,10 @@
+
 #include <Graphics/Texture.hpp>
 
 #include <Graphics/Exceptions.hpp>
 #include <Utils/MiscUtils.hpp>
+
+#include <lunasvg/svgdocument.h>
 
 #include "Debug/Logger.hpp"
 #include <iostream>
@@ -51,6 +54,17 @@ namespace obe::Graphics
             return sfRect;
         }
 
+        sf::Image loadSvgFromFile(const std::string filename)
+        {
+            lunasvg::SVGDocument document;
+            document.loadFontFromFile(filename);
+            //renderToBitmap by default uses the original document's dimension
+            const auto bitmap = document.renderToBitmap();
+            sf::Image image;
+            image.create(bitmap.width(), bitmap.height(), bitmap.data());
+            return image;
+        }
+
     } //namespace
 
     Texture::Texture()
@@ -88,12 +102,22 @@ namespace obe::Graphics
 
     bool Texture::loadFromFile(const std::string& filename)
     {
+        if (Utils::String::endsWith(filename, ".svg"))
+        {
+            const auto image = loadSvgFromFile(filename);
+            return getMutableTexture(m_texture).loadFromImage(image);
+        }
         return getMutableTexture(m_texture).loadFromFile(filename);
     }
 
     bool Texture::loadFromFile(const std::string& filename, const Transform::Rect& rect)
     {
         const sf::IntRect sfRect = toSfRect(rect);
+        if (Utils::String::endsWith(filename, ".svg"))
+        {
+            const auto image = loadSvgFromFile(filename);
+            return getMutableTexture(m_texture).loadFromImage(image, sfRect);
+        }
         return getMutableTexture(m_texture).loadFromFile(filename, sfRect);
     }
 
