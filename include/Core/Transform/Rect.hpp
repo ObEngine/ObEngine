@@ -155,8 +155,13 @@ namespace obe::Transform
          * \asproperty
          */
         [[nodiscard]] double height() const;
-
-        [[nodiscard]] std::optional<Rect> intersects(const Rect& rect) const;
+        /**
+        * \brief Checks if the Rect intersects a specified Rect
+        * \param other The other Rect to check
+        * \return true if the Rect intersects the other Rect, false otherwise
+        */
+        [[nodiscard]] bool doesIntersects(const Rect& rect) const;
+        [[nodiscard]] std::optional<Rect> getIntersection(const Rect& rect) const;
         [[nodiscard]] bool contains(const Rect& rect) const;
         [[nodiscard]] bool contains(const UnitVector& position) const;
     };

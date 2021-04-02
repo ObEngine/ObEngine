@@ -82,6 +82,46 @@ namespace obe::Collision
         return fullHull;
     }
 
+    /**
+     * \brief Returns colliders that may be potentially touched (Axis-Aligned Bounding Box filtering)
+    */
+    std::vector<PolygonalCollider*> AABBfilter(const PolygonalCollider& coll,
+        const Transform::UnitVector& offset,
+        const std::vector<PolygonalCollider*>& colliders)
+    {
+        const Transform::Rect colBBox = coll.getBoundingBox();
+        Transform::Rect aabb;
+        aabb.setSize(
+            colBBox.getSize() + Transform::UnitVector(abs(offset.x), abs(offset.y)));
+        if (offset.x >= 0 && offset.y >= 0)
+        {
+            aabb.setPosition(colBBox.getPosition(Transform::Referential::TopLeft),
+                Transform::Referential::TopLeft);
+        }
+        else if (offset.x >= 0 && offset.y < 0)
+        {
+            aabb.setPosition(colBBox.getPosition(Transform::Referential::BottomLeft),
+                Transform::Referential::BottomLeft);
+        }
+        else if (offset.x < 0 && offset.y >= 0)
+        {
+            aabb.setPosition(colBBox.getPosition(Transform::Referential::TopRight),
+                Transform::Referential::TopRight);
+        }
+        else // offset.x < 0 && offset.y < 0
+        {
+            aabb.setPosition(colBBox.getPosition(Transform::Referential::BottomRight),
+                Transform::Referential::BottomRight);
+        }
+        std::vector<PolygonalCollider*> collidersToCheck;
+        for (auto& collider : colliders)
+        {
+            if (collider != &coll && aabb.doesIntersects(collider->getBoundingBox()))
+                collidersToCheck.push_back(collider);
+        }
+        return collidersToCheck;
+    }
+
     PolygonalCollider::PolygonalCollider(const std::string& id)
         : Selectable(false)
         , Component(id)
@@ -124,6 +164,54 @@ namespace obe::Collision
         return ComponentType;
     }
 
+    Transform::Rect PolygonalCollider::getBoundingBox() const
+    {
+        if (m_updateBoundingBox) {
+            m_boundingBox = Transform::Polygon::getBoundingBox();
+            m_updateBoundingBox = false;
+        }
+        return m_boundingBox;
+    }
+
+    void PolygonalCollider::addPoint(
+        const Transform::UnitVector& position, int pointIndex)
+    {
+        Transform::Polygon::addPoint(position, pointIndex);
+        m_updateBoundingBox = true;
+    }
+
+    void PolygonalCollider::move(const Transform::UnitVector& position)
+    {
+        Transform::Polygon::move(position);
+        m_boundingBox.move(position);
+    }
+
+    void PolygonalCollider::rotate(float angle, Transform::UnitVector origin)
+    {
+        Transform::Polygon::rotate(angle, origin);
+        m_updateBoundingBox = true;
+    }
+
+    void PolygonalCollider::setPosition(const Transform::UnitVector& position)
+    {
+        const Transform::UnitVector diff = position - this->getPosition();
+        Transform::Polygon::setPosition(position);
+        m_boundingBox.move(diff);
+    }
+
+    void PolygonalCollider::setRotation(float angle, Transform::UnitVector origin)
+    {
+        Transform::Polygon::setRotation(angle, origin);
+        m_updateBoundingBox = true;
+    }
+
+    void PolygonalCollider::setPositionFromCentroid(const Transform::UnitVector& position)
+    {
+        const Transform::UnitVector oldPos = this->getPosition();
+        Transform::Polygon::setPositionFromCentroid(position);
+        m_boundingBox.move(oldPos - this->getPosition());
+    }
+
     void PolygonalCollider::resetUnit(Transform::Units unit)
     {
     }
@@ -137,19 +225,18 @@ namespace obe::Collision
         CollisionData collData;
         collData.offset = offset;
 
-        for (auto& collider : Pool)
+        std::vector<PolygonalCollider*> collidersToCheck = AABBfilter(*this, offset, Pool);
+
+        for (auto& collider : collidersToCheck)
         {
             if (checkTags(*collider))
             {
                 const Transform::UnitVector maxDist
-                    = this->getMaximumDistanceBeforeCollision(*collider, offset);
+                    = this->getMaximumDistanceBeforeCollision(*collider, offset, false);
                 // Debug::Log->warn("Maximum distance before collision from {}
                 // with {} is ({}, {})", this->getId(), collider->getId(),
                 // maxDist.x, maxDist.y);
-                if (maxDist != offset && collider != this)
-                {
-                    reachableColliders.emplace_back(collider, maxDist);
-                }
+                if (maxDist != offset) reachableColliders.emplace_back(collider, maxDist);
             }
         }
 
@@ -208,11 +295,14 @@ namespace obe::Collision
     {
         CollisionData collData;
         collData.offset = offset;
-        for (auto& collider : Pool)
+
+        std::vector<PolygonalCollider*> collidersToCheck = AABBfilter(*this, offset, Pool);
+
+        for (auto& collider : collidersToCheck)
         {
-            if (collider != this && checkTags(*collider))
+            if (checkTags(*collider))
             {
-                if (this->doesCollide(*collider, offset))
+                if (this->doesCollide(*collider, offset, false))
                 {
                     collData.colliders.push_back(collider);
                 }
@@ -252,25 +342,13 @@ namespace obe::Collision
     }
 
     Transform::UnitVector PolygonalCollider::getMaximumDistanceBeforeCollision(
-        PolygonalCollider& collider, const Transform::UnitVector& offset) const
+        PolygonalCollider& collider, const Transform::UnitVector& offset,
+        const bool doAABBfilter) const
     {
         const Transform::Units pxUnit = Transform::Units::ScenePixels;
         const Transform::UnitVector tOffset = offset.to(pxUnit);
-        Transform::Rect fromBoundingBox = this->getBoundingBox();
-        Transform::Rect toBoundingBox = fromBoundingBox;
-        toBoundingBox.move(offset);
-        const Transform::UnitVector minXY(
-            std::min(fromBoundingBox.x(), toBoundingBox.x()),
-            std::min(fromBoundingBox.y(), toBoundingBox.y()));
-        const Transform::UnitVector maxXY(
-            std::max(fromBoundingBox.x(), toBoundingBox.x()),
-            std::max(fromBoundingBox.y(), toBoundingBox.y()));
-        fromBoundingBox.setPosition(minXY);
-        fromBoundingBox.setSize(maxXY);
-        if (!fromBoundingBox.intersects(collider.getBoundingBox()))
-        {
+        if (doAABBfilter && AABBfilter(*this, offset, { &collider }).empty())
             return tOffset;
-        }
         bool inFront = false;
         Transform::UnitVector minDep;
         const auto calcMinDistanceDep = [this](const Transform::PolygonPath& sol1,
@@ -354,14 +432,10 @@ namespace obe::Collision
     }
 
     bool PolygonalCollider::doesCollide(
-        PolygonalCollider& collider, const Transform::UnitVector& offset) const
+        PolygonalCollider& collider, const Transform::UnitVector& offset, const bool doAABBfilter) const
     {
-        Transform::Rect boundingBox = this->getBoundingBox();
-        boundingBox.move(offset);
-        if (!boundingBox.intersects(collider.getBoundingBox()))
-        {
+        if (doAABBfilter && AABBfilter(*this, offset, { &collider }).empty())
             return false;
-        }
         std::vector<Transform::UnitVector> pSet1;
         pSet1.reserve(m_points.size());
         std::vector<Transform::UnitVector> pSet2;

@@ -50,8 +50,8 @@ namespace obe::Collision::Bindings
                 obe::Collision::PolygonalCollider::*)(const obe::Transform::UnitVector&)
                     const>(&obe::Collision::PolygonalCollider::doesCollide),
             static_cast<bool (obe::Collision::PolygonalCollider::*)(
-                obe::Collision::PolygonalCollider&, const obe::Transform::UnitVector&)
-                    const>(&obe::Collision::PolygonalCollider::doesCollide));
+                obe::Collision::PolygonalCollider&, const obe::Transform::UnitVector&,
+                const bool) const>(&obe::Collision::PolygonalCollider::doesCollide));
         bindPolygonalCollider["doesHaveAnyTag"]
             = &obe::Collision::PolygonalCollider::doesHaveAnyTag;
         bindPolygonalCollider["doesHaveTag"]
@@ -65,8 +65,8 @@ namespace obe::Collision::Bindings
                     const>(
                 &obe::Collision::PolygonalCollider::getMaximumDistanceBeforeCollision),
             static_cast<obe::Transform::UnitVector (obe::Collision::PolygonalCollider::*)(
-                obe::Collision::PolygonalCollider&, const obe::Transform::UnitVector&)
-                    const>(
+                obe::Collision::PolygonalCollider&, const obe::Transform::UnitVector&,
+                const bool) const>(
                 &obe::Collision::PolygonalCollider::getMaximumDistanceBeforeCollision));
         bindPolygonalCollider["getParentId"]
             = &obe::Collision::PolygonalCollider::getParentId;
@@ -76,6 +76,24 @@ namespace obe::Collision::Bindings
         bindPolygonalCollider["setParentId"]
             = &obe::Collision::PolygonalCollider::setParentId;
         bindPolygonalCollider["type"] = &obe::Collision::PolygonalCollider::type;
+        bindPolygonalCollider["getBoundingBox"]
+            = &obe::Collision::PolygonalCollider::getBoundingBox;
+        bindPolygonalCollider["addPoint"] = sol::overload(
+            [](obe::Collision::PolygonalCollider* self,
+                const obe::Transform::UnitVector& position) -> void {
+                return self->addPoint(position);
+            },
+            [](obe::Collision::PolygonalCollider* self,
+                const obe::Transform::UnitVector& position,
+                int pointIndex) -> void { return self->addPoint(position, pointIndex); });
+        bindPolygonalCollider["move"] = &obe::Collision::PolygonalCollider::move;
+        bindPolygonalCollider["rotate"] = &obe::Collision::PolygonalCollider::rotate;
+        bindPolygonalCollider["setPosition"]
+            = &obe::Collision::PolygonalCollider::setPosition;
+        bindPolygonalCollider["setRotation"]
+            = &obe::Collision::PolygonalCollider::setRotation;
+        bindPolygonalCollider["setPositionFromCentroid"]
+            = &obe::Collision::PolygonalCollider::setPositionFromCentroid;
     }
     void LoadClassTrajectory(sol::state_view state)
     {

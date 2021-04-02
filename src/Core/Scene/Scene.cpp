@@ -716,7 +716,7 @@ namespace obe::Scene
             {
                 sprCollider.addPoint(sprite->getPosition(ref));
             }
-            if (sprCollider.doesCollide(positionCollider, zeroOffset))
+            if (sprCollider.doesCollide(positionCollider, zeroOffset, true))
             {
                 return sprite;
             }

@@ -66,6 +66,15 @@ namespace obe::Collision
             { ColliderTagType::Rejected, {} },
         };
 
+        /*
+        * \brief Cached bounding box, used for AABB filtering
+        */
+        mutable Transform::Rect m_boundingBox;
+        /*
+        * \brief If true, the bounding box is recalculated at next getBoundingBox() call
+        */
+        mutable bool m_updateBoundingBox = true;
+
         void resetUnit(Transform::Units unit) override;
         [[nodiscard]] bool checkTags(const PolygonalCollider& collider) const;
 
@@ -110,7 +119,7 @@ namespace obe::Collision
          * \return true if the two polygons intersects, false otherwise
          */
         bool doesCollide(
-            PolygonalCollider& collider, const Transform::UnitVector& offset) const;
+            PolygonalCollider& collider, const Transform::UnitVector& offset, const bool doAABBfilter) const;
         /**
          * \brief Check if the Collider contains one of the Tag in parameter
          * \param tagType List from where you want to check the Tags existence
@@ -162,7 +171,8 @@ namespace obe::Collision
          * \return The maximum distance the Collider can travel before colliding
          */
         Transform::UnitVector getMaximumDistanceBeforeCollision(
-            PolygonalCollider& collider, const Transform::UnitVector& offset) const;
+            PolygonalCollider& collider, const Transform::UnitVector& offset,
+            const bool doAABBfilter) const;
         /**
          * \brief Get the Id of the parent of the Collider (When used in a
          *        GameObject) \return A std::string containing the Id of the parent of
@@ -188,5 +198,15 @@ namespace obe::Collision
          */
         void setParentId(const std::string& parent);
         [[nodiscard]] std::string_view type() const override;
+        /*
+        * \brief Returns the cached bounding box. Recalculates it if necessary.
+        */
+        [[nodiscard]] Transform::Rect getBoundingBox() const override;
+        void addPoint(const Transform::UnitVector& position, int pointIndex = -1) override;
+        void move(const Transform::UnitVector& position) override;
+        void rotate(float angle, Transform::UnitVector origin) override;
+        void setPosition(const Transform::UnitVector& position) override;
+        void setRotation(float angle, Transform::UnitVector origin) override;
+        void setPositionFromCentroid(const Transform::UnitVector& position) override;
     };
 } // namespace obe::Collision
