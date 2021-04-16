@@ -5767,7 +5767,7 @@ namespace sol {
 		struct tagged {
 		private:
 			T value_;
-		
+
 		public:
 			template <typename Arg, typename... Args, meta::disable<std::is_same<meta::unqualified_t<Arg>, tagged>> = meta::enabler>
 			tagged(Arg&& arg, Args&&... args)
@@ -7496,7 +7496,7 @@ namespace sol {
 			}
 #if !defined(SOL_EXCEPTIONS_SAFE_PROPAGATION)
 			// LuaJIT cannot have the catchall when the safe propagation is on
-			// but LuaJIT will swallow all C++ errors 
+			// but LuaJIT will swallow all C++ errors
 			// if we don't at least catch std::exception ones
 			catch (...) {
 				call_exception_handler(L, optional<const std::exception&>(nullopt), "caught (...) exception");
@@ -7507,7 +7507,7 @@ namespace sol {
 		}
 
 #ifdef SOL_NOEXCEPT_FUNCTION_TYPE
-#if 0 
+#if 0
 		// impossible: g++/clang++ choke as they think this function is ambiguous:
 		// to fix, wait for template <auto X> and then switch on no-exceptness of the function
 		template <lua_CFunction_noexcept f>
@@ -7550,7 +7550,7 @@ namespace sol {
 			}
 #if !defined(SOL_EXCEPTIONS_SAFE_PROPAGATION)
 			// LuaJIT cannot have the catchall when the safe propagation is on
-			// but LuaJIT will swallow all C++ errors 
+			// but LuaJIT will swallow all C++ errors
 			// if we don't at least catch std::exception ones
 			catch (...) {
 				call_exception_handler(L, optional<const std::exception&>(nullopt), "caught (...) exception");
@@ -8218,7 +8218,7 @@ namespace sol {
 	class stateless_stack_reference {
 	private:
 		friend class stack_reference;
-		
+
 		int index = 0;
 
 		int registry_index() const noexcept {
@@ -8472,7 +8472,7 @@ namespace sol {
 				lua_pop(L, t);
 			}
 		};
-		
+
 		template <>
 		struct push_popper_n<true> {
 			push_popper_n(lua_State*, int) {
@@ -8487,7 +8487,7 @@ namespace sol {
 
 			push_popper(T x)
 			: t(x), idx(lua_absindex(t.lua_state(), -t.push())) {
-				
+
 			}
 
 			int index_of(const Tu&) {
@@ -8513,11 +8513,11 @@ namespace sol {
 			~push_popper() {
 			}
 		};
-		
+
 		template <typename T>
 		struct push_popper<false, T, std::enable_if_t<is_stack_based_v<meta::unqualified_t<T>>>> {
 			using Tu = meta::unqualified_t<T>;
-			
+
 			push_popper(T) {
 			}
 
@@ -8540,7 +8540,7 @@ namespace sol {
 			lua_State* L = x.lua_state();
 			return push_popper_at(L, lua_absindex(L, -c), c);
 		}
-		
+
 		template <bool top_level = false>
 		push_popper_n<top_level> pop_n(lua_State* L, int x) {
 			return push_popper_n<top_level>(L, x);
@@ -11576,7 +11576,7 @@ namespace sol {
 				dr.error = error_code::invalid_code_point;
 				return dr;
 			}
-			
+
 			// then everything is fine
 			dr.codepoint = decoded;
 			dr.error = error_code::ok;
@@ -11594,7 +11594,7 @@ namespace sol {
 			}
 
 			char16_t lead = static_cast<char16_t>(*it);
-			
+
 			if (!unicode_detail::is_surrogate(lead)) {
 				++it;
 				dr.codepoint = static_cast<char32_t>(lead);
@@ -11615,7 +11615,7 @@ namespace sol {
 				dr.next = it;
 				return dr;
 			}
-			
+
 			dr.codepoint = unicode_detail::combine_surrogates(lead, trail);
 			dr.next = ++it;
 			dr.error = error_code::ok;
@@ -14660,7 +14660,7 @@ namespace sol {
 	class basic_object_base : public ref_t {
 	private:
 		using base_t = ref_t;
-		
+
 		template <typename T>
 		decltype(auto) as_stack(std::true_type) const {
 			return stack::get<T>(base_t::lua_state(), base_t::stack_index());
@@ -16060,14 +16060,20 @@ namespace sol {
 		template <typename T, bool checked, bool clean_stack>
 		struct constructor_match {
 			T* obj_;
+			stack::stack_detail::undefined_metatable* p_umf_;
 
-			constructor_match(T* o) : obj_(o) {
+			constructor_match(T* obj_ptr, stack::stack_detail::undefined_metatable& umf) : obj_(obj_ptr), p_umf_(&umf) {
 			}
 
 			template <typename Fx, std::size_t I, typename... R, typename... Args>
 			int operator()(types<Fx>, meta::index_value<I>, types<R...> r, types<Args...> a, lua_State* L, int, int start) const {
 				detail::default_construct func{};
-				return stack::call_into_lua<checked, clean_stack>(r, a, L, start, func, obj_);
+				int result = stack::call_into_lua<checked, clean_stack>(r, a, L, start, func, this->obj_);
+				// construct userdata table
+				// SPECIFICALLY, after we've created it successfully.
+				// If the constructor exits for any reason we have to break things down...
+				(*this->p_umf_)();
+				return result;
 			}
 		};
 
@@ -16252,11 +16258,10 @@ namespace sol {
 			T* obj = detail::usertype_allocate<T>(L);
 			reference userdataref(L, -1);
 			stack::stack_detail::undefined_metatable umf(L, &meta[0], &stack::stack_detail::set_undefined_methods_on<T>);
-			umf();
 
 			// put userdata at the first index
 			lua_insert(L, 1);
-			construct_match<T, TypeLists...>(constructor_match<T, checked, clean_stack>(obj), L, argcount, 1 + static_cast<int>(syntax));
+			construct_match<T, TypeLists...>(constructor_match<T, checked, clean_stack>(obj, umf), L, argcount, 1 + static_cast<int>(syntax));
 
 			userdataref.push();
 			return 1;
@@ -16579,13 +16584,16 @@ namespace sol {
 				argcount -= static_cast<int>(syntax);
 
 				T* obj = detail::usertype_allocate<T>(L);
-				reference userdataref(L, -1);
+				stack_reference userdataref(L, -1);
 				stack::stack_detail::undefined_metatable umf(L, &meta[0], &stack::stack_detail::set_undefined_methods_on<T>);
-				umf();
 
 				// put userdata at the first index
 				lua_insert(L, 1);
-				construct_match<T, Args...>(constructor_match<T, checked, clean_stack>(obj), L, argcount, boost + 1 + 1 + static_cast<int>(syntax));
+				// Because of the way constructors work,
+				// we have to kill the data, but only if the cosntructor is successfully invoked...
+				// if it's not successfully invoked and we panic,
+				// we cannot actually deallocate/delete the data.
+				construct_match<T, Args...>(constructor_match<T, checked, clean_stack>(obj, umf), L, argcount, boost + 1 + 1 + static_cast<int>(syntax));
 
 				userdataref.push();
 				return 1;
@@ -18633,7 +18641,7 @@ namespace sol {
 		: base_t(L, std::forward<T>(r)), error_handler(std::move(eh)) {
 #if defined(SOL_SAFE_REFERENCES) && SOL_SAFE_REFERENCES
 			auto pp = stack::push_pop(*this);
-			constructor_handler handler{};
+	constructor_handler handler{};
 			stack::check<basic_protected_function>(lua_state(), -1, handler);
 #endif // Safety
 		}
@@ -24004,7 +24012,7 @@ namespace sol {
 	private:
 		template <typename T>
 		using is_reference_or_lua_value_init_list
-		     = meta::any<meta::is_specialization_of<T, std::initializer_list>, std::is_same<T, reference>, std::is_same<T, arr>>;
+	     = meta::any<meta::is_specialization_of<T, std::initializer_list>, std::is_same<T, reference>, std::is_same<T, arr>>;
 
 		template <typename T>
 		using is_lua_value_single_constructible = meta::any<std::is_same<T, lua_value>, is_reference_or_lua_value_init_list<T>>;
