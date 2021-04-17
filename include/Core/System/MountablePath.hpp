@@ -40,8 +40,8 @@ namespace obe::System
          * \param basePath Path to the mounted path
          * \param priority Priority of the mounted path
          */
-        MountablePath(MountablePathType pathType, const std::string& basePath,
-            unsigned int priority = 0);
+        MountablePath(MountablePathType pathType, const std::string& basePath, const std::string& prefix,
+            unsigned int priority = 0, bool implicit = true);
         /**
          * \brief Type of the mounted path
          */
@@ -51,10 +51,18 @@ namespace obe::System
          */
         std::string basePath;
         /**
+         * \brief Prefix of the mounted path
+         */
+        std::string prefix;
+        /**
          * \brief Priority of the mounted path (Higher priority means overriding
          *        lower priority Paths)
          */
         unsigned int priority;
+        /**
+         * \brief Allows the path to be used implicitly (without prefix)
+         */
+        bool implicit;
 
         bool operator==(const MountablePath& other) const;
 

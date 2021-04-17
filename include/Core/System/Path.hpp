@@ -7,6 +7,8 @@
 
 namespace obe::System
 {
+    std::pair<std::string, std::string> splitPathAndPrefix(const std::string& path);
+
     enum class PathType
     {
         All,
@@ -21,11 +23,12 @@ namespace obe::System
         std::string m_root;
         std::string m_path;
         std::string m_element;
+        std::vector<MountablePath> m_mounts;
 
         void checkValidity() const;
 
     public:
-        FindResult(const std::string& pathNotFound);
+        FindResult(const std::string& pathNotFound, const std::vector<MountablePath>& mounts);
         FindResult(PathType pathType, const std::string& root, const std::string& path,
             const std::string& element);
         [[nodiscard]] const std::string& path() const;
@@ -47,6 +50,7 @@ namespace obe::System
     {
     private:
         std::string m_path;
+        std::string m_prefix;
         const std::vector<MountablePath>& m_mounts;
 
         static std::unordered_map<std::string, FindResult> PathCache;
@@ -57,7 +61,7 @@ namespace obe::System
          */
         Path();
         /**
-         * \brief Build a path from an other path (Copy constructor)
+         * \brief Build a path with a custom registry of MountablePath that it will be able to search from
          * \param mount A reference containing the mount points the Path should be using
          */
         Path(const std::vector<MountablePath>& mount);
@@ -67,10 +71,20 @@ namespace obe::System
          */
         Path(const Path& path);
         /**
-         * \brief Build a path from a std::string
-         * \param path Path in std::string form
+         * \brief Build a path from a std::string_view
+         * \param path Path in std::string_view form
          */
         Path(std::string_view path);
+        /**
+         * \brief Build a path with explicit prefix
+         * \param prefix Prefix in std::string_view form
+         * \param path Path in std::string_view form
+         */
+        Path(std::string_view prefix, std::string_view path);
+        /**
+         * \brief Replaces Path's value with a new one
+         * \param path New value for Path
+         */
         Path& set(const std::string& path);
         /**
          * \brief Returns a new Path which is the current one concatenated with
@@ -108,6 +122,18 @@ namespace obe::System
         [[nodiscard]] std::string toString() const;
 
         void operator=(const Path& path);
+    };
+
+    class ContextualPathFactory
+    {
+    private:
+        std::vector<System::MountablePath> m_mounts;
+    public:
+        ContextualPathFactory(const std::string& base);
+        ContextualPathFactory(
+            const std::string& base, const std::vector<MountablePath>& customMounts);
+
+        Path operator()(const std::string& path) const;
     };
 } // namespace obe::System
 

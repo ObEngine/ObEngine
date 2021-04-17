@@ -32,9 +32,10 @@ namespace obe::System::Package
     /**
      * \brief Load a new Package in the mounted paths
      * \param packageName Name of the Package to load.
+     * \param prefix Prefix that can be used to reference Package root path
      * \param priority Priority of the path that will be mounted.
      * \return true if the Package has been successfully loaded, false
      *         otherwise.
      */
-    bool Load(const std::string& packageName, unsigned int priority = 1);
+    bool Load(const std::string& packageName, const std::string& prefix, unsigned int priority = 1);
 } // namespace obe::System::Package

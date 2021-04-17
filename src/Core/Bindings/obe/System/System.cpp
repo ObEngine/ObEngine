@@ -81,7 +81,7 @@ namespace obe::System::Bindings
         sol::usertype<obe::System::FindResult> bindFindResult
             = SystemNamespace.new_usertype<obe::System::FindResult>("FindResult",
                 sol::call_constructor,
-                sol::constructors<obe::System::FindResult(const std::string&),
+                sol::constructors<obe::System::FindResult(const std::string&, const std::vector<MountablePath>&),
                     obe::System::FindResult(obe::System::PathType, const std::string&,
                         const std::string&, const std::string&)>());
         bindFindResult["path"] = &obe::System::FindResult::path;
@@ -103,9 +103,9 @@ namespace obe::System::Bindings
             = SystemNamespace.new_usertype<obe::System::MountablePath>("MountablePath",
                 sol::call_constructor,
                 sol::constructors<obe::System::MountablePath(
-                                      obe::System::MountablePathType, const std::string&),
+                                      obe::System::MountablePathType, const std::string&, const std::string&),
                     obe::System::MountablePath(obe::System::MountablePathType,
-                        const std::string&, unsigned int)>());
+                        const std::string&, const std::string&, unsigned int)>());
         bindMountablePath[sol::meta_function::equal_to]
             = &obe::System::MountablePath::operator==;
         bindMountablePath["LoadMountFile"] = &obe::System::MountablePath::LoadMountFile;
@@ -116,6 +116,7 @@ namespace obe::System::Bindings
         bindMountablePath["Sort"] = &obe::System::MountablePath::Sort;
         bindMountablePath["pathType"] = &obe::System::MountablePath::pathType;
         bindMountablePath["basePath"] = &obe::System::MountablePath::basePath;
+        bindMountablePath["prefix"] = &obe::System::MountablePath::prefix;
         bindMountablePath["priority"] = &obe::System::MountablePath::priority;
     }
     void LoadClassPath(sol::state_view state)

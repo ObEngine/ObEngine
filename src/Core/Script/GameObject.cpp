@@ -55,7 +55,7 @@ namespace obe::Script
     {
         if (!allDefinitions.contains(type))
         {
-            const std::string objectDefinitionPath = System::Path("Data/GameObjects/")
+            const std::string objectDefinitionPath = System::Path("*://Data/GameObjects/")
                                                          .add(type)
                                                          .add(type + ".obj.vili")
                                                          .find();
@@ -91,6 +91,7 @@ namespace obe::Script
         sol::state_view lua, const std::string& type, const std::string& id)
         : Identifiable(id)
         , m_lua(std::move(lua))
+        , GameObjectPath(System::Path("*://Data/GameObjects/").add(type).find(System::PathType::Directory))
     {
         m_type = type;
     }
@@ -168,7 +169,7 @@ namespace obe::Script
             m_environment["__OBJECT_INIT"] = false;
             m_environment["Private"] = m_privateKey;
 
-            loadSource("Lib/Internal/ObjectInit.lua");
+            loadSource("obe://Lib/Internal/ObjectInit.lua");
 
             if (script.contains("source"))
             {
@@ -226,7 +227,7 @@ namespace obe::Script
                 m_animator->setTarget(*m_sprite, scaleMode);
             if (!animatorPath.empty())
             {
-                m_animator->load(System::Path(animatorPath), resources);
+                m_animator->load(GameObjectPath(animatorPath), resources);
             }
             if (animator.contains("default"))
             {
@@ -412,7 +413,7 @@ namespace obe::Script
 
     void GameObject::loadSource(const std::string& path)
     {
-        const std::string fullPath = System::Path(path).find();
+        const std::string fullPath = GameObjectPath(path).find();
         if (fullPath.empty())
         {
             throw Exceptions::ScriptFileNotFound(m_type, m_id, path, EXC_INFO);

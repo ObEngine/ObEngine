@@ -123,4 +123,20 @@ namespace obe::System::Exceptions
             this->hint("Maybe you meant to get one of these modes : (None, Center, Fit, Stretch, KeepWidth, KeepHeight)");
         }
     };
+
+    class UnknownPathPrefix : public Exception
+    {
+    public:
+        UnknownPathPrefix(std::string_view prefix, const std::vector<std::string> allPrefixes, DebugInfo info)
+            : Exception("UnknownPathPrefix", info)
+        {
+            this->error("Path prefix '{}' does not exist", prefix);
+            std::vector<std::string> suggestions
+                = Utils::String::sortByDistance(prefix.data(), allPrefixes, 5);
+            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
+                Utils::String::quote);
+            this->hint("Maybe you meant to use one of these prefixes : ({})",
+                fmt::join(suggestions, ", "));
+        }
+    };
 }

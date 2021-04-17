@@ -24,10 +24,11 @@ namespace obe::System::Workspace
     /**
      * \brief Load a new Workspace in the mounted paths
      * \param workspaceName Name of the Workspace to load.
+     * \param prefix Prefix that can be used to reference Workspace root path
      * \param priority Priority of the path that will be mounted.
      * \return true if the Workspace has been successfully loaded, false
      *         otherwise.
      */
-    bool Load(const std::string& workspaceName, unsigned int priority = 1);
+    bool Load(const std::string& workspaceName, const std::string& prefix, unsigned int priority = 1);
     std::vector<std::string> ListWorkspaces();
 } // namespace obe::System::Workspace

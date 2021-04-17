@@ -1,2 +1,2 @@
-Mount:
-    root: Path
+Mount: {
+}

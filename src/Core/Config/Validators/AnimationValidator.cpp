@@ -1,7 +1,8 @@
-#include <Animation/AnimationValidator.hpp>
+#include <vili/node.hpp>
+
 #include <Config/Templates/Animation.hpp>
 
-namespace obe::Animation
+namespace obe::Config::Validators
 {
     vili::node AnimationValidator()
     {
@@ -9,25 +10,25 @@ namespace obe::Animation
         return vili::object {
             {
                 "Meta", vili::object {
-                    {"type", "object"},
+                    {"type", vili::object_typename},
                     {
                         "properties", vili::object {
                             {
                                 "name", vili::object {
-                                    {"type", "string"},
+                                    {"type", vili::string_typename},
                                     {"min_length", 1}
                                 }
                             },
                             {
                                 "clock", vili::object {
-                                    {"type", "number"},
+                                    {"type", vili::number_typename},
                                     {"optional", true},
                                     {"min", 0.f}
                                 }
                             },
                             {
                                 "mode", vili::object {
-                                    {"type", "string"},
+                                    {"type", vili::string_typename},
                                     {"values", vili::array {"OneTime", "Loop", "Force"}},
                                     {"optional", true}
                                 }
@@ -38,19 +39,19 @@ namespace obe::Animation
             },
             {
                 "Images", vili::object {
-                    {"type", "object"},
+                    {"type", vili::object_typename},
                     {
                         "properties", vili::object {
                             {
                                 "images", vili::object {
-                                    {"type", "array"},
+                                    {"type", vili::array_typename},
                                     {
                                         "items", vili::object {
                                             {"type", "union"},
                                             {
                                                 "types", vili::array {
-                                                    vili::object {{"type", "integer"}},
-                                                    vili::object {{"type", "string"}},
+                                                    vili::object {{"type", vili::integer_typename}},
+                                                    vili::object {{"type", vili::string_typename}},
                                                 }
                                             }
                                         }
@@ -60,7 +61,7 @@ namespace obe::Animation
                             },
                             {
                                 "model", vili::object {
-                                    {"type", "string"},
+                                    {"type", vili::string_typename},
                                     {"optional", true}
                                 }
                             }
@@ -70,25 +71,25 @@ namespace obe::Animation
             },
             {
                 "Groups", vili::object {
-                    {"type", "object"},
+                    {"type", vili::object_typename},
                     {
                         "items", vili::object {
-                            {"type", "object"},
+                            {"type", vili::object_typename},
                             {
                                 "properties", vili::object {
                                     {
                                         "content", vili::object {
-                                            {"type", "array"},
+                                            {"type", vili::array_typename},
                                             {
                                                 "items", vili::object {
-                                                    {"type", "integer"}
+                                                    {"type", vili::integer_typename}
                                                 }
                                             }
                                         }
                                     },
                                     {
                                         "clock", vili::object {
-                                            {"type", "number"},
+                                            {"type", vili::number_typename},
                                             {"optional", true}
                                         }
                                     }
@@ -100,20 +101,20 @@ namespace obe::Animation
             },
             {
                 "Animation", vili::object {
-                    {"type", "object"},
+                    {"type", vili::object_typename},
                     {
                         "properties", vili::object {
                             {
                                 "code", vili::object {
-                                    {"type", "array"},
+                                    {"type", vili::array_typename},
                                     {
                                         "items", vili::object {
-                                            {"type", "object"},
+                                            {"type", vili::object_typename},
                                             {
                                                 "properties", vili::object {
                                                     {
                                                         "command", vili::object {
-                                                            {"type", "string"},
+                                                            {"type", vili::string_typename},
                                                             {
                                                                 "values", vili::array {
                                                                     vili::string { Config::Templates::play_group_command },
@@ -125,19 +126,19 @@ namespace obe::Animation
                                                     },
                                                     {
                                                         "group", vili::object {
-                                                            {"type", "string"},
+                                                            {"type", vili::string_typename},
                                                             {"optional", true}
                                                         }
                                                     },
                                                     {
                                                         "repeat", vili::object {
-                                                            {"type", "integer"},
+                                                            {"type", vili::integer_typename},
                                                             {"optional", true}
                                                         }
                                                     },
                                                     {
                                                         "animation", vili::object {
-                                                            {"type", "string"},
+                                                            {"type", vili::string_typename},
                                                             {"optional", true}
                                                         }
                                                     }

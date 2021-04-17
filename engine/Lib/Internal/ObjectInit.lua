@@ -8,7 +8,7 @@ __INIT_ARG_TABLE = {};
 
 Local = {};
 
-local ArgMirror = require('Lib/Internal/ArgMirror');
+local ArgMirror = require('obe://Lib/Internal/ArgMirror');
 function __CALL_INIT()
     local Lua_Func_ArgList = ArgMirror.GetArgs(Local.Init);
     local Lua_Func_CallArgs = {};
