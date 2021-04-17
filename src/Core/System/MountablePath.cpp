@@ -2,23 +2,23 @@
 #include <vector>
 
 #include <Config/Templates/Mount.hpp>
+#include <Config/Validators.hpp>
 #include <System/MountablePath.hpp>
 #include <System/Package.hpp>
 #include <System/Path.hpp>
 #include <System/Workspace.hpp>
 
 #include <vili/parser.hpp>
+#include <vld8/validator.hpp>
 
 namespace obe::System
 {
     std::vector<MountablePath> MountablePath::MountedPaths = std::vector<MountablePath>();
 
-    MountablePath::MountablePath(
-        MountablePathType pathType, const std::string& basePath, unsigned int priority)
+    MountablePath::MountablePath(MountablePathType pathType, const std::string& basePath,
+        const std::string& prefix, unsigned int priority, bool implicit)
+        : pathType(pathType), basePath(basePath), prefix(prefix), priority(priority), implicit(implicit)
     {
-        this->pathType = pathType;
-        this->basePath = basePath;
-        this->priority = priority;
     }
 
     bool MountablePath::operator==(const MountablePath& other) const
@@ -30,6 +30,10 @@ namespace obe::System
     void MountablePath::LoadMountFile()
     {
         MountablePath::MountedPaths.clear();
+        MountablePath::MountedPaths.push_back(
+            MountablePath(MountablePathType::Path, "", "root"));
+        MountablePath::MountedPaths.push_back(
+            MountablePath(MountablePathType::Path, "", "obe", 0, false));
         vili::node mountedPaths;
         try
         {
@@ -43,31 +47,43 @@ namespace obe::System
             throw Exceptions::MountFileMissing(
                 Utils::File::getCurrentDirectory(), EXC_INFO);
         }
-        for (vili::node& path : mountedPaths.at("Mount"))
+        vili::validator::validate_tree(Config::Validators::MountValidator(), mountedPaths);
+        for (auto [pathId, path] : mountedPaths.at("Mount").items())
         {
             const std::string currentType = path.at("type");
-            const std::string currentPath = path.at("path");
+            std::string currentPath = path.at("path");
+            std::string prefix = pathId;
+            if (path.contains("prefix"))
+            {
+                prefix = path.at("prefix");
+            }
             int currentPriority = path.at("priority");
             if (currentType == "Path")
             {
+                auto [pathPrefix, _] = splitPathAndPrefix(currentPath);
+                if (!pathPrefix.empty())
+                {
+                    currentPath
+                        = System::Path(currentPath).find(PathType::Directory).path();
+                }
                 MountablePath::Mount(
-                    MountablePath(MountablePathType::Path, currentPath, currentPriority));
-                Debug::Log->info("<MountablePath> Mounted Path : '{0}' with priority {1}",
-                    currentPath, currentPriority);
+                    MountablePath(MountablePathType::Path, currentPath, prefix, currentPriority));
+                Debug::Log->info("<MountablePath> Mounted Path : '{0}' at '{1}://' with priority {2}",
+                    currentPath, prefix, currentPriority);
             }
             else if (currentType == "Package")
             {
-                Package::Load(currentPath, currentPriority);
+                Package::Load(currentPath, prefix, currentPriority);
                 Debug::Log->info(
-                    "<MountablePath> Mounted Package : '{0}' with priority {1}",
-                    currentPath, currentPriority);
+                    "<MountablePath> Mounted Package : '{0}' at '{1}://' with priority {2}",
+                    currentPath, prefix, currentPriority);
             }
             else if (currentType == "Workspace")
             {
-                Workspace::Load(currentPath, currentPriority);
-                Debug::Log->info("<MountablePath> Mounted Workspace : '{0}' "
-                                 "with priority {1}",
-                    currentPath, currentPriority);
+                Workspace::Load(currentPath, prefix, currentPriority);
+                Debug::Log->info("<MountablePath> Mounted Workspace : '{0}' at '{1}://' "
+                                 "with priority {2}",
+                    currentPath, prefix, currentPriority);
             }
         }
         Debug::Log->info("<MountablePath> List of mounted paths : ");

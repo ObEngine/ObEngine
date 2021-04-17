@@ -121,7 +121,7 @@ namespace vili::Bindings
         bindnode["operator unsigned"] = &vili::node::operator unsigned;
         bindnode[sol::meta_function::equal_to] = &vili::node::operator==;
         bindnode["from_type"] = &vili::node::from_type;
-        state.script_file("Lib/Internal/Vili.lua"_fs);
+        state.script_file("obe://Lib/Internal/Vili.lua"_fs);
     }
     void LoadClassNodeIterator(sol::state_view state)
     {

@@ -26,10 +26,11 @@ int main(int argc, char** argv)
     {
         InitEngine(surfaceWidth, surfaceHeight);
     }
-    catch (Exception& e)
+    catch (const std::exception& e)
     {
         Debug::Log->error(e.what());
-        Debug::Log->error("Error occured while initializing ObEngine");
+        Debug::Log->error("Error occurred while initializing ObEngine");
+        return 1;
     }
 
     Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
@@ -42,7 +43,8 @@ int main(int argc, char** argv)
     catch (const std::exception& e)
     {
         Debug::Log->error(e.what());
-        Debug::Log->error("Error occured while running ObEngine");
+        Debug::Log->error("Error occurred while running ObEngine");
+        return 1;
     }
 
     return 0;

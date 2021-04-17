@@ -14,6 +14,5 @@ namespace obe::Animation::Bindings
     void LoadEnumAnimationStatus(sol::state_view state);
     void LoadEnumAnimatorTargetScaleMode(sol::state_view state);
     void LoadFunctionStringToAnimationPlayMode(sol::state_view state);
-    void LoadFunctionAnimationValidator(sol::state_view state);
     void LoadFunctionStringToAnimatorTargetScaleMode(sol::state_view state);
 };

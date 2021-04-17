@@ -207,6 +207,11 @@ namespace vili
         m_data = value;
     }
 
+    node::node(std::string_view value)
+    {
+        m_data = std::string(value);
+    }
+
     node::node(boolean value)
     {
         m_data = value;

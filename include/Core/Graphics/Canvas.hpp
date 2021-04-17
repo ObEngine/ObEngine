@@ -248,7 +248,7 @@ namespace obe::Graphics::Canvas
     /**
      * \brief A Canvas where you can draw CanvasElements
      * \bind{Canvas}
-     * \helper{Lib/Internal/Canvas.lua}
+     * \helper{obe://Lib/Internal/Canvas.lua}
      */
     class Canvas
     {

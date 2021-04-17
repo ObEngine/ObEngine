@@ -59,7 +59,7 @@ function LuaCore.MakeTriggerGroupHook(GameObject, namespace)
     return hook_table;
 end
 
-local ArgMirror = require('Lib/Internal/ArgMirror');
+local ArgMirror = require('obe://Lib/Internal/ArgMirror');
 function LuaCore.IndexTriggerArgList(env, triggerName, funcToCall)
     env["__TRIGGERS"][triggerName].args = ArgMirror.GetArgs(funcToCall);
 end
@@ -84,7 +84,7 @@ function LuaCore.FuncInjector(env, funcToCall, triggerRegisterName)
 end
 
 function LuaCore.MakeCallback(trigger, callback, callbackName)
-    local ArgMirror = require('Lib/Internal/ArgMirror');
+    local ArgMirror = require('obe://Lib/Internal/ArgMirror');
     local argTable = "__TRIGGERS[\"%s\"][\"ArgTable\"][\"%s\"]"
     local argStringList = {};
 
