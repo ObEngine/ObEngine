@@ -4,7 +4,6 @@
 
 namespace obe::Config
 {
-    vili::node ConfigValidator();
     class ConfigurationManager : public vili::node
     {
     public:

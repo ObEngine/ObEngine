@@ -176,7 +176,7 @@ function buildCommandExecution(func, args)
         }
     };
     args["autocomplete"] = autocomplete;
-    local ArgMirror = require('Lib/Internal/ArgMirror');
+    local ArgMirror = require('obe://Lib/Internal/ArgMirror');
     -- Getting arguments names of the function
     local argList = ArgMirror.GetArgs(func);
     local callArgs = {};

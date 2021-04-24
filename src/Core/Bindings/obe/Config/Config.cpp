@@ -1,6 +1,7 @@
 #include <Bindings/obe/Config/Config.hpp>
 
 #include <Config/Config.hpp>
+#include <Config/Validators.hpp>
 
 #include <Bindings/Config.hpp>
 
@@ -19,6 +20,6 @@ namespace obe::Config::Bindings
     void LoadFunctionConfigValidator(sol::state_view state)
     {
         sol::table ConfigNamespace = state["obe"]["Config"].get<sol::table>();
-        ConfigNamespace.set_function("ConfigValidator", obe::Config::ConfigValidator);
+        ConfigNamespace.set_function("ConfigValidator", obe::Config::Validators::ConfigValidator);
     }
 };

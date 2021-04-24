@@ -4,9 +4,9 @@
 #include <vld8/validator.hpp>
 
 #include <Animation/Animation.hpp>
-#include <Animation/AnimationValidator.hpp>
 #include <Animation/Exceptions.hpp>
 #include <Config/Templates/Animation.hpp>
+#include <Config/Validators.hpp>
 #include <Debug/Logger.hpp>
 #include <Engine/ResourceManager.hpp>
 #include <Utils/StringUtils.hpp>
@@ -102,7 +102,7 @@ namespace obe::Animation
             = vili::parser::from_file(path.add(path.last() + ".ani.vili").find(),
                 Config::Templates::getAnimationTemplates());
 
-        vili::validator::validate_tree(AnimationValidator(), animationConfig);
+        vili::validator::validate_tree(Config::Validators::AnimationValidator(), animationConfig);
 
         // Meta
         Debug::Log->trace("  <Animation> Loading Meta block");
@@ -126,12 +126,12 @@ namespace obe::Animation
         vili::node& currentCommand = m_code[m_codeIndex];
         Debug::Log->trace("<Animation> Executing instruction {} / {} : {}", m_codeIndex,
             m_code.size() - 1, currentCommand.dump());
-        if (currentCommand.at("command") == Config::Templates::wait_command)
+        if (currentCommand.at("command").as_string() == Config::Templates::wait_command)
         {
             m_feedInstructions = true;
             m_sleep = currentCommand.at("time");
         }
-        else if (currentCommand.at("command") == Config::Templates::play_group_command)
+        else if (currentCommand.at("command").as_string() == Config::Templates::play_group_command)
         {
             if (!m_currentGroupName.empty())
                 m_groups[m_currentGroupName]->reset();
@@ -139,7 +139,7 @@ namespace obe::Animation
             m_currentGroupName = currentCommand.at("group");
             m_groups[m_currentGroupName]->setLoops(currentCommand.at("repeat"));
         }
-        else if (currentCommand.at("command") == Config::Templates::set_animation_command)
+        else if (currentCommand.at("command").as_string() == Config::Templates::set_animation_command)
         {
             m_feedInstructions = false;
             m_status = AnimationStatus::Call;

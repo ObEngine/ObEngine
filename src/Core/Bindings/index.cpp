@@ -137,7 +137,6 @@ namespace obe::Bindings
         obe::Animation::Bindings::LoadEnumAnimationStatus(state);
         obe::Animation::Bindings::LoadEnumAnimatorTargetScaleMode(state);
         obe::Animation::Bindings::LoadFunctionStringToAnimationPlayMode(state);
-        obe::Animation::Bindings::LoadFunctionAnimationValidator(state);
         obe::Animation::Bindings::LoadFunctionStringToAnimatorTargetScaleMode(state);
 
         obe::Animation::Exceptions::Bindings::LoadClassAnimationGroupTextureIndexOverflow(

@@ -50,13 +50,14 @@ namespace obe::Engine
             sol::lib::count, sol::lib::debug, sol::lib::io, sol::lib::bit32);
 
         m_lua->safe_script("LuaCore = {}");
-        m_lua->safe_script_file("Lib/Internal/ScriptInit.lua"_fs);
-        m_lua->safe_script_file("Lib/Internal/Events.lua"_fs);
+        m_lua->safe_script_file("obe://Lib/Internal/ScriptInit.lua"_fs);
+        m_lua->safe_script_file("obe://Lib/Internal/Events.lua"_fs);
 
         Bindings::IndexAllBindings(*m_lua);
-        m_lua->safe_script_file("Lib/Internal/Searcher.lua"_fs);
-        m_lua->safe_script_file("Lib/Internal/GameInit.lua"_fs);
-        m_lua->safe_script_file("Lib/Internal/Logger.lua"_fs);
+        m_lua->safe_script_file("obe://Lib/Internal/Searcher.lua"_fs);
+        m_lua->safe_script_file("obe://Lib/Internal/Helpers.lua"_fs);
+        m_lua->safe_script_file("obe://Lib/Internal/GameInit.lua"_fs);
+        m_lua->safe_script_file("obe://Lib/Internal/Logger.lua"_fs);
         m_lua->set_exception_handler(&lua_exception_handler);
         m_lua->safe_script("collectgarbage(\"generational\");");
 
@@ -110,7 +111,7 @@ namespace obe::Engine
         {
             Debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}",
                 mountedPath.basePath);
-            System::Path cPluginPath = System::Path(mountedPath.basePath).add("Plugins");
+            System::Path cPluginPath = System::Path("root://").add(mountedPath.basePath).add("Plugins");
             if (Utils::File::directoryExists(cPluginPath.toString()))
             {
                 for (const std::string& filename :
@@ -311,7 +312,7 @@ namespace obe::Engine
         if (!m_initialized)
             throw Exceptions::UnitializedEngine(EXC_INFO);
 
-        const std::string bootScript = "boot.lua"_fs;
+        const std::string bootScript = "*://boot.lua"_fs;
         if (bootScript.empty())
             throw Exceptions::BootScriptMissing(
                 System::MountablePath::StringPaths(), EXC_INFO);

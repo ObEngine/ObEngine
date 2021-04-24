@@ -8,20 +8,62 @@ namespace obe::System
         return base + ((!base.empty()) ? "/" : "") + path;
     }
 
+    std::pair<std::string, std::string> splitPathAndPrefix(const std::string& path)
+    {
+        if (const auto prefixPos = path.find("://"); prefixPos != std::string::npos)
+        {
+            std::string prefix = path.substr(0, prefixPos);
+            if (prefix == "*")
+            {
+                prefix.clear();
+            }
+            return std::make_pair(path.substr(prefixPos + 3), prefix);
+        }
+
+        Debug::Log->warn("Path '{}' has no prefix, defaulting to '*://'", path);
+        return std::make_pair(path, "");
+    }
+
+    std::vector<MountablePath> filterMountablePathsWithPrefix(const std::vector<MountablePath>& mounts, const std::string& prefix)
+    {
+        std::vector<MountablePath> validMounts;
+        for (const MountablePath& mountablePath : mounts)
+        {
+            if (mountablePath.prefix == prefix || (prefix.empty() && mountablePath.implicit))
+            {
+                validMounts.push_back(mountablePath);
+            }
+        }
+        if (validMounts.empty())
+        {
+            std::vector<std::string> allPrefixes;
+            allPrefixes.reserve(mounts.size());
+            std::transform(mounts.begin(), mounts.end(), std::back_inserter(allPrefixes),
+                [](const MountablePath& mount) { return mount.prefix; });
+            throw Exceptions::UnknownPathPrefix(prefix, allPrefixes, EXC_INFO);
+        }
+        return validMounts;
+    }
+
     std::unordered_map<std::string, FindResult> Path::PathCache;
 
     void FindResult::checkValidity() const
     {
         if (!success())
         {
-            throw Exceptions::ResourceNotFound(
-                m_path, MountablePath::StringPaths(), EXC_INFO);
+            std::vector<std::string> mountsAsStrings;
+            std::transform(m_mounts.begin(), m_mounts.end(),
+                std::back_inserter(mountsAsStrings), [](const MountablePath& mount) {
+                    return fmt::format("\"{}://{}\"", mount.prefix, mount.basePath);
+                });
+            throw Exceptions::ResourceNotFound(m_path, mountsAsStrings, EXC_INFO);
         }
     }
 
-    FindResult::FindResult(const std::string& pathNotFound)
+    FindResult::FindResult(const std::string& pathNotFound, const std::vector<MountablePath>& mounts)
     {
         m_path = pathNotFound;
+        m_mounts = mounts;
     }
 
     FindResult::FindResult(PathType pathType, const std::string& root,
@@ -92,23 +134,31 @@ namespace obe::System
         : m_mounts(path.m_mounts)
     {
         this->m_path = path.toString();
+        this->m_prefix = path.m_prefix;
     }
 
     Path::Path(std::string_view path)
         : m_mounts(MountablePath::Paths())
     {
+        std::tie(m_path, m_prefix) = splitPathAndPrefix(path.data());
+        
+    }
+
+    Path::Path(std::string_view prefix, std::string_view path) : m_mounts(MountablePath::Paths())
+    {
+        m_prefix = prefix;
         m_path = path;
     }
 
     Path& Path::set(const std::string& path)
     {
-        m_path = path;
+        std::tie(m_path, m_prefix) = splitPathAndPrefix(path);
         return *this;
     }
 
     Path Path::add(const std::string& path) const
     {
-        return Path(
+        return Path(m_prefix,
             m_path + ((!m_path.empty() && m_path.back() != '/') ? "/" : "") + path);
     }
 
@@ -135,7 +185,9 @@ namespace obe::System
     std::vector<FindResult> Path::list(PathType pathType) const
     {
         std::vector<FindResult> results;
-        for (const MountablePath& mountedPath : m_mounts)
+        const std::vector<MountablePath> validMounts
+            = filterMountablePathsWithPrefix(m_mounts, m_prefix);
+        for (const MountablePath& mountedPath : validMounts)
         {
             std::string fullPath = joinPath(mountedPath.basePath, m_path);
 
@@ -173,7 +225,9 @@ namespace obe::System
         {
             return cacheResult->second;
         }
-        for (const MountablePath& mountedPath : m_mounts)
+        const std::vector<MountablePath> validMounts
+            = filterMountablePathsWithPrefix(m_mounts, m_prefix);
+        for (const MountablePath& mountedPath : validMounts)
         {
             const std::string fullPath = mountedPath.basePath
                 + ((!mountedPath.basePath.empty()) ? "/" : "") + m_path;
@@ -197,13 +251,15 @@ namespace obe::System
                     .first->second;
             }
         }
-        return FindResult(m_path);
+        return FindResult(m_path, validMounts);
     }
 
     std::vector<FindResult> Path::findAll(PathType pathType) const
     {
         std::vector<FindResult> results;
-        for (const MountablePath& mountedPath : m_mounts)
+        const std::vector<MountablePath> validMounts
+            = filterMountablePathsWithPrefix(m_mounts, m_prefix);
+        for (const MountablePath& mountedPath : validMounts)
         {
             const std::string fullPath = joinPath(mountedPath.basePath, m_path);
             if ((pathType == PathType::All || pathType == PathType::File)
@@ -230,6 +286,26 @@ namespace obe::System
     void Path::operator=(const Path& path)
     {
         m_path = path.m_path;
+    }
+
+    ContextualPathFactory::ContextualPathFactory(const std::string& base)
+    {
+        m_mounts = System::MountablePath::Paths();
+        m_mounts.push_back(
+            System::MountablePath(System::MountablePathType::Path, base, "self"));
+    }
+
+    ContextualPathFactory::ContextualPathFactory(const std::string& base,
+        const std::vector<MountablePath>& customMounts)
+    {
+        m_mounts = customMounts;
+        m_mounts.push_back(
+            System::MountablePath(System::MountablePathType::Path, base, "self"));
+    }
+
+    Path ContextualPathFactory::operator()(const std::string& path) const
+    {
+        return System::Path(m_mounts).set(path);
     }
 } // namespace obe::System
 

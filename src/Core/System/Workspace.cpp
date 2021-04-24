@@ -24,14 +24,14 @@ namespace obe::System::Workspace
             .contains(workspaceName);
     }
 
-    bool Load(const std::string& workspaceName, const unsigned int priority)
+    bool Load(const std::string& workspaceName, const std::string& prefix, const unsigned int priority)
     {
         Debug::Log->info("<Workspace> Loading Workspace '{0}' with priority {1}",
             workspaceName, priority);
         if (WorkspaceExists(workspaceName))
         {
             MountablePath::Mount(MountablePath(MountablePathType::Workspace,
-                GetWorkspaceLocation(workspaceName), priority));
+                GetWorkspaceLocation(workspaceName), prefix, priority));
             return true;
         }
         throw Exceptions::UnknownWorkspace(workspaceName, ListWorkspaces(), EXC_INFO);

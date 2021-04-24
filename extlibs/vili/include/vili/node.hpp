@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <string_view>
 #include <variant>
 
 #include <vili/exceptions.hpp>
@@ -42,7 +43,7 @@ namespace vili
     using node_data
         = std::variant<std::monostate, object, array, integer, number, boolean, string>;
     /**
-     * \helper{Lib/Internal/Vili.lua}
+     * \helper{obe://Lib/Internal/Vili.lua}
      * \brief Base Class for every Node in the Tree
      */
     class node
@@ -74,6 +75,10 @@ namespace vili
          * \brief Creates a node that contains a string
          */
         node(const string& value);
+        /**
+         * \brief Creates a node that contains a string
+         */
+        node(std::string_view value);
         /**
          * \brief Creates a node that contains a boolean
          */

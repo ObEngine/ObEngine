@@ -82,6 +82,8 @@ namespace obe::Script
         bool m_active = false;
         bool m_canUpdate = true;
 
+        System::ContextualPathFactory GameObjectPath;
+
         friend class Scene::Scene;
 
     public:
