@@ -554,7 +554,7 @@ obe.Canvas.Bases.Circle = {
 function positionToUnitVector(position)
     if type(position) == "table" then
         local x = position.x or position[1];
-        local y = position.x or position[2];
+        local y = position.y or position[2];
         local unit = position.unit or position[3] or obe.Transform.Units.ScenePixels;
         position = obe.Transform.UnitVector(x, y, unit);
     end
@@ -802,10 +802,6 @@ function obe.Canvas.Canvas:render(target)
         end
     end
     self.internal:render(target);
-end
-
-function obe.Canvas.Canvas:setTarget(target)
-    self.internal:setTarget(target);
 end
 
 function obe.Canvas.Canvas:clear()

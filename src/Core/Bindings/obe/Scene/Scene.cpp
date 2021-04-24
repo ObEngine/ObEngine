@@ -49,6 +49,14 @@ namespace obe::Scene::Bindings
     void LoadClassScene(sol::state_view state)
     {
         sol::table SceneNamespace = state["obe"]["Scene"].get<sol::table>();
+
+        sol::usertype<obe::Scene::SceneRenderOptions> bindSceneRenderOptions
+            = SceneNamespace.new_usertype<obe::Scene::SceneRenderOptions>(
+                "SceneRenderOptions", sol::call_constructor, sol::default_constructor);
+        bindSceneRenderOptions["collisions"] = &obe::Scene::SceneRenderOptions::collisions;
+        bindSceneRenderOptions["sceneNodes"] = &obe::Scene::SceneRenderOptions::sceneNodes;
+        bindSceneRenderOptions["sprites"] = &obe::Scene::SceneRenderOptions::sprites;
+
         sol::usertype<obe::Scene::Scene> bindScene
             = SceneNamespace.new_usertype<obe::Scene::Scene>("Scene",
                 sol::call_constructor,
@@ -138,9 +146,11 @@ namespace obe::Scene::Bindings
             static_cast<void (obe::Scene::Scene::*)(
                 const obe::Scene::OnSceneLoadCallback&)>(&obe::Scene::Scene::reload));
         bindScene["getLevelFile"] = &obe::Scene::Scene::getLevelFile;
-        bindScene["enableShowSceneNodes"] = &obe::Scene::Scene::enableShowSceneNodes;
+        bindScene["getRenderOptions"] = &obe::Scene::Scene::getRenderOptions;
+        bindScene["setRenderOptions"] = &obe::Scene::Scene::setRenderOptions;
         bindScene["getSceneNodeByPosition"] = &obe::Scene::Scene::getSceneNodeByPosition;
         bindScene["getTiles"] = &obe::Scene::Scene::getTiles;
+        bindScene["hasTiles"] = &obe::Scene::Scene::hasTiles;
     }
     void LoadClassSceneNode(sol::state_view state)
     {
@@ -153,6 +163,9 @@ namespace obe::Scene::Bindings
         bindSceneNode["removeChild"] = &obe::Scene::SceneNode::removeChild;
         bindSceneNode["setPosition"] = &obe::Scene::SceneNode::setPosition;
         bindSceneNode["move"] = &obe::Scene::SceneNode::move;
+        bindSceneNode["setPositionWithoutChildren"]
+            = &obe::Scene::SceneNode::setPositionWithoutChildren;
+        bindSceneNode["moveWithoutChildren"] = &obe::Scene::SceneNode::moveWithoutChildren;
     }
     void LoadFunctionSceneGetGameObjectProxy(sol::state_view state)
     {

@@ -50,6 +50,8 @@ namespace obe::Graphics
 
         operator sf::Color() const;
 
+        static Color Random(bool randomAlpha = false);
+
         static Color AliceBlue;
         static Color AntiqueWhite;
         static Color Aqua;

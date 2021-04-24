@@ -1,4 +1,5 @@
 #include <Config/Templates/Scene.hpp>
+#include <Debug/Render.hpp>
 #include <Scene/Exceptions.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/ViliLuaBridge.hpp>
@@ -63,8 +64,6 @@ namespace obe::Scene
         , e_scene(eventNamespace.createGroup("Scene"))
 
     {
-        m_showElements["SceneNodes"] = false;
-
         e_scene->add<Events::Scene::Loaded>();
     }
 
@@ -506,17 +505,29 @@ namespace obe::Scene
         }*/
 
         this->_reorganizeLayers();
-        for (const auto& renderable : m_renderCache)
+        if (m_renderOptions.sprites)
         {
-            if (renderable->isVisible())
+            for (const auto& renderable : m_renderCache)
             {
-                renderable->draw(surface, m_camera);
+                if (renderable->isVisible())
+                {
+                    renderable->draw(surface, m_camera);
+                }
             }
         }
 
         // m_tiles->draw(surface, m_camera);
 
-        if (m_showElements["SceneNodes"])
+        if (m_renderOptions.collisions)
+        {
+            for (const auto& collider : m_colliderArray)
+            {
+                Debug::Render::drawPolygon(surface, *collider.get(), true, true, false,
+                    false, m_camera.getPosition());
+            }
+        }
+
+        if (m_renderOptions.sceneNodes)
         {
             for (auto& gameObject : m_gameObjectArray)
             {
@@ -642,8 +653,8 @@ namespace obe::Scene
 
         if (newGameObject->doesHaveSprite())
         {
-            const Transform::UnitVector zero(0, 0);
-            newGameObject->getSprite().setPosition(zero);
+            // const Transform::UnitVector zero(0, 0);
+            // newGameObject->getSprite().setPosition(zero);
             newGameObject->getSprite().setParentId(useId);
         }
 
@@ -756,11 +767,6 @@ namespace obe::Scene
         m_spriteIds.erase(id);
     }
 
-    void Scene::enableShowSceneNodes(bool showNodes)
-    {
-        m_showElements["SceneNodes"] = showNodes;
-    }
-
     SceneNode* Scene::getSceneNodeByPosition(const Transform::UnitVector& position) const
     {
         for (auto& gameObject : m_gameObjectArray)
@@ -784,9 +790,24 @@ namespace obe::Scene
         return nullptr;
     }
 
+    bool Scene::hasTiles() const
+    {
+        return static_cast<bool>(m_tiles);
+    }
+
     const Tiles::TileScene& Scene::getTiles() const
     {
         return *m_tiles;
+    }
+
+    SceneRenderOptions Scene::getRenderOptions() const
+    {
+        return m_renderOptions;
+    }
+
+    void Scene::setRenderOptions(SceneRenderOptions options)
+    {
+        m_renderOptions = options;
     }
 
     std::pair<Collision::PolygonalCollider*, int> Scene::getColliderPointByPosition(

@@ -37,4 +37,14 @@ namespace obe::Scene
         }
         Movable::move(position);
     }
+
+    void SceneNode::setPositionWithoutChildren(const Transform::UnitVector& position)
+    {
+        Movable::setPosition(position);
+    }
+
+    void SceneNode::moveWithoutChildren(const Transform::UnitVector& position)
+    {
+        Movable::move(position);
+    }
 } // namespace obe::Scene

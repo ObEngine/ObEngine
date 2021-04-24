@@ -40,5 +40,15 @@ namespace obe::Scene
          * \param position Position to add to the current Position
          */
         void move(const Transform::UnitVector& position) override;
+        /**
+         * \brief Set the position of the SceneNode using an UnitVector
+         * \param position Position to affect to the SceneNode
+         */
+        void setPositionWithoutChildren(const Transform::UnitVector& position);
+        /**
+         * \brief Moves the SceneNode (Adds the given position to the current one)
+         * \param position Position to add to the current Position
+         */
+        void moveWithoutChildren(const Transform::UnitVector& position);
     };
 } // namespace obe::Scene

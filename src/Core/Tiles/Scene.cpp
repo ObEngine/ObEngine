@@ -32,6 +32,10 @@ namespace obe::Tiles
         m_height = data["height"];
         m_tileWidth = data["tileWidth"];
         m_tileHeight = data["tileHeight"];
+        if (data.contains("smooth"))
+        {
+            m_smooth = data["smooth"];
+        }
 
         const vili::node& tilesets = data["sources"];
         for (const auto& [tilesetId, tileset] : tilesets.items())
@@ -134,6 +138,15 @@ namespace obe::Tiles
         m_tileHeight = 0;
     }
 
+    std::vector<TileLayer*> TileScene::getAllLayers() const
+    {
+        std::vector<TileLayer*> layers;
+        std::transform(m_layers.begin(), m_layers.end(), std::back_inserter(layers),
+            [](const auto& layer) { return layer.get();
+            });
+        return layers;
+    }
+
     TileLayer& TileScene::getLayer(const std::string& id) const
     {
         for (const auto& layer : m_layers)
@@ -203,6 +216,11 @@ namespace obe::Tiles
     uint32_t TileScene::getTileHeight() const
     {
         return m_tileHeight;
+    }
+
+    bool TileScene::isSmooth() const
+    {
+        return m_smooth;
     }
 
     Scene::Scene& TileScene::getScene() const

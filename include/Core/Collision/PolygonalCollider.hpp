@@ -39,7 +39,7 @@ namespace obe::Collision
     {
     public:
         /**
-         * \briefColliders the collider touched during the collision (empty if no collision occurs)
+         * \brief Colliders the collider touched during the collision (empty if no collision occurs)
          */
         std::vector<PolygonalCollider*> colliders;
         /**

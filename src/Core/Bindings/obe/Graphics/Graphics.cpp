@@ -72,6 +72,13 @@ namespace obe::Graphics::Bindings
         bindColor["g"] = &obe::Graphics::Color::g;
         bindColor["b"] = &obe::Graphics::Color::b;
         bindColor["a"] = &obe::Graphics::Color::a;
+        bindColor["Random"]
+            = sol::overload(
+                []() -> Graphics::Color { return Graphics::Color::Random(); },
+                [](bool randomAlpha) -> Graphics::Color {
+                    return Graphics::Color::Random(randomAlpha);
+                }
+       );
         bindColor["AliceBlue"] = sol::var(&obe::Graphics::Color::AliceBlue);
         bindColor["AntiqueWhite"] = sol::var(&obe::Graphics::Color::AntiqueWhite);
         bindColor["Aqua"] = sol::var(&obe::Graphics::Color::Aqua);

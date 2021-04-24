@@ -65,10 +65,24 @@ namespace obe::Graphics::Canvas
     {
         const Transform::UnitVector p1px = p1.to<Transform::Units::ScenePixels>();
         const Transform::UnitVector p2px = p2.to<Transform::Units::ScenePixels>();
-        const sf::Vertex firstVertex(sf::Vector2f(p1px.x, p1px.y), p1color);
-        const sf::Vertex secondVertex(sf::Vector2f(p2px.x, p2px.y), p2color);
-        const sf::Vertex line[] = { firstVertex, secondVertex };
-        target.draw(line, 2, sf::Lines);
+        if (thickness == 1)
+        {
+            const sf::Vertex firstVertex(sf::Vector2f(p1px.x, p1px.y), p1color);
+            const sf::Vertex secondVertex(sf::Vector2f(p2px.x, p2px.y), p2color);
+            const sf::Vertex line[] = { firstVertex, secondVertex };
+            target.draw(line, 2, sf::Lines);
+        }
+        else
+        {
+            sf::VertexArray lines(sf::TrianglesStrip, 4);
+            sf::Vector2f sfp1(p1px.x, p1px.y);
+            sf::Vector2f sfp2(p2px.x, p2px.y);
+            lines[0] = sf::Vertex(sfp1, p1color);
+            lines[1] = sf::Vertex(sfp2, p2color);
+            lines[2] = sf::Vertex(sfp2 + sf::Vector2f(thickness, thickness), p2color);
+            lines[3] = sf::Vertex(sfp1 + sf::Vector2f(thickness, thickness), p1color);
+            target.draw(lines);
+        }
     }
 
     CanvasPositionable::CanvasPositionable(Canvas& parent, const std::string& id)

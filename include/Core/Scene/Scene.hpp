@@ -35,6 +35,13 @@ namespace obe::Scene
 {
     using OnSceneLoadCallback = sol::protected_function;
 
+    struct SceneRenderOptions
+    {
+        bool sprites = true;
+        bool collisions = false;
+        bool sceneNodes = false;
+    };
+
     /**
      * \brief The Scene class is a container of all the game elements
      */
@@ -65,7 +72,7 @@ namespace obe::Scene
         SceneNode m_sceneRoot;
 
         std::string m_levelFileName;
-        std::map<std::string, bool> m_showElements;
+        SceneRenderOptions m_renderOptions;
         OnSceneLoadCallback m_onLoadCallback;
         Event::EventGroupPtr e_scene;
         sol::state_view m_lua;
@@ -320,10 +327,12 @@ namespace obe::Scene
          *         with loadFromFile method
          */
         [[nodiscard]] std::string getLevelFile() const;
-        void enableShowSceneNodes(bool showNodes);
         [[nodiscard]] SceneNode* getSceneNodeByPosition(
             const Transform::UnitVector& position) const;
+        bool hasTiles() const;
         const Tiles::TileScene& getTiles() const;
+        SceneRenderOptions getRenderOptions() const;
+        void setRenderOptions(SceneRenderOptions options);
     };
 
     /**

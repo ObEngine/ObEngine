@@ -32,6 +32,7 @@ namespace obe::Tiles
         uint32_t m_height;
         uint32_t m_tileWidth;
         uint32_t m_tileHeight;
+        bool m_smooth = false;
 
         std::vector<std::unique_ptr<TileLayer>> m_layers;
         std::vector<std::unique_ptr<AnimatedTile>> m_animatedTiles;
@@ -49,6 +50,7 @@ namespace obe::Tiles
         void update();
         void clear();
 
+        [[nodiscard]] std::vector<TileLayer*> getAllLayers() const;
         [[nodiscard]] TileLayer& getLayer(const std::string& id) const;
         [[nodiscard]] AnimatedTiles getAnimatedTiles() const;
         [[nodiscard]] const TilesetCollection& getTilesets() const;
@@ -60,6 +62,7 @@ namespace obe::Tiles
         [[nodiscard]] uint32_t getHeight() const;
         [[nodiscard]] uint32_t getTileWidth() const;
         [[nodiscard]] uint32_t getTileHeight() const;
+        [[nodiscard]] bool isSmooth() const;
 
         [[nodiscard]] Scene::Scene& getScene() const;
     };

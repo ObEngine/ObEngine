@@ -103,6 +103,7 @@ namespace obe::Tiles::Bindings
         bindTileScene["load"] = &obe::Tiles::TileScene::load;
         bindTileScene["update"] = &obe::Tiles::TileScene::update;
         bindTileScene["clear"] = &obe::Tiles::TileScene::clear;
+        bindTileScene["getAllLayers"] = &obe::Tiles::TileScene::getAllLayers;
         bindTileScene["getLayer"] = &obe::Tiles::TileScene::getLayer;
         bindTileScene["getAnimatedTiles"] = &obe::Tiles::TileScene::getAnimatedTiles;
         bindTileScene["getTilesets"] = &obe::Tiles::TileScene::getTilesets;

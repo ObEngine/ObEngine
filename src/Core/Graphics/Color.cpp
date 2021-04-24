@@ -1,3 +1,5 @@
+#include "Utils/MathUtils.hpp"
+
 #include <Graphics/Color.hpp>
 #include <Graphics/Exceptions.hpp>
 
@@ -520,6 +522,17 @@ namespace obe::Graphics
     Color::operator sf::Color() const
     {
         return sf::Color(r, g, b, a);
+    }
+
+    Color Color::Random(bool randomAlpha)
+    {
+        int alpha = 255;
+        if (randomAlpha)
+        {
+            alpha = Utils::Math::randfloat() * 255.f;
+        }
+        return Color(255.f * Utils::Math::randfloat(), 255.f * Utils::Math::randfloat(),
+            255.f * Utils::Math::randfloat(), alpha);
     }
 
     std::ostream& operator<<(std::ostream& os, const Color& color)

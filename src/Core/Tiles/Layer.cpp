@@ -10,6 +10,30 @@
 #include "Graphics/DrawUtils.hpp"
 #include "Utils/VectorUtils.hpp"
 
+const std::string_view fragSource = "\
+#version 130\n\
+uniform sampler2D m;\n\
+uniform sampler2D t;\n\
+uniform vec2 w;\n\
+uniform vec2 z;\n\
+void main()\n\
+{\n\
+    vec4 c=texture2D(m,gl_TexCoord[0].xy/32.0);\n\
+    float i=floor(c.r*255.0+c.g*65280);\n\
+    vec2 a=vec2(mod(i,w.x),floor(i/w.x))/w;\n\
+    vec2 b=mod((gl_TexCoord[0].xy*z)/32.0,1.0);\n\
+    gl_FragColor=texture2D(t,a+b/w);\n\
+    gl_FragColor.a*=c.a;\n\
+}";
+const std::string_view vertSource = "\
+#version 130\n\
+void main()\n\
+{\n\
+    gl_Position=gl_ModelViewProjectionMatrix*gl_Vertex;\n\
+    gl_TexCoord[0]=gl_TextureMatrix[0]*gl_MultiTexCoord0;\n\
+    gl_FrontColor=gl_Color;\n\
+}";
+
 namespace obe::Tiles
 {
     void drawCollider(Graphics::RenderTarget& surface, const Scene::Camera& camera,
@@ -84,7 +108,6 @@ namespace obe::Tiles
                         y * tileset.getTileHeight(), Transform::Units::ScenePixels)
                     + offset);
                 m_scene.getScene().getCamera().setSize(cameraSizeBackup);
-                break;
             }
         }
         for (const auto& gameObject : m_scene.getGameObjectsModels())
@@ -252,12 +275,18 @@ namespace obe::Tiles
             const double cameraScale = 1.0 / (cameraSize.y / 2.0);
 
             states.transform.scale(cameraScale, cameraScale, middleX, middleY);
-            const int64_t translateX
-                = -(middleCamera.x * (Transform::UnitVector::Screen.h / 2))
+            float translateX
+                = -(middleCamera.x * (Transform::UnitVector::Screen.h / 2.f))
                 + (Transform::UnitVector::Screen.w / 2);
-            const int64_t translateY
-                = -(middleCamera.y * (Transform::UnitVector::Screen.h / 2))
+            float translateY
+                = -(middleCamera.y * (Transform::UnitVector::Screen.h / 2.f))
                 + (Transform::UnitVector::Screen.h / 2);
+
+            if (!m_scene.isSmooth())
+            {
+                translateX = std::round(translateX);
+                translateY = std::round(translateY);
+            }
 
             states.transform.translate(translateX, translateY);
 
@@ -290,6 +319,10 @@ namespace obe::Tiles
 
     uint32_t TileLayer::getTile(uint32_t x, uint32_t y)
     {
+        if (x >= m_width || y >= m_height || x < 0 || y < 0)
+        {
+            throw Exceptions::TilePositionOutsideLayer(x, y, m_width, m_height, EXC_INFO);
+        }
         return m_data[x + y * m_width];
     }
 }
