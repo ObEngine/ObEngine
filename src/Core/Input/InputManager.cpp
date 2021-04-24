@@ -72,35 +72,35 @@ namespace obe::Input
             }
             if (m_refresh)
             {
-                bool noRefresh = true;
+                bool shouldRefresh = false;
                 for (auto& [_, input] : m_inputs)
                 {
 
                     if (input->isPressed())
                     {
 
-                        noRefresh = false;
+                        shouldRefresh = true;
                         break;
                     }
                 }
-                for (const auto& monitorPtr : m_monitors)
-                {
-                    if (const auto& monitor = monitorPtr.lock())
-                    {
-                        if (monitor->getButton().isPressed())
-                        {
-                            noRefresh = false;
-                            break;
-                        }
-                    }
-                }
-                m_refresh = !noRefresh;
                 m_monitors.erase(
                     std::remove_if(m_monitors.begin(), m_monitors.end(),
                         [this](const std::weak_ptr<InputButtonMonitor>& element) {
                             return updateOrCleanMonitor(e_inputs, element);
                         }),
                     m_monitors.end());
+                for (const auto& monitorPtr : m_monitors)
+                {
+                    if (const auto& monitor = monitorPtr.lock())
+                    {
+                        if (monitor->checkForRefresh())
+                        {
+                            shouldRefresh = true;
+                            break;
+                        }
+                    }
+                }
+                m_refresh = shouldRefresh;
             }
         }
     }

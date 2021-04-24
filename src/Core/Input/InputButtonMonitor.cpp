@@ -30,12 +30,12 @@ namespace obe::Input
         Debug::Log->trace("Updating InputMonitor of {}", m_button.getName());
         const bool keyPressed = m_button.isPressed();
         const InputButtonState oldState = m_buttonState;
+        m_shouldRefresh = false;
         if (keyPressed
             && (m_buttonState == InputButtonState::Idle
                 || m_buttonState == InputButtonState::Released))
         {
             m_buttonState = InputButtonState::Pressed;
-            // InputButtonMonitor::RequireRefresh = true;
         }
         else if (keyPressed && m_buttonState == InputButtonState::Pressed)
         {
@@ -46,7 +46,6 @@ namespace obe::Input
                 || m_buttonState == InputButtonState::Hold))
         {
             m_buttonState = InputButtonState::Released;
-            // InputButtonMonitor::RequireRefresh = true;
         }
         else if (!keyPressed && m_buttonState == InputButtonState::Released)
         {
@@ -54,9 +53,14 @@ namespace obe::Input
         }
         if (oldState != m_buttonState)
         {
+            m_shouldRefresh = true;
             events->trigger(m_button.getName(),
                 Events::Keys::StateChanged { m_buttonState, oldState });
         }
     }
 
+    bool InputButtonMonitor::checkForRefresh() const
+    {
+        return m_shouldRefresh;
+    }
 } // namespace obe::Input

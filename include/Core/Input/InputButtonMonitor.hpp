@@ -33,6 +33,7 @@ namespace obe::Input
     private:
         InputButton& m_button;
         InputButtonState m_buttonState = InputButtonState::Idle;
+        bool m_shouldRefresh = false;
 
     public:
         /**
@@ -57,5 +58,6 @@ namespace obe::Input
          *        InputButtonState)
          */
         void update(Event::EventGroupPtr events);
+        bool checkForRefresh() const;
     };
 } // namespace obe::Input
