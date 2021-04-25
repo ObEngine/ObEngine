@@ -6,6 +6,7 @@
 
 #include <fmt/format.h>
 
+#include <Debug/Logger.hpp>
 #include <Utils/StringUtils.hpp>
 
 namespace obe
@@ -42,6 +43,7 @@ namespace obe
         {
             const std::string errorMsg = fmt::format(std::forward<Args>(args)...);
             m_message += fmt::format("  Error: {}\n", errorMsg);
+            Debug::Log->error(m_message);
         }
         template <class... Args> void hint(Args&&... args)
         {

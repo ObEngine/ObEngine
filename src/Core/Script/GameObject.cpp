@@ -215,7 +215,12 @@ namespace obe::Script
         {
             m_animator = std::make_unique<Animation::Animator>();
             vili::node& animator = obj.at("Animator");
-            const std::string animatorPath = animator.at("path");
+            std::string animatorPath;
+            if (animator.contains("path"))
+            {
+                animatorPath = animator.at("path");
+            }
+
             Animation::AnimatorTargetScaleMode scaleMode
                 = Animation::AnimatorTargetScaleMode::Fit;
             if (animator.contains("scaling"))
