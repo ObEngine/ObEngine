@@ -620,7 +620,7 @@ namespace obe::Scene
         std::vector<Script::GameObject*> returnVec;
         for (auto& gameObject : m_gameObjectArray)
         {
-            if (gameObject->deletable && objectType.empty()
+            if (!gameObject->deletable && objectType.empty()
                 || objectType == gameObject->getType())
                 returnVec.push_back(gameObject.get());
         }
