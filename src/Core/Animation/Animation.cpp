@@ -310,7 +310,7 @@ namespace obe::Animation
                     "    <Animation> Loading Texture {0} (using ResourceManager)",
                     textureName);
                 m_textures.emplace_back(resources->getTexture(
-                    path.add(textureName).toString(), m_antiAliasing));
+                    path.add(textureName), m_antiAliasing));
             }
             else
             {

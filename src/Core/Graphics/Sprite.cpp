@@ -117,7 +117,7 @@ namespace obe::Graphics
             m_path = path;
             if (m_resources)
             {
-                m_texture = m_resources->getTexture(path, m_antiAliasing);
+                m_texture = m_resources->getTexture(System::Path(path), m_antiAliasing);
             }
             else
             {

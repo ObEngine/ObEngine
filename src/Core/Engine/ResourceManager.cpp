@@ -5,52 +5,53 @@
 namespace obe::Engine
 {
     const Graphics::Texture& ResourceManager::getTexture(
-        const std::string& path, bool antiAliasing)
+        const System::Path& path, bool antiAliasing)
     {
-        if (m_textures.find(path) == m_textures.end()
-            || (!m_textures[path].first && !antiAliasing)
-            || (!m_textures[path].second && antiAliasing))
+        const std::string pathAsString = path.toString();
+        if (m_textures.find(pathAsString) == m_textures.end()
+            || (!m_textures[pathAsString].first && !antiAliasing)
+            || (!m_textures[pathAsString].second && antiAliasing))
         {
             std::shared_ptr<sf::Texture> tempTexture = std::make_shared<sf::Texture>();
-            const std::string realPath = System::Path(path).find();
+            const std::string realPath = path.find();
             Debug::Log->debug(
-                "[ResourceManager] Loading <Texture> {} from {}", path, realPath);
-            const bool success = tempTexture->loadFromFile(realPath);
+                "[ResourceManager] Loading <Texture> {} from {}", pathAsString, realPath);
 
+            const bool success = tempTexture->loadFromFile(realPath);
             if (success)
             {
                 tempTexture->setSmooth(antiAliasing);
                 if (!antiAliasing)
                 {
-                    m_textures[path].first
+                    m_textures[pathAsString].first
                         = std::make_unique<Graphics::Texture>(tempTexture);
-                    return *m_textures[path].first;
+                    return *m_textures[pathAsString].first;
                 }
                 else
                 {
-                    m_textures[path].second
+                    m_textures[pathAsString].second
                         = std::make_unique<Graphics::Texture>(tempTexture);
-                    return *m_textures[path].second;
+                    return *m_textures[pathAsString].second;
                 }
             }
             else
                 throw Exceptions::TextureNotFound(
-                    path, System::MountablePath::StringPaths(), EXC_INFO);
+                    pathAsString, System::MountablePath::StringPaths(), EXC_INFO);
         }
         else
         {
             if (antiAliasing)
             {
-                return *m_textures[path].second;
+                return *m_textures[pathAsString].second;
             }
             else
             {
-                return *m_textures[path].first;
+                return *m_textures[pathAsString].first;
             }
         }
     }
 
-    const Graphics::Texture& ResourceManager::getTexture(const std::string& path)
+    const Graphics::Texture& ResourceManager::getTexture(const System::Path& path)
     {
         return getTexture(path, defaultAntiAliasing);
     }

@@ -9,6 +9,12 @@
 #include <Graphics/Font.hpp>
 #include <Graphics/Texture.hpp>
 
+namespace obe {
+    namespace System {
+        class Path;
+    }
+}
+
 namespace obe::Engine
 {
     template <class T> using ResourceStore = std::unordered_map<std::string, T>;
@@ -37,8 +43,8 @@ namespace obe::Engine
          * \param antiAliasing Uses Anti-Aliasing for the texture when first loading it
          * \return A pointer to the texture stored in the cache
          */
-        const Graphics::Texture& getTexture(const std::string& path, bool antiAliasing);
-        const Graphics::Texture& getTexture(const std::string& path);
+        const Graphics::Texture& getTexture(const System::Path& path, bool antiAliasing);
+        const Graphics::Texture& getTexture(const System::Path& path);
 
         void clean();
     };
