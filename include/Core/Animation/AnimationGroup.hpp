@@ -55,6 +55,7 @@ namespace obe::Animation
          * \param name Name of the AnimationGroup
          */
         explicit AnimationGroup(std::string name);
+        AnimationGroup(const AnimationGroup& group);
         /**
          * \brief Get the delay between each frame of the AnimationGroup
          * \return The delay between each frame in milliseconds

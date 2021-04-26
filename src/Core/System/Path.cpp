@@ -283,9 +283,12 @@ namespace obe::System
         return m_path;
     }
 
-    void Path::operator=(const Path& path)
+    Path& Path::operator=(const Path& path)
     {
         m_path = path.m_path;
+        m_prefix = path.m_prefix;
+
+        return *this;
     }
 
     ContextualPathFactory::ContextualPathFactory(const std::string& base)

@@ -31,6 +31,7 @@ namespace obe::Animation::Bindings
         AnimationNamespace.new_enum<obe::Animation::AnimatorTargetScaleMode>(
             "AnimatorTargetScaleMode",
             { { "Fit", obe::Animation::AnimatorTargetScaleMode::Fit },
+                {"KeepRatio", obe::Animation::AnimatorTargetScaleMode::KeepRatio},
                 { "FixedWidth", obe::Animation::AnimatorTargetScaleMode::FixedWidth },
                 { "FixedHeight", obe::Animation::AnimatorTargetScaleMode::FixedHeight },
                 { "TextureSize",
@@ -132,6 +133,22 @@ namespace obe::Animation::Bindings
                 return self->setTarget(sprite);
             },
             [](obe::Animation::Animator* self, obe::Graphics::Sprite& sprite,
+                obe::Animation::AnimatorTargetScaleMode targetScaleMode) -> void {
+                return self->setTarget(sprite, targetScaleMode);
+            });
+        bindAnimator["makeState"] = &obe::Animation::Animator::makeState;
+
+        sol::usertype<obe::Animation::AnimatorState> bindAnimatorState
+            = AnimationNamespace.new_usertype<obe::Animation::AnimatorState>(
+                "AnimatorState");
+        bindAnimatorState["setKey"] = &obe::Animation::AnimatorState::setKey;
+        bindAnimatorState["update"] = &obe::Animation::AnimatorState::update;
+        bindAnimatorState["setTarget"] = sol::overload(
+            [](obe::Animation::AnimatorState* self, obe::Graphics::Sprite& sprite)
+                -> void {
+                return self->setTarget(sprite);
+            },
+            [](obe::Animation::AnimatorState* self, obe::Graphics::Sprite& sprite,
                 obe::Animation::AnimatorTargetScaleMode targetScaleMode) -> void {
                 return self->setTarget(sprite, targetScaleMode);
             });

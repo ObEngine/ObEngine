@@ -17,6 +17,12 @@ namespace obe::Animation
     {
     }
 
+    AnimationGroup::AnimationGroup(const AnimationGroup& group)
+    {
+        m_groupList = group.m_groupList;
+        m_delay = group.m_delay;
+    }
+
     void AnimationGroup::setDelay(Time::TimeUnit delay) noexcept
     {
         m_delay = delay;

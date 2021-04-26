@@ -9,6 +9,7 @@
 
 namespace obe::Animation
 {
+    class Animator;
     /**
      * \brief Sets the scaling behaviour the Animator will apply on target
      * \bind{Animator.TargetScaleMode}
@@ -17,6 +18,7 @@ namespace obe::Animation
     {
         // Fits the animation texture into the target's size, ignoring the ratio
         Fit,
+        KeepRatio,
         // Animation texture will have target's width, height will be adjusted with correct
         // ratio
         FixedWidth,
@@ -28,6 +30,53 @@ namespace obe::Animation
     };
     AnimatorTargetScaleMode stringToAnimatorTargetScaleMode(const std::string& targetScaleMode);
 
+
+    class AnimatorState
+    {
+    private:
+        std::unordered_map<std::string, std::unique_ptr<AnimationState>> m_states;
+        const Animator& m_parent;
+        AnimationState* m_currentAnimation = nullptr;
+        bool m_paused = false;
+        Graphics::Sprite* m_target = nullptr;
+        AnimatorTargetScaleMode m_targetScaleMode = AnimatorTargetScaleMode::Fit;
+
+        void applyTexture() const;
+    public:
+        AnimatorState(const Animator& parent);
+        /**
+         * \brief Get the name of the currently played Animation
+         * \return A std::string containing the name of the currently played
+         *         Animation
+         */
+        void load();
+        [[nodiscard]] std::string getKey() const noexcept;
+        /**
+         * \brief Set the Animation to play by name
+         * \param key A std::string containing the name of the Animation to
+         *        play.
+         * \throw UnknownAnimation if the Animation key is not found.
+         */
+        void setKey(const std::string& key);
+        /**
+         * \brief Start or Pause the Animator (won't do anything even if
+         *        updated)
+         * \param pause true if the Animator should pause, false
+         *        otherwise
+         */
+        void setPaused(bool pause) noexcept;
+        /**
+         * \brief Update the Animator and the currently played Animation
+         */
+        void update();
+        void setTarget(Graphics::Sprite& sprite,
+            AnimatorTargetScaleMode targetScaleMode = AnimatorTargetScaleMode::Fit);
+        void reset();
+        [[nodiscard]] Graphics::Sprite* getTarget() const;
+        [[nodiscard]] AnimationState* getCurrentAnimation() const;
+        const Graphics::Texture& getTexture() const;
+    };
+
     /**
      * \brief A Class that will manage a set of Animation
      * \bind{Animator}
@@ -35,15 +84,15 @@ namespace obe::Animation
     class Animator
     {
     private:
+        AnimatorState m_defaultState;
         std::unordered_map<std::string, std::unique_ptr<Animation>> m_animations;
-        Animation* m_currentAnimation = nullptr;
-        bool m_paused = false;
         System::Path m_path;
-        Graphics::Sprite* m_target = nullptr;
-        AnimatorTargetScaleMode m_targetScaleMode = AnimatorTargetScaleMode::Fit;
+        
         void applyTexture() const;
+        friend class AnimatorState;
 
     public:
+        Animator();
         /**
          * \brief Clear the Animator of all Animation
          */
@@ -109,5 +158,9 @@ namespace obe::Animation
 
         void setTarget(Graphics::Sprite& sprite,
             AnimatorTargetScaleMode targetScaleMode = AnimatorTargetScaleMode::Fit);
+
+        System::Path getPath() const;
+
+        AnimatorState makeState() const;
     };
 } // namespace obe::Animation

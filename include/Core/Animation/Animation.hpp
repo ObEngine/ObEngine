@@ -72,6 +72,82 @@ namespace obe::Animation
         Call
     };
 
+    class Animation;
+
+    class AnimationState
+    {
+    private:
+        const Animation& m_parent;
+        std::unordered_map<std::string, std::unique_ptr<AnimationGroup>> m_groups;
+        std::size_t m_codeIndex = 0;
+        bool m_feedInstructions = true;
+        std::string m_currentGroupName;
+        std::string m_nextAnimation;
+        bool m_over = false;
+        AnimationStatus m_status = AnimationStatus::Play;
+        Time::TimeUnit m_clock = 0;
+        Time::TimeUnit m_sleep = 0;
+
+        void executeInstruction();
+        void updateCurrentGroup();
+        void setActiveAnimationGroup(const std::string& groupName);
+    public:
+        AnimationState(const Animation& parent);
+        void load();
+        /**
+         * \brief Get the Animation Status
+         * \return An enum value containing the AnimationStatus, it can be one
+         *         of these modes :
+         *         - AnimationStatus::Play
+         *         - AnimationStatus::Call
+         */
+        [[nodiscard]] AnimationStatus getStatus() const noexcept;
+        /**
+         * \brief Get the name of the Animation to call when the AnimationStatus
+         *        of the Animation is equal to AnimationStatus::Call
+         * \return A std::string containing the name of the Animation that will be called.
+         */
+        [[nodiscard]] std::string getCalledAnimation() const noexcept;
+        /**
+         * \brief Get AnimationGroup pointer by groupName.
+         *        It will throws a
+         *        ObEngine.Animation.Animation.AnimationGroupNotFound if the
+         *        AnimationGroup is not found.
+         * \param groupName The name of the
+         *        AnimationGroup to return
+         * \return A pointer to the AnimationGroup
+         * \throw UnknownAnimationGroup if the group does not exists
+         */
+        AnimationGroup& getAnimationGroup(const std::string& groupName);
+        /**
+         * \brief Get the name of the current AnimationGroup
+         * \return A std::string containing the name of the current
+         *         AnimationGroup
+         */
+        [[nodiscard]] std::string getCurrentAnimationGroup() const noexcept;
+        /**
+         * \brief Get the current Texture displayed by the Animation
+         * \return A reference to the currently displayed Texture
+         */
+        const Graphics::Texture& getTexture();
+        /**
+         * \brief Return whether the Animation is over or not
+         * \return true if the Animation is over, false otherwise
+         */
+        [[nodiscard]] bool isOver() const noexcept;
+        /**
+         * \brief Reset the Animation (Unselect current AnimationGroup and
+         *        restart AnimationCode)
+         */
+        void reset() noexcept;
+        /**
+         * \brief Update the Animation (Updates the current AnimationGroup,
+         *        executes the AnimationCode)
+         */
+        void update();
+        const Animation& getAnimation() const;
+    };
+
     /**
      * \brief A whole Animation that contains one or more AnimationGroup.
      * \bind{Animation}
@@ -79,31 +155,20 @@ namespace obe::Animation
     class Animation
     {
     private:
+        AnimationState m_defaultState;
         std::string m_name;
+        std::unordered_map<std::string, std::unique_ptr<AnimationGroup>> m_groups;
 
-        Time::TimeUnit m_clock = 0;
+        bool m_antiAliasing = false;
         Time::TimeUnit m_delay = 0;
-        Time::TimeUnit m_sleep = 0;
 
         std::vector<vili::node> m_code;
-        std::size_t m_codeIndex = 0;
-        bool m_feedInstructions = true;
-
+        
         std::vector<Graphics::Texture> m_textures;
-        std::unordered_map<std::string, std::unique_ptr<AnimationGroup>> m_groups;
-        std::string m_currentGroupName;
-        std::string m_nextAnimation;
 
         AnimationPlayMode m_playMode = AnimationPlayMode::OneTime;
-        AnimationStatus m_status = AnimationStatus::Play;
 
-        bool m_over = false;
         int m_priority = 0;
-        bool m_antiAliasing = false;
-
-        void executeInstruction();
-        void updateCurrentGroup();
-        void setActiveAnimationGroup(const std::string& groupName);
 
         void loadMeta(const vili::node& meta);
         void loadImages(const vili::node& images, const System::Path& path,
@@ -111,7 +176,9 @@ namespace obe::Animation
         void loadGroups(const vili::node& groups);
         void loadCode(const vili::node& code);
 
+        friend class AnimationState;
     public:
+        Animation();
         /**
          * \todo Make Animation a serializable type instead of this "applyParameters"
          * \brief Apply global Animation parameters (Sprite offset and priority)
@@ -237,5 +304,6 @@ namespace obe::Animation
          * \brief Gets the anti-aliasing status for the Animation
          */
         [[nodiscard]] bool getAntiAliasing() const noexcept;
+        [[nodiscard]] AnimationState makeState() const;
     };
 } // namespace obe::Animation

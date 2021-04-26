@@ -201,6 +201,10 @@ namespace obe::Script
                 }
             }
         }
+        if (m_hasScriptEngine)
+        {
+            m_environment["Object"]["SceneNode"] = &m_objectNode;
+        }
         // Sprite
         if (obj.contains("Sprite"))
         {

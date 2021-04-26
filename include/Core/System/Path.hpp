@@ -81,6 +81,7 @@ namespace obe::System
          * \param path Path in std::string_view form
          */
         Path(std::string_view prefix, std::string_view path);
+        Path& operator=(const Path& path);
         /**
          * \brief Replaces Path's value with a new one
          * \param path New value for Path
@@ -120,8 +121,6 @@ namespace obe::System
          * \return The Path in std::string form
          */
         [[nodiscard]] std::string toString() const;
-
-        void operator=(const Path& path);
     };
 
     class ContextualPathFactory
