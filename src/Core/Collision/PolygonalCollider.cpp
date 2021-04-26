@@ -314,7 +314,7 @@ namespace obe::Collision
 
     void PolygonalCollider::removeTag(ColliderTagType tagType, const std::string& tag)
     {
-        std::vector<std::string>& tags = m_tags.at(ColliderTagType::Tag);
+        std::vector<std::string>& tags = m_tags.at(tagType);
         tags.erase(std::remove(tags.begin(), tags.end(), tag), tags.end());
     }
 

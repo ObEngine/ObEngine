@@ -206,7 +206,7 @@ namespace obe::Animation
             {
                 tempAnim->setAntiAliasing(m_defaultState.getTarget()->getAntiAliasing());
             }
-            tempAnim->loadAnimation(System::Path(directory.path()), resources);
+            tempAnim->loadAnimation(path.add(System::Path(directory.path()).last()), resources);
             if (!animatorCfgFile.is_null())
             {
                 if (animatorCfgFile.contains("all"))
