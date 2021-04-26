@@ -141,6 +141,8 @@ namespace obe::Animation::Bindings
         sol::usertype<obe::Animation::AnimatorState> bindAnimatorState
             = AnimationNamespace.new_usertype<obe::Animation::AnimatorState>(
                 "AnimatorState");
+        bindAnimatorState["getAnimator"] = &obe::Animation::AnimatorState::getAnimator;
+        bindAnimatorState["getKey"] = &obe::Animation::AnimatorState::getKey;
         bindAnimatorState["setKey"] = &obe::Animation::AnimatorState::setKey;
         bindAnimatorState["update"] = &obe::Animation::AnimatorState::update;
         bindAnimatorState["setTarget"] = sol::overload(

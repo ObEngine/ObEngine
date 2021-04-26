@@ -75,6 +75,7 @@ namespace obe::Animation
         [[nodiscard]] Graphics::Sprite* getTarget() const;
         [[nodiscard]] AnimationState* getCurrentAnimation() const;
         const Graphics::Texture& getTexture() const;
+        [[nodiscard]] const Animator& getAnimator() const;
     };
 
     /**

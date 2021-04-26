@@ -296,6 +296,11 @@ namespace obe::Animation
         throw Exceptions::NoSelectedAnimation(m_parent.getPath().toString(), EXC_INFO);
     }
 
+    const Animator& AnimatorState::getAnimator() const
+    {
+        return m_parent;
+    }
+
     const Graphics::Texture& Animator::getTextureAtKey(
         const std::string& key, int index) const
     {
