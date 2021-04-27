@@ -35,34 +35,37 @@ TEST_CASE("Color dump should change based on the ColorType provided", "[obe.Grap
     Color color(123, 104, 238, 220);
     SECTION("Default ColorType")
     {
-        vili::node node = vili::object { { "color", color.dump() } };
-        std::string expectedResult = expectedRgba("123.0", "104.0", "238.0", "220.0");
-        REQUIRE(node.dump(true) == expectedResult);
+        vili::node node = color.dump();
+        REQUIRE(node.at("r").as<vili::number>() == 123.0);
+        REQUIRE(node.at("g").as<vili::number>() == 104.0);
+        REQUIRE(node.at("b").as<vili::number>() == 238.0);
+        REQUIRE(node.at("a").as<vili::number>() == 220.0);
     }
     SECTION("ColorType is Rgba")
     {
-        vili::node node = vili::object { { "color", color.dump(ColorType::Rgba) } };
-        std::string expectedResult = expectedRgba("123.0", "104.0", "238.0", "220.0");
-        REQUIRE(node.dump(true) == expectedResult);
+        vili::node node = color.dump(ColorType::Rgba);
+        REQUIRE(node.at("r").as<vili::number>() == 123.0);
+        REQUIRE(node.at("g").as<vili::number>() == 104.0);
+        REQUIRE(node.at("b").as<vili::number>() == 238.0);
+        REQUIRE(node.at("a").as<vili::number>() == 220.0);
     }
     color.a = 255;
     SECTION("ColorType is Hsv")
     {
-        vili::node node = vili::object { { "color", color.dump(ColorType::Hsv) } };
-        std::string expectedResult = expectedHsv("248.507463", "0.563025", "0.933333");
-        REQUIRE(node.dump(true) == expectedResult);
+        vili::node node = color.dump(ColorType::Hsv);
+        REQUIRE(node.at("H").as<vili::number>() == Approx(248.507463));
+        REQUIRE(node.at("S").as<vili::number>() == Approx(0.563025));
+        REQUIRE(node.at("V").as<vili::number>() == Approx(0.933333));
     }
     SECTION("ColorType is Hex")
     {
-        vili::node node = vili::object { { "color", color.dump(ColorType::Hex) } };
-        std::string expectedResult = expectedHex("#7b68ee");
-        REQUIRE(node.dump(true) == expectedResult);
+        vili::node node = color.dump(ColorType::Hex);
+        REQUIRE(node.as<vili::string>() == "#7b68ee");
     }
     SECTION("ColorType is ColorName")
     {
-        vili::node node = vili::object { { "color", color.dump(ColorType::ColorName) } };
-        std::string expectedResult = expectedColorName("mediumslateblue");
-        REQUIRE(node.dump(true) == expectedResult);
+        vili::node node = color.dump(ColorType::ColorName);
+        REQUIRE(node.as<vili::string>() == "mediumslateblue");
     }
 }
 
@@ -107,48 +110,47 @@ TEST_CASE("Color dump should be able to infer the desired ColorType from the las
     {
         Color color;
         color.fromRgb(123, 104, 238, 220);
-        vili::node node = vili::object { { "color", color.dump() } };
-        std::string expectedResult = expectedRgba("123.0", "104.0", "238.0", "220.0");
-        REQUIRE(node.dump(true) == expectedResult);
+        vili::node node = color.dump();
+        REQUIRE(node.at("r").as<vili::number>() == 123.0);
+        REQUIRE(node.at("g").as<vili::number>() == 104.0);
+        REQUIRE(node.at("b").as<vili::number>() == 238.0);
+        REQUIRE(node.at("a").as<vili::number>() == 220.0);
     }
     SECTION("ColorType is Hsv")
     {
         Color color;
         color.fromHsv(248.507463, 0.563025, 0.933333);
-        vili::node node = vili::object { { "color", color.dump() } };
-        std::string expectedResult = expectedHsv("248.507463", "0.563025", "0.933333");
-        REQUIRE(node.dump(true) == expectedResult);
+        vili::node node = color.dump();
+        REQUIRE(node.at("H").as<vili::number>() == Approx(248.507463));
+        REQUIRE(node.at("S").as<vili::number>() == Approx(0.563025));
+        REQUIRE(node.at("V").as<vili::number>() == Approx(0.933333));
     }
     SECTION("ColorType is Hex")
     {
         Color color;
         color.fromHex("#7b68ee");
-        vili::node node = vili::object { { "color", color.dump() } };
-        std::string expectedResult = expectedHex("#7b68ee");
-        REQUIRE(node.dump(true) == expectedResult);
+        vili::node node = color.dump();
+        REQUIRE(node.as<vili::string>() == "#7b68ee");
     }
     SECTION("ColorType is Hex using generic fromString method")
     {
         Color color;
         color.fromString("#7b68ee");
-        vili::node node = vili::object { { "color", color.dump() } };
-        std::string expectedResult = expectedHex("#7b68ee");
-        REQUIRE(node.dump(true) == expectedResult);
+        vili::node node = color.dump();
+        REQUIRE(node.as<vili::string>() == "#7b68ee");
     }
     SECTION("ColorType is ColorName")
     {
         Color color;
         color.fromName("MediumSlateBlue");
-        vili::node node = vili::object { { "color", color.dump() } };
-        std::string expectedResult = expectedColorName("mediumslateblue");
-        REQUIRE(node.dump(true) == expectedResult);
+        vili::node node = color.dump();
+        REQUIRE(node.as<vili::string>() == "mediumslateblue");
     }
     SECTION("ColorType is ColorName using generic fromString method")
     {
         Color color;
         color.fromString("MediumSlateBlue");
-        vili::node node = vili::object { { "color", color.dump() } };
-        std::string expectedResult = expectedColorName("mediumslateblue");
-        REQUIRE(node.dump(true) == expectedResult);
+        vili::node node = color.dump();
+        REQUIRE(node.as<vili::string>() == "mediumslateblue");
     }
 }

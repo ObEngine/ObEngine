@@ -424,8 +424,8 @@ namespace obe::Graphics
 
     uint32_t Color::toInteger() const
     {
-        return (static_cast<int>(r) << 24) + (static_cast<int>(g) << 16)
-            + (static_cast<int>(b) << 8) + (a);
+        return (static_cast<int>(r + 0.5) << 24) + (static_cast<int>(g + 0.5) << 16)
+            + (static_cast<int>(b + 0.5) << 8) + static_cast<int>(a + 0.5);
     }
 
     void Color::fromHex(std::string hexCode)
