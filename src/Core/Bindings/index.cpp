@@ -14,7 +14,9 @@
 #include <Bindings/obe/Component/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Config/Config.hpp>
 #include <Bindings/obe/Config/Templates/Templates.hpp>
+#include <Bindings/obe/Config/Validators/Validators.hpp>
 #include <Bindings/obe/Debug/Debug.hpp>
+#include <Bindings/obe/Debug/Render/Render.hpp>
 #include <Bindings/obe/Engine/Engine.hpp>
 #include <Bindings/obe/Engine/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Event/Event.hpp>
@@ -55,6 +57,7 @@
 #include <Bindings/obe/Utils/String/String.hpp>
 #include <Bindings/obe/Utils/Vector/Vector.hpp>
 #include <Bindings/obe/obe.hpp>
+
 #include <Bindings/vili/exceptions/exceptions.hpp>
 #include <Bindings/vili/parser/parser.hpp>
 #include <Bindings/vili/parser/rules/rules.hpp>
@@ -67,6 +70,7 @@ namespace obe::Bindings
     void IndexAllBindings(sol::state_view state)
     {
         state["obe"].get_or_create<sol::table>();
+        state["tgui"].get_or_create<sol::table>();
         state["vili"].get_or_create<sol::table>();
         state["obe"]["Animation"].get_or_create<sol::table>();
         state["obe"]["Audio"].get_or_create<sol::table>();
@@ -90,6 +94,7 @@ namespace obe::Bindings
         state["vili"]["writer"].get_or_create<sol::table>();
         state["obe"]["Bindings"].get_or_create<sol::table>();
         state["obe"]["Debug"].get_or_create<sol::table>();
+        state["tgui"]["bind_functions"].get_or_create<sol::table>();
         state["obe"]["Utils"].get_or_create<sol::table>();
         state["obe"]["Events"].get_or_create<sol::table>();
         state["vili"]["utils"].get_or_create<sol::table>();
@@ -119,6 +124,8 @@ namespace obe::Bindings
         state["vili"]["parser"]["rules"].get_or_create<sol::table>();
         state["obe"]["Animation"]["Easing"].get_or_create<sol::table>();
         state["obe"]["Config"]["Templates"].get_or_create<sol::table>();
+        state["obe"]["Config"]["Validators"].get_or_create<sol::table>();
+        state["obe"]["Debug"]["Render"].get_or_create<sol::table>();
         state["obe"]["Graphics"]["Utils"].get_or_create<sol::table>();
         state["obe"]["Script"]["ViliLuaBridge"].get_or_create<sol::table>();
         state["obe"]["System"]["Package"].get_or_create<sol::table>();
@@ -131,7 +138,9 @@ namespace obe::Bindings
         state["obe"]["System"]["Constraints"].get_or_create<sol::table>();
         obe::Animation::Bindings::LoadClassAnimation(state);
         obe::Animation::Bindings::LoadClassAnimationGroup(state);
+        obe::Animation::Bindings::LoadClassAnimationState(state);
         obe::Animation::Bindings::LoadClassAnimator(state);
+        obe::Animation::Bindings::LoadClassAnimatorState(state);
         obe::Animation::Bindings::LoadClassValueTweening(state);
         obe::Animation::Bindings::LoadEnumAnimationPlayMode(state);
         obe::Animation::Bindings::LoadEnumAnimationStatus(state);
@@ -175,7 +184,6 @@ namespace obe::Bindings
         obe::Component::Exceptions::Bindings::LoadClassComponentIdAlreadyTaken(state);
 
         obe::Config::Bindings::LoadClassConfigurationManager(state);
-        obe::Config::Bindings::LoadFunctionConfigValidator(state);
 
         obe::Bindings::LoadClassDebugInfo(state);
         obe::Bindings::LoadClassException(state);
@@ -292,6 +300,7 @@ namespace obe::Bindings
         obe::Scene::Bindings::LoadClassCamera(state);
         obe::Scene::Bindings::LoadClassScene(state);
         obe::Scene::Bindings::LoadClassSceneNode(state);
+        obe::Scene::Bindings::LoadClassSceneRenderOptions(state);
         obe::Scene::Bindings::LoadFunctionSceneGetGameObjectProxy(state);
         obe::Scene::Bindings::LoadFunctionSceneCreateGameObjectProxy(state);
         obe::Scene::Bindings::LoadFunctionSceneGetAllGameObjectsProxy(state);
@@ -315,6 +324,7 @@ namespace obe::Bindings
         obe::Script::Bindings::LoadClassGameObject(state);
         obe::Script::Bindings::LoadClassGameObjectDatabase(state);
 
+        obe::System::Bindings::LoadClassContextualPathFactory(state);
         obe::System::Bindings::LoadClassCursor(state);
         obe::System::Bindings::LoadClassFindResult(state);
         obe::System::Bindings::LoadClassMountablePath(state);
@@ -325,6 +335,7 @@ namespace obe::Bindings
         obe::System::Bindings::LoadEnumPathType(state);
         obe::System::Bindings::LoadEnumWindowContext(state);
         obe::System::Bindings::LoadEnumStretchMode(state);
+        obe::System::Bindings::LoadFunctionSplitPathAndPrefix(state);
         obe::System::Bindings::LoadFunctionStringToStretchMode(state);
 
         obe::System::Exceptions::Bindings::LoadClassInvalidMouseButtonEnumValue(state);
@@ -334,6 +345,7 @@ namespace obe::Bindings
         obe::System::Exceptions::Bindings::LoadClassPackageFileNotFound(state);
         obe::System::Exceptions::Bindings::LoadClassResourceNotFound(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownPackage(state);
+        obe::System::Exceptions::Bindings::LoadClassUnknownPathPrefix(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownStretchMode(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownWorkspace(state);
 
@@ -572,6 +584,10 @@ namespace obe::Bindings
         obe::Config::Templates::Bindings::LoadGlobalPlayGroupCommand(state);
         obe::Config::Templates::Bindings::LoadGlobalSetAnimationCommand(state);
 
+        obe::Config::Validators::Bindings::LoadFunctionAnimationValidator(state);
+        obe::Config::Validators::Bindings::LoadFunctionConfigValidator(state);
+        obe::Config::Validators::Bindings::LoadFunctionMountValidator(state);
+
         obe::Debug::Bindings::LoadFunctionInitLogger(state);
         obe::Debug::Bindings::LoadFunctionTrace(state);
         obe::Debug::Bindings::LoadFunctionDebug(state);
@@ -580,6 +596,8 @@ namespace obe::Bindings
         obe::Debug::Bindings::LoadFunctionError(state);
         obe::Debug::Bindings::LoadFunctionCritical(state);
         obe::Debug::Bindings::LoadGlobalLog(state);
+
+        obe::Debug::Render::Bindings::LoadFunctionDrawPolygon(state);
 
         obe::Graphics::Utils::Bindings::LoadFunctionDrawPoint(state);
         obe::Graphics::Utils::Bindings::LoadFunctionDrawLine(state);

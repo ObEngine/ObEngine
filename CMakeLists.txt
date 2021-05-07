@@ -54,6 +54,10 @@ if (NOT DEFINED BUILD_PLAYER)
     set(BUILD_PLAYER ON CACHE BOOL "Build ObEngine Player ?")
 endif()
 
+if (NOT DEFINED BUILD_DEV)
+    set(BUILD_DEV ON CACHE BOOL "Build ObEngine Dev ?")
+endif()
+
 if (WIN32)
     add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
     file(GLOB OBENGINE_ICON ${CMAKE_SOURCE_DIR}/resources/resource.rc)
@@ -64,6 +68,12 @@ endif()
 if (BUILD_PLAYER)
     add_subdirectory(src/Player)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ObEnginePlayer)
+endif()
+
+if (BUILD_DEV)
+    add_subdirectory(extlibs/tgui)
+    add_subdirectory(src/Dev)
+    set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ObEngineDev)
 endif()
 
 if (NOT DEFINED BUILD_DEV)

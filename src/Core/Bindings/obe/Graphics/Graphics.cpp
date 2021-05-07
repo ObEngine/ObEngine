@@ -68,17 +68,17 @@ namespace obe::Graphics::Bindings
             static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(double) const>(
                 &obe::Graphics::Color::operator/));
         bindColor["operator sf::Color"] = &obe::Graphics::Color::operator sf::Color;
+        bindColor["Random"] = sol::overload(
+            [](obe::Graphics::Color* self) -> obe::Graphics::Color {
+                return self->Random();
+            },
+            [](obe::Graphics::Color* self, bool randomAlpha) -> obe::Graphics::Color {
+                return self->Random(randomAlpha);
+            });
         bindColor["r"] = &obe::Graphics::Color::r;
         bindColor["g"] = &obe::Graphics::Color::g;
         bindColor["b"] = &obe::Graphics::Color::b;
         bindColor["a"] = &obe::Graphics::Color::a;
-        bindColor["Random"]
-            = sol::overload(
-                []() -> Graphics::Color { return Graphics::Color::Random(); },
-                [](bool randomAlpha) -> Graphics::Color {
-                    return Graphics::Color::Random(randomAlpha);
-                }
-       );
         bindColor["AliceBlue"] = sol::var(&obe::Graphics::Color::AliceBlue);
         bindColor["AntiqueWhite"] = sol::var(&obe::Graphics::Color::AntiqueWhite);
         bindColor["Aqua"] = sol::var(&obe::Graphics::Color::Aqua);
@@ -234,9 +234,9 @@ namespace obe::Graphics::Bindings
                     obe::Graphics::Font(const sf::Font&)>());
         bindFont["loadFromFile"] = &obe::Graphics::Font::loadFromFile;
         bindFont[sol::meta_function::equal_to] = &obe::Graphics::Font::operator==;
-        bindFont["operator sf::Font &"] = &obe::Graphics::Font::operator sf::Font &;
+        bindFont["operator sf::Font &"] = &obe::Graphics::Font::operator sf::Font&;
         bindFont["operator const sf::Font &"]
-            = &obe::Graphics::Font::operator const sf::Font &;
+            = &obe::Graphics::Font::operator const sf::Font&;
         bindFont["operator bool"] = &obe::Graphics::Font::operator bool;
     }
     void LoadClassPositionTransformer(sol::state_view state)
@@ -289,9 +289,9 @@ namespace obe::Graphics::Bindings
                 std::size_t, sf::PrimitiveType, const sf::RenderStates&) const>(
                 &obe::Graphics::RenderTarget::draw));
         bindRenderTarget["operator sf::RenderTarget &"]
-            = &obe::Graphics::RenderTarget::operator sf::RenderTarget &;
+            = &obe::Graphics::RenderTarget::operator sf::RenderTarget&;
         bindRenderTarget["operator const sf::RenderTarget &"]
-            = &obe::Graphics::RenderTarget::operator const sf::RenderTarget &;
+            = &obe::Graphics::RenderTarget::operator const sf::RenderTarget&;
     }
     void LoadClassRichText(sol::state_view state)
     {
@@ -433,9 +433,9 @@ namespace obe::Graphics::Bindings
         bindTexture["reset"] = &obe::Graphics::Texture::reset;
         bindTexture["useCount"] = &obe::Graphics::Texture::useCount;
         bindTexture["operator sf::Texture &"]
-            = &obe::Graphics::Texture::operator sf::Texture &;
+            = &obe::Graphics::Texture::operator sf::Texture&;
         bindTexture["operator const sf::Texture &"]
-            = &obe::Graphics::Texture::operator const sf::Texture &;
+            = &obe::Graphics::Texture::operator const sf::Texture&;
         bindTexture["operator="] = sol::overload(
             static_cast<obe::Graphics::Texture& (
                 obe::Graphics::Texture::*)(const obe::Graphics::Texture&)>(

@@ -8,7 +8,9 @@ namespace obe::Animation::Bindings
 {
     void LoadClassAnimation(sol::state_view state);
     void LoadClassAnimationGroup(sol::state_view state);
+    void LoadClassAnimationState(sol::state_view state);
     void LoadClassAnimator(sol::state_view state);
+    void LoadClassAnimatorState(sol::state_view state);
     void LoadClassValueTweening(sol::state_view state);
     void LoadEnumAnimationPlayMode(sol::state_view state);
     void LoadEnumAnimationStatus(sol::state_view state);

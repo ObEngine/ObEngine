@@ -117,6 +117,8 @@ namespace obe::Input::Bindings
         bindInputButtonMonitor["getButton"] = &obe::Input::InputButtonMonitor::getButton;
         bindInputButtonMonitor["getState"] = &obe::Input::InputButtonMonitor::getState;
         bindInputButtonMonitor["update"] = &obe::Input::InputButtonMonitor::update;
+        bindInputButtonMonitor["checkForRefresh"]
+            = &obe::Input::InputButtonMonitor::checkForRefresh;
     }
     void LoadClassInputCondition(sol::state_view state)
     {
