@@ -80,6 +80,7 @@ namespace obe::Script
 
         bool m_hasScriptEngine = false;
         bool m_active = false;
+        bool m_initialized = false;
         bool m_canUpdate = true;
 
         System::ContextualPathFactory GameObjectPath;

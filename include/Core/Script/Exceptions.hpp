@@ -90,4 +90,26 @@ namespace obe::Script::Exceptions
                 "Lua Error encountered while loading script at '{}' : {}", path, error);
         }
     };
+
+    class GameObjectScriptError : public Exception
+    {
+    public:
+        GameObjectScriptError(std::string_view objectType, std::string_view objectId, std::string_view callback, DebugInfo info) : Exception("GameObjectScriptError", info)
+        {
+            this->error("Lua Error encountered while executing callback '{}' of "
+                        "GameObject '{}' of type '{}'",
+                callback, objectId, objectType);
+        }
+    };
+
+    class LuaExecutionError : public Exception
+    {
+    public:
+        LuaExecutionError(std::string_view errorMessage, DebugInfo info)
+            : Exception("LuaExecutionError", info)
+        {
+            this->error(
+                "Lua encountered an error while executing code :\n{}", errorMessage);
+        }
+    };
 }

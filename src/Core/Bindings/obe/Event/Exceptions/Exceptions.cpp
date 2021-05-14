@@ -86,12 +86,6 @@ namespace obe::Event::Exceptions::Bindings
     {
         sol::table ExceptionsNamespace
             = state["obe"]["Event"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::Event::Exceptions::LuaExecutionError> bindLuaExecutionError
-            = ExceptionsNamespace.new_usertype<obe::Event::Exceptions::LuaExecutionError>(
-                "LuaExecutionError", sol::call_constructor,
-                sol::constructors<obe::Event::Exceptions::LuaExecutionError(
-                    std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
     }
     void LoadClassUnknownEvent(sol::state_view state)
     {

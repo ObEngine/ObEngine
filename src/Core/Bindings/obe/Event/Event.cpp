@@ -47,7 +47,7 @@ namespace obe::Event::Bindings
                 sol::constructors<obe::Event::CallbackScheduler()>());
         bindCallbackScheduler["after"] = &obe::Event::CallbackScheduler::after;
         bindCallbackScheduler["every"] = &obe::Event::CallbackScheduler::every;
-        bindCallbackScheduler["repeat"] = &obe::Event::CallbackScheduler::repeat;
+        bindCallbackScheduler["loop"] = &obe::Event::CallbackScheduler::repeat;
         bindCallbackScheduler["run"] = &obe::Event::CallbackScheduler::run;
         bindCallbackScheduler["stop"] = &obe::Event::CallbackScheduler::stop;
     }

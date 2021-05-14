@@ -143,15 +143,4 @@ namespace obe::Event::Exceptions
                        "group.setJoinable(true) from its manager");
         }
     };
-
-    class LuaExecutionError : public Exception
-    {
-    public:
-        LuaExecutionError(std::string_view errorMessage, DebugInfo info)
-            : Exception("LuaExecutionError", info)
-        {
-            this->error(
-                "Lua encountered an error while executing code :\n{}", errorMessage);
-        }
-    };
 }

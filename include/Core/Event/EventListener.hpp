@@ -5,9 +5,7 @@
 
 #include <sol/sol.hpp>
 
-#include <Debug/Logger.hpp>
-#include <Event/Exceptions.hpp>
-#include <Utils/StringUtils.hpp>
+#include <Script/Scripting.hpp>
 
 namespace obe::Event
 {
@@ -28,17 +26,7 @@ namespace obe::Event
     template <class EventType>
     void LuaEventListener::operator()(const EventType& event) const
     {
-        const sol::protected_function_result result = m_callback(event);
-        if (!result.valid())
-        {
-            const auto errObj = result.get<sol::error>();
-            const std::string errMsg = "\n        \""
-                + Utils::String::replace(errObj.what(), "\n", "\n        ") + "\"";
-            const auto exception = Exceptions::LuaExecutionError(errMsg, EXC_INFO);
-            Debug::Log->debug(exception.what());
-
-            throw exception;
-        }
+        Script::safeLuaCall(m_callback, event);
     }
 
     using ExternalEventListener = std::variant<LuaEventListener>;

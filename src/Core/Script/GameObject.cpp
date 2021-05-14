@@ -2,6 +2,7 @@
 #include <Scene/Scene.hpp>
 #include <Script/Exceptions.hpp>
 #include <Script/GameObject.hpp>
+#include <Script/Scripting.hpp>
 #include <Script/ViliLuaBridge.hpp>
 #include <Utils/StringUtils.hpp>
 
@@ -25,7 +26,7 @@ namespace obe::Script
     sol::function GameObject::getConstructor() const
     {
         if (m_hasScriptEngine)
-            return m_environment["ObjectInit"].get<sol::function>();
+            return m_environment["ObjectInitFromLua"].get<sol::function>();
         throw Exceptions::NoSuchComponent("Script", m_type, m_id, EXC_INFO);
     }
 
@@ -98,31 +99,34 @@ namespace obe::Script
 
     void GameObject::initialize()
     {
-        if (!m_active)
+        if (!m_initialized)
         {
             Debug::Log->debug(
                 "<GameObject> Initializing GameObject '{0}' ({1})", m_id, m_type);
-            m_active = true;
+            m_initialized = true;
             if (m_hasScriptEngine)
             {
                 m_environment["__OBJECT_INIT"] = true;
-                sol::protected_function initFunc
-                    = m_environment["__CALL_INIT"].get<sol::protected_function>();
-                const sol::protected_function_result initResult = initFunc();
-                if (!initResult.valid())
+                try
                 {
-                    const auto errObj = initResult.get<sol::error>();
-                    const std::string errMsg = "\n        \""
-                        + Utils::String::replace(errObj.what(), "\n", "\n        ")
-                        + "\"";
-                    throw Event::Exceptions::LuaExecutionError(errMsg, EXC_INFO);
+                    safeLuaCall(
+                        m_environment["ObjectInit"].get<sol::protected_function>());
+                }
+                catch (const Exception& e)
+                {
+                    throw Exceptions::GameObjectScriptError(
+                        m_type, m_id, "ObjectInit", EXC_INFO)
+                        .nest(e);
                 }
             }
+            m_active = true;
         }
         else
+        {
             Debug::Log->warn("<GameObject> GameObject '{0}' ({1}) has already "
                              "been initialized",
                 m_id, m_type);
+        }
     }
 
     GameObject::~GameObject()
@@ -363,8 +367,17 @@ namespace obe::Script
 
             if (m_hasScriptEngine)
             {
-                m_environment["ObjectDelete"]();
-                m_environment["Local"]["Delete"]();
+                try
+                {
+                    safeLuaCall(
+                        m_environment["ObjectDelete"].get<sol::protected_function>());
+                }
+                catch (const Exception& e)
+                {
+                    throw Exceptions::GameObjectScriptError(
+                        m_type, m_id, "ObjectDelete", EXC_INFO)
+                        .nest(e);
+                }
             }
 
             this->deletable = true;

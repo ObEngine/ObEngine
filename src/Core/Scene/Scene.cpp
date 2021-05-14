@@ -193,13 +193,18 @@ namespace obe::Scene
         {
             m_resources->clean();
         }
-        for (auto& gameObject : m_gameObjectArray)
+        for (auto it = m_gameObjectArray.rbegin(); it != m_gameObjectArray.rend(); ++it)
         {
+            Script::GameObject* gameObject = it->get();
             if (!gameObject->isPermanent())
             {
                 Debug::Log->debug("<Scene> Deleting GameObject {0}", gameObject->getId());
                 gameObject->deleteObject();
             }
+        }
+        for (auto& gameObject : m_gameObjectArray)
+        {
+
         }
         Debug::Log->debug("<Scene> Cleaning GameObject Array");
         m_gameObjectArray.erase(
@@ -586,7 +591,7 @@ namespace obe::Scene
     {
         for (auto& gameObject : m_gameObjectArray)
         {
-            if (gameObject->getId() == id)
+            if (gameObject->getId() == id && !gameObject->deletable)
                 return *gameObject;
         }
         std::vector<std::string> objectIds;
