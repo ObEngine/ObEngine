@@ -51,7 +51,7 @@ Check this tutorial to learn how to build ÖbEngine : [Building ÖbEngine](https
 |[Lua 5.3](http://lua-users.org/wiki/LuaBinaries)|Scripting language|zlib License|
 |[RichText](https://github.com/Skyrpex/RichText)|sf::Text extension|MIT License|
 |[spdlog](https://github.com/gabime/spdlog)|Logging library|MIT License|
-|[Vili](https://github.com/Sygmei/ViliData)|Homemade Data language (YAML-like)|MIT License|
+|[Vili](https://github.com/Sygmei/Vili)|Homemade Data language (YAML-like)|MIT License|
 |[zlib & minizip](http://www.zlib.net/)|zip archives|zlib license|
 
 #### Lua dependencies
@@ -121,7 +121,7 @@ Each major release will have a name based on a translation of the word "Eggplant
 
 ## Do you have a roadmap I can check ?
 
-Sure ! For now we use GitHub Project system as a planning / roadmap tool which is available [here](https://github.com/Sygmei/ObEngine/projects).
+Sure ! For now we use GitHub Project system as a planning / roadmap tool which is available [here](https://github.com/ObEngine/ObEngine/projects).
 
 ## Right, can I see how does scripting looks ?
 Sure, here are some simple GameObjects :
@@ -191,9 +191,9 @@ Interested in contributing to ÖbEngine ? Great ! We always need help on various
 
 A good first step would be to join the [ÖbEngine's Discord server](https://discord.gg/HkM6zdT) to chat with us and discuss how you could contribute depending on your preferences and skills.
 
-Not talkative ? We understand ! You can also check the [ÖbEngine issues](https://github.com/Sygmei/ObEngine/issues) and more particularly those tagged with ["Good first issue"](https://github.com/Sygmei/ObEngine/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) or ["Help wanted"](https://github.com/Sygmei/ObEngine/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22).
+Not talkative ? We understand ! You can also check the [ÖbEngine issues](https://github.com/ObEngine/ObEngine/issues) and more particularly those tagged with ["Good first issue"](https://github.com/ObEngine/ObEngine/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22) or ["Help wanted"](https://github.com/ObEngine/ObEngine/issues?q=is%3Aissue+is%3Aopen+label%3A%22help+wanted%22).
 
-If you are thinking about contributing to ÖbEngine, we highly recommend you to check out the [Code of Conduct](https://github.com/Sygmei/ObEngine/blob/master/.github/CODE_OF_CONDUCT.md) and the [Contibuting](https://github.com/Sygmei/ObEngine/blob/master/.github/CONTRIBUTING.md) pages for more details.
+If you are thinking about contributing to ÖbEngine, we highly recommend you to check out the [Code of Conduct](https://github.com/ObEngine/ObEngine/blob/master/.github/CODE_OF_CONDUCT.md) and the [Contibuting](https://github.com/ObEngine/ObEngine/blob/master/.github/CONTRIBUTING.md) pages for more details.
 
 If you noticed a bug, want to ask for a feature or anything else you can always open an issue.
 
@@ -205,9 +205,9 @@ Those are the core contributors of ÖbEngine, you could become one too !
 
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/Sygmei"><img src="https://avatars1.githubusercontent.com/u/3835355?v=4" width="100px;" alt="Sygmei"/><br /><sub><b>Sygmei</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Sygmei" title="Creator / Code">✍️💻</a></td>
-    <td align="center"><a href="https://github.com/PierrickLP"><img src="https://avatars1.githubusercontent.com/u/19671805?v=4" width="100px;" alt="PierrickLP"/><br /><sub><b>PierrickLP</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=PierrickLP" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/Darnagof"><img src="https://avatars3.githubusercontent.com/u/4027974?s=400&v=4" width="100px;" alt="Darnagof"/><br /><sub><b>Darnagof</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Darnagof" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Sygmei"><img src="https://avatars1.githubusercontent.com/u/3835355?v=4" width="100px;" alt="Sygmei"/><br /><sub><b>Sygmei</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=Sygmei" title="Creator / Code">✍️💻</a></td>
+    <td align="center"><a href="https://github.com/PierrickLP"><img src="https://avatars1.githubusercontent.com/u/19671805?v=4" width="100px;" alt="PierrickLP"/><br /><sub><b>PierrickLP</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=PierrickLP" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Darnagof"><img src="https://avatars3.githubusercontent.com/u/4027974?s=400&v=4" width="100px;" alt="Darnagof"/><br /><sub><b>Darnagof</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=Darnagof" title="Code">💻</a></td>
   </tr>
 </table>
 
@@ -217,22 +217,22 @@ Those are the core contributors of ÖbEngine, you could become one too !
 
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/Skealz"><img src="https://avatars3.githubusercontent.com/u/11155537?v=4" width="100px;" alt="Skealz"/><br /><sub><b>Skealz</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Skealz" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/TeddyTrqt"><img src="https://avatars3.githubusercontent.com/u/25806305?v=4" width="100px;" alt="TeddyTrqt"/><br /><sub><b>TeddyTrqt</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=TeddyTrqt" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/Arthapz"><img src="https://avatars1.githubusercontent.com/u/27437334?v=4" width="100px;" alt="Arthapz"/><br /><sub><b>Arthapz</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Arthapz" title="Help / Code">💡💻</a></td>
-    <td align="center"><a href="#"><img src="https://i.pinimg.com/originals/cb/bd/af/cbbdaf63fa8d5b246441e9e38bee0059.jpg" width="100px;" alt="LePatissier"/><br /><sub><b>LePatissier</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=LePatissier" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/Tzupy"><img src="https://avatars0.githubusercontent.com/u/12645020?v=4" width="100px;" alt="Tzupy"/><br /><sub><b>Tzupy</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Tzupy" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/mjopenglsdl"><img src="https://avatars1.githubusercontent.com/u/3438296?s=460&v=4" width="100px;" alt="mjopenglsdl"/><br /><sub><b>mjopenglsdl</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=mjopenglsdl" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/julio-b"><img src="https://avatars1.githubusercontent.com/u/16379308?v=4" width="100px;" alt="julio-b"/><br /><sub><b>julio-b</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=julio-b" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Skealz"><img src="https://avatars3.githubusercontent.com/u/11155537?v=4" width="100px;" alt="Skealz"/><br /><sub><b>Skealz</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=Skealz" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/TeddyTrqt"><img src="https://avatars3.githubusercontent.com/u/25806305?v=4" width="100px;" alt="TeddyTrqt"/><br /><sub><b>TeddyTrqt</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=TeddyTrqt" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Arthapz"><img src="https://avatars1.githubusercontent.com/u/27437334?v=4" width="100px;" alt="Arthapz"/><br /><sub><b>Arthapz</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=Arthapz" title="Help / Code">💡💻</a></td>
+    <td align="center"><a href="#"><img src="https://i.pinimg.com/originals/cb/bd/af/cbbdaf63fa8d5b246441e9e38bee0059.jpg" width="100px;" alt="LePatissier"/><br /><sub><b>LePatissier</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=LePatissier" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Tzupy"><img src="https://avatars0.githubusercontent.com/u/12645020?v=4" width="100px;" alt="Tzupy"/><br /><sub><b>Tzupy</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=Tzupy" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/mjopenglsdl"><img src="https://avatars1.githubusercontent.com/u/3438296?s=460&v=4" width="100px;" alt="mjopenglsdl"/><br /><sub><b>mjopenglsdl</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=mjopenglsdl" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/julio-b"><img src="https://avatars1.githubusercontent.com/u/16379308?v=4" width="100px;" alt="julio-b"/><br /><sub><b>julio-b</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=julio-b" title="Code">💻</a></td>
   </tr>
   <tr>
-    <td align="center"><a href="https://github.com/ZanyMonk"><img src="https://avatars2.githubusercontent.com/u/3920186?v=4" width="100px;" alt="ZanyMonk"/><br /><sub><b>ZanyMonk</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=ZanyMonk" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/Mari0nv"><img src="https://avatars3.githubusercontent.com/u/23618241?s=400&v=4" width="100px;" alt="Mari0nV"/><br /><sub><b>Mari0nV</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=Mari0nV" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/TerensTare"><img src="https://avatars.githubusercontent.com/u/37905314?s=460&v=4" width="100px;" alt="TerensTare"/><br /><sub><b>TerensTare</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=TerensTare" title="Code">💻</a></td>
-        <td align="center"><a href="https://github.com/AugustasV"><img src="https://avatars.githubusercontent.com/u/7377334?s=460&v=4" width="100px;" alt="AugustasV"/><br /><sub><b>AugustasV</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=AugustasV" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/eXpl0it3r"><img src="https://avatars1.githubusercontent.com/u/16379308?v=4" width="100px;" alt="eXpl0it3r"/><br /><sub><b>eXpl0it3r</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=eXpl0it3r" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/kevle"><img src="https://avatars.githubusercontent.com/u/8260484?s=460&v=4" width="100px;" alt="kevle"/><br /><sub><b>kevle</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=kevle" title="Code">💻</a></td>
-    <td align="center"><a href="https://github.com/nfarid"><img src="https://avatars.githubusercontent.com/u/54642193?s=460&v=4" width="100px;" alt="nfarid"/><br /><sub><b>nfarid</b></sub></a><br /><a href="https://github.com/Sygmei/ObEngine/commits?author=nfarid" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/ZanyMonk"><img src="https://avatars2.githubusercontent.com/u/3920186?v=4" width="100px;" alt="ZanyMonk"/><br /><sub><b>ZanyMonk</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=ZanyMonk" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Mari0nv"><img src="https://avatars3.githubusercontent.com/u/23618241?s=400&v=4" width="100px;" alt="Mari0nV"/><br /><sub><b>Mari0nV</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=Mari0nV" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/TerensTare"><img src="https://avatars.githubusercontent.com/u/37905314?s=460&v=4" width="100px;" alt="TerensTare"/><br /><sub><b>TerensTare</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=TerensTare" title="Code">💻</a></td>
+        <td align="center"><a href="https://github.com/AugustasV"><img src="https://avatars.githubusercontent.com/u/7377334?s=460&v=4" width="100px;" alt="AugustasV"/><br /><sub><b>AugustasV</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=AugustasV" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/eXpl0it3r"><img src="https://avatars1.githubusercontent.com/u/16379308?v=4" width="100px;" alt="eXpl0it3r"/><br /><sub><b>eXpl0it3r</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=eXpl0it3r" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/kevle"><img src="https://avatars.githubusercontent.com/u/8260484?s=460&v=4" width="100px;" alt="kevle"/><br /><sub><b>kevle</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=kevle" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/nfarid"><img src="https://avatars.githubusercontent.com/u/54642193?s=460&v=4" width="100px;" alt="nfarid"/><br /><sub><b>nfarid</b></sub></a><br /><a href="https://github.com/ObEngine/ObEngine/commits?author=nfarid" title="Code">💻</a></td>
   </tr>
 </table>
 

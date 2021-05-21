@@ -4,7 +4,7 @@
     "maintainers": [
         "Sygmei"
     ],
-    "homepage": "https://github.com/Sygmei/ObEngine",
+    "homepage": "https://github.com/ObEngine/ObEngine",
     "license": "MIT",
     "description": "A 2D Game Engine made on top of SFML",
     "dependencies": [

@@ -97,4 +97,4 @@ before_deploy:
 #  target_commitish: $TRAVIS_COMMIT
 #  tag_name: obengine-unstable-linux
 #  on:
-#    repo: Sygmei/ObEngine
+#    repo: ObEngine/ObEngine
