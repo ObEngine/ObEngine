@@ -1,26 +1,26 @@
-# ![ÖbEngine](https://raw.githubusercontent.com/Sygmei/ObWiki/master/banner.png)
+# ![ÖbEngine](https://raw.githubusercontent.com/ObEngine/ObWiki/master/banner.png)
 
 [![Discord](https://img.shields.io/discord/302123079818149888.svg?style=for-the-badge&logo=discord)](https://discordapp.com/invite/HkM6zdT)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://raw.githubusercontent.com/Sygmei/ObEngine/master/license)
-[![Github All Releases](https://img.shields.io/github/downloads/sygmei/obengine/total.svg?style=for-the-badge)](https://github.com/Sygmei/ObEngine/releases)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://raw.githubusercontent.com/ObEngine/ObEngine/master/license)
+[![Github All Releases](https://img.shields.io/github/downloads/sygmei/obengine/total.svg?style=for-the-badge)](https://github.com/ObEngine/ObEngine/releases)
 [![Codacy Badge](https://img.shields.io/codacy/grade/81846da629d244f69f357568a2f8d690.svg?style=for-the-badge)](https://www.codacy.com/app/Sygmei/ObEngine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Sygmei/ObEngine&amp;utm_campaign=Badge_Grade)
 
 ## CI/CD status
 
 | CI/CD name  | Build status |
 | ----------- | ------------ |
-| GitHub Actions | [![Build Status](https://img.shields.io/github/workflow/status/Sygmei/ObEngine/build?logo=github&style=for-the-badge)](https://github.com/Sygmei/ObEngine/actions?query=workflow%3Abuild) |
+| GitHub Actions | [![Build Status](https://img.shields.io/github/workflow/status/ObEngine/ObEngine/build?logo=github&style=for-the-badge)](https://github.com/ObEngine/ObEngine/actions?query=workflow%3Abuild) |
 | Travis      | [![Build Status](https://img.shields.io/travis/Sygmei/ObEngine.svg?style=for-the-badge&logo=travis)](https://travis-ci.org/Sygmei/ObEngine) |
 | AppVeyor    | [![Build status](https://img.shields.io/appveyor/ci/Sygmei/ObEngine.svg?style=for-the-badge&logo=appveyor)](https://ci.appveyor.com/project/Sygmei/obengine) |
 | Azure Pipelines | [![Build Status](https://img.shields.io/azure-devops/build/obengine/d879c6ea-1ed9-4984-b3d1-84c5dd9b8feb/1.svg?style=for-the-badge&logo=microsoft-azure)](https://dev.azure.com/obengine/%C3%96bEngine) |
 
 ## Useful links
 
-- :book: [ÖbEngine's Wiki](https://github.com/Sygmei/ObEngine/wiki)
+- :book: [ÖbEngine's Wiki](https://github.com/ObEngine/ObEngine/wiki)
 - :link: [ÖbEngine's Website](https://www.obengine.io)
 - :page_facing_up: [ÖbEngine's Documentation](https://www.obengine.io/doc.html)
 - :speech_balloon: [ÖbEngine's Discord](https://discord.gg/HkM6zdT)
-- :hammer_and_wrench: [ÖbEngine's Development Boards](https://github.com/Sygmei/ObEngine/projects)
+- :hammer_and_wrench: [ÖbEngine's Development Boards](https://github.com/ObEngine/ObEngine/projects)
 - :video_game: [ÖbEngine's Examples](https://github.com/ObEngine/Examples)
 
 ## What is ÖbEngine ?
@@ -36,7 +36,7 @@
 - You may also need alsa-lib (if you're on Linux)
 
 There are other third-party libraries but they are included in the repository (`extlibs/` folder).
-Check this tutorial to learn how to build ÖbEngine : [Building ÖbEngine](https://github.com/Sygmei/ObEngine/wiki/Building-ObEngine)
+Check this tutorial to learn how to build ÖbEngine : [Building ÖbEngine](https://github.com/ObEngine/ObEngine/wiki/Building-ObEngine)
 
 ### Bundled dependencies
 
