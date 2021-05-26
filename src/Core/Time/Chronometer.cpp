@@ -10,6 +10,11 @@ namespace obe::Time
         m_started = true;
     }
 
+    bool Chronometer::started() const {
+        if(m_started) 
+            return true;
+        return false;
+    }
     void Chronometer::stop()
     {
         m_started = false;
@@ -39,6 +44,6 @@ namespace obe::Time
 
     bool Chronometer::over() const
     {
-        return ((!m_started) xor (this->getTime() > m_limit));
+        return ((!started()) xor (this->getTime() > m_limit));
     }
 } // namespace obe::Time
