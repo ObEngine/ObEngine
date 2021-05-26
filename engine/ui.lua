@@ -5,26 +5,28 @@ local edit_box_username = tgui.EditBox.create();
 edit_box_username:setSize(L"66.67%", L"12.5%");
 edit_box_username:setPosition(L"parent.left + 20%", L"16.67%");
 edit_box_username:setDefaultText(S"Username");
-push_to_gui(gui, edit_box_username);
+print(gui, edit_box_username)
+gui:add(edit_box_username);
+-- push_to_gui(gui, edit_box_username);
 
 local edit_box_password = tgui.EditBox.create();
 edit_box_password:setSize(L"66.67%", L"12.5%");
 edit_box_password:setPosition(L"16.67%", L"41.6%");
 edit_box_password:setPasswordCharacter("*");
 edit_box_password:setDefaultText(S"Password");
-push_to_gui(gui, edit_box_password);
+-- push_to_gui(gui, edit_box_password);
 
 local button = tgui.Button();
 button:setText(S"Login");
 button:setSize(L"50%", L"16.67%");
 button:setPosition(L"25%", L"70%");
-push_to_gui(gui, button);
+-- push_to_gui(gui, button);
 
 function login(username, password)
     print(username:getText(), password:getText());
 end
 
-on_press(button, function() login(edit_box_username, edit_box_password) end);
+-- on_press(button, function() login(edit_box_username, edit_box_password) end);
 
 
 --[[return ui.Module {

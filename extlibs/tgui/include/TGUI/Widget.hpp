@@ -1003,7 +1003,7 @@ namespace tgui
             return std::dynamic_pointer_cast<WidgetType>(shared_from_this());
         }
 
-
+    protected:
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         /// @brief Makes a copy of the widget if you don't know its exact type
         ///
@@ -1016,7 +1016,7 @@ namespace tgui
 
 
         /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    protected:
+
 
         using SavingRenderersMap = std::map<const Widget*, std::pair<std::unique_ptr<DataIO::Node>, String>>;
         using LoadingRenderersMap = std::map<String, std::shared_ptr<RendererData>>;

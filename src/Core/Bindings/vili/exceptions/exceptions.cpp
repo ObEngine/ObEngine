@@ -23,7 +23,7 @@ namespace vili::exceptions::Bindings
         sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
         sol::usertype<vili::exceptions::base_exception> bindbase_exception
             = exceptionsNamespace.new_usertype<vili::exceptions::base_exception>(
-                "base_exception", sol::call_constructor, sol::default_constructor);
+                "base_exception");
         bindbase_exception["what"] = &vili::exceptions::base_exception::what;
     }
     void LoadClassDebugInfo(sol::state_view state)

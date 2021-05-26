@@ -101,13 +101,6 @@ namespace obe::System::Bindings
         bindFindResult["root"] = &obe::System::FindResult::root;
         bindFindResult["element"] = &obe::System::FindResult::element;
         bindFindResult["success"] = &obe::System::FindResult::success;
-        bindFindResult["operator bool"] = &obe::System::FindResult::operator bool;
-        bindFindResult["operator const std::string &"]
-            = &obe::System::FindResult::operator const std::string&;
-        bindFindResult["operator const char *"]
-            = &obe::System::FindResult::operator const char*;
-        bindFindResult["operator std::string_view"]
-            = &obe::System::FindResult::operator std::string_view;
     }
     void LoadClassMountablePath(sol::state_view state)
     {

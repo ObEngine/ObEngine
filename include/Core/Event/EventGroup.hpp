@@ -20,6 +20,19 @@ public:
     };
 };
 
+template <typename T> class _has_id
+{
+private:
+    template <typename C> static std::true_type test(decltype(&C::id));
+    template <typename C> static std::false_type test(...);
+
+public:
+    enum
+    {
+        value = sizeof(test<T>(0)) == sizeof(std::true_type)
+    };
+};
+
 namespace obe::Event
 {
     class EventGroup;

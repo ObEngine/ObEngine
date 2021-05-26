@@ -21,7 +21,7 @@ namespace obe::Collision::Bindings
         sol::table CollisionNamespace = state["obe"]["Collision"].get<sol::table>();
         sol::usertype<obe::Collision::CollisionData> bindCollisionData
             = CollisionNamespace.new_usertype<obe::Collision::CollisionData>(
-                "CollisionData", sol::call_constructor, sol::default_constructor);
+                "CollisionData");
         bindCollisionData["colliders"] = &obe::Collision::CollisionData::colliders;
         bindCollisionData["offset"] = &obe::Collision::CollisionData::offset;
     }

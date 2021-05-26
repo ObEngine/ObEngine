@@ -112,14 +112,6 @@ namespace vili::Bindings
         bindnode["size"] = &vili::node::size;
         bindnode["empty"] = &vili::node::empty;
         bindnode["clear"] = &vili::node::clear;
-        bindnode["operator std::string_view"] = &vili::node::operator std::string_view;
-        bindnode["operator const std::string &"]
-            = &vili::node::operator const std::string&;
-        bindnode["operator integer"] = &vili::node::operator integer;
-        bindnode["operator int"] = &vili::node::operator int;
-        bindnode["operator number"] = &vili::node::operator number;
-        bindnode["operator boolean"] = &vili::node::operator boolean;
-        bindnode["operator unsigned"] = &vili::node::operator unsigned;
         bindnode[sol::meta_function::equal_to] = &vili::node::operator==;
         bindnode["from_type"] = &vili::node::from_type;
         state.script_file("obe://Lib/Internal/Vili.lua"_fs);

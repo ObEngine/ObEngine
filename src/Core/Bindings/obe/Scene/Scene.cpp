@@ -149,7 +149,7 @@ namespace obe::Scene::Bindings
         sol::table SceneNamespace = state["obe"]["Scene"].get<sol::table>();
         sol::usertype<obe::Scene::SceneNode> bindSceneNode
             = SceneNamespace.new_usertype<obe::Scene::SceneNode>("SceneNode",
-                sol::call_constructor, sol::default_constructor, sol::base_classes,
+                sol::base_classes,
                 sol::bases<obe::Transform::Movable, obe::Types::Selectable>());
         bindSceneNode["addChild"] = &obe::Scene::SceneNode::addChild;
         bindSceneNode["removeChild"] = &obe::Scene::SceneNode::removeChild;
@@ -165,7 +165,7 @@ namespace obe::Scene::Bindings
         sol::table SceneNamespace = state["obe"]["Scene"].get<sol::table>();
         sol::usertype<obe::Scene::SceneRenderOptions> bindSceneRenderOptions
             = SceneNamespace.new_usertype<obe::Scene::SceneRenderOptions>(
-                "SceneRenderOptions", sol::call_constructor, sol::default_constructor);
+                "SceneRenderOptions");
         bindSceneRenderOptions["sprites"] = &obe::Scene::SceneRenderOptions::sprites;
         bindSceneRenderOptions["collisions"]
             = &obe::Scene::SceneRenderOptions::collisions;

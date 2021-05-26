@@ -4,14 +4,14 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Bindings::tguiBindings
+namespace tgui::Bindings
 {
     void LoadClassAbsoluteOrRelativeValue(sol::state_view state);
     void LoadClassBackendBase(sol::state_view state);
     void LoadClassBackendFontBase(sol::state_view state);
     void LoadClassBackendRenderTargetBase(sol::state_view state);
-    void LoadClassBackendTextureBase(sol::state_view state);
     void LoadClassBackendTextBase(sol::state_view state);
+    void LoadClassBackendTextureBase(sol::state_view state);
     void LoadClassBaseThemeLoader(sol::state_view state);
     void LoadClassBitmapButton(sol::state_view state);
     void LoadClassBoxLayout(sol::state_view state);
@@ -43,10 +43,10 @@ namespace obe::Bindings::tguiBindings
     void LoadClassEditBox(sol::state_view state);
     void LoadClassEditBoxRenderer(sol::state_view state);
     void LoadClassException(sol::state_view state);
-    void LoadClassFilesystem(sol::state_view state);
     void LoadClassFileDialog(sol::state_view state);
     void LoadClassFileDialogIconLoader(sol::state_view state);
     void LoadClassFileDialogRenderer(sol::state_view state);
+    void LoadClassFilesystem(sol::state_view state);
     void LoadClassFont(sol::state_view state);
     void LoadClassGrid(sol::state_view state);
     void LoadClassGroup(sol::state_view state);
@@ -69,6 +69,7 @@ namespace obe::Bindings::tguiBindings
     void LoadClassMenuBarRenderer(sol::state_view state);
     void LoadClassMessageBox(sol::state_view state);
     void LoadClassMessageBoxRenderer(sol::state_view state);
+    void LoadClassObjectConverter(sol::state_view state);
     void LoadClassOutline(sol::state_view state);
     void LoadClassPanel(sol::state_view state);
     void LoadClassPanelRenderer(sol::state_view state);
@@ -102,17 +103,18 @@ namespace obe::Bindings::tguiBindings
     void LoadClassSpinButtonRenderer(sol::state_view state);
     void LoadClassSpinControl(sol::state_view state);
     void LoadClassSprite(sol::state_view state);
+    void LoadClassString(sol::state_view state);
     void LoadClassSubwidgetContainer(sol::state_view state);
     void LoadClassSvgImage(sol::state_view state);
+    void LoadClassTabContainer(sol::state_view state);
     void LoadClassTabs(sol::state_view state);
     void LoadClassTabsRenderer(sol::state_view state);
-    void LoadClassTabContainer(sol::state_view state);
     void LoadClassText(sol::state_view state);
-    void LoadClassTexture(sol::state_view state);
-    void LoadClassTextureManager(sol::state_view state);
     void LoadClassTextArea(sol::state_view state);
     void LoadClassTextAreaRenderer(sol::state_view state);
     void LoadClassTextStyles(sol::state_view state);
+    void LoadClassTexture(sol::state_view state);
+    void LoadClassTextureManager(sol::state_view state);
     void LoadClassTheme(sol::state_view state);
     void LoadClassTimer(sol::state_view state);
     void LoadClassToggleButton(sol::state_view state);
@@ -127,10 +129,10 @@ namespace obe::Bindings::tguiBindings
     void LoadClassEvent(sol::state_view state);
     void LoadClassFontGlyph(sol::state_view state);
     void LoadClassImageLoader(sol::state_view state);
-    void LoadClassRelativeValue(sol::state_view state);
     void LoadClassRelFloatRect(sol::state_view state);
-    void LoadClassRendererData(sol::state_view state);
+    void LoadClassRelativeValue(sol::state_view state);
     void LoadClassRenderStates(sol::state_view state);
+    void LoadClassRendererData(sol::state_view state);
     void LoadClassTextureData(sol::state_view state);
     void LoadClassTextureDataHolder(sol::state_view state);
     void LoadClassVertex(sol::state_view state);
@@ -149,20 +151,5 @@ namespace obe::Bindings::tguiBindings
     void LoadFunctionSetEditCursorBlinkRate(sol::state_view state);
     void LoadFunctionGetEditCursorBlinkRate(sol::state_view state);
     void LoadFunctionReadFileToMemory(sol::state_view state);
-    void LoadFunctionBindPosX(sol::state_view state);
-    void LoadFunctionBindPosY(sol::state_view state);
-    void LoadFunctionBindLeft(sol::state_view state);
-    void LoadFunctionBindTop(sol::state_view state);
-    void LoadFunctionBindWidth(sol::state_view state);
-    void LoadFunctionBindHeight(sol::state_view state);
-    void LoadFunctionBindInnerWidth(sol::state_view state);
-    void LoadFunctionBindInnerHeight(sol::state_view state);
-    void LoadFunctionBindRight(sol::state_view state);
-    void LoadFunctionBindBottom(sol::state_view state);
-    void LoadFunctionBindPosition(sol::state_view state);
-    void LoadFunctionBindSize(sol::state_view state);
-    void LoadFunctionBindInnerSize(sol::state_view state);
-    void LoadFunctionBindMin(sol::state_view state);
-    void LoadFunctionBindMax(sol::state_view state);
     void LoadFunctionIsWhitespace(sol::state_view state);
 };

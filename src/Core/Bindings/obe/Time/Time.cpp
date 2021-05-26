@@ -13,8 +13,7 @@ namespace obe::Time::Bindings
     {
         sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
         sol::usertype<obe::Time::Chronometer> bindChronometer
-            = TimeNamespace.new_usertype<obe::Time::Chronometer>(
-                "Chronometer", sol::call_constructor, sol::default_constructor);
+            = TimeNamespace.new_usertype<obe::Time::Chronometer>("Chronometer");
         bindChronometer["start"] = &obe::Time::Chronometer::start;
         bindChronometer["stop"] = &obe::Time::Chronometer::stop;
         bindChronometer["reset"] = &obe::Time::Chronometer::reset;
@@ -27,8 +26,7 @@ namespace obe::Time::Bindings
     {
         sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
         sol::usertype<obe::Time::FramerateCounter> bindFramerateCounter
-            = TimeNamespace.new_usertype<obe::Time::FramerateCounter>(
-                "FramerateCounter", sol::call_constructor, sol::default_constructor);
+            = TimeNamespace.new_usertype<obe::Time::FramerateCounter>("FramerateCounter");
         bindFramerateCounter["tick"] = &obe::Time::FramerateCounter::tick;
         bindFramerateCounter["uTick"] = &obe::Time::FramerateCounter::uTick;
         bindFramerateCounter["loadFont"] = &obe::Time::FramerateCounter::loadFont;

@@ -10,8 +10,7 @@ namespace obe::Events::Cursor::Bindings
     {
         sol::table CursorNamespace = state["obe"]["Events"]["Cursor"].get<sol::table>();
         sol::usertype<obe::Events::Cursor::Hold> bindHold
-            = CursorNamespace.new_usertype<obe::Events::Cursor::Hold>(
-                "Hold", sol::call_constructor, sol::default_constructor);
+            = CursorNamespace.new_usertype<obe::Events::Cursor::Hold>("Hold");
         bindHold["x"] = &obe::Events::Cursor::Hold::x;
         bindHold["y"] = &obe::Events::Cursor::Hold::y;
         bindHold["left"] = &obe::Events::Cursor::Hold::left;
@@ -23,8 +22,7 @@ namespace obe::Events::Cursor::Bindings
     {
         sol::table CursorNamespace = state["obe"]["Events"]["Cursor"].get<sol::table>();
         sol::usertype<obe::Events::Cursor::Move> bindMove
-            = CursorNamespace.new_usertype<obe::Events::Cursor::Move>(
-                "Move", sol::call_constructor, sol::default_constructor);
+            = CursorNamespace.new_usertype<obe::Events::Cursor::Move>("Move");
         bindMove["x"] = &obe::Events::Cursor::Move::x;
         bindMove["y"] = &obe::Events::Cursor::Move::y;
         bindMove["previousX"] = &obe::Events::Cursor::Move::previousX;
@@ -35,8 +33,7 @@ namespace obe::Events::Cursor::Bindings
     {
         sol::table CursorNamespace = state["obe"]["Events"]["Cursor"].get<sol::table>();
         sol::usertype<obe::Events::Cursor::Press> bindPress
-            = CursorNamespace.new_usertype<obe::Events::Cursor::Press>(
-                "Press", sol::call_constructor, sol::default_constructor);
+            = CursorNamespace.new_usertype<obe::Events::Cursor::Press>("Press");
         bindPress["x"] = &obe::Events::Cursor::Press::x;
         bindPress["y"] = &obe::Events::Cursor::Press::y;
         bindPress["left"] = &obe::Events::Cursor::Press::left;
@@ -48,8 +45,7 @@ namespace obe::Events::Cursor::Bindings
     {
         sol::table CursorNamespace = state["obe"]["Events"]["Cursor"].get<sol::table>();
         sol::usertype<obe::Events::Cursor::Release> bindRelease
-            = CursorNamespace.new_usertype<obe::Events::Cursor::Release>(
-                "Release", sol::call_constructor, sol::default_constructor);
+            = CursorNamespace.new_usertype<obe::Events::Cursor::Release>("Release");
         bindRelease["x"] = &obe::Events::Cursor::Release::x;
         bindRelease["y"] = &obe::Events::Cursor::Release::y;
         bindRelease["left"] = &obe::Events::Cursor::Release::left;
