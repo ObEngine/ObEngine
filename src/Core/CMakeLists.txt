@@ -2,12 +2,9 @@ project(ObEngineCore)
 
 include(group_files)
 
-<<<<<<< Updated upstream
-=======
 add_custom_target(ConfigureObEngineGit COMMAND ${CMAKE_COMMAND}
     -DGIT_EXECUTABLE=${GIT_EXECUTABLE} -DObEngine_SOURCE_DIR=${ObEngine_SOURCE_DIR} -DObEngine_BINARY_DIR=${ObEngine_BINARY_DIR} -P "${ObEngine_SOURCE_DIR}/cmake/engine_git.cmake")
 
->>>>>>> Stashed changes
 file(GLOB_RECURSE OBE_HEADERS
     ${ObEngine_SOURCE_DIR}/include/Core/*.hpp
     ${ObEngine_SOURCE_DIR}/include/Core/*.inl)

@@ -33,6 +33,10 @@ namespace obe
         std::string m_message;
 
     public:
+        Exception(const Exception& e) noexcept
+        {
+            m_message = e.m_message;
+        }
         Exception(std::string id, DebugInfo info)
         {
             m_message = fmt::format("Exception [{}] occured\n", id);

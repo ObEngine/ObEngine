@@ -1,11 +1,14 @@
-cmake_minimum_required(VERSION 3.8)
-
+cmake_minimum_required(VERSION 3.16)
 set(OpenGL_GL_PREFERENCE GLVND)
+
+include(cmake/check_vcpkg.cmake)
+
+set(OBE_USE_VCPKG OFF)
+obe_check_vcpkg(OBE_USE_VCPKG)
 
 project(ObEngine)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
-include(engine_git)
 
 add_subdirectory(extlibs/bezier)
 if(OBE_USE_VCPKG)
@@ -32,24 +35,15 @@ endif()
 add_subdirectory(extlibs/dynamicLinker)
 add_subdirectory(extlibs/fswrapper)
 
-# fmtlib is required by spdlog
-add_subdirectory(extlibs/fmt)
-add_subdirectory(extlibs/spdlog)
-
 # vili is required by vili-d8
 add_subdirectory(extlibs/vili)
 add_subdirectory(extlibs/vili-d8)
-
-# lua is required by sol
-add_subdirectory(extlibs/lua)
-add_subdirectory(extlibs/sol3)
 
 # Audio library
 add_subdirectory(extlibs/soloud)
 add_subdirectory(extlibs/whereami)
 
 if (APPLE OR USE_FILESYSTEM_FALLBACK)
-    add_subdirectory(extlibs/tinydir)
     set(USE_FILESYSTEM_FALLBACK TRUE CACHE BOOL "Use filesystem fallback" FORCE)
 endif()
 
@@ -57,12 +51,18 @@ endif()
 add_subdirectory(extlibs/minizip)
 add_subdirectory(extlibs/elzip)
 
-# SFML 2.5 is minimum version
 find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
+
 # SFML is required by sfe (SFml Extensions)
 add_subdirectory(extlibs/sfe)
 
-configure_obengine_git()
+# Find git installation
+find_package(Git QUIET)
+if(NOT Git_FOUND)
+    message(WARNING "Could not find git, trying to use git from PATH")
+    set(GIT_EXECUTABLE "git")
+endif()
+
 add_subdirectory(src/Core)
 
 if (BUILD_ANDROID)
