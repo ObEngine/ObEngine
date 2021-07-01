@@ -76,4 +76,15 @@ namespace obe::Utils::File
      *         System
      */
     std::string separator();
+
+    /**
+     * \brief Returns the path to the directory of the current executable
+     * \return A std::string containing the path to the directory of the current executable
+     */
+    std::string getExecutableDirectory();
+    /**
+     * \brief Returns the path of the current executable
+     * \return A std::string containing the path of the current executable
+     */
+    std::string getExecutablePath();
 } // namespace obe::Utils::File

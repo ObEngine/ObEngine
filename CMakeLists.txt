@@ -8,7 +8,27 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_SOURCE_DIR}/cmake)
 include(engine_git)
 
 add_subdirectory(extlibs/bezier)
-add_subdirectory(extlibs/catch)
+if(OBE_USE_VCPKG)
+    find_package(fmt CONFIG REQUIRED)
+    find_package(spdlog CONFIG REQUIRED)
+    find_package(lua CONFIG REQUIRED)
+    find_package(sol2 CONFIG REQUIRED)
+    find_package(Catch2 CONFIG REQUIRED)
+else()
+    add_subdirectory(extlibs/catch)
+
+    # fmtlib is required by spdlog
+    add_subdirectory(extlibs/fmt)
+    add_subdirectory(extlibs/spdlog)
+
+    # lua is required by sol
+    add_subdirectory(extlibs/lua)
+    add_subdirectory(extlibs/sol3)
+
+    if (APPLE OR USE_FILESYSTEM_FALLBACK)
+        add_subdirectory(extlibs/tinydir)
+    endif()
+endif()
 add_subdirectory(extlibs/dynamicLinker)
 add_subdirectory(extlibs/fswrapper)
 
@@ -26,6 +46,7 @@ add_subdirectory(extlibs/sol3)
 
 # Audio library
 add_subdirectory(extlibs/soloud)
+add_subdirectory(extlibs/whereami)
 
 if (APPLE OR USE_FILESYSTEM_FALLBACK)
     add_subdirectory(extlibs/tinydir)
@@ -54,6 +75,10 @@ if (NOT DEFINED BUILD_PLAYER)
     set(BUILD_PLAYER ON CACHE BOOL "Build ObEngine Player ?")
 endif()
 
+if (NOT DEFINED BUILD_TOOLKIT)
+    set(BUILD_TOOLKIT ON CACHE BOOL "Build ObEngine Toolkit ?")
+endif()
+
 if (WIN32)
     add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
     file(GLOB OBENGINE_ICON ${CMAKE_SOURCE_DIR}/resources/resource.rc)
@@ -64,6 +89,10 @@ endif()
 if (BUILD_PLAYER)
     add_subdirectory(src/Player)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ObEnginePlayer)
+endif()
+
+if (BUILD_TOOLKIT)
+    add_subdirectory(src/Toolkit)
 endif()
 
 if (NOT DEFINED BUILD_DEV)

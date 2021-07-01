@@ -22,6 +22,8 @@
 #include <fswrapper/fswrapper.hpp>
 #endif
 
+#include <whereami/whereami.h>
+
 #include <Debug/Logger.hpp>
 #include <Utils/FileUtils.hpp>
 
@@ -195,5 +197,27 @@ namespace obe::Utils::File
 #else
         return "/";
 #endif
+    }
+    std::string getExecutableDirectory()
+    {
+        std::string executablePath;
+
+        int pathLength = wai_getExecutablePath(nullptr, 0, nullptr);
+        executablePath.resize(pathLength);
+        int dirnameLength;
+        wai_getExecutablePath(executablePath.data(), pathLength, &dirnameLength);
+
+        return executablePath.substr(0, dirnameLength);
+    }
+    std::string getExecutablePath()
+    {
+        std::string executablePath;
+
+        int pathLength = wai_getExecutablePath(nullptr, 0, nullptr);
+        executablePath.resize(pathLength);
+        int dirnameLength;
+        wai_getExecutablePath(executablePath.data(), pathLength, &dirnameLength);
+
+        return executablePath;
     }
 } // namespace obe::Utils::File
