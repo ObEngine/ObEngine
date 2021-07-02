@@ -393,8 +393,6 @@ namespace obe::Scene
                         Script::GameObjectDatabase::ApplyRequirements(
                             newObject.getEnvironment(), objectRequirements);
                     }
-                    if (newObject.doesHaveScriptEngine())
-                        newObject.exec("LuaCore.InjectInitInjectionTable()");
                 }
                 else if (!this->getGameObject(gameObjectId).isPermanent())
                 {
@@ -570,7 +568,6 @@ namespace obe::Scene
         std::vector<Collision::PolygonalCollider*> allColliders;
         for (const auto& collider : m_colliderArray)
             allColliders.push_back(collider.get());
-        Debug::Log->info("All colliders : {}", allColliders.size());
         return allColliders;
     }
 

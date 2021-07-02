@@ -41,11 +41,11 @@ int main(int argc, char** argv)
         sol::lib::count, sol::lib::debug, sol::lib::io, sol::lib::bit32);
 
     lua.safe_script("LuaCore = {}");
-    lua.safe_script_file("Lib/Internal/ScriptInit.lua"_fs);
+    lua.safe_script_file("obe://Lib/Internal/ScriptInit.lua"_fs);
 
     Bindings::IndexAllBindings(lua);
-    lua.safe_script_file("Lib/Internal/Searcher.lua"_fs);
-    lua.safe_script_file("Lib/Internal/Logger.lua"_fs);
+    lua.safe_script_file("obe://Lib/Internal/Searcher.lua"_fs);
+    lua.safe_script_file("obe://Lib/Internal/Logger.lua"_fs);
     lua.set_exception_handler(&lua_exception_handler2);
 
     std::string command;
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
               std::cout << std::endl;
           };
 
-    lua.safe_script_file("Lib/Toolkit/Toolkit.lua"_fs);
+    lua.safe_script_file("obe://Lib/Toolkit/Toolkit.lua"_fs);
 
     lua["evaluate"](command);
 
