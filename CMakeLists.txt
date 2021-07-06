@@ -41,7 +41,6 @@ add_subdirectory(extlibs/vili-d8)
 
 # Audio library
 add_subdirectory(extlibs/soloud)
-add_subdirectory(extlibs/whereami)
 
 if (APPLE OR USE_FILESYSTEM_FALLBACK)
     set(USE_FILESYSTEM_FALLBACK TRUE CACHE BOOL "Use filesystem fallback" FORCE)
@@ -55,6 +54,9 @@ find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
 
 # SFML is required by sfe (SFml Extensions)
 add_subdirectory(extlibs/sfe)
+
+# Other libraries
+add_subdirectory(extlibs/whereami)
 
 # Find git installation
 find_package(Git QUIET)
@@ -92,6 +94,7 @@ if (BUILD_PLAYER)
 endif()
 
 if (BUILD_TOOLKIT)
+    add_subdirectory(extlibs/styler)
     add_subdirectory(src/Toolkit)
 endif()
 

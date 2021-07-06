@@ -3,6 +3,7 @@
 #include <memory>
 
 #include <sol/sol.hpp>
+#include <styler/styler.hpp>
 
 #include <Debug/Logger.hpp>
 #include <Graphics/Color.hpp>
@@ -26,6 +27,46 @@ int lua_exception_handler2(lua_State* L,
         obe::Debug::Log->error("<LuaError>[Error] : {}", description);
     }
     return sol::stack::push(L, description);
+}
+
+styler::Foreground convertColor(obe::Graphics::Color color)
+{
+    if (color.toName() == "white")
+    {
+        return styler::Foreground::White;
+    }
+    else if (color.toName() == "red")
+    {
+        return styler::Foreground::Red;
+    }
+    else if (color.toName() == "green")
+    {
+        return styler::Foreground::Green;
+    }
+    else if (color.toName() == "blue")
+    {
+        return styler::Foreground::Blue;
+    }
+    else if (color.toName() == "yellow")
+    {
+        return styler::Foreground::Yellow;
+    }
+    else if (color.toName() == "magenta")
+    {
+        return styler::Foreground::Magenta;
+    }
+    else if (color.toName() == "cyan")
+    {
+        return styler::Foreground::Cyan;
+    }
+    else if (color.toName() == "black")
+    {
+        return styler::Foreground::Black;
+    }
+    else
+    {
+        return styler::Foreground::White;
+    }
 }
 
 int main(int argc, char** argv)
@@ -55,9 +96,11 @@ int main(int argc, char** argv)
 
     lua["_term_display"]
         = [](std::vector<std::string> texts, std::vector<obe::Graphics::Color> colors) {
-              for (const auto& text : texts)
+              for (size_t i = 0; i < texts.size(); i++)
               {
-                  std::cout << text;
+                  const std::string_view text = texts[i];
+                  const Graphics::Color color = colors[i];
+                  std::cout << convertColor(color) << text;
               }
               std::cout << std::endl;
           };

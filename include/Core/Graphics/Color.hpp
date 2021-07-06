@@ -30,6 +30,8 @@ namespace obe::Graphics
         void fromHsv(int H, double S, double V);
 
         [[nodiscard]] uint32_t toInteger() const;
+        [[nodiscard]] std::string toHex() const;
+        [[nodiscard]] std::string toName() const;
 
         bool operator==(const Color& color) const;
         bool operator!=(const Color& color) const;

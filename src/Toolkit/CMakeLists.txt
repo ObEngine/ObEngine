@@ -15,6 +15,7 @@ target_include_directories(obey
 )
 
 target_link_libraries(obey ObEngineCore)
+target_link_libraries(obey styler)
 
 group_files(
     "${OBETOOLKIT_HEADERS}" "${OBETOOLKIT_SOURCES}"
