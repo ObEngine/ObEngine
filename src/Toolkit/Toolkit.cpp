@@ -1,4 +1,5 @@
 #include <functional>
+#include <iostream>
 #include <memory>
 
 #include <sol/sol.hpp>
