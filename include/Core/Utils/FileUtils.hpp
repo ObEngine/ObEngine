@@ -87,4 +87,11 @@ namespace obe::Utils::File
      * \return A std::string containing the path of the current executable
      */
     std::string getExecutablePath();
+    /**
+     * \brief Normalizes the path given in argument
+              (replaces every separator with a forward slash)
+     * \param path Path to normalize
+     * \return Normalized path
+     */
+    std::string normalizePath(const std::string& path);
 } // namespace obe::Utils::File

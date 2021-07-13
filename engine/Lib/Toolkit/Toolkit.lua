@@ -11,7 +11,8 @@ local fs = obe.Utils.File;
 
 -- Load all Toolkit functions located in Lib/Toolkit/Functions
 function loadToolkitFunctions()
-    local fileList = fs.getFileList("Lib/Toolkit/Functions");
+    local toolkitFunctionsDirectory = obe.System.Path("obe://Lib/Toolkit/Functions"):find(obe.System.PathType.Directory);
+    local fileList = fs.getFileList(toolkitFunctionsDirectory:path());
     local allFunctions = {};
     for _, content in pairs(fileList) do
         -- print("Loading Toolkit function :", "Lib/Toolkit/Functions/", content);
@@ -193,7 +194,12 @@ function buildCommandExecution(func, args)
     local argList = ArgMirror.GetArgs(func);
     local callArgs = {};
     -- We create a table containing arguments of the function at the correct index
-    for _, arg in pairs(argList) do table.insert(callArgs, args[arg].value); end
+    for _, arg in pairs(argList) do
+        if args[arg] == nil then
+            error("Command does not take any parameter named '" .. arg .. "'");
+        end
+        table.insert(callArgs, args[arg].value);
+    end
     local exec = coroutine.create(function()
         local subroutine = coroutine.create(function()
             func(ArgMirror.Unpack(callArgs));
@@ -685,24 +691,6 @@ function reachCommand(command, branch, args, idargs)
         end
         -- If we find a callable function
         if futureCall then
-            -- If the function is a reference (name of the function)
-            if futureCall.calltype == "Ref" then
-                -- We get it from Functions table of the command
-                if ToolkitFunctions[command].Functions[futureCall.ref] then
-                    futureCall.ref =
-                        ToolkitFunctions[command].Functions[futureCall.ref];
-                else
-                    Color.print({
-                        {
-                            text = "Bad reference to function ",
-                            color = Style.Error
-                        }, {text = futureCall.ref, color = Style.Argument},
-                        {text = " for command ", color = Style.Error},
-                        {text = command, color = Style.Command}
-                    }, 1);
-                    futureCall.ref = nil;
-                end
-            end
             return futureCall.ref, identifiedArgs;
         else
             -- No callable function found

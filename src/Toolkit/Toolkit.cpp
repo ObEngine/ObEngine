@@ -7,6 +7,7 @@
 
 #include <Debug/Logger.hpp>
 #include <Graphics/Color.hpp>
+#include <Script/Scripting.hpp>
 #include <System/Path.hpp>
 
 namespace obe::Bindings
@@ -69,12 +70,12 @@ styler::Foreground convertColor(obe::Graphics::Color color)
     }
 }
 
-int main(int argc, char** argv)
+void run(const std::string& command)
 {
     using namespace obe;
 
     Debug::InitLogger();
-    Debug::Log->set_level(spdlog::level::warn);
+    Debug::Log->set_level(spdlog::level::debug);
     System::MountablePath::LoadMountFile();
 
     sol::state lua;
@@ -90,10 +91,6 @@ int main(int argc, char** argv)
     lua.safe_script_file("obe://Lib/Internal/Logger.lua"_fs);
     lua.set_exception_handler(&lua_exception_handler2);
 
-    std::string command;
-    std::for_each(argv + 1, argv + argc,
-        [&](const char* c_str) { command += std::string(c_str) + " "; });
-
     lua["_term_display"]
         = [](std::vector<std::string> texts, std::vector<obe::Graphics::Color> colors) {
               for (size_t i = 0; i < texts.size(); i++)
@@ -107,7 +104,37 @@ int main(int argc, char** argv)
 
     lua.safe_script_file("obe://Lib/Toolkit/Toolkit.lua"_fs);
 
-    lua["evaluate"](command);
+    Script::safeLuaCall(lua["evaluate"].get<sol::protected_function>(), command);
+}
+
+int main(int argc, char** argv)
+{
+    std::string command;
+    std::for_each(argv + 1, argv + argc,
+        [&](const char* c_str) { command += std::string(c_str) + " "; });
+
+#if defined _DEBUG
+    run(command);
+#else
+    try
+    {
+        run(command);
+    }
+    catch (const std::exception& e)
+    {
+        if (Debug::Log)
+        {
+            Debug::Log->error("The following error occurred while running obey");
+            Debug::Log->error(e.what());
+        }
+        else
+        {
+            std::cerr << "The following error occurred while running obey" << std::endl;
+            std::cerr << e.what() << std::endl;
+        }
+        return 1;
+    }
+#endif
 
     return 0;
 }

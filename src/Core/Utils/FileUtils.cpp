@@ -44,7 +44,7 @@ namespace obe::Utils::File
             if (file.is_dir && std::string(file.name) != "."
                 && std::string(file.name) != "..")
             {
-                folderList.push_back(std::string(file.name));
+                folderList.push_back(normalizePath(std::string(file.name)));
             }
             tinydir_next(&dir);
         }
@@ -54,7 +54,8 @@ namespace obe::Utils::File
         {
             if (std::filesystem::is_directory(p))
             {
-                folderList.push_back(std::filesystem::path(p.path()).filename().string());
+                std::string dirpath = std::filesystem::path(p.path()).filename().string();
+                folderList.push_back(normalizePath(dirpath));
             }
         }
 #endif
@@ -76,7 +77,7 @@ namespace obe::Utils::File
             tinydir_readfile(&dir, &file);
             if (!file.is_dir)
             {
-                fileList.push_back(std::string(file.name));
+                fileList.push_back(normalizePath(std::string(file.name)));
             }
             tinydir_next(&dir);
         }
@@ -86,7 +87,9 @@ namespace obe::Utils::File
         {
             if (std::filesystem::is_regular_file(p))
             {
-                fileList.push_back(std::filesystem::path(p.path()).filename().string());
+                std::string filepath
+                    = std::filesystem::path(p.path()).filename().string();
+                fileList.push_back(normalizePath(filepath));
             }
         }
 #endif
@@ -186,7 +189,7 @@ namespace obe::Utils::File
         std::string current_working_dir(buff);
         return current_working_dir;
 #else
-        return std::filesystem::current_path().string();
+        return normalizePath(std::filesystem::current_path().string());
 #endif
     }
 
@@ -207,7 +210,7 @@ namespace obe::Utils::File
         int dirnameLength;
         wai_getExecutablePath(executablePath.data(), pathLength, &dirnameLength);
 
-        return executablePath.substr(0, dirnameLength);
+        return normalizePath(executablePath.substr(0, dirnameLength));
     }
     std::string getExecutablePath()
     {
@@ -218,6 +221,12 @@ namespace obe::Utils::File
         int dirnameLength;
         wai_getExecutablePath(executablePath.data(), pathLength, &dirnameLength);
 
-        return executablePath;
+        return normalizePath(executablePath);
+    }
+    std::string normalizePath(const std::string& path)
+    {
+        std::string normalizedPath = path;
+        std::replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
+        return normalizedPath;
     }
 } // namespace obe::Utils::File
