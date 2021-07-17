@@ -109,6 +109,8 @@ void run(const std::string& command)
 
 int main(int argc, char** argv)
 {
+    using namespace obe;
+
     std::string command;
     std::for_each(argv + 1, argv + argc,
         [&](const char* c_str) { command += std::string(c_str) + " "; });
