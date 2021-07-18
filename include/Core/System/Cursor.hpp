@@ -4,6 +4,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Mouse.hpp>
+#include <SFML/Window/Cursor.hpp>
 
 #include <Animation/Animator.hpp>
 #include <Event/EventGroup.hpp>
@@ -55,6 +56,25 @@ namespace obe::Events::Cursor
 
 namespace obe::System
 {
+
+    /**
+    * \brief 
+    */
+    class ObeCursor
+    {
+    private:
+        std::shared_ptr<sf::Cursor> m_cursor;
+
+    public:
+        ObeCursor();
+        bool loadFromFile(
+            const std::string& filename, unsigned int hotspotX, unsigned int hotspotY);
+        /**
+         * \nobind
+         */
+        std::shared_ptr<sf::Cursor> getPtr() const;
+    };
+
     /**
      * \brief A Class to manipulate and display the Cursor in the Engine
      */
@@ -72,6 +92,7 @@ namespace obe::System
         std::function<std::pair<int, int>(Cursor*)> m_constraint;
         std::function<bool()> m_constraintCondition;
         std::map<sf::Mouse::Button, bool> m_buttonState;
+        std::shared_ptr<sf::Cursor> m_customCursor;
 
     public:
         /**
@@ -145,6 +166,10 @@ namespace obe::System
             std::function<std::pair<int, int>(Cursor*)> constraint,
             std::function<bool()> condition = []() { return true; });
         bool isPressed(sf::Mouse::Button button);
+        /**
+         * \brief
+         */
+        void setCursor(System::ObeCursor& newCursor);
     };
 
     /**

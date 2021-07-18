@@ -187,4 +187,32 @@ namespace obe::System
     {
         return m_buttonState[button];
     }
+
+    void Cursor::setCursor(System::ObeCursor& newCursor)
+    {
+        m_customCursor = newCursor.getPtr();
+        m_window.getWindow().setMouseCursor(*m_customCursor);
+    }
+
+    ObeCursor::ObeCursor()
+    {
+        m_cursor = std::make_shared<sf::Cursor>();
+    }
+
+    bool ObeCursor::loadFromFile(
+        const std::string& filename, unsigned int hotspotX, unsigned int hotspotY)
+    {
+        sf::Image img;
+        if (img.loadFromFile(System::Path(filename).find()))
+        {
+            return m_cursor.get()->loadFromPixels(
+                img.getPixelsPtr(), img.getSize(), sf::Vector2u(hotspotX, hotspotY));
+        }
+        return false;
+    }
+
+    std::shared_ptr<sf::Cursor> ObeCursor::getPtr() const
+    {
+        return m_cursor;
+    }
 } // namespace obe::System

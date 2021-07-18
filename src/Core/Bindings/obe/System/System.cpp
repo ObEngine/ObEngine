@@ -74,6 +74,7 @@ namespace obe::System::Bindings
                 return self->setConstraint(constraint, condition);
             });
         bindCursor["isPressed"] = &obe::System::Cursor::isPressed;
+        bindCursor["setCursor"] = &obe::System::Cursor::setCursor;
     }
     void LoadClassFindResult(sol::state_view state)
     {
@@ -118,6 +119,14 @@ namespace obe::System::Bindings
         bindMountablePath["basePath"] = &obe::System::MountablePath::basePath;
         bindMountablePath["prefix"] = &obe::System::MountablePath::prefix;
         bindMountablePath["priority"] = &obe::System::MountablePath::priority;
+    }
+    void LoadClassObeCursor(sol::state_view state)
+    {
+        sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
+        sol::usertype<obe::System::ObeCursor> bindObeCursor
+            = SystemNamespace.new_usertype<obe::System::ObeCursor>("ObeCursor",
+                sol::call_constructor, sol::constructors<obe::System::ObeCursor()>());
+        bindObeCursor["loadFromFile"] = &obe::System::ObeCursor::loadFromFile;
     }
     void LoadClassPath(sol::state_view state)
     {

@@ -9,6 +9,7 @@ namespace obe::System::Bindings
     void LoadClassCursor(sol::state_view state);
     void LoadClassFindResult(sol::state_view state);
     void LoadClassMountablePath(sol::state_view state);
+    void LoadClassObeCursor(sol::state_view state);
     void LoadClassPath(sol::state_view state);
     void LoadClassPlugin(sol::state_view state);
     void LoadClassWindow(sol::state_view state);
