@@ -447,17 +447,6 @@ namespace obe::Graphics::Bindings
                 obe::Graphics::Texture::*)(std::shared_ptr<sf::Texture>)>(
                 &obe::Graphics::Texture::operator=));
     }
-    void LoadFunctionInitPositionTransformer(sol::state_view state)
-    {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        GraphicsNamespace.set_function(
-            "InitPositionTransformer", obe::Graphics::InitPositionTransformer);
-    }
-    void LoadFunctionMakeNullTexture(sol::state_view state)
-    {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        GraphicsNamespace.set_function("MakeNullTexture", obe::Graphics::MakeNullTexture);
-    }
     void LoadGlobalTransformers(sol::state_view state)
     {
         sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();

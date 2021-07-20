@@ -51,6 +51,8 @@ add_subdirectory(extlibs/minizip)
 add_subdirectory(extlibs/elzip)
 
 find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
+message("Finding SDL2")
+find_package(SDL2 REQUIRED)
 
 # SFML is required by sfe (SFml Extensions)
 add_subdirectory(extlibs/sfe)

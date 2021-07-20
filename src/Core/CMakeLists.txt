@@ -49,6 +49,9 @@ target_link_libraries(ObEngineCore sol2::sol2)
 
 # SFML
 target_link_libraries(ObEngineCore sfml-graphics sfml-system sfml-network)
+# SDL
+target_include_directories(ObEngineCore PRIVATE ${SDL2_INCLUDE_DIRS})
+target_link_libraries(ObEngineCore ${SDL2_LIBRARIES})
 
 if(OBE_USE_VCPKG)
     target_include_directories(ObEngineCore PUBLIC

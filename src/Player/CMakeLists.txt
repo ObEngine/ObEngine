@@ -19,6 +19,9 @@ target_include_directories(ObEnginePlayer
 
 target_link_libraries(ObEnginePlayer ObEngineCore)
 target_link_libraries(ObEnginePlayer sfml-window)
+# SDL
+target_include_directories(ObEnginePlayer PRIVATE ${SDL2_INCLUDE_DIRS})
+target_link_libraries(ObEnginePlayer ${SDL2_LIBRARIES})
 
 group_files(
     "${OBEPLAYER_HEADERS}" "${OBEPLAYER_SOURCES}"

@@ -2,8 +2,6 @@
 
 namespace obe::Graphics
 {
-    std::map<std::string, CoordinateTransformer> Transformers;
-
     CoordinateTransformer Parallax = [](double pos, double cam, int layer) -> double {
         return (pos * layer - cam) / double(layer);
     };
@@ -11,6 +9,9 @@ namespace obe::Graphics
         = [](double pos, double cam, int layer) -> double { return pos - cam; };
     CoordinateTransformer Position
         = [](double pos, double cam, int layer) -> double { return pos; };
+
+    std::map<std::string, CoordinateTransformer> Transformers
+        = { { "Parallax", Parallax }, { "Camera", Camera }, { "Position", Position } };
 
     PositionTransformer::PositionTransformer()
     {
@@ -57,12 +58,5 @@ namespace obe::Graphics
     std::string PositionTransformer::getYTransformerName() const
     {
         return m_yTransformerName;
-    }
-
-    void InitPositionTransformer()
-    {
-        Transformers["Parallax"] = Parallax;
-        Transformers["Camera"] = Camera;
-        Transformers["Position"] = Position;
     }
 } // namespace obe::Graphics

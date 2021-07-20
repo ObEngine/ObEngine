@@ -242,8 +242,6 @@ namespace obe::Bindings
         obe::Graphics::Bindings::LoadClassText(state);
         obe::Graphics::Bindings::LoadClassTexture(state);
         obe::Graphics::Bindings::LoadEnumSpriteHandlePointType(state);
-        obe::Graphics::Bindings::LoadFunctionInitPositionTransformer(state);
-        obe::Graphics::Bindings::LoadFunctionMakeNullTexture(state);
         obe::Graphics::Bindings::LoadGlobalTransformers(state);
         obe::Graphics::Bindings::LoadGlobalParallax(state);
         obe::Graphics::Bindings::LoadGlobalCamera(state);

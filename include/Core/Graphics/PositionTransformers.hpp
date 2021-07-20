@@ -13,8 +13,6 @@ namespace obe::Graphics
     using CoordinateTransformer
         = std::function<double(double position, double camera, int layer)>;
 
-    void InitPositionTransformer();
-
     extern std::map<std::string, CoordinateTransformer> Transformers;
     /**
      * \brief CoordinateTransformer which uses the layer and camera position to give a

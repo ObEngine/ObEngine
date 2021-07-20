@@ -18,8 +18,6 @@ namespace obe::Graphics::Bindings
     void LoadClassText(sol::state_view state);
     void LoadClassTexture(sol::state_view state);
     void LoadEnumSpriteHandlePointType(sol::state_view state);
-    void LoadFunctionInitPositionTransformer(sol::state_view state);
-    void LoadFunctionMakeNullTexture(sol::state_view state);
     void LoadGlobalTransformers(sol::state_view state);
     void LoadGlobalParallax(sol::state_view state);
     void LoadGlobalCamera(sol::state_view state);

@@ -1,9 +1,8 @@
-#include "System/Path.hpp"
-
 #include <fstream>
 #include <iostream>
 
 #include <SFML/Window/VideoMode.hpp>
+#include <SDL.h>
 
 #include <Config/Config.hpp>
 #include <Debug/Logger.hpp>
@@ -22,6 +21,7 @@ int main(int argc, char** argv)
 {
     const unsigned int surfaceWidth = sf::VideoMode::getDesktopMode().width;
     const unsigned int surfaceHeight = sf::VideoMode::getDesktopMode().height;
+
     try
     {
         InitEngine(surfaceWidth, surfaceHeight);

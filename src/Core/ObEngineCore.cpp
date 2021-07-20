@@ -23,14 +23,9 @@ namespace obe
             Config::OBENGINE_GIT_HASH);
 
         Transform::UnitVector::Init(surfaceWidth, surfaceHeight);
-        Debug::Log->debug("<ObEngine> Initialising Position Transformers");
-        Graphics::InitPositionTransformer();
 
         Debug::Log->debug("<ObEngine> Mounting paths");
         System::MountablePath::LoadMountFile();
-
-        Debug::Log->debug("<ObEngine> Initialising NullTexture");
-        Graphics::MakeNullTexture();
 
         Debug::Log->info("<ObEngine> Initialisation over !");
     }

@@ -9,9 +9,9 @@
 namespace obe::Graphics
 {
     static sf::Image NullImage;
-    static Graphics::Texture NullTexture;
-    void MakeNullTexture()
+    Graphics::Texture MakeNullTexture()
     {
+        Graphics::Texture texture;
         NullImage.create(100, 100, sf::Color::Transparent);
         for (unsigned int i = 0; i < NullImage.getSize().x; i++)
         {
@@ -23,8 +23,10 @@ namespace obe::Graphics
                     NullImage.setPixel(i, j, sf::Color::Red);
             }
         }
-        NullTexture.loadFromImage(NullImage);
+        texture.loadFromImage(NullImage);
+        return texture;
     }
+    static Graphics::Texture NullTexture = MakeNullTexture();
 
     sf::Vertex toSfVertex(const Transform::UnitVector& uv)
     {

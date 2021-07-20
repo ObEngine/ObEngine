@@ -16,7 +16,6 @@
 
 namespace obe::Graphics
 {
-    void MakeNullTexture();
     /**
      * \brief Type of the handle point of a Sprite (either scale or rotate)
      */
