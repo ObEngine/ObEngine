@@ -58,15 +58,18 @@ namespace obe::System
 {
 
     /**
-    * \brief 
+    * \brief A Class to define a custom cursor. Used for System::Cursor.setCursor()
     */
-    class ObeCursor
+    class CursorModel
     {
     private:
         std::shared_ptr<sf::Cursor> m_cursor;
 
     public:
-        ObeCursor();
+        /**
+         * \brief Set cursor appearance and hotspot from an image file
+         * \return true if loading succeeded, false otherwise
+          */
         bool loadFromFile(
             const std::string& filename, unsigned int hotspotX, unsigned int hotspotY);
         /**
@@ -167,9 +170,9 @@ namespace obe::System
             std::function<bool()> condition = []() { return true; });
         bool isPressed(sf::Mouse::Button button);
         /**
-         * \brief
+         * \brief Change the cursor
          */
-        void setCursor(System::ObeCursor& newCursor);
+        void setCursor(System::CursorModel& newCursor);
     };
 
     /**
