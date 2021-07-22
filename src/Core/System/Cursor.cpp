@@ -195,6 +195,12 @@ namespace obe::System
         m_window.getWindow().setMouseCursor(*m_customCursor);
     }
 
+    CursorModel::CursorModel(
+        const std::string& filename, unsigned int hotspotX, unsigned int hotspotY)
+    {
+        loadFromFile(filename, hotspotX, hotspotY);
+    }
+
     bool CursorModel::loadFromFile(
         const std::string& filename, unsigned int hotspotX, unsigned int hotspotY)
     {

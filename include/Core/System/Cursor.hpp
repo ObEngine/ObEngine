@@ -66,14 +66,21 @@ namespace obe::System
         std::shared_ptr<sf::Cursor> m_cursor;
 
     public:
+        CursorModel() {};
+        explicit CursorModel(
+            const std::string& filename, unsigned int hotspotX, unsigned int hotspotY);
         /**
          * \brief Set cursor appearance and hotspot from an image file
+         * \param filename Image file to use for the cursor
+         * \param hotspotX X coordinate on image (in pixels) of the cursor hotspot
+         * \param hotspotY Y coordinate on image (in pixels) of the cursor hotspot
          * \return true if loading succeeded, false otherwise
           */
         bool loadFromFile(
             const std::string& filename, unsigned int hotspotX, unsigned int hotspotY);
         /**
          * \nobind
+         * \brief Returns cursor shared pointer
          */
         std::shared_ptr<sf::Cursor> getPtr() const;
     };
@@ -171,6 +178,7 @@ namespace obe::System
         bool isPressed(sf::Mouse::Button button);
         /**
          * \brief Change the cursor
+         * \param newCursor CursorModel defining the cursor to display
          */
         void setCursor(System::CursorModel& newCursor);
     };
