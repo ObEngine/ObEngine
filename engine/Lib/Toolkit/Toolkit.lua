@@ -9,8 +9,10 @@ local currentExecution;
 
 local fs = obe.Utils.File;
 
+TOOLKIT_CONTEXTS = {};
+
 -- Load all Toolkit functions located in Lib/Toolkit/Functions
-function loadToolkitFunctions()
+local function loadToolkitFunctions()
     local toolkitFunctionsDirectory = obe.System.Path("obe://Lib/Toolkit/Functions"):find(obe.System.PathType.Directory);
     local fileList = fs.getFileList(toolkitFunctionsDirectory:path());
     local allFunctions = {};
@@ -25,7 +27,7 @@ function loadToolkitFunctions()
 end
 
 -- Display the current input to the user
-function askForCompletion(command)
+local function askForCompletion(command)
     Color.print({
         {text = "> ", color = Style.CompletionPrompt.Prompt},
         {text = command, color = Style.CompletionPrompt.Text},
@@ -34,7 +36,7 @@ function askForCompletion(command)
 end
 
 -- Checks if the value checks the Argument requirements (based on type)
-function matchCommandArgumentType(content, value)
+local function matchCommandArgumentType(content, value)
     if content.type == "Argument" then
         -- Argument type matching
         if (content.argType == "any") or
@@ -50,7 +52,7 @@ function matchCommandArgumentType(content, value)
 end
 
 -- Returns a table with only the elements from matchList that starts like baseWord
-function excludeNonMatchingWords(baseWord, matchList)
+local function excludeNonMatchingWords(baseWord, matchList)
     local newMatchList = {};
     for _, content in pairs(matchList) do
         if #content >= #baseWord then
@@ -64,7 +66,7 @@ end
 
 -- We get the biggest common root of a word
 -- Biggest common root of "res" in {"reset", "reselling", "reservations"} is "rese"
-function getBiggestCommonRoot(baseWord, completionWords)
+local function getBiggestCommonRoot(baseWord, completionWords)
     local completed = (#completionWords > 0);
     local baseLetter = "";
     for index, content in pairs(completionWords) do
@@ -88,7 +90,7 @@ function getBiggestCommonRoot(baseWord, completionWords)
 end
 
 -- We split user input into a command table containing command name and command args
-function splitCommandAndArgs(command)
+local function splitCommandAndArgs(command)
     local commandName = "";
     local strArgs = "";
     local commandArgs = {};
@@ -117,7 +119,7 @@ function splitCommandAndArgs(command)
 end
 
 -- Find if the command name does not match any other commands
-function isUniqueValidCommand(command)
+local function isUniqueValidCommand(command)
     local commandMatches = 0;
     for key, func in pairs(ToolkitFunctions) do
         if key:sub(0, #command.full) == command.name then
@@ -127,30 +129,8 @@ function isUniqueValidCommand(command)
     return commandMatches == 1;
 end
 
-function printHelp(arg)
-    local helpParts = {{text = "? ", color = Style.Execute}};
-    local command = splitCommandAndArgs(arg);
-    table.insert(helpParts, {text = command.name .. " ", color = Style.Command});
-    for i = 1, #command.args do
-        if i == #command.args then
-            table.insert(helpParts, {
-                text = command.args[i] .. " ",
-                color = Style.Workspace
-            })
-        else
-            table.insert(helpParts, {
-                text = command.args[i] .. " ",
-                color = Style.Argument
-            });
-        end
-    end
-    table.insert(helpParts, {text = ": ", color = Style.Default});
-    table.insert(helpParts, {text = getHelp(arg), color = Style.Help});
-    Color.print(helpParts, 2);
-end
-
 -- Get the "Help" child in a command node
-function getHelp(arg)
+local function getHelp(arg)
     if type(arg) == "table" then
         for _, child in pairs(arg) do
             if child.type == "Help" then return child.help; end
@@ -175,7 +155,7 @@ function getHelp(arg)
 end
 
 -- Checks the current command execution state
-function checkCommandExecutionState(co)
+local function checkCommandExecutionState(co)
     if coroutine.status(co) == "dead" then
         return false;
     else
@@ -184,7 +164,7 @@ function checkCommandExecutionState(co)
 end
 
 -- Builds a new command execution
-function buildCommandExecution(func, args)
+local function buildCommandExecution(func, args)
     local autocomplete = {
         value = {func = function() print("Called autocomplete"); end}
     };
@@ -232,7 +212,7 @@ function buildCommandExecution(func, args)
 end
 
 -- Autocomplete the argument parts of the command
-function autocompleteArgs(command, query)
+local function autocompleteArgs(command, query)
     local path = {};
     local currentWord = "";
     local start = "";
@@ -360,7 +340,7 @@ function autocompleteArgs(command, query)
 end
 
 -- That function returns what the inputbox should contain after triggering autocompletion
-function autocompleteHandle(command)
+local function autocompleteHandle(command)
     local autocompleteResult = command.full;
     -- If the command isn't empty
     if #command.full > 0 then
@@ -415,7 +395,7 @@ function autocompleteHandle(command)
 end
 
 -- Complete the workspace function name based on current input if possible
-function getMatchingToolkingFunctions(command)
+local function getMatchingToolkingFunctions(command)
     local allFunctions = {};
     for key, func in pairs(ToolkitFunctions) do
         table.insert(allFunctions, key);
@@ -555,7 +535,7 @@ function autocomplete(input)
 end
 
 -- Try to return a node in the command tree based on input
-function reachNode(command, branch, args)
+local function reachNode(command, branch, args)
     -- Get the first part of the command arguments and store the remaining ones
     local argCount = 0;
     local subArgs = {};
@@ -613,7 +593,7 @@ function reachNode(command, branch, args)
 end
 
 -- Try to return the function given a command and its arguments (Will also return identified args of the function)
-function reachCommand(command, branch, args, idargs)
+local function reachCommand(command, branch, args, idargs)
     -- idargs can be nil, we set it to an empty table if that's the case
     local identifiedArgs = idargs or {};
     -- Get the first part of the command arguments and store the remaining ones
@@ -705,6 +685,11 @@ function reachCommand(command, branch, args, idargs)
     end
 end
 
+-- Get the list of the Toolkit commands based on the current contexts
+function getCommands()
+
+end
+
 -- Execute user input
 function evaluate(input)
     if currentExecution == nil then
@@ -754,6 +739,13 @@ function evaluate(input)
             currentExecution = nil;
         end
     end
+end
+
+-- Interactive toolkit prompt
+function prompt()
+    io.write(">> ");
+    local command = io.read();
+    evaluate(command);
 end
 
 -- Loading functions of the toolkit

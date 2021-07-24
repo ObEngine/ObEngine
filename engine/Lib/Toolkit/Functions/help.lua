@@ -28,6 +28,6 @@ end
 return {
     Routes = {
         Route.Call(Commands.help);
-        Route.Help("Well, it.. helps you ?");
+        Route.Help("Displays the help of all commands");
     }
 };

@@ -9,6 +9,7 @@
 #include <Graphics/Color.hpp>
 #include <Script/Scripting.hpp>
 #include <System/Path.hpp>
+#include <Utils/VectorUtils.hpp>
 
 namespace obe::Bindings
 {
@@ -70,7 +71,7 @@ styler::Foreground convertColor(obe::Graphics::Color color)
     }
 }
 
-void run(const std::string& command)
+void run(std::string command)
 {
     using namespace obe;
 
@@ -103,8 +104,30 @@ void run(const std::string& command)
           };
 
     lua.safe_script_file("obe://Lib/Toolkit/Toolkit.lua"_fs);
+    lua["TOOLKIT_CONTEXTS"] = std::map<std::string, bool> { { "terminal", true } };
 
+    auto isInteractive = [&lua]()
+    {
+        std::map<std::string, bool> contexts = lua["TOOLKIT_CONTEXTS"];
+        if (contexts.find("interactive") == contexts.end() || !contexts.at("interactive"))
+        {
+            return false;
+        }
+        return true;
+    };
     Script::safeLuaCall(lua["evaluate"].get<sol::protected_function>(), command);
+
+    while (true)
+    {
+        if (!isInteractive())
+        {
+            break;
+        }
+        else
+        {
+            Script::safeLuaCall(lua["prompt"].get<sol::protected_function>());
+        }
+    }
 }
 
 int main(int argc, char** argv)

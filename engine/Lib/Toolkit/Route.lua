@@ -61,4 +61,11 @@ return {
             help = helpString
         }
     end,
+
+    Context = function(context)
+        return {
+            type = "Context",
+            context = context
+        }
+    end,
 }
