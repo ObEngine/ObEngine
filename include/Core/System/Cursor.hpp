@@ -56,6 +56,22 @@ namespace obe::Events::Cursor
 
 namespace obe::System
 {
+    enum class CursorType // taken from sf::Cursor::Type
+    {
+        Arrow, ///< Arrow cursor (default)
+        ArrowWait, ///< Busy arrow cursor
+        Wait, ///< Busy cursor
+        Text, ///< I-beam, cursor when hovering over a field allowing text entry
+        Hand, ///< Pointing hand cursor
+        SizeHorizontal, ///< Horizontal double arrow cursor
+        SizeVertical, ///< Vertical double arrow cursor
+        SizeTopLeftBottomRight, ///< Double arrow cursor going from top-left to bottom-right
+        SizeBottomLeftTopRight, ///< Double arrow cursor going from bottom-left to top-right
+        SizeAll, ///< Combination of SizeHorizontal and SizeVertical
+        Cross, ///< Crosshair cursor
+        Help, ///< Help cursor
+        NotAllowed ///< Action not allowed cursor
+    };
 
     /**
     * \brief A Class to define a custom cursor. Used for System::Cursor.setCursor()
@@ -66,18 +82,21 @@ namespace obe::System
         std::shared_ptr<sf::Cursor> m_cursor;
 
     public:
-        CursorModel() {};
-        explicit CursorModel(
-            const std::string& filename, unsigned int hotspotX, unsigned int hotspotY);
         /**
          * \brief Set cursor appearance and hotspot from an image file
          * \param filename Image file to use for the cursor
          * \param hotspotX X coordinate on image (in pixels) of the cursor hotspot
          * \param hotspotY Y coordinate on image (in pixels) of the cursor hotspot
          * \return true if loading succeeded, false otherwise
-          */
+         */
         bool loadFromFile(
             const std::string& filename, unsigned int hotspotX, unsigned int hotspotY);
+        /**
+         * \brief Loads a native system cursor
+         * \param Native system cursor type
+         * \return true if loading succeeded, false otherwise
+         */
+        bool loadFromSystem(CursorType type);
         /**
          * \nobind
          * \brief Returns cursor shared pointer

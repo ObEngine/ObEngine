@@ -195,12 +195,6 @@ namespace obe::System
         m_window.getWindow().setMouseCursor(*m_customCursor);
     }
 
-    CursorModel::CursorModel(
-        const std::string& filename, unsigned int hotspotX, unsigned int hotspotY)
-    {
-        loadFromFile(filename, hotspotX, hotspotY);
-    }
-
     bool CursorModel::loadFromFile(
         const std::string& filename, unsigned int hotspotX, unsigned int hotspotY)
     {
@@ -220,6 +214,17 @@ namespace obe::System
                 delete newCursor;
             }
         }
+        return false;
+    }
+
+    bool CursorModel::loadFromSystem(CursorType type)
+    {
+        sf::Cursor* newCursor = new sf::Cursor();
+        if (newCursor->loadFromSystem((sf::Cursor::Type)type)) {
+            m_cursor.reset(newCursor);
+            return true;
+        }
+        delete newCursor;
         return false;
     }
 
