@@ -1,9 +1,7 @@
 local Color = require("Lib/StdLib/ConsoleColor");
-local Route = require("Lib/Toolkit/Route");
+local Commands = require("Lib/Toolkit/Commands");
 local Style = require("Lib/Toolkit/Stylesheet");
 local SampleProjectTemplate = require("Lib/Toolkit/Templates/SampleProject");
-
-local Commands = {};
 
 local fs = obe.Utils.File;
 
@@ -57,7 +55,7 @@ local function write_to_file(path, content)
     file_handle:close();
 end
 
-Commands.mount = function(workspace_name)
+local function _mount_(workspace_name)
     local workspace_definition_filepath = obe.System.Path(
         "obe://Workspace/Workspaces.vili"
     ):find(obe.System.PathType.File);
@@ -86,7 +84,7 @@ Commands.mount = function(workspace_name)
     end
 end
 
-Commands.create = function(workspaceName)
+local function _create_(workspaceName)
     local workspaceDefinitionFilepath = obe.System.Path("obe://Workspace/Workspaces.vili"):find(obe.System.PathType.File);
     local parser = vili.parser.from_file(workspaceDefinitionFilepath:path(),
                                          vili.parser.state());
@@ -153,7 +151,7 @@ Commands.create = function(workspaceName)
     }, 2);
 end
 
-function Commands.list()
+local function _list_()
     local allWorkspaces = get_workspace_list();
     Color.print(
         {{text = "All Registered Workspaces : ", color = Style.Execute}}, 1);
@@ -165,7 +163,7 @@ function Commands.list()
     end
 end
 
-function Commands.index(workspace_name)
+local function _index_(workspace_name)
     local non_indexed_workspaces = get_non_indexed_workspaces();
     if contains(non_indexed_workspaces, workspace_name) then
         local workspace_definition_filepath = obe.System.Path(
@@ -220,34 +218,32 @@ function Commands.index(workspace_name)
 end
 
 return {
-    Routes = {
-        Route.Help("Commands to work with Workspaces"),
-        create = Route.Node {
-            Route.Help("Creates a new Workspace"),
-            workspaceName = Route.Arg {
-                Route.Help("Name of the new Workspace to create"),
-                Route.Call(Commands.create)
-            }
-        },
-        mount = Route.Node {
-            Route.Help("Mounts a Workspace"),
-            workspaceName = Route.Arg {
-                Route.Call(Commands.mount),
-                Route.Help("Name of the Workspace you want to mount"),
-                Route.Autocomplete(get_workspace_list)
-            }
-        },
-        index = Route.Node {
-            Route.Help("Indexes an existing Workspace"),
-            workspace_name = Route.Arg {
-                Route.Call(Commands.index),
-                Route.Help("Name of the Workspace you want to index"),
-                Route.Autocomplete(get_non_indexed_workspaces)
-            }
-        },
-        list = Route.Node {
-            Route.Help("Lists all existing Workspaces"),
-            Route.Call(Commands.list)
+    Commands.help("Commands to work with Workspaces"),
+    create = Commands.command {
+        Commands.help("Creates a new Workspace"),
+        workspaceName = Commands.arg {
+            Commands.help("Name of the new Workspace to create"),
+            Commands.call(_create_)
         }
+    },
+    mount = Commands.command {
+        Commands.help("Mounts a Workspace"),
+        workspaceName = Commands.arg {
+            Commands.call(_mount_),
+            Commands.help("Name of the Workspace you want to mount"),
+            Commands.autocomplete(get_workspace_list)
+        }
+    },
+    index = Commands.command {
+        Commands.help("Indexes an existing Workspace"),
+        workspace_name = Commands.arg {
+            Commands.call(_index_),
+            Commands.help("Name of the Workspace you want to index"),
+            Commands.autocomplete(get_non_indexed_workspaces)
+        }
+    },
+    list = Commands.command {
+        Commands.help("Lists all existing Workspaces"),
+        Commands.call(_list_)
     }
 };

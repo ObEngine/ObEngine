@@ -1,5 +1,5 @@
 local Color = require("Lib/StdLib/ConsoleColor");
-local Route = require("Lib/Toolkit/Route");
+local Commands = require("Lib/Toolkit/Commands");
 local Style = require("Lib/Toolkit/Stylesheet");
 local TM = require("Lib/Toolkit/Utils");
 
@@ -43,12 +43,10 @@ local function get_quests_names()
     return quests_names;
 end
 
-local Commands = {};
-
-function Commands.create(quest_name)
+local function _create_(questName)
 end
 
-function Commands.list()
+local function _list_()
     for id, quest in pairs(Quests) do
         Color.print({
             {text = "Quest (", color = Style.Default},
@@ -59,7 +57,7 @@ function Commands.list()
     end
 end
 
-function Commands.start(autocomplete, questName)
+local function _start_(autocomplete, questName)
     if Quests[questName] then
         Quests[questName].quest(autocomplete);
     else
@@ -68,26 +66,24 @@ function Commands.start(autocomplete, questName)
 end
 
 return {
-    Routes = {
-        Route.Help("Commands to work with Workloads");
-        create = Route.Node {
-            Route.Help("Creates a new Quest");
-            quest_name = Route.StringArg {
-                Route.Help("Name of the new Quest to create");
-                Route.Call(Commands.create);
-            };
+    Commands.help("Commands to work with Workloads");
+    create = Commands.command {
+        Commands.help("Creates a new Quest");
+        quest_name = Commands.string {
+            Commands.help("Name of the new Quest to create");
+            Commands.call(_create_);
         };
-        list = Route.Node {
-            Route.Help("Lists all available quests");
-            Route.Call(Commands.list);
+    };
+    list = Commands.command {
+        Commands.help("Lists all available quests");
+        Commands.call(_list_);
+    };
+    start = Commands.command {
+        Commands.help("Indexes an existing Workload");
+        questName = Commands.arg {
+            Commands.call(_start_);
+            Commands.help("Name of the Quest you want to start");
+            Commands.autocomplete(get_quests_names);
         };
-        start = Route.Node {
-            Route.Help("Indexes an existing Workload");
-            questName = Route.Arg {
-                Route.Call(Commands.start);
-                Route.Help("Name of the Quest you want to start");
-                Route.Autocomplete(get_quests_names);
-            };
-        }
     }
 };
