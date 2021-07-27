@@ -1,10 +1,8 @@
 local Color = require("Lib/StdLib/ConsoleColor");
-local Route = require("Lib/Toolkit/Route");
+local Commands = require("Lib/Toolkit/Commands");
 local Style = require("Lib/Toolkit/Stylesheet");
 
-local Commands = {};
-
-local function get_log_levels()
+local function getLogLevels()
     return {
         "0 (trace)",
         "1 (debug)",
@@ -16,8 +14,8 @@ local function get_log_levels()
     };
 end
 
-function Commands.loglevel(level)
-    local log_levels = get_log_levels();
+local function _loglevel_(level)
+    local log_levels = getLogLevels();
     local level_num = tonumber(level);
     if level_num ~= nil and level_num >= 0 and level_num <= 6 then
         obe.Debug.setLevel(level_num);
@@ -34,12 +32,11 @@ function Commands.loglevel(level)
 end 
 
 return {
-    Routes = {
-        Route.Help("Change log level of ÖbEngine");
-        level = Route.Arg {
-            Route.Help("Log level");
-            Route.Call(Commands.loglevel);
-            Route.Autocomplete(get_log_levels);
-        };
-    }
+    Commands.help("Change log level of ÖbEngine");
+    level = Commands.arg {
+        Commands.help("Log level");
+        Commands.call(_loglevel_);
+        Commands.autocomplete(getLogLevels);
+    };
+}
 };

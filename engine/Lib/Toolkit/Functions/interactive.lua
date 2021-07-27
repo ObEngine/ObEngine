@@ -1,16 +1,12 @@
-local Route = require("Lib/Toolkit/Route");
+local Commands = require("Lib/Toolkit/Commands");
 
-local Commands = {};
-
-function Commands.interactive()
+local function _interactive_()
     print("Entering interactive mode")
-    TOOLKIT_CONTEXTS["interactive"] = true;
+    TOOLKIT_CONTEXTS.interactive = true;
 end
 
 return {
-    Routes = {
-        Route.Call(Commands.interactive);
-        Route.Help("Enters interactive mode");
-        Route.Context("terminal")
-    }
+    Commands.call(_interactive_);
+    Commands.help("Enters interactive mode");
+    Commands.context("terminal");
 };

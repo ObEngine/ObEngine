@@ -18,10 +18,8 @@ local function loadToolkitFunctions()
     local allFunctions = {};
     for _, content in pairs(fileList) do
         -- print("Loading Toolkit function :", "Lib/Toolkit/Functions/", content);
-        allFunctions[String.split(content, ".")[1]] = require(
-                                                          "Lib/Toolkit/Functions/" ..
-                                                              String.split(
-                                                                  content, ".")[1]);
+        local toolkitModuleWithoutExt = String.split(content, ".")[1];
+        allFunctions[toolkitModuleWithoutExt] = require("Lib/Toolkit/Functions/" .. toolkitModuleWithoutExt);
     end
     return allFunctions;
 end
@@ -37,7 +35,7 @@ end
 
 -- Checks if the value checks the Argument requirements (based on type)
 local function matchCommandArgumentType(content, value)
-    if content.type == "Argument" then
+    if content.type == "arg" then
         -- Argument type matching
         if (content.argType == "any") or
             (content.argType == "number" and tonumber(value) ~= nil) or
@@ -140,7 +138,7 @@ local function getHelp(arg)
         if ToolkitFunctions[command.name] then
             local node = reachNode(command.name, {
                 id = "{root}",
-                children = ToolkitFunctions[command.name].Routes
+                children = ToolkitFunctions[command.name]
             }, command.args);
             return getHelp(node.children);
         else
@@ -348,7 +346,7 @@ local function autocompleteHandle(command)
         if ToolkitFunctions[command.name] then
             -- We try to autocomplete the arguments
             local completions = autocompleteArgs(
-                                    ToolkitFunctions[command.name].Routes,
+                                    ToolkitFunctions[command.name],
                                     command.strArgs);
             -- We remove
             local nodesOnly = {};
@@ -422,7 +420,7 @@ local function getMatchingToolkingFunctions(command)
                 {text = "> ", color = Style.Default},
                 {text = key, color = Style.Command},
                 {text = " : ", color = Style.Default},
-                {text = getHelp(func.Routes), color = Style.Help}
+                {text = getHelp(func), color = Style.Help}
             }, 2);
         end
     end
@@ -443,7 +441,7 @@ function autocomplete(input)
                 local checkCurrentInput = autocompleteHandle(command);
                 -- We always show all suggestions
                 local completions = autocompleteArgs(
-                                        ToolkitFunctions[command.name].Routes,
+                                        ToolkitFunctions[command.name],
                                         command.strArgs);
                 if Table.getSize(completions) == 1 and completions[1].name ==
                     command.args[#command.args] then
@@ -478,7 +476,7 @@ function autocomplete(input)
                             {text = "> ", color = Style.Default},
                             {text = key, color = Style.Command},
                             {text = " : ", color = Style.Default},
-                            {text = getHelp(func.Routes), color = Style.Help}
+                            {text = getHelp(func), color = Style.Help}
                         }, 2);
                     end
                 end
@@ -687,7 +685,7 @@ end
 
 -- Get the list of the Toolkit commands based on the current contexts
 function getCommands()
-
+    for 
 end
 
 -- Execute user input
@@ -701,7 +699,7 @@ function evaluate(input)
             local callFunction, identifiedArgs =
                 reachCommand(command.name, {
                     id = "{root}",
-                    children = ToolkitFunctions[command.name].Routes
+                    children = ToolkitFunctions[command.name]
                 }, command.args);
             -- If the function to call has been found and arguments has been identified
             if callFunction and identifiedArgs then
@@ -743,9 +741,11 @@ end
 
 -- Interactive toolkit prompt
 function prompt()
-    io.write(">> ");
-    local command = io.read();
-    evaluate(command);
+    while TOOLKIT_CONTEXTS.interactive do
+        io.write(">> ");
+        local command = io.read();
+        evaluate(command);
+    end
 end
 
 -- Loading functions of the toolkit

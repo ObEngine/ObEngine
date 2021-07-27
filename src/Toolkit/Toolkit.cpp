@@ -117,16 +117,9 @@ void run(std::string command)
     };
     Script::safeLuaCall(lua["evaluate"].get<sol::protected_function>(), command);
 
-    while (true)
+    if (!isInteractive())
     {
-        if (!isInteractive())
-        {
-            break;
-        }
-        else
-        {
-            Script::safeLuaCall(lua["prompt"].get<sol::protected_function>());
-        }
+        Script::safeLuaCall(lua["prompt"].get<sol::protected_function>());
     }
 }
 

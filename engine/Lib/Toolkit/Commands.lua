@@ -1,70 +1,70 @@
 return {
-    Node = function(children)
+    command = function(children)
         return {
             children = children,
-            type = "Node",
+            type = "command",
         };
     end,
 
-    Arg = function(children)
+    arg = function(children)
         return {
             children = children,
-            type = "Argument",
+            type = "arg",
             argType = "any"
         };
     end,
 
-    NumberArg = function(children)
+    number = function(children)
         return {
             children = children,
-            type = "Argument",
+            type = "arg",
             argType = "number"
         };
     end,
 
-    StringArg = function(children)
+    string = function(children)
         return {
             children = children,
-            type = "Argument",
+            type = "arg",
             argType = "string"
         };
     end,
 
-    BooleanArg = function(children)
+    boolean = function(children)
         return {
             children = children,
-            type = "Argument",
+            type = "arg",
             argType = "boolean"
         };
     end,
 
-    Call = function(func)
+    call = function(func)
         if type(func) ~= "function" then
-            error("argument to Route.Call must be a function (got " .. tostring(func) .. ")");
+            error("argument to Route.call must be a function (got " .. tostring(func) .. ")");
         end
         return {
-            type = "Call",
+            type = "call",
             ref = func
         };
     end,
 
-    Autocomplete = function(func)
+    autocomplete = function(func)
         return {
-            type = "Autocomplete",
+            type = "autocomplete",
             ref = func
         }
     end,
 
-    Help = function(helpString)
+    help = function(helpString)
         return {
-            type = "Help",
+            type = "help",
             help = helpString
         }
     end,
 
-    Context = function(context)
+    context = function(context)
         return {
-            type = "Context",
+            type = "context",
             context = context
         }
     end,

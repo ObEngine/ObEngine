@@ -1,17 +1,15 @@
 local Color = require("Lib/StdLib/ConsoleColor");
-local Route = require("Lib/Toolkit/Route");
+local Commands = require("Lib/Toolkit/Route");
 local Style = require("Lib/Toolkit/Stylesheet");
 
-local Commands = {};
-
-function Commands.version()
+local function _version_()
     Color.print({
         { text = "ÖbEngine is in version ", color = Style.Default},
         { text = obe.version, color = Style.Workspace},
     }, 1);
 end
 
-function Commands.major()
+local function _major_()
     local major_version = string.split(string.sub(obe.version, 2),".")[1];
     Color.print({
         { text = "ÖbEngine's major version is ", color = Style.Default},
@@ -19,7 +17,7 @@ function Commands.major()
     }, 1);
 end
 
-function Commands.minor()
+local function _minor_()
     local minor_version = string.split(string.sub(obe.version, 2),".")[2];
     Color.print({
         { text = "ÖbEngine's minor version is ", color = Style.Default},
@@ -27,7 +25,7 @@ function Commands.minor()
     }, 1);
 end
 
-function Commands.patch()
+local function _patch_()
     local patch_version = string.split(string.sub(obe.version, 2),".")[3];
     Color.print({
         { text = "ÖbEngine's patch version is ", color = Style.Default},
@@ -35,7 +33,7 @@ function Commands.patch()
     }, 1);
 end
 
-function Commands.commit()
+local function _commit_()
     local commit_version = obe.commit;
     Color.print({
         { text = "ÖbEngine's commit version is ", color = Style.Default},
@@ -43,7 +41,7 @@ function Commands.commit()
     }, 1);
 end
 
-function Commands.branch()
+local function _branch_()
     local branch_version = obe.branch;
     Color.print({
         { text = "ÖbEngine's branch version is ", color = Style.Default},
@@ -52,28 +50,26 @@ function Commands.branch()
 end
 
 return {
-    Routes = {
-        Route.Help("Get ÖbEngine's version");
-        Route.Call(Commands.version);
-        major = Route.Node {
-            Route.Help("Get ÖbEngine's major version");
-            Route.Call(Commands.major);
-        },
-        minor = Route.Node {
-            Route.Help("Get ÖbEngine's minor version");
-            Route.Call(Commands.minor);
-        },
-        patch = Route.Node {
-            Route.Help("Get ÖbEngine's patch version");
-            Route.Call(Commands.patch);
-        },
-        commit = Route.Node {
-            Route.Help("Get ÖbEngine's commit version");
-            Route.Call(Commands.commit);
-        },
-        branch = Route.Node {
-            Route.Help("Get ÖbEngine's branch version");
-            Route.Call(Commands.branch);
-        }
+    Commands.help("Get ÖbEngine's version");
+    Commands.call(_version_);
+    major = Commands.command {
+        Commands.help("Get ÖbEngine's major version");
+        Commands.call(_major_);
+    },
+    minor = Commands.command {
+        Commands.help("Get ÖbEngine's minor version");
+        Commands.call(_minor_);
+    },
+    patch = Commands.command {
+        Commands.help("Get ÖbEngine's patch version");
+        Commands.call(_patch_);
+    },
+    commit = Commands.command {
+        Commands.help("Get ÖbEngine's commit version");
+        Commands.call(_commit_);
+    },
+    branch = Commands.command {
+        Commands.help("Get ÖbEngine's branch version");
+        Commands.call(_branch_);
     }
 };
