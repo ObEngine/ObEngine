@@ -32,6 +32,19 @@ namespace obe::Animation::Exceptions::Bindings
                         std::string_view, std::size_t, std::size_t, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::Exception>());
     }
+    void LoadClassInvalidAnimationFile(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["Animation"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Animation::Exceptions::InvalidAnimationFile>
+            bindInvalidAnimationFile
+            = ExceptionsNamespace
+                  .new_usertype<obe::Animation::Exceptions::InvalidAnimationFile>(
+                      "InvalidAnimationFile", sol::call_constructor,
+                      sol::constructors<obe::Animation::Exceptions::InvalidAnimationFile(
+                          std::string_view, obe::DebugInfo)>(),
+                      sol::base_classes, sol::bases<obe::Exception>());
+    }
     void LoadClassNoSelectedAnimation(sol::state_view state)
     {
         sol::table ExceptionsNamespace

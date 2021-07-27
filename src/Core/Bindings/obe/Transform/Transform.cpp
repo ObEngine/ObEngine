@@ -247,8 +247,7 @@ namespace obe::Transform::Bindings
             = TransformNamespace.new_usertype<obe::Transform::Referential>("Referential",
                 sol::call_constructor,
                 sol::constructors<obe::Transform::Referential(),
-                    obe::Transform::Referential(double, double),
-                    obe::Transform::Referential(const obe::Transform::Referential&)>());
+                    obe::Transform::Referential(double, double)>());
         bindReferential[sol::meta_function::equal_to]
             = &obe::Transform::Referential::operator==;
         bindReferential["flip"] = sol::overload(
@@ -326,6 +325,8 @@ namespace obe::Transform::Bindings
                 const obe::Transform::UnitVector&) const>(
                 &obe::Transform::UnitVector::operator-),
             static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(double)
+                    const>(&obe::Transform::UnitVector::operator-),
+            static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)()
                     const>(&obe::Transform::UnitVector::operator-));
         bindUnitVector[sol::meta_function::multiplication] = sol::overload(
             static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(
@@ -341,9 +342,6 @@ namespace obe::Transform::Bindings
                     const>(&obe::Transform::UnitVector::operator/));
         bindUnitVector[sol::meta_function::equal_to]
             = &obe::Transform::UnitVector::operator==;
-        bindUnitVector[sol::meta_function::unary_minus]
-            = static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)() const>(
-                &obe::Transform::UnitVector::operator-);
         bindUnitVector["to"]
             = static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(
                 obe::Transform::Units) const>(&obe::Transform::UnitVector::to);

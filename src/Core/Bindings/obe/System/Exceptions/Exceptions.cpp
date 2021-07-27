@@ -18,6 +18,17 @@ namespace obe::System::Exceptions::Bindings
                     int, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::Exception>());
     }
+    void LoadClassMountFileMissing(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["System"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::System::Exceptions::MountFileMissing> bindMountFileMissing
+            = ExceptionsNamespace.new_usertype<obe::System::Exceptions::MountFileMissing>(
+                "MountFileMissing", sol::call_constructor,
+                sol::constructors<obe::System::Exceptions::MountFileMissing(
+                    std::string_view, obe::DebugInfo)>(),
+                sol::base_classes, sol::bases<obe::Exception>());
+    }
     void LoadClassMountablePathIndexOverflow(sol::state_view state)
     {
         sol::table ExceptionsNamespace
@@ -29,17 +40,6 @@ namespace obe::System::Exceptions::Bindings
                 sol::constructors<obe::System::Exceptions::MountablePathIndexOverflow(
                     std::size_t, std::size_t, const std::vector<std::string>&,
                     obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
-    }
-    void LoadClassMountFileMissing(sol::state_view state)
-    {
-        sol::table ExceptionsNamespace
-            = state["obe"]["System"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::System::Exceptions::MountFileMissing> bindMountFileMissing
-            = ExceptionsNamespace.new_usertype<obe::System::Exceptions::MountFileMissing>(
-                "MountFileMissing", sol::call_constructor,
-                sol::constructors<obe::System::Exceptions::MountFileMissing(
-                    std::string_view, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::Exception>());
     }
     void LoadClassPackageAlreadyInstalled(sol::state_view state)
@@ -88,6 +88,18 @@ namespace obe::System::Exceptions::Bindings
                 "UnknownPackage", sol::call_constructor,
                 sol::constructors<obe::System::Exceptions::UnknownPackage(
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),
+                sol::base_classes, sol::bases<obe::Exception>());
+    }
+    void LoadClassUnknownPathPrefix(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["System"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::System::Exceptions::UnknownPathPrefix> bindUnknownPathPrefix
+            = ExceptionsNamespace.new_usertype<
+                obe::System::Exceptions::UnknownPathPrefix>("UnknownPathPrefix",
+                sol::call_constructor,
+                sol::constructors<obe::System::Exceptions::UnknownPathPrefix(
+                    std::string_view, const std::vector<std::string>, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::Exception>());
     }
     void LoadClassUnknownStretchMode(sol::state_view state)

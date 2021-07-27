@@ -8,4 +8,5 @@ namespace obe::Script::Bindings
 {
     void LoadClassGameObject(sol::state_view state);
     void LoadClassGameObjectDatabase(sol::state_view state);
+    void LoadFunctionSafeLuaCall(sol::state_view state);
 };

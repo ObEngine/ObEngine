@@ -33,6 +33,49 @@ namespace obe::Tiles::Bindings
         bindAnimatedTile["getId"] = &obe::Tiles::AnimatedTile::getId;
         bindAnimatedTile["update"] = &obe::Tiles::AnimatedTile::update;
     }
+    void LoadClassTileLayer(sol::state_view state)
+    {
+        sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
+        sol::usertype<obe::Tiles::TileLayer> bindTileLayer
+            = TilesNamespace.new_usertype<obe::Tiles::TileLayer>("TileLayer",
+                sol::call_constructor,
+                sol::constructors<obe::Tiles::TileLayer(const obe::Tiles::TileScene&,
+                    const std::string&, int32_t, uint32_t, uint32_t, uint32_t, uint32_t,
+                    std::vector<uint32_t>)>(),
+                sol::base_classes, sol::bases<obe::Graphics::Renderable>());
+        bindTileLayer["getId"] = &obe::Tiles::TileLayer::getId;
+        bindTileLayer["build"] = &obe::Tiles::TileLayer::build;
+        bindTileLayer["draw"] = &obe::Tiles::TileLayer::draw;
+        bindTileLayer["setTile"] = &obe::Tiles::TileLayer::setTile;
+        bindTileLayer["getTile"] = &obe::Tiles::TileLayer::getTile;
+    }
+    void LoadClassTileScene(sol::state_view state)
+    {
+        sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
+        sol::usertype<obe::Tiles::TileScene> bindTileScene
+            = TilesNamespace.new_usertype<obe::Tiles::TileScene>("TileScene",
+                sol::call_constructor,
+                sol::constructors<obe::Tiles::TileScene(obe::Scene::Scene&)>(),
+                sol::base_classes, sol::bases<obe::Types::Serializable>());
+        bindTileScene["dump"] = &obe::Tiles::TileScene::dump;
+        bindTileScene["load"] = &obe::Tiles::TileScene::load;
+        bindTileScene["update"] = &obe::Tiles::TileScene::update;
+        bindTileScene["clear"] = &obe::Tiles::TileScene::clear;
+        bindTileScene["getAllLayers"] = &obe::Tiles::TileScene::getAllLayers;
+        bindTileScene["getLayer"] = &obe::Tiles::TileScene::getLayer;
+        bindTileScene["getAnimatedTiles"] = &obe::Tiles::TileScene::getAnimatedTiles;
+        bindTileScene["getTilesets"] = &obe::Tiles::TileScene::getTilesets;
+        bindTileScene["getRenderables"] = &obe::Tiles::TileScene::getRenderables;
+        bindTileScene["getColliderModels"] = &obe::Tiles::TileScene::getColliderModels;
+        bindTileScene["getGameObjectsModels"]
+            = &obe::Tiles::TileScene::getGameObjectsModels;
+        bindTileScene["getWidth"] = &obe::Tiles::TileScene::getWidth;
+        bindTileScene["getHeight"] = &obe::Tiles::TileScene::getHeight;
+        bindTileScene["getTileWidth"] = &obe::Tiles::TileScene::getTileWidth;
+        bindTileScene["getTileHeight"] = &obe::Tiles::TileScene::getTileHeight;
+        bindTileScene["isSmooth"] = &obe::Tiles::TileScene::isSmooth;
+        bindTileScene["getScene"] = &obe::Tiles::TileScene::getScene;
+    }
     void LoadClassTileset(sol::state_view state)
     {
         sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
@@ -74,48 +117,6 @@ namespace obe::Tiles::Bindings
         bindTilesetCollection["getTilesetsFirstTilesIds"]
             = &obe::Tiles::TilesetCollection::getTilesetsFirstTilesIds;
         bindTilesetCollection["clear"] = &obe::Tiles::TilesetCollection::clear;
-    }
-    void LoadClassTileLayer(sol::state_view state)
-    {
-        sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
-        sol::usertype<obe::Tiles::TileLayer> bindTileLayer
-            = TilesNamespace.new_usertype<obe::Tiles::TileLayer>("TileLayer",
-                sol::call_constructor,
-                sol::constructors<obe::Tiles::TileLayer(const obe::Tiles::TileScene&,
-                    const std::string&, int32_t, uint32_t, uint32_t, uint32_t, uint32_t,
-                    std::vector<uint32_t>)>(),
-                sol::base_classes, sol::bases<obe::Graphics::Renderable>());
-        bindTileLayer["getId"] = &obe::Tiles::TileLayer::getId;
-        bindTileLayer["build"] = &obe::Tiles::TileLayer::build;
-        bindTileLayer["draw"] = &obe::Tiles::TileLayer::draw;
-        bindTileLayer["setTile"] = &obe::Tiles::TileLayer::setTile;
-        bindTileLayer["getTile"] = &obe::Tiles::TileLayer::getTile;
-    }
-    void LoadClassTileScene(sol::state_view state)
-    {
-        sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
-        sol::usertype<obe::Tiles::TileScene> bindTileScene
-            = TilesNamespace.new_usertype<obe::Tiles::TileScene>("TileScene",
-                sol::call_constructor,
-                sol::constructors<obe::Tiles::TileScene(obe::Scene::Scene&)>(),
-                sol::base_classes, sol::bases<obe::Types::Serializable>());
-        bindTileScene["dump"] = &obe::Tiles::TileScene::dump;
-        bindTileScene["load"] = &obe::Tiles::TileScene::load;
-        bindTileScene["update"] = &obe::Tiles::TileScene::update;
-        bindTileScene["clear"] = &obe::Tiles::TileScene::clear;
-        bindTileScene["getAllLayers"] = &obe::Tiles::TileScene::getAllLayers;
-        bindTileScene["getLayer"] = &obe::Tiles::TileScene::getLayer;
-        bindTileScene["getAnimatedTiles"] = &obe::Tiles::TileScene::getAnimatedTiles;
-        bindTileScene["getTilesets"] = &obe::Tiles::TileScene::getTilesets;
-        bindTileScene["getRenderables"] = &obe::Tiles::TileScene::getRenderables;
-        bindTileScene["getColliderModels"] = &obe::Tiles::TileScene::getColliderModels;
-        bindTileScene["getGameObjectsModels"]
-            = &obe::Tiles::TileScene::getGameObjectsModels;
-        bindTileScene["getWidth"] = &obe::Tiles::TileScene::getWidth;
-        bindTileScene["getHeight"] = &obe::Tiles::TileScene::getHeight;
-        bindTileScene["getTileWidth"] = &obe::Tiles::TileScene::getTileWidth;
-        bindTileScene["getTileHeight"] = &obe::Tiles::TileScene::getTileHeight;
-        bindTileScene["getScene"] = &obe::Tiles::TileScene::getScene;
     }
     void LoadClassTextureQuadsIndex(sol::state_view state)
     {

@@ -2,6 +2,7 @@
 
 #include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
+#include <Script/Scripting.hpp>
 
 #include <Bindings/Config.hpp>
 
@@ -67,5 +68,8 @@ namespace obe::Script::Bindings
         bindGameObjectDatabase["ApplyRequirements"]
             = &obe::Script::GameObjectDatabase::ApplyRequirements;
         bindGameObjectDatabase["Clear"] = &obe::Script::GameObjectDatabase::Clear;
+    }
+    void LoadFunctionSafeLuaCall(sol::state_view state)
+    {
     }
 };

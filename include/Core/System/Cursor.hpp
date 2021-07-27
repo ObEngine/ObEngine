@@ -199,7 +199,7 @@ namespace obe::System
          * \brief Change the cursor
          * \param newCursor CursorModel defining the cursor to display
          */
-        void setCursor(System::CursorModel& newCursor);
+        void setCursor(const System::CursorModel& newCursor);
     };
 
     /**

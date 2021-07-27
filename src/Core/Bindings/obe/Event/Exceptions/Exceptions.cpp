@@ -82,11 +82,6 @@ namespace obe::Event::Exceptions::Bindings
                     std::string_view, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::Exception>());
     }
-    void LoadClassLuaExecutionError(sol::state_view state)
-    {
-        sol::table ExceptionsNamespace
-            = state["obe"]["Event"]["Exceptions"].get<sol::table>();
-    }
     void LoadClassUnknownEvent(sol::state_view state)
     {
         sol::table ExceptionsNamespace

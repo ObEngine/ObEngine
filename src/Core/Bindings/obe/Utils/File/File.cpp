@@ -75,4 +75,9 @@ namespace obe::Utils::File::Bindings
         FileNamespace.set_function(
             "getExecutablePath", obe::Utils::File::getExecutablePath);
     }
+    void LoadFunctionNormalizePath(sol::state_view state)
+    {
+        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
+        FileNamespace.set_function("normalizePath", obe::Utils::File::normalizePath);
+    }
 };

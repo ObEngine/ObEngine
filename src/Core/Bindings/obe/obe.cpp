@@ -23,7 +23,8 @@ namespace obe::Bindings
         sol::usertype<obe::Exception> bindException
             = obeNamespace.new_usertype<obe::Exception>("Exception",
                 sol::call_constructor,
-                sol::constructors<obe::Exception(std::string, obe::DebugInfo)>());
+                sol::constructors<obe::Exception(const obe::Exception&),
+                    obe::Exception(std::string, obe::DebugInfo)>());
         bindException["what"] = &obe::Exception::what;
         bindException["nest"] = &obe::Exception::nest;
     }

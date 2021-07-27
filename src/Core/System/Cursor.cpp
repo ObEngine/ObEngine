@@ -188,7 +188,7 @@ namespace obe::System
         return m_buttonState[button];
     }
 
-    void Cursor::setCursor(System::CursorModel& newCursor)
+    void Cursor::setCursor(const System::CursorModel& newCursor)
     {
         m_customCursor
             = newCursor.getPtr();
@@ -201,17 +201,12 @@ namespace obe::System
         sf::Image img;
         if (img.loadFromFile(System::Path(filename).find()))
         {
-            sf::Cursor* newCursor
-                = new sf::Cursor();
+            std::shared_ptr<sf::Cursor> newCursor = std::make_shared<sf::Cursor>();
             if (newCursor->loadFromPixels(
                 img.getPixelsPtr(), img.getSize(), sf::Vector2u(hotspotX, hotspotY)))
             {
-                m_cursor.reset(newCursor);
+                m_cursor = newCursor;
                 return true;
-            }
-            else
-            {
-                delete newCursor;
             }
         }
         return false;

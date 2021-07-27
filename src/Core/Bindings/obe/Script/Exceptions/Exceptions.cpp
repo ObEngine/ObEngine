@@ -6,6 +6,20 @@
 
 namespace obe::Script::Exceptions::Bindings
 {
+    void LoadClassGameObjectScriptError(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Script::Exceptions::GameObjectScriptError>
+            bindGameObjectScriptError
+            = ExceptionsNamespace
+                  .new_usertype<obe::Script::Exceptions::GameObjectScriptError>(
+                      "GameObjectScriptError", sol::call_constructor,
+                      sol::constructors<obe::Script::Exceptions::GameObjectScriptError(
+                          std::string_view, std::string_view, std::string_view,
+                          obe::DebugInfo)>(),
+                      sol::base_classes, sol::bases<obe::Exception>());
+    }
     void LoadClassInvalidScript(sol::state_view state)
     {
         sol::table ExceptionsNamespace
@@ -16,6 +30,18 @@ namespace obe::Script::Exceptions::Bindings
                 sol::constructors<obe::Script::Exceptions::InvalidScript(
                     std::string_view, std::string_view, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::Exception>());
+    }
+    void LoadClassLuaExecutionError(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace
+            = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Script::Exceptions::LuaExecutionError> bindLuaExecutionError
+            = ExceptionsNamespace
+                  .new_usertype<obe::Script::Exceptions::LuaExecutionError>(
+                      "LuaExecutionError", sol::call_constructor,
+                      sol::constructors<obe::Script::Exceptions::LuaExecutionError(
+                          std::string_view, obe::DebugInfo)>(),
+                      sol::base_classes, sol::bases<obe::Exception>());
     }
     void LoadClassNoSuchComponent(sol::state_view state)
     {
