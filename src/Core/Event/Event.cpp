@@ -1,5 +1,4 @@
 #include <Event/Event.hpp>
-#include <Event/EventGroup.hpp>
 
 namespace obe::Event
 {

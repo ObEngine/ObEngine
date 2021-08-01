@@ -1,7 +1,5 @@
 #include <Debug/Logger.hpp>
 #include <Event/EventGroup.hpp>
-#include <Event/EventManager.hpp>
-#include <Event/Exceptions.hpp>
 
 namespace obe::Event
 {

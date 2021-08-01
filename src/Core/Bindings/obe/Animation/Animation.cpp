@@ -4,6 +4,7 @@
 #include <Animation/AnimationGroup.hpp>
 #include <Animation/Animator.hpp>
 #include <Animation/Tweening.hpp>
+#include <Graphics/Sprite.hpp>
 
 #include <Bindings/Config.hpp>
 

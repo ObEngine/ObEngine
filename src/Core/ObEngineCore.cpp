@@ -1,16 +1,12 @@
 #include <ObEngineCore.hpp>
 
-#include <Audio/AudioManager.hpp>
-#include <Config/Config.hpp>
 #include <Config/Git.hpp>
 #include <Debug/Logger.hpp>
 #include <Graphics/PositionTransformers.hpp>
 #include <Graphics/Sprite.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <System/Path.hpp>
-#include <System/Plugin.hpp>
 
-#include <soloud/soloud.h>
 
 namespace obe
 {

@@ -1,8 +1,6 @@
 #include <Graphics/Exceptions.hpp>
 #include <Graphics/Texture.hpp>
-
-#include "Debug/Logger.hpp"
-#include <iostream>
+#include <Transform/Rect.hpp>
 
 namespace obe::Graphics
 {

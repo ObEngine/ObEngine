@@ -2,7 +2,6 @@
 
 #include <Input/Exceptions.hpp>
 #include <Input/InputManager.hpp>
-#include <Utils/StringUtils.hpp>
 #include <Utils/VectorUtils.hpp>
 
 namespace obe::Input

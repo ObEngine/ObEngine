@@ -1,10 +1,6 @@
 #include <Config/Exceptions.hpp>
 #include <Config/Version.hpp>
 
-#include <Utils/StringUtils.hpp>
-
-#include <string>
-
 namespace obe::Config
 {
     Version::Version(const std::string& str)

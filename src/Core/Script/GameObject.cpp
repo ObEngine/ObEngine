@@ -1,16 +1,10 @@
-#include <Config/Templates/GameObject.hpp>
-#include <Scene/Scene.hpp>
-#include <Script/Exceptions.hpp>
-#include <Script/GameObject.hpp>
-#include <Script/Scripting.hpp>
-#include <Script/ViliLuaBridge.hpp>
-#include <Utils/StringUtils.hpp>
-
 #include <utility>
 
 #include <vili/parser.hpp>
 
-#include <Event/Exceptions.hpp>
+#include <Config/Templates/GameObject.hpp>
+#include <Scene/Scene.hpp>
+#include <Script/GameObject.hpp>
 
 namespace obe::Script
 {

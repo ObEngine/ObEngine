@@ -4,7 +4,6 @@
 
 #include <System/Path.hpp>
 #include <System/Window.hpp>
-#include <Transform/UnitVector.hpp>
 
 namespace obe::System
 {

@@ -2,6 +2,7 @@
 
 #include <Audio/AudioManager.hpp>
 #include <Audio/Sound.hpp>
+#include <System/Path.hpp>
 
 #include <Bindings/Config.hpp>
 

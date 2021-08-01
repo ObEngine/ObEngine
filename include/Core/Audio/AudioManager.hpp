@@ -2,11 +2,20 @@
 
 #include <unordered_map>
 
-#include <System/Path.hpp>
-
 #include <soloud/soloud.h>
 #include <soloud/soloud_wav.h>
 
+namespace obe
+{
+    namespace System
+    {
+        class Path;
+    }
+}
+
+/**
+ * \additionalincludes{System/Path.hpp}
+ */
 namespace obe::Audio
 {
     class Sound;

@@ -1,17 +1,22 @@
 #pragma once
 
-#include <any>
 #include <unordered_map>
 
 #include <Graphics/Color.hpp>
-#include <Graphics/RenderTarget.hpp>
-#include <Transform/UnitVector.hpp>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/System/Vector2.hpp>
+namespace obe::Graphics
+{
+    class RenderTarget;
+}
+
+namespace obe::Transform
+{
+    class UnitVector;
+}
 
 /**
  * \brief Some useful Graphics functions.
+ * \additionalinclude{Graphics/RenderTarget.hpp}
  */
 namespace obe::Graphics::Utils
 {
@@ -37,7 +42,17 @@ namespace obe::Graphics::Utils
      */
     void drawLine(RenderTarget surface, int x1, int y1, int x2, int y2, int thickness,
         const Color& color);
-    using DrawPolygonOptions = std::unordered_map<std::string, std::any>;
+
+    struct DrawPolygonOptions
+    {
+        bool lines = true;
+        bool points = true;
+        unsigned int radius = 6;
+        Color lineColor = Color::White;
+        Color pointColor = Color::White;
+        std::unordered_map<unsigned int, Color> specificLineColor;
+        std::unordered_map<unsigned int, Color> specificPointColor;
+    };
     /**
      * \brief Draws a Polygon
      * \param surface RenderSurface where to render the polygon

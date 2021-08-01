@@ -3,10 +3,20 @@
 #include <vector>
 
 #include <Animation/Animation.hpp>
-#include <Graphics/Sprite.hpp>
-#include <Graphics/Texture.hpp>
 #include <System/Path.hpp>
 
+namespace obe
+{
+    namespace Graphics
+    {
+        class Sprite;
+        class Texture;
+    }
+}
+
+/**
+ * \additionalincludes{Graphics/Sprite.hpp}
+ */
 namespace obe::Animation
 {
     class Animator;

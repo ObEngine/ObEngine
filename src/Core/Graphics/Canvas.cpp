@@ -2,7 +2,6 @@
 #include <bezier/bezier.h>
 
 #include <Graphics/Canvas.hpp>
-#include <Utils/StringUtils.hpp>
 
 namespace obe::Graphics::Canvas
 {

@@ -1,6 +1,7 @@
+#include <utility>
+
 #include <Input/InputAction.hpp>
 #include <Utils/VectorUtils.hpp>
-#include <utility>
 
 namespace obe::Input
 {

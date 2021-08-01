@@ -1,7 +1,6 @@
 #include <thread>
 
 #include <Input/InputManager.hpp>
-#include <SFML/Window/Joystick.hpp>
 
 namespace obe::Input
 {

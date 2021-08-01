@@ -1,12 +1,8 @@
-#include "Utils/MathUtils.hpp"
+#include <array>
 
 #include <Graphics/Color.hpp>
 #include <Graphics/Exceptions.hpp>
-
-#include <array>
-#include <cmath>
-#include <sstream>
-#include <unordered_map>
+#include <Utils/MathUtils.hpp>
 
 namespace obe::Graphics
 {

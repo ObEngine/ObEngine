@@ -1,7 +1,7 @@
+#include <SFML/Window/Joystick.hpp>
+
 #include <Input/Exceptions.hpp>
 #include <Input/InputButton.hpp>
-
-#include <SFML/Window/Joystick.hpp>
 
 namespace obe::Input
 {

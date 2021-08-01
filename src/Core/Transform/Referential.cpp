@@ -1,12 +1,9 @@
 #include <Transform/Exceptions.hpp>
 #include <Transform/Referential.hpp>
 
-#include <array>
-#include <cassert>
 #include <ostream> // Weird fix on latest versions of MSVC
 #include <regex>
 
-#include <fmt/format.h>
 
 namespace obe::Transform
 {

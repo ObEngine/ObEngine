@@ -1,6 +1,5 @@
 #include <Network/NetworkHandler.hpp>
 
-#include <iostream>
 
 namespace obe::Network
 {

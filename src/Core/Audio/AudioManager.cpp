@@ -1,12 +1,9 @@
+#include <soloud/soloud_wavstream.h>
+
 #include <Audio/AudioManager.hpp>
 #include <Audio/Exceptions.hpp>
 #include <Audio/Sound.hpp>
-#include <Debug/Logger.hpp>
 #include <System/Path.hpp>
-
-#include <soloud/soloud.h>
-#include <soloud/soloud_wav.h>
-#include <soloud/soloud_wavstream.h>
 
 namespace obe::Audio
 {

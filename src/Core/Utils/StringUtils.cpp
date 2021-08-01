@@ -3,7 +3,6 @@
 
 #include <Utils/MathUtils.hpp>
 #include <Utils/StringUtils.hpp>
-#include <Utils/VectorUtils.hpp>
 
 namespace obe::Utils::String
 {

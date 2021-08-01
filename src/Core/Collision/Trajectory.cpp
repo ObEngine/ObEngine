@@ -1,5 +1,4 @@
 #include <Collision/Trajectory.hpp>
-#include <Collision/TrajectoryNode.hpp>
 
 namespace obe::Collision
 {

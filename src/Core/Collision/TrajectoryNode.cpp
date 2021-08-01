@@ -1,7 +1,6 @@
 #include <cmath>
 
 #include <Collision/TrajectoryNode.hpp>
-#include <Debug/Logger.hpp>
 #include <Utils/MathUtils.hpp>
 
 namespace obe::Collision

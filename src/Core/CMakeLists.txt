@@ -5,11 +5,11 @@ include(group_files)
 add_custom_target(ConfigureObEngineGit COMMAND ${CMAKE_COMMAND}
     -DGIT_EXECUTABLE=${GIT_EXECUTABLE} -DObEngine_SOURCE_DIR=${ObEngine_SOURCE_DIR} -DObEngine_BINARY_DIR=${ObEngine_BINARY_DIR} -P "${ObEngine_SOURCE_DIR}/cmake/engine_git.cmake")
 
-file(GLOB_RECURSE OBE_HEADERS
+file(GLOB_RECURSE OBE_HEADERS CONFIGURE_DEPENDS
     ${ObEngine_SOURCE_DIR}/include/Core/*.hpp
     ${ObEngine_SOURCE_DIR}/include/Core/*.inl)
 list(REMOVE_ITEM OBE_HEADERS "${ObEngine_SOURCE_DIR}/include/Core/PreCompileHeader.hpp")
-file(GLOB_RECURSE OBE_SOURCES ${ObEngine_SOURCE_DIR}/src/Core/*.cpp)
+file(GLOB_RECURSE OBE_SOURCES CONFIGURE_DEPENDS ${ObEngine_SOURCE_DIR}/src/Core/*.cpp)
 
 add_library(ObEngineCore ${OBE_HEADERS} ${OBE_SOURCES})
 

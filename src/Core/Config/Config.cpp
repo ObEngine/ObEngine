@@ -4,7 +4,6 @@
 #include <Config/Config.hpp>
 #include <Config/Templates/Config.hpp>
 #include <Config/Validators.hpp>
-#include <Debug/Logger.hpp>
 #include <System/Path.hpp>
 
 namespace obe::Config

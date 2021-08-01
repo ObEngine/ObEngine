@@ -1,5 +1,4 @@
 #include <Animation/Tweening.hpp>
-#include <iostream>
 
 namespace obe::Animation
 {

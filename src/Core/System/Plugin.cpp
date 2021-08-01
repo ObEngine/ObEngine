@@ -1,7 +1,7 @@
+#include <sol/sol.hpp>
+
 #include <Debug/Logger.hpp>
 #include <System/Plugin.hpp>
-
-#include <sol/sol.hpp>
 
 namespace obe::System
 {

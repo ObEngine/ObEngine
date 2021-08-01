@@ -1,7 +1,5 @@
 #include <cmath>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-
 #include <Graphics/DrawUtils.hpp>
 #include <Transform/Rect.hpp>
 #include <Utils/MathUtils.hpp>
@@ -100,17 +98,23 @@ namespace obe::Transform
         Graphics::Utils::drawLine(
             surface, vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
 
-        Graphics::Utils::drawPolygon(surface, drawPoints,
-            { { "lines", true }, { "points", true }, { "radius", r },
-                { "point_color", sf::Color::White }, { "point_color_0", sf::Color::Red },
-                { "point_color_1", sf::Color(255, 128, 0) },
-                { "point_color_2", sf::Color::Yellow },
-                { "point_color_3", sf::Color(128, 255, 0) },
-                { "point_color_4", sf::Color::Green },
-                { "point_color_5", sf::Color(0, 255, 128) },
-                { "point_color_6", sf::Color::Magenta },
-                { "point_color_7", sf::Color(0, 128, 255) },
-                { "point_color_8", sf::Color::White } });
+        std::unordered_map<unsigned int, Graphics::Color> pointsColor = {
+            { 0, Graphics::Color::Red },
+            { 1, Graphics::Color(255, 128, 0) },
+            { 2, Graphics::Color::Yellow },
+            { 3, Graphics::Color(128, 255, 0) },
+            { 4, Graphics::Color::Green },
+            { 5, Graphics::Color(0, 255, 128) },
+            { 6, Graphics::Color::Magenta },
+            { 7, Graphics::Color(0, 128, 255) },
+            { 8, Graphics::Color::Blue }
+        };
+
+        // TODO: Refactor using C++20 designated initializers
+        Graphics::Utils::DrawPolygonOptions options { true, true, r,
+            Graphics::Color::White, Graphics::Color::White, {}, pointsColor };
+
+        Graphics::Utils::drawPolygon(surface, drawPoints, options);
     }
 
     double Rect::x() const

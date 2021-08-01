@@ -1,7 +1,7 @@
 project(ObEngineTests)
 
-file(GLOB_RECURSE OBT_HEADERS src/*.hpp)
-file(GLOB_RECURSE OBT_SOURCES src/*.cpp)
+file(GLOB_RECURSE OBT_HEADERS CONFIGURE_DEPENDS src/*.hpp)
+file(GLOB_RECURSE OBT_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 
 add_executable(ObEngineTests ${OBT_HEADERS} ${OBT_SOURCES})
 

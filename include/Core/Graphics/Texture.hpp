@@ -3,9 +3,16 @@
 #include <string>
 #include <variant>
 
-#include <Transform/Rect.hpp>
-
 #include <SFML/Graphics/Texture.hpp>
+
+namespace obe
+{
+    namespace Transform
+    {
+        class Rect;
+        class UnitVector;
+    }
+}
 
 namespace obe::Graphics
 {

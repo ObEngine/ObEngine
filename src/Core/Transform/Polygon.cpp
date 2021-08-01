@@ -1,4 +1,3 @@
-#include <Debug/Logger.hpp>
 #include <Transform/Exceptions.hpp>
 #include <Transform/Polygon.hpp>
 #include <Utils/MathUtils.hpp>
