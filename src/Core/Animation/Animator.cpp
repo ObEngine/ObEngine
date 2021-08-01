@@ -1,10 +1,9 @@
+#include <vili/parser.hpp>
+
 #include <Animation/Animator.hpp>
 #include <Animation/Exceptions.hpp>
-
 #include <Graphics/Sprite.hpp>
-#include <Utils/VectorUtils.hpp>
-
-#include <vili/parser.hpp>
+#include <Transform/UnitVector.hpp>
 
 using namespace std::string_literals;
 

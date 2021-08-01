@@ -1,12 +1,6 @@
 #include <Graphics/Text.hpp>
 #include <codecvt>
 
-#include <SFML/Graphics/Font.hpp>
-#include <SFML/Graphics/Rect.hpp>
-#include <SFML/Graphics/RenderTarget.hpp>
-
-#include <SFML/System/String.hpp>
-
 namespace obe::Graphics
 {
     Text::Text()

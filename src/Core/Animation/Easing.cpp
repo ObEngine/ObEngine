@@ -1,6 +1,4 @@
 #include <cmath>
-#include <map>
-#include <string>
 
 #include <Animation/Easing.hpp>
 #include <Animation/Exceptions.hpp>

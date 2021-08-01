@@ -1,7 +1,6 @@
-#include <Script/ViliLuaBridge.hpp>
-#include <Utils/StringUtils.hpp>
-#include <Utils/VectorUtils.hpp>
 #include <sol/sol.hpp>
+
+#include <Script/ViliLuaBridge.hpp>
 
 namespace obe::Script::ViliLuaBridge
 {

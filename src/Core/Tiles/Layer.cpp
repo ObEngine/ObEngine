@@ -1,14 +1,7 @@
-#include <set>
-
-#include <Debug/Logger.hpp>
-#include <SFML/Graphics/CircleShape.hpp>
+#include <Graphics/DrawUtils.hpp>
 #include <Scene/Scene.hpp>
 #include <Tiles/Exceptions.hpp>
 #include <Tiles/Layer.hpp>
-#include <Tiles/Scene.hpp>
-
-#include "Graphics/DrawUtils.hpp"
-#include "Utils/VectorUtils.hpp"
 
 const std::string_view fragSource = "\
 #version 130\n\
@@ -46,10 +39,9 @@ namespace obe::Tiles
             /*const Transform::UnitVector pMaster
                 = this->getCentroid().to<Transform::Units::ScenePixels>();*/
 
-            float r = 6;
-            Graphics::Utils::DrawPolygonOptions drawOptions = { { "lines", true },
-                { "points", false }, { "radius", r }, { "point_color", sf::Color::White },
-                { "line_color", sf::Color::White } };
+            const float r = 6.f;
+            // TODO: Refactor using C++20 designated initializers
+            const Graphics::Utils::DrawPolygonOptions drawOptions { true, false, r };
 
             std::vector<Transform::UnitVector> lDrawPoints;
 

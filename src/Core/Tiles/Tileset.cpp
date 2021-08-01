@@ -1,11 +1,6 @@
+#include <System/Path.hpp>
 #include <Tiles/Exceptions.hpp>
 #include <Tiles/Tileset.hpp>
-#include <set>
-
-#include <SFML/Graphics/Sprite.hpp>
-
-#include "Debug/Logger.hpp"
-#include "System/Path.hpp"
 
 namespace obe::Tiles
 {

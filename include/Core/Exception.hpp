@@ -1,13 +1,21 @@
 #pragma once
 
 #include <exception>
-#include <optional>
 #include <string>
 
-#include <fmt/format.h>
+#include <fmt/core.h>
 
-#include <Debug/Logger.hpp>
 #include <Utils/StringUtils.hpp>
+
+namespace spdlog
+{
+    class logger;
+}
+
+namespace obe::Debug
+{
+    extern std::shared_ptr<spdlog::logger> Log;
+}
 
 namespace obe
 {

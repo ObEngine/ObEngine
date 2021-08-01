@@ -1,9 +1,6 @@
 #include <SFML/Window/Mouse.hpp>
 
-#include <Input/InputManager.hpp>
 #include <System/Cursor.hpp>
-#include <System/Window.hpp>
-#include <Transform/UnitVector.hpp>
 
 namespace obe::System
 {

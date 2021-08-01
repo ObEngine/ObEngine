@@ -1,7 +1,6 @@
 #include <utility>
 
 #include <Tiles/Animation.hpp>
-#include <Tiles/Layer.hpp>
 
 namespace obe::Tiles
 {

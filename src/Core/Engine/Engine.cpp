@@ -1,8 +1,8 @@
+#include <fstream>
+
 #include <Engine/Engine.hpp>
 #include <Engine/Exceptions.hpp>
-#include <Utils/StringUtils.hpp>
-
-#include <fstream>
+#include <Utils/FileUtils.hpp>
 
 int lua_exception_handler(lua_State* L,
     sol::optional<const std::exception&> maybe_exception, sol::string_view description)

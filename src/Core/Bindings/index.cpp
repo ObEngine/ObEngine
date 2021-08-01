@@ -61,7 +61,6 @@
 #include <Bindings/vili/utils/string/string.hpp>
 #include <Bindings/vili/vili.hpp>
 #include <Bindings/vili/writer/writer.hpp>
-#include <sol/sol.hpp>
 namespace obe::Bindings
 {
     void IndexAllBindings(sol::state_view state)

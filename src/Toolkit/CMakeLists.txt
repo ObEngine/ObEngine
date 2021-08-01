@@ -3,8 +3,8 @@ project(obey)
 include(group_files)
 include(setup_environment)
 
-file(GLOB_RECURSE OBETOOLKIT_HEADERS "${ObEngine_SOURCE_DIR}/include/Toolkit/*.hpp")
-file(GLOB_RECURSE OBETOOLKIT_SOURCES "${ObEngine_SOURCE_DIR}/src/Toolkit/*.cpp")
+file(GLOB_RECURSE OBETOOLKIT_HEADERS CONFIGURE_DEPENDS "${ObEngine_SOURCE_DIR}/include/Toolkit/*.hpp")
+file(GLOB_RECURSE OBETOOLKIT_SOURCES CONFIGURE_DEPENDS "${ObEngine_SOURCE_DIR}/src/Toolkit/*.cpp")
 
 
 add_executable(obey ${OBETOOLKIT_HEADERS} ${OBETOOLKIT_SOURCES} ${OBENGINE_ICON})

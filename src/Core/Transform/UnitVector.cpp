@@ -3,7 +3,6 @@
 #include <Transform/Matrix2D.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Utils/MathUtils.hpp>
-#include <cmath>
 
 namespace obe::Transform
 {

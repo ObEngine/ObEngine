@@ -1,6 +1,5 @@
 #include <Bindings/Patches.hpp>
 
-#include <vili/node.hpp>
 #include <vili/parser/parser_state.hpp>
 
 

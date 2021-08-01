@@ -1,14 +1,10 @@
+#include <vili/parser.hpp>
+
 #include <Config/Templates/Scene.hpp>
 #include <Debug/Render.hpp>
 #include <Scene/Exceptions.hpp>
 #include <Scene/Scene.hpp>
-#include <Script/ViliLuaBridge.hpp>
-#include <System/Window.hpp>
 #include <Utils/MathUtils.hpp>
-#include <Utils/StringUtils.hpp>
-
-#include <vili/node.hpp>
-#include <vili/parser.hpp>
 
 namespace obe::Scene
 {

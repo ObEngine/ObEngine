@@ -1,5 +1,4 @@
 #include <Event/EventManager.hpp>
-#include <Event/Exceptions.hpp>
 
 namespace obe::Event
 {

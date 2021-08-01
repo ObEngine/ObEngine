@@ -1,15 +1,14 @@
 #include <vili/node.hpp>
 #include <vili/parser.hpp>
-#include <vili/types.hpp>
 #include <vld8/validator.hpp>
 
 #include <Animation/Animation.hpp>
+#include <Animation/AnimationGroup.hpp>
 #include <Animation/Exceptions.hpp>
 #include <Config/Templates/Animation.hpp>
 #include <Config/Validators.hpp>
-#include <Debug/Logger.hpp>
 #include <Engine/ResourceManager.hpp>
-#include <Utils/StringUtils.hpp>
+#include <System/Path.hpp>
 
 namespace obe::Animation
 {

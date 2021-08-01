@@ -1,11 +1,7 @@
 #include <algorithm>
-#include <cmath>
 
 #include <Collision/Exceptions.hpp>
 #include <Collision/PolygonalCollider.hpp>
-#include <Debug/Logger.hpp>
-#include <Graphics/DrawUtils.hpp>
-#include <Scene/Scene.hpp>
 #include <Utils/VectorUtils.hpp>
 
 namespace obe::Collision

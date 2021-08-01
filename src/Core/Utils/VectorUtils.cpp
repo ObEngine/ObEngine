@@ -1,5 +1,6 @@
-#include <Utils/VectorUtils.hpp>
 #include <string>
+
+#include <Utils/VectorUtils.hpp>
 
 namespace obe::Utils::Vector
 {

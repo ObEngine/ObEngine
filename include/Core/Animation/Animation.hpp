@@ -2,10 +2,8 @@
 
 #include <unordered_map>
 
-#include <vili/node.hpp>
-
 #include <Animation/AnimationGroup.hpp>
-#include <System/Path.hpp>
+#include <Time/TimeUtils.hpp>
 
 namespace obe
 {
@@ -13,6 +11,19 @@ namespace obe
     {
         class ResourceManager;
     }
+    namespace Graphics
+    {
+        class Texture;
+    }
+    namespace System
+    {
+        class Path;
+    }
+}
+
+namespace vili
+{
+    class node;
 }
 
 namespace obe::Animation

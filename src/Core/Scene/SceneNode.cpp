@@ -1,7 +1,7 @@
+#include <algorithm>
+
 #include <Scene/Exceptions.hpp>
 #include <Scene/SceneNode.hpp>
-
-#include <algorithm>
 
 namespace obe::Scene
 {

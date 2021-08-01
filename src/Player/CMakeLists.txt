@@ -3,8 +3,8 @@ project(ObEnginePlayer)
 include(group_files)
 include(setup_environment)
 
-file(GLOB_RECURSE OBEPLAYER_HEADERS "${ObEngine_SOURCE_DIR}/include/Player/*.hpp")
-file(GLOB_RECURSE OBEPLAYER_SOURCES "${ObEngine_SOURCE_DIR}/src/Player/*.cpp")
+file(GLOB_RECURSE OBEPLAYER_HEADERS CONFIGURE_DEPENDS "${ObEngine_SOURCE_DIR}/include/Player/*.hpp")
+file(GLOB_RECURSE OBEPLAYER_SOURCES CONFIGURE_DEPENDS "${ObEngine_SOURCE_DIR}/src/Player/*.cpp")
 
 if (BUILD_ANDROID)
     add_library(ObEnginePlayer SHARED ${OBEPLAYER_HEADERS} ${OBEPLAYER_SOURCES})

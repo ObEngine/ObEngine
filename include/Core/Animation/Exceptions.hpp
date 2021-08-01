@@ -1,9 +1,5 @@
 #pragma once
 
-#include <fmt/format.h>
-#include <string_view>
-
-#include <Animation/Animation.hpp>
 #include <Exception.hpp>
 
 namespace obe::Animation::Exceptions

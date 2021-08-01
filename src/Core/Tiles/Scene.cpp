@@ -1,8 +1,6 @@
+#include <Debug/Logger.hpp>
 #include <Scene/Scene.hpp>
-#include <Tiles/Layer.hpp>
 #include <Tiles/Scene.hpp>
-
-#include "Debug/Logger.hpp"
 
 namespace obe::Tiles
 {

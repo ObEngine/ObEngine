@@ -1,5 +1,4 @@
 #include <Debug/Logger.hpp>
-#include <Event/EventGroup.hpp>
 #include <Input/InputButtonMonitor.hpp>
 
 namespace obe::Input

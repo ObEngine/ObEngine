@@ -1,6 +1,7 @@
 #include <Bindings/obe/Graphics/Utils/Utils.hpp>
 
 #include <Graphics/DrawUtils.hpp>
+#include <Graphics/RenderTarget.hpp>
 
 #include <Bindings/Config.hpp>
 

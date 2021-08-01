@@ -1,4 +1,3 @@
-#include <System/Window.hpp>
 #include <Time/FramerateCounter.hpp>
 
 namespace obe::Time

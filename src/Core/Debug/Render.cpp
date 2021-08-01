@@ -2,8 +2,6 @@
 
 #include <Graphics/DrawUtils.hpp>
 #include <Transform/Polygon.hpp>
-#include <Transform/UnitVector.hpp>
-#include <Utils/VectorUtils.hpp>
 
 namespace obe::Debug::Render
 {
@@ -14,10 +12,9 @@ namespace obe::Debug::Render
             const Transform::UnitVector centroid
                 = polygon.getCentroid().to<Transform::Units::ScenePixels>();
 
-            float r = 6.f;
-            Graphics::Utils::DrawPolygonOptions drawOptions = { { "lines", drawLines },
-                { "points", drawPoints }, { "radius", r },
-                { "point_color", sf::Color::White }, { "line_color", sf::Color::White } };
+            const float r = 6.f;
+            // TODO: Refactor using C++20 designated initializers
+            const Graphics::Utils::DrawPolygonOptions drawOptions { drawLines, drawPoints, r };
 
             std::vector<Transform::UnitVector> drawPoints;
             std::vector<Transform::UnitVector> pixelPoints;
