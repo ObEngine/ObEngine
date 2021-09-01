@@ -47,7 +47,7 @@ namespace obe::Graphics::Utils
     {
         bool lines = true;
         bool points = true;
-        unsigned int radius = 6;
+        float radius = 6.f;
         Color lineColor = Color::White;
         Color pointColor = Color::White;
         std::unordered_map<unsigned int, Color> specificLineColor;
