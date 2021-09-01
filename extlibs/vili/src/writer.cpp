@@ -63,7 +63,7 @@ namespace vili::writer
             }
             return utils::string::truncate_float(number_as_string);
         }
-        throw exceptions::integer_dump_error(number_value, VILI_EXC_INFO);
+        throw exceptions::number_dump_error(number_value, VILI_EXC_INFO);
     }
 #else
     std::string dump_integer(const vili::node& data)
@@ -118,7 +118,7 @@ namespace vili::writer
             || (max_items_per_line && items_count <= max_items_per_line));
     }
 
-    inline bool check_max_line_length(unsigned int max_line_length, unsigned line_length)
+    inline bool check_max_line_length(size_t max_line_length, size_t line_length)
     {
         return (!max_line_length || (max_line_length && line_length <= max_line_length));
     }
@@ -149,7 +149,7 @@ namespace vili::writer
 
         std::vector<std::string> values_dumps;
         values_dumps.reserve(data.size());
-        unsigned int total_content_length = 0;
+        size_t total_content_length = 0;
         for (const vili::node& item : data.as_array())
         {
             const std::string item_dump = dump(item, options);
@@ -262,7 +262,7 @@ namespace vili::writer
         // Pre-dumping all items to check length
         std::unordered_map<std::string, std::string> values_dumps;
         values_dumps.reserve(data.size());
-        unsigned int total_content_length = 0;
+        size_t total_content_length = 0;
         const unsigned int base_required_space = 2
             + options.object.affectation_left_spaces
             + options.object.affectation_right_spaces;

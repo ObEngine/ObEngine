@@ -94,9 +94,9 @@ namespace obe::Transform
         result.x = (-dy * sinAngle) * -1;
         result.y = (dy * cosAngle) * -1;
         vec += result;
-        Graphics::Utils::drawPoint(surface, vec.x - radius, vec.y - radius, radius, sf::Color::White);
+        Graphics::Utils::drawPoint(surface, static_cast<int>(vec.x - radius), static_cast<int>(vec.y - radius), radius, sf::Color::White);
         Graphics::Utils::drawLine(
-            surface, vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
+            surface, static_cast<int>(vec.x), static_cast<int>(vec.y), static_cast<int>(topPos.x), static_cast<int>(topPos.y), 2, sf::Color::White);
 
         std::unordered_map<unsigned int, Graphics::Color> pointsColor = {
             { 0, Graphics::Color::Red },

@@ -1,5 +1,6 @@
 #include <Debug/Logger.hpp>
 #include <Scene/Scene.hpp>
+#include <Tiles/Exceptions.hpp>
 #include <Tiles/Scene.hpp>
 
 namespace obe::Tiles
@@ -54,8 +55,10 @@ namespace obe::Tiles
                         const uint32_t sleepMilliseconds = frame.at("clock");
                         sleeps.push_back(
                             static_cast<double>(sleepMilliseconds) * Time::milliseconds);
-                        tileIds.push_back(frame.at("tileid").as<vili::integer>()
-                            + tileset.at("firstTileId").as<vili::integer>());
+                        uint32_t fullTileId
+                            = static_cast<uint32_t>(frame.at("tileid").as<vili::integer>()
+                                + tileset.at("firstTileId").as<vili::integer>());
+                        tileIds.push_back(fullTileId);
                     }
                     m_animatedTiles.push_back(
                         std::make_unique<AnimatedTile>(currentTileset, tileIds, sleeps));
@@ -145,6 +148,17 @@ namespace obe::Tiles
         return layers;
     }
 
+    std::vector<std::string> TileScene::getLayersIds() const
+    {
+        std::vector<std::string> layersNames;
+        layersNames.reserve(m_layers.size());
+        for (const auto& layer : m_layers)
+        {
+            layersNames.push_back(layer->getId());
+        }
+        return layersNames;
+    }
+
     TileLayer& TileScene::getLayer(const std::string& id) const
     {
         for (const auto& layer : m_layers)
@@ -154,6 +168,8 @@ namespace obe::Tiles
                 return *layer;
             }
         }
+
+        throw Exceptions::UnknownTileLayer(id, this->getLayersIds(), EXC_INFO);
     }
 
     AnimatedTiles TileScene::getAnimatedTiles() const

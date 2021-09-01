@@ -446,7 +446,7 @@ namespace obe::Collision
         const auto pointInPolygon = [](const std::vector<Transform::UnitVector>& poly,
                                         Transform::UnitVector& pTest) -> bool {
             int i, j, c = 0;
-            const int nPt = poly.size();
+            const int nPt = static_cast<int>(poly.size());
             for (i = 0, j = nPt - 1; i < nPt; j = i++)
             {
                 if (((poly[i].y > pTest.y) != (poly[j].y > pTest.y))
