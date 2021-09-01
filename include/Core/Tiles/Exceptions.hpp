@@ -57,4 +57,21 @@ namespace obe::Tiles::Exceptions
                 x, y, width, height);
         }
     };
+
+    class UnknownTileLayer : public Exception
+    {
+    public:
+        UnknownTileLayer(const std::string& layerId,
+            const std::vector<std::string>& layerIds, DebugInfo info)
+            : Exception("UnknownTileLayer", info)
+        {
+            this->error("Impossible to find Tile Layer with id '{}'", layerId);
+            std::vector<std::string> suggestions
+                = Utils::String::sortByDistance(layerId.data(), layerIds, 5);
+            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
+                Utils::String::quote);
+            this->hint("Maybe you meant one of these layers : ({})",
+                fmt::join(suggestions, ", "));
+        }
+    };
 }

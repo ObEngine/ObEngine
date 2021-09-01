@@ -51,6 +51,7 @@ namespace obe::Tiles
         void clear();
 
         [[nodiscard]] std::vector<TileLayer*> getAllLayers() const;
+        [[nodiscard]] std::vector<std::string> getLayersIds() const;
         [[nodiscard]] TileLayer& getLayer(const std::string& id) const;
         [[nodiscard]] AnimatedTiles getAnimatedTiles() const;
         [[nodiscard]] const TilesetCollection& getTilesets() const;

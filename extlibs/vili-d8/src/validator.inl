@@ -128,5 +128,7 @@ namespace vili::validator
                     validator_values.dump(), input.dump(), VILI_EXC_INFO);
             }
         }
+
+        return true;
     }
 }

@@ -31,7 +31,7 @@ namespace vili
         {
             ++std::get<array::iterator>(m_ptr);
         }
-        if (std::holds_alternative<object::iterator>(m_ptr))
+        else
         {
             ++std::get<object::iterator>(m_ptr);
         }
@@ -46,7 +46,7 @@ namespace vili
             return std::get<array::iterator>(m_ptr)
                 != std::get<array::iterator>(rhs.m_ptr);
         }
-        if (std::holds_alternative<object::iterator>(m_ptr))
+        else
         {
             return std::get<object::iterator>(m_ptr)
                 != std::get<object::iterator>(rhs.m_ptr);
@@ -59,7 +59,7 @@ namespace vili
         {
             return *std::get<array::iterator>(m_ptr);
         }
-        if (std::holds_alternative<object::iterator>(m_ptr))
+        else
         {
             return std::get<object::iterator>(m_ptr)->second;
         }
@@ -86,7 +86,7 @@ namespace vili
         {
             ++std::get<array::const_iterator>(m_ptr);
         }
-        if (std::holds_alternative<object::const_iterator>(m_ptr))
+        else
         {
             ++std::get<object::const_iterator>(m_ptr);
         }
@@ -101,7 +101,7 @@ namespace vili
             return std::get<array::const_iterator>(m_ptr)
                 != std::get<array::const_iterator>(rhs.m_ptr);
         }
-        if (std::holds_alternative<object::const_iterator>(m_ptr))
+        else
         {
             return std::get<object::const_iterator>(m_ptr)
                 != std::get<object::const_iterator>(rhs.m_ptr);
@@ -114,7 +114,7 @@ namespace vili
         {
             return *std::get<array::const_iterator>(m_ptr);
         }
-        if (std::holds_alternative<object::const_iterator>(m_ptr))
+        else
         {
             return std::get<object::const_iterator>(m_ptr)->second;
         }
@@ -185,6 +185,10 @@ namespace vili
         {
             return vili::object {};
         }
+        else
+        {
+            throw exceptions::invalid_node_type(unknown_typename, VILI_EXC_INFO);
+        }
     }
 
     node::node(int value)
@@ -251,36 +255,40 @@ namespace vili
     {
         if (is_null())
             return node_type::null;
-        if (std::holds_alternative<integer>(m_data))
+        else if (std::holds_alternative<integer>(m_data))
             return node_type::integer;
-        if (std::holds_alternative<number>(m_data))
+        else if (std::holds_alternative<number>(m_data))
             return node_type::number;
-        if (std::holds_alternative<boolean>(m_data))
+        else if (std::holds_alternative<boolean>(m_data))
             return node_type::boolean;
-        if (std::holds_alternative<string>(m_data))
+        else if (std::holds_alternative<string>(m_data))
             return node_type::string;
-        if (std::holds_alternative<object>(m_data))
+        else if (std::holds_alternative<object>(m_data))
             return node_type::object;
-        if (std::holds_alternative<array>(m_data))
+        else if (std::holds_alternative<array>(m_data))
             return node_type::array;
+        else
+            throw exceptions::invalid_node_type(unknown_typename, VILI_EXC_INFO);
     }
 
     std::string node::dump(bool root) const
     {
         if (is_null())
             return "";
-        if (is<number>())
+        else if (is<number>())
             return utils::string::truncate_float(std::to_string(as<number>()));
-        if (is<integer>())
+        else if (is<integer>())
             return std::to_string(as<integer>());
-        if (is<string>())
+        else if (is<string>())
             return utils::string::quote(as<string>());
-        if (is<boolean>())
+        else if (is<boolean>())
             return (as<boolean>() ? "true" : "false");
-        if (is<array>())
+        else if (is<array>())
             return dump_array();
-        if (is<object>())
+        else if (is<object>())
             return dump_object(root);
+        else
+            throw exceptions::invalid_node_type(unknown_typename, VILI_EXC_INFO);
     }
 
     bool node::is_primitive() const
@@ -677,10 +685,14 @@ namespace vili
             auto& vector = std::get<array>(m_data);
             return std::get<array>(m_data).begin();
         }
-        if (is<object>())
+        else if (is<object>())
         {
             auto& map = std::get<object>(m_data);
             return map.begin();
+        }
+        else
+        {
+            throw exceptions::invalid_cast(container_typename, to_string(type()), VILI_EXC_INFO);
         }
     }
 
@@ -691,10 +703,14 @@ namespace vili
             auto& vector = std::get<array>(m_data);
             return vector.end();
         }
-        if (is<object>())
+        else if (is<object>())
         {
             auto& map = std::get<object>(m_data);
             return map.end();
+        }
+        else
+        {
+            throw exceptions::invalid_cast(container_typename, to_string(type()), VILI_EXC_INFO);
         }
     }
 
@@ -705,10 +721,14 @@ namespace vili
             auto& vector = std::get<array>(m_data);
             return std::get<array>(m_data).begin();
         }
-        if (is<object>())
+        else if (is<object>())
         {
             auto& map = std::get<object>(m_data);
             return map.begin();
+        }
+        else
+        {
+            throw exceptions::invalid_cast(container_typename, to_string(type()), VILI_EXC_INFO);
         }
     }
 
@@ -719,10 +739,14 @@ namespace vili
             auto& vector = std::get<array>(m_data);
             return vector.end();
         }
-        if (is<object>())
+        else if (is<object>())
         {
             auto& map = std::get<object>(m_data);
             return map.end();
+        }
+        else
+        {
+            throw exceptions::invalid_cast(container_typename, to_string(type()), VILI_EXC_INFO);
         }
     }
 
@@ -733,6 +757,10 @@ namespace vili
             auto& map = std::get<object>(m_data);
             return map;
         }
+        else
+        {
+            throw exceptions::invalid_cast(object_typename, to_string(type()), VILI_EXC_INFO);
+        }
     }
 
     const object& node::items() const
@@ -741,6 +769,10 @@ namespace vili
         {
             auto& map = std::get<object>(m_data);
             return map;
+        }
+        else
+        {
+            throw exceptions::invalid_cast(object_typename, to_string(type()), VILI_EXC_INFO);
         }
     }
 
