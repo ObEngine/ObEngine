@@ -2,18 +2,15 @@
 
 #include <sol/sol.hpp>
 
-#include <Debug/Logger.hpp>
 #include <Script/Exceptions.hpp>
 
-#include <Script/ViliLuaBridge.hpp>
 
 namespace obe::Script
 {
     template <class... Args>
     void safeLuaCall(sol::protected_function callback, Args&&... args)
     {
-        const sol::protected_function_result result = callback(args...);
-        if (!result.valid())
+        if (const sol::protected_function_result result = callback(args...); !result.valid())
         {
             if (result.return_count() > 0)
             {

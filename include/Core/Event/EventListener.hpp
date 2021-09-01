@@ -3,8 +3,6 @@
 #include <functional>
 #include <string>
 
-#include <sol/sol.hpp>
-
 #include <Script/Scripting.hpp>
 
 namespace obe::Event
