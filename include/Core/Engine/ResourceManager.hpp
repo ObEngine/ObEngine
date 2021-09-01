@@ -3,8 +3,6 @@
 #include <memory>
 #include <unordered_map>
 
-#include <SFML/Graphics/Font.hpp>
-
 #include <Event/EventGroup.hpp>
 #include <Graphics/Font.hpp>
 #include <Graphics/Texture.hpp>

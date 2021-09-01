@@ -2,12 +2,11 @@
 
 #include <map>
 
-#include <sol/sol.hpp>
-
 #include <Debug/Logger.hpp>
 #include <Event/EventListener.hpp>
 #include <Event/Exceptions.hpp>
 #include <Time/TimeUtils.hpp>
+
 
 namespace obe::Event
 {

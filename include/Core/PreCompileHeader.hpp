@@ -17,10 +17,10 @@
 #include <variant>
 #include <vector>
 
+#include <SFML/Graphics.hpp>
 #include <fmt/format.h>
 #include <fmt/ostream.h>
 #include <SFML/Audio.hpp>
-#include <SFML/Graphics.hpp>
 #include <sol/sol.hpp>
 #include <spdlog/spdlog.h>
 #include <vili/node.hpp>
