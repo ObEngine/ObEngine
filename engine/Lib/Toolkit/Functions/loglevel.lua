@@ -38,5 +38,4 @@ return {
         Commands.call(_loglevel_);
         Commands.autocomplete(getLogLevels);
     };
-}
 };

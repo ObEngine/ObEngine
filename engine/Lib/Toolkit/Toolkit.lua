@@ -237,7 +237,7 @@ local function autocompleteArgs(command, query)
         local recurseIn = nil;
         -- We iterate over children of the current command
         for id, content in pairs(command) do
-            if content.type == "Node" and id == path[1] then
+            if content.type == "command" and id == path[1] then
                 -- We found a Node that matches the id
                 recurseIn = content;
                 break
@@ -260,7 +260,7 @@ local function autocompleteArgs(command, query)
         -- We iterate over all children of the current argument
         for id, arg in pairs(command) do
             -- We check the type of the current child
-            if arg.type == "Node" then
+            if arg.type == "command" then
                 -- If we found a Node and the beginning of the current argument value matches the id of the node
                 arg.name = id;
                 if start ~= nil and string.sub(id, 1, string.len(start)) ==
@@ -301,7 +301,7 @@ local function autocompleteArgs(command, query)
                                             getHelp(arg.children) .. ")"
                                     }
                                 },
-                                type = "Node",
+                                type = "command",
                                 name = content
                             });
                         elseif start == nil then
@@ -315,7 +315,7 @@ local function autocompleteArgs(command, query)
                                             getHelp(arg.children) .. ")"
                                     }
                                 },
-                                type = "Node",
+                                type = "command",
                                 name = content
                             });
                         end
@@ -351,7 +351,7 @@ local function autocompleteHandle(command)
             -- We remove
             local nodesOnly = {};
             for _, v in pairs(completions) do
-                if v.type == "Node" and v.name:sub(1, 1) ~= "<" and
+                if v.type == "command" and v.name:sub(1, 1) ~= "<" and
                     v.name:sub(#v.name, #v.name) ~= ">" then
                     nodesOnly[v.name] = v;
                 end
@@ -553,14 +553,14 @@ local function reachNode(command, branch, args)
         local recurseIn = nil;
         -- For all arguments children in the current argument
         for id, content in pairs(branch.children) do
-            -- If we find a "Node" argument that matches the next argument in the input
-            if content.type == "Node" and id == nextJump then
+            -- If we find a "Command" argument that matches the next argument in the input
+            if content.type == "command" and id == nextJump then
                 -- We store the Node that will be used
                 recurseIn = content;
                 break
             end
         end
-        -- If the current argument did not match a "Node" argument before
+        -- If the current argument did not match a "command" argument before
         -- (Either because the argument did not exist or because it was an "Argument" argument)
         if recurseIn == nil then
             -- We iterate again in all arguments children in the current argument
@@ -613,19 +613,19 @@ local function reachCommand(command, branch, args, idargs)
         local recurseIn = nil;
         -- For all arguments children in the current argument
         for id, content in pairs(branch.children) do
-            -- If we find a "Node" argument that matches the next argument in the input
-            if content.type == "Node" and id == nextJump then
+            -- If we find a "command" argument that matches the next argument in the input
+            if content.type == "command" and id == nextJump then
                 -- We store the Node that will be used
                 recurseIn = content;
                 -- We also store it as an identified argument
                 identifiedArgs[id] = {
                     index = Table.getSize(identifiedArgs),
-                    type = "Node"
+                    type = "command"
                 };
                 break
             end
         end
-        -- If the current argument did not match a "Node" argument before
+        -- If the current argument did not match a "command" argument before
         -- (Either because the argument did not exist or because it was an "Argument" argument)
         if recurseIn == nil then
             -- We iterate again in all arguments children in the current argument
@@ -660,8 +660,8 @@ local function reachCommand(command, branch, args, idargs)
         local futureCall = nil;
         -- We iterate in the current branch children
         for _, content in pairs(branch.children) do
-            -- If we find a "Call" Node
-            if content.type == "Call" then
+            -- If we find a "call" Node
+            if content.type == "call" then
                 -- We copy the Node for later use
                 futureCall = copy(content);
                 break
@@ -685,7 +685,6 @@ end
 
 -- Get the list of the Toolkit commands based on the current contexts
 function getCommands()
-    for 
 end
 
 -- Execute user input
@@ -705,8 +704,8 @@ function evaluate(input)
             if callFunction and identifiedArgs then
                 -- For all arguments of the command
                 for key, content in pairs(identifiedArgs) do
-                    if content.type == "Node" then
-                        -- If the argument is a "Node", the argument value will be the name of the next Node / Argument
+                    if content.type == "command" then
+                        -- If the argument is a "command", the argument value will be the name of the next Node / Argument
                         identifiedArgs[key].value =
                             Table.getKeyAtIndex(identifiedArgs,
                                                 content.index + 1);
