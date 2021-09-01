@@ -1,3 +1,5 @@
+#include <soloud/soloud.h>
+#include <soloud/soloud_wav.h>
 #include <soloud/soloud_wavstream.h>
 
 #include <Audio/AudioManager.hpp>
@@ -10,12 +12,13 @@ namespace obe::Audio
     AudioManager::AudioManager()
     {
         Debug::Log->debug("<AudioManager> Initializing AudioManager");
-        m_engine.init();
+        m_engine = std::make_unique<SoLoud::Soloud>();
+        m_engine->init();
     }
     AudioManager::~AudioManager()
     {
         Debug::Log->debug("<AudioManager> Cleaning AudioManager");
-        m_engine.deinit();
+        m_engine->deinit();
     }
 
     Sound AudioManager::load(const System::Path& path, LoadPolicy loadPolicy)
@@ -52,6 +55,6 @@ namespace obe::Audio
                 dynamic_cast<SoLoud::Wav*>(sample.get())->load(filePath.c_str());
             }
         }
-        return Sound(m_engine, std::move(sample));
+        return Sound(*m_engine, std::move(sample));
     }
 }
