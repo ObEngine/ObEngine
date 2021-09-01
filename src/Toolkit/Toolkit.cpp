@@ -1,5 +1,5 @@
-#include <functional>
 #include <iostream>
+#include <map>
 #include <memory>
 
 #include <sol/sol.hpp>
@@ -9,7 +9,6 @@
 #include <Graphics/Color.hpp>
 #include <Script/Scripting.hpp>
 #include <System/Path.hpp>
-#include <Utils/VectorUtils.hpp>
 
 namespace obe::Bindings
 {
@@ -108,7 +107,8 @@ void run(std::string command)
 
     auto isInteractive = [&lua]()
     {
-        std::map<std::string, bool> contexts = lua["TOOLKIT_CONTEXTS"];
+        std::map<std::string, bool> contexts
+            = lua["TOOLKIT_CONTEXTS"].get<std::map<std::string, bool>>();
         if (contexts.find("interactive") == contexts.end() || !contexts.at("interactive"))
         {
             return false;

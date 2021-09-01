@@ -5,6 +5,7 @@
 #include <Config/Templates/GameObject.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
+#include <Script/ViliLuaBridge.hpp>
 
 namespace obe::Script
 {

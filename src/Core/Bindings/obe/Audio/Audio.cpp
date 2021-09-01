@@ -1,3 +1,5 @@
+#include <soloud/soloud.h>
+
 #include <Bindings/obe/Audio/Audio.hpp>
 
 #include <Audio/AudioManager.hpp>

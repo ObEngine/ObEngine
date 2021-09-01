@@ -3,8 +3,11 @@
 #include <memory>
 #include <unordered_map>
 
-#include <soloud/soloud.h>
-#include <soloud/soloud_wav.h>
+namespace SoLoud
+{
+    class Wav;
+    class Soloud;
+}
 
 namespace obe
 {
@@ -16,6 +19,7 @@ namespace obe
 
 /**
  * \additionalincludes{System/Path.hpp}
+ * \additionalincludes{soloud/soloud.h}
  */
 namespace obe::Audio
 {
@@ -47,7 +51,7 @@ namespace obe::Audio
     class AudioManager
     {
     private:
-        SoLoud::Soloud m_engine;
+        std::unique_ptr<SoLoud::Soloud> m_engine;
         std::unordered_map<std::string, std::shared_ptr<SoLoud::Wav>> m_cache;
 
     public:
