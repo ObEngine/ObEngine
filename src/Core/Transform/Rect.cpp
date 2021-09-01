@@ -62,7 +62,7 @@ namespace obe::Transform
 
     void Rect::draw(Graphics::RenderTarget surface, int x, int y) const
     {
-        int r = 6;
+        float radius = 6.f;
 
         std::vector<Transform::UnitVector> drawPoints;
         const UnitVector dPos(x, y, Transform::Units::ScenePixels);
@@ -94,7 +94,7 @@ namespace obe::Transform
         result.x = (-dy * sinAngle) * -1;
         result.y = (dy * cosAngle) * -1;
         vec += result;
-        Graphics::Utils::drawPoint(surface, vec.x - r, vec.y - r, r, sf::Color::White);
+        Graphics::Utils::drawPoint(surface, vec.x - radius, vec.y - radius, radius, sf::Color::White);
         Graphics::Utils::drawLine(
             surface, vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
 
@@ -111,7 +111,7 @@ namespace obe::Transform
         };
 
         // TODO: Refactor using C++20 designated initializers
-        Graphics::Utils::DrawPolygonOptions options { true, true, r,
+        Graphics::Utils::DrawPolygonOptions options { true, true, radius,
             Graphics::Color::White, Graphics::Color::White, {}, pointsColor };
 
         Graphics::Utils::drawPolygon(surface, drawPoints, options);
