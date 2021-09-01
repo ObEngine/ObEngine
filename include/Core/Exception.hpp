@@ -57,7 +57,7 @@ namespace obe
             m_message += fmt::format("  Error: {}\n", errorMsg);
             if (Debug::Log)
             {
-                fprintf(stderr, m_message.c_str());
+                fprintf(stderr, "%s", m_message.c_str());
             }
         }
         template <class... Args> void hint(Args&&... args)
