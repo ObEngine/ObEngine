@@ -5,6 +5,7 @@
 #include <Audio/AudioManager.hpp>
 #include <Audio/Exceptions.hpp>
 #include <Audio/Sound.hpp>
+#include <Debug/Logger.hpp>
 #include <System/Path.hpp>
 
 namespace obe::Audio

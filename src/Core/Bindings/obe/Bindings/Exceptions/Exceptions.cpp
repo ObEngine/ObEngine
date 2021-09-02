@@ -17,6 +17,6 @@ namespace obe::Bindings::Exceptions::Bindings
                 sol::constructors<obe::Bindings::Exceptions::BindingTreeNodeNotFound(
                     std::string_view, std::string_view, std::vector<std::string>,
                     obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
 };

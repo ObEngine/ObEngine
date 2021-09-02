@@ -16,7 +16,7 @@ namespace obe::Scene::Exceptions::Bindings
                       "ChildNotInSceneNode", sol::call_constructor,
                       sol::constructors<obe::Scene::Exceptions::ChildNotInSceneNode(
                           void*, void*, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassGameObjectAlreadyExists(sol::state_view state)
     {
@@ -30,7 +30,7 @@ namespace obe::Scene::Exceptions::Bindings
                       sol::constructors<obe::Scene::Exceptions::GameObjectAlreadyExists(
                           std::string_view, std::string_view, std::string_view,
                           obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassMissingSceneFileBlock(sol::state_view state)
     {
@@ -43,7 +43,7 @@ namespace obe::Scene::Exceptions::Bindings
                       "MissingSceneFileBlock", sol::call_constructor,
                       sol::constructors<obe::Scene::Exceptions::MissingSceneFileBlock(
                           std::string_view, std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassSceneOnLoadCallbackError(sol::state_view state)
     {
@@ -57,7 +57,7 @@ namespace obe::Scene::Exceptions::Bindings
                       sol::constructors<obe::Scene::Exceptions::SceneOnLoadCallbackError(
                           std::string_view, std::string_view, std::string_view,
                           obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassSceneScriptLoadingError(sol::state_view state)
     {
@@ -71,7 +71,7 @@ namespace obe::Scene::Exceptions::Bindings
                       sol::constructors<obe::Scene::Exceptions::SceneScriptLoadingError(
                           std::string_view, std::string_view, std::string_view,
                           obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownCollider(sol::state_view state)
     {
@@ -83,7 +83,7 @@ namespace obe::Scene::Exceptions::Bindings
                 sol::constructors<obe::Scene::Exceptions::UnknownCollider(
                     std::string_view, std::string_view, const std::vector<std::string>&,
                     obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownGameObject(sol::state_view state)
     {
@@ -95,7 +95,7 @@ namespace obe::Scene::Exceptions::Bindings
                 sol::constructors<obe::Scene::Exceptions::UnknownGameObject(
                     std::string_view, std::string_view, const std::vector<std::string>&,
                     obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownSprite(sol::state_view state)
     {
@@ -106,6 +106,6 @@ namespace obe::Scene::Exceptions::Bindings
                 "UnknownSprite", sol::call_constructor,
                 sol::constructors<obe::Scene::Exceptions::UnknownSprite(std::string_view,
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
 };

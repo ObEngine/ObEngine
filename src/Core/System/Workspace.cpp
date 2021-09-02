@@ -1,5 +1,6 @@
 #include <vili/parser.hpp>
 
+#include <Debug/Logger.hpp>
 #include <System/Path.hpp>
 #include <System/Workspace.hpp>
 

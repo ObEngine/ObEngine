@@ -1,5 +1,6 @@
 #include <Animation/AnimationGroup.hpp>
 #include <Animation/Exceptions.hpp>
+#include <Debug/Logger.hpp>
 #include <Graphics/Texture.hpp>
 
 namespace obe::Animation

@@ -4,11 +4,12 @@
 
 namespace obe::Scene::Exceptions
 {
-    class ChildNotInSceneNode : public Exception
+    class ChildNotInSceneNode : public Exception<ChildNotInSceneNode>
     {
     public:
+        using Exception::Exception;
         ChildNotInSceneNode(void* sceneNode, void* child, DebugInfo info)
-            : Exception("ChildNotInSceneNode", info)
+            : Exception(info)
         {
             this->error("Impossible to remove Movable {} from SceneNode {} as it is not "
                         "one of its children",
@@ -16,12 +17,13 @@ namespace obe::Scene::Exceptions
         }
     };
 
-    class MissingSceneFileBlock : public Exception
+    class MissingSceneFileBlock : public Exception<MissingSceneFileBlock>
     {
     public:
+        using Exception::Exception;
         MissingSceneFileBlock(
             std::string_view sceneFile, std::string_view blockName, DebugInfo info)
-            : Exception("MissingSceneFileBlock", info)
+            : Exception(info)
         {
             this->error("Scene from file '{}' does not have any required <{}> block",
                 sceneFile, blockName);
@@ -29,12 +31,13 @@ namespace obe::Scene::Exceptions
         }
     };
 
-    class UnknownGameObject : public Exception
+    class UnknownGameObject : public Exception<UnknownGameObject>
     {
     public:
+        using Exception::Exception;
         UnknownGameObject(std::string_view sceneFile, std::string_view objectId,
             const std::vector<std::string>& allObjectIds, DebugInfo info)
-            : Exception("UnknownGameObject", info)
+            : Exception(info)
         {
             this->error("GameObject with id '{}' does not exists inside Scene '{}'",
                 objectId, sceneFile);
@@ -47,12 +50,13 @@ namespace obe::Scene::Exceptions
         }
     };
 
-    class GameObjectAlreadyExists : public Exception
+    class GameObjectAlreadyExists : public Exception<GameObjectAlreadyExists>
     {
     public:
+        using Exception::Exception;
         GameObjectAlreadyExists(std::string_view sceneFile, std::string_view objectType,
             std::string_view objectId, DebugInfo info)
-            : Exception("GameObjectAlreadyExists", info)
+            : Exception(info)
         {
             this->error(
                 "Scene '{}' already contains a GameObject of type '{}' with id '{}'",
@@ -61,12 +65,13 @@ namespace obe::Scene::Exceptions
         }
     };
 
-    class UnknownSprite : public Exception
+    class UnknownSprite : public Exception<UnknownSprite>
     {
     public:
+        using Exception::Exception;
         UnknownSprite(std::string_view sceneFile, std::string_view spriteId,
             const std::vector<std::string>& allSpritesIds, DebugInfo info)
-            : Exception("UnknownSprite", info)
+            : Exception(info)
         {
             this->error("Sprite with id '{}' does not exists inside Scene '{}'", spriteId,
                 sceneFile);
@@ -79,12 +84,13 @@ namespace obe::Scene::Exceptions
         }
     };
 
-    class UnknownCollider : public Exception
+    class UnknownCollider : public Exception<UnknownCollider>
     {
     public:
+        using Exception::Exception;
         UnknownCollider(std::string_view sceneFile, std::string_view colliderId,
             const std::vector<std::string>& allCollidersIds, DebugInfo info)
-            : Exception("UnknownCollider", info)
+            : Exception(info)
         {
             this->error("Collider with id '{}' does not exists inside Scene '{}'",
                 colliderId, sceneFile);
@@ -97,12 +103,13 @@ namespace obe::Scene::Exceptions
         }
     };
 
-    class SceneScriptLoadingError : public Exception
+    class SceneScriptLoadingError : public Exception<SceneScriptLoadingError>
     {
     public:
+        using Exception::Exception;
         SceneScriptLoadingError(std::string_view sceneFile, std::string_view scriptPath,
             std::string_view errorMessage, DebugInfo info)
-            : Exception("SceneScriptLoadingError", info)
+            : Exception(info)
         {
             this->error("Failed to load Scene '{}' script file '{}' as it "
                         "encountered following error : '{}'",
@@ -110,12 +117,13 @@ namespace obe::Scene::Exceptions
         }
     };
 
-    class SceneOnLoadCallbackError : public Exception
+    class SceneOnLoadCallbackError : public Exception<SceneOnLoadCallbackError>
     {
     public:
+        using Exception::Exception;
         SceneOnLoadCallbackError(std::string_view sceneFile,
             std::string_view nextSceneFile, std::string_view errorMessage, DebugInfo info)
-            : Exception("SceneOnLoadCallbackError", info)
+            : Exception(info)
         {
             this->error("Encountered error while running OnLoadCallback to load Scene "
                         "'{}' from Scene '{}' : '{}'",

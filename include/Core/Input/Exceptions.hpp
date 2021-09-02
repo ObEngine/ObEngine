@@ -7,12 +7,13 @@
 
 namespace obe::Input::Exceptions
 {
-    class InputButtonInvalidOperation : public Exception
+    class InputButtonInvalidOperation : public Exception<InputButtonInvalidOperation>
     {
     public:
+        using Exception::Exception;
         InputButtonInvalidOperation(std::string_view inputButtonType,
             std::string_view operationType, DebugInfo info)
-            : Exception("InputButtonInvalidOperation", info)
+            : Exception(info)
         {
             this->error("Tried to do a '{}' operation on an InputButton of type '{}' "
                         "which is incompatible",
@@ -20,11 +21,12 @@ namespace obe::Input::Exceptions
         }
     };
 
-    class InvalidInputButtonState : public Exception
+    class InvalidInputButtonState : public Exception<InvalidInputButtonState>
     {
     public:
+        using Exception::Exception;
         InvalidInputButtonState(std::string_view state, DebugInfo info)
-            : Exception("InvalidInputButtonState", info)
+            : Exception(info)
         {
             this->error("'{}' is not a valid InputButtonState value", state);
             this->hint(
@@ -32,12 +34,13 @@ namespace obe::Input::Exceptions
         }
     };
 
-    class UnknownInputAction : public Exception
+    class UnknownInputAction : public Exception<UnknownInputAction>
     {
     public:
+        using Exception::Exception;
         UnknownInputAction(std::string_view actionName,
             const std::vector<std::string>& existingActions, DebugInfo info)
-            : Exception("UnknownInputAction", info)
+            : Exception(info)
         {
             this->error("InputAction named '{}' does not exists", actionName);
             std::vector<std::string> suggestions
@@ -49,12 +52,13 @@ namespace obe::Input::Exceptions
         }
     };
 
-    class UnknownInputButton : public Exception
+    class UnknownInputButton : public Exception<UnknownInputButton>
     {
     public:
+        using Exception::Exception;
         UnknownInputButton(std::string_view buttonName,
             const std::vector<std::string>& existingButtons, DebugInfo info)
-            : Exception("UnknownInputButton", info)
+            : Exception(info)
         {
             this->error("InputButton named '{}' does not exists", buttonName);
             std::vector<std::string> suggestions
@@ -66,12 +70,13 @@ namespace obe::Input::Exceptions
         }
     };
 
-    class InvalidInputCombinationCode : public Exception
+    class InvalidInputCombinationCode : public Exception<InvalidInputCombinationCode>
     {
     public:
+        using Exception::Exception;
         InvalidInputCombinationCode(
             std::string_view action, std::string_view combinationCode, DebugInfo info)
-            : Exception("InvalidInputCombinationCode", info)
+            : Exception(info)
         {
             this->error(
                 "The following InputCombinationCode '{}' for InputAction '{}' is invalid",
@@ -79,11 +84,13 @@ namespace obe::Input::Exceptions
         }
     };
 
-    class InputButtonAlreadyInCombination : public Exception
+    class InputButtonAlreadyInCombination
+        : public Exception<InputButtonAlreadyInCombination>
     {
     public:
+        using Exception::Exception;
         InputButtonAlreadyInCombination(std::string_view button, DebugInfo info)
-            : Exception("InputButtonAlreadyInCombination", info)
+            : Exception(info)
         {
             this->error("The same InputButton '{}' can't appear twice in the same "
                         "InputCondition",
@@ -93,11 +100,12 @@ namespace obe::Input::Exceptions
         }
     };
 
-    class InvalidInputTypeEnumValue : public Exception
+    class InvalidInputTypeEnumValue : public Exception<InvalidInputTypeEnumValue>
     {
     public:
+        using Exception::Exception;
         InvalidInputTypeEnumValue(int enumValue, DebugInfo info)
-            : Exception("InvalidInputTypeEnumValue", info)
+            : Exception(info)
         {
             this->error("Enum InputType can't have invalid value ({})", enumValue);
         }

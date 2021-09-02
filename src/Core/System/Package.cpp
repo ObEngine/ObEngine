@@ -1,6 +1,7 @@
 #include <elzip/elzip.hpp>
 #include <vili/parser.hpp>
 
+#include <Debug/Logger.hpp>
 #include <System/Package.hpp>
 #include <System/Path.hpp>
 #include <Utils/FileUtils.hpp>

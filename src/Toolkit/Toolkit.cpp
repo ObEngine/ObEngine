@@ -76,7 +76,8 @@ void run(std::string command)
 
     Debug::InitLogger();
     Debug::Log->set_level(spdlog::level::debug);
-    System::MountablePath::LoadMountFile();
+    System::MountablePath::LoadMountFile(false, true);
+
 
     sol::state lua;
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::table,

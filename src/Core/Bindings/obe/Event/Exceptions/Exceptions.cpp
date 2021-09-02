@@ -18,7 +18,7 @@ namespace obe::Event::Exceptions::Bindings
                       sol::constructors<obe::Event::Exceptions::CallbackCreationError(
                           std::string_view, std::string_view, std::string_view,
                           std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassEventAlreadyExists(sol::state_view state)
     {
@@ -30,7 +30,7 @@ namespace obe::Event::Exceptions::Bindings
                       "EventAlreadyExists", sol::call_constructor,
                       sol::constructors<obe::Event::Exceptions::EventAlreadyExists(
                           std::string_view, std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassEventExecutionError(sol::state_view state)
     {
@@ -42,7 +42,7 @@ namespace obe::Event::Exceptions::Bindings
                       "EventExecutionError", sol::call_constructor,
                       sol::constructors<obe::Event::Exceptions::EventExecutionError(
                           std::string_view, std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassEventGroupAlreadyExists(sol::state_view state)
     {
@@ -55,7 +55,7 @@ namespace obe::Event::Exceptions::Bindings
                       "EventGroupAlreadyExists", sol::call_constructor,
                       sol::constructors<obe::Event::Exceptions::EventGroupAlreadyExists(
                           std::string_view, std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassEventGroupNotJoinable(sol::state_view state)
     {
@@ -68,7 +68,7 @@ namespace obe::Event::Exceptions::Bindings
                       "EventGroupNotJoinable", sol::call_constructor,
                       sol::constructors<obe::Event::Exceptions::EventGroupNotJoinable(
                           std::string_view, std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassEventNamespaceAlreadyExists(sol::state_view state)
     {
@@ -80,7 +80,7 @@ namespace obe::Event::Exceptions::Bindings
                 "EventNamespaceAlreadyExists", sol::call_constructor,
                 sol::constructors<obe::Event::Exceptions::EventNamespaceAlreadyExists(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassLuaExecutionError(sol::state_view state)
     {
@@ -96,7 +96,7 @@ namespace obe::Event::Exceptions::Bindings
                 "UnknownEvent", sol::call_constructor,
                 sol::constructors<obe::Event::Exceptions::UnknownEvent(std::string_view,
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownEventGroup(sol::state_view state)
     {
@@ -108,7 +108,7 @@ namespace obe::Event::Exceptions::Bindings
                 sol::constructors<obe::Event::Exceptions::UnknownEventGroup(
                     std::string_view, std::string_view, const std::vector<std::string>&,
                     obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownEventNamespace(sol::state_view state)
     {
@@ -120,6 +120,6 @@ namespace obe::Event::Exceptions::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Event::Exceptions::UnknownEventNamespace(
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
 };

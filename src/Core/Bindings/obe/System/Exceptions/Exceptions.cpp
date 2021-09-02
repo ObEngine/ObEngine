@@ -16,7 +16,7 @@ namespace obe::System::Exceptions::Bindings
                 "InvalidMouseButtonEnumValue", sol::call_constructor,
                 sol::constructors<obe::System::Exceptions::InvalidMouseButtonEnumValue(
                     int, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassMountablePathIndexOverflow(sol::state_view state)
     {
@@ -29,7 +29,7 @@ namespace obe::System::Exceptions::Bindings
                 sol::constructors<obe::System::Exceptions::MountablePathIndexOverflow(
                     std::size_t, std::size_t, const std::vector<std::string>&,
                     obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassMountFileMissing(sol::state_view state)
     {
@@ -40,7 +40,7 @@ namespace obe::System::Exceptions::Bindings
                 "MountFileMissing", sol::call_constructor,
                 sol::constructors<obe::System::Exceptions::MountFileMissing(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassPackageAlreadyInstalled(sol::state_view state)
     {
@@ -53,7 +53,7 @@ namespace obe::System::Exceptions::Bindings
                       "PackageAlreadyInstalled", sol::call_constructor,
                       sol::constructors<obe::System::Exceptions::PackageAlreadyInstalled(
                           std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassPackageFileNotFound(sol::state_view state)
     {
@@ -66,7 +66,7 @@ namespace obe::System::Exceptions::Bindings
                       "PackageFileNotFound", sol::call_constructor,
                       sol::constructors<obe::System::Exceptions::PackageFileNotFound(
                           std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassResourceNotFound(sol::state_view state)
     {
@@ -77,7 +77,7 @@ namespace obe::System::Exceptions::Bindings
                 "ResourceNotFound", sol::call_constructor,
                 sol::constructors<obe::System::Exceptions::ResourceNotFound(
                     std::string_view, std::vector<std::string>, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownPackage(sol::state_view state)
     {
@@ -88,7 +88,7 @@ namespace obe::System::Exceptions::Bindings
                 "UnknownPackage", sol::call_constructor,
                 sol::constructors<obe::System::Exceptions::UnknownPackage(
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownStretchMode(sol::state_view state)
     {
@@ -100,7 +100,7 @@ namespace obe::System::Exceptions::Bindings
                       "UnknownStretchMode", sol::call_constructor,
                       sol::constructors<obe::System::Exceptions::UnknownStretchMode(
                           std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownWorkspace(sol::state_view state)
     {
@@ -111,6 +111,6 @@ namespace obe::System::Exceptions::Bindings
                 "UnknownWorkspace", sol::call_constructor,
                 sol::constructors<obe::System::Exceptions::UnknownWorkspace(
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
 };

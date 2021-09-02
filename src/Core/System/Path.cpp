@@ -1,3 +1,4 @@
+#include <Debug/Logger.hpp>
 #include <System/Path.hpp>
 #include <Utils/FileUtils.hpp>
 
@@ -228,8 +229,16 @@ namespace obe::System
         {
             return cacheResult->second;
         }
-        const std::vector<MountablePath> validMounts
-            = filterMountablePathsWithPrefix(m_mounts, m_prefix);
+        std::vector<MountablePath> validMounts;
+        try
+        {
+            validMounts = filterMountablePathsWithPrefix(m_mounts, m_prefix);
+        }
+        catch (const Exceptions::UnknownPathPrefix& exc)
+        {
+            throw Exceptions::PathError(m_prefix, m_path, EXC_INFO).nest(exc);
+        }
+        
         for (const MountablePath& mountedPath : validMounts)
         {
             const std::string fullPath = mountedPath.basePath

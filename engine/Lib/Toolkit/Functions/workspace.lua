@@ -74,7 +74,7 @@ local function _mount_(workspace_name)
             {text = workspace_name, color = Style.Workspace},
             {text = "' has  been successfully mounted !", color = Style.Success}
         }, 2);
-        obe.MountPaths();
+        obe.System.MountablePath.LoadMountFile();
     else
         Color.print({
             {text = "Workspace '", color = Style.Error},
@@ -221,14 +221,14 @@ return {
     Commands.help("Commands to work with Workspaces"),
     create = Commands.command {
         Commands.help("Creates a new Workspace"),
-        workspaceName = Commands.arg {
+        workspace_name = Commands.arg {
             Commands.help("Name of the new Workspace to create"),
             Commands.call(_create_)
         }
     },
     mount = Commands.command {
         Commands.help("Mounts a Workspace"),
-        workspaceName = Commands.arg {
+        workspace_name = Commands.arg {
             Commands.call(_mount_),
             Commands.help("Name of the Workspace you want to mount"),
             Commands.autocomplete(get_workspace_list)
