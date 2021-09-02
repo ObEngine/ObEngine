@@ -70,7 +70,7 @@ namespace obe::System
         /**
          * \brief Function called to Mount all Paths using 'Mount.vili' file
          */
-        static void LoadMountFile();
+        static void LoadMountFile(bool fromCWD = true, bool fromExe = true);
         /**
          * \brief Add a Path to Mounted Paths
          * \param path Path to mount

@@ -20,12 +20,11 @@ namespace obe::Bindings
     void LoadClassException(sol::state_view state)
     {
         sol::table obeNamespace = state["obe"].get<sol::table>();
-        sol::usertype<obe::Exception> bindException
-            = obeNamespace.new_usertype<obe::Exception>("Exception",
+        sol::usertype<obe::BaseException> bindException
+            = obeNamespace.new_usertype<obe::BaseException>("Exception",
                 sol::call_constructor,
-                sol::constructors<obe::Exception(std::string, obe::DebugInfo)>());
-        bindException["what"] = &obe::Exception::what;
-        bindException["nest"] = &obe::Exception::nest;
+                sol::constructors<obe::BaseException(const std::exception&)>());
+        bindException["what"] = &obe::BaseException::what;
     }
     void LoadFunctionInitEngine(sol::state_view state)
     {

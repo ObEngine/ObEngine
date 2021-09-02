@@ -17,7 +17,7 @@ namespace obe::Transform::Exceptions::Bindings
                       "InvalidUnitsEnumValue", sol::call_constructor,
                       sol::constructors<obe::Transform::Exceptions::InvalidUnitsEnumValue(
                           int, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassPolygonNotEnoughPoints(sol::state_view state)
     {
@@ -29,7 +29,7 @@ namespace obe::Transform::Exceptions::Bindings
                 "PolygonNotEnoughPoints", sol::call_constructor,
                 sol::constructors<obe::Transform::Exceptions::PolygonNotEnoughPoints(
                     void*, std::size_t, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassPolygonPointIndexOverflow(sol::state_view state)
     {
@@ -41,7 +41,7 @@ namespace obe::Transform::Exceptions::Bindings
                 "PolygonPointIndexOverflow", sol::call_constructor,
                 sol::constructors<obe::Transform::Exceptions::PolygonPointIndexOverflow(
                     const void*, std::size_t, std::size_t, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownReferential(sol::state_view state)
     {
@@ -54,7 +54,7 @@ namespace obe::Transform::Exceptions::Bindings
                       "UnknownReferential", sol::call_constructor,
                       sol::constructors<obe::Transform::Exceptions::UnknownReferential(
                           std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownUnit(sol::state_view state)
     {
@@ -65,6 +65,6 @@ namespace obe::Transform::Exceptions::Bindings
                 "UnknownUnit", sol::call_constructor,
                 sol::constructors<obe::Transform::Exceptions::UnknownUnit(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
 };

@@ -107,7 +107,7 @@ namespace obe::Script
                     safeLuaCall(
                         m_environment["ObjectInit"].get<sol::protected_function>());
                 }
-                catch (const Exception& e)
+                catch (const BaseException& e)
                 {
                     throw Exceptions::GameObjectScriptError(
                         m_type, m_id, "ObjectInit", EXC_INFO)
@@ -369,7 +369,7 @@ namespace obe::Script
                     safeLuaCall(
                         m_environment["ObjectDelete"].get<sol::protected_function>());
                 }
-                catch (const Exception& e)
+                catch (const BaseException& e)
                 {
                     throw Exceptions::GameObjectScriptError(
                         m_type, m_id, "ObjectDelete", EXC_INFO)

@@ -15,7 +15,7 @@ namespace obe::Script::Exceptions::Bindings
                 "InvalidScript", sol::call_constructor,
                 sol::constructors<obe::Script::Exceptions::InvalidScript(
                     std::string_view, std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassNoSuchComponent(sol::state_view state)
     {
@@ -27,7 +27,7 @@ namespace obe::Script::Exceptions::Bindings
                 sol::constructors<obe::Script::Exceptions::NoSuchComponent(
                     std::string_view, std::string_view, std::string_view,
                     obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassObjectDefinitionBlockNotFound(sol::state_view state)
     {
@@ -39,7 +39,7 @@ namespace obe::Script::Exceptions::Bindings
                 "ObjectDefinitionBlockNotFound", sol::call_constructor,
                 sol::constructors<obe::Script::Exceptions::ObjectDefinitionBlockNotFound(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassObjectDefinitionNotFound(sol::state_view state)
     {
@@ -52,7 +52,7 @@ namespace obe::Script::Exceptions::Bindings
                       "ObjectDefinitionNotFound", sol::call_constructor,
                       sol::constructors<obe::Script::Exceptions::ObjectDefinitionNotFound(
                           std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassScriptFileNotFound(sol::state_view state)
     {
@@ -65,7 +65,7 @@ namespace obe::Script::Exceptions::Bindings
                       sol::constructors<obe::Script::Exceptions::ScriptFileNotFound(
                           std::string_view, std::string_view, std::string_view,
                           obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassWrongSourceAttributeType(sol::state_view state)
     {
@@ -79,6 +79,6 @@ namespace obe::Script::Exceptions::Bindings
                       sol::constructors<obe::Script::Exceptions::WrongSourceAttributeType(
                           std::string_view, std::string_view, std::string_view,
                           std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
 };

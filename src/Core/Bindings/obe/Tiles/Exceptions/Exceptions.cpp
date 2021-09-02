@@ -17,7 +17,7 @@ namespace obe::Tiles::Exceptions::Bindings
                       "TilePositionOutsideLayer", sol::call_constructor,
                       sol::constructors<obe::Tiles::Exceptions::TilePositionOutsideLayer(
                           uint32_t, uint32_t, uint32_t, uint32_t, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownTileset(sol::state_view state)
     {
@@ -29,7 +29,7 @@ namespace obe::Tiles::Exceptions::Bindings
                 sol::constructors<obe::Tiles::Exceptions::UnknownTileset(
                     const std::string&, const std::vector<std::string>&,
                     obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownTileId(sol::state_view state)
     {
@@ -41,6 +41,6 @@ namespace obe::Tiles::Exceptions::Bindings
                 sol::constructors<obe::Tiles::Exceptions::UnknownTileId(uint32_t,
                     uint32_t, std::map<std::string, std::pair<uint32_t, uint32_t>>,
                     obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
 };

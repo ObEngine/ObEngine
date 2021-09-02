@@ -4,11 +4,12 @@
 
 namespace obe::Graphics::Exceptions
 {
-    class ReadOnlyTexture : public Exception
+    class ReadOnlyTexture : public Exception<ReadOnlyTexture>
     {
     public:
+        using Exception::Exception;
         ReadOnlyTexture(std::string_view method, DebugInfo info)
-            : Exception("ReadOnlyTexture", info)
+            : Exception(info)
         {
             this->error(
                 "Impossible to call method Texture::{} when Texture is in readonly-mode",
@@ -16,33 +17,36 @@ namespace obe::Graphics::Exceptions
         }
     };
 
-    class ImageFileNotFound : public Exception
+    class ImageFileNotFound : public Exception<ImageFileNotFound>
     {
     public:
+        using Exception::Exception;
         ImageFileNotFound(std::string_view path, DebugInfo info)
-            : Exception("ImageFileNotFound", info)
+            : Exception(info)
         {
             this->error("Image at path '{}' not found", path);
         }
     };
 
-    class InvalidColorName : public Exception
+    class InvalidColorName : public Exception<InvalidColorName>
     {
     public:
+        using Exception::Exception;
         InvalidColorName(std::string_view color, DebugInfo info)
-            : Exception("InvalidColorName", info)
+            : Exception(info)
         {
             this->error(
                 "Impossible to find a color with the following name : '{}'", color);
         }
     };
 
-    class InvalidRgbFormat : public Exception
+    class InvalidRgbFormat : public Exception<InvalidRgbFormat>
     {
     public:
+        using Exception::Exception;
         InvalidRgbFormat(const double r, const double g, const double b, const double a,
             DebugInfo info)
-            : Exception("InvalidRgbFormat", info)
+            : Exception(info)
         {
             this->error("Invalid RGB format, values should be between 0 and 255, got "
                         "[r={}, g={}, b={}, a={}]",
@@ -50,11 +54,12 @@ namespace obe::Graphics::Exceptions
         }
     };
 
-    class InvalidHsvFormat : public Exception
+    class InvalidHsvFormat : public Exception<InvalidHsvFormat>
     {
     public:
+        using Exception::Exception;
         InvalidHsvFormat(const int H, const double S, const double V, DebugInfo info)
-            : Exception("InvalidHsvFormat", info)
+            : Exception(info)
         {
             this->error(
                 "Invalid HSV format, values should be between 0 and 365 for Hue and 0.0 "
@@ -63,11 +68,12 @@ namespace obe::Graphics::Exceptions
         }
     };
 
-    class InvalidHexFormat : public Exception
+    class InvalidHexFormat : public Exception<InvalidHexFormat>
     {
     public:
+        using Exception::Exception;
         InvalidHexFormat(std::string_view hexCode, DebugInfo info)
-            : Exception("InvalidHexFormat", info)
+            : Exception(info)
         {
             this->error(
                 "Impossible to find a color with following hexadecimal code : '{}'",
@@ -75,24 +81,26 @@ namespace obe::Graphics::Exceptions
         }
     };
 
-    class CanvasElementAlreadyExists : public Exception
+    class CanvasElementAlreadyExists : public Exception<CanvasElementAlreadyExists>
     {
     public:
+        using Exception::Exception;
         CanvasElementAlreadyExists(std::string_view id, std::string_view newElementType,
             std::string_view existingElementType, DebugInfo info)
-            : Exception("CanvasElementAlreadyExists", info)
+            : Exception(info)
         {
             this->error("Impossible to create a Canvas::{} with id '{}' as there is "
                         "already a Canvas::{} with the same id");
         }
     };
 
-    class InvalidSpriteColorType : public Exception
+    class InvalidSpriteColorType : public Exception<InvalidSpriteColorType>
     {
     public:
+        using Exception::Exception;
         InvalidSpriteColorType(
             std::string_view type, std::string_view value, DebugInfo info)
-            : Exception("InvalidSpriteColorType ", info)
+            : Exception(info)
         {
             this->error("Invalid value for 'color' attribute, expected 'object' or "
                         "'string' and got '{}' (value: {})",

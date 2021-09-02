@@ -283,7 +283,7 @@ namespace obe::Engine
         {
             this->clean();
         }
-        catch (Exception& e)
+        catch (BaseException& e)
         {
             Debug::Log->error("Failed to properly clean the engine :\n{}", e.what());
         }

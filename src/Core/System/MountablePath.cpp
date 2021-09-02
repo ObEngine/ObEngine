@@ -5,6 +5,7 @@
 
 #include <Config/Templates/Mount.hpp>
 #include <Config/Validators.hpp>
+#include <Debug/Logger.hpp>
 #include <System/MountablePath.hpp>
 #include <System/Package.hpp>
 #include <System/Path.hpp>
@@ -27,44 +28,61 @@ namespace obe::System
             && this->pathType == other.pathType);
     }
 
-    void MountablePath::LoadMountFile()
+    void MountablePath::LoadMountFile(bool fromCWD, bool fromExe)
     {
         MountablePath::UnmountAll();
 
-        MountablePath workingDirectoryPath(MountablePathType::Path, "", "root");
-        MountablePath::Mount(workingDirectoryPath);
+        if (!fromCWD && !fromExe)
+        {
+            throw Exceptions::MissingDefaultMountPoint(EXC_INFO);
+        }
 
-        MountablePath enginePath(MountablePathType::Path, "", "obe", 0, false);
-        MountablePath::Mount(enginePath);
+        MountablePath workingDirectoryPath(MountablePathType::Path, "", "cwd");
+        if (fromCWD)
+        {
+            MountablePath::Mount(workingDirectoryPath);
+        }
 
         MountablePath executablePath(MountablePathType::Path,
             Utils::File::getExecutableDirectory(), "exe", 0, false);
-        MountablePath::Mount(executablePath);
-
-        FindResult mountFilePathInCwd
-            = Path("root://Mount.vili").find(obe::System::PathType::File);
-        FindResult mountFilePathInExe
-            = Path("exe://Mount.vili").find(obe::System::PathType::File);
-        if (!mountFilePathInCwd && !mountFilePathInExe)
+        if (fromExe)
         {
-            Debug::Log->info("No Mount.vili file found in either working directory "
-                             "('{}') executable path ('{}')",
-                workingDirectoryPath.basePath, executablePath.basePath);
+            
+            MountablePath::Mount(executablePath);
+        }
+
+        MountablePath rootPath(
+            MountablePathType::Path, MountablePath::Paths()[0].basePath, "root", 0, false);
+        MountablePath::Mount(rootPath);
+
+        MountablePath enginePath(MountablePathType::Path, MountablePath::Paths()[0].basePath, "obe", 0, false);
+        MountablePath::Mount(enginePath);
+
+        FindResult mountFilePath
+            = Path("root://Mount.vili").find(obe::System::PathType::File);
+        if (!mountFilePath)
+        {
+            auto stringPaths = MountablePath::StringPaths();
+            std::transform(stringPaths.begin(), stringPaths.end(), stringPaths.begin(),
+                Utils::String::quote);
+            
+            Debug::Log->info("No Mount.vili file found in the following directories ({})",
+                fmt::join(stringPaths.begin(), stringPaths.end(), ", "));
             return;
         }
 
-        FindResult mountFileLocation
-            = (mountFilePathInCwd) ? mountFilePathInCwd : mountFilePathInExe;
+        Debug::Log->debug("Found Mount.vili file in '{}'", mountFilePath.path());
 
-        Debug::Log->debug("Found Mount.vili file in '{}'", mountFileLocation.path());
-
-        MountablePath::Unmount(executablePath);
+        if (fromCWD)
+        {
+            MountablePath::Unmount(executablePath);
+        }
 
         vili::node mountedPaths;
         try
         {
             mountedPaths = vili::parser::from_file(
-                mountFileLocation, Config::Templates::getMountTemplates());
+                mountFilePath, Config::Templates::getMountTemplates());
         }
         catch (std::exception& e)
         {

@@ -163,7 +163,7 @@ namespace obe::Animation
 
             m_defaultState.load();
         }
-        catch (const Exception& e)
+        catch (const BaseException& e)
         {
             throw Exceptions::InvalidAnimationFile(animationConfigFile, EXC_INFO).nest(e);
         }

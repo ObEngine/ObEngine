@@ -172,7 +172,7 @@ namespace obe::Event
         {
             listener(event);
         }
-        catch (const Exception& e)
+        catch (const BaseException& e)
         {
             throw Exceptions::EventExecutionError(m_identifier, listenerId, EXC_INFO)
                 .nest(e);

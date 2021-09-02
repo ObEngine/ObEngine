@@ -2,6 +2,7 @@
 
 #include <Collision/Exceptions.hpp>
 #include <Collision/PolygonalCollider.hpp>
+#include <Debug/Logger.hpp>
 #include <Utils/VectorUtils.hpp>
 
 namespace obe::Collision

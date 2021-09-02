@@ -17,7 +17,7 @@ namespace obe::Animation::Exceptions::Bindings
                 sol::constructors<
                     obe::Animation::Exceptions::AnimationGroupTextureIndexOverflow(
                         std::string_view, std::size_t, std::size_t, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassAnimationTextureIndexOverflow(sol::state_view state)
     {
@@ -30,7 +30,7 @@ namespace obe::Animation::Exceptions::Bindings
                 sol::constructors<
                     obe::Animation::Exceptions::AnimationTextureIndexOverflow(
                         std::string_view, std::size_t, std::size_t, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassNoSelectedAnimation(sol::state_view state)
     {
@@ -43,7 +43,7 @@ namespace obe::Animation::Exceptions::Bindings
                       "NoSelectedAnimation", sol::call_constructor,
                       sol::constructors<obe::Animation::Exceptions::NoSelectedAnimation(
                           std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassNoSelectedAnimationGroup(sol::state_view state)
     {
@@ -55,7 +55,7 @@ namespace obe::Animation::Exceptions::Bindings
                 "NoSelectedAnimationGroup", sol::call_constructor,
                 sol::constructors<obe::Animation::Exceptions::NoSelectedAnimationGroup(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownAnimation(sol::state_view state)
     {
@@ -68,7 +68,7 @@ namespace obe::Animation::Exceptions::Bindings
                       sol::constructors<obe::Animation::Exceptions::UnknownAnimation(
                           std::string_view, std::string_view,
                           const std::vector<std::string>&, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownAnimationCommand(sol::state_view state)
     {
@@ -80,7 +80,7 @@ namespace obe::Animation::Exceptions::Bindings
                 "UnknownAnimationCommand", sol::call_constructor,
                 sol::constructors<obe::Animation::Exceptions::UnknownAnimationCommand(
                     std::string_view, std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownAnimationGroup(sol::state_view state)
     {
@@ -94,7 +94,7 @@ namespace obe::Animation::Exceptions::Bindings
                       sol::constructors<obe::Animation::Exceptions::UnknownAnimationGroup(
                           std::string_view, std::string_view,
                           const std::vector<std::string>&, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownAnimationPlayMode(sol::state_view state)
     {
@@ -106,7 +106,7 @@ namespace obe::Animation::Exceptions::Bindings
                 "UnknownAnimationPlayMode", sol::call_constructor,
                 sol::constructors<obe::Animation::Exceptions::UnknownAnimationPlayMode(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownEasingFromEnum(sol::state_view state)
     {
@@ -119,7 +119,7 @@ namespace obe::Animation::Exceptions::Bindings
                       "UnknownEasingFromEnum", sol::call_constructor,
                       sol::constructors<obe::Animation::Exceptions::UnknownEasingFromEnum(
                           int, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::Exception>());
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownEasingFromString(sol::state_view state)
     {
@@ -131,7 +131,7 @@ namespace obe::Animation::Exceptions::Bindings
                 "UnknownEasingFromString", sol::call_constructor,
                 sol::constructors<obe::Animation::Exceptions::UnknownEasingFromString(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownTargetScaleMode(sol::state_view state)
     {
@@ -143,6 +143,6 @@ namespace obe::Animation::Exceptions::Bindings
                 "UnknownTargetScaleMode", sol::call_constructor,
                 sol::constructors<obe::Animation::Exceptions::UnknownTargetScaleMode(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception>());
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
 };

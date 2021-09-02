@@ -4,12 +4,13 @@
 
 namespace obe::Collision::Exceptions
 {
-    class InvalidTagFormat : public Exception
+    class InvalidTagFormat : public Exception<InvalidTagFormat>
     {
     public:
+        using Exception::Exception;
         InvalidTagFormat(std::string_view colliderId, std::string_view tagType,
             std::string_view dataType, DebugInfo info)
-            : Exception("InvalidTagFormat", info)
+            : Exception(info)
         {
             this->error(
                 "Tried to set '{}' tags field with value of type '{}' on collider '{}'",

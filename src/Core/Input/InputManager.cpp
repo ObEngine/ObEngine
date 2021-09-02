@@ -149,7 +149,7 @@ namespace obe::Input
                           {
                               combination = this->makeCombination(condition);
                           }
-                          catch (const Exception& e)
+                          catch (const BaseException& e)
                           {
                               throw Exceptions::InvalidInputCombinationCode(
                                   action, condition, EXC_INFO)
