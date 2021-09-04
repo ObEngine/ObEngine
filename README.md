@@ -3,7 +3,7 @@
 [![Discord](https://img.shields.io/discord/302123079818149888.svg?style=for-the-badge&logo=discord)](https://discordapp.com/invite/HkM6zdT)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=for-the-badge)](https://raw.githubusercontent.com/ObEngine/ObEngine/master/license)
 [![Github All Releases](https://img.shields.io/github/downloads/sygmei/obengine/total.svg?style=for-the-badge)](https://github.com/ObEngine/ObEngine/releases)
-[![Codacy Badge](https://img.shields.io/codacy/grade/81846da629d244f69f357568a2f8d690.svg?style=for-the-badge)](https://www.codacy.com/app/Sygmei/ObEngine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Sygmei/ObEngine&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://img.shields.io/codacy/grade/731a0541a4544f98a4e36c5080da8046?style=for-the-badge)](https://app.codacy.com/gh/ObEngine/ObEngine?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=ObEngine/ObEngine&amp;utm_campaign=Badge_Grade)
 
 ## CI/CD status
 
