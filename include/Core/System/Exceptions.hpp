@@ -156,7 +156,7 @@ namespace obe::System::Exceptions
     {
     public:
         using Exception::Exception;
-        MissingDefaultMountPoint(DebugInfo info)
+        explicit MissingDefaultMountPoint(DebugInfo info)
             : Exception(info)
         {
             this->error("Must at least choose cwd or executable path as default mount point");

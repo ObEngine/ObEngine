@@ -56,7 +56,7 @@ namespace obe
         std::string m_message;
     public:
         BaseException() = default;
-        BaseException(const std::exception& e) noexcept;
+        explicit BaseException(const std::exception& e) noexcept;
         template <class... Args> void error(Args&&... args);
         template <class... Args> void hint(Args&&... args);
         [[nodiscard]] const char* what() const noexcept override;
@@ -67,13 +67,13 @@ namespace obe
     {
     public:
         using BaseException::BaseException;
-        Exception(DebugInfo info);
+        explicit Exception(DebugInfo info);
         ExceptionType nest(const std::exception& exception);
     };
 
     inline BaseException::BaseException(const std::exception& e) noexcept
+        : m_message(e.what())
     {
-        m_message = e.what();
     }
 
     template <class ExceptionType>
