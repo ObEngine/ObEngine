@@ -95,11 +95,11 @@ namespace obe::System::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::System::FindResult(const std::string&,
                                       const std::vector<obe::System::MountablePath>&),
-                    obe::System::FindResult(obe::System::PathType, const std::string&,
+                    obe::System::FindResult(obe::System::PathType, const obe::System::MountablePath&,
                         const std::string&, const std::string&)>());
         bindFindResult["path"] = &obe::System::FindResult::path;
-        bindFindResult["root"] = &obe::System::FindResult::root;
-        bindFindResult["element"] = &obe::System::FindResult::element;
+        bindFindResult["mount"] = &obe::System::FindResult::mount;
+        bindFindResult["query"] = &obe::System::FindResult::query;
         bindFindResult["success"] = &obe::System::FindResult::success;
     }
     void LoadClassMountablePath(sol::state_view state)
@@ -118,14 +118,14 @@ namespace obe::System::Bindings
         bindMountablePath[sol::meta_function::equal_to]
             = &obe::System::MountablePath::operator==;
         bindMountablePath["LoadMountFile"] = sol::overload(
-            [](obe::System::MountablePath* self) -> void {
-                return self->LoadMountFile();
+            []() -> void {
+                return MountablePath::LoadMountFile();
             },
-            [](obe::System::MountablePath* self, bool fromCWD) -> void {
-                return self->LoadMountFile(fromCWD);
+            [](bool fromCWD) -> void {
+                return MountablePath::LoadMountFile(fromCWD);
             },
-            [](obe::System::MountablePath* self, bool fromCWD, bool fromExe) -> void {
-                return self->LoadMountFile(fromCWD, fromExe);
+            [](bool fromCWD, bool fromExe) -> void {
+                return MountablePath::LoadMountFile(fromCWD, fromExe);
             });
         bindMountablePath["Mount"] = &obe::System::MountablePath::Mount;
         bindMountablePath["Unmount"] = &obe::System::MountablePath::Unmount;

@@ -392,7 +392,7 @@ local function autocompleteHandle(command)
     return autocompleteResult;
 end
 
--- Complete the workspace function name based on current input if possible
+-- Complete the project function name based on current input if possible
 local function getMatchingToolkingFunctions(command)
     local allFunctions = {};
     for key, func in pairs(ToolkitFunctions) do

@@ -18,7 +18,7 @@ namespace obe::System
     {
     private:
         PathType m_type = PathType::All;
-        std::string m_root;
+        const MountablePath* m_mount;
         std::string m_path;
         std::string m_element;
         std::vector<MountablePath> m_mounts;
@@ -27,11 +27,11 @@ namespace obe::System
 
     public:
         FindResult(const std::string& pathNotFound, const std::vector<MountablePath>& mounts);
-        FindResult(PathType pathType, const std::string& root, const std::string& path,
+        FindResult(PathType pathType, const MountablePath& mount, const std::string& path,
             const std::string& element);
         [[nodiscard]] const std::string& path() const;
-        [[nodiscard]] const std::string& root() const;
-        [[nodiscard]] const std::string& element() const;
+        [[nodiscard]] const MountablePath& mount() const;
+        [[nodiscard]] const std::string& query() const;
         [[nodiscard]] bool success() const;
         operator bool() const;
         operator const std::string &() const;

@@ -10,7 +10,8 @@ namespace obe::System::Workspace
     {
         if (WorkspaceExists(workspaceName))
         {
-            return vili::parser::from_file("Workspace/Workspaces.vili")
+            const std::string projectsFileLocation = "obe://Projects.vili"_fs;
+            return vili::parser::from_file(projectsFileLocation)
                 .at(workspaceName)
                 .at("path");
         }
@@ -19,13 +20,14 @@ namespace obe::System::Workspace
 
     bool WorkspaceExists(const std::string& workspaceName)
     {
-        return vili::parser::from_file("Workspace/Workspaces.vili")
+        const std::string projectsFileLocation = "obe://Projects.vili"_fs;
+        return vili::parser::from_file(projectsFileLocation)
             .contains(workspaceName);
     }
 
     bool Load(const std::string& workspaceName, const std::string& prefix, const unsigned int priority)
     {
-        Debug::Log->info("<Workspace> Loading Workspace '{0}' with priority {1}",
+        Debug::Log->info("<Project> Loading Project '{0}' with priority {1}",
             workspaceName, priority);
         if (WorkspaceExists(workspaceName))
         {
@@ -38,7 +40,8 @@ namespace obe::System::Workspace
 
     std::vector<std::string> ListWorkspaces()
     {
-        vili::node workspaces = vili::parser::from_file("Workspace/Workspaces.vili");
+        const std::string projectsFileLocation = "obe://Projects.vili"_fs;
+        vili::node workspaces = vili::parser::from_file(projectsFileLocation);
         std::vector<std::string> workspacesNames;
         for (auto [workspaceName, _] : workspaces.items())
         {

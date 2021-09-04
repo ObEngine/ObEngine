@@ -6,7 +6,7 @@ local SampleProjectTemplate = require("Lib/Toolkit/Templates/SampleProject");
 local fs = obe.Utils.File;
 
 local function is_in_engine_directory()
-    return fs.fileExists("Workspace/Workspaces.vili");
+    return fs.fileExists("projects.vili");
 end
 
 local function contains(t, item)
@@ -18,8 +18,8 @@ local function contains(t, item)
     return false;
 end
 
-local function get_workspace_list()
-    local workspace_definition_filepath = obe.System.Path("obe://Workspace/Workspaces.vili"):find(obe.System.PathType.File);
+local function get_project_list()
+    local workspace_definition_filepath = obe.System.Path("obe://projects.vili"):find(obe.System.PathType.File);
     local parser = vili.parser.from_file(workspace_definition_filepath:path(),
                                          vili.parser.state());
     local workspaces = vili.to_lua(parser);
@@ -30,22 +30,22 @@ local function get_workspace_list()
     return all_workspaces;
 end
 
-local function get_non_indexed_workspaces()
+local function get_non_indexed_projects()
     local lookup_path = fs.getCurrentDirectory();
     if is_in_engine_directory() then
-        lookup_path = fs.getCurrentDirectory() .. "/Workspace";
+        lookup_path = fs.getCurrentDirectory() .. "/Projects";
     end
     print("Lookup path", lookup_path);
     local all_directories = fs.getDirectoryList(lookup_path);
-    local all_indexed_workspaces = get_workspace_list();
+    local indexed_projects = get_project_list();
 
-    local return_workspaces = {};
-    for _, key in pairs(all_directories) do
-        if not contains(all_indexed_workspaces, key) then
-            table.insert(return_workspaces, key);
+    local non_indexed_projects = {};
+    for _, directory_name in pairs(all_directories) do
+        if not contains(indexed_projects, directory_name) then
+            table.insert(non_indexed_projects, directory_name);
         end
     end
-    return return_workspaces;
+    return non_indexed_projects;
 end
 
 local function write_to_file(path, content)

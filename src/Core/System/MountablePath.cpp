@@ -37,25 +37,24 @@ namespace obe::System
             throw Exceptions::MissingDefaultMountPoint(EXC_INFO);
         }
 
-        MountablePath workingDirectoryPath(MountablePathType::Path, "", "cwd");
-        if (fromCWD)
-        {
-            MountablePath::Mount(workingDirectoryPath);
-        }
-
+        MountablePath workingDirectoryPath(MountablePathType::Path, "", "cwd", 0, false);
         MountablePath executablePath(MountablePathType::Path,
             Utils::File::getExecutableDirectory(), "exe", 0, false);
-        if (fromExe)
-        {
-            
-            MountablePath::Mount(executablePath);
-        }
+        MountablePath::Mount(workingDirectoryPath);
+        MountablePath::Mount(executablePath);
 
-        MountablePath rootPath(
-            MountablePathType::Path, MountablePath::Paths()[0].basePath, "root", 0, false);
+        MountablePath rootPath(MountablePathType::Path, "", "root", 0, false);
+        if (fromCWD)
+        {
+            rootPath.basePath = workingDirectoryPath.basePath;
+        }
+        else
+        {
+            rootPath.basePath = executablePath.basePath;
+        }
         MountablePath::Mount(rootPath);
 
-        MountablePath enginePath(MountablePathType::Path, MountablePath::Paths()[0].basePath, "obe", 0, false);
+        MountablePath enginePath(MountablePathType::Path, executablePath.basePath, "obe", 0, false);
         MountablePath::Mount(enginePath);
 
         FindResult mountFilePath
@@ -71,7 +70,7 @@ namespace obe::System
             return;
         }
 
-        Debug::Log->debug("Found Mount.vili file in '{}'", mountFilePath.path());
+        Debug::Log->debug("Found Mount.vili file in '{}' (prefix: '{}')", mountFilePath.path(), mountFilePath.mount().prefix);
 
         if (fromCWD)
         {
@@ -133,7 +132,7 @@ namespace obe::System
         Debug::Log->info("<MountablePath> List of mounted paths : ");
         for (MountablePath& currentPath : MountablePath::MountedPaths)
         {
-            Debug::Log->info("<MountablePath> MountedPath : {0}", currentPath.basePath);
+            Debug::Log->info("<MountablePath> MountedPath : '{}' with prefix '{}'", currentPath.basePath, currentPath.prefix);
         }
     }
 
