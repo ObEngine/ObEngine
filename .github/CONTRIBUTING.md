@@ -12,7 +12,7 @@ https://discord.gg/HkM6zdT
 
 ## Contributors
 
-Right now I [Sygmei](https://github.com/Sygmei) work mostly alone on the project but I got a lot of help from various people 
+Right now I [Sygmei](https://github.com/Sygmei) work mostly alone on the project but I got a lot of help from various people.
 (See "Thanks" category).
 
 ## Main files (what to check first)
@@ -28,7 +28,7 @@ Right now I [Sygmei](https://github.com/Sygmei) work mostly alone on the project
 - KeyBind : Associates keys with actions
 - Sprite : Primitive drawable element
 - ObEngine : main function inside
-- Package & Workspace : Pretty much the same thing, works with the PathResolver
+- Package & Project : Pretty much the same thing, works with the PathResolver
 - PathResolver : Really important class that "mounts" (see wiki) folders
 - Scene : Scene-like container
 - Script : All the Lua binding stuff in there

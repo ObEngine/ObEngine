@@ -232,8 +232,8 @@ namespace obe::Transform::Bindings
         bindRect["y"] = sol::property(&obe::Transform::Rect::y);
         bindRect["width"] = sol::property(&obe::Transform::Rect::width);
         bindRect["height"] = sol::property(&obe::Transform::Rect::height);
-        bindRect["doesIntersects"] = &obe::Transform::Rect::doesIntersects;
-        bindRect["getIntersection"] = &obe::Transform::Rect::getIntersection;
+        bindRect["intersects"] = &obe::Transform::Rect::intersects;
+        bindRect["intersection"] = &obe::Transform::Rect::intersection;
         bindRect["contains"] = sol::overload(
             static_cast<bool (obe::Transform::Rect::*)(const obe::Transform::Rect&)
                     const>(&obe::Transform::Rect::contains),
@@ -342,8 +342,8 @@ namespace obe::Transform::Bindings
         bindUnitVector[sol::meta_function::equal_to]
             = &obe::Transform::UnitVector::operator==;
         bindUnitVector[sol::meta_function::unary_minus]
-            = static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)() const>(
-                &obe::Transform::UnitVector::operator-);
+            = static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)()
+                    const>(&obe::Transform::UnitVector::operator-);
         bindUnitVector["to"]
             = static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(
                 obe::Transform::Units) const>(&obe::Transform::UnitVector::to);

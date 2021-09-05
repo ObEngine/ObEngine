@@ -49,6 +49,11 @@ namespace obe::Collision::Bindings
             static_cast<obe::Collision::CollisionData (
                 obe::Collision::PolygonalCollider::*)(const obe::Transform::UnitVector&)
                     const>(&obe::Collision::PolygonalCollider::doesCollide),
+            [](const obe::Collision::PolygonalCollider* self,
+                obe::Collision::PolygonalCollider& collider,
+                const obe::Transform::UnitVector& offset) {
+                return self->doesCollide(collider, offset);
+            },
             static_cast<bool (obe::Collision::PolygonalCollider::*)(
                 obe::Collision::PolygonalCollider&, const obe::Transform::UnitVector&,
                 const bool) const>(&obe::Collision::PolygonalCollider::doesCollide));
@@ -64,6 +69,11 @@ namespace obe::Collision::Bindings
                 obe::Collision::PolygonalCollider::*)(const obe::Transform::UnitVector&)
                     const>(
                 &obe::Collision::PolygonalCollider::getMaximumDistanceBeforeCollision),
+            [](const obe::Collision::PolygonalCollider* self,
+                obe::Collision::PolygonalCollider& collider,
+                const obe::Transform::UnitVector& offset) {
+                return self->getMaximumDistanceBeforeCollision(collider, offset);
+            },
             static_cast<obe::Transform::UnitVector (obe::Collision::PolygonalCollider::*)(
                 obe::Collision::PolygonalCollider&, const obe::Transform::UnitVector&,
                 const bool) const>(

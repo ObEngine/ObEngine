@@ -7,9 +7,9 @@ namespace obe::Config::Templates
     {
         vili::parser::state state;
 
-        vili::node workspace
-            = vili::object { { "type", "Workspace" }, { "path", "" }, { "priority", 2 } };
-        state.push_template("Workspace", workspace);
+        vili::node project
+            = vili::object { { "type", "Project" }, { "path", "" }, { "priority", 2 } };
+        state.push_template("Project", project);
 
         vili::node package
             = vili::object { { "type", "Package" }, { "path", "" }, { "priority", 1 } };

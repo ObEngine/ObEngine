@@ -20,9 +20,9 @@ namespace obe::System
          */
         Package,
         /**
-         * \brief The mounted path is a Workspace
+         * \brief The mounted path is a Project
          */
-        Workspace
+        Project
     };
 
     /**
@@ -40,8 +40,8 @@ namespace obe::System
          * \param basePath Path to the mounted path
          * \param priority Priority of the mounted path
          */
-        MountablePath(MountablePathType pathType, const std::string& basePath, const std::string& prefix,
-            unsigned int priority = 0, bool implicit = true);
+        MountablePath(MountablePathType pathType, const std::string& basePath,
+            const std::string& prefix, unsigned int priority = 0, bool implicit = true);
         /**
          * \brief Type of the mounted path
          */
@@ -68,7 +68,7 @@ namespace obe::System
 
     public:
         /**
-         * \brief Function called to Mount all Paths using 'Mount.vili' file
+         * \brief Function called to Mount all Paths using 'mount.vili' file
          */
         static void LoadMountFile(bool fromCWD = true, bool fromExe = true);
         /**

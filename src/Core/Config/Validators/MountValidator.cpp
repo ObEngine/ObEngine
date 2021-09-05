@@ -17,7 +17,7 @@ namespace obe::Config::Validators
                                     {
                                         "type", vili::object {
                                             {"type", vili::string_typename},
-                                            {"values", vili::array {"Path", "Workspace", "Package"}}
+                                            {"values", vili::array {"Path", "Project", "Package"}}
                                         },
                                     },
                                     {

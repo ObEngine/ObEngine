@@ -14,11 +14,12 @@ local Style = {
     Argument = {140, 210, 80},
     Command = {255, 192, 0},
     Help = {230, 125, 50},
-    Workspace = {255, 150, 255},
+    Project = {255, 150, 255},
     Package = {255, 255, 150},
     Success = {0, 255, 0},
     Execute = {80, 150, 255},
-    Object = {173, 73, 85}
+    Object = {173, 73, 85},
+    Version = {255, 150, 255}
 }
 
 return Style;
