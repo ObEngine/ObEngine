@@ -1,7 +1,12 @@
 #pragma once
 
+#include <set>
 #include <string>
 #include <vector>
+
+#include <Config/Version.hpp>
+#include <System/MountablePath.hpp>
+#include <Types/Serializable.hpp>
 
 /**
  * \brief Various functions to work with Projects
@@ -32,4 +37,57 @@ namespace obe::System::Project
     bool Load(const std::string& projectName, const std::string& prefix,
         unsigned int priority = 1);
     std::vector<std::string> ListProjects();
+
+    class ProjectURLs : Types::Serializable
+    {
+    public:
+        std::string homepage;
+        std::string issues;
+        std::string readme;
+        std::string documentation;
+        std::string license;
+
+        /**
+         * \brief Dumps the content of the Project URLs to a vili node
+         */
+        vili::node dump() const override;
+        /**
+         * \brief Loads a Project URLs from a vili node
+         * \param data vili node containing the data of the Project URLs
+         */
+        void load(const vili::node& data) override;
+    };
+
+    class Project : Types::Serializable
+    {
+    private:
+        std::string m_id;
+        Config::Version m_obengineVersion;
+
+        std::vector<std::string> m_include;
+        std::vector<std::string> m_exclude;
+
+        std::string m_source;
+
+        // Metadata
+        std::string m_name;
+        std::vector<std::string> m_authors;
+        std::string m_description;
+        std::set<std::string> m_keywords;
+        std::set<std::string> m_categories;
+        std::string m_license;
+        ProjectURLs m_urls;
+        MountList m_mounts;
+    public:
+        /**
+         * \brief Dumps the content of the Project to a vili node
+         */
+        vili::node dump() const override;
+        /**
+         * \brief Loads a Project from a vili node
+         * \param data vili node containing the data of the Project
+         */
+        void load(const vili::node& data) override;
+        void loadFromFile(const std::string& path);
+    };
 } // namespace obe::System::Project

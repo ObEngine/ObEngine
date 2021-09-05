@@ -4,24 +4,24 @@
 
 namespace obe::Config
 {
-    struct Version
+    class Version
     {
-        int version_major = 0;
-        int version_minor = 0;
-        int version_patch = 0;
+    public:
+        int major = 0;
+        int minor = 0;
+        int patch = 0;
 
         constexpr Version(int version_major, int version_minor, int version_patch)
-            : version_major(version_major)
-            , version_minor(version_minor)
-            , version_patch(version_patch) {};
+            : major(version_major)
+            , minor(version_minor)
+            , patch(version_patch) {};
         Version(const std::string& str);
+        constexpr std::string string() const;
     };
 
     inline constexpr bool operator==(const Version& lhs, const Version& rhs)
     {
-        return (lhs.version_major == rhs.version_major
-            && lhs.version_minor == rhs.version_minor
-            && lhs.version_patch == rhs.version_patch);
+        return (lhs.major == rhs.major && lhs.minor == rhs.minor && lhs.patch == rhs.patch);
     }
 
     inline constexpr bool operator!=(const Version& lhs, const Version& rhs)
@@ -31,15 +31,15 @@ namespace obe::Config
 
     inline constexpr bool operator<(const Version& lhs, const Version& rhs)
     {
-        if (lhs.version_major < rhs.version_major)
+        if (lhs.major < rhs.major)
             return true;
-        if (lhs.version_major > rhs.version_major)
+        if (lhs.major > rhs.major)
             return false;
-        if (lhs.version_minor < rhs.version_minor)
+        if (lhs.minor < rhs.minor)
             return true;
-        if (lhs.version_minor > rhs.version_minor)
+        if (lhs.minor > rhs.minor)
             return false;
-        return (lhs.version_patch < rhs.version_patch);
+        return (lhs.patch < rhs.patch);
     }
 
     inline constexpr bool operator<=(const Version& lhs, const Version& rhs)

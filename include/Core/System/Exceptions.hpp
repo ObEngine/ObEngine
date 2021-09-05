@@ -190,4 +190,17 @@ namespace obe::System::Exceptions
             this->error("An error occured while loading path '{}://{}'", prefix, path);
         }
     };
+
+    class InvalidProjectFile : public Exception<InvalidProjectFile>
+    {
+    public:
+        using Exception::Exception;
+        InvalidProjectFile(std::string_view projectFilePath, DebugInfo info)
+            : Exception(info)
+        {
+            this->error(
+                "An error occured while parsing 'project.vili' file located at '{}'",
+                projectFilePath);
+        }
+    };
 }
