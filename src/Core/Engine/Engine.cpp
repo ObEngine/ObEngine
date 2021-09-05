@@ -107,11 +107,11 @@ namespace obe::Engine
 
     void Engine::initPlugins()
     {
-        for (const System::MountablePath& mountedPath : System::MountablePath::Paths())
+        for (const auto& mountedPath : System::MountablePath::Paths())
         {
             Debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}",
-                mountedPath.basePath);
-            System::Path cPluginPath = System::Path("root://").add(mountedPath.basePath).add("Plugins");
+                mountedPath->basePath);
+            System::Path cPluginPath = System::Path("root://").add(mountedPath->basePath).add("Plugins");
             if (Utils::File::directoryExists(cPluginPath.toString()))
             {
                 for (const std::string& filename :

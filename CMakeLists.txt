@@ -32,6 +32,7 @@ else()
         add_subdirectory(extlibs/tinydir)
     endif()
 endif()
+add_subdirectory(extlibs/platformfolders)
 add_subdirectory(extlibs/dynamicLinker)
 add_subdirectory(extlibs/fswrapper)
 

@@ -1,5 +1,6 @@
 #include <string>
 
+#include <platformfolders/platform_folders.h>
 #include <vili/parser.hpp>
 #include <vld8/validator.hpp>
 
@@ -14,12 +15,12 @@
 
 namespace obe::System
 {
-    std::vector<MountablePath> MountablePath::MountedPaths = std::vector<MountablePath>();
+    MountList MountablePath::MountedPaths;
 
-    MountablePath::MountablePath(MountablePathType pathType, const std::string& basePath,
-        const std::string& prefix, unsigned int priority, bool implicit)
+    MountablePath::MountablePath(MountablePathType pathType, std::string_view basePath,
+        std::string_view prefix, unsigned int priority, bool implicit)
         : pathType(pathType)
-        , basePath(basePath)
+        , basePath(Utils::File::canonicalPath(basePath.data()))
         , prefix(prefix)
         , priority(priority)
         , implicit(implicit)
@@ -41,15 +42,17 @@ namespace obe::System
             throw Exceptions::MissingDefaultMountPoint(EXC_INFO);
         }
 
-        MountablePath workingDirectoryPath(MountablePathType::Path, "", "cwd", 0, false);
+        MountablePath workingDirectoryPath(MountablePathType::Path, "", Prefixes::cwd, 0, false);
         MountablePath implicitCWDPath(MountablePathType::Path, "", "");
         MountablePath executablePath(MountablePathType::Path,
-            Utils::File::getExecutableDirectory(), "exe", 0, false);
+            Utils::File::getExecutableDirectory(), Prefixes::exe, 0, false);
+        MountablePath configPath(MountablePathType::Path, sago::getConfigHome(), Prefixes::cfg, 0, false);
         MountablePath::Mount(workingDirectoryPath);
         MountablePath::Mount(implicitCWDPath);
         MountablePath::Mount(executablePath);
+        MountablePath::Mount(configPath);
 
-        MountablePath rootPath(MountablePathType::Path, "", "root", 0, false);
+        MountablePath rootPath(MountablePathType::Path, "", Prefixes::root, 0, false);
         if (fromCWD)
         {
             rootPath.basePath = workingDirectoryPath.basePath;
@@ -61,11 +64,11 @@ namespace obe::System
         MountablePath::Mount(rootPath);
 
         MountablePath enginePath(
-            MountablePathType::Path, executablePath.basePath, "obe", 0, false);
+            MountablePathType::Path, executablePath.basePath, Prefixes::obe, 0, false);
         MountablePath::Mount(enginePath);
 
         FindResult mountFilePath
-            = Path("root://mount.vili").find(obe::System::PathType::File);
+            = Path(Prefixes::root, "mount.vili").find(obe::System::PathType::File);
         if (!mountFilePath)
         {
             auto stringPaths = MountablePath::StringPaths();
@@ -142,16 +145,16 @@ namespace obe::System
             }
         }
         Debug::Log->info("<MountablePath> List of mounted paths : ");
-        for (MountablePath& currentPath : MountablePath::MountedPaths)
+        for (const auto& currentPath : MountablePath::MountedPaths)
         {
             Debug::Log->info("<MountablePath> MountedPath : '{}' with prefix '{}'",
-                currentPath.basePath, currentPath.prefix);
+                currentPath->basePath, currentPath->prefix);
         }
     }
 
     void MountablePath::Mount(const MountablePath path)
     {
-        MountedPaths.push_back(path);
+        MountedPaths.push_back(std::make_unique<MountablePath>(path));
         Sort();
     }
 
@@ -159,7 +162,7 @@ namespace obe::System
     {
         MountedPaths.erase(
             std::remove_if(MountedPaths.begin(), MountedPaths.end(),
-                [path](MountablePath& mountablePath) { return mountablePath == path; }),
+                [path](const auto& mountablePath) { return *mountablePath == path; }),
             MountedPaths.end());
     }
 
@@ -168,7 +171,7 @@ namespace obe::System
         MountedPaths.clear();
     }
 
-    const std::vector<MountablePath>& MountablePath::Paths()
+    const MountList& MountablePath::Paths()
     {
         return MountedPaths;
     }
@@ -179,7 +182,7 @@ namespace obe::System
         mountedPaths.reserve(MountedPaths.size());
         for (auto& mountedPath : MountedPaths)
         {
-            mountedPaths.push_back(mountedPath.basePath);
+            mountedPaths.push_back(mountedPath->basePath);
         }
         return mountedPaths;
     }
@@ -187,7 +190,29 @@ namespace obe::System
     void MountablePath::Sort()
     {
         std::sort(MountedPaths.begin(), MountedPaths.end(),
-            [](const MountablePath& first, const MountablePath& second)
-            { return first.priority > second.priority; });
+            [](const auto& first, const auto& second)
+            { return first->priority > second->priority; });
+    }
+
+    const MountablePath& MountablePath::FromPrefix(const std::string& prefix)
+    {
+        for (const auto& mount : MountedPaths)
+        {
+            if (mount->prefix == prefix)
+            {
+                return *mount;
+            }
+        }
+        throw Exceptions::UnknownPathPrefix(prefix, GetAllPrefixes(), EXC_INFO);
+    }
+
+    const std::vector<std::string> MountablePath::GetAllPrefixes()
+    {
+        MountList mounts = MountedPaths;
+        std::vector<std::string> allPrefixes;
+            allPrefixes.reserve(mounts.size());
+            std::transform(mounts.begin(), mounts.end(), std::back_inserter(allPrefixes),
+                [](const auto& mount) { return mount->prefix; });
+        return allPrefixes;
     }
 } // namespace obe::System

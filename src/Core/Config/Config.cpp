@@ -6,6 +6,8 @@
 #include <Config/Validators.hpp>
 #include <Debug/Logger.hpp>
 #include <System/Path.hpp>
+#include <Utils/FileUtils.hpp>
+
 
 namespace obe::Config
 {
@@ -15,11 +17,24 @@ namespace obe::Config
     }
     void ConfigurationManager::load()
     {
-        // TODO: Do not modify MountedPaths directly
-        auto mountPoints = System::MountablePath::Paths();
-        std::reverse(mountPoints.begin(), mountPoints.end());
+        System::MountList configMounts;
+        const auto& allMounts = System::MountablePath::Paths();
+        std::set<std::string> canonicalPaths;
+        for (auto mountIt = allMounts.rbegin(); mountIt != allMounts.rend(); ++mountIt)
+        {
+            const std::string basePath
+                = mountIt->get()->basePath;
+            if (canonicalPaths.find(basePath) == canonicalPaths.end())
+            {
+                configMounts.push_back(std::make_shared<System::MountablePath>(
+                    System::MountablePathType::Path, basePath,
+                    mountIt->get()->prefix, 0,
+                    true));
+                canonicalPaths.emplace(basePath);
+            }
+        }
         const auto loadResult
-            = System::Path(mountPoints).set("*://Data/config.cfg.vili").findAll();
+            = System::Path(configMounts).set("*://config.cfg.vili").findAll();
         for (const auto& findResult : loadResult)
         {
             Debug::Log->info("Loading config file from {}", findResult.path());

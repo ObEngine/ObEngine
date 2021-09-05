@@ -50,7 +50,7 @@ namespace obe::System::Bindings
                 "ContextualPathFactory", sol::call_constructor,
                 sol::constructors<obe::System::ContextualPathFactory(const std::string&),
                     obe::System::ContextualPathFactory(const std::string&,
-                        const std::vector<obe::System::MountablePath>&)>());
+                        const MountList&)>());
         bindContextualPathFactory[sol::meta_function::call]
             = &obe::System::ContextualPathFactory::operator();
     }
@@ -93,9 +93,9 @@ namespace obe::System::Bindings
             = SystemNamespace.new_usertype<obe::System::FindResult>("FindResult",
                 sol::call_constructor,
                 sol::constructors<obe::System::FindResult(const std::string&,
-                                      const std::vector<obe::System::MountablePath>&),
+                                      const MountList&),
                     obe::System::FindResult(obe::System::PathType,
-                        const obe::System::MountablePath&, const std::string&,
+                        std::shared_ptr<obe::System::MountablePath>, const std::string&,
                         const std::string&)>());
         bindFindResult["path"] = &obe::System::FindResult::path;
         bindFindResult["mount"] = &obe::System::FindResult::mount;
@@ -141,11 +141,10 @@ namespace obe::System::Bindings
             = SystemNamespace.new_usertype<obe::System::Path>("Path",
                 sol::call_constructor,
                 sol::constructors<obe::System::Path(),
-                    obe::System::Path(const std::vector<obe::System::MountablePath>&),
+                    obe::System::Path(const MountList&),
                     obe::System::Path(const obe::System::Path&),
                     obe::System::Path(std::string_view),
                     obe::System::Path(std::string_view, std::string_view)>());
-        bindPath["operator="] = &obe::System::Path::operator=;
         bindPath["set"] = &obe::System::Path::set;
         bindPath["add"] = &obe::System::Path::add;
         bindPath["last"] = &obe::System::Path::last;

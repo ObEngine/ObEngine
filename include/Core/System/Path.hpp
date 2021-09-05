@@ -18,16 +18,16 @@ namespace obe::System
     {
     private:
         PathType m_type = PathType::All;
-        const MountablePath* m_mount;
+        std::shared_ptr<MountablePath> m_mount;
         std::string m_path;
         std::string m_element;
-        std::vector<MountablePath> m_mounts;
+        MountList m_mounts;
 
         void checkValidity() const;
 
     public:
-        FindResult(const std::string& pathNotFound, const std::vector<MountablePath>& mounts);
-        FindResult(PathType pathType, const MountablePath& mount, const std::string& path,
+        FindResult(const std::string& pathNotFound, const MountList& mounts);
+        FindResult(PathType pathType, std::shared_ptr<MountablePath> mount, const std::string& path,
             const std::string& element);
         [[nodiscard]] const std::string& path() const;
         [[nodiscard]] const MountablePath& mount() const;
@@ -49,9 +49,12 @@ namespace obe::System
     private:
         std::string m_path;
         std::string m_prefix;
-        const std::vector<MountablePath>& m_mounts;
+        // TODO: Change to std::span when available
+        const MountList* m_mounts;
+        MountList m_customMounts;
 
         static std::unordered_map<std::string, FindResult> PathCache;
+        const MountList* copyMountSource(const Path& path);
 
     public:
         /**
@@ -62,7 +65,7 @@ namespace obe::System
          * \brief Build a path with a custom registry of MountablePath that it will be able to search from
          * \param mount A reference containing the mount points the Path should be using
          */
-        Path(const std::vector<MountablePath>& mount);
+        Path(const MountList& mount);
         /**
          * \brief Build a path from an other path (Copy constructor)
          * \param path The Path to build the new Path from
@@ -79,7 +82,6 @@ namespace obe::System
          * \param path Path in std::string_view form
          */
         Path(std::string_view prefix, std::string_view path);
-        Path& operator=(const Path& path);
         /**
          * \brief Replaces Path's value with a new one
          * \param path New value for Path
@@ -119,16 +121,19 @@ namespace obe::System
          * \return The Path in std::string form
          */
         [[nodiscard]] std::string toString() const;
+        Path& operator=(const Path& path);
     };
 
     class ContextualPathFactory
     {
     private:
-        std::vector<System::MountablePath> m_mounts;
+        Path m_base;
+        MountList makeMountList(const std::string& base);
+        MountList makeMountList(const std::string& base, const MountList& customMounts);
     public:
         ContextualPathFactory(const std::string& base);
         ContextualPathFactory(
-            const std::string& base, const std::vector<MountablePath>& customMounts);
+            const std::string& base, const MountList& customMounts);
 
         Path operator()(const std::string& path) const;
     };
