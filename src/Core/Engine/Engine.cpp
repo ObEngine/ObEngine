@@ -248,6 +248,10 @@ namespace obe::Engine
             case sf::Event::Resized:
                 m_window->setWindowSize(event.size.width, event.size.height);
                 break;
+            case sf::Event::JoystickConnected:
+                [[fallthrough]];
+            case sf::Event::JoystickDisconnected:
+                m_input->initializeGamepads();
             case sf::Event::MouseWheelScrolled:
                 [[fallthrough]];
             case sf::Event::MouseButtonPressed:

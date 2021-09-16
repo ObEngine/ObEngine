@@ -63,6 +63,22 @@ namespace obe::Input
         m_name = name;
     }
 
+    InputButton::InputButton(const InputButton& other)
+    {
+        this->reload(other);
+    }
+
+    void InputButton::reload(const InputButton& other)
+    {
+        m_type = other.m_type;
+        m_button = other.m_button;
+        m_returnChar = other.m_returnChar;
+        m_name = other.m_name;
+        m_detectAxis = m_detectAxis;
+        m_gamepadIndex = other.m_gamepadIndex;
+        m_wheelDelta = other.m_wheelDelta;
+    }
+
     sf::Keyboard::Key InputButton::getKey() const
     {
         if (std::holds_alternative<sf::Keyboard::Key>(m_button))

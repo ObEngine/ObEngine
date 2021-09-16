@@ -106,6 +106,10 @@ namespace obe::Input
             std::pair<AxisThresholdDirection, float> detect, const std::string& name);
 
         InputButton(MouseWheelScrollDirection direction, const std::string& name);
+
+        InputButton(const InputButton& other);
+
+        void reload(const InputButton& other);
         /**
          * \brief Get Axis Position value if InputButton is an axis (throws
          *        error otherwise)

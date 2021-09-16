@@ -110,4 +110,16 @@ namespace obe::Input::Exceptions
             this->error("Enum InputType can't have invalid value ({})", enumValue);
         }
     };
+
+    class InvalidGamepadButton : public Exception<InvalidGamepadButton>
+    {
+    public:
+        using Exception::Exception;
+        InvalidGamepadButton(std::string_view gamepadButtonId, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("Gamepad input '{}' is not a valid identifier", gamepadButtonId);
+            this->hint("Gamepad input should look like this : 'GP_<GAMEPAD_ID>_BTN_<BUTTON_ID>' or 'GP_X_AXIS_<AXIS_NAME>_<AXIS_DIRECTION>", gamepadButtonId);
+        }
+    };
 }

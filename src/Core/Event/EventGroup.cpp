@@ -64,6 +64,11 @@ namespace obe::Event
             m_identifier, eventName, this->getEventsNames(), EXC_INFO);
     }
 
+    bool EventGroup::contains(const std::string& eventName)
+    {
+        return (m_events.find(eventName) != m_events.end());
+    }
+
     void EventGroup::remove(const std::string& eventName)
     {
         Debug::Log->debug("<EventGroup> Remove Event '{}' from EventGroup '{}'",

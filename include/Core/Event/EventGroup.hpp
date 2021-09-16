@@ -103,7 +103,13 @@ namespace obe::Event
          * \return A pointer to the Event if found (throws an error otherwise)
          */
         template <class EventType>
-        [[nodiscard]] Event<EventType>& get(const std::string& eventName = "");
+        [[nodiscard]] Event<EventType>& get(const std::string& eventName);
+        /**
+         * \brief Checks whether the EventGroup contains an Event with a given name or not
+         * \param eventName Name of the Event to check the existence of
+         * \return true if the EventGroup contains an Event with the given name, false otherwise
+         */
+        [[nodicard]] bool contains(const std::string& eventName);
         /**
          * \brief Creates a new Event in the EventGroup
          * \param eventName Name of the Event to create
