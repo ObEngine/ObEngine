@@ -1,24 +1,73 @@
 #include <vili/node.hpp>
 
+#include <Utils/VectorUtils.hpp>
+
 namespace obe::Config::Validators
 {
     vili::node ConfigValidator()
     {
-        std::string actionRe = std::string(
-            "((Idle|Hold|Pressed|Released)\\s*:\\s*(Add|Backslash|Backspace|Comma|Dash|"
-            "Delete|"
-            "Divide|End|Equal|Escape|Home|Insert|LAlt|LBracket|LControl|LShift|Menu|"
-            "Multiply|PageDown|PageUp|Pause|Period|Quote|RAlt|RBracket|RControl|Return|"
-            "RShift|RSystem|Semicolon|Slash|Space|Subtract|Tab|Tilde|Left|Right|Up|Down|"
-            "LMB|MMB|RMB|MouseWheelLeft|MouseWheelRight|MouseWheelUp|MouseWheelDown|"
-            "NumPad[0-9]|F(1[0-2]|[1-9])|[A-Z]|[0-9]))(\\s*\\+\\s*(Idle|Hold|"
-            "Pressed|Released)\\s*:\\s*(Add|Backslash|Backspace|Comma|Dash|Delete|Divide|"
-            "End|"
-            "Equal|Escape|Home|Insert|LAlt|LBracket|LControl|LShift|Menu|Multiply|"
-            "PageDown|PageUp|Pause|Period|Quote|RAlt|RBracket|RControl|Return|RShift|"
-            "RSystem|Semicolon|Slash|Space|Subtract|Tab|Tilde|Left|Right|Up|Down|LMB|MMB|"
-            "RMB|MouseWheelLeft|MouseWheelRight|MouseWheelUp|MouseWheelDown|NumPad[0-9]|"
-            "F(1[0-2]|[1-9])|[A-Z]|[0-9]))*");
+        // clang-format off
+        std::vector<std::string> inputList = {
+            "Add",
+            "Backslash",
+            "Backspace",
+            "Comma",
+            "Dash",
+            "Delete",
+            "Divide",
+            "End",
+            "Equal",
+            "Escape",
+            "Home",
+            "Insert",
+            "LAlt",
+            "LBracket",
+            "LControl",
+            "LShift",
+            "Menu",
+            "Multiply",
+            "PageDown",
+            "PageUp",
+            "Pause",
+            "Period",
+            "Quote",
+            "RAlt",
+            "RBracket",
+            "RControl",
+            "Return",
+            "RShift",
+            "RSystem",
+            "Semicolon",
+            "Slash",
+            "Space",
+            "Subtract",
+            "Tab",
+            "Tilde",
+            "Left",
+            "Right",
+            "Up",
+            "Down",
+            "LMB",
+            "MMB",
+            "RMB",
+            "MouseWheelLeft",
+            "MouseWheelRight",
+            "MouseWheelUp",
+            "MouseWheelDown"
+            "NumPad[0-9]",
+            "F(1[0-2]|[1-9])",
+            "[A-Z]",
+            "[0-9]",
+            "GP_[0-9]+_BTN_[0-9]+",
+            "GP_[0-9]+_AXIS_(X|Y|Z|R|U|PovX|PovY)_(LEFT|UP|RIGHT|DOWN)"
+        };
+        std::string allInputs = Utils::Vector::join(inputList, "|");
+        // clang-format on
+        std::string actionRe = fmt::format("((Idle|Hold|Pressed|Released)"
+                                           "\\s*:\\s*({0}))(\\s*\\+\\s*"
+                                           "(Idle|Hold|Pressed|Released)"
+                                           "\\s*:\\s*({0}))*",
+            allInputs);
 
         // clang-format off
         vili::node ResolutionDimensionValidator = vili::object {
