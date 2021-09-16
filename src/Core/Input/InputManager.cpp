@@ -378,6 +378,25 @@ namespace obe::Input
                         }
                     }
                     const std::string keyId = stateAndButton[1];
+                    // Detect gamepad button / axis and initialize whole gamepad
+                    if (keyId.substr(0, 3) == "GP_")
+                    {
+                        auto gamepadParts = Utils::String::split(keyId, "_");
+                        unsigned int gamepadIndex;
+                        try
+                        {
+                            gamepadIndex = std::stoi(gamepadParts[1]);
+                        }
+                        catch (const std::invalid_argument& exc)
+                        {
+                            throw Exceptions::InvalidGamepadButton(keyId, EXC_INFO);
+                        }
+                        catch (const std::out_of_range& exc)
+                        {
+                            throw Exceptions::InvalidGamepadButton(keyId, EXC_INFO);
+                        }
+                        this->initializeGamepad(gamepadIndex);
+                    }
                     if (m_inputs.find(keyId) != m_inputs.end())
                     {
                         InputButton& button = this->getInput(keyId);

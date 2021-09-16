@@ -7,7 +7,7 @@ namespace obe::Input
     void InputManager::createInputMap()
     {
         // Gamepad
-        std::thread gamepadLoaderThr([this]() { this->createGamepadMap(); });
+        std::thread gamepadLoaderThr([this]() { this->initializeGamepads(); });
 
         // Letters
         m_inputs["A"]
@@ -232,81 +232,110 @@ namespace obe::Input
         gamepadLoaderThr.join();
     }
 
-    void InputManager::createGamepadMap()
+    void InputManager::initializeGamepad(unsigned int gamepadIndex)
     {
-        auto cKey = m_inputs.begin();
+        auto gamepadInfo = sf::Joystick::getIdentification(gamepadIndex);
+        Debug::Log->debug("[InputManager] Initializing Gamepad {} : {}", gamepadIndex, gamepadInfo.name.toAnsiString());
+        bool useEveryAxis = true;
+        unsigned int buttonCount = sf::Joystick::ButtonCount;
+        if (sf::Joystick::isConnected(gamepadIndex))
+        {
+            useEveryAxis = false;
+            buttonCount = sf::Joystick::getButtonCount(gamepadIndex);
+        }
+
+        auto setOrResetButton = [this](const std::string& name, const InputButton& button) {
+            if (m_inputs.find(name) == m_inputs.end())
+            {
+                m_inputs[name] = std::make_unique<InputButton>(button);
+            }
+            else
+            {
+                m_inputs.at(name)->reload(button);
+            }
+        };
+
+        for (unsigned int buttonIndex = 0;
+             buttonIndex < buttonCount; buttonIndex++)
+        {
+            std::string gamepadButtonName = "GP_" + std::to_string(gamepadIndex) + "_BTN_"
+                + std::to_string(buttonIndex);
+            setOrResetButton(gamepadButtonName, InputButton(
+                gamepadIndex, buttonIndex, gamepadButtonName));
+        }
+
+        auto addHorizontalAxis = [&gamepadIndex, useEveryAxis, setOrResetButton, this](
+                                     sf::Joystick::Axis axis,
+                                     const std::string& axisName,
+                                     bool invertAxis = false) {
+            if (useEveryAxis || sf::Joystick::hasAxis(gamepadIndex, axis))
+            {
+                const std::string gamepadAxisName
+                    = "GP_" + std::to_string(gamepadIndex) + "_AXIS_" + axisName;
+                std::pair<AxisThresholdDirection, float> leftX(
+                    AxisThresholdDirection::Less, -80);
+                std::pair<AxisThresholdDirection, float> rightX(
+                    AxisThresholdDirection::More, 80);
+                std::string leftAxisName = (!invertAxis) ? gamepadAxisName + "_LEFT"
+                                                         : gamepadAxisName + "_RIGHT";
+                std::string rightAxisName = (!invertAxis) ? gamepadAxisName + "_RIGHT"
+                                                          : gamepadAxisName + "_LEFT";
+                setOrResetButton(leftAxisName, InputButton(
+                    gamepadIndex, axis, leftX, leftAxisName));
+                setOrResetButton(rightAxisName, InputButton(
+                    gamepadIndex, axis, rightX, rightAxisName));
+            }
+        };
+        auto addVerticalAxis = [&gamepadIndex, useEveryAxis, setOrResetButton, this](
+                                   sf::Joystick::Axis axis,
+                                   const std::string& axisName, bool invertAxis = false) {
+            if (useEveryAxis || sf::Joystick::hasAxis(gamepadIndex, axis))
+            {
+                const std::string gamepadAxisName
+                    = "GP_" + std::to_string(gamepadIndex) + "_AXIS_" + axisName;
+                std::pair<AxisThresholdDirection, float> upY(
+                    AxisThresholdDirection::Less, -80);
+                std::pair<AxisThresholdDirection, float> downY(
+                    AxisThresholdDirection::More, 80);
+                std::string upAxisName = (!invertAxis) ? gamepadAxisName + "_UP"
+                                                         : gamepadAxisName + "_DOWN";
+                std::string downAxisName = (!invertAxis) ? gamepadAxisName + "_DOWN"
+                                                          : gamepadAxisName + "_UP";
+                setOrResetButton(upAxisName, InputButton(gamepadIndex, axis, upY, upAxisName));
+                setOrResetButton(downAxisName, InputButton(
+                    gamepadIndex, axis, downY, downAxisName));
+            }
+        };
+        addHorizontalAxis(sf::Joystick::Axis::X, "X");
+        addVerticalAxis(sf::Joystick::Axis::Y, "Y");
+        addHorizontalAxis(sf::Joystick::Axis::PovX, "PovX");
+        addVerticalAxis(sf::Joystick::Axis::PovY, "PovY", true);
+        addHorizontalAxis(sf::Joystick::Axis::U, "U");
+        addVerticalAxis(sf::Joystick::Axis::V, "V");
+        addVerticalAxis(sf::Joystick::Axis::R, "R");
+        addHorizontalAxis(sf::Joystick::Axis::Z, "Z", true);
+    }
+
+    void InputManager::initializeGamepads()
+    {
+        // TODO: Improve this mechanism, we can't remove existing input due to orphan InputButton pointers
+        /*auto cKey = m_inputs.begin();
         while (cKey != m_inputs.end())
         {
             if (cKey->first.rfind("GP_", 0) == 0)
                 cKey = m_inputs.erase(cKey);
             else
                 ++cKey;
-        }
+        }*/
         sf::Joystick::update();
         for (int gamepadIndex = 0; gamepadIndex < sf::Joystick::Count; gamepadIndex++)
         {
-            for (unsigned int buttonIndex = 0;
-                 buttonIndex < sf::Joystick::getButtonCount(gamepadIndex); buttonIndex++)
+            if (sf::Joystick::isConnected(gamepadIndex))
             {
-                std::string gamepadButtonName = "GP_" + std::to_string(gamepadIndex)
-                    + "_BTN_" + std::to_string(buttonIndex);
-                m_inputs[gamepadButtonName] = std::make_unique<InputButton>(
-                    gamepadIndex, buttonIndex, gamepadButtonName);
-            }
-            auto addHorizontalAxis = [&gamepadIndex, this](sf::Joystick::Axis axis,
-                                         const std::string& axisName) {
-                if (sf::Joystick::hasAxis(gamepadIndex, axis))
-                {
-                    const std::string gamepadAxisName
-                        = "GP_" + std::to_string(gamepadIndex) + "_AXIS_" + axisName;
-                    std::pair<AxisThresholdDirection, float> leftX(
-                        AxisThresholdDirection::Less, -80);
-                    std::pair<AxisThresholdDirection, float> rightX(
-                        AxisThresholdDirection::More, 80);
-                    m_inputs[gamepadAxisName + "_LEFT"] = std::make_unique<InputButton>(
-                        gamepadIndex, axis, leftX, gamepadAxisName + "_LEFT");
-                    m_inputs[gamepadAxisName + "_RIGHT"] = std::make_unique<InputButton>(
-                        gamepadIndex, axis, rightX, gamepadAxisName + "_RIGHT");
-                }
-            };
-            auto addVerticalAxis = [&gamepadIndex, this](sf::Joystick::Axis axis,
-                                       const std::string& axisName) {
-                if (sf::Joystick::hasAxis(gamepadIndex, axis))
-                {
-                    const std::string gamepadAxisName
-                        = "GP_" + std::to_string(gamepadIndex) + "_AXIS_" + axisName;
-                    std::pair<AxisThresholdDirection, float> upY(
-                        AxisThresholdDirection::Less, -80);
-                    std::pair<AxisThresholdDirection, float> downY(
-                        AxisThresholdDirection::More, 80);
-                    m_inputs[gamepadAxisName + "_UP"] = std::make_unique<InputButton>(
-                        gamepadIndex, axis, upY, gamepadAxisName + "_UP");
-                    m_inputs[gamepadAxisName + "_DOWN"] = std::make_unique<InputButton>(
-                        gamepadIndex, axis, downY, gamepadAxisName + "_DOWN");
-                }
-            };
-            addHorizontalAxis(sf::Joystick::Axis::X, "X");
-            addVerticalAxis(sf::Joystick::Axis::Y, "Y");
-            addHorizontalAxis(sf::Joystick::Axis::PovX, "PovX");
-            addVerticalAxis(sf::Joystick::Axis::PovY, "PovY");
-            addHorizontalAxis(sf::Joystick::Axis::U, "U");
-            addVerticalAxis(sf::Joystick::Axis::R, "R");
-            if (sf::Joystick::hasAxis(gamepadIndex, sf::Joystick::Axis::Z))
-            {
-                const std::string gamepadAxisName
-                    = "GP_" + std::to_string(gamepadIndex) + "_AXIS_Z";
-                std::pair<AxisThresholdDirection, float> leftT(
-                    AxisThresholdDirection::More, 80);
-                std::pair<AxisThresholdDirection, float> rightT(
-                    AxisThresholdDirection::Less, -80);
-                m_inputs[gamepadAxisName + "_LEFT"]
-                    = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::Z,
-                        leftT, gamepadAxisName + "_LEFT");
-                m_inputs[gamepadAxisName + "_RIGHT"]
-                    = std::make_unique<InputButton>(gamepadIndex, sf::Joystick::Axis::Z,
-                        rightT, gamepadAxisName + "_RIGHT");
+                this->initializeGamepad(gamepadIndex);
             }
         }
+        this->createEvents();
     }
 
     void InputManager::createEvents()
@@ -314,20 +343,24 @@ namespace obe::Input
         for (auto const& [key, val] : m_inputs)
         {
             Input::InputButton* button = val.get();
-            e_inputs->add<Events::Keys::StateChanged>(button->getName());
-            e_inputs->onAddListener(button->getName(),
-                [button, this](Event::ListenerChangeState, const std::string&) {
-                    m_key_monitors.push_back(this->monitor(*button));
-                });
-            e_inputs->onRemoveListener(button->getName(),
-                [button, this](Event::ListenerChangeState, const std::string&) {
-                    const auto position = std::find_if(m_key_monitors.begin(),
-                        m_key_monitors.end(), [button](const auto& monitor) {
-                            return &monitor->getButton() == button;
-                        });
-                    if (position != m_key_monitors.end())
-                        m_key_monitors.erase(position);
-                });
+
+            if (!e_inputs->contains(button->getName()))
+            {
+                e_inputs->add<Events::Keys::StateChanged>(button->getName());
+                e_inputs->onAddListener(button->getName(),
+                    [button, this](Event::ListenerChangeState, const std::string&) {
+                        m_key_monitors.push_back(this->monitor(*button));
+                    });
+                e_inputs->onRemoveListener(button->getName(),
+                    [button, this](Event::ListenerChangeState, const std::string&) {
+                        const auto position = std::find_if(m_key_monitors.begin(),
+                            m_key_monitors.end(), [button](const auto& monitor) {
+                                return &monitor->getButton() == button;
+                            });
+                        if (position != m_key_monitors.end())
+                            m_key_monitors.erase(position);
+                    });
+            }
         }
     }
 

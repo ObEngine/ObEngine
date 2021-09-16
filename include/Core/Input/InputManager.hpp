@@ -27,7 +27,6 @@ namespace obe::Input
         std::vector<InputAction*> m_currentActions {};
         bool isActionCurrentlyInUse(const std::string& actionId);
         void createInputMap();
-        void createGamepadMap();
         void createEvents();
         [[nodiscard]] std::vector<std::string> getAllInputButtonNames() const;
 
@@ -121,5 +120,8 @@ namespace obe::Input
          * \nobind
          */
         InputCombination makeCombination(const std::string& code);
+
+        void initializeGamepads();
+        void initializeGamepad(unsigned int gamepadIndex);
     };
 } // namespace obe::Input
