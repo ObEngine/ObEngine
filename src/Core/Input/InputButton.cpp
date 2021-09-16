@@ -74,7 +74,7 @@ namespace obe::Input
         m_button = other.m_button;
         m_returnChar = other.m_returnChar;
         m_name = other.m_name;
-        m_detectAxis = m_detectAxis;
+        m_detectAxis = other.m_detectAxis;
         m_gamepadIndex = other.m_gamepadIndex;
         m_wheelDelta = other.m_wheelDelta;
     }
