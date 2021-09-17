@@ -30,7 +30,7 @@ namespace obe::System
     bool MountablePath::operator==(const MountablePath& other) const
     {
         return (this->basePath == other.basePath && this->priority == other.priority
-            && this->pathType == other.pathType);
+            && this->pathType == other.pathType && this->prefix == other.prefix);
     }
 
     void MountablePath::LoadMountFile(bool fromCWD, bool fromExe)
@@ -52,23 +52,23 @@ namespace obe::System
         MountablePath::Mount(executablePath);
         MountablePath::Mount(configPath);
 
-        MountablePath rootPath(MountablePathType::Path, "", Prefixes::root, 0, false);
+        MountablePath basePath(MountablePathType::Path, "", Prefixes::base, 0, false);
         if (fromCWD)
         {
-            rootPath.basePath = workingDirectoryPath.basePath;
+            basePath.basePath = workingDirectoryPath.basePath;
         }
         else
         {
-            rootPath.basePath = executablePath.basePath;
+            basePath.basePath = executablePath.basePath;
         }
-        MountablePath::Mount(rootPath);
+        MountablePath::Mount(basePath);
 
         MountablePath enginePath(
             MountablePathType::Path, executablePath.basePath, Prefixes::obe, 0, false);
         MountablePath::Mount(enginePath);
 
         FindResult mountFilePath
-            = Path(Prefixes::root, "mount.vili").find(obe::System::PathType::File);
+            = Path(Prefixes::base, "mount.vili").find(obe::System::PathType::File);
         if (!mountFilePath)
         {
             auto stringPaths = MountablePath::StringPaths();
@@ -105,7 +105,11 @@ namespace obe::System
         }
         vili::validator::validate_tree(
             Config::Validators::MountValidator(), mountedPaths);
-        for (auto [pathId, path] : mountedPaths.at("Mount").items())
+        if (mountedPaths.contains("project"))
+        {
+            Project::Load(mountedPaths.at("project"), "root", 0);
+        }
+        for (auto [pathId, path] : mountedPaths.at("mounts").items())
         {
             const std::string currentType = path.at("type");
             std::string currentPath = path.at("path");
@@ -154,7 +158,24 @@ namespace obe::System
 
     void MountablePath::Mount(const MountablePath path)
     {
-        MountedPaths.push_back(std::make_unique<MountablePath>(path));
+        auto pathCmp = [&path](const auto& mountedPath)
+        {
+            return path == *mountedPath;
+        };
+        bool pathAlreadyExists = std::find_if(MountedPaths.begin(), MountedPaths.end(), pathCmp)
+            != MountedPaths.end();
+        if (pathAlreadyExists)
+        {
+            Debug::Log->warn(
+                "[MountablePath] Can't Mount the same path twice: MountablePath(prefix={}, path={}, priority={}, implicit={})",
+                path.prefix,
+                path.basePath,
+                path.priority,
+                path.implicit
+            );
+            return;
+        }
+        MountedPaths.push_back(std::make_shared<MountablePath>(path));
         Sort();
     }
 

@@ -71,6 +71,7 @@ namespace obe::System::Project
 
         // Metadata
         std::string m_name;
+        std::string m_version;
         std::vector<std::string> m_authors;
         std::string m_description;
         std::set<std::string> m_keywords;
@@ -78,7 +79,11 @@ namespace obe::System::Project
         std::string m_license;
         ProjectURLs m_urls;
         MountList m_mounts;
+
+    protected:
+
     public:
+        Project();
         /**
          * \brief Dumps the content of the Project to a vili node
          */
@@ -88,6 +93,10 @@ namespace obe::System::Project
          * \param data vili node containing the data of the Project
          */
         void load(const vili::node& data) override;
+
         void loadFromFile(const std::string& path);
+
+        void mount();
+        void unmount();
     };
 } // namespace obe::System::Project

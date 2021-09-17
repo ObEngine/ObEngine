@@ -29,7 +29,7 @@ namespace obe::Config
         patch = std::stoi(parts[2]);
     }
 
-    constexpr std::string Version::string() const
+    std::string Version::string() const
     {
         return std::to_string(major) + "." + std::to_string(minor) + "."
             + std::to_string(patch);

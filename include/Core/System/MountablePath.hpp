@@ -12,7 +12,7 @@ namespace obe::System
         constexpr std::string_view cwd = "cwd";
         constexpr std::string_view exe = "exe";
         constexpr std::string_view cfg = "cfg";
-        constexpr std::string_view root = "root";
+        constexpr std::string_view base = "base";
     }
 
     /**

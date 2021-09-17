@@ -34,8 +34,11 @@ namespace obe::System::Project
             "<Project> Loading Project '{0}' with priority {1}", projectName, priority);
         if (ProjectExists(projectName))
         {
-            MountablePath::Mount(MountablePath(MountablePathType::Project,
-                GetProjectLocation(projectName), prefix, priority));
+            const std::string projectLocation = GetProjectLocation(projectName);
+            Project project;
+            project.loadFromFile(projectLocation);
+            project.mount();
+            MountablePath::Mount(MountablePath(MountablePathType::Project, projectLocation, prefix, priority));
             return true;
         }
         throw Exceptions::UnknownProject(projectName, ListProjects(), EXC_INFO);
@@ -51,6 +54,41 @@ namespace obe::System::Project
             projectsNames.push_back(projectName);
         }
         return projectsNames;
+    }
+
+    vili::node ProjectURLs::dump() const
+    {
+        return vili::object {
+            {"homepage", homepage},
+            {"issues", issues},
+            {"readme", readme},
+            {"documentation", documentation},
+            {"license", license}
+        };
+    }
+
+    void ProjectURLs::load(const vili::node& data)
+    {
+        if (data.contains("homepage"))
+        {
+            homepage = data.at("homepage");
+        }
+        if (data.contains("issues"))
+        {
+            issues = data.at("issues");
+        }
+        if (data.contains("readme"))
+        {
+            readme = data.at("readme");
+        }
+        if (data.contains("documentation"))
+        {
+            documentation = data.at("documentation");
+        }
+        if (data.contains("license"))
+        {
+            license = data.at("license");
+        }
     }
 
     vili::node Project::dump() const
@@ -87,11 +125,96 @@ namespace obe::System::Project
         try
         {
             vili::validator::validate_tree(validator, data);
+
+            m_id = data.at("id");
+            m_name = data.at("name");
+            m_source = data.at("source");
+            m_version = data.at("version");
+            m_obengineVersion = data.at("obengine_version").as_string();
+
+            if (data.contains("authors"))
+            {
+                for (const auto& author : data.at("authors").as<vili::array>())
+                {
+                    m_authors.push_back(author);
+                }
+            }
+            if (data.contains("description"))
+            {
+                m_description = data.at("description");
+            }
+            if (data.contains("keywords"))
+            {
+                for (const auto& keyword : data.at("keywords").as<vili::array>())
+                {
+                    m_keywords.emplace(keyword);
+                }
+            }
+            if (data.contains("categories"))
+            {
+                for (const auto& category : data.at("categories").as<vili::array>())
+                {
+                    m_categories.emplace(category);
+                }
+            }
+            if (data.contains("license"))
+            {
+                m_license = data.at("license");
+            }
+            if (data.contains("include"))
+            {
+                for (const auto& include : data.at("include").as<vili::array>())
+                {
+                    m_include.push_back(include);
+                }
+            }
+            if (data.contains("exclude"))
+            {
+                for (const auto& exclude : data.at("exclude").as<vili::array>())
+                {
+                    m_include.push_back(exclude);
+                }
+            }
+            if (data.contains("mounts"))
+            {
+                for (const auto& [mountName, mount] : data.at("mounts").items())
+                {
+                    if (mount.is_string())
+                    {
+                        m_mounts.push_back(std::make_shared<MountablePath>(
+                            MountablePathType::Path, mount, mountName));
+                    }
+                    else if (mount.is_object())
+                    {
+                        int priority = 0;
+                        bool implicit = false;
+                        const std::string mountPath = mount.at("path");
+                        if (mount.contains("priority"))
+                        {
+                            priority = mount.at("priority");
+                        }
+                        if (mount.contains("implicit"))
+                        {
+                            implicit = mount.at("implicit");
+                        }
+                        m_mounts.push_back(std::make_shared<MountablePath>(
+                            MountablePathType::Path, mountPath, mountName, priority, implicit));
+                    }
+                }
+            }
+            if (data.contains("urls"))
+            {
+                m_urls.load(data.at("urls"));
+            }
         }
         catch (const vili::exceptions::base_exception& e)
         {
             throw Exceptions::InvalidProjectFile("<?>", EXC_INFO).nest(e);
         }
+    }
+
+    Project::Project() : m_obengineVersion(0, 1, 0)
+    {
     }
 
     void Project::loadFromFile(const std::string& path)
@@ -101,10 +224,27 @@ namespace obe::System::Project
         try
         {
             vili::validator::validate_tree(validator, project);
+            this->load(project);
         }
         catch (const vili::exceptions::base_exception& e)
         {
             throw Exceptions::InvalidProjectFile(path, EXC_INFO).nest(e);
+        }
+    }
+
+    void Project::mount()
+    {
+        for (const auto& mount : m_mounts)
+        {
+            MountablePath::Mount(*mount);
+        }
+    }
+
+    void Project::unmount()
+    {
+        for (const auto& mount : m_mounts)
+        {
+            MountablePath::Unmount(*mount);
         }
     }
 } // namespace obe::System::Project

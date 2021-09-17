@@ -45,13 +45,40 @@ namespace obe::Config::Validators
         };
 
         vili::object mounts = vili::object {
-            {"type", vili::object_typename},
-            {"optional", true},
+            {"type", "union"},
             {
-                "items", vili::object {
-                    {"type", vili::string_typename}
+                "types", vili::array {
+                    vili::object {
+                        {"type", vili::object_typename},
+                        {
+                            "properties", vili::object {
+                                {
+                                    "path", vili::object {
+                                        {"type", vili::string_typename}
+                                    }
+                                },
+                                {
+                                    "priority", vili::object {
+                                        {"type", vili::integer_typename},
+                                        {"optional", true}
+                                    }
+                                },
+                                {
+                                    "implicit", vili::object {
+                                        {"type", vili::boolean_typename},
+                                        {"optional", true}
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    vili::object {
+                        {"type", vili::string_typename},
+                    }
                 }
-            }
+            },
+            {"optional", true},
+
         };
 
         return vili::object {
@@ -63,6 +90,23 @@ namespace obe::Config::Validators
             {
                 "name", vili::object {
                     {"type", vili::string_typename}
+                },
+            },
+            {
+                "source", vili::object {
+                    {"type", vili::string_typename},
+                },
+            },
+            {
+                "version", vili::object {
+                    {"type", vili::string_typename},
+                    {"regex", "\\d+\\.\\d+\\.\\d+"}
+                },
+            },
+            {
+                "obengine_version", vili::object {
+                    {"type", vili::string_typename},
+                    {"regex", "\\d+\\.\\d+\\.\\d+"}
                 },
             },
             {
@@ -78,12 +122,6 @@ namespace obe::Config::Validators
                 "description", vili::object {
                     {"type", vili::string_typename},
                     {"optional", true}
-                },
-            },
-            {
-                "obengine_version", vili::object {
-                    {"type", vili::string_typename},
-                    {"regex", "\\d+\\.\\d+\\.\\d+"}
                 },
             },
             {
@@ -126,11 +164,6 @@ namespace obe::Config::Validators
                         {"type", vili::string_typename}
                     }},
                     {"optional", true}
-                },
-            },
-            {
-                "source", vili::object {
-                    {"type", vili::string_typename},
                 },
             },
             {

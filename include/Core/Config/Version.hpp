@@ -16,7 +16,7 @@ namespace obe::Config
             , minor(version_minor)
             , patch(version_patch) {};
         Version(const std::string& str);
-        constexpr std::string string() const;
+        [[nodiscard]] std::string string() const;
     };
 
     inline constexpr bool operator==(const Version& lhs, const Version& rhs)

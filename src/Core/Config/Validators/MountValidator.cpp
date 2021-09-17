@@ -7,8 +7,15 @@ namespace obe::Config::Validators
         // clang-format off
         return vili::object {
             {
-                "Mount", vili::object {
+                "project", vili::object {
+                    {"type", vili::string_typename},
+                    {"optional", true}
+                }
+            },
+            {
+                "mounts", vili::object {
                     {"type", vili::object_typename},
+                    {"optional", true},
                     {
                         "items", vili::object {
                             {"type", vili::object_typename},
