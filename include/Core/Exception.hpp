@@ -54,12 +54,14 @@ namespace obe
     {
     protected:
         std::string m_message;
+        std::vector<std::exception> m_traceback;
     public:
         BaseException() = default;
         explicit BaseException(const std::exception& e) noexcept;
         template <class... Args> void error(Args&&... args);
         template <class... Args> void hint(Args&&... args);
         [[nodiscard]] const char* what() const noexcept override;
+        std::vector<std::exception> traceback() const;
     };
 
     template <class ExceptionType>
@@ -69,6 +71,7 @@ namespace obe
         using BaseException::BaseException;
         explicit Exception(DebugInfo info);
         ExceptionType nest(const std::exception& exception);
+        ExceptionType nest(BaseException& exception);
     };
 
     inline BaseException::BaseException(const std::exception& e) noexcept
@@ -106,10 +109,32 @@ namespace obe
         return m_message.c_str();
     }
 
+    inline std::vector<std::exception> BaseException::traceback() const
+    {
+        return m_traceback;
+    }
+
     template <class ExceptionType>
     ExceptionType Exception<ExceptionType>::nest(const std::exception& exception)
     {
         ExceptionType nestedException(*this);
+        nestedException.m_traceback = std::vector
+        {
+            std::exception(exception.what())
+        };
+        nestedException.m_message += "  Cause:\n";
+        nestedException.m_message
+            += "    " + Utils::String::replace(exception.what(), "\n", "\n    ");
+        return nestedException;
+    }
+
+    template <class ExceptionType>
+    ExceptionType Exception<ExceptionType>::nest(BaseException& exception)
+    {
+        ExceptionType nestedException(*this);
+        const std::vector<const std::exception*> traceback = exception.traceback();
+        nestedException.m_traceback = std::vector(traceback.begin(), traceback.end());
+        nestedException.m_traceback.push_back(std::exception(exception.what()));
         nestedException.m_message += "  Cause:\n";
         nestedException.m_message
             += "    " + Utils::String::replace(exception.what(), "\n", "\n    ");

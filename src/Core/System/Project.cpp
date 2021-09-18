@@ -234,9 +234,16 @@ namespace obe::System::Project
         {
             this->load(project);
         }
-        catch (const vili::exceptions::base_exception& e)
+        catch (const Exceptions::InvalidProjectFile& e)
         {
-            throw Exceptions::InvalidProjectFile(path, EXC_INFO).nest(e);
+            const std::vector<std::exception> traceback = e.traceback();
+            if (!traceback.empty())
+            {
+                const std::exception underlying_exception = traceback.back();
+                throw Exceptions::InvalidProjectFile(path, EXC_INFO)
+                    .nest(underlying_exception);
+            }
+            throw Exceptions::InvalidProjectFile(path, EXC_INFO);
         }
     }
 

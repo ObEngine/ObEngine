@@ -168,7 +168,7 @@ namespace obe::System
         }
         if (mountedPaths.contains("project"))
         {
-            Project::Load(mountedPaths.at("project"), "root", 0);
+            Project::Load(mountedPaths.at("project"), "root", 2);
         }
         Debug::Log->info("<MountablePath> List of mounted paths : ");
         for (const auto& currentPath : MountablePath::MountedPaths)

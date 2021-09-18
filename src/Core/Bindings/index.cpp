@@ -306,7 +306,6 @@ namespace obe::Bindings
 
         obe::Script::Exceptions::Bindings::LoadClassInvalidScript(state);
         obe::Script::Exceptions::Bindings::LoadClassNoSuchComponent(state);
-        obe::Script::Exceptions::Bindings::LoadClassObjectDefinitionBlockNotFound(state);
         obe::Script::Exceptions::Bindings::LoadClassObjectDefinitionNotFound(state);
         obe::Script::Exceptions::Bindings::LoadClassScriptFileNotFound(state);
         obe::Script::Exceptions::Bindings::LoadClassWrongSourceAttributeType(state);

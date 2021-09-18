@@ -39,22 +39,6 @@ namespace obe::Script::Exceptions
         }
     };
 
-    class ObjectDefinitionBlockNotFound : public Exception<ObjectDefinitionBlockNotFound>
-    {
-    public:
-        using Exception::Exception;
-        ObjectDefinitionBlockNotFound(std::string_view objectType, DebugInfo info)
-            : Exception(info)
-        {
-            this->error("Impossible to find a block named '{0}' in "
-                        "Data/GameObjects/{0}/{0}.obj.vili",
-                objectType);
-            this->hint("Try to edit Data/GameObjects/{0}/{0}.obj.vili and add a "
-                       "top-level block named {0}",
-                objectType);
-        }
-    };
-
     class ScriptFileNotFound : public Exception<ScriptFileNotFound>
     {
     public:
