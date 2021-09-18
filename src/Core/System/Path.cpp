@@ -133,7 +133,8 @@ namespace obe::System
     }
 
     Path::Path(const MountList& mount)
-        : m_mounts(&m_customMounts), m_customMounts(mount)
+        : m_mounts(&m_customMounts)
+        , m_customMounts(mount)
     {
     }
 
@@ -209,8 +210,7 @@ namespace obe::System
     std::vector<FindResult> Path::list(PathType pathType) const
     {
         std::vector<FindResult> results;
-        const MountList validMounts
-            = filterMountablePathsWithPrefix(*m_mounts, m_prefix);
+        const MountList validMounts = filterMountablePathsWithPrefix(*m_mounts, m_prefix);
         for (const auto& mountedPath : validMounts)
         {
             std::string fullPath = joinPath(mountedPath->basePath, m_path);
@@ -288,8 +288,7 @@ namespace obe::System
     std::vector<FindResult> Path::findAll(PathType pathType) const
     {
         std::vector<FindResult> results;
-        const MountList validMounts
-            = filterMountablePathsWithPrefix(*m_mounts, m_prefix);
+        const MountList validMounts = filterMountablePathsWithPrefix(*m_mounts, m_prefix);
         for (const auto& mountedPath : validMounts)
         {
             const std::string fullPath = joinPath(mountedPath->basePath, m_path);
@@ -321,6 +320,11 @@ namespace obe::System
         return *this;
     }
 
+    Path::operator std::string() const
+    {
+        return this->toString();
+    }
+
     MountList ContextualPathFactory::makeMountList(const std::string& base)
     {
         MountList customMounts = MountablePath::Paths();
@@ -329,8 +333,8 @@ namespace obe::System
         return customMounts;
     }
 
-    MountList ContextualPathFactory::makeMountList(const std::string& base,
-        const MountList& customMounts)
+    MountList ContextualPathFactory::makeMountList(
+        const std::string& base, const MountList& customMounts)
     {
         MountList _customMounts = customMounts;
         _customMounts.push_back(std::make_unique<System::MountablePath>(
@@ -338,12 +342,14 @@ namespace obe::System
         return _customMounts;
     }
 
-    ContextualPathFactory::ContextualPathFactory(const std::string& base) : m_base(makeMountList(base))
+    ContextualPathFactory::ContextualPathFactory(const std::string& base)
+        : m_base(makeMountList(base))
     {
     }
 
     ContextualPathFactory::ContextualPathFactory(
-        const std::string& base, const MountList& customMounts) : m_base(makeMountList(base, customMounts))
+        const std::string& base, const MountList& customMounts)
+        : m_base(makeMountList(base, customMounts))
     {
     }
 

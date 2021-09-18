@@ -1,5 +1,7 @@
 #include <vili/node.hpp>
 
+#include <Config/Validators.hpp>
+
 namespace obe::Config::Validators
 {
     vili::node ProjectValidator()
@@ -44,42 +46,8 @@ namespace obe::Config::Validators
             }
         };
 
-        vili::object mounts = vili::object {
-            {"type", "union"},
-            {
-                "types", vili::array {
-                    vili::object {
-                        {"type", vili::object_typename},
-                        {
-                            "properties", vili::object {
-                                {
-                                    "path", vili::object {
-                                        {"type", vili::string_typename}
-                                    }
-                                },
-                                {
-                                    "priority", vili::object {
-                                        {"type", vili::integer_typename},
-                                        {"optional", true}
-                                    }
-                                },
-                                {
-                                    "implicit", vili::object {
-                                        {"type", vili::boolean_typename},
-                                        {"optional", true}
-                                    }
-                                }
-                            }
-                        }
-                    },
-                    vili::object {
-                        {"type", vili::string_typename},
-                    }
-                }
-            },
-            {"optional", true},
-
-        };
+        vili::node mountValidator = MountValidator();
+        vili::object mounts = mountValidator.at("mounts").as<vili::object>();
 
         return vili::object {
             {

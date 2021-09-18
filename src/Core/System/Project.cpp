@@ -35,10 +35,11 @@ namespace obe::System::Project
         if (ProjectExists(projectName))
         {
             const std::string projectLocation = GetProjectLocation(projectName);
+            MountablePath::Mount(MountablePath(
+                MountablePathType::Project, projectLocation, prefix, priority));
             Project project;
-            project.loadFromFile(projectLocation);
+            project.loadFromFile(Path(projectLocation).add("project.vili"));
             project.mount();
-            MountablePath::Mount(MountablePath(MountablePathType::Project, projectLocation, prefix, priority));
             return true;
         }
         throw Exceptions::UnknownProject(projectName, ListProjects(), EXC_INFO);
@@ -58,13 +59,9 @@ namespace obe::System::Project
 
     vili::node ProjectURLs::dump() const
     {
-        return vili::object {
-            {"homepage", homepage},
-            {"issues", issues},
-            {"readme", readme},
-            {"documentation", documentation},
-            {"license", license}
-        };
+        return vili::object { { "homepage", homepage }, { "issues", issues },
+            { "readme", readme }, { "documentation", documentation },
+            { "license", license } };
     }
 
     void ProjectURLs::load(const vili::node& data)
@@ -179,16 +176,18 @@ namespace obe::System::Project
             {
                 for (const auto& [mountName, mount] : data.at("mounts").items())
                 {
+                    int priority = 0;
+                    bool implicit = false;
+                    std::string mountPath;
+                    std::string prefix = mountName;
+
                     if (mount.is_string())
                     {
-                        m_mounts.push_back(std::make_shared<MountablePath>(
-                            MountablePathType::Path, mount, mountName));
+                        mountPath = mount;
                     }
                     else if (mount.is_object())
                     {
-                        int priority = 0;
-                        bool implicit = false;
-                        const std::string mountPath = mount.at("path");
+                        mountPath = mount.at("path");
                         if (mount.contains("priority"))
                         {
                             priority = mount.at("priority");
@@ -197,9 +196,19 @@ namespace obe::System::Project
                         {
                             implicit = mount.at("implicit");
                         }
-                        m_mounts.push_back(std::make_shared<MountablePath>(
-                            MountablePathType::Path, mountPath, mountName, priority, implicit));
+                        if (mount.contains("prefix"))
+                        {
+                            prefix = mount.at("prefix");
+                        }
                     }
+                    auto [_, pathPrefix] = splitPathAndPrefix(mountPath, false);
+                    if (!pathPrefix.empty())
+                    {
+                        mountPath
+                            = System::Path(mountPath).find(PathType::Directory).path();
+                    }
+                    m_mounts.push_back(std::make_shared<MountablePath>(
+                        MountablePathType::Path, mountPath, prefix, priority, implicit));
                 }
             }
             if (data.contains("urls"))
@@ -213,17 +222,16 @@ namespace obe::System::Project
         }
     }
 
-    Project::Project() : m_obengineVersion(0, 1, 0)
+    Project::Project()
+        : m_obengineVersion(0, 1, 0)
     {
     }
 
     void Project::loadFromFile(const std::string& path)
     {
         vili::node project = vili::parser::from_file(path);
-        const auto validator = Config::Validators::ProjectValidator();
         try
         {
-            vili::validator::validate_tree(validator, project);
             this->load(project);
         }
         catch (const vili::exceptions::base_exception& e)

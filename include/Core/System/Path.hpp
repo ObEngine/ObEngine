@@ -5,7 +5,8 @@
 
 namespace obe::System
 {
-    std::pair<std::string, std::string> splitPathAndPrefix(const std::string& path, bool warnOnMissingPrefix = true);
+    std::pair<std::string, std::string> splitPathAndPrefix(
+        const std::string& path, bool warnOnMissingPrefix = true);
 
     enum class PathType
     {
@@ -27,14 +28,14 @@ namespace obe::System
 
     public:
         FindResult(const std::string& pathNotFound, const MountList& mounts);
-        FindResult(PathType pathType, std::shared_ptr<MountablePath> mount, const std::string& path,
-            const std::string& element);
+        FindResult(PathType pathType, std::shared_ptr<MountablePath> mount,
+            const std::string& path, const std::string& element);
         [[nodiscard]] const std::string& path() const;
         [[nodiscard]] const MountablePath& mount() const;
         [[nodiscard]] const std::string& query() const;
         [[nodiscard]] bool success() const;
         operator bool() const;
-        operator const std::string &() const;
+        operator const std::string&() const;
         operator const char*() const;
         operator std::string_view() const;
     };
@@ -121,6 +122,7 @@ namespace obe::System
          * \return The Path in std::string form
          */
         [[nodiscard]] std::string toString() const;
+        operator std::string() const;
         Path& operator=(const Path& path);
     };
 
@@ -130,10 +132,10 @@ namespace obe::System
         Path m_base;
         MountList makeMountList(const std::string& base);
         MountList makeMountList(const std::string& base, const MountList& customMounts);
+
     public:
         ContextualPathFactory(const std::string& base);
-        ContextualPathFactory(
-            const std::string& base, const MountList& customMounts);
+        ContextualPathFactory(const std::string& base, const MountList& customMounts);
 
         Path operator()(const std::string& path) const;
     };
