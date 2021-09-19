@@ -72,7 +72,11 @@ local function _mount_(project_name)
         }, 1
     );
     if projects[project_name] then
-        fs.copy(projects[project_name].path .. "/mount.vili", "mount.vili");
+        local mount_file = {project = project_name};
+        local mount_file_export = vili.writer.dump(
+            vili.from_lua(mount_file), vili.writer.dump_options()
+        );
+        write_to_file("mount.vili", mount_file_export);
         Color.print(
             {
                 {text = "Project '", color = Style.Success},
@@ -126,13 +130,16 @@ local function _create_(project_name)
     fs.createDirectory(path);
     fs.createDirectory(path .. "/Data");
     fs.createDirectory(path .. "/Data/GameObjects");
+    fs.createDirectory(path .. "/Data/GameObjects/SampleObject");
     fs.createDirectory(path .. "/Scenes");
     fs.createDirectory(path .. "/Sprites");
     write_to_file(
-        path .. "/Data/GameObjects/SampleObject.lua", SampleProjectTemplate.HELLO_WORLD_GO_SCRIPT
+        path .. "/Data/GameObjects/SampleObject/SampleObject.lua",
+            SampleProjectTemplate.HELLO_WORLD_GO_SCRIPT
     );
     write_to_file(
-        path .. "/Data/GameObjects/SampleObject.obj.vili", SampleProjectTemplate.HELLO_WORLD_GO_DEF
+        path .. "/Data/GameObjects/SampleObject/SampleObject.obj.vili",
+            SampleProjectTemplate.HELLO_WORLD_GO_DEF
     );
     write_to_file(path .. "/Scenes/sample.map.vili", SampleProjectTemplate.HELLO_WORLD_SCENE);
     write_to_file(path .. "/boot.lua", SampleProjectTemplate.HELLO_WORLD_BOOT);
@@ -143,16 +150,23 @@ local function _create_(project_name)
     write_to_file(project_definition_filepath:path(), projects_export);
 
     -- Writing project's mount.vili
-    local defaultMount = {Mount = {[project_name] = {type = "Project", path = path, priority = 1}}};
-    local mount_file_content = vili.writer.dump(
-        vili.from_lua(defaultMount), vili.writer.dump_options()
+    local project_file = {
+        id = project_name,
+        name = project_name,
+        version = "0.1.0",
+        obengine_version = "0.5.0",
+        source = "",
+        mounts = {scenes = "root://Scenes", sprites = "root://Sprites"}
+    };
+    local project_file_content = vili.writer.dump(
+        vili.from_lua(project_file), vili.writer.dump_options()
     );
-    write_to_file(path .. "/mount.vili", mount_file_content);
+    write_to_file(path .. "/project.vili", project_file_content);
 
     Color.print(
         {
             {text = "Project '", color = Style.Success},
-            {text = projects_export, color = Style.Project},
+            {text = project_name, color = Style.Project},
             {text = "' has  been successfully created !", color = Style.Success}
         }, 2
     );

@@ -1,5 +1,5 @@
-local Class = require("Lib/StdLib/Class");
-local contains = require("Lib/StdLib/Contains");
+local Class = require("obe://Lib/StdLib/Class");
+local contains = require("obe://Lib/StdLib/Contains");
 
 obe.Canvas = {};
 
@@ -19,7 +19,7 @@ function deepcopy(orig)
 end
 
 obe.Canvas.Canvas = Class(
-                        "Canvas", function(self, width, height, usecache)
+    "Canvas", function(self, width, height, usecache)
         self.internal = obe.Graphics.Canvas.Canvas(math.floor(width), math.floor(height));
         self.elements = {};
         self.useCache = usecache or false;
@@ -28,26 +28,26 @@ obe.Canvas.Canvas = Class(
                 .MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Line}, self.useCache),
             Rectangle = obe.Canvas.MakeMT(
                 {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Rectangle},
-                self.useCache
+                    self.useCache
             ),
             Text = obe.Canvas.MakeMT(
                 {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Text},
-                self.useCache
+                    self.useCache
             ),
             Circle = obe.Canvas.MakeMT(
                 {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Circle},
-                self.useCache
+                    self.useCache
             ),
             Polygon = obe.Canvas.MakeMT(
                 {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Polygon},
-                self.useCache
+                    self.useCache
             ),
             Bezier = obe.Canvas.MakeMT(
                 {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Bezier}, self.useCache
             )
         };
     end
-                    );
+);
 
 function obe.Canvas.NormalizeColor(color, base)
     if type(color) == "table" then
@@ -82,7 +82,7 @@ function obe.Canvas.ConvertHAlign(align)
         else
             error(
                 "Horizontal Alignment", align,
-                "does not exists, use one of those [Left, Center, Right]"
+                    "does not exists, use one of those [Left, Center, Right]"
             )
         end
     else
@@ -107,7 +107,7 @@ function obe.Canvas.ConvertVAlign(align)
         else
             error(
                 "Vertical Alignment", align,
-                "does not exists, use one of those [Top, Center, Botton]"
+                    "does not exists, use one of those [Top, Center, Botton]"
             )
         end
     else

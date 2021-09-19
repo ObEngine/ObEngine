@@ -1,4 +1,5 @@
-local function custom_searcher( module_name )
+local function custom_searcher(module_name)
+    module_name = module_name:gsub("%.", "/");
     module_name = module_name .. '.lua';
     if module_name:find("://") == nil then
         -- Silenting no prefix for Lua modules
@@ -11,3 +12,19 @@ local function custom_searcher( module_name )
 end
 
 table.insert(package.searchers, 1, custom_searcher);
+
+local _require = require;
+
+local function require_from_obe(module_name)
+    if module_name:find("://") == nil then
+        return _require("obe://" .. module_name);
+    else
+        return _require(module_name);
+    end
+end
+
+function with_require_from_obe(func)
+    require = require_from_obe;
+    func();
+    require = _require;
+end

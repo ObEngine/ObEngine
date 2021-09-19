@@ -107,35 +107,13 @@ namespace obe::System
         }
         vili::validator::validate_tree(
             Config::Validators::MountValidator(), mountedPaths);
-        for (auto [mountName, mount] : mountedPaths.at("mounts").items())
+        if (mountedPaths.contains("mounts"))
         {
-            if (mount.is_string())
+            for (auto [mountName, mount] : mountedPaths.at("mounts").items())
             {
-                std::string currentPath = mount;
-                auto [_, pathPrefix] = splitPathAndPrefix(currentPath, false);
-                if (!pathPrefix.empty())
+                if (mount.is_string())
                 {
-                    currentPath
-                        = System::Path(currentPath).find(PathType::Directory).path();
-                }
-                MountablePath::Mount(
-                    MountablePath(MountablePathType::Path, currentPath, mountName, 0));
-                Debug::Log->info("<MountablePath> Mounted Path : '{0}' at '{1}://' "
-                                 "with priority {2}",
-                    currentPath, mountName, 0);
-            }
-            else if (mount.is_object())
-            {
-                const std::string currentType = mount.at("type");
-                std::string currentPath = mount.at("path");
-                std::string prefix = mountName;
-                if (mount.contains("prefix"))
-                {
-                    prefix = mount.at("prefix");
-                }
-                int currentPriority = mount.at("priority");
-                if (currentType == "Path")
-                {
+                    std::string currentPath = mount;
                     auto [_, pathPrefix] = splitPathAndPrefix(currentPath, false);
                     if (!pathPrefix.empty())
                     {
@@ -143,26 +121,53 @@ namespace obe::System
                             = System::Path(currentPath).find(PathType::Directory).path();
                     }
                     MountablePath::Mount(MountablePath(
-                        MountablePathType::Path, currentPath, prefix, currentPriority));
+                        MountablePathType::Path, currentPath, mountName, 0));
                     Debug::Log->info("<MountablePath> Mounted Path : '{0}' at '{1}://' "
                                      "with priority {2}",
-                        currentPath, prefix, currentPriority);
+                        currentPath, mountName, 0);
                 }
-                else if (currentType == "Package")
+                else if (mount.is_object())
                 {
-                    Package::Load(currentPath, prefix, currentPriority);
-                    Debug::Log->info(
-                        "<MountablePath> Mounted Package : '{0}' at '{1}://' "
-                        "with priority {2}",
-                        currentPath, prefix, currentPriority);
-                }
-                else if (currentType == "Project")
-                {
-                    Project::Load(currentPath, prefix, currentPriority);
-                    Debug::Log->info(
-                        "<MountablePath> Mounted Project : '{0}' at '{1}://' "
-                        "with priority {2}",
-                        currentPath, prefix, currentPriority);
+                    const std::string currentType = mount.at("type");
+                    std::string currentPath = mount.at("path");
+                    std::string prefix = mountName;
+                    if (mount.contains("prefix"))
+                    {
+                        prefix = mount.at("prefix");
+                    }
+                    int currentPriority = mount.at("priority");
+                    if (currentType == "Path")
+                    {
+                        auto [_, pathPrefix] = splitPathAndPrefix(currentPath, false);
+                        if (!pathPrefix.empty())
+                        {
+                            currentPath = System::Path(currentPath)
+                                              .find(PathType::Directory)
+                                              .path();
+                        }
+                        MountablePath::Mount(MountablePath(MountablePathType::Path,
+                            currentPath, prefix, currentPriority));
+                        Debug::Log->info(
+                            "<MountablePath> Mounted Path : '{0}' at '{1}://' "
+                            "with priority {2}",
+                            currentPath, prefix, currentPriority);
+                    }
+                    else if (currentType == "Package")
+                    {
+                        Package::Load(currentPath, prefix, currentPriority);
+                        Debug::Log->info(
+                            "<MountablePath> Mounted Package : '{0}' at '{1}://' "
+                            "with priority {2}",
+                            currentPath, prefix, currentPriority);
+                    }
+                    else if (currentType == "Project")
+                    {
+                        Project::Load(currentPath, prefix, currentPriority);
+                        Debug::Log->info(
+                            "<MountablePath> Mounted Project : '{0}' at '{1}://' "
+                            "with priority {2}",
+                            currentPath, prefix, currentPriority);
+                    }
                 }
             }
         }

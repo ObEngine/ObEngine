@@ -54,7 +54,6 @@ namespace obe::Engine
         m_lua->safe_script_file("obe://Lib/Internal/Events.lua"_fs);
 
         Bindings::IndexAllBindings(*m_lua);
-        m_lua->safe_script_file("obe://Lib/Internal/Searcher.lua"_fs);
         m_lua->safe_script_file("obe://Lib/Internal/Helpers.lua"_fs);
         m_lua->safe_script_file("obe://Lib/Internal/GameInit.lua"_fs);
         m_lua->safe_script_file("obe://Lib/Internal/Logger.lua"_fs);

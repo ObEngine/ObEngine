@@ -66,6 +66,12 @@ namespace obe::Bindings
     void IndexAllBindings(sol::state_view state)
     {
         state["obe"].get_or_create<sol::table>();
+        state["obe"]["System"].get_or_create<sol::table>();
+
+        obe::System::Bindings::LoadClassMountablePath(state);
+        obe::System::Bindings::LoadClassFindResult(state);
+        obe::System::Bindings::LoadClassPath(state);
+
         state["vili"].get_or_create<sol::table>();
         state["obe"]["Animation"].get_or_create<sol::table>();
         state["obe"]["Audio"].get_or_create<sol::table>();
@@ -79,7 +85,6 @@ namespace obe::Bindings
         state["obe"]["Network"].get_or_create<sol::table>();
         state["obe"]["Scene"].get_or_create<sol::table>();
         state["obe"]["Script"].get_or_create<sol::table>();
-        state["obe"]["System"].get_or_create<sol::table>();
         state["obe"]["Tiles"].get_or_create<sol::table>();
         state["obe"]["Time"].get_or_create<sol::table>();
         state["obe"]["Transform"].get_or_create<sol::table>();
@@ -314,9 +319,6 @@ namespace obe::Bindings
         obe::Script::Bindings::LoadClassGameObjectDatabase(state);
 
         obe::System::Bindings::LoadClassCursor(state);
-        obe::System::Bindings::LoadClassFindResult(state);
-        obe::System::Bindings::LoadClassMountablePath(state);
-        obe::System::Bindings::LoadClassPath(state);
         obe::System::Bindings::LoadClassPlugin(state);
         obe::System::Bindings::LoadClassWindow(state);
         obe::System::Bindings::LoadEnumMountablePathType(state);
