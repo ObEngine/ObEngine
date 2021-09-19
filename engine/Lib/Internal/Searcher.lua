@@ -15,16 +15,38 @@ table.insert(package.searchers, 1, custom_searcher);
 
 local _require = require;
 
-local function require_from_obe(module_name)
-    if module_name:find("://") == nil then
-        return _require("obe://" .. module_name);
-    else
-        return _require(module_name);
+-- TODO: Fix require breaking out of _ENV (https://github.com/pygy/require.lua)
+--[[function with_require_from(prefix, module_name)
+    local function require_from(module_name)
+        if module_name:find("://") == nil then
+            return _require(prefix .. "://" .. module_name);
+        else
+            return _require(module_name);
+        end
     end
+    local module;
+    do
+        _ENV = setmetatable({require = require_from}, {})
+        local sandboxed_require = function()
+            return require(module_name);
+        end
+        module = sandboxed_require();
+    end
+    return module;
 end
+]]
 
-function with_require_from_obe(func)
-    require = require_from_obe;
-    func();
+function with_require_from(prefix, module_name)
+    local function require_from(module_name)
+        if module_name:find("://") == nil then
+            return _require(prefix .. "://" .. module_name);
+        else
+            return _require(module_name);
+        end
+    end
+
+    require = require_from
+    local module = require(module_name);
     require = _require;
+    return module;
 end
