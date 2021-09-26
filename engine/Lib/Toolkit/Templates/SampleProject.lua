@@ -23,16 +23,16 @@ function Event.Game.Render()
 end
 ]]
 
-HELLO_WORLD_GO_DEF = [[SampleObject:
-    Sprite:
-        rect:
-            x: 0.0
-            y: 0.0
-            width: 1.0
-            height: 1.0
-            unit: "ViewPercentage"
-    Script:
-        source: "Data/GameObjects/SampleObject/SampleObject.lua"
+HELLO_WORLD_GO_DEF = [[
+Sprite:
+    rect:
+        x: 0.0
+        y: 0.0
+        width: 1.0
+        height: 1.0
+        unit: "ViewPercentage"
+Script:
+    source: "self://SampleObject.lua"
 ]]
 
 HELLO_WORLD_SCENE = [[Meta:
@@ -52,7 +52,7 @@ GameObjects:
 ]]
 
 HELLO_WORLD_BOOT = [[function Game.Start()
-    Engine.Scene:loadFromFile("Scenes/sample.map.vili");
+    Engine.Scene:loadFromFile("scenes://sample.map.vili");
 end
 ]]
 
