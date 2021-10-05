@@ -1,4 +1,6 @@
+print("bef", __ENV_REQUIRE_PREFIX);
 local Class = require("obe://Lib/StdLib/Class");
+print("aft", __ENV_REQUIRE_PREFIX);
 local contains = require("obe://Lib/StdLib/Contains");
 
 obe.Canvas = {};

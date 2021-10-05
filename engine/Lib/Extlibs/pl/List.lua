@@ -20,6 +20,7 @@
 
 local tinsert,tremove,concat,tsort = table.insert,table.remove,table.concat,table.sort
 local setmetatable, getmetatable,type,tostring,string = setmetatable,getmetatable,type,tostring,string
+print("FROM PL LIST, with FUNC=", require, "testxd", testxd);
 local tablex = require 'Lib.Extlibs.pl.tablex'
 local filter,imap,imap2,reduce,transform,tremovevalues = tablex.filter,tablex.imap,tablex.imap2,tablex.reduce,tablex.transform,tablex.removevalues
 local tsub = tablex.sub
