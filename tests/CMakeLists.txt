@@ -12,6 +12,7 @@ target_include_directories(ObEngineTests
 
 target_link_libraries(ObEngineTests ObEngineCore)
 target_link_libraries(ObEngineTests catch)
+target_link_libraries(ObEngineTests sfml-window)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
