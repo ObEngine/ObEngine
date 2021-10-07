@@ -236,10 +236,10 @@ namespace obe::System::Project
         }
         catch (const Exceptions::InvalidProjectFile& e)
         {
-            const std::vector<std::exception> traceback = e.traceback();
+            const std::vector<std::runtime_error>& traceback = e.traceback();
             if (!traceback.empty())
             {
-                const std::exception underlying_exception = traceback.back();
+                const std::runtime_error underlying_exception = traceback.back();
                 throw Exceptions::InvalidProjectFile(path, EXC_INFO)
                     .nest(underlying_exception);
             }
