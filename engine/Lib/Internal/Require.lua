@@ -11,17 +11,69 @@ local function checkstring(s)
     end
 end
 
-local package, p_loaded = package, package.loaded;
-local error, ipairs, type = error, ipairs, type;
-local t_concat = table.concat
+local function split_prefix_module_name(module_name)
+    local prefix_index = module_name:find("://");
+    if prefix_index ~= nil then
+        local prefix = module_name:sub(0, prefix_index - 1);
+        local module_name_no_prefix = module_name:sub(prefix_index + 3);
+        return prefix, module_name_no_prefix;
+    end
+    return nil, module_name;
+end
+
+local function make_prefix_searcher(prefix)
+    return function(module_name)
+        print("Searcher Loading module name", module_name, "prefix set to", prefix)
+        local module_prefix, _ = split_prefix_module_name(module_name);
+        module_name = module_name:gsub("%.", "/");
+
+        if module_prefix == nil then
+            -- Silenting no prefix for Lua modules
+            module_name = prefix .. "://" .. module_name;
+        end
+
+        module_name = module_name .. '.lua';
+
+        local find_result = obe.System.Path(module_name):find();
+        if find_result:success() then
+            print("  FOUND " .. module_name .. " with default prefix " .. prefix);
+            local loadfile_env = setmetatable({require=make_base_require(module_prefix or prefix)}, {__index=_G});
+            return loadfile(find_result:path(), "bt", loadfile_env);
+            --[[if module_prefix ~= nil then
+                print("    NEW ENV CRAFTED");
+                local loadfile_env = setmetatable({require=make_base_require(module_prefix)}, {__index=_G});
+                return loadfile(find_result:path(), "bt", loadfile_env);
+            else
+                print("    OLD ENV REUSED");
+                return loadfile(find_result:path());
+            end]]
+        else
+            return "\n        no file " .. module_name .. " (default prefix: " .. prefix .. ")";
+        end
+    end
+end
+
+local function find_searcher(package_searchers, searcher)
+    for k, v in pairs(package_searchers) do
+        if v == searcher then
+            return k;
+        end
+    end
+end
 
 -- Drop in replacement for `require` function
 -- Allows to use upvalue system instead of globally replace `require` (unsafe)
-local function make_base_require()
+function make_base_require(prefix)
+    local env_searchers = setmetatable(
+        {[#package.searchers] = make_prefix_searcher(prefix)},
+        {__index=package.searchers}
+    );
+    local env_package = setmetatable({searchers = env_searchers}, {__index=package});
+    local _ENV = setmetatable({package = env_package}, {__index=_G});
     return function(name)
-        print("BASE REQUIRE", name, require);
+        print("<REQUIRE> called with", name)
         name = checkstring(name)
-        local module = p_loaded[name]
+        local module = package.loaded[name]
         if module then return module end
 
         local msg = {}
@@ -36,23 +88,25 @@ local function make_base_require()
             loader = nil
         end
         if loader == nil then
-            error("module '" .. name .. "' not found: "..t_concat(msg), 2)
+            error("module '" .. name .. "' not found:\n".. table.concat(msg), 2)
         end
         local res = loader(name, param)
         if res ~= nil then
             module = res
-        elseif not p_loaded[name] then
+        elseif not package.loaded[name] then
             module = true
         else
-        module = p_loaded[name]
+        module = package.loaded[name]
         end
 
-        p_loaded[name] = module
+        package.loaded[name] = module
         return module
     end
 end
 
-local function split_prefix_module_name(module_name)
+require = make_base_require("cwd");
+
+--[[local function split_prefix_module_name(module_name)
     local prefix_index = module_name:find("://");
     if prefix_index ~= nil then
         local prefix = module_name:sub(0, prefix_index - 1);
@@ -84,6 +138,22 @@ local function make_require_from_prefix(prefix)
         end
     end
 end
+
+function prefix_searcher(module_name)
+    print("  Searcher Loading module name", module_name)
+    module_name = module_name:gsub("%.", "/");
+    module_name = module_name .. '.lua';
+    if module_name:find("://") == nil then
+        -- Silenting no prefix for Lua modules
+        module_name = "*://" .. module_name .. ".lua";
+    end
+    local find_result = obe.System.Path(module_name):find();
+    if find_result:success() then
+        return loadfile(find_result:path(), "bt", setmetatable({}, {__index=_G}));
+    end
+end
+
+table.insert(package.searchers, prefix_searcher);]]
 
 -- require = make_require_from_prefix("cwd");
 

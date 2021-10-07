@@ -181,6 +181,12 @@ namespace obe::System
             Debug::Log->info("<MountablePath> MountedPath : '{}' with prefix '{}'",
                 currentPath->basePath, currentPath->prefix);
         }
+
+        // If obe prefix has been redefined, extlibs will change accordingly
+        std::string obePath = MountablePath::FromPrefix(Prefixes::obe.data()).basePath;
+        MountablePath extlibsPath(MountablePathType::Path, obePath + "/Lib/Extlibs", Prefixes::extlibs, 0,
+            false);
+        MountablePath::Mount(extlibsPath);
     }
 
     void MountablePath::Mount(const MountablePath path)

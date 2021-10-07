@@ -8,7 +8,7 @@
 --
 -- Dependencies: `pl.utils`
 -- @module pl.stringx
-local utils = require 'Lib.Extlibs.pl.utils'
+local utils = require 'pl.utils'
 local string = string
 local find = string.find
 local type,setmetatable,ipairs = type,setmetatable,ipairs
@@ -36,7 +36,7 @@ local function assert_nonempty_string(n,s)
 end
 
 local function makelist(l)
-    return setmetatable(l, require('Lib.Extlibs.pl.List'))
+    return setmetatable(l, require('pl.List'))
 end
 
 local stringx = {}
@@ -509,7 +509,7 @@ local function has_lquote(s)
         end
     until not new_equals
 
-    return equals 
+    return equals
 end
 
 --- Quote the given string and preserve any control or escape characters, such that reloading the string in Lua returns the same result.
@@ -530,8 +530,8 @@ function stringx.quote_string(s)
         equal_signs = ("="):rep((equal_signs or -1) + 1)
         -- Long strings strip out leading newline. We want to retain that, when quoting.
         if s:find("^\n") then s = "\n" .. s end
-        local lbracket, rbracket =  
-            "[" .. equal_signs .. "[",  
+        local lbracket, rbracket =
+            "[" .. equal_signs .. "[",
             "]" .. equal_signs .. "]"
         s = lbracket .. s .. rbracket
     else

@@ -60,7 +60,7 @@ end
 -- if pussycat:is_a(Cat) then
 --   -- it's true, it is a Lion, but also a Cat
 -- end
--- 
+--
 -- if pussycat:is_a() == Lion then
 --   -- It's true
 -- end
@@ -131,7 +131,7 @@ local function _class(base,c_arg,c)
     else
         c = c or {}
     end
-   
+
     if type(base) == 'table' then
         -- our new class is a shallow copy of the base class!
         -- but be careful not to wipe out any methods we have been given at this point!
@@ -218,7 +218,7 @@ class = setmetatable({},{
             io.stderr:write('require("pl.class").class is deprecated. Use require("pl.class")\n')
             return class
         end
-        compat = compat or require 'Lib.Extlibs.pl.compat'
+        compat = compat or require 'pl.compat'
         local env = compat.getfenv(2)
         return function(...)
             local c = _class(...)

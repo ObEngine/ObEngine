@@ -1,9 +1,9 @@
-inspect = require("obe://Lib/Extlibs/Inspect");
-dbg = require("obe://Lib/Extlibs/debugger");
+inspect = require("extlibs://Inspect");
+dbg = require("extlibs://debugger");
 try = require("obe://Lib/Internal/Try");
 print("============================================= START");
-pl.List = require("obe://Lib/Extlibs/pl/List");
+pl.List = require("extlibs://pl/List");
 print("============================================= END");
-pl.String = require("obe://Lib/Extlibs/pl/stringx");
+pl.String = require("extlibs://pl/stringx");
 
 pl.String:import();

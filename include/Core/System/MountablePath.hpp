@@ -13,6 +13,7 @@ namespace obe::System
         constexpr std::string_view exe = "exe";
         constexpr std::string_view cfg = "cfg";
         constexpr std::string_view base = "base";
+        constexpr std::string_view extlibs = "extlibs";
     }
 
     /**
