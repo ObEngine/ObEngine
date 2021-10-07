@@ -174,7 +174,6 @@ namespace obe::System::Bindings
         bindPath["toString"] = &obe::System::Path::toString;
 
         state.safe_script_file("obe://Lib/Internal/Require.lua"_fs);
-        state.safe_script_file("obe://Lib/Internal/Searcher.lua"_fs);
     }
     void LoadClassPlugin(sol::state_view state)
     {

@@ -1,9 +1,8 @@
 -- Dependancies
-local String = require("Lib/StdLib/String");
 local Color = require("Lib/StdLib/ConsoleColor");
 local copy = require("Lib/StdLib/Copy");
 local Style = require("Lib/Toolkit/Stylesheet");
-local Table = require("Lib/StdLib/Table");
+local tablex = require("extlibs://pl.tablex");
 
 local currentExecution;
 
@@ -18,7 +17,7 @@ local function loadToolkitFunctions()
     local allFunctions = {};
     for _, content in pairs(fileList) do
         -- print("Loading Toolkit function :", "Lib/Toolkit/Functions/", content);
-        local toolkitModuleWithoutExt = String.split(content, ".")[1];
+        local toolkitModuleWithoutExt = content:split(".")[1];
         allFunctions[toolkitModuleWithoutExt] = require("Lib/Toolkit/Functions/" .. toolkitModuleWithoutExt);
     end
     return allFunctions;
@@ -92,7 +91,7 @@ local function splitCommandAndArgs(command)
     local commandName = "";
     local strArgs = "";
     local commandArgs = {};
-    for k, v in pairs(String.split(command, " ")) do
+    for k, v in pairs(command:split(" ")) do
         if k == 1 then
             commandName = v;
         else
@@ -248,8 +247,7 @@ local function autocompleteArgs(command, query)
         end
         if recurseIn then
             -- If we find a Node / Argument that matches criterias
-            return autocompleteArgs(recurseIn.children,
-                                    pl.List(subpath):join(" "));
+            return autocompleteArgs(recurseIn.children, (" "):join(subpath));
         else
             -- If no Node / Argument were found
             return {};
@@ -356,8 +354,8 @@ local function autocompleteHandle(command)
                     nodesOnly[v.name] = v;
                 end
             end
-            local completionKeys = Table.getKeys(nodesOnly);
-            if Table.getSize(completionKeys) == 1 then
+            local completionKeys = tablex.keys(nodesOnly);
+            if tablex.size(completionKeys) == 1 then
                 -- Only one completion found, complete and add space (if not a variable)
                 local onlyCompletion = completionKeys[1];
                 if onlyCompletion:sub(1, 1) == "<" and
@@ -374,7 +372,7 @@ local function autocompleteHandle(command)
                     autocompleteResult =
                         autocompleteResult .. completionKeys[1] .. " ";
                 end
-            elseif Table.getSize(completionKeys) > 1 then
+            elseif tablex.size(completionKeys) > 1 then
                 -- Multiple completions found, completing with biggest common root
                 -- We remove that trailing space
                 while autocompleteResult:sub(#autocompleteResult,
@@ -443,7 +441,7 @@ function autocomplete(input)
                 local completions = autocompleteArgs(
                                         ToolkitFunctions[command.name],
                                         command.strArgs);
-                if Table.getSize(completions) == 1 and completions[1].name ==
+                if tablex.size(completions) == 1 and completions[1].name ==
                     command.args[#command.args] then
                     input = input .. " ";
                     _term_write(" ");
@@ -516,9 +514,9 @@ function autocomplete(input)
                     {text = completionsInfos[i], color = Style.Help}
                 }, 2);
             end
-            if Table.getSize(validCompletions) == 1 then
+            if tablex.size(validCompletions) == 1 then
                 autocompleteResult = validCompletions[1];
-            elseif Table.getSize(validCompletions) > 1 then
+            elseif tablex.size(validCompletions) > 1 then
                 -- We complete as much as we can based on the common root of available completions
                 local commonRoot = getBiggestCommonRoot(input, validCompletions);
                 autocompleteResult = commonRoot;
@@ -619,7 +617,7 @@ local function reachCommand(command, branch, args, idargs)
                 recurseIn = content;
                 -- We also store it as an identified argument
                 identifiedArgs[id] = {
-                    index = Table.getSize(identifiedArgs),
+                    index = tablex.size(identifiedArgs),
                     type = "command"
                 };
                 break
@@ -636,7 +634,7 @@ local function reachCommand(command, branch, args, idargs)
                     recurseIn = content;
                     -- We also store it as an identified argument
                     identifiedArgs[id] = {
-                        index = Table.getSize(identifiedArgs),
+                        index = tablex.size(identifiedArgs),
                         type = "Argument",
                         argType = content.argType
                     };
@@ -707,8 +705,7 @@ function evaluate(input)
                     if content.type == "command" then
                         -- If the argument is a "command", the argument value will be the name of the next Node / Argument
                         identifiedArgs[key].value =
-                            Table.getKeyAtIndex(identifiedArgs,
-                                                content.index + 1);
+                            tablex.keys(identifiedArgs)[content.index + 1];
                     elseif content.type == "Argument" then
                         -- Otherwise, if the argument is an "Argument", we just fetch the value from user input
                         identifiedArgs[key].value =
