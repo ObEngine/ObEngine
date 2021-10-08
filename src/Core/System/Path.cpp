@@ -4,11 +4,6 @@
 
 namespace obe::System
 {
-    std::string joinPath(const std::string& base, const std::string& path)
-    {
-        return base + ((!base.empty()) ? "/" : "") + path;
-    }
-
     std::pair<std::string, std::string> splitPathAndPrefix(
         const std::string& path, bool warnOnMissingPrefix)
     {
@@ -243,7 +238,7 @@ namespace obe::System
         const MountList validMounts = filterMountablePathsWithPrefix(*m_mounts, m_prefix);
         for (const auto& mountedPath : validMounts)
         {
-            std::string fullPath = joinPath(mountedPath->basePath, m_path);
+            std::string fullPath = Utils::File::join({ mountedPath->basePath, m_path });
 
             if (Utils::File::directoryExists(fullPath))
             {
@@ -253,7 +248,7 @@ namespace obe::System
                     for (const std::string& directory : directories)
                     {
                         results.emplace_back(PathType::Directory, mountedPath,
-                            joinPath(fullPath, directory), query, directory);
+                            Utils::File::join({ fullPath, directory }), query, directory);
                     }
                 }
                 else if (pathType == PathType::All || pathType == PathType::File)
@@ -261,8 +256,8 @@ namespace obe::System
                     std::vector<std::string> files = Utils::File::getFileList(fullPath);
                     for (const std::string& file : files)
                     {
-                        results.emplace_back(
-                            PathType::File, mountedPath, joinPath(fullPath, file), query, file);
+                        results.emplace_back(PathType::File, mountedPath,
+                            Utils::File::join({ fullPath, file }), query, file);
                     }
                 }
             }
@@ -295,7 +290,7 @@ namespace obe::System
             if ((pathType == PathType::All || pathType == PathType::File)
                 && Utils::File::fileExists(fullPath))
             {
-                const std::string result = joinPath(mountedPath->basePath, m_path);
+                const std::string result = Utils::File::join({ mountedPath->basePath, m_path });
                 return PathCache
                     .emplace(m_path, FindResult(PathType::File, mountedPath, result, query))
                     .first->second;
@@ -303,7 +298,7 @@ namespace obe::System
             else if ((pathType == PathType::All || pathType == PathType::Directory)
                 && Utils::File::directoryExists(fullPath))
             {
-                const std::string result = joinPath(mountedPath->basePath, m_path);
+                const std::string result = Utils::File::join({ mountedPath->basePath, m_path });
                 return PathCache
                     .emplace(m_path, FindResult(PathType::Directory, mountedPath, result, query))
                     .first->second;
@@ -319,7 +314,7 @@ namespace obe::System
         const MountList validMounts = filterMountablePathsWithPrefix(*m_mounts, m_prefix);
         for (const auto& mountedPath : validMounts)
         {
-            const std::string fullPath = joinPath(mountedPath->basePath, m_path);
+            const std::string fullPath = Utils::File::join({ mountedPath->basePath, m_path });
             if ((pathType == PathType::All || pathType == PathType::File)
                 && Utils::File::fileExists(fullPath))
             {

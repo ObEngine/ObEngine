@@ -48,6 +48,9 @@ namespace obe::System
      * \brief Class used to manipulate paths and dynamically load resources
      *        (Based on multiple mounted paths)
      * \bind{Path}
+     * \loadpriority{1}
+     * \helper{obe://Lib/Internal/Require.lua}
+     * \helper{obe://Lib/Internal/Filesystem.lua}
      */
     class Path
     {
