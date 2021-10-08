@@ -41,8 +41,21 @@ namespace obe::System::Exceptions
             : Exception(info)
         {
             this->error(
-                "Could not find Mount.vili file in the execution directory : '{}'",
+                "Could not find mount.vili file in the execution directory : '{}'",
                 currentPath);
+        }
+    };
+
+    class InvalidMountFile : public Exception<InvalidMountFile>
+    {
+    public:
+        using Exception::Exception;
+        InvalidMountFile(std::string_view mountFilePath, DebugInfo info)
+            : Exception(info)
+        {
+            this->error(
+                "An error occured while parsing 'mount.vili' file located at '{}'",
+                mountFilePath);
         }
     };
 
@@ -104,21 +117,22 @@ namespace obe::System::Exceptions
         }
     };
 
-    class UnknownWorkspace : public Exception<UnknownWorkspace>
+    class UnknownProject : public Exception<UnknownProject>
     {
     public:
         using Exception::Exception;
-        UnknownWorkspace(std::string_view workspace,
-            const std::vector<std::string>& allWorkspaces, DebugInfo info)
+        UnknownProject(std::string_view project,
+            const std::vector<std::string>& allProjects, DebugInfo info)
             : Exception(info)
         {
-            this->error("Impossible to get Workspace '{}', please check it is correctly "
-                        "indexed", workspace);
+            this->error("Impossible to find Project '{}', please check it is correctly "
+                        "indexed",
+                project);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(workspace.data(), allWorkspaces, 5);
+                = Utils::String::sortByDistance(project.data(), allProjects, 5);
             std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
                 Utils::String::quote);
-            this->hint("Maybe you meant to get one of these workspaces : ({})",
+            this->hint("Maybe you meant to get one of these projects : ({})",
                 fmt::join(suggestions, ", "));
         }
     };
@@ -131,7 +145,8 @@ namespace obe::System::Exceptions
             : Exception(info)
         {
             this->error("Stretch mode '{}' does not exist", stretchMode);
-            this->hint("Maybe you meant to get one of these modes : (None, Center, Fit, Stretch, KeepWidth, KeepHeight)");
+            this->hint("Maybe you meant to get one of these modes : (None, Center, Fit, "
+                       "Stretch, KeepWidth, KeepHeight)");
         }
     };
 
@@ -139,7 +154,8 @@ namespace obe::System::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownPathPrefix(std::string_view prefix, const std::vector<std::string> allPrefixes, DebugInfo info)
+        UnknownPathPrefix(std::string_view prefix,
+            const std::vector<std::string> allPrefixes, DebugInfo info)
             : Exception(info)
         {
             this->error("Path prefix '{}' does not exist", prefix);
@@ -159,7 +175,8 @@ namespace obe::System::Exceptions
         explicit MissingDefaultMountPoint(DebugInfo info)
             : Exception(info)
         {
-            this->error("Must at least choose cwd or executable path as default mount point");
+            this->error(
+                "Must at least choose cwd or executable path as default mount point");
         }
     };
 
@@ -170,8 +187,20 @@ namespace obe::System::Exceptions
         PathError(std::string_view prefix, std::string_view path, DebugInfo info)
             : Exception(info)
         {
+            this->error("An error occured while loading path '{}://{}'", prefix, path);
+        }
+    };
+
+    class InvalidProjectFile : public Exception<InvalidProjectFile>
+    {
+    public:
+        using Exception::Exception;
+        InvalidProjectFile(std::string_view projectFilePath, DebugInfo info)
+            : Exception(info)
+        {
             this->error(
-                "An error occured while loading path '{}://{}'", prefix, path);
+                "An error occured while parsing 'project.vili' file located at '{}'",
+                projectFilePath);
         }
     };
 }

@@ -1,10 +1,21 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace obe::System
 {
+    namespace Prefixes
+    {
+        constexpr std::string_view obe = "obe";
+        constexpr std::string_view cwd = "cwd";
+        constexpr std::string_view exe = "exe";
+        constexpr std::string_view cfg = "cfg";
+        constexpr std::string_view base = "base";
+        constexpr std::string_view extlibs = "extlibs";
+    }
+
     /**
      * \brief Defines the source of a mounted path
      * \bind{MountablePathType}
@@ -20,18 +31,20 @@ namespace obe::System
          */
         Package,
         /**
-         * \brief The mounted path is a Workspace
+         * \brief The mounted path is a Project
          */
-        Workspace
+        Project
     };
 
+    class MountablePath;
+    using MountList = std::vector<std::shared_ptr<MountablePath>>;
     /**
      * \brief Class used to encapsulate mounted Paths
      */
     class MountablePath
     {
     private:
-        static std::vector<MountablePath> MountedPaths;
+        static MountList MountedPaths;
 
     public:
         /**
@@ -40,8 +53,8 @@ namespace obe::System
          * \param basePath Path to the mounted path
          * \param priority Priority of the mounted path
          */
-        MountablePath(MountablePathType pathType, const std::string& basePath, const std::string& prefix,
-            unsigned int priority = 0, bool implicit = true);
+        MountablePath(MountablePathType pathType, std::string_view basePath,
+            std::string_view prefix, unsigned int priority = 0, bool implicit = true);
         /**
          * \brief Type of the mounted path
          */
@@ -68,7 +81,7 @@ namespace obe::System
 
     public:
         /**
-         * \brief Function called to Mount all Paths using 'Mount.vili' file
+         * \brief Function called to Mount all Paths using 'mount.vili' file
          */
         static void LoadMountFile(bool fromCWD = true, bool fromExe = true);
         /**
@@ -88,7 +101,7 @@ namespace obe::System
         /**
          * \brief All the Mounted Paths
          */
-        static const std::vector<MountablePath>& Paths();
+        static const MountList& Paths();
         /**
          * \brief All the Mounted Paths as strings
          */
@@ -97,5 +110,11 @@ namespace obe::System
          * \brief Sort the mounted paths based on their priorities
          */
         static void Sort();
+        /**
+         * \brief Retrieve a MountablePath based on the prefix
+         */
+        static const MountablePath& FromPrefix(const std::string& prefix);
+
+        static const std::vector<std::string> GetAllPrefixes();
     };
 } // namespace obe::System

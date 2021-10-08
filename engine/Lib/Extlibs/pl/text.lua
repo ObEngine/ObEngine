@@ -9,7 +9,7 @@
 -- Calling `text.format_operator()` overloads the % operator for strings to give Python/Ruby style formated output.
 -- This is extended to also do template-like substitution for map-like data.
 --
---    > require 'Lib.Extlibs.pl.text'.format_operator()
+--    > require 'pl.text'.format_operator()
 --    > = '%s = %5.3f' % {'PI',math.pi}
 --    PI = 3.142
 --    > = '$name = $value' % {name='dog',value='Pluto'}
@@ -20,13 +20,13 @@
 
 local gsub = string.gsub
 local concat,append = table.concat,table.insert
-local utils = require 'Lib.Extlibs.pl.utils'
+local utils = require 'pl.utils'
 local bind1,usplit,assert_arg = utils.bind1,utils.split,utils.assert_arg
-local is_callable = require 'Lib.Extlibs.pl.types'.is_callable
+local is_callable = require 'pl.types'.is_callable
 local unpack = utils.unpack
 
 local function makelist(l)
-    return setmetatable(l, require('Lib.Extlibs.pl.List'))
+    return setmetatable(l, require('pl.List'))
 end
 
 local function lstrip(str)  return (str:gsub('^%s+',''))  end
@@ -40,7 +40,7 @@ local function imap(f,t,...)
 end
 
 --[[
-module ('Lib.Extlibs.pl.text',utils._module)
+module ('pl.text',utils._module)
 ]]
 
 local text = {}

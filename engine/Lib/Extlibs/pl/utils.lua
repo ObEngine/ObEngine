@@ -5,7 +5,7 @@
 --
 -- @module pl.utils
 local format = string.format
-local compat = require 'Lib.Extlibs.pl.compat'
+local compat = require 'pl.compat'
 local stdout = io.stdout
 local append = table.insert
 local unpack = rawget(_G,'unpack') or rawget(table,'unpack')
@@ -367,7 +367,7 @@ function utils.function_arg (idx,f,msg)
     if tp == 'function' then return f end  -- no worries!
     -- ok, a string can correspond to an operator (like '==')
     if tp == 'string' then
-        if not ops then ops = require 'Lib.Extlibs.pl.operator'.optable end
+        if not ops then ops = require 'pl.operator'.optable end
         local fn = ops[f]
         if fn then return fn end
         local fn, err = utils.string_lambda(f)

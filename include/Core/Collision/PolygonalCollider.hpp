@@ -118,8 +118,8 @@ namespace obe::Collision
          * \param offset The offset to apply to the source collider
          * \return true if the two polygons intersects, false otherwise
          */
-        bool doesCollide(
-            PolygonalCollider& collider, const Transform::UnitVector& offset, const bool doAABBfilter) const;
+        bool doesCollide(PolygonalCollider& collider, const Transform::UnitVector& offset,
+            const bool doAABBfilter = true) const;
         /**
          * \brief Check if the Collider contains one of the Tag in parameter
          * \param tagType List from where you want to check the Tags existence
@@ -172,7 +172,7 @@ namespace obe::Collision
          */
         Transform::UnitVector getMaximumDistanceBeforeCollision(
             PolygonalCollider& collider, const Transform::UnitVector& offset,
-            const bool doAABBfilter) const;
+            const bool doAABBfilter = true) const;
         /**
          * \brief Get the Id of the parent of the Collider (When used in a
          *        GameObject) \return A std::string containing the Id of the parent of
@@ -202,7 +202,8 @@ namespace obe::Collision
         * \brief Returns the cached bounding box. Recalculates it if necessary.
         */
         [[nodiscard]] Transform::Rect getBoundingBox() const override;
-        void addPoint(const Transform::UnitVector& position, int pointIndex = -1) override;
+        void addPoint(
+            const Transform::UnitVector& position, int pointIndex = -1) override;
         void move(const Transform::UnitVector& position) override;
         void rotate(float angle, Transform::UnitVector origin) override;
         void setPosition(const Transform::UnitVector& position) override;

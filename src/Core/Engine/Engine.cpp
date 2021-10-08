@@ -54,7 +54,6 @@ namespace obe::Engine
         m_lua->safe_script_file("obe://Lib/Internal/Events.lua"_fs);
 
         Bindings::IndexAllBindings(*m_lua);
-        m_lua->safe_script_file("obe://Lib/Internal/Searcher.lua"_fs);
         m_lua->safe_script_file("obe://Lib/Internal/Helpers.lua"_fs);
         m_lua->safe_script_file("obe://Lib/Internal/GameInit.lua"_fs);
         m_lua->safe_script_file("obe://Lib/Internal/Logger.lua"_fs);
@@ -107,11 +106,11 @@ namespace obe::Engine
 
     void Engine::initPlugins()
     {
-        for (const System::MountablePath& mountedPath : System::MountablePath::Paths())
+        for (const auto& mountedPath : System::MountablePath::Paths())
         {
             Debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}",
-                mountedPath.basePath);
-            System::Path cPluginPath = System::Path("root://").add(mountedPath.basePath).add("Plugins");
+                mountedPath->basePath);
+            System::Path cPluginPath = System::Path(mountedPath->basePath).add("Plugins");
             if (Utils::File::directoryExists(cPluginPath.toString()))
             {
                 for (const std::string& filename :

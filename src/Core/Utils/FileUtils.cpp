@@ -229,4 +229,9 @@ namespace obe::Utils::File
         std::replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
         return normalizedPath;
     }
+
+    std::string canonicalPath(const std::string& path)
+    {
+        return std::filesystem::canonical((path.empty()) ? "." : path).string();
+    }
 } // namespace obe::Utils::File

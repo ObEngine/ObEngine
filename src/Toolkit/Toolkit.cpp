@@ -88,7 +88,8 @@ void run(std::string command)
     lua.safe_script_file("obe://Lib/Internal/ScriptInit.lua"_fs);
 
     Bindings::IndexAllBindings(lua);
-    lua.safe_script_file("obe://Lib/Internal/Searcher.lua"_fs);
+    lua.safe_script_file("obe://Lib/Internal/Require.lua"_fs);
+    lua.safe_script_file("obe://Lib/Internal/Helpers.lua"_fs);
     lua.safe_script_file("obe://Lib/Internal/Logger.lua"_fs);
     lua.set_exception_handler(&lua_exception_handler2);
 

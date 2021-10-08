@@ -13,7 +13,7 @@ namespace obe::System::Package
     {
         if (PackageExists(packageName))
         {
-            return vili::parser::from_file("obe://Package/Packages.vili"_fs)
+            return vili::parser::from_file("obe://Packages/packages.vili"_fs)
                 .at(packageName)
                 .at("path");
         }
@@ -22,12 +22,13 @@ namespace obe::System::Package
 
     bool PackageExists(const std::string& packageName)
     {
-        return vili::parser::from_file("obe://Package/Packages.vili"_fs).contains(packageName);
+        return vili::parser::from_file("obe://Packages/packages.vili"_fs)
+            .contains(packageName);
     }
 
     std::vector<std::string> ListPackages()
     {
-        vili::node packages = vili::parser::from_file("obe://Package/Packages.vili"_fs);
+        vili::node packages = vili::parser::from_file("obe://Packages/packages.vili"_fs);
         std::vector<std::string> packageNames;
         for (auto [packageName, _] : packages.items())
         {
@@ -54,14 +55,15 @@ namespace obe::System::Package
         throw Exceptions::PackageAlreadyInstalled(packageName, EXC_INFO);
     }
 
-    bool Load(const std::string& packageName, const std::string& prefix, const unsigned int priority)
+    bool Load(const std::string& packageName, const std::string& prefix,
+        const unsigned int priority)
     {
         Debug::Log->info(
             "<Package> Loading Package '{0}' with priority", packageName, priority);
         if (PackageExists(packageName))
         {
-            MountablePath::Mount(MountablePath(
-                MountablePathType::Package, GetPackageLocation(packageName), prefix, priority));
+            MountablePath::Mount(MountablePath(MountablePathType::Package,
+                GetPackageLocation(packageName), prefix, priority));
             return true;
         }
         throw Exceptions::UnknownPackage(packageName, ListPackages(), EXC_INFO);

@@ -113,7 +113,7 @@ namespace obe::Collision
         std::vector<PolygonalCollider*> collidersToCheck;
         for (auto& collider : colliders)
         {
-            if (collider != &coll && aabb.doesIntersects(collider->getBoundingBox()))
+            if (collider != &coll && aabb.intersects(collider->getBoundingBox()))
                 collidersToCheck.push_back(collider);
         }
         return collidersToCheck;
@@ -163,7 +163,8 @@ namespace obe::Collision
 
     Transform::Rect PolygonalCollider::getBoundingBox() const
     {
-        if (m_updateBoundingBox) {
+        if (m_updateBoundingBox)
+        {
             m_boundingBox = Transform::Polygon::getBoundingBox();
             m_updateBoundingBox = false;
         }
@@ -222,7 +223,8 @@ namespace obe::Collision
         CollisionData collData;
         collData.offset = offset;
 
-        std::vector<PolygonalCollider*> collidersToCheck = AABBfilter(*this, offset, Pool);
+        std::vector<PolygonalCollider*> collidersToCheck
+            = AABBfilter(*this, offset, Pool);
 
         for (auto& collider : collidersToCheck)
         {
@@ -233,7 +235,8 @@ namespace obe::Collision
                 // Debug::Log->warn("Maximum distance before collision from {}
                 // with {} is ({}, {})", this->getId(), collider->getId(),
                 // maxDist.x, maxDist.y);
-                if (maxDist != offset) reachableColliders.emplace_back(collider, maxDist);
+                if (maxDist != offset)
+                    reachableColliders.emplace_back(collider, maxDist);
             }
         }
 
@@ -293,7 +296,8 @@ namespace obe::Collision
         CollisionData collData;
         collData.offset = offset;
 
-        std::vector<PolygonalCollider*> collidersToCheck = AABBfilter(*this, offset, Pool);
+        std::vector<PolygonalCollider*> collidersToCheck
+            = AABBfilter(*this, offset, Pool);
 
         for (auto& collider : collidersToCheck)
         {
@@ -428,8 +432,8 @@ namespace obe::Collision
         return minDep;
     }
 
-    bool PolygonalCollider::doesCollide(
-        PolygonalCollider& collider, const Transform::UnitVector& offset, const bool doAABBfilter) const
+    bool PolygonalCollider::doesCollide(PolygonalCollider& collider,
+        const Transform::UnitVector& offset, const bool doAABBfilter) const
     {
         if (doAABBfilter && AABBfilter(*this, offset, { &collider }).empty())
             return false;

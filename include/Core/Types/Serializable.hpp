@@ -12,12 +12,12 @@ namespace obe::Types
     public:
         virtual ~Serializable() = default;
         /**
-         * \brief Dumps the content of the Serializable object to a ComplexNode
+         * \brief Dumps the content of the Serializable object to a vili node
          */
         virtual vili::node dump() const = 0;
         /**
-         * \brief Loads an object from a ComplexNode
-         * \param data ComplexNode containing the data of the object
+         * \brief Loads an object from a vili node
+         * \param data vili node containing the data of the object
          */
         virtual void load(const vili::node& data) = 0;
     };

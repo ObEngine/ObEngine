@@ -94,4 +94,6 @@ namespace obe::Utils::File
      * \return Normalized path
      */
     std::string normalizePath(const std::string& path);
+
+    std::string canonicalPath(const std::string& path);
 } // namespace obe::Utils::File

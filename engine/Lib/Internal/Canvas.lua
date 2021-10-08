@@ -1,5 +1,5 @@
-local Class = require("Lib/StdLib/Class");
-local contains = require("Lib/StdLib/Contains");
+local class = require("extlibs://pl.class");
+local tablex = require("extlibs://pl.tablex");
 
 obe.Canvas = {};
 
@@ -18,36 +18,35 @@ function deepcopy(orig)
     return copy
 end
 
-obe.Canvas.Canvas = Class(
-                        "Canvas", function(self, width, height, usecache)
-        self.internal = obe.Graphics.Canvas.Canvas(math.floor(width), math.floor(height));
-        self.elements = {};
-        self.useCache = usecache or false;
-        self.bases = {
-            Line = obe.Canvas
-                .MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Line}, self.useCache),
-            Rectangle = obe.Canvas.MakeMT(
-                {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Rectangle},
+obe.Canvas.Canvas = class();
+function obe.Canvas.Canvas:_init(width, height, usecache)
+    self.internal = obe.Graphics.Canvas.Canvas(math.floor(width), math.floor(height));
+    self.elements = {};
+    self.useCache = usecache or false;
+    self.bases = {
+        Line = obe.Canvas
+            .MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Line}, self.useCache),
+        Rectangle = obe.Canvas.MakeMT(
+            {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Rectangle},
                 self.useCache
-            ),
-            Text = obe.Canvas.MakeMT(
-                {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Text},
+        ),
+        Text = obe.Canvas.MakeMT(
+            {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Text},
                 self.useCache
-            ),
-            Circle = obe.Canvas.MakeMT(
-                {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Circle},
+        ),
+        Circle = obe.Canvas.MakeMT(
+            {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Circle},
                 self.useCache
-            ),
-            Polygon = obe.Canvas.MakeMT(
-                {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Polygon},
+        ),
+        Polygon = obe.Canvas.MakeMT(
+            {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Polygon},
                 self.useCache
-            ),
-            Bezier = obe.Canvas.MakeMT(
-                {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Bezier}, self.useCache
-            )
-        };
-    end
-                    );
+        ),
+        Bezier = obe.Canvas.MakeMT(
+            {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Bezier}, self.useCache
+        )
+    };
+end
 
 function obe.Canvas.NormalizeColor(color, base)
     if type(color) == "table" then
@@ -82,7 +81,7 @@ function obe.Canvas.ConvertHAlign(align)
         else
             error(
                 "Horizontal Alignment", align,
-                "does not exists, use one of those [Left, Center, Right]"
+                    "does not exists, use one of those [Left, Center, Right]"
             )
         end
     else
@@ -107,7 +106,7 @@ function obe.Canvas.ConvertVAlign(align)
         else
             error(
                 "Vertical Alignment", align,
-                "does not exists, use one of those [Top, Center, Botton]"
+                    "does not exists, use one of those [Top, Center, Botton]"
             )
         end
     else
@@ -230,7 +229,7 @@ function obe.Canvas.MakeMT(bases, usecache)
     for _, base in pairs(bases) do
         if base.priority then
             for _, priorityName in pairs(base.priority) do
-                if not contains(priority, priorityName) then
+                if not tablex.find(priority, priorityName) then
                     table.insert(priority, priorityName);
                 end
             end

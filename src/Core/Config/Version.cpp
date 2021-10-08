@@ -24,8 +24,14 @@ namespace obe::Config
             parts[0] = parts[0].substr(1);
         }
 
-        version_major = std::stoi(parts[0]);
-        version_minor = std::stoi(parts[1]);
-        version_patch = std::stoi(parts[2]);
+        major = std::stoi(parts[0]);
+        minor = std::stoi(parts[1]);
+        patch = std::stoi(parts[2]);
+    }
+
+    std::string Version::string() const
+    {
+        return std::to_string(major) + "." + std::to_string(minor) + "."
+            + std::to_string(patch);
     }
 } // namespace obe::Config

@@ -25,7 +25,8 @@ namespace obe
 #define EXC_INFO_WRAPPER() DebugInfo(__FILE__, __LINE__, __func__)
 #define EXC_INFO EXC_INFO_WRAPPER()
 
-    template <typename T> constexpr auto getTypeName() -> std::string_view
+    template <typename T>
+    constexpr auto getTypeName() -> std::string_view
     {
 #if defined(__clang__)
         constexpr auto prefix = std::string_view { "[T = " };
@@ -54,12 +55,17 @@ namespace obe
     {
     protected:
         std::string m_message;
+        std::vector<std::runtime_error> m_traceback;
+
     public:
         BaseException() = default;
         explicit BaseException(const std::exception& e) noexcept;
-        template <class... Args> void error(Args&&... args);
-        template <class... Args> void hint(Args&&... args);
+        template <class... Args>
+        void error(Args&&... args);
+        template <class... Args>
+        void hint(Args&&... args);
         [[nodiscard]] const char* what() const noexcept override;
+        const std::vector<std::runtime_error>& traceback() const;
     };
 
     template <class ExceptionType>
@@ -69,6 +75,7 @@ namespace obe
         using BaseException::BaseException;
         explicit Exception(DebugInfo info);
         ExceptionType nest(const std::exception& exception);
+        ExceptionType nest(BaseException& exception);
     };
 
     inline BaseException::BaseException(const std::exception& e) noexcept
@@ -84,7 +91,7 @@ namespace obe
         m_message += fmt::format("  In function: {}\n", info.function);
     }
 
-    template <class ... Args>
+    template <class... Args>
     void BaseException::error(Args&&... args)
     {
         const std::string errorMsg = fmt::format(std::forward<Args>(args)...);
@@ -94,7 +101,7 @@ namespace obe
 #endif
     }
 
-    template <class ... Args>
+    template <class... Args>
     void BaseException::hint(Args&&... args)
     {
         const std::string hintMsg = fmt::format(std::forward<Args>(args)...);
@@ -106,10 +113,29 @@ namespace obe
         return m_message.c_str();
     }
 
+    inline const std::vector<std::runtime_error>& BaseException::traceback() const
+    {
+        return m_traceback;
+    }
+
     template <class ExceptionType>
     ExceptionType Exception<ExceptionType>::nest(const std::exception& exception)
     {
         ExceptionType nestedException(*this);
+        nestedException.m_traceback = std::vector { std::runtime_error(exception.what()) };
+        nestedException.m_message += "  Cause:\n";
+        nestedException.m_message
+            += "    " + Utils::String::replace(exception.what(), "\n", "\n    ");
+        return nestedException;
+    }
+
+    template <class ExceptionType>
+    ExceptionType Exception<ExceptionType>::nest(BaseException& exception)
+    {
+        ExceptionType nestedException(*this);
+        const std::vector<std::runtime_error>& traceback = exception.traceback();
+        nestedException.m_traceback = std::vector(traceback.begin(), traceback.end());
+        nestedException.m_traceback.push_back(std::runtime_error(exception.what()));
         nestedException.m_message += "  Cause:\n";
         nestedException.m_message
             += "    " + Utils::String::replace(exception.what(), "\n", "\n    ");

@@ -57,15 +57,12 @@ namespace obe::Script
                                                          .find();
             if (objectDefinitionPath.empty())
                 throw Exceptions::ObjectDefinitionNotFound(type, EXC_INFO);
-            vili::node getGameObjectFile = vili::parser::from_file(
+
+            vili::node definitionData = vili::parser::from_file(
                 objectDefinitionPath, Config::Templates::getGameObjectTemplates());
-            if (getGameObjectFile.contains(type))
-            {
-                vili::node& definitionData = getGameObjectFile.at(type);
-                allDefinitions[type] = definitionData;
-                return definitionData;
-            }
-            throw Exceptions::ObjectDefinitionBlockNotFound(type, EXC_INFO);
+
+            allDefinitions[type] = definitionData;
+            return definitionData;
         }
         return allDefinitions.at(type);
     }

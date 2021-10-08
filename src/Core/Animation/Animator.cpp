@@ -212,9 +212,9 @@ namespace obe::Animation
                 {
                     tempAnim->applyParameters(animatorCfgFile.at("all"));
                 }
-                if (animatorCfgFile.contains(directory.element()))
+                if (animatorCfgFile.contains(directory.query()))
                 {
-                    tempAnim->applyParameters(animatorCfgFile.at(directory.element()));
+                    tempAnim->applyParameters(animatorCfgFile.at(directory.query()));
                 }
             }
 

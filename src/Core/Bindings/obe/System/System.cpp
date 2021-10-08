@@ -16,7 +16,7 @@ namespace obe::System::Bindings
         SystemNamespace.new_enum<obe::System::MountablePathType>("MountablePathType",
             { { "Path", obe::System::MountablePathType::Path },
                 { "Package", obe::System::MountablePathType::Package },
-                { "Workspace", obe::System::MountablePathType::Workspace } });
+                { "Project", obe::System::MountablePathType::Project } });
     }
     void LoadEnumPathType(sol::state_view state)
     {
@@ -49,8 +49,8 @@ namespace obe::System::Bindings
             = SystemNamespace.new_usertype<obe::System::ContextualPathFactory>(
                 "ContextualPathFactory", sol::call_constructor,
                 sol::constructors<obe::System::ContextualPathFactory(const std::string&),
-                    obe::System::ContextualPathFactory(const std::string&,
-                        const std::vector<obe::System::MountablePath>&)>());
+                    obe::System::ContextualPathFactory(
+                        const std::string&, const MountList&)>());
         bindContextualPathFactory[sol::meta_function::call]
             = &obe::System::ContextualPathFactory::operator();
     }
@@ -93,13 +93,14 @@ namespace obe::System::Bindings
         sol::usertype<obe::System::FindResult> bindFindResult
             = SystemNamespace.new_usertype<obe::System::FindResult>("FindResult",
                 sol::call_constructor,
-                sol::constructors<obe::System::FindResult(const std::string&,
-                                      const std::vector<obe::System::MountablePath>&),
-                    obe::System::FindResult(obe::System::PathType, const std::string&,
-                        const std::string&, const std::string&)>());
+                sol::constructors<obe::System::FindResult(
+                                      const std::string&, const MountList&),
+                    obe::System::FindResult(obe::System::PathType,
+                        std::shared_ptr<obe::System::MountablePath>, const std::string&,
+                        const std::string&)>());
         bindFindResult["path"] = &obe::System::FindResult::path;
-        bindFindResult["root"] = &obe::System::FindResult::root;
-        bindFindResult["element"] = &obe::System::FindResult::element;
+        bindFindResult["mount"] = &obe::System::FindResult::mount;
+        bindFindResult["query"] = &obe::System::FindResult::query;
         bindFindResult["success"] = &obe::System::FindResult::success;
     }
     void LoadClassMountablePath(sol::state_view state)
@@ -118,14 +119,10 @@ namespace obe::System::Bindings
         bindMountablePath[sol::meta_function::equal_to]
             = &obe::System::MountablePath::operator==;
         bindMountablePath["LoadMountFile"] = sol::overload(
-            [](obe::System::MountablePath* self) -> void {
-                return self->LoadMountFile();
-            },
-            [](obe::System::MountablePath* self, bool fromCWD) -> void {
-                return self->LoadMountFile(fromCWD);
-            },
-            [](obe::System::MountablePath* self, bool fromCWD, bool fromExe) -> void {
-                return self->LoadMountFile(fromCWD, fromExe);
+            []() -> void { return MountablePath::LoadMountFile(); },
+            [](bool fromCWD) -> void { return MountablePath::LoadMountFile(fromCWD); },
+            [](bool fromCWD, bool fromExe) -> void {
+                return MountablePath::LoadMountFile(fromCWD, fromExe);
             });
         bindMountablePath["Mount"] = &obe::System::MountablePath::Mount;
         bindMountablePath["Unmount"] = &obe::System::MountablePath::Unmount;
@@ -146,11 +143,10 @@ namespace obe::System::Bindings
             = SystemNamespace.new_usertype<obe::System::Path>("Path",
                 sol::call_constructor,
                 sol::constructors<obe::System::Path(),
-                    obe::System::Path(const std::vector<obe::System::MountablePath>&),
+                    obe::System::Path(const MountList&),
                     obe::System::Path(const obe::System::Path&),
                     obe::System::Path(std::string_view),
                     obe::System::Path(std::string_view, std::string_view)>());
-        bindPath["operator="] = &obe::System::Path::operator=;
         bindPath["set"] = &obe::System::Path::set;
         bindPath["add"] = &obe::System::Path::add;
         bindPath["last"] = &obe::System::Path::last;
@@ -176,6 +172,8 @@ namespace obe::System::Bindings
                 return self->findAll(pathType);
             });
         bindPath["toString"] = &obe::System::Path::toString;
+
+        state.safe_script_file("obe://Lib/Internal/Require.lua"_fs);
     }
     void LoadClassPlugin(sol::state_view state)
     {

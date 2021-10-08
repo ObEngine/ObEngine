@@ -41,8 +41,8 @@
 #include <Bindings/obe/System/Constraints/Constraints.hpp>
 #include <Bindings/obe/System/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/System/Package/Package.hpp>
+#include <Bindings/obe/System/Project/Project.hpp>
 #include <Bindings/obe/System/System.hpp>
-#include <Bindings/obe/System/Workspace/Workspace.hpp>
 #include <Bindings/obe/Tiles/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Tiles/Tiles.hpp>
 #include <Bindings/obe/Time/Time.hpp>
@@ -66,6 +66,12 @@ namespace obe::Bindings
     void IndexAllBindings(sol::state_view state)
     {
         state["obe"].get_or_create<sol::table>();
+        state["obe"]["System"].get_or_create<sol::table>();
+
+        obe::System::Bindings::LoadClassMountablePath(state);
+        obe::System::Bindings::LoadClassFindResult(state);
+        obe::System::Bindings::LoadClassPath(state);
+
         state["vili"].get_or_create<sol::table>();
         state["obe"]["Animation"].get_or_create<sol::table>();
         state["obe"]["Audio"].get_or_create<sol::table>();
@@ -79,7 +85,6 @@ namespace obe::Bindings
         state["obe"]["Network"].get_or_create<sol::table>();
         state["obe"]["Scene"].get_or_create<sol::table>();
         state["obe"]["Script"].get_or_create<sol::table>();
-        state["obe"]["System"].get_or_create<sol::table>();
         state["obe"]["Tiles"].get_or_create<sol::table>();
         state["obe"]["Time"].get_or_create<sol::table>();
         state["obe"]["Transform"].get_or_create<sol::table>();
@@ -121,7 +126,7 @@ namespace obe::Bindings
         state["obe"]["Graphics"]["Utils"].get_or_create<sol::table>();
         state["obe"]["Script"]["ViliLuaBridge"].get_or_create<sol::table>();
         state["obe"]["System"]["Package"].get_or_create<sol::table>();
-        state["obe"]["System"]["Workspace"].get_or_create<sol::table>();
+        state["obe"]["System"]["Project"].get_or_create<sol::table>();
         state["obe"]["Utils"]["File"].get_or_create<sol::table>();
         state["obe"]["Utils"]["Math"].get_or_create<sol::table>();
         state["obe"]["Utils"]["String"].get_or_create<sol::table>();
@@ -306,7 +311,6 @@ namespace obe::Bindings
 
         obe::Script::Exceptions::Bindings::LoadClassInvalidScript(state);
         obe::Script::Exceptions::Bindings::LoadClassNoSuchComponent(state);
-        obe::Script::Exceptions::Bindings::LoadClassObjectDefinitionBlockNotFound(state);
         obe::Script::Exceptions::Bindings::LoadClassObjectDefinitionNotFound(state);
         obe::Script::Exceptions::Bindings::LoadClassScriptFileNotFound(state);
         obe::Script::Exceptions::Bindings::LoadClassWrongSourceAttributeType(state);
@@ -315,9 +319,6 @@ namespace obe::Bindings
         obe::Script::Bindings::LoadClassGameObjectDatabase(state);
 
         obe::System::Bindings::LoadClassCursor(state);
-        obe::System::Bindings::LoadClassFindResult(state);
-        obe::System::Bindings::LoadClassMountablePath(state);
-        obe::System::Bindings::LoadClassPath(state);
         obe::System::Bindings::LoadClassPlugin(state);
         obe::System::Bindings::LoadClassWindow(state);
         obe::System::Bindings::LoadEnumMountablePathType(state);
@@ -334,7 +335,7 @@ namespace obe::Bindings
         obe::System::Exceptions::Bindings::LoadClassResourceNotFound(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownPackage(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownStretchMode(state);
-        obe::System::Exceptions::Bindings::LoadClassUnknownWorkspace(state);
+        obe::System::Exceptions::Bindings::LoadClassUnknownProject(state);
 
         obe::Tiles::Bindings::LoadClassAnimatedTile(state);
         obe::Tiles::Bindings::LoadClassTileset(state);
@@ -599,10 +600,10 @@ namespace obe::Bindings
         obe::System::Package::Bindings::LoadFunctionInstall(state);
         obe::System::Package::Bindings::LoadFunctionLoad(state);
 
-        obe::System::Workspace::Bindings::LoadFunctionGetWorkspaceLocation(state);
-        obe::System::Workspace::Bindings::LoadFunctionWorkspaceExists(state);
-        obe::System::Workspace::Bindings::LoadFunctionLoad(state);
-        obe::System::Workspace::Bindings::LoadFunctionListWorkspaces(state);
+        obe::System::Project::Bindings::LoadFunctionGetProjectLocation(state);
+        obe::System::Project::Bindings::LoadFunctionProjectExists(state);
+        obe::System::Project::Bindings::LoadFunctionLoad(state);
+        obe::System::Project::Bindings::LoadFunctionListProjects(state);
 
         obe::Utils::File::Bindings::LoadFunctionGetDirectoryList(state);
         obe::Utils::File::Bindings::LoadFunctionGetFileList(state);

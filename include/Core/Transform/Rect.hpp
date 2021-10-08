@@ -160,8 +160,8 @@ namespace obe::Transform
         * \param other The other Rect to check
         * \return true if the Rect intersects the other Rect, false otherwise
         */
-        [[nodiscard]] bool doesIntersects(const Rect& rect) const;
-        [[nodiscard]] std::optional<Rect> getIntersection(const Rect& rect) const;
+        [[nodiscard]] bool intersects(const Rect& rect) const;
+        [[nodiscard]] std::optional<Rect> intersection(const Rect& rect) const;
         [[nodiscard]] bool contains(const Rect& rect) const;
         [[nodiscard]] bool contains(const UnitVector& position) const;
     };

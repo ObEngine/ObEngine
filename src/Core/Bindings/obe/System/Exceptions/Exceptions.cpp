@@ -102,14 +102,14 @@ namespace obe::System::Exceptions::Bindings
                           std::string_view, obe::DebugInfo)>(),
                       sol::base_classes, sol::bases<obe::BaseException>());
     }
-    void LoadClassUnknownWorkspace(sol::state_view state)
+    void LoadClassUnknownProject(sol::state_view state)
     {
         sol::table ExceptionsNamespace
             = state["obe"]["System"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::System::Exceptions::UnknownWorkspace> bindUnknownWorkspace
-            = ExceptionsNamespace.new_usertype<obe::System::Exceptions::UnknownWorkspace>(
-                "UnknownWorkspace", sol::call_constructor,
-                sol::constructors<obe::System::Exceptions::UnknownWorkspace(
+        sol::usertype<obe::System::Exceptions::UnknownProject> bindUnknownProject
+            = ExceptionsNamespace.new_usertype<obe::System::Exceptions::UnknownProject>(
+                "UnknownProject", sol::call_constructor,
+                sol::constructors<obe::System::Exceptions::UnknownProject(
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::BaseException>());
     }
