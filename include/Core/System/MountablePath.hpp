@@ -12,8 +12,24 @@ namespace obe::System
         constexpr std::string_view cwd = "cwd";
         constexpr std::string_view exe = "exe";
         constexpr std::string_view cfg = "cfg";
-        constexpr std::string_view base = "base";
+        constexpr std::string_view mount = "mount";
         constexpr std::string_view extlibs = "extlibs";
+        constexpr std::string_view root = "root";
+    }
+
+    /**
+     * \brief contains default priorities of mounts
+     * 
+     * High-priority user defined(>3) > Project(3) > Mount(2) > Defaults(1) > Low-priority user defined(<0)
+     */
+    namespace Priorities
+    {
+        constexpr int high = 5;
+        constexpr int projectmount = 4;
+        constexpr int project = 3;
+        constexpr int mount = 2;
+        constexpr int defaults = 1;
+        constexpr int low = 0;
     }
 
     /**

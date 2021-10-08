@@ -43,18 +43,19 @@ namespace obe::System
         }
 
         MountablePath workingDirectoryPath(
-            MountablePathType::Path, "", Prefixes::cwd, 0, false);
-        MountablePath implicitCWDPath(MountablePathType::Path, "", "");
-        MountablePath executablePath(MountablePathType::Path,
-            Utils::File::getExecutableDirectory(), Prefixes::exe, 0, false);
-        MountablePath configPath(
-            MountablePathType::Path, sago::getConfigHome(), Prefixes::cfg, 0, false);
+            MountablePathType::Path, "", Prefixes::cwd, Priorities::defaults, false);
+        MountablePath implicitCWDPath(MountablePathType::Path, "", "", Priorities::defaults);
+        MountablePath executablePath(MountablePathType::Path, Utils::File::getExecutableDirectory(),
+            Prefixes::exe, Priorities::defaults, false);
+        MountablePath configPath(MountablePathType::Path, sago::getConfigHome(), Prefixes::cfg,
+            Priorities::defaults, false);
         MountablePath::Mount(workingDirectoryPath);
         MountablePath::Mount(implicitCWDPath);
         MountablePath::Mount(executablePath);
         MountablePath::Mount(configPath);
 
-        MountablePath basePath(MountablePathType::Path, "", Prefixes::base, 0, false);
+        MountablePath basePath(
+            MountablePathType::Path, "", Prefixes::mount, Priorities::defaults, false);
         if (fromCWD)
         {
             basePath.basePath = workingDirectoryPath.basePath;
@@ -65,48 +66,43 @@ namespace obe::System
         }
         MountablePath::Mount(basePath);
 
-        MountablePath enginePath(
-            MountablePathType::Path, executablePath.basePath, Prefixes::obe, 0, false);
+        MountablePath enginePath(MountablePathType::Path, executablePath.basePath, Prefixes::obe,
+            Priorities::defaults, false);
         MountablePath::Mount(enginePath);
 
         FindResult mountFilePath
-            = Path(Prefixes::base, "mount.vili").find(obe::System::PathType::File);
+            = Path(Prefixes::mount, "mount.vili").find(obe::System::PathType::File);
         if (!mountFilePath)
         {
             auto stringPaths = MountablePath::StringPaths();
-            std::transform(stringPaths.begin(), stringPaths.end(), stringPaths.begin(),
-                Utils::String::quote);
+            std::transform(
+                stringPaths.begin(), stringPaths.end(), stringPaths.begin(), Utils::String::quote);
 
-            Debug::Log->info(
-                "No 'mount.vili' file found in the following directories ({})",
+            Debug::Log->info("No 'mount.vili' file found in the following directories ({})",
                 fmt::join(stringPaths.begin(), stringPaths.end(), ", "));
             return;
         }
 
-        Debug::Log->debug("Found 'mount.vili' file in '{}' (prefix: '{}')",
-            mountFilePath.path(), mountFilePath.mount().prefix);
+        Debug::Log->debug("Found 'mount.vili' file in '{}' (prefix: '{}')", mountFilePath.path(),
+            mountFilePath.mount().prefix);
 
         vili::node mountedPaths;
         try
         {
-            mountedPaths = vili::parser::from_file(
-                mountFilePath, Config::Templates::getMountTemplates());
+            mountedPaths
+                = vili::parser::from_file(mountFilePath, Config::Templates::getMountTemplates());
         }
         catch (const vili::exceptions::file_not_found& e)
         {
-            Debug::Log->critical(
-                "<MountablePath> Unable to find 'mount.vili' : \n{}", e.what());
-            throw Exceptions::MountFileMissing(
-                Utils::File::getCurrentDirectory(), EXC_INFO);
+            Debug::Log->critical("<MountablePath> Unable to find 'mount.vili' : \n{}", e.what());
+            throw Exceptions::MountFileMissing(Utils::File::getCurrentDirectory(), EXC_INFO);
         }
         catch (const std::exception& e)
         {
-            Debug::Log->critical(
-                "<MountablePath> Unable to load 'mount.vili' : \n{}", e.what());
+            Debug::Log->critical("<MountablePath> Unable to load 'mount.vili' : \n{}", e.what());
             throw Exceptions::InvalidMountFile(mountFilePath.path(), EXC_INFO).nest(e);
         }
-        vili::validator::validate_tree(
-            Config::Validators::MountValidator(), mountedPaths);
+        vili::validator::validate_tree(Config::Validators::MountValidator(), mountedPaths);
         if (mountedPaths.contains("mounts"))
         {
             for (auto [mountName, mount] : mountedPaths.at("mounts").items())
@@ -117,55 +113,58 @@ namespace obe::System
                     auto [_, pathPrefix] = splitPathAndPrefix(currentPath, false);
                     if (!pathPrefix.empty())
                     {
-                        currentPath
-                            = System::Path(currentPath).find(PathType::Directory).path();
+                        currentPath = System::Path(currentPath).find(PathType::Directory).path();
                     }
                     MountablePath::Mount(MountablePath(
-                        MountablePathType::Path, currentPath, mountName, 0));
+                        MountablePathType::Path, currentPath, mountName, Priorities::mount));
                     Debug::Log->info("<MountablePath> Mounted Path : '{0}' at '{1}://' "
                                      "with priority {2}",
                         currentPath, mountName, 0);
                 }
                 else if (mount.is_object())
                 {
-                    const std::string currentType = mount.at("type");
+                    std::string currentType = "Path";
+                    if (mount.contains("type"))
+                    {
+                        currentType = mount.at("type");
+                    }
                     std::string currentPath = mount.at("path");
                     std::string prefix = mountName;
                     if (mount.contains("prefix"))
                     {
                         prefix = mount.at("prefix");
                     }
-                    int currentPriority = mount.at("priority");
+                    int currentPriority = Priorities::mount;
+                    if (mount.contains("priority"))
+                    {
+                        currentPriority = mount.at("priority");
+                    }
                     if (currentType == "Path")
                     {
                         auto [_, pathPrefix] = splitPathAndPrefix(currentPath, false);
                         if (!pathPrefix.empty())
                         {
-                            currentPath = System::Path(currentPath)
-                                              .find(PathType::Directory)
-                                              .path();
+                            currentPath
+                                = System::Path(currentPath).find(PathType::Directory).path();
                         }
-                        MountablePath::Mount(MountablePath(MountablePathType::Path,
-                            currentPath, prefix, currentPriority));
-                        Debug::Log->info(
-                            "<MountablePath> Mounted Path : '{0}' at '{1}://' "
-                            "with priority {2}",
+                        MountablePath::Mount(MountablePath(
+                            MountablePathType::Path, currentPath, prefix, currentPriority));
+                        Debug::Log->info("<MountablePath> Mounted Path : '{0}' at '{1}://' "
+                                         "with priority {2}",
                             currentPath, prefix, currentPriority);
                     }
                     else if (currentType == "Package")
                     {
                         Package::Load(currentPath, prefix, currentPriority);
-                        Debug::Log->info(
-                            "<MountablePath> Mounted Package : '{0}' at '{1}://' "
-                            "with priority {2}",
+                        Debug::Log->info("<MountablePath> Mounted Package : '{0}' at '{1}://' "
+                                         "with priority {2}",
                             currentPath, prefix, currentPriority);
                     }
                     else if (currentType == "Project")
                     {
                         Project::Load(currentPath, prefix, currentPriority);
-                        Debug::Log->info(
-                            "<MountablePath> Mounted Project : '{0}' at '{1}://' "
-                            "with priority {2}",
+                        Debug::Log->info("<MountablePath> Mounted Project : '{0}' at '{1}://' "
+                                         "with priority {2}",
                             currentPath, prefix, currentPriority);
                     }
                 }
@@ -173,7 +172,7 @@ namespace obe::System
         }
         if (mountedPaths.contains("project"))
         {
-            Project::Load(mountedPaths.at("project"), "root", 2);
+            Project::Load(mountedPaths.at("project"), Prefixes::root.data(), Priorities::project);
         }
         Debug::Log->info("<MountablePath> List of mounted paths : ");
         for (const auto& currentPath : MountablePath::MountedPaths)
@@ -184,8 +183,8 @@ namespace obe::System
 
         // If obe prefix has been redefined, extlibs will change accordingly
         std::string obePath = MountablePath::FromPrefix(Prefixes::obe.data()).basePath;
-        MountablePath extlibsPath(MountablePathType::Path, obePath + "/Lib/Extlibs", Prefixes::extlibs, 0,
-            false);
+        MountablePath extlibsPath(MountablePathType::Path, obePath + "/Lib/Extlibs",
+            Prefixes::extlibs, Priorities::defaults, false);
         MountablePath::Mount(extlibsPath);
     }
 
@@ -193,13 +192,11 @@ namespace obe::System
     {
         auto pathCmp = [&path](const auto& mountedPath) { return path == *mountedPath; };
         bool pathAlreadyExists
-            = std::find_if(MountedPaths.begin(), MountedPaths.end(), pathCmp)
-            != MountedPaths.end();
+            = std::find_if(MountedPaths.begin(), MountedPaths.end(), pathCmp) != MountedPaths.end();
         if (pathAlreadyExists)
         {
-            Debug::Log->warn(
-                "[MountablePath] Can't Mount the same path twice: "
-                "MountablePath(prefix={}, path={}, priority={}, implicit={})",
+            Debug::Log->warn("[MountablePath] Can't Mount the same path twice: "
+                             "MountablePath(prefix={}, path={}, priority={}, implicit={})",
                 path.prefix, path.basePath, path.priority, path.implicit);
             return;
         }
@@ -238,8 +235,8 @@ namespace obe::System
 
     void MountablePath::Sort()
     {
-        std::sort(MountedPaths.begin(), MountedPaths.end(),
-            [](const auto& first, const auto& second) {
+        std::sort(
+            MountedPaths.begin(), MountedPaths.end(), [](const auto& first, const auto& second) {
                 return first->priority > second->priority;
             });
     }

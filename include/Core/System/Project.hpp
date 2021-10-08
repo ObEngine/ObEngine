@@ -13,6 +13,11 @@
  */
 namespace obe::System::Project
 {
+    namespace Prefixes
+    {
+        constexpr std::string_view objects = "objects";
+        constexpr std::string_view scenes = "scenes";
+    }
     /**
      * \brief Get the Location of the Project identified by projectName
      * \param projectName Name of the Project you want to get the path.
@@ -35,7 +40,7 @@ namespace obe::System::Project
      *         otherwise.
      */
     bool Load(const std::string& projectName, const std::string& prefix,
-        unsigned int priority = 1);
+        unsigned int priority = Priorities::project);
     std::vector<std::string> ListProjects();
 
     class ProjectURLs : Types::Serializable

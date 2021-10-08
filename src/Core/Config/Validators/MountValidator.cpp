@@ -14,15 +14,16 @@ namespace obe::Config::Validators
                         {
                             "properties", vili::object {
                                 {
-                                    "type", vili::object {
-                                        {"type", vili::string_typename},
-                                        {"values", vili::array {"Path", "Project", "Package"}}
-                                    },
-                                },
-                                {
                                     "path", vili::object {
                                         {"type", vili::string_typename}
                                     }
+                                },
+                                {
+                                    "type", vili::object {
+                                        {"type", vili::string_typename},
+                                        {"values", vili::array {"Path", "Project", "Package"}},
+                                        {"optional", true}
+                                    },
                                 },
                                 {
                                     "prefix", vili::object {

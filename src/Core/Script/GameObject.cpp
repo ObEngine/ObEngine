@@ -6,6 +6,7 @@
 #include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
 #include <Script/ViliLuaBridge.hpp>
+#include <System/Project.hpp>
 
 namespace obe::Script
 {
@@ -51,10 +52,7 @@ namespace obe::Script
     {
         if (!allDefinitions.contains(type))
         {
-            const std::string objectDefinitionPath = System::Path("*://Data/GameObjects/")
-                                                         .add(type)
-                                                         .add(type + ".obj.vili")
-                                                         .find();
+            const std::string objectDefinitionPath = System::Path(System::Project::Prefixes::objects, type).add(type + ".obj.vili").find();
             if (objectDefinitionPath.empty())
                 throw Exceptions::ObjectDefinitionNotFound(type, EXC_INFO);
 
@@ -84,7 +82,7 @@ namespace obe::Script
         sol::state_view lua, const std::string& type, const std::string& id)
         : Identifiable(id)
         , m_lua(std::move(lua))
-        , GameObjectPath(System::Path("*://Data/GameObjects/").add(type).find(System::PathType::Directory))
+        , GameObjectPath(System::Path(System::Project::Prefixes::objects, type).find(System::PathType::Directory))
     {
         m_type = type;
     }

@@ -1,5 +1,6 @@
 id: "sample_project"
 name: "SampleProject"
+version: "0.1.0"
 authors: ["Sygmei"]
 description: "Simple project to get started with ObEngine"
 obengine_version: "0.5.0"
@@ -17,5 +18,5 @@ urls:
     license: "https://github.com/ObEngine/SampleProject/tree/master/LICENSE"
 
 mounts:
-    scenes: "project://Scenes"
-    objects: "project://GameObjects"
+    scenes: "root://Scenes"
+    objects: "root://GameObjects"
