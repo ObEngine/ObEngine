@@ -5,10 +5,10 @@
 
 strategy:
   matrix:
-    linux-16.04:
-      imageName: 'ubuntu-16.04'
-    linux-18.04:
-      imageName: 'ubuntu-18.04'
+#    linux-16.04:
+#      imageName: 'ubuntu-16.04'
+#    linux-18.04:
+#      imageName: 'ubuntu-18.04'
     linux-latest:
       imageName: 'ubuntu-latest'
     mac:
