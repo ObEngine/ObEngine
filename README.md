@@ -89,7 +89,7 @@ Here you go :
 - Canvas (You can draw stuff using a simple API)
 - Network support
 - Scene / GameObjects system
-- Workspaces and Packages system
+- Projects and Packages system
 - Layering system with parallax support
 - Polygonal Collisions with full collision detection support
 - Integrated CLI to manage your project
