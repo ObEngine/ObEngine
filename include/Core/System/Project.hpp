@@ -86,6 +86,7 @@ namespace obe::System::Project
         MountList m_mounts;
 
     protected:
+        void mountDefaults();
 
     public:
         Project();

@@ -21,18 +21,22 @@ namespace obe::System
         PathType m_type = PathType::All;
         std::shared_ptr<MountablePath> m_mount;
         std::string m_path;
+        std::string m_query;
         std::string m_element;
         MountList m_mounts;
 
         void checkValidity() const;
 
     public:
-        FindResult(const std::string& pathNotFound, const MountList& mounts);
-        FindResult(PathType pathType, std::shared_ptr<MountablePath> mount,
-            const std::string& path, const std::string& element);
+        FindResult(
+            const std::string& pathNotFound, const std::string& query, const MountList& mounts);
+        FindResult(PathType pathType, std::shared_ptr<MountablePath> mount, const std::string& path,
+            const std::string& query, const std::string& element = "");
+        [[nodiscard]] std::string hypotheticalPath() const;
         [[nodiscard]] const std::string& path() const;
         [[nodiscard]] const MountablePath& mount() const;
         [[nodiscard]] const std::string& query() const;
+        [[nodiscard]] const std::string& element() const;
         [[nodiscard]] bool success() const;
         operator bool() const;
         operator const std::string&() const;
@@ -112,11 +116,9 @@ namespace obe::System
          * \brief Finds the most prioritized file corresponding to the Path
          * \return The full path to the most prioritized file
          */
-        [[nodiscard]] std::vector<FindResult> list(
-            PathType pathType = PathType::All) const;
+        [[nodiscard]] std::vector<FindResult> list(PathType pathType = PathType::All) const;
         [[nodiscard]] FindResult find(PathType pathType = PathType::All) const;
-        [[nodiscard]] std::vector<FindResult> findAll(
-            PathType pathType = PathType::All) const;
+        [[nodiscard]] std::vector<FindResult> findAll(PathType pathType = PathType::All) const;
         /**
          * \brief Get the current path in string form
          * \return The Path in std::string form

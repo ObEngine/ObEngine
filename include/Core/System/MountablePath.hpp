@@ -19,7 +19,7 @@ namespace obe::System
 
     /**
      * \brief contains default priorities of mounts
-     * 
+     *
      * High-priority user defined(>3) > Project(3) > Mount(2) > Defaults(1) > Low-priority user defined(<0)
      */
     namespace Priorities
@@ -50,6 +50,25 @@ namespace obe::System
          * \brief The mounted path is a Project
          */
         Project
+    };
+
+    /**
+     * \brief action to take whenever two MountablePath with the same prefix are mounted
+     */
+    enum class SamePrefixPolicy
+    {
+        /**
+         * \brief keep both MountablePath with the same prefix
+         */
+        KeepBoth,
+        /**
+         * \brief discard the new MountablePath
+         */
+        Skip,
+        /**
+         * \brief discard the old MountablePath
+         */
+        Replace
     };
 
     class MountablePath;
@@ -103,8 +122,10 @@ namespace obe::System
         /**
          * \brief Add a Path to Mounted Paths
          * \param path Path to mount
+         * \param samePrefixPolicy action to take whenever two or more MountablePath with the same prefix are found
          */
-        static void Mount(MountablePath path);
+        static void Mount(
+            MountablePath path, SamePrefixPolicy samePrefixPolicy = SamePrefixPolicy::KeepBoth);
         /**
          * \brief Remove a Path from Mounted Paths
          * \param path Path to unmount

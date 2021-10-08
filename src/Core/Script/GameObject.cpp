@@ -32,11 +32,8 @@ namespace obe::Script
     {
         if (!allRequires.contains(type))
         {
-            vili::node getGameObjectFile
-                = vili::parser::from_file(System::Path("Data/GameObjects/")
-                                              .add(type)
-                                              .add(type + ".obj.vili")
-                                              .find());
+            vili::node getGameObjectFile = vili::parser::from_file(
+                System::Path("Data/GameObjects/").add(type).add(type + ".obj.vili").find());
             if (getGameObjectFile.contains("Requires"))
             {
                 vili::node& requiresData = getGameObjectFile.at("Requires");
@@ -52,7 +49,10 @@ namespace obe::Script
     {
         if (!allDefinitions.contains(type))
         {
-            const std::string objectDefinitionPath = System::Path(System::Project::Prefixes::objects, type).add(type + ".obj.vili").find();
+            const std::string objectDefinitionPath
+                = System::Path(System::Project::Prefixes::objects, type)
+                      .add(type + ".obj.vili")
+                      .find();
             if (objectDefinitionPath.empty())
                 throw Exceptions::ObjectDefinitionNotFound(type, EXC_INFO);
 
@@ -78,11 +78,11 @@ namespace obe::Script
     }
 
     // GameObject
-    GameObject::GameObject(
-        sol::state_view lua, const std::string& type, const std::string& id)
+    GameObject::GameObject(sol::state_view lua, const std::string& type, const std::string& id)
         : Identifiable(id)
         , m_lua(std::move(lua))
-        , GameObjectPath(System::Path(System::Project::Prefixes::objects, type).find(System::PathType::Directory))
+        , GameObjectPath(System::Path(System::Project::Prefixes::objects, type)
+                             .find(System::PathType::Directory))
     {
         m_type = type;
     }
@@ -91,21 +91,18 @@ namespace obe::Script
     {
         if (!m_initialized)
         {
-            Debug::Log->debug(
-                "<GameObject> Initializing GameObject '{0}' ({1})", m_id, m_type);
+            Debug::Log->debug("<GameObject> Initializing GameObject '{0}' ({1})", m_id, m_type);
             m_initialized = true;
             if (m_hasScriptEngine)
             {
                 m_environment["__OBJECT_INIT"] = true;
                 try
                 {
-                    safeLuaCall(
-                        m_environment["ObjectInit"].get<sol::protected_function>());
+                    safeLuaCall(m_environment["ObjectInit"].get<sol::protected_function>());
                 }
                 catch (const BaseException& e)
                 {
-                    throw Exceptions::GameObjectScriptError(
-                        m_type, m_id, "ObjectInit", EXC_INFO)
+                    throw Exceptions::GameObjectScriptError(m_type, m_id, "ObjectInit", EXC_INFO)
                         .nest(e);
                 }
             }
@@ -151,10 +148,8 @@ namespace obe::Script
             vili::node& script = obj.at("Script");
             m_hasScriptEngine = true;
             m_environment = sol::environment(m_lua, sol::create, m_lua.globals());
-            m_privateKey = m_type + "_"
-                + Utils::String::getRandomKey(Utils::String::Alphabet, 1)
-                + Utils::String::getRandomKey(
-                    Utils::String::Alphabet + Utils::String::Numbers, 11);
+            m_privateKey = m_type + "_" + Utils::String::getRandomKey(Utils::String::Alphabet, 1)
+                + Utils::String::getRandomKey(Utils::String::Alphabet + Utils::String::Numbers, 11);
 
             m_environment["This"] = this;
 
@@ -220,12 +215,10 @@ namespace obe::Script
                 animatorPath = animator.at("path");
             }
 
-            Animation::AnimatorTargetScaleMode scaleMode
-                = Animation::AnimatorTargetScaleMode::Fit;
+            Animation::AnimatorTargetScaleMode scaleMode = Animation::AnimatorTargetScaleMode::Fit;
             if (animator.contains("scaling"))
             {
-                scaleMode = Animation::stringToAnimatorTargetScaleMode(
-                    animator.at("scaling"));
+                scaleMode = Animation::stringToAnimatorTargetScaleMode(animator.at("scaling"));
             }
             if (m_sprite)
                 m_animator->setTarget(*m_sprite, scaleMode);
@@ -354,20 +347,17 @@ namespace obe::Script
     {
         if (!this->deletable)
         {
-            Debug::Log->debug(
-                "GameObject::deleteObject called for '{0}' ({1})", m_id, m_type);
+            Debug::Log->debug("GameObject::deleteObject called for '{0}' ({1})", m_id, m_type);
 
             if (m_hasScriptEngine)
             {
                 try
                 {
-                    safeLuaCall(
-                        m_environment["ObjectDelete"].get<sol::protected_function>());
+                    safeLuaCall(m_environment["ObjectDelete"].get<sol::protected_function>());
                 }
                 catch (const BaseException& e)
                 {
-                    throw Exceptions::GameObjectScriptError(
-                        m_type, m_id, "ObjectDelete", EXC_INFO)
+                    throw Exceptions::GameObjectScriptError(m_type, m_id, "ObjectDelete", EXC_INFO)
                         .nest(e);
                 }
             }
@@ -412,8 +402,7 @@ namespace obe::Script
         if (auto dumpFunction = this->access()["Dump"]; dumpFunction.valid())
         {
             const sol::table saveTableRef = dumpFunction().get<sol::table>();
-            vili::node saveRequirements
-                = Script::ViliLuaBridge::luaTableToViliObject(saveTableRef);
+            vili::node saveRequirements = Script::ViliLuaBridge::luaTableToViliObject(saveTableRef);
             result["Requires"] = saveRequirements;
         }
 
@@ -440,13 +429,11 @@ namespace obe::Script
                 throw Exceptions::InvalidScript(
                     fullPath, target.get<sol::error>().what(), EXC_INFO);
             }
-            const sol::protected_function bytecode
-                = target.get<sol::protected_function>();
+            const sol::protected_function bytecode = target.get<sol::protected_function>();
             ScriptCache.emplace(fullPath, bytecode.dump());
         }
         const std::string_view source = ScriptCache.at(fullPath).as_string_view();
-        sol::protected_function_result loadResult
-            = m_lua.safe_script(source, m_environment);
+        sol::protected_function_result loadResult = m_lua.safe_script(source, m_environment);
         if (!loadResult.valid())
         {
             throw Exceptions::InvalidScript(

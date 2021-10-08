@@ -218,6 +218,20 @@ namespace obe::System::Project
         }
     }
 
+    void Project::mountDefaults()
+    {
+        const std::string projectRoot
+            = System::Path(System::Prefixes::root, ".").find(PathType::Directory).path();
+
+        const MountablePath objectsPath(
+            MountablePathType::Path, projectRoot, Prefixes::objects, Priorities::projectmount);
+        MountablePath::Mount(objectsPath, SamePrefixPolicy::Skip);
+
+        const MountablePath scenesPath(
+            MountablePathType::Path, projectRoot, Prefixes::objects, Priorities::projectmount);
+        MountablePath::Mount(scenesPath, SamePrefixPolicy::Skip);
+    }
+
     Project::Project()
         : m_obengineVersion(0, 1, 0)
     {
@@ -248,6 +262,7 @@ namespace obe::System::Project
         {
             MountablePath::Mount(*mount);
         }
+        this->mountDefaults();
     }
 
     void Project::unmount()

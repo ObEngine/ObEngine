@@ -188,7 +188,7 @@ namespace obe::System
         MountablePath::Mount(extlibsPath);
     }
 
-    void MountablePath::Mount(const MountablePath path)
+    void MountablePath::Mount(const MountablePath path, SamePrefixPolicy samePrefixPolicy)
     {
         auto pathCmp = [&path](const auto& mountedPath) { return path == *mountedPath; };
         bool pathAlreadyExists
@@ -200,7 +200,18 @@ namespace obe::System
                 path.prefix, path.basePath, path.priority, path.implicit);
             return;
         }
-        MountedPaths.push_back(std::make_shared<MountablePath>(path));
+        if (samePrefixPolicy == SamePrefixPolicy::Replace)
+        {
+            MountedPaths.erase(std::remove_if(MountedPaths.begin(), MountedPaths.end(),
+                                   [path](const auto& mountablePath)
+                                   { return mountablePath->prefix == path.prefix; }),
+                MountedPaths.end());
+            MountedPaths.push_back(std::make_shared<MountablePath>(path));
+        }
+        if (samePrefixPolicy != SamePrefixPolicy::Skip)
+        {
+            MountedPaths.push_back(std::make_shared<MountablePath>(path));
+        }
         Sort();
     }
 
@@ -235,10 +246,9 @@ namespace obe::System
 
     void MountablePath::Sort()
     {
-        std::sort(
-            MountedPaths.begin(), MountedPaths.end(), [](const auto& first, const auto& second) {
-                return first->priority > second->priority;
-            });
+        std::sort(MountedPaths.begin(), MountedPaths.end(),
+            [](const auto& first, const auto& second)
+            { return first->priority > second->priority; });
     }
 
     const MountablePath& MountablePath::FromPrefix(const std::string& prefix)

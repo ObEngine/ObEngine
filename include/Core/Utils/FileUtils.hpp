@@ -96,4 +96,6 @@ namespace obe::Utils::File
     std::string normalizePath(const std::string& path);
 
     std::string canonicalPath(const std::string& path);
+
+    std::string join(const std::vector<std::string> parts);
 } // namespace obe::Utils::File

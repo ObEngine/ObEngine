@@ -41,8 +41,7 @@ namespace obe::Utils::File
         {
             tinydir_file file;
             tinydir_readfile(&dir, &file);
-            if (file.is_dir && std::string(file.name) != "."
-                && std::string(file.name) != "..")
+            if (file.is_dir && std::string(file.name) != "." && std::string(file.name) != "..")
             {
                 folderList.push_back(normalizePath(std::string(file.name)));
             }
@@ -87,8 +86,7 @@ namespace obe::Utils::File
         {
             if (std::filesystem::is_regular_file(p))
             {
-                std::string filepath
-                    = std::filesystem::path(p.path()).filename().string();
+                std::string filepath = std::filesystem::path(p.path()).filename().string();
                 fileList.push_back(normalizePath(filepath));
             }
         }
@@ -233,5 +231,19 @@ namespace obe::Utils::File
     std::string canonicalPath(const std::string& path)
     {
         return std::filesystem::canonical((path.empty()) ? "." : path).string();
+    }
+
+    std::string join(const std::vector<std::string> parts)
+    {
+        if (parts.empty())
+        {
+            return "";
+        }
+        std::filesystem::path base = parts.front();
+        for (size_t i = 1; i < parts.size(); i++)
+        {
+            base /= parts[i];
+        }
+        return normalizePath(base.string());
     }
 } // namespace obe::Utils::File
