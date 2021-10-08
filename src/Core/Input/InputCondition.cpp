@@ -23,8 +23,7 @@ namespace obe::Input
     {
     }
 
-    void InputCondition::addCombinationElement(
-        const InputCombinationElement combinationElement)
+    void InputCondition::addCombinationElement(const InputCombinationElement combinationElement)
     {
         m_combination.push_back(combinationElement);
         m_enabled = true;

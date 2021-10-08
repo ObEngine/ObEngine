@@ -63,12 +63,10 @@ namespace obe::Input
             {
                 if (m_state)
                 {
-                    if (m_repeat
-                            .over()) // Reset repeat when combination is unchecked <REVISION>
+                    if (m_repeat.over()) // Reset repeat when combination is unchecked <REVISION>
                     {
                         m_repeat.reset();
-                        e_actions->trigger(
-                            m_id, Events::Actions::Action { *this, condition });
+                        e_actions->trigger(m_id, Events::Actions::Action { *this, condition });
                     }
                 }
                 else
@@ -93,8 +91,7 @@ namespace obe::Input
         std::vector<InputButton*> involvedButtons;
         for (const InputCondition& condition : m_conditions)
         {
-            for (const InputCombinationElement& combinationElement :
-                condition.getCombination())
+            for (const InputCombinationElement& combinationElement : condition.getCombination())
             {
                 involvedButtons.push_back(combinationElement.first);
             }

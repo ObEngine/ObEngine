@@ -7,16 +7,13 @@ namespace obe::Config::Templates
     {
         vili::parser::state state;
 
-        vili::node project
-            = vili::object { { "type", "Project" }, { "path", "" } };
+        vili::node project = vili::object { { "type", "Project" }, { "path", "" } };
         state.push_template("Project", project);
 
-        vili::node package
-            = vili::object { { "type", "Package" }, { "path", "" } };
+        vili::node package = vili::object { { "type", "Package" }, { "path", "" } };
         state.push_template("Package", package);
 
-        vili::node path
-            = vili::object { { "type", "Path" }, { "path", "" } };
+        vili::node path = vili::object { { "type", "Path" }, { "path", "" } };
         state.push_template("Path", path);
 
         vili::node executable = vili::object { { "type", "Path" },

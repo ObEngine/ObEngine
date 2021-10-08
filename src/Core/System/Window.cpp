@@ -48,8 +48,7 @@ namespace obe::System
                 const float yOffset = ((fHeight - fRenderHeight) / 2) / fHeight;
                 const float viewportWidth = fRenderWidth / fWidth;
                 const float viewportHeight = fRenderHeight / fHeight;
-                m_view.setViewport(
-                    sf::FloatRect(xOffset, yOffset, viewportWidth, viewportHeight));
+                m_view.setViewport(sf::FloatRect(xOffset, yOffset, viewportWidth, viewportHeight));
                 m_view.setCenter(m_renderWidth / 2, m_renderHeight / 2);
                 m_window.setView(m_view);
             }
@@ -78,8 +77,7 @@ namespace obe::System
                 const float yOffset = (1 - expectedHeight) / 2;
 
                 m_view.setSize(fRenderWidth, fRenderHeight);
-                m_view.setViewport(
-                    sf::FloatRect(xOffset, yOffset, expectedWidth, expectedHeight));
+                m_view.setViewport(sf::FloatRect(xOffset, yOffset, expectedWidth, expectedHeight));
                 m_view.setCenter(fRenderWidth / 2.f, fRenderHeight / 2.f);
                 m_window.setView(m_view);
             }
@@ -230,23 +228,21 @@ namespace obe::System
         m_window.draw(drawable, states);
     }
 
-    void Window::draw(const sf::Vertex* vertices, std::size_t vertexCount,
-        sf::PrimitiveType type, const sf::RenderStates& states)
+    void Window::draw(const sf::Vertex* vertices, std::size_t vertexCount, sf::PrimitiveType type,
+        const sf::RenderStates& states)
     {
         m_window.draw(vertices, vertexCount, type, states);
     }
 
     Transform::UnitVector Window::getRenderSize() const
     {
-        return Transform::UnitVector(
-            m_renderWidth, m_renderHeight, Transform::Units::ScenePixels);
+        return Transform::UnitVector(m_renderWidth, m_renderHeight, Transform::Units::ScenePixels);
     }
 
     Transform::UnitVector Window::getWindowSize() const
     {
         const sf::Vector2u windowSize = m_window.getSize();
-        return Transform::UnitVector(
-            windowSize.x, windowSize.y, Transform::Units::ScenePixels);
+        return Transform::UnitVector(windowSize.x, windowSize.y, Transform::Units::ScenePixels);
     }
 
     Transform::UnitVector Window::getScreenSize() const
@@ -293,7 +289,7 @@ namespace obe::System
         sf::Texture iconTexture;
         iconTexture.loadFromFile(realPath);
         m_icon = iconTexture.copyToImage();
-        
+
         m_window.setIcon(32, 32, m_icon.getPixelsPtr());
     }
 

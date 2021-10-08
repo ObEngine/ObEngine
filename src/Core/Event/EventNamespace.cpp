@@ -32,6 +32,7 @@ namespace obe::Event
     private:
         EventNamespace* m_eventNamespace;
         EventGroup* m_group;
+
     public:
         EventGroupPtrDeleter(EventNamespace* eventNamespace);
         void operator()(EventGroup* ptr) const;
@@ -42,10 +43,10 @@ namespace obe::Event
         m_eventNamespace->removeGroup(ptr);
     }
 
-    EventGroupPtrDeleter::EventGroupPtrDeleter(EventNamespace* eventNamespace) : m_eventNamespace(eventNamespace)
+    EventGroupPtrDeleter::EventGroupPtrDeleter(EventNamespace* eventNamespace)
+        : m_eventNamespace(eventNamespace)
     {
     }
-
 
     EventGroupPtr EventNamespace::createGroup(const std::string& group)
     {
@@ -73,8 +74,7 @@ namespace obe::Event
             throw Exceptions::EventGroupNotJoinable(m_name, group, EXC_INFO);
         }
 
-        throw Exceptions::UnknownEventGroup(
-            m_name, group, this->getAllGroupsNames(), EXC_INFO);
+        throw Exceptions::UnknownEventGroup(m_name, group, this->getAllGroupsNames(), EXC_INFO);
     }
 
     EventGroupView EventNamespace::getGroup(const std::string& group) const

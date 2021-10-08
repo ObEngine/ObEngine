@@ -12,8 +12,7 @@ namespace obe::Collision::Exceptions
             std::string_view dataType, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Tried to set '{}' tags field with value of type '{}' on collider '{}'",
+            this->error("Tried to set '{}' tags field with value of type '{}' on collider '{}'",
                 tagType, dataType, colliderId);
             this->hint("The field should either be a string (for a unique tag) or an "
                        "array of strings (for multiple tags)");

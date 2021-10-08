@@ -40,7 +40,6 @@ namespace obe::Animation
     };
     AnimatorTargetScaleMode stringToAnimatorTargetScaleMode(const std::string& targetScaleMode);
 
-
     class AnimatorState
     {
     private:
@@ -52,6 +51,7 @@ namespace obe::Animation
         AnimatorTargetScaleMode m_targetScaleMode = AnimatorTargetScaleMode::Fit;
 
         void applyTexture() const;
+
     public:
         AnimatorState(const Animator& parent);
         /**
@@ -98,7 +98,7 @@ namespace obe::Animation
         AnimatorState m_defaultState;
         std::unordered_map<std::string, std::unique_ptr<Animation>> m_animations;
         System::Path m_path;
-        
+
         void applyTexture() const;
         friend class AnimatorState;
 

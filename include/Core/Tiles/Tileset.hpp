@@ -29,8 +29,8 @@ namespace obe::Tiles
 
     public:
         Tileset(const std::string& id, uint32_t firstTileId, uint32_t count,
-            const std::string& imagePath, uint32_t columns, uint32_t tileWidth,
-            uint32_t tileHeight, uint32_t margin = 0, uint32_t spacing = 0);
+            const std::string& imagePath, uint32_t columns, uint32_t tileWidth, uint32_t tileHeight,
+            uint32_t margin = 0, uint32_t spacing = 0);
         uint32_t getFirstTileId() const;
         uint32_t getLastTileId() const;
         uint32_t getTileCount() const;
@@ -51,9 +51,8 @@ namespace obe::Tiles
 
     public:
         TilesetCollection();
-        void addTileset(uint32_t firstTileId, const std::string& id,
-            const std::string& source, uint32_t columns, uint32_t width, uint32_t height,
-            uint32_t count);
+        void addTileset(uint32_t firstTileId, const std::string& id, const std::string& source,
+            uint32_t columns, uint32_t width, uint32_t height, uint32_t count);
         [[nodiscard]] const Tileset& tilesetFromId(const std::string& id) const;
         [[nodiscard]] const Tileset& tilesetFromTileId(uint32_t tileId) const;
         [[nodiscard]] const size_t size() const;

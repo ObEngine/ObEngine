@@ -4,7 +4,6 @@
 
 #include <Script/Exceptions.hpp>
 
-
 namespace obe::Script
 {
     template <class... Args>

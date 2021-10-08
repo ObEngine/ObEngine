@@ -25,8 +25,7 @@ namespace obe::Event::Exceptions
     {
     public:
         using Exception::Exception;
-        EventExecutionError(
-            std::string_view eventName, std::string_view listenerId, DebugInfo info)
+        EventExecutionError(std::string_view eventName, std::string_view listenerId, DebugInfo info)
             : Exception(info)
         {
             this->error("Error while executing an Event callback"
@@ -44,14 +43,13 @@ namespace obe::Event::Exceptions
             const std::vector<std::string>& existingEvents, DebugInfo info)
             : Exception(info)
         {
-            this->error("Unable to find a Event named '{}' inside EventGroup '{}'",
-                eventName, eventGroup);
+            this->error(
+                "Unable to find a Event named '{}' inside EventGroup '{}'", eventName, eventGroup);
             std::vector<std::string> suggestions
                 = Utils::String::sortByDistance(eventName.data(), existingEvents, 5);
-            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
-                Utils::String::quote);
-            this->hint(
-                "Try one of the following Events ({}...)", fmt::join(suggestions, ", "));
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
+            this->hint("Try one of the following Events ({}...)", fmt::join(suggestions, ", "));
         }
     };
 
@@ -64,12 +62,12 @@ namespace obe::Event::Exceptions
             : Exception(info)
         {
             this->error("Unable to find a EventNamespace named '{}'", eventNamespace);
-            std::vector<std::string> suggestions = Utils::String::sortByDistance(
-                eventNamespace.data(), existingNamespaces, 5);
-            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
-                Utils::String::quote);
-            this->hint("Try one of the following EventNamespaces ({}...)",
-                fmt::join(suggestions, ", "));
+            std::vector<std::string> suggestions
+                = Utils::String::sortByDistance(eventNamespace.data(), existingNamespaces, 5);
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
+            this->hint(
+                "Try one of the following EventNamespaces ({}...)", fmt::join(suggestions, ", "));
         }
     };
 
@@ -81,15 +79,14 @@ namespace obe::Event::Exceptions
             const std::vector<std::string>& existingGroups, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Unable to find an EventGroup named '{}' inside EventNamespace '{}'",
+            this->error("Unable to find an EventGroup named '{}' inside EventNamespace '{}'",
                 eventGroup, eventNamespace);
             std::vector<std::string> suggestions
                 = Utils::String::sortByDistance(eventGroup.data(), existingGroups, 5);
-            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
-                Utils::String::quote);
-            this->hint("Try one of the following EventGroups ({}...)",
-                fmt::join(suggestions, ", "));
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
+            this->hint(
+                "Try one of the following EventGroups ({}...)", fmt::join(suggestions, ", "));
         }
     };
 
@@ -114,8 +111,7 @@ namespace obe::Event::Exceptions
             std::string_view eventNamespace, std::string_view eventGroup, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "An EventGroup named '{}' already exists inside EventNamespace '{}'",
+            this->error("An EventGroup named '{}' already exists inside EventNamespace '{}'",
                 eventGroup, eventNamespace);
             this->hint("Try creating an EventGroup with a different name that is "
                        "not already taken");
@@ -126,12 +122,12 @@ namespace obe::Event::Exceptions
     {
     public:
         using Exception::Exception;
-        EventAlreadyExists(std::string_view eventGroupIdentifier,
-            std::string_view eventName, DebugInfo info)
+        EventAlreadyExists(
+            std::string_view eventGroupIdentifier, std::string_view eventName, DebugInfo info)
             : Exception(info)
         {
-            this->error("An Event named '{}' already exists inside EventGroup '{}'",
-                eventName, eventGroupIdentifier);
+            this->error("An Event named '{}' already exists inside EventGroup '{}'", eventName,
+                eventGroupIdentifier);
             this->hint("Try creating an Event with a different name that is "
                        "not already taken");
         }

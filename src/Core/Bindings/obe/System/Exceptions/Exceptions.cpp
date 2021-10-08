@@ -8,33 +8,30 @@ namespace obe::System::Exceptions::Bindings
 {
     void LoadClassInvalidMouseButtonEnumValue(sol::state_view state)
     {
-        sol::table ExceptionsNamespace
-            = state["obe"]["System"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["System"]["Exceptions"].get<sol::table>();
         sol::usertype<obe::System::Exceptions::InvalidMouseButtonEnumValue>
-            bindInvalidMouseButtonEnumValue = ExceptionsNamespace.new_usertype<
-                obe::System::Exceptions::InvalidMouseButtonEnumValue>(
-                "InvalidMouseButtonEnumValue", sol::call_constructor,
-                sol::constructors<obe::System::Exceptions::InvalidMouseButtonEnumValue(
-                    int, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+            bindInvalidMouseButtonEnumValue
+            = ExceptionsNamespace
+                  .new_usertype<obe::System::Exceptions::InvalidMouseButtonEnumValue>(
+                      "InvalidMouseButtonEnumValue", sol::call_constructor,
+                      sol::constructors<obe::System::Exceptions::InvalidMouseButtonEnumValue(
+                          int, obe::DebugInfo)>(),
+                      sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassMountablePathIndexOverflow(sol::state_view state)
     {
-        sol::table ExceptionsNamespace
-            = state["obe"]["System"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["System"]["Exceptions"].get<sol::table>();
         sol::usertype<obe::System::Exceptions::MountablePathIndexOverflow>
-            bindMountablePathIndexOverflow = ExceptionsNamespace.new_usertype<
-                obe::System::Exceptions::MountablePathIndexOverflow>(
+            bindMountablePathIndexOverflow
+            = ExceptionsNamespace.new_usertype<obe::System::Exceptions::MountablePathIndexOverflow>(
                 "MountablePathIndexOverflow", sol::call_constructor,
                 sol::constructors<obe::System::Exceptions::MountablePathIndexOverflow(
-                    std::size_t, std::size_t, const std::vector<std::string>&,
-                    obe::DebugInfo)>(),
+                    std::size_t, std::size_t, const std::vector<std::string>&, obe::DebugInfo)>(),
                 sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassMountFileMissing(sol::state_view state)
     {
-        sol::table ExceptionsNamespace
-            = state["obe"]["System"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["System"]["Exceptions"].get<sol::table>();
         sol::usertype<obe::System::Exceptions::MountFileMissing> bindMountFileMissing
             = ExceptionsNamespace.new_usertype<obe::System::Exceptions::MountFileMissing>(
                 "MountFileMissing", sol::call_constructor,
@@ -44,34 +41,27 @@ namespace obe::System::Exceptions::Bindings
     }
     void LoadClassPackageAlreadyInstalled(sol::state_view state)
     {
-        sol::table ExceptionsNamespace
-            = state["obe"]["System"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::System::Exceptions::PackageAlreadyInstalled>
-            bindPackageAlreadyInstalled
-            = ExceptionsNamespace
-                  .new_usertype<obe::System::Exceptions::PackageAlreadyInstalled>(
-                      "PackageAlreadyInstalled", sol::call_constructor,
-                      sol::constructors<obe::System::Exceptions::PackageAlreadyInstalled(
-                          std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::BaseException>());
+        sol::table ExceptionsNamespace = state["obe"]["System"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::System::Exceptions::PackageAlreadyInstalled> bindPackageAlreadyInstalled
+            = ExceptionsNamespace.new_usertype<obe::System::Exceptions::PackageAlreadyInstalled>(
+                "PackageAlreadyInstalled", sol::call_constructor,
+                sol::constructors<obe::System::Exceptions::PackageAlreadyInstalled(
+                    std::string_view, obe::DebugInfo)>(),
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassPackageFileNotFound(sol::state_view state)
     {
-        sol::table ExceptionsNamespace
-            = state["obe"]["System"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::System::Exceptions::PackageFileNotFound>
-            bindPackageFileNotFound
-            = ExceptionsNamespace
-                  .new_usertype<obe::System::Exceptions::PackageFileNotFound>(
-                      "PackageFileNotFound", sol::call_constructor,
-                      sol::constructors<obe::System::Exceptions::PackageFileNotFound(
-                          std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::BaseException>());
+        sol::table ExceptionsNamespace = state["obe"]["System"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::System::Exceptions::PackageFileNotFound> bindPackageFileNotFound
+            = ExceptionsNamespace.new_usertype<obe::System::Exceptions::PackageFileNotFound>(
+                "PackageFileNotFound", sol::call_constructor,
+                sol::constructors<obe::System::Exceptions::PackageFileNotFound(
+                    std::string_view, obe::DebugInfo)>(),
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassResourceNotFound(sol::state_view state)
     {
-        sol::table ExceptionsNamespace
-            = state["obe"]["System"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["System"]["Exceptions"].get<sol::table>();
         sol::usertype<obe::System::Exceptions::ResourceNotFound> bindResourceNotFound
             = ExceptionsNamespace.new_usertype<obe::System::Exceptions::ResourceNotFound>(
                 "ResourceNotFound", sol::call_constructor,
@@ -81,8 +71,7 @@ namespace obe::System::Exceptions::Bindings
     }
     void LoadClassUnknownPackage(sol::state_view state)
     {
-        sol::table ExceptionsNamespace
-            = state["obe"]["System"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["System"]["Exceptions"].get<sol::table>();
         sol::usertype<obe::System::Exceptions::UnknownPackage> bindUnknownPackage
             = ExceptionsNamespace.new_usertype<obe::System::Exceptions::UnknownPackage>(
                 "UnknownPackage", sol::call_constructor,
@@ -92,20 +81,17 @@ namespace obe::System::Exceptions::Bindings
     }
     void LoadClassUnknownStretchMode(sol::state_view state)
     {
-        sol::table ExceptionsNamespace
-            = state["obe"]["System"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["System"]["Exceptions"].get<sol::table>();
         sol::usertype<obe::System::Exceptions::UnknownStretchMode> bindUnknownStretchMode
-            = ExceptionsNamespace
-                  .new_usertype<obe::System::Exceptions::UnknownStretchMode>(
-                      "UnknownStretchMode", sol::call_constructor,
-                      sol::constructors<obe::System::Exceptions::UnknownStretchMode(
-                          std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::BaseException>());
+            = ExceptionsNamespace.new_usertype<obe::System::Exceptions::UnknownStretchMode>(
+                "UnknownStretchMode", sol::call_constructor,
+                sol::constructors<obe::System::Exceptions::UnknownStretchMode(
+                    std::string_view, obe::DebugInfo)>(),
+                sol::base_classes, sol::bases<obe::BaseException>());
     }
     void LoadClassUnknownProject(sol::state_view state)
     {
-        sol::table ExceptionsNamespace
-            = state["obe"]["System"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["System"]["Exceptions"].get<sol::table>();
         sol::usertype<obe::System::Exceptions::UnknownProject> bindUnknownProject
             = ExceptionsNamespace.new_usertype<obe::System::Exceptions::UnknownProject>(
                 "UnknownProject", sol::call_constructor,

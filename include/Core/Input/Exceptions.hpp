@@ -11,8 +11,8 @@ namespace obe::Input::Exceptions
     {
     public:
         using Exception::Exception;
-        InputButtonInvalidOperation(std::string_view inputButtonType,
-            std::string_view operationType, DebugInfo info)
+        InputButtonInvalidOperation(
+            std::string_view inputButtonType, std::string_view operationType, DebugInfo info)
             : Exception(info)
         {
             this->error("Tried to do a '{}' operation on an InputButton of type '{}' "
@@ -29,8 +29,7 @@ namespace obe::Input::Exceptions
             : Exception(info)
         {
             this->error("'{}' is not a valid InputButtonState value", state);
-            this->hint(
-                "Try one of the following values : (Idle, Hold, Pressed, Released)");
+            this->hint("Try one of the following values : (Idle, Hold, Pressed, Released)");
         }
     };
 
@@ -45,10 +44,10 @@ namespace obe::Input::Exceptions
             this->error("InputAction named '{}' does not exists", actionName);
             std::vector<std::string> suggestions
                 = Utils::String::sortByDistance(actionName.data(), existingActions, 5);
-            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
-                Utils::String::quote);
-            this->hint("Try one of the following InputAction : ({}...)",
-                fmt::join(suggestions, ", "));
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
+            this->hint(
+                "Try one of the following InputAction : ({}...)", fmt::join(suggestions, ", "));
         }
     };
 
@@ -63,10 +62,10 @@ namespace obe::Input::Exceptions
             this->error("InputButton named '{}' does not exists", buttonName);
             std::vector<std::string> suggestions
                 = Utils::String::sortByDistance(buttonName.data(), existingButtons, 5);
-            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
-                &Utils::String::quote);
-            this->hint("Try one of the following InputButton : ({}...)",
-                fmt::join(suggestions, ", "));
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), &Utils::String::quote);
+            this->hint(
+                "Try one of the following InputButton : ({}...)", fmt::join(suggestions, ", "));
         }
     };
 
@@ -78,14 +77,12 @@ namespace obe::Input::Exceptions
             std::string_view action, std::string_view combinationCode, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "The following InputCombinationCode '{}' for InputAction '{}' is invalid",
+            this->error("The following InputCombinationCode '{}' for InputAction '{}' is invalid",
                 combinationCode, action);
         }
     };
 
-    class InputButtonAlreadyInCombination
-        : public Exception<InputButtonAlreadyInCombination>
+    class InputButtonAlreadyInCombination : public Exception<InputButtonAlreadyInCombination>
     {
     public:
         using Exception::Exception;
@@ -119,7 +116,9 @@ namespace obe::Input::Exceptions
             : Exception(info)
         {
             this->error("Gamepad input '{}' is not a valid identifier", gamepadButtonId);
-            this->hint("Gamepad input should look like this : 'GP_<GAMEPAD_ID>_BTN_<BUTTON_ID>' or 'GP_X_AXIS_<AXIS_NAME>_<AXIS_DIRECTION>", gamepadButtonId);
+            this->hint("Gamepad input should look like this : 'GP_<GAMEPAD_ID>_BTN_<BUTTON_ID>' or "
+                       "'GP_X_AXIS_<AXIS_NAME>_<AXIS_DIRECTION>",
+                gamepadButtonId);
         }
     };
 }

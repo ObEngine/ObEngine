@@ -7,16 +7,14 @@
 #include <Input/InputButtonMonitor.hpp>
 #include <System/Path.hpp>
 
-
 namespace obe
 {
     void InitEngine(unsigned int surfaceWidth, unsigned int surfaceHeight)
     {
         Debug::InitLogger();
 
-        Debug::Log->info("Using ObEngineCore (Version : {} ({}:{}))",
-            Config::OBENGINE_VERSION, Config::OBENGINE_GIT_BRANCH,
-            Config::OBENGINE_GIT_HASH);
+        Debug::Log->info("Using ObEngineCore (Version : {} ({}:{}))", Config::OBENGINE_VERSION,
+            Config::OBENGINE_GIT_BRANCH, Config::OBENGINE_GIT_HASH);
 
         Transform::UnitVector::Init(surfaceWidth, surfaceHeight);
         Debug::Log->debug("<ObEngine> Initialising Position Transformers");

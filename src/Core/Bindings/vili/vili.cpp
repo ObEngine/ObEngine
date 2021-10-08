@@ -14,10 +14,8 @@ namespace vili::Bindings
         sol::table viliNamespace = state["vili"].get<sol::table>();
         viliNamespace.new_enum<vili::node_type>("node_type",
             { { "null", vili::node_type::null }, { "string", vili::node_type::string },
-                { "integer", vili::node_type::integer },
-                { "number", vili::node_type::number },
-                { "boolean", vili::node_type::boolean },
-                { "array", vili::node_type::array },
+                { "integer", vili::node_type::integer }, { "number", vili::node_type::number },
+                { "boolean", vili::node_type::boolean }, { "array", vili::node_type::array },
                 { "object", vili::node_type::object } });
     }
     void LoadClassConstNodeIterator(sol::state_view state)
@@ -36,18 +34,18 @@ namespace vili::Bindings
     void LoadClassNode(sol::state_view state)
     {
         sol::table viliNamespace = state["vili"].get<sol::table>();
-        sol::usertype<vili::node> bindnode = viliNamespace.new_usertype<vili::node>(
-            "node", sol::call_constructor,
-            sol::constructors<vili::node(), vili::node(int), vili::node(vili::integer),
-                vili::node(vili::number), vili::node(const vili::string&),
-                vili::node(vili::boolean), vili::node(const char*),
-                vili::node(const vili::array&), vili::node(const vili::object&),
-                vili::node(const vili::node&), vili::node(vili::node &&)>());
+        sol::usertype<vili::node> bindnode
+            = viliNamespace.new_usertype<vili::node>("node", sol::call_constructor,
+                sol::constructors<vili::node(), vili::node(int), vili::node(vili::integer),
+                    vili::node(vili::number), vili::node(const vili::string&),
+                    vili::node(vili::boolean), vili::node(const char*),
+                    vili::node(const vili::array&), vili::node(const vili::object&),
+                    vili::node(const vili::node&), vili::node(vili::node &&)>());
         bindnode["operator="] = &vili::node::operator=;
         bindnode["type"] = &vili::node::type;
-        bindnode["dump"] = sol::overload(
-            [](vili::node* self) -> std::string { return self->dump(); },
-            [](vili::node* self, bool root) -> std::string { return self->dump(root); });
+        bindnode["dump"]
+            = sol::overload([](vili::node* self) -> std::string { return self->dump(); },
+                [](vili::node* self, bool root) -> std::string { return self->dump(root); });
         bindnode["is_primitive"] = &vili::node::is_primitive;
         bindnode["is_container"] = &vili::node::is_container;
         bindnode["is_null"] = &vili::node::is_null;
@@ -64,56 +62,47 @@ namespace vili::Bindings
         bindnode["as_string"] = &vili::node::as_string;
         bindnode["as_array"] = &vili::node::as_array;
         bindnode["as_object"] = &vili::node::as_object;
-        bindnode[sol::meta_function::index]
-            = sol::overload(static_cast<vili::node& (vili::node::*)(const char*)>(
-                                &vili::node::operator[]),
-                static_cast<vili::node& (vili::node::*)(const std::string&)>(
-                    &vili::node::operator[]),
-                static_cast<vili::node& (vili::node::*)(size_t)>(&vili::node::operator[]),
-                static_cast<const vili::node& (vili::node::*)(const char*) const>(
-                    &vili::node::operator[]),
-                static_cast<const vili::node& (vili::node::*)(const std::string&) const>(
-                    &vili::node::operator[]),
-                static_cast<const vili::node& (vili::node::*)(size_t) const>(
-                    &vili::node::operator[]));
+        bindnode[sol::meta_function::index] = sol::overload(
+            static_cast<vili::node& (vili::node::*)(const char*)>(&vili::node::operator[]),
+            static_cast<vili::node& (vili::node::*)(const std::string&)>(&vili::node::operator[]),
+            static_cast<vili::node& (vili::node::*)(size_t)>(&vili::node::operator[]),
+            static_cast<const vili::node& (vili::node::*)(const char*) const>(
+                &vili::node::operator[]),
+            static_cast<const vili::node& (vili::node::*)(const std::string&) const>(
+                &vili::node::operator[]),
+            static_cast<const vili::node& (vili::node::*)(size_t) const>(&vili::node::operator[]));
         bindnode["push"] = &vili::node::push;
-        bindnode["insert"]
-            = sol::overload(static_cast<void (vili::node::*)(size_t, const vili::node&)>(
-                                &vili::node::insert),
-                static_cast<void (vili::node::*)(const std::string&, vili::node)>(
-                    &vili::node::insert));
+        bindnode["insert"] = sol::overload(
+            static_cast<void (vili::node::*)(size_t, const vili::node&)>(&vili::node::insert),
+            static_cast<void (vili::node::*)(const std::string&, vili::node)>(&vili::node::insert));
         bindnode["merge"] = &vili::node::merge;
         bindnode["contains"] = &vili::node::contains;
-        bindnode["erase"] = sol::overload(
-            static_cast<void (vili::node::*)(size_t)>(&vili::node::erase),
-            static_cast<void (vili::node::*)(size_t, size_t)>(&vili::node::erase),
-            static_cast<void (vili::node::*)(const std::string&)>(&vili::node::erase));
+        bindnode["erase"]
+            = sol::overload(static_cast<void (vili::node::*)(size_t)>(&vili::node::erase),
+                static_cast<void (vili::node::*)(size_t, size_t)>(&vili::node::erase),
+                static_cast<void (vili::node::*)(const std::string&)>(&vili::node::erase));
         bindnode["front"] = &vili::node::front;
         bindnode["back"] = &vili::node::back;
-        bindnode["begin"] = sol::overload(
-            static_cast<vili::node_iterator (vili::node::*)()>(&vili::node::begin),
-            static_cast<vili::const_node_iterator (vili::node::*)() const>(
-                &vili::node::begin));
-        bindnode["end"] = sol::overload(
-            static_cast<vili::node_iterator (vili::node::*)()>(&vili::node::end),
-            static_cast<vili::const_node_iterator (vili::node::*)() const>(
-                &vili::node::end));
-        bindnode["items"] = sol::overload(
-            static_cast<vili::object& (vili::node::*)()>(&vili::node::items),
-            static_cast<const vili::object& (vili::node::*)() const>(&vili::node::items));
+        bindnode["begin"]
+            = sol::overload(static_cast<vili::node_iterator (vili::node::*)()>(&vili::node::begin),
+                static_cast<vili::const_node_iterator (vili::node::*)() const>(&vili::node::begin));
+        bindnode["end"]
+            = sol::overload(static_cast<vili::node_iterator (vili::node::*)()>(&vili::node::end),
+                static_cast<vili::const_node_iterator (vili::node::*)() const>(&vili::node::end));
+        bindnode["items"]
+            = sol::overload(static_cast<vili::object& (vili::node::*)()>(&vili::node::items),
+                static_cast<const vili::object& (vili::node::*)() const>(&vili::node::items));
         bindnode["at"] = sol::overload(
             static_cast<vili::node& (vili::node::*)(const std::string&)>(&vili::node::at),
             static_cast<vili::node& (vili::node::*)(size_t)>(&vili::node::at),
             static_cast<const vili::node& (vili::node::*)(const std::string&) const>(
                 &vili::node::at),
-            static_cast<const vili::node& (vili::node::*)(size_t) const>(
-                &vili::node::at));
+            static_cast<const vili::node& (vili::node::*)(size_t) const>(&vili::node::at));
         bindnode["size"] = &vili::node::size;
         bindnode["empty"] = &vili::node::empty;
         bindnode["clear"] = &vili::node::clear;
         bindnode["operator std::string_view"] = &vili::node::operator std::string_view;
-        bindnode["operator const std::string &"]
-            = &vili::node::operator const std::string &;
+        bindnode["operator const std::string &"] = &vili::node::operator const std::string&;
         bindnode["operator integer"] = &vili::node::operator integer;
         bindnode["operator int"] = &vili::node::operator int;
         bindnode["operator number"] = &vili::node::operator number;
@@ -133,8 +122,7 @@ namespace vili::Bindings
                     vili::node_iterator(object::iterator),
                     vili::node_iterator(const vili::node_iterator&)>());
         bindnode_iterator["operator++"] = &vili::node_iterator::operator++;
-        bindnode_iterator[sol::meta_function::multiplication]
-            = &vili::node_iterator::operator*;
+        bindnode_iterator[sol::meta_function::multiplication] = &vili::node_iterator::operator*;
     }
     void LoadFunctionFromString(sol::state_view state)
     {

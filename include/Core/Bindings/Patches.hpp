@@ -16,7 +16,9 @@ namespace vili::parser
      * \flagsurrogate{vili::node}
      * \helper{Lib/Internal/Vili.lua}
      */
-    class _PatchNode {};
+    class _PatchNode
+    {
+    };
     /**
      * \flagsurrogate{vili::node::is}
      * \nobind

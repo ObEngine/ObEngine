@@ -28,12 +28,9 @@ namespace obe::Config::Templates
         vili::node rect = vili::object { { "x", 0.f }, { "y", 0.f }, { "width", 0.f },
             { "height", 0.f }, { "unit", "SceneUnits" } };
         state.push_template("Rect", rect);
-        vili::node positionTransform
-            = vili::object { { "x", "Position" }, { "y", "Position" } };
-        vili::node cameraTransform
-            = vili::object { { "x", "Camera" }, { "y", "Camera" } };
-        vili::node parallaxTransform
-            = vili::object { { "x", "Parallax" }, { "y", "Parallax" } };
+        vili::node positionTransform = vili::object { { "x", "Position" }, { "y", "Position" } };
+        vili::node cameraTransform = vili::object { { "x", "Camera" }, { "y", "Camera" } };
+        vili::node parallaxTransform = vili::object { { "x", "Parallax" }, { "y", "Parallax" } };
 
         state.push_template("PositionTransform", positionTransform);
         state.push_template("CameraTransform", cameraTransform);

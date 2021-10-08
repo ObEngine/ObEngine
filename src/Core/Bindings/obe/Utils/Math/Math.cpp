@@ -20,19 +20,15 @@ namespace obe::Utils::Math::Bindings
     {
         sol::table MathNamespace = state["obe"]["Utils"]["Math"].get<sol::table>();
         MathNamespace.set_function("obe::Utils::Math::getMin",
-            sol::overload(
-                static_cast<int (*)(const int&, const int&)>(obe::Utils::Math::getMin),
-                static_cast<double (*)(const double&, const double&)>(
-                    obe::Utils::Math::getMin)));
+            sol::overload(static_cast<int (*)(const int&, const int&)>(obe::Utils::Math::getMin),
+                static_cast<double (*)(const double&, const double&)>(obe::Utils::Math::getMin)));
     }
     void LoadFunctionGetMax(sol::state_view state)
     {
         sol::table MathNamespace = state["obe"]["Utils"]["Math"].get<sol::table>();
         MathNamespace.set_function("obe::Utils::Math::getMax",
-            sol::overload(
-                static_cast<int (*)(const int&, const int&)>(obe::Utils::Math::getMax),
-                static_cast<double (*)(const double&, const double&)>(
-                    obe::Utils::Math::getMax)));
+            sol::overload(static_cast<int (*)(const int&, const int&)>(obe::Utils::Math::getMax),
+                static_cast<double (*)(const double&, const double&)>(obe::Utils::Math::getMax)));
     }
     void LoadFunctionIsBetween(sol::state_view state)
     {

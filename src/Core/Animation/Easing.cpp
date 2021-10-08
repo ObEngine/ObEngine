@@ -56,7 +56,7 @@ namespace obe::Animation::Easing
 
     double InOutCubic(double t)
     {
-        return t < 0.5 ? 4 * t * t * t : 1 + 4 * (t-2) * (t-2) * (t-2);
+        return t < 0.5 ? 4 * t * t * t : 1 + 4 * (t - 2) * (t - 2) * (t - 2);
     }
 
     double InQuart(double t)
@@ -269,15 +269,13 @@ namespace obe::Animation::Easing
             easingFunctions.insert(std::make_pair(EasingType::InOutBack, InOutBack));
             easingFunctions.insert(std::make_pair(EasingType::InElastic, InElastic));
             easingFunctions.insert(std::make_pair(EasingType::OutElastic, OutElastic));
-            easingFunctions.insert(
-                std::make_pair(EasingType::InOutElastic, InOutElastic));
+            easingFunctions.insert(std::make_pair(EasingType::InOutElastic, InOutElastic));
             easingFunctions.insert(std::make_pair(EasingType::InBounce, InBounce));
             easingFunctions.insert(std::make_pair(EasingType::OutBounce, OutBounce));
             easingFunctions.insert(std::make_pair(EasingType::InOutBounce, InOutBounce));
         }
 
-        if (const auto function = easingFunctions.find(easing);
-            function != easingFunctions.end())
+        if (const auto function = easingFunctions.find(easing); function != easingFunctions.end())
         {
             return function->second;
         }
@@ -323,8 +321,7 @@ namespace obe::Animation::Easing
             easingFunctions.insert(std::make_pair("InOutBounce", InOutBounce));
         }
 
-        if (const auto function = easingFunctions.find(easing);
-            function != easingFunctions.end())
+        if (const auto function = easingFunctions.find(easing); function != easingFunctions.end())
         {
             return function->second;
         }

@@ -14,8 +14,7 @@ namespace obe::Utils::String::Bindings
     void LoadFunctionOccurencesInString(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function(
-            "occurencesInString", obe::Utils::String::occurencesInString);
+        StringNamespace.set_function("occurencesInString", obe::Utils::String::occurencesInString);
     }
     void LoadFunctionIsStringAlpha(sol::state_view state)
     {
@@ -31,8 +30,7 @@ namespace obe::Utils::String::Bindings
     void LoadFunctionIsStringNumeric(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function(
-            "isStringNumeric", obe::Utils::String::isStringNumeric);
+        StringNamespace.set_function("isStringNumeric", obe::Utils::String::isStringNumeric);
     }
     void LoadFunctionIsStringInt(sol::state_view state)
     {
@@ -52,8 +50,7 @@ namespace obe::Utils::String::Bindings
     void LoadFunctionIsSurroundedBy(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function(
-            "isSurroundedBy", obe::Utils::String::isSurroundedBy);
+        StringNamespace.set_function("isSurroundedBy", obe::Utils::String::isSurroundedBy);
     }
     void LoadFunctionGetRandomKey(sol::state_view state)
     {
@@ -83,8 +80,7 @@ namespace obe::Utils::String::Bindings
     void LoadFunctionSortByDistance(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function(
-            "sortByDistance", obe::Utils::String::sortByDistance);
+        StringNamespace.set_function("sortByDistance", obe::Utils::String::sortByDistance);
     }
     void LoadFunctionQuote(sol::state_view state)
     {

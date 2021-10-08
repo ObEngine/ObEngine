@@ -15,8 +15,8 @@ namespace obe::Script::Exceptions
             std::string_view objectId, DebugInfo info)
             : Exception(info)
         {
-            this->error("GameObject '{}' (type: '{}') has no {} component", objectId,
-                objectType, componentType);
+            this->error("GameObject '{}' (type: '{}') has no {} component", objectId, objectType,
+                componentType);
             this->hint("Try to check in the {}.obj.vili if you correctly created the "
                        "{} section",
                 objectType, componentType);
@@ -31,8 +31,7 @@ namespace obe::Script::Exceptions
             : Exception(info)
         {
             this->error(
-                "Can't find a GameObject Definition File for GameObjects of type '{}'",
-                objectType);
+                "Can't find a GameObject Definition File for GameObjects of type '{}'", objectType);
             this->hint("Try to check if there is a file named "
                        "GameObject/{0}/{0}.obj.vili",
                 objectType);
@@ -57,9 +56,8 @@ namespace obe::Script::Exceptions
     {
     public:
         using Exception::Exception;
-        WrongSourceAttributeType(std::string_view objectType,
-            std::string_view attributeName, std::string_view expectedType,
-            std::string_view realType, DebugInfo info)
+        WrongSourceAttributeType(std::string_view objectType, std::string_view attributeName,
+            std::string_view expectedType, std::string_view realType, DebugInfo info)
             : Exception(info)
         {
             this->error("GameObject '{}' tried to use attribute '{}' as a '{}' where it "
@@ -75,8 +73,7 @@ namespace obe::Script::Exceptions
         InvalidScript(std::string_view path, std::string_view error, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Lua Error encountered while loading script at '{}' : {}", path, error);
+            this->error("Lua Error encountered while loading script at '{}' : {}", path, error);
         }
     };
 
@@ -84,7 +81,9 @@ namespace obe::Script::Exceptions
     {
     public:
         using Exception::Exception;
-        GameObjectScriptError(std::string_view objectType, std::string_view objectId, std::string_view callback, DebugInfo info) : Exception(info)
+        GameObjectScriptError(std::string_view objectType, std::string_view objectId,
+            std::string_view callback, DebugInfo info)
+            : Exception(info)
         {
             this->error("Lua Error encountered while executing callback '{}' of "
                         "GameObject '{}' of type '{}'",
@@ -99,8 +98,7 @@ namespace obe::Script::Exceptions
         LuaExecutionError(std::string_view errorMessage, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Lua encountered an error while executing code :\n{}", errorMessage);
+            this->error("Lua encountered an error while executing code :\n{}", errorMessage);
         }
     };
 }

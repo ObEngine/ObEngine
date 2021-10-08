@@ -9,8 +9,7 @@ namespace obe::Graphics
 
     Text::Text(const std::string& string)
     {
-        this->string
-            = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(string);
+        this->string = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(string);
     }
 
     void RichText::Line::setCharacterSize(unsigned int size) const
@@ -193,8 +192,7 @@ namespace obe::Graphics
             m_bounds.height -= line.getGlobalBounds().height;
 
             // Append text
-            line.appendText(
-                createText(*it, text.color, text.outline, text.thickness, text.style));
+            line.appendText(createText(*it, text.color, text.outline, text.thickness, text.style));
 
             // Update bounds
             m_bounds.height += line.getGlobalBounds().height;
@@ -206,8 +204,7 @@ namespace obe::Graphics
         {
             Line line;
             line.setPosition(0.f, m_bounds.height);
-            line.appendText(
-                createText(*it, text.color, text.outline, text.thickness, text.style));
+            line.appendText(createText(*it, text.color, text.outline, text.thickness, text.style));
 
             // Update bounds
             m_bounds.height += line.getGlobalBounds().height;

@@ -143,10 +143,8 @@ namespace obe::Bindings
         obe::Animation::Bindings::LoadFunctionStringToAnimationPlayMode(state);
         obe::Animation::Bindings::LoadFunctionStringToAnimatorTargetScaleMode(state);
 
-        obe::Animation::Exceptions::Bindings::LoadClassAnimationGroupTextureIndexOverflow(
-            state);
-        obe::Animation::Exceptions::Bindings::LoadClassAnimationTextureIndexOverflow(
-            state);
+        obe::Animation::Exceptions::Bindings::LoadClassAnimationGroupTextureIndexOverflow(state);
+        obe::Animation::Exceptions::Bindings::LoadClassAnimationTextureIndexOverflow(state);
         obe::Animation::Exceptions::Bindings::LoadClassNoSelectedAnimation(state);
         obe::Animation::Exceptions::Bindings::LoadClassNoSelectedAnimationGroup(state);
         obe::Animation::Exceptions::Bindings::LoadClassUnknownAnimation(state);

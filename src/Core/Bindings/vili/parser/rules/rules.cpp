@@ -16,8 +16,7 @@ namespace vili::parser::rules::Bindings
     void LoadClassAffectationSeparator(sol::state_view state)
     {
         sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::affectation_separator>
-            bindaffectation_separator
+        sol::usertype<vili::parser::rules::affectation_separator> bindaffectation_separator
             = rulesNamespace.new_usertype<vili::parser::rules::affectation_separator>(
                 "affectation_separator", sol::call_constructor, sol::default_constructor);
     }
@@ -227,11 +226,9 @@ namespace vili::parser::rules::Bindings
     void LoadClassMultilineCommentBlock(sol::state_view state)
     {
         sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::multiline_comment_block>
-            bindmultiline_comment_block
+        sol::usertype<vili::parser::rules::multiline_comment_block> bindmultiline_comment_block
             = rulesNamespace.new_usertype<vili::parser::rules::multiline_comment_block>(
-                "multiline_comment_block", sol::call_constructor,
-                sol::default_constructor);
+                "multiline_comment_block", sol::call_constructor, sol::default_constructor);
     }
     void LoadClassNode(sol::state_view state)
     {
@@ -334,8 +331,7 @@ namespace vili::parser::rules::Bindings
     void LoadClassTemplateDeclContent(sol::state_view state)
     {
         sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::template_decl_content>
-            bindtemplate_decl_content
+        sol::usertype<vili::parser::rules::template_decl_content> bindtemplate_decl_content
             = rulesNamespace.new_usertype<vili::parser::rules::template_decl_content>(
                 "template_decl_content", sol::call_constructor, sol::default_constructor);
     }
@@ -349,12 +345,10 @@ namespace vili::parser::rules::Bindings
     void LoadClassTemplateIdentifierUsage(sol::state_view state)
     {
         sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::template_identifier_usage>
-            bindtemplate_identifier_usage
+        sol::usertype<vili::parser::rules::template_identifier_usage> bindtemplate_identifier_usage
             = rulesNamespace.new_usertype<vili::parser::rules::template_identifier_usage>(
-                "template_identifier_usage", sol::call_constructor,
-                sol::default_constructor, sol::base_classes,
-                sol::bases<vili::parser::rules::template_identifier>());
+                "template_identifier_usage", sol::call_constructor, sol::default_constructor,
+                sol::base_classes, sol::bases<vili::parser::rules::template_identifier>());
     }
     void LoadClassTemplateKeyword(sol::state_view state)
     {
@@ -366,11 +360,9 @@ namespace vili::parser::rules::Bindings
     void LoadClassTemplateSpecialization(sol::state_view state)
     {
         sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::template_specialization>
-            bindtemplate_specialization
+        sol::usertype<vili::parser::rules::template_specialization> bindtemplate_specialization
             = rulesNamespace.new_usertype<vili::parser::rules::template_specialization>(
-                "template_specialization", sol::call_constructor,
-                sol::default_constructor);
+                "template_specialization", sol::call_constructor, sol::default_constructor);
     }
     void LoadClassTemplateUsage(sol::state_view state)
     {

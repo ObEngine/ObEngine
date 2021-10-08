@@ -14,15 +14,14 @@ namespace obe::Tiles::Exceptions
             std::map<std::string, std::pair<uint32_t, uint32_t>> tilesets, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Impossible to load tile with id '{}' when maximum tile id is '{}'",
-                tileId, maxTileId);
+            this->error("Impossible to load tile with id '{}' when maximum tile id is '{}'", tileId,
+                maxTileId);
             std::string hintMsg = "The following tilesets are loaded :\n";
             std::string tilesetHintList;
             for (const auto& [tilesetId, minMaxId] : tilesets)
             {
-                tilesetHintList += fmt::format("    - {} [min_id={}, max_id={}]\n",
-                    tilesetId, minMaxId.first, minMaxId.second);
+                tilesetHintList += fmt::format("    - {} [min_id={}, max_id={}]\n", tilesetId,
+                    minMaxId.first, minMaxId.second);
             }
             hintMsg += tilesetHintList;
             this->hint(hintMsg);
@@ -33,17 +32,17 @@ namespace obe::Tiles::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownTileset(const std::string& tilesetId,
-            const std::vector<std::string>& tilesetsIds, DebugInfo info)
+        UnknownTileset(const std::string& tilesetId, const std::vector<std::string>& tilesetsIds,
+            DebugInfo info)
             : Exception(info)
         {
             this->error("Impossible to find Tileset with id '{}'", tilesetId);
             std::vector<std::string> suggestions
                 = Utils::String::sortByDistance(tilesetId.data(), tilesetsIds, 5);
-            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
-                Utils::String::quote);
-            this->hint("Maybe you meant one of these tilesets : ({})",
-                fmt::join(suggestions, ", "));
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
+            this->hint(
+                "Maybe you meant one of these tilesets : ({})", fmt::join(suggestions, ", "));
         }
     };
 
@@ -65,17 +64,16 @@ namespace obe::Tiles::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownTileLayer(const std::string& layerId,
-            const std::vector<std::string>& layerIds, DebugInfo info)
+        UnknownTileLayer(
+            const std::string& layerId, const std::vector<std::string>& layerIds, DebugInfo info)
             : Exception(info)
         {
             this->error("Impossible to find Tile Layer with id '{}'", layerId);
             std::vector<std::string> suggestions
                 = Utils::String::sortByDistance(layerId.data(), layerIds, 5);
-            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
-                Utils::String::quote);
-            this->hint("Maybe you meant one of these layers : ({})",
-                fmt::join(suggestions, ", "));
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
+            this->hint("Maybe you meant one of these layers : ({})", fmt::join(suggestions, ", "));
         }
     };
 }

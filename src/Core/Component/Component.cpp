@@ -21,8 +21,8 @@ namespace obe::Component
 
     void ComponentBase::RemoveComponent(ComponentBase* component)
     {
-        Components.erase(std::remove(Components.begin(), Components.end(), component),
-            Components.end());
+        Components.erase(
+            std::remove(Components.begin(), Components.end(), component), Components.end());
     }
 
     ComponentBase::ComponentBase(const std::string& id)

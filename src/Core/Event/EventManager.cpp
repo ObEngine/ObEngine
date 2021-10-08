@@ -23,11 +23,9 @@ namespace obe::Event
                 }
             }
         }
-        m_schedulers.erase(std::remove_if(m_schedulers.begin(), m_schedulers.end(),
-                               [](auto& scheduler) {
-                                   return scheduler->m_state
-                                       == CallbackSchedulerState::Done;
-                               }),
+        m_schedulers.erase(
+            std::remove_if(m_schedulers.begin(), m_schedulers.end(),
+                [](auto& scheduler) { return scheduler->m_state == CallbackSchedulerState::Done; }),
             m_schedulers.end());
     }
 
@@ -74,8 +72,8 @@ namespace obe::Event
             {
                 Debug::Log->debug("Namespace group {}", groupName);
                 result.at(namespaceItr.first)
-                    .emplace(groupName,
-                        namespaceItr.second->getGroup(groupName).getProfilerResults());
+                    .emplace(
+                        groupName, namespaceItr.second->getGroup(groupName).getProfilerResults());
             }
         }
         return result;

@@ -11,8 +11,8 @@ namespace obe::Transform::Exceptions
         PolygonNotEnoughPoints(void* polygon, std::size_t points, DebugInfo info)
             : Exception(info)
         {
-            this->error("Polygon at address @{} has only {} points (minimum: 3)",
-                fmt::ptr(polygon), points);
+            this->error("Polygon at address @{} has only {} points (minimum: 3)", fmt::ptr(polygon),
+                points);
         }
     };
 

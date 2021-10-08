@@ -36,25 +36,22 @@ namespace obe::Event
 
     void EventBase::collectGarbage()
     {
-        Debug::Log->trace("EventListeners Garbage Collection for Event {} [External]", m_identifier);
+        Debug::Log->trace(
+            "EventListeners Garbage Collection for Event {} [External]", m_identifier);
         for (const std::string& listenerId : m_garbageCollector)
         {
-            Debug::Log->trace("  - Garbage Collecting listener {}",
-                listenerId);
+            Debug::Log->trace("  - Garbage Collecting listener {}", listenerId);
             m_listeners.erase(listenerId);
         }
         m_garbageCollector.clear();
     }
 
-
-    EventBase::EventBase(
-        const std::string& parentName, const std::string& name, bool startState)
+    EventBase::EventBase(const std::string& parentName, const std::string& name, bool startState)
     {
         m_name = name;
         m_identifier = fmt::format("{}.{}", parentName, m_name);
         m_enabled = startState;
-        Debug::Log->trace(
-            "<Event> Creating Event '{}' @{}", m_identifier, fmt::ptr(this));
+        Debug::Log->trace("<Event> Creating Event '{}' @{}", m_identifier, fmt::ptr(this));
     }
 
     bool EventBase::getState() const
@@ -75,8 +72,7 @@ namespace obe::Event
     void EventBase::addExternalListener(
         const std::string& id, const ExternalEventListener& listener)
     {
-        Debug::Log->trace(
-            "<Event> Adding new listener '{}' to Event '{}'", id, m_identifier);
+        Debug::Log->trace("<Event> Adding new listener '{}' to Event '{}'", id, m_identifier);
         m_listeners.emplace(id, listener);
         if (m_onAddListener)
         {
@@ -86,8 +82,7 @@ namespace obe::Event
 
     void EventBase::removeExternalListener(const std::string& id)
     {
-        Debug::Log->trace(
-            "<Event> Removing listener '{}' from Event '{}'", id, m_identifier);
+        Debug::Log->trace("<Event> Removing listener '{}' from Event '{}'", id, m_identifier);
         if (m_garbageLock)
             m_garbageCollector.push_back(id);
         else

@@ -10,15 +10,13 @@ namespace obe::Script::ViliLuaBridge::Bindings
     {
         sol::table ViliLuaBridgeNamespace
             = state["obe"]["Script"]["ViliLuaBridge"].get<sol::table>();
-        ViliLuaBridgeNamespace.set_function(
-            "viliToLua", obe::Script::ViliLuaBridge::viliToLua);
+        ViliLuaBridgeNamespace.set_function("viliToLua", obe::Script::ViliLuaBridge::viliToLua);
     }
     void LoadFunctionLuaToVili(sol::state_view state)
     {
         sol::table ViliLuaBridgeNamespace
             = state["obe"]["Script"]["ViliLuaBridge"].get<sol::table>();
-        ViliLuaBridgeNamespace.set_function(
-            "luaToVili", obe::Script::ViliLuaBridge::luaToVili);
+        ViliLuaBridgeNamespace.set_function("luaToVili", obe::Script::ViliLuaBridge::luaToVili);
     }
     void LoadFunctionViliObjectToLuaTable(sol::state_view state)
     {
@@ -31,8 +29,8 @@ namespace obe::Script::ViliLuaBridge::Bindings
     {
         sol::table ViliLuaBridgeNamespace
             = state["obe"]["Script"]["ViliLuaBridge"].get<sol::table>();
-        ViliLuaBridgeNamespace.set_function("viliPrimitiveToLuaValue",
-            obe::Script::ViliLuaBridge::viliPrimitiveToLuaValue);
+        ViliLuaBridgeNamespace.set_function(
+            "viliPrimitiveToLuaValue", obe::Script::ViliLuaBridge::viliPrimitiveToLuaValue);
     }
     void LoadFunctionViliArrayToLuaTable(sol::state_view state)
     {
@@ -52,8 +50,8 @@ namespace obe::Script::ViliLuaBridge::Bindings
     {
         sol::table ViliLuaBridgeNamespace
             = state["obe"]["Script"]["ViliLuaBridge"].get<sol::table>();
-        ViliLuaBridgeNamespace.set_function("luaValueToViliPrimitive",
-            obe::Script::ViliLuaBridge::luaValueToViliPrimitive);
+        ViliLuaBridgeNamespace.set_function(
+            "luaValueToViliPrimitive", obe::Script::ViliLuaBridge::luaValueToViliPrimitive);
     }
     void LoadFunctionLuaTableToViliArray(sol::state_view state)
     {

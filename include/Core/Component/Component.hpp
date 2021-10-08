@@ -31,7 +31,8 @@ namespace obe::Component
         [[nodiscard]] virtual std::string_view type() const = 0;
     };
 
-    template <class T> class Component : public ComponentBase
+    template <class T>
+    class Component : public ComponentBase
     {
     public:
         /**
@@ -62,10 +63,11 @@ namespace obe::Component
         Pool.emplace_back(static_cast<T*>(this));
     }
 
-    template <class T> Component<T>::~Component()
+    template <class T>
+    Component<T>::~Component()
     {
-        Pool.erase(std::remove_if(Pool.begin(), Pool.end(),
-                       [&](T* ptr) -> bool { return (this == ptr); }),
+        Pool.erase(
+            std::remove_if(Pool.begin(), Pool.end(), [&](T* ptr) -> bool { return (this == ptr); }),
             Pool.end());
     }
 
@@ -77,18 +79,21 @@ namespace obe::Component
         return *ref;
     }*/
 
-    template <class T> void Component<T>::inject(unsigned int envIndex)
+    template <class T>
+    void Component<T>::inject(unsigned int envIndex)
     {
         /*Script::ScriptEngine["__ENVIRONMENTS"][envIndex]["Components"][m_id]
             = static_cast<T*>(this);*/
     }
 
-    template <class T> std::string_view Component<T>::type() const
+    template <class T>
+    std::string_view Component<T>::type() const
     {
         return ComponentType;
     }
 
-    template <class T> void Component<T>::remove()
+    template <class T>
+    void Component<T>::remove()
     {
         RemoveComponent(this);
         T::Pool.erase(std::remove_if(T::Pool.begin(), T::Pool.end(),
@@ -96,5 +101,6 @@ namespace obe::Component
             T::Pool.end());
     }
 
-    template <class T> std::vector<T*> Component<T>::Pool;
+    template <class T>
+    std::vector<T*> Component<T>::Pool;
 } // namespace obe::Component

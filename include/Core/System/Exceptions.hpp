@@ -11,8 +11,7 @@ namespace obe::System::Exceptions
     {
     public:
         using Exception::Exception;
-        ResourceNotFound(
-            std::string_view path, std::vector<std::string> mounts, DebugInfo info)
+        ResourceNotFound(std::string_view path, std::vector<std::string> mounts, DebugInfo info)
             : Exception(info)
         {
             this->error("Resource at path '{}' not found", path);
@@ -28,8 +27,7 @@ namespace obe::System::Exceptions
         InvalidMouseButtonEnumValue(int enumValue, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "MouseButton enum should not have the following value : {}", enumValue);
+            this->error("MouseButton enum should not have the following value : {}", enumValue);
         }
     };
 
@@ -41,8 +39,7 @@ namespace obe::System::Exceptions
             : Exception(info)
         {
             this->error(
-                "Could not find mount.vili file in the execution directory : '{}'",
-                currentPath);
+                "Could not find mount.vili file in the execution directory : '{}'", currentPath);
         }
     };
 
@@ -54,8 +51,7 @@ namespace obe::System::Exceptions
             : Exception(info)
         {
             this->error(
-                "An error occured while parsing 'mount.vili' file located at '{}'",
-                mountFilePath);
+                "An error occured while parsing 'mount.vili' file located at '{}'", mountFilePath);
         }
     };
 
@@ -67,11 +63,9 @@ namespace obe::System::Exceptions
             const std::vector<std::string>& mounts, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Impossible to get MountablePath at index {} when there is only {} Paths",
+            this->error("Impossible to get MountablePath at index {} when there is only {} Paths",
                 index, maximum);
-            this->hint("Here is a list of available MountablePath ({})",
-                fmt::join(mounts, ", "));
+            this->hint("Here is a list of available MountablePath ({})", fmt::join(mounts, ", "));
         }
     };
 
@@ -79,16 +73,15 @@ namespace obe::System::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownPackage(std::string_view package,
-            const std::vector<std::string>& allPackages, DebugInfo info)
+        UnknownPackage(
+            std::string_view package, const std::vector<std::string>& allPackages, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Impossible to get Package '{}', please check it is correctly installed");
+            this->error("Impossible to get Package '{}', please check it is correctly installed");
             std::vector<std::string> suggestions
                 = Utils::String::sortByDistance(package.data(), allPackages, 5);
-            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
-                Utils::String::quote);
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
             this->hint("Maybe you meant to get one of these packages : ({})",
                 fmt::join(suggestions, ", "));
         }
@@ -101,8 +94,7 @@ namespace obe::System::Exceptions
         PackageFileNotFound(std::string_view path, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Impossible to find a Package file at following path : '{}'", path);
+            this->error("Impossible to find a Package file at following path : '{}'", path);
         }
     };
 
@@ -121,8 +113,8 @@ namespace obe::System::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownProject(std::string_view project,
-            const std::vector<std::string>& allProjects, DebugInfo info)
+        UnknownProject(
+            std::string_view project, const std::vector<std::string>& allProjects, DebugInfo info)
             : Exception(info)
         {
             this->error("Impossible to find Project '{}', please check it is correctly "
@@ -130,8 +122,8 @@ namespace obe::System::Exceptions
                 project);
             std::vector<std::string> suggestions
                 = Utils::String::sortByDistance(project.data(), allProjects, 5);
-            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
-                Utils::String::quote);
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
             this->hint("Maybe you meant to get one of these projects : ({})",
                 fmt::join(suggestions, ", "));
         }
@@ -154,15 +146,15 @@ namespace obe::System::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownPathPrefix(std::string_view prefix,
-            const std::vector<std::string> allPrefixes, DebugInfo info)
+        UnknownPathPrefix(
+            std::string_view prefix, const std::vector<std::string> allPrefixes, DebugInfo info)
             : Exception(info)
         {
             this->error("Path prefix '{}' does not exist", prefix);
             std::vector<std::string> suggestions
                 = Utils::String::sortByDistance(prefix.data(), allPrefixes, 5);
-            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(),
-                Utils::String::quote);
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
             this->hint("Maybe you meant to use one of these prefixes : ({})",
                 fmt::join(suggestions, ", "));
         }
@@ -175,8 +167,7 @@ namespace obe::System::Exceptions
         explicit MissingDefaultMountPoint(DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Must at least choose cwd or executable path as default mount point");
+            this->error("Must at least choose cwd or executable path as default mount point");
         }
     };
 
@@ -198,8 +189,7 @@ namespace obe::System::Exceptions
         InvalidProjectFile(std::string_view projectFilePath, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "An error occured while parsing 'project.vili' file located at '{}'",
+            this->error("An error occured while parsing 'project.vili' file located at '{}'",
                 projectFilePath);
         }
     };

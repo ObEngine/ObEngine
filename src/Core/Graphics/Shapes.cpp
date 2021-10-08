@@ -15,8 +15,7 @@ namespace obe::Graphics::Shapes
     Transform::UnitVector Rectangle::getSize() const
     {
         const sf::Vector2f pixelSize = shape.getSize();
-        return Transform::UnitVector(
-            pixelSize.x, pixelSize.y, Transform::Units::ScenePixels);
+        return Transform::UnitVector(pixelSize.x, pixelSize.y, Transform::Units::ScenePixels);
     }
 
     void Rectangle::setSize(Transform::UnitVector size)
@@ -95,11 +94,9 @@ namespace obe::Graphics::Shapes
         return shape;
     }
 
-    void Polygon::setPointPosition(
-        std::size_t index, const Transform::UnitVector& position)
+    void Polygon::setPointPosition(std::size_t index, const Transform::UnitVector& position)
     {
-        const Transform::UnitVector pixelPosition
-            = position.to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector pixelPosition = position.to<Transform::Units::ScenePixels>();
         if (shape.getPointCount() <= index)
         {
             shape.setPointCount(index + 1);

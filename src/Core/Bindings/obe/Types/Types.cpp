@@ -24,8 +24,7 @@ namespace obe::Types::Bindings
         sol::table TypesNamespace = state["obe"]["Types"].get<sol::table>();
         sol::usertype<obe::Types::ProtectedIdentifiable> bindProtectedIdentifiable
             = TypesNamespace.new_usertype<obe::Types::ProtectedIdentifiable>(
-                "ProtectedIdentifiable", sol::base_classes,
-                sol::bases<obe::Types::Identifiable>());
+                "ProtectedIdentifiable", sol::base_classes, sol::bases<obe::Types::Identifiable>());
     }
     void LoadClassSelectable(sol::state_view state)
     {
@@ -33,8 +32,7 @@ namespace obe::Types::Bindings
         sol::usertype<obe::Types::Selectable> bindSelectable
             = TypesNamespace.new_usertype<obe::Types::Selectable>("Selectable",
                 sol::call_constructor,
-                sol::constructors<obe::Types::Selectable(),
-                    obe::Types::Selectable(bool)>());
+                sol::constructors<obe::Types::Selectable(), obe::Types::Selectable(bool)>());
         bindSelectable["setSelected"] = &obe::Types::Selectable::setSelected;
         bindSelectable["toggleSelected"] = &obe::Types::Selectable::toggleSelected;
         bindSelectable["select"] = &obe::Types::Selectable::select;
@@ -53,8 +51,8 @@ namespace obe::Types::Bindings
     {
         sol::table TypesNamespace = state["obe"]["Types"].get<sol::table>();
         sol::usertype<obe::Types::Togglable> bindTogglable
-            = TypesNamespace.new_usertype<obe::Types::Togglable>("Togglable",
-                sol::call_constructor, sol::constructors<obe::Types::Togglable(bool)>());
+            = TypesNamespace.new_usertype<obe::Types::Togglable>("Togglable", sol::call_constructor,
+                sol::constructors<obe::Types::Togglable(bool)>());
         bindTogglable["setEnabled"] = &obe::Types::Togglable::setEnabled;
         bindTogglable["toggle"] = &obe::Types::Togglable::toggle;
         bindTogglable["enable"] = &obe::Types::Togglable::enable;

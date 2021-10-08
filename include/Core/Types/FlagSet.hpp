@@ -27,7 +27,8 @@ namespace obe::Types
      *      * The user enumeration shall not explicitely set any value.
      *      * The last enumeration member shall be: "LAST__"
      */
-    template <typename T> struct FlagSet
+    template <typename T>
+    struct FlagSet
     {
         /**
          * Construct a FlagSet. All bits are set to 0.

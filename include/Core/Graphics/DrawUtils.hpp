@@ -40,8 +40,8 @@ namespace obe::Graphics::Utils
      *        visible size)
      * \param color Color of the line you want to draw
      */
-    void drawLine(RenderTarget surface, int x1, int y1, int x2, int y2, int thickness,
-        const Color& color);
+    void drawLine(
+        RenderTarget surface, int x1, int y1, int x2, int y2, int thickness, const Color& color);
 
     struct DrawPolygonOptions
     {

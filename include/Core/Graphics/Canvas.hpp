@@ -284,7 +284,8 @@ namespace obe::Graphics::Canvas
          * \endthints
          *
          */
-        template <class T> T& add(const std::string& id);
+        template <class T>
+        T& add(const std::string& id);
 
         /**
          * \brief Get a CanvasElement with the given id
@@ -317,7 +318,8 @@ namespace obe::Graphics::Canvas
         void requiresSort();
     };
 
-    template <class T> inline T& Canvas::add(const std::string& id)
+    template <class T>
+    inline T& Canvas::add(const std::string& id)
     {
         if (const auto existingElement = this->get(id); existingElement)
         {
@@ -328,8 +330,7 @@ namespace obe::Graphics::Canvas
             }
             else
             {
-                throw Exceptions::CanvasElementAlreadyExists(id,
-                    canvasElementTypeToString(T::Type),
+                throw Exceptions::CanvasElementAlreadyExists(id, canvasElementTypeToString(T::Type),
                     canvasElementTypeToString(existingElement->type), EXC_INFO);
             }
         }
@@ -338,9 +339,8 @@ namespace obe::Graphics::Canvas
             m_sortRequired = true;
             std::unique_ptr<T> newElement = std::make_unique<T>(*this, id);
             auto insert_it = std::find_if(m_elements.begin(), m_elements.end(),
-                [&newElement](const CanvasElement::Ptr& elem) {
-                    return newElement->layer <= elem->layer;
-                });
+                [&newElement](const CanvasElement::Ptr& elem)
+                { return newElement->layer <= elem->layer; });
             auto elem_it = m_elements.insert(insert_it, std::move(newElement));
             return *static_cast<T*>(elem_it->get());
         }

@@ -56,8 +56,8 @@ namespace obe::Input
     class InputButton
     {
     private:
-        std::variant<sf::Keyboard::Key, sf::Mouse::Button, unsigned int,
-            sf::Joystick::Axis, MouseWheelScrollDirection>
+        std::variant<sf::Keyboard::Key, sf::Mouse::Button, unsigned int, sf::Joystick::Axis,
+            MouseWheelScrollDirection>
             m_button;
         std::pair<AxisThresholdDirection, float> m_detectAxis;
         unsigned int m_gamepadIndex = 0;
@@ -78,8 +78,8 @@ namespace obe::Input
          * \param type Type of the Key (Arrows, Alpha, Numeric, NumericNP,
          *        Functions, Others)
          */
-        InputButton(sf::Keyboard::Key key, const std::string& name,
-            const std::string& returnChar, InputType type);
+        InputButton(sf::Keyboard::Key key, const std::string& name, const std::string& returnChar,
+            InputType type);
         /**
          * \brief Creates a new InputButton representing a Mouse Button
          * \param key SFML Mouse Button
@@ -92,8 +92,7 @@ namespace obe::Input
          * \param buttonIndex Index of the button of the gamepad
          * \param name Name of the gamepad Button
          */
-        InputButton(
-            unsigned int gamepadIndex, unsigned int buttonIndex, const std::string& name);
+        InputButton(unsigned int gamepadIndex, unsigned int buttonIndex, const std::string& name);
         /**
          * \brief Creates a new InputButton representing a gamepad Axis
          * \param gamepadIndex Index of the gamepad

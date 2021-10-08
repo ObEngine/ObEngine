@@ -15,8 +15,7 @@ namespace obe::System::Project::Bindings
     void LoadFunctionProjectExists(sol::state_view state)
     {
         sol::table ProjectNamespace = state["obe"]["System"]["Project"].get<sol::table>();
-        ProjectNamespace.set_function(
-            "ProjectExists", obe::System::Project::ProjectExists);
+        ProjectNamespace.set_function("ProjectExists", obe::System::Project::ProjectExists);
     }
     void LoadFunctionLoad(sol::state_view state)
     {

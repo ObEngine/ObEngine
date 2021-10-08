@@ -11,8 +11,7 @@ namespace obe::Animation::Exceptions
         UnknownAnimationPlayMode(std::string_view playMode, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Unable to convert the string '{}' to an AnimationPlayMode", playMode);
+            this->error("Unable to convert the string '{}' to an AnimationPlayMode", playMode);
             this->hint("Try one of the following values : (OneTime, Loop, Force)");
         }
     };
@@ -25,8 +24,8 @@ namespace obe::Animation::Exceptions
             const std::vector<std::string>& groups, DebugInfo info)
             : Exception(info)
         {
-            this->error("Unable to retrieve AnimationGroup '{}' from Animation '{}'",
-                animation, groupName);
+            this->error(
+                "Unable to retrieve AnimationGroup '{}' from Animation '{}'", animation, groupName);
             this->hint("Existing groups are ({})", fmt::join(groups, ", "));
         }
     };
@@ -35,8 +34,8 @@ namespace obe::Animation::Exceptions
     {
     public:
         using Exception::Exception;
-        AnimationTextureIndexOverflow(std::string_view animation, std::size_t index,
-            std::size_t maximum, DebugInfo info)
+        AnimationTextureIndexOverflow(
+            std::string_view animation, std::size_t index, std::size_t maximum, DebugInfo info)
             : Exception(info)
         {
             this->error("Tried to access Texture of Animation '{}' at index {} when it "
@@ -49,13 +48,12 @@ namespace obe::Animation::Exceptions
     {
     public:
         using Exception::Exception;
-        AnimationGroupTextureIndexOverflow(std::string_view animationGroup,
-            std::size_t index, std::size_t maximum, DebugInfo info)
+        AnimationGroupTextureIndexOverflow(
+            std::string_view animationGroup, std::size_t index, std::size_t maximum, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Tried to access Texture of AnimationGroup '{}' at index {} when it "
-                "only contains {} textures",
+            this->error("Tried to access Texture of AnimationGroup '{}' at index {} when it "
+                        "only contains {} textures",
                 animationGroup, index, maximum);
         }
     };
@@ -67,12 +65,11 @@ namespace obe::Animation::Exceptions
         NoSelectedAnimationGroup(std::string_view animation, DebugInfo info)
             : Exception(info)
         {
-            this->error("The Animation '{}' does not have any AnimationGroup selected",
-                animation);
+            this->error("The Animation '{}' does not have any AnimationGroup selected", animation);
         }
     };
 
-    class UnknownAnimationCommand : public Exception <NoSelectedAnimationGroup>
+    class UnknownAnimationCommand : public Exception<NoSelectedAnimationGroup>
     {
     public:
         using Exception::Exception;
@@ -81,8 +78,7 @@ namespace obe::Animation::Exceptions
             : Exception(info)
         {
             this->error("Unknown command '{}' in code of Animation '{}'");
-            this->hint(
-                "Try one of the following valid commands (DELAY, PLAY_GROUP, CALL)");
+            this->hint("Try one of the following valid commands (DELAY, PLAY_GROUP, CALL)");
         }
     };
 
@@ -94,10 +90,9 @@ namespace obe::Animation::Exceptions
             const std::vector<std::string>& animations, DebugInfo info)
             : Exception(info)
         {
-            this->error("Animator '{}' doesn't have any Animation named '{}'",
-                animatorPath, animation);
-            this->hint(
-                "Try one of the following animations ({})", fmt::join(animations, ", "));
+            this->error(
+                "Animator '{}' doesn't have any Animation named '{}'", animatorPath, animation);
+            this->hint("Try one of the following animations ({})", fmt::join(animations, ", "));
         }
     };
 
@@ -108,8 +103,7 @@ namespace obe::Animation::Exceptions
         NoSelectedAnimation(std::string_view animator, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "The Animator '{}' does not have any Animation selected", animator);
+            this->error("The Animator '{}' does not have any Animation selected", animator);
         }
     };
 
@@ -120,8 +114,8 @@ namespace obe::Animation::Exceptions
         UnknownEasingFromEnum(int enumValue, DebugInfo info)
             : Exception(info)
         {
-            this->error("Enum with value {} could not be converted to an easing function",
-                enumValue);
+            this->error(
+                "Enum with value {} could not be converted to an easing function", enumValue);
         }
     };
 

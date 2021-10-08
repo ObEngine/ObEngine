@@ -183,8 +183,8 @@ namespace obe::Animation
         int m_priority = 0;
 
         void loadMeta(const vili::node& meta);
-        void loadImages(const vili::node& images, const System::Path& path,
-            Engine::ResourceManager* resources);
+        void loadImages(
+            const vili::node& images, const System::Path& path, Engine::ResourceManager* resources);
         void loadGroups(const vili::node& groups);
         void loadCode(const vili::node& code);
 
@@ -296,8 +296,7 @@ namespace obe::Animation
          * \param resources pointer to the ResourceManager
          *        that will load the textures for the Animation
          */
-        void loadAnimation(
-            const System::Path& path, Engine::ResourceManager* resources = nullptr);
+        void loadAnimation(const System::Path& path, Engine::ResourceManager* resources = nullptr);
         /**
          * \brief Reset the Animation (Unselect current AnimationGroup and
          *        restart AnimationCode)

@@ -15,8 +15,7 @@ namespace obe::System::Package::Bindings
     void LoadFunctionPackageExists(sol::state_view state)
     {
         sol::table PackageNamespace = state["obe"]["System"]["Package"].get<sol::table>();
-        PackageNamespace.set_function(
-            "PackageExists", obe::System::Package::PackageExists);
+        PackageNamespace.set_function("PackageExists", obe::System::Package::PackageExists);
     }
     void LoadFunctionListPackages(sol::state_view state)
     {

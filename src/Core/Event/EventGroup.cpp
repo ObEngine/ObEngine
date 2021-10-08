@@ -60,8 +60,7 @@ namespace obe::Event
         {
             return *event->second;
         }
-        throw Exceptions::UnknownEvent(
-            m_identifier, eventName, this->getEventsNames(), EXC_INFO);
+        throw Exceptions::UnknownEvent(m_identifier, eventName, this->getEventsNames(), EXC_INFO);
     }
 
     bool EventGroup::contains(const std::string& eventName)
@@ -71,8 +70,8 @@ namespace obe::Event
 
     void EventGroup::remove(const std::string& eventName)
     {
-        Debug::Log->debug("<EventGroup> Remove Event '{}' from EventGroup '{}'",
-            eventName, m_identifier);
+        Debug::Log->debug(
+            "<EventGroup> Remove Event '{}' from EventGroup '{}'", eventName, m_identifier);
         if (m_events.find(eventName) != m_events.end())
             m_events.erase(eventName);
         else
@@ -123,14 +122,12 @@ namespace obe::Event
         return m_name;
     }
 
-    void EventGroup::onAddListener(
-        const std::string& eventName, OnListenerChange callback) const
+    void EventGroup::onAddListener(const std::string& eventName, OnListenerChange callback) const
     {
         this->get(eventName).onAddListener(callback);
     }
 
-    void EventGroup::onRemoveListener(
-        const std::string& eventName, OnListenerChange callback) const
+    void EventGroup::onRemoveListener(const std::string& eventName, OnListenerChange callback) const
     {
         this->get(eventName).onRemoveListener(callback);
     }

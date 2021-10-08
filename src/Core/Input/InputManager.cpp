@@ -82,11 +82,9 @@ namespace obe::Input
                         break;
                     }
                 }
-                m_monitors.erase(
-                    std::remove_if(m_monitors.begin(), m_monitors.end(),
-                        [this](const std::weak_ptr<InputButtonMonitor>& element) {
-                            return updateOrCleanMonitor(e_inputs, element);
-                        }),
+                m_monitors.erase(std::remove_if(m_monitors.begin(), m_monitors.end(),
+                                     [this](const std::weak_ptr<InputButtonMonitor>& element)
+                                     { return updateOrCleanMonitor(e_inputs, element); }),
                     m_monitors.end());
                 for (const auto& monitorPtr : m_monitors)
                 {
@@ -140,28 +138,26 @@ namespace obe::Input
                 {
                     this->getAction(actionName).clearConditions();
                 }
-                auto inputCondition
-                    = [this](InputManager* inputManager, const std::string& action,
-                          vili::node& condition) {
-                          InputCondition actionCondition;
-                          InputCombination combination;
-                          try
-                          {
-                              combination = this->makeCombination(condition);
-                          }
-                          catch (const BaseException& e)
-                          {
-                              throw Exceptions::InvalidInputCombinationCode(
-                                  action, condition, EXC_INFO)
-                                  .nest(e);
-                          }
+                auto inputCondition = [this](InputManager* inputManager, const std::string& action,
+                                          vili::node& condition)
+                {
+                    InputCondition actionCondition;
+                    InputCombination combination;
+                    try
+                    {
+                        combination = this->makeCombination(condition);
+                    }
+                    catch (const BaseException& e)
+                    {
+                        throw Exceptions::InvalidInputCombinationCode(action, condition, EXC_INFO)
+                            .nest(e);
+                    }
 
-                          actionCondition.setCombination(combination);
-                          Debug::Log->debug(
-                              "<InputManager> Associated Key '{0}' for Action '{1}'",
-                              condition, action);
-                          inputManager->getAction(action).addCondition(actionCondition);
-                      };
+                    actionCondition.setCombination(combination);
+                    Debug::Log->debug(
+                        "<InputManager> Associated Key '{0}' for Action '{1}'", condition, action);
+                    inputManager->getAction(action).addCondition(actionCondition);
+                };
                 if (condition.is_primitive())
                 {
                     inputCondition(this, actionName, condition);
@@ -198,8 +194,8 @@ namespace obe::Input
             if (Utils::Vector::contains(context, action->getContexts())
                 && !isActionCurrentlyInUse(action->getId()))
             {
-                Debug::Log->debug("<InputManager> Add Action '{0}' in Context '{1}'",
-                    action->getId(), context);
+                Debug::Log->debug(
+                    "<InputManager> Add Action '{0}' in Context '{1}'", action->getId(), context);
                 m_currentActions.push_back(action.get());
                 std::vector<InputButtonMonitorPtr> monitors;
                 for (InputButton* button : action->getInvolvedButtons())
@@ -216,26 +212,26 @@ namespace obe::Input
     {
         //<REVISION> Multiple context, keep which one, remove keys of wrong
         // context
-        m_currentActions.erase(
-            std::remove_if(m_currentActions.begin(), m_currentActions.end(),
-                [&context](auto& action) -> bool {
-                    const auto& contexts = action->getContexts();
-                    auto isActionInContext
-                        = std::find(contexts.begin(), contexts.end(), context)
-                        != contexts.end();
-                    if (isActionInContext)
-                    {
-                        Debug::Log->debug("<InputManager> Remove Action '{0}' "
-                                          "from Context '{1}'",
-                            action->getId(), context);
-                        action->disable();
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }),
+        m_currentActions.erase(std::remove_if(m_currentActions.begin(), m_currentActions.end(),
+                                   [&context](auto& action) -> bool
+                                   {
+                                       const auto& contexts = action->getContexts();
+                                       auto isActionInContext
+                                           = std::find(contexts.begin(), contexts.end(), context)
+                                           != contexts.end();
+                                       if (isActionInContext)
+                                       {
+                                           Debug::Log->debug("<InputManager> Remove Action '{0}' "
+                                                             "from Context '{1}'",
+                                               action->getId(), context);
+                                           action->disable();
+                                           return true;
+                                       }
+                                       else
+                                       {
+                                           return false;
+                                       }
+                                   }),
             m_currentActions.end());
         return *this;
     }
@@ -265,8 +261,7 @@ namespace obe::Input
         if (m_inputs.find(keyId) != m_inputs.end())
             return *m_inputs[keyId].get();
 
-        throw Exceptions::UnknownInputButton(
-            keyId, this->getAllInputButtonNames(), EXC_INFO);
+        throw Exceptions::UnknownInputButton(keyId, this->getAllInputButtonNames(), EXC_INFO);
     }
 
     std::vector<InputButton*> InputManager::getInputs()
@@ -351,8 +346,7 @@ namespace obe::Input
             for (std::string element : elements)
             {
                 Utils::String::replaceInPlace(element, " ", "");
-                std::vector<std::string> stateAndButton
-                    = Utils::String::split(element, ":");
+                std::vector<std::string> stateAndButton = Utils::String::split(element, ":");
                 if (stateAndButton.size() == 1 || stateAndButton.size() == 2)
                 {
                     if (stateAndButton.size() == 1)
@@ -373,8 +367,7 @@ namespace obe::Input
                         }
                         else
                         {
-                            throw Exceptions::InvalidInputButtonState(
-                                buttonState, EXC_INFO);
+                            throw Exceptions::InvalidInputButtonState(buttonState, EXC_INFO);
                         }
                     }
                     const std::string keyId = stateAndButton[1];

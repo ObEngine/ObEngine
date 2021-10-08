@@ -22,8 +22,7 @@ namespace obe::System::Package
 
     bool PackageExists(const std::string& packageName)
     {
-        return vili::parser::from_file("obe://Packages/packages.vili"_fs)
-            .contains(packageName);
+        return vili::parser::from_file("obe://Packages/packages.vili"_fs).contains(packageName);
     }
 
     std::vector<std::string> ListPackages()
@@ -40,8 +39,7 @@ namespace obe::System::Package
     bool Install(const std::string& packageName)
     {
         Debug::Log->info("<Package> Installing Package '{0}'", packageName);
-        if (!Utils::Vector::contains(
-                packageName + ".opaque", Utils::File::getFileList("Package")))
+        if (!Utils::Vector::contains(packageName + ".opaque", Utils::File::getFileList("Package")))
         {
             throw Exceptions::PackageFileNotFound(
                 fmt::format("Package/{}.opaque", packageName), EXC_INFO);
@@ -55,15 +53,14 @@ namespace obe::System::Package
         throw Exceptions::PackageAlreadyInstalled(packageName, EXC_INFO);
     }
 
-    bool Load(const std::string& packageName, const std::string& prefix,
-        const unsigned int priority)
+    bool Load(
+        const std::string& packageName, const std::string& prefix, const unsigned int priority)
     {
-        Debug::Log->info(
-            "<Package> Loading Package '{0}' with priority", packageName, priority);
+        Debug::Log->info("<Package> Loading Package '{0}' with priority", packageName, priority);
         if (PackageExists(packageName))
         {
-            MountablePath::Mount(MountablePath(MountablePathType::Package,
-                GetPackageLocation(packageName), prefix, priority));
+            MountablePath::Mount(MountablePath(
+                MountablePathType::Package, GetPackageLocation(packageName), prefix, priority));
             return true;
         }
         throw Exceptions::UnknownPackage(packageName, ListPackages(), EXC_INFO);

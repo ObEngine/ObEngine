@@ -84,8 +84,7 @@ namespace obe::Graphics
          * \param position Position where the HandlePoint should move to
          * \param camera Camera used to manipulate PositionTransformers
          */
-        void moveTo(
-            const Transform::UnitVector& position, const Transform::UnitVector& camera);
+        void moveTo(const Transform::UnitVector& position, const Transform::UnitVector& camera);
     };
 
     /**

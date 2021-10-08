@@ -12,8 +12,7 @@ namespace obe::Engine::Exceptions
         BootScriptMissing(const std::vector<std::string>& mountedPaths, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Unable to find a 'boot.lua' file which is required to start the engine");
+            this->error("Unable to find a 'boot.lua' file which is required to start the engine");
             this->hint("ObEngine tried to fetch the 'boot.lua' file from the following "
                        "locations : ({})",
                 fmt::join(mountedPaths, ", "));
@@ -27,8 +26,7 @@ namespace obe::Engine::Exceptions
         BootScriptLoadingError(std::string_view errorMessage, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Lua error while loading 'boot.lua' script file :\n{}", errorMessage);
+            this->error("Lua error while loading 'boot.lua' script file :\n{}", errorMessage);
         }
     };
 
@@ -40,8 +38,7 @@ namespace obe::Engine::Exceptions
             std::string_view functionName, std::string_view errorMessage, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Lua error while executing a function named '{}' in 'boot.lua' :\n{}",
+            this->error("Lua error while executing a function named '{}' in 'boot.lua' :\n{}",
                 functionName, errorMessage);
         }
     };
@@ -50,8 +47,7 @@ namespace obe::Engine::Exceptions
     {
     public:
         using Exception::Exception;
-        TextureNotFound(
-            std::string_view path, std::vector<std::string> mounts, DebugInfo info)
+        TextureNotFound(std::string_view path, std::vector<std::string> mounts, DebugInfo info)
             : Exception(info)
         {
             this->error("Could not find Texture with path '{}'", path);
@@ -64,8 +60,7 @@ namespace obe::Engine::Exceptions
     {
     public:
         using Exception::Exception;
-        FontNotFound(
-            std::string_view path, std::vector<std::string> mounts, DebugInfo info)
+        FontNotFound(std::string_view path, std::vector<std::string> mounts, DebugInfo info)
             : Exception(info)
         {
             this->error("Could not find Font with path '{}'", path);

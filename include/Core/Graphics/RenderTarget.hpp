@@ -16,8 +16,7 @@ namespace obe::Graphics
 
         void draw(const sf::Drawable& drawable,
             const sf::RenderStates& states = sf::RenderStates::Default) const;
-        void draw(const sf::Vertex* vertices, std::size_t vertexCount,
-            sf::PrimitiveType type,
+        void draw(const sf::Vertex* vertices, std::size_t vertexCount, sf::PrimitiveType type,
             const sf::RenderStates& states = sf::RenderStates::Default) const;
 
         operator sf::RenderTarget&();

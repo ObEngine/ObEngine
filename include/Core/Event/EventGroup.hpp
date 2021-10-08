@@ -7,11 +7,14 @@
 
 #include <Event/Event.hpp>
 
-template <typename T> class HasId
+template <typename T>
+class HasId
 {
 private:
-    template <typename C> static std::true_type test(decltype(&C::id));
-    template <typename C> static std::false_type test(...);
+    template <typename C>
+    static std::true_type test(decltype(&C::id));
+    template <typename C>
+    static std::false_type test(...);
 
 public:
     enum
@@ -61,7 +64,8 @@ namespace obe::Event
          * \brief Get a Event contained in the EventGroup
          * \return A pointer to the Event if found (throws an error otherwise)
          */
-        template <class EventType> Event<EventType>& get() const;
+        template <class EventType>
+        Event<EventType>& get() const;
         vili::node getProfilerResults() const;
     };
 
@@ -116,7 +120,8 @@ namespace obe::Event
          */
         template <class EventType>
         typename std::enable_if<HasId<EventType>::value>::type add();
-        template <class EventType> void add(const std::string& eventName);
+        template <class EventType>
+        void add(const std::string& eventName);
         /**
          * \brief Removes a Event from the EventGroup
          * \param eventName Name of the Event to remove
@@ -128,7 +133,8 @@ namespace obe::Event
          * \param event event
          * \return Pointer to the EventGroup to chain calls
          */
-        template <class EventType> void trigger(EventType event);
+        template <class EventType>
+        void trigger(EventType event);
         /**
          * \brief Triggers a Event
          * \param eventName name of the Event to trigger
@@ -166,12 +172,12 @@ namespace obe::Event
         /**
          * \brief Register a callback for when Event::removeListener is called
          */
-        void onRemoveListener(
-            const std::string& eventName, OnListenerChange callback) const;
+        void onRemoveListener(const std::string& eventName, OnListenerChange callback) const;
         vili::node getProfilerResults() const;
     };
 
-    template <class EventType> Event<EventType>& EventGroupView::get() const
+    template <class EventType>
+    Event<EventType>& EventGroupView::get() const
     {
         return m_group.get<EventType>();
     }
@@ -197,12 +203,13 @@ namespace obe::Event
         this->add<EventType>(EventType::id.data());
     }
 
-    template <class EventType> void EventGroup::add(const std::string& eventName)
+    template <class EventType>
+    void EventGroup::add(const std::string& eventName)
     {
         if (!m_events.count(eventName))
         {
-            Debug::Log->debug("<EventGroup> Add Event '{}' to EventGroup '{}'", eventName,
-                m_identifier);
+            Debug::Log->debug(
+                "<EventGroup> Add Event '{}' to EventGroup '{}'", eventName, m_identifier);
             m_events.emplace(
                 eventName, std::make_unique<Event<EventType>>(m_identifier, eventName));
         }
@@ -212,7 +219,8 @@ namespace obe::Event
         }
     }
 
-    template <class EventType> void EventGroup::trigger(EventType event)
+    template <class EventType>
+    void EventGroup::trigger(EventType event)
     {
         this->trigger(EventType::id.data(), event);
     }
@@ -220,8 +228,8 @@ namespace obe::Event
     template <class EventType>
     void EventGroup::trigger(const std::string& eventName, EventType event)
     {
-        Debug::Log->trace("<EventGroup> Triggering Event '{}' from EventGroup '{}'",
-            eventName, m_identifier);
+        Debug::Log->trace(
+            "<EventGroup> Triggering Event '{}' from EventGroup '{}'", eventName, m_identifier);
         static_cast<Event<EventType>*>(m_events.at(eventName).get())->trigger(event);
     }
 

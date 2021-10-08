@@ -33,8 +33,8 @@ namespace obe::Input
         m_type = InputType::Mouse;
     }
 
-    InputButton::InputButton(const unsigned int gamepadIndex, unsigned int buttonIndex,
-        const std::string& name)
+    InputButton::InputButton(
+        const unsigned int gamepadIndex, unsigned int buttonIndex, const std::string& name)
     {
         m_gamepadIndex = gamepadIndex;
         m_button = buttonIndex;
@@ -43,9 +43,8 @@ namespace obe::Input
         m_name = name;
     }
 
-    InputButton::InputButton(const unsigned int gamepadIndex,
-        sf::Joystick::Axis gamepadAxis, std::pair<AxisThresholdDirection, float> detect,
-        const std::string& name)
+    InputButton::InputButton(const unsigned int gamepadIndex, sf::Joystick::Axis gamepadAxis,
+        std::pair<AxisThresholdDirection, float> detect, const std::string& name)
     {
         m_gamepadIndex = gamepadIndex;
         m_type = InputType::GamepadAxis;
@@ -112,8 +111,7 @@ namespace obe::Input
         if (m_type == InputType::Mouse)
             return sf::Mouse::isButtonPressed(std::get<sf::Mouse::Button>(m_button));
         if (m_type == InputType::GamepadButton)
-            return sf::Joystick::isButtonPressed(
-                m_gamepadIndex, std::get<unsigned int>(m_button));
+            return sf::Joystick::isButtonPressed(m_gamepadIndex, std::get<unsigned int>(m_button));
         if (m_type == InputType::GamepadAxis)
         {
             const float axisValue = sf::Joystick::getAxisPosition(

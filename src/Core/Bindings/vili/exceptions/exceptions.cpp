@@ -42,8 +42,8 @@ namespace vili::exceptions::Bindings
     {
         sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
         sol::usertype<vili::exceptions::file_not_found> bindfile_not_found
-            = exceptionsNamespace.new_usertype<vili::exceptions::file_not_found>(
-                "file_not_found", sol::call_constructor,
+            = exceptionsNamespace.new_usertype<vili::exceptions::file_not_found>("file_not_found",
+                sol::call_constructor,
                 sol::constructors<vili::exceptions::file_not_found(
                     std::string_view, vili::exceptions::debug_info)>(),
                 sol::base_classes,
@@ -53,16 +53,14 @@ namespace vili::exceptions::Bindings
     void LoadClassInconsistentIndentation(sol::state_view state)
     {
         sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
-        sol::usertype<vili::exceptions::inconsistent_indentation>
-            bindinconsistent_indentation
-            = exceptionsNamespace
-                  .new_usertype<vili::exceptions::inconsistent_indentation>(
-                      "inconsistent_indentation", sol::call_constructor,
-                      sol::constructors<vili::exceptions::inconsistent_indentation(
-                          int64_t, int64_t, vili::exceptions::debug_info)>(),
-                      sol::base_classes,
-                      sol::bases<vili::exceptions::exception<inconsistent_indentation>,
-                          vili::exceptions::base_exception>());
+        sol::usertype<vili::exceptions::inconsistent_indentation> bindinconsistent_indentation
+            = exceptionsNamespace.new_usertype<vili::exceptions::inconsistent_indentation>(
+                "inconsistent_indentation", sol::call_constructor,
+                sol::constructors<vili::exceptions::inconsistent_indentation(
+                    int64_t, int64_t, vili::exceptions::debug_info)>(),
+                sol::base_classes,
+                sol::bases<vili::exceptions::exception<inconsistent_indentation>,
+                    vili::exceptions::base_exception>());
     }
     void LoadClassIntegerDumpError(sol::state_view state)
     {
@@ -80,8 +78,8 @@ namespace vili::exceptions::Bindings
     {
         sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
         sol::usertype<vili::exceptions::invalid_cast> bindinvalid_cast
-            = exceptionsNamespace.new_usertype<vili::exceptions::invalid_cast>(
-                "invalid_cast", sol::call_constructor,
+            = exceptionsNamespace.new_usertype<vili::exceptions::invalid_cast>("invalid_cast",
+                sol::call_constructor,
                 sol::constructors<vili::exceptions::invalid_cast(
                     std::string_view, std::string_view, vili::exceptions::debug_info)>(),
                 sol::base_classes,
@@ -104,8 +102,8 @@ namespace vili::exceptions::Bindings
     {
         sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
         sol::usertype<vili::exceptions::invalid_merge> bindinvalid_merge
-            = exceptionsNamespace.new_usertype<vili::exceptions::invalid_merge>(
-                "invalid_merge", sol::call_constructor,
+            = exceptionsNamespace.new_usertype<vili::exceptions::invalid_merge>("invalid_merge",
+                sol::call_constructor,
                 sol::constructors<vili::exceptions::invalid_merge(
                     std::string_view, std::string_view, vili::exceptions::debug_info)>(),
                 sol::base_classes,
@@ -140,8 +138,8 @@ namespace vili::exceptions::Bindings
     {
         sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
         sol::usertype<vili::exceptions::parsing_error> bindparsing_error
-            = exceptionsNamespace.new_usertype<vili::exceptions::parsing_error>(
-                "parsing_error", sol::call_constructor,
+            = exceptionsNamespace.new_usertype<vili::exceptions::parsing_error>("parsing_error",
+                sol::call_constructor,
                 sol::constructors<vili::exceptions::parsing_error(
                     std::string_view, size_t, size_t, vili::exceptions::debug_info)>(),
                 sol::base_classes,
@@ -188,7 +186,6 @@ namespace vili::exceptions::Bindings
     void LoadFunctionIndentString(sol::state_view state)
     {
         sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
-        exceptionsNamespace.set_function(
-            "indent_string", vili::exceptions::indent_string);
+        exceptionsNamespace.set_function("indent_string", vili::exceptions::indent_string);
     }
 };

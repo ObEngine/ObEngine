@@ -1,10 +1,10 @@
 #include <Input/Exceptions.hpp>
 #include <Input/InputButtonState.hpp>
 
-#define OBE_INPUT_WRITE_INPUT_BUTTON_STATE_TO_STRING(TYPE)                               \
-    if (state == InputButtonState::TYPE)                                                 \
-    {                                                                                    \
-        return #TYPE;                                                                    \
+#define OBE_INPUT_WRITE_INPUT_BUTTON_STATE_TO_STRING(TYPE)                                         \
+    if (state == InputButtonState::TYPE)                                                           \
+    {                                                                                              \
+        return #TYPE;                                                                              \
     }
 
 namespace obe::Input

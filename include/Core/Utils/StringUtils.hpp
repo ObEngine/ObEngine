@@ -23,8 +23,7 @@ namespace obe::Utils::String
      * \param delimiters Delimiter used to split the string
      * \return The split string in a std::vector of std::string
      */
-    std::vector<std::string> split(
-        const std::string& str, const std::string& delimiters = " ");
+    std::vector<std::string> split(const std::string& str, const std::string& delimiters = " ");
     /**
      * \brief Count of the occurences of occur in string str
      * \param str String you want to count the occurences in
@@ -82,8 +81,7 @@ namespace obe::Utils::String
      * \param replace The content that will replace search occurences
      * \return A std::string containing the modified string
      */
-    std::string replace(
-        std::string subject, const std::string& search, const std::string& replace);
+    std::string replace(std::string subject, const std::string& search, const std::string& replace);
     /**
      * \brief Check if the string is surrounded by the given string
      * \param string String you want to check
@@ -122,8 +120,8 @@ namespace obe::Utils::String
 
     std::size_t distance(std::string_view source, std::string_view target);
 
-    std::vector<std::string> sortByDistance(const std::string& source,
-        const std::vector<std::string>& words, std::size_t limit = 0);
+    std::vector<std::string> sortByDistance(
+        const std::string& source, const std::vector<std::string>& words, std::size_t limit = 0);
 
     std::string quote(const std::string& source);
 } // namespace obe::Utils::String

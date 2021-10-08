@@ -13,8 +13,7 @@ namespace obe::Bindings::Exceptions
             std::vector<std::string> children, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "BindingTree node '{}' could not find a child with id '{}'", id, childId);
+            this->error("BindingTree node '{}' could not find a child with id '{}'", id, childId);
             this->hint("BindingTree Node '{}' contains the following children ({})", id,
                 fmt::join(children, ", "));
         }

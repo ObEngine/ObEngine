@@ -46,8 +46,7 @@ namespace obe::Transform
          *          - From : Referential::TopLeft to ref
          *          - To : ref to Referential::TopLeft
          */
-        void transformRef(
-            UnitVector& vec, const Referential& ref, ConversionType type) const;
+        void transformRef(UnitVector& vec, const Referential& ref, ConversionType type) const;
 
         Rect() = default;
         Rect(const Transform::UnitVector& position, const Transform::UnitVector& size);
@@ -98,8 +97,7 @@ namespace obe::Transform
          *        Referential
          * \param ref Referential you want to move
          */
-        void movePoint(
-            const UnitVector& position, const Referential& ref = Referential::TopLeft);
+        void movePoint(const UnitVector& position, const Referential& ref = Referential::TopLeft);
 
         /**
          * \brief Set the size of the Rect
@@ -107,8 +105,7 @@ namespace obe::Transform
          * \param ref Referential used to resize the Rect (Referential that
          *        won't move)
          */
-        void setSize(
-            const UnitVector& size, const Referential& ref = Referential::TopLeft);
+        void setSize(const UnitVector& size, const Referential& ref = Referential::TopLeft);
         /**
          * \brief Scales the Rect (Relative to the current size)
          * \param size Size to multiply to the current size

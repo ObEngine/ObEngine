@@ -13,8 +13,7 @@ namespace obe::Animation::Bindings
     void LoadEnumAnimationPlayMode(sol::state_view state)
     {
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
-        AnimationNamespace.new_enum<obe::Animation::AnimationPlayMode>(
-            "AnimationPlayMode",
+        AnimationNamespace.new_enum<obe::Animation::AnimationPlayMode>("AnimationPlayMode",
             { { "OneTime", obe::Animation::AnimationPlayMode::OneTime },
                 { "Loop", obe::Animation::AnimationPlayMode::Loop },
                 { "Force", obe::Animation::AnimationPlayMode::Force } });
@@ -32,11 +31,10 @@ namespace obe::Animation::Bindings
         AnimationNamespace.new_enum<obe::Animation::AnimatorTargetScaleMode>(
             "AnimatorTargetScaleMode",
             { { "Fit", obe::Animation::AnimatorTargetScaleMode::Fit },
-                {"KeepRatio", obe::Animation::AnimatorTargetScaleMode::KeepRatio},
+                { "KeepRatio", obe::Animation::AnimatorTargetScaleMode::KeepRatio },
                 { "FixedWidth", obe::Animation::AnimatorTargetScaleMode::FixedWidth },
                 { "FixedHeight", obe::Animation::AnimatorTargetScaleMode::FixedHeight },
-                { "TextureSize",
-                    obe::Animation::AnimatorTargetScaleMode::TextureSize } });
+                { "TextureSize", obe::Animation::AnimatorTargetScaleMode::TextureSize } });
     }
     void LoadClassAnimation(sol::state_view state)
     {
@@ -48,28 +46,23 @@ namespace obe::Animation::Bindings
         bindAnimation["getAllAnimationGroupName"]
             = &obe::Animation::Animation::getAllAnimationGroupName;
         bindAnimation["getDelay"] = &obe::Animation::Animation::getDelay;
-        bindAnimation["getAnimationGroup"]
-            = &obe::Animation::Animation::getAnimationGroup;
+        bindAnimation["getAnimationGroup"] = &obe::Animation::Animation::getAnimationGroup;
         bindAnimation["getName"] = &obe::Animation::Animation::getName;
         bindAnimation["getPlayMode"] = &obe::Animation::Animation::getPlayMode;
         bindAnimation["getStatus"] = &obe::Animation::Animation::getStatus;
-        bindAnimation["getCalledAnimation"]
-            = &obe::Animation::Animation::getCalledAnimation;
+        bindAnimation["getCalledAnimation"] = &obe::Animation::Animation::getCalledAnimation;
         bindAnimation["getCurrentAnimationGroup"]
             = &obe::Animation::Animation::getCurrentAnimationGroup;
         bindAnimation["getPriority"] = &obe::Animation::Animation::getPriority;
         bindAnimation["getTexture"] = &obe::Animation::Animation::getTexture;
-        bindAnimation["getTextureAtIndex"]
-            = &obe::Animation::Animation::getTextureAtIndex;
+        bindAnimation["getTextureAtIndex"] = &obe::Animation::Animation::getTextureAtIndex;
         bindAnimation["isOver"] = &obe::Animation::Animation::isOver;
         bindAnimation["loadAnimation"] = sol::overload(
-            [](obe::Animation::Animation* self, const obe::System::Path& path) -> void {
-                return self->loadAnimation(path);
-            },
+            [](obe::Animation::Animation* self, const obe::System::Path& path) -> void
+            { return self->loadAnimation(path); },
             [](obe::Animation::Animation* self, const obe::System::Path& path,
-                obe::Engine::ResourceManager* resources) -> void {
-                return self->loadAnimation(path, resources);
-            });
+                obe::Engine::ResourceManager* resources) -> void
+            { return self->loadAnimation(path, resources); });
         bindAnimation["reset"] = &obe::Animation::Animation::reset;
         bindAnimation["update"] = &obe::Animation::Animation::update;
         bindAnimation["setAntiAliasing"] = &obe::Animation::Animation::setAntiAliasing;
@@ -79,8 +72,8 @@ namespace obe::Animation::Bindings
     {
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
         sol::usertype<obe::Animation::AnimationGroup> bindAnimationGroup
-            = AnimationNamespace.new_usertype<obe::Animation::AnimationGroup>(
-                "AnimationGroup", sol::call_constructor,
+            = AnimationNamespace.new_usertype<obe::Animation::AnimationGroup>("AnimationGroup",
+                sol::call_constructor,
                 sol::constructors<obe::Animation::AnimationGroup(std::string)>());
         bindAnimationGroup["getDelay"] = &obe::Animation::AnimationGroup::getDelay;
         bindAnimationGroup["getIndex"] = &obe::Animation::AnimationGroup::getIndex;
@@ -88,16 +81,14 @@ namespace obe::Animation::Bindings
         bindAnimationGroup["getSize"] = &obe::Animation::AnimationGroup::getSize;
         bindAnimationGroup["getTexture"] = &obe::Animation::AnimationGroup::getTexture;
         bindAnimationGroup["isOver"] = &obe::Animation::AnimationGroup::isOver;
-        bindAnimationGroup["next"] = sol::overload(
-            [](obe::Animation::AnimationGroup* self) -> void { return self->next(); },
-            [](obe::Animation::AnimationGroup* self, bool force) -> void {
-                return self->next(force);
-            });
+        bindAnimationGroup["next"] = sol::overload([](obe::Animation::AnimationGroup* self) -> void
+            { return self->next(); },
+            [](obe::Animation::AnimationGroup* self, bool force) -> void
+            { return self->next(force); });
         bindAnimationGroup["previous"] = sol::overload(
             [](obe::Animation::AnimationGroup* self) -> void { return self->previous(); },
-            [](obe::Animation::AnimationGroup* self, bool force) -> void {
-                return self->previous(force);
-            });
+            [](obe::Animation::AnimationGroup* self, bool force) -> void
+            { return self->previous(force); });
         bindAnimationGroup["pushTexture"] = &obe::Animation::AnimationGroup::pushTexture;
         bindAnimationGroup["removeTextureByIndex"]
             = &obe::Animation::AnimationGroup::removeTextureByIndex;
@@ -112,59 +103,49 @@ namespace obe::Animation::Bindings
             = AnimationNamespace.new_usertype<obe::Animation::Animator>(
                 "Animator", sol::call_constructor, sol::default_constructor);
         bindAnimator["clear"] = &obe::Animation::Animator::clear;
-        bindAnimator["getAllAnimationName"]
-            = &obe::Animation::Animator::getAllAnimationName;
+        bindAnimator["getAllAnimationName"] = &obe::Animation::Animator::getAllAnimationName;
         bindAnimator["getAnimation"] = &obe::Animation::Animator::getAnimation;
         bindAnimator["getKey"] = &obe::Animation::Animator::getKey;
         bindAnimator["getTexture"] = &obe::Animation::Animator::getTexture;
         bindAnimator["getTextureAtKey"] = &obe::Animation::Animator::getTextureAtKey;
-        bindAnimator["load"] = sol::overload(
-            [](obe::Animation::Animator* self, obe::System::Path path) -> void {
-                return self->load(path);
-            },
-            [](obe::Animation::Animator* self, obe::System::Path path,
-                obe::Engine::ResourceManager* resources) -> void {
-                return self->load(path, resources);
-            });
+        bindAnimator["load"]
+            = sol::overload([](obe::Animation::Animator* self, obe::System::Path path) -> void
+                { return self->load(path); },
+                [](obe::Animation::Animator* self, obe::System::Path path,
+                    obe::Engine::ResourceManager* resources) -> void
+                { return self->load(path, resources); });
         bindAnimator["setKey"] = &obe::Animation::Animator::setKey;
         bindAnimator["setPaused"] = &obe::Animation::Animator::setPaused;
         bindAnimator["update"] = &obe::Animation::Animator::update;
         bindAnimator["setTarget"] = sol::overload(
-            [](obe::Animation::Animator* self, obe::Graphics::Sprite& sprite) -> void {
-                return self->setTarget(sprite);
-            },
+            [](obe::Animation::Animator* self, obe::Graphics::Sprite& sprite) -> void
+            { return self->setTarget(sprite); },
             [](obe::Animation::Animator* self, obe::Graphics::Sprite& sprite,
-                obe::Animation::AnimatorTargetScaleMode targetScaleMode) -> void {
-                return self->setTarget(sprite, targetScaleMode);
-            });
+                obe::Animation::AnimatorTargetScaleMode targetScaleMode) -> void
+            { return self->setTarget(sprite, targetScaleMode); });
         bindAnimator["makeState"] = &obe::Animation::Animator::makeState;
 
         sol::usertype<obe::Animation::AnimatorState> bindAnimatorState
-            = AnimationNamespace.new_usertype<obe::Animation::AnimatorState>(
-                "AnimatorState");
+            = AnimationNamespace.new_usertype<obe::Animation::AnimatorState>("AnimatorState");
         bindAnimatorState["getAnimator"] = &obe::Animation::AnimatorState::getAnimator;
         bindAnimatorState["getKey"] = &obe::Animation::AnimatorState::getKey;
         bindAnimatorState["setKey"] = &obe::Animation::AnimatorState::setKey;
         bindAnimatorState["update"] = &obe::Animation::AnimatorState::update;
         bindAnimatorState["setTarget"] = sol::overload(
-            [](obe::Animation::AnimatorState* self, obe::Graphics::Sprite& sprite)
-                -> void {
-                return self->setTarget(sprite);
-            },
+            [](obe::Animation::AnimatorState* self, obe::Graphics::Sprite& sprite) -> void
+            { return self->setTarget(sprite); },
             [](obe::Animation::AnimatorState* self, obe::Graphics::Sprite& sprite,
-                obe::Animation::AnimatorTargetScaleMode targetScaleMode) -> void {
-                return self->setTarget(sprite, targetScaleMode);
-            });
+                obe::Animation::AnimatorTargetScaleMode targetScaleMode) -> void
+            { return self->setTarget(sprite, targetScaleMode); });
     }
     void LoadClassValueTweening(sol::state_view state)
     {
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
         sol::usertype<obe::Animation::ValueTweening> bindValueTweening
-            = AnimationNamespace.new_usertype<obe::Animation::ValueTweening>(
-                "ValueTweening", sol::call_constructor,
+            = AnimationNamespace.new_usertype<obe::Animation::ValueTweening>("ValueTweening",
+                sol::call_constructor,
                 sol::constructors<obe::Animation::ValueTweening(obe::Time::TimeUnit),
-                    obe::Animation::ValueTweening(
-                        double, double, obe::Time::TimeUnit)>());
+                    obe::Animation::ValueTweening(double, double, obe::Time::TimeUnit)>());
         bindValueTweening["from"] = &obe::Animation::ValueTweening::from;
         bindValueTweening["to"] = &obe::Animation::ValueTweening::to;
         bindValueTweening["ease"] = &obe::Animation::ValueTweening::ease;
@@ -180,7 +161,7 @@ namespace obe::Animation::Bindings
     void LoadFunctionStringToAnimatorTargetScaleMode(sol::state_view state)
     {
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
-        AnimationNamespace.set_function("stringToAnimatorTargetScaleMode",
-            obe::Animation::stringToAnimatorTargetScaleMode);
+        AnimationNamespace.set_function(
+            "stringToAnimatorTargetScaleMode", obe::Animation::stringToAnimatorTargetScaleMode);
     }
 };

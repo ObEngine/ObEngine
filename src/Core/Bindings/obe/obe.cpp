@@ -10,9 +10,9 @@ namespace obe::Bindings
     void LoadClassDebugInfo(sol::state_view state)
     {
         sol::table obeNamespace = state["obe"].get<sol::table>();
-        sol::usertype<obe::DebugInfo> bindDebugInfo = obeNamespace.new_usertype<
-            obe::DebugInfo>("DebugInfo", sol::call_constructor,
-            sol::constructors<obe::DebugInfo(std::string_view, int, std::string_view)>());
+        sol::usertype<obe::DebugInfo> bindDebugInfo
+            = obeNamespace.new_usertype<obe::DebugInfo>("DebugInfo", sol::call_constructor,
+                sol::constructors<obe::DebugInfo(std::string_view, int, std::string_view)>());
         bindDebugInfo["file"] = &obe::DebugInfo::file;
         bindDebugInfo["line"] = &obe::DebugInfo::line;
         bindDebugInfo["function"] = &obe::DebugInfo::function;
@@ -21,8 +21,7 @@ namespace obe::Bindings
     {
         sol::table obeNamespace = state["obe"].get<sol::table>();
         sol::usertype<obe::BaseException> bindException
-            = obeNamespace.new_usertype<obe::BaseException>("Exception",
-                sol::call_constructor,
+            = obeNamespace.new_usertype<obe::BaseException>("Exception", sol::call_constructor,
                 sol::constructors<obe::BaseException(const std::exception&)>());
         bindException["what"] = &obe::BaseException::what;
     }

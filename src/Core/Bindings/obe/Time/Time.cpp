@@ -55,16 +55,13 @@ namespace obe::Time::Bindings
             = &obe::Time::FramerateManager::isFramerateLimited;
         bindFramerateManager["getFramerateTarget"]
             = &obe::Time::FramerateManager::getFramerateTarget;
-        bindFramerateManager["isVSyncEnabled"]
-            = &obe::Time::FramerateManager::isVSyncEnabled;
+        bindFramerateManager["isVSyncEnabled"] = &obe::Time::FramerateManager::isVSyncEnabled;
         bindFramerateManager["setSpeedCoefficient"]
             = &obe::Time::FramerateManager::setSpeedCoefficient;
-        bindFramerateManager["limitFramerate"]
-            = &obe::Time::FramerateManager::limitFramerate;
+        bindFramerateManager["limitFramerate"] = &obe::Time::FramerateManager::limitFramerate;
         bindFramerateManager["setFramerateTarget"]
             = &obe::Time::FramerateManager::setFramerateTarget;
-        bindFramerateManager["setVSyncEnabled"]
-            = &obe::Time::FramerateManager::setVSyncEnabled;
+        bindFramerateManager["setVSyncEnabled"] = &obe::Time::FramerateManager::setVSyncEnabled;
     }
     void LoadFunctionEpoch(sol::state_view state)
     {

@@ -174,8 +174,7 @@ namespace obe::Graphics::Canvas
         controlPoints.reserve(points.size());
         for (Transform::UnitVector& point : points)
         {
-            const Transform::UnitVector pixelPosition
-                = point.to<Transform::Units::ScenePixels>();
+            const Transform::UnitVector pixelPosition = point.to<Transform::Units::ScenePixels>();
             controlPoints.push_back(::Bezier::Point(pixelPosition.x, pixelPosition.y));
         }
         std::vector<::Bezier::Bezier<3>> bezierCurves;
@@ -211,9 +210,7 @@ namespace obe::Graphics::Canvas
     void Canvas::sortElements()
     {
         std::sort(m_elements.begin(), m_elements.end(),
-            [](const auto& elem1, const auto& elem2) {
-                return elem1->layer > elem2->layer;
-            });
+            [](const auto& elem1, const auto& elem2) { return elem1->layer > elem2->layer; });
     }
 
     Canvas::Canvas(unsigned int width, unsigned int height)

@@ -26,8 +26,8 @@ namespace obe::Scene
          * \param ref Referential used to get the Position of the Camera
          * \return The Position of the Camera
          */
-        Transform::UnitVector getPosition(const Transform::Referential& ref
-            = Transform::Referential::TopLeft) const override;
+        Transform::UnitVector getPosition(
+            const Transform::Referential& ref = Transform::Referential::TopLeft) const override;
         /**
          * \brief Gets an UnitVector containing the size of the Camera (Width
          *        and Height)
@@ -45,8 +45,8 @@ namespace obe::Scene
          * \param pScale Factor used to multiply the current size
          * \param ref Referential used to resize the Camera
          */
-        void scale(double pScale,
-            const Transform::Referential& ref = Transform::Referential::Center);
+        void scale(
+            double pScale, const Transform::Referential& ref = Transform::Referential::Center);
         // void setAngle(double angle);
         /**
          * \brief Sets the Position of the Camera
@@ -61,7 +61,7 @@ namespace obe::Scene
          *        Height = 2 SceneUnits)
          * \param ref Referential used to resize the Camera
          */
-        void setSize(double pSize,
-            const Transform::Referential& ref = Transform::Referential::Center);
+        void setSize(
+            double pSize, const Transform::Referential& ref = Transform::Referential::Center);
     };
 } // namespace obe::Scene

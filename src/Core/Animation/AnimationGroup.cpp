@@ -44,8 +44,7 @@ namespace obe::Animation
     {
         if (index < m_groupList.size())
             m_groupList.erase(m_groupList.begin() + index);
-        throw Exceptions::AnimationGroupTextureIndexOverflow(m_name, index,
-            m_groupList.size(),
+        throw Exceptions::AnimationGroupTextureIndexOverflow(m_name, index, m_groupList.size(),
             EXC_INFO); // TODO: Improve this exception
     }
 
@@ -56,8 +55,7 @@ namespace obe::Animation
 
     void AnimationGroup::reset() noexcept
     {
-        Debug::Log->trace(
-            "            <AnimationGroup> Resetting AnimationGroup '{}'", m_name);
+        Debug::Log->trace("            <AnimationGroup> Resetting AnimationGroup '{}'", m_name);
         m_index = 0;
         m_over = false;
         m_loopIndex = 0;

@@ -12,7 +12,6 @@ namespace obe::Events::Keys::Bindings
         sol::usertype<obe::Events::Keys::StateChanged> bindStateChanged
             = KeysNamespace.new_usertype<obe::Events::Keys::StateChanged>("StateChanged");
         bindStateChanged["state"] = &obe::Events::Keys::StateChanged::state;
-        bindStateChanged["previousState"]
-            = &obe::Events::Keys::StateChanged::previousState;
+        bindStateChanged["previousState"] = &obe::Events::Keys::StateChanged::previousState;
     }
 };

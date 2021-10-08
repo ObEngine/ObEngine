@@ -19,8 +19,7 @@ namespace obe::Graphics
     class Texture
     {
     private:
-        std::variant<sf::Texture, std::shared_ptr<sf::Texture>, const sf::Texture*>
-            m_texture;
+        std::variant<sf::Texture, std::shared_ptr<sf::Texture>, const sf::Texture*> m_texture;
 
     public:
         Texture();

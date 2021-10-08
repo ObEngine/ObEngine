@@ -47,8 +47,7 @@ namespace obe::Graphics
         }
         if (std::holds_alternative<std::shared_ptr<sf::Texture>>(m_texture))
         {
-            return std::get<std::shared_ptr<sf::Texture>>(m_texture)->create(
-                width, height);
+            return std::get<std::shared_ptr<sf::Texture>>(m_texture)->create(width, height);
         }
         if (std::holds_alternative<const sf::Texture*>(m_texture))
         {
@@ -65,8 +64,7 @@ namespace obe::Graphics
         }
         if (std::holds_alternative<std::shared_ptr<sf::Texture>>(m_texture))
         {
-            return std::get<std::shared_ptr<sf::Texture>>(m_texture)->loadFromFile(
-                filename);
+            return std::get<std::shared_ptr<sf::Texture>>(m_texture)->loadFromFile(filename);
         }
         if (std::holds_alternative<const sf::Texture*>(m_texture))
         {
@@ -79,8 +77,7 @@ namespace obe::Graphics
     {
         const Transform::UnitVector position
             = rect.getPosition().to<Transform::Units::ScenePixels>();
-        const Transform::UnitVector size
-            = rect.getPosition().to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector size = rect.getPosition().to<Transform::Units::ScenePixels>();
         const sf::IntRect sfRect(position.x, position.y, size.x, size.y);
         if (std::holds_alternative<sf::Texture>(m_texture))
         {
@@ -106,8 +103,7 @@ namespace obe::Graphics
         }
         if (std::holds_alternative<std::shared_ptr<sf::Texture>>(m_texture))
         {
-            return std::get<std::shared_ptr<sf::Texture>>(m_texture)->loadFromImage(
-                image);
+            return std::get<std::shared_ptr<sf::Texture>>(m_texture)->loadFromImage(image);
         }
         if (std::holds_alternative<const sf::Texture*>(m_texture))
         {
@@ -131,8 +127,7 @@ namespace obe::Graphics
         {
             textureSize = std::get<const sf::Texture*>(m_texture)->getSize();
         }
-        return Transform::UnitVector(
-            textureSize.x, textureSize.y, Transform::Units::ScenePixels);
+        return Transform::UnitVector(textureSize.x, textureSize.y, Transform::Units::ScenePixels);
     }
 
     void Texture::setAntiAliasing(bool antiAliasing)
@@ -143,8 +138,7 @@ namespace obe::Graphics
         }
         if (std::holds_alternative<std::shared_ptr<sf::Texture>>(m_texture))
         {
-            return std::get<std::shared_ptr<sf::Texture>>(m_texture)->setSmooth(
-                antiAliasing);
+            return std::get<std::shared_ptr<sf::Texture>>(m_texture)->setSmooth(antiAliasing);
         }
         if (std::holds_alternative<const sf::Texture*>(m_texture))
         {
@@ -177,8 +171,7 @@ namespace obe::Graphics
         }
         if (std::holds_alternative<std::shared_ptr<sf::Texture>>(m_texture))
         {
-            return std::get<std::shared_ptr<sf::Texture>>(m_texture)->setRepeated(
-                repeated);
+            return std::get<std::shared_ptr<sf::Texture>>(m_texture)->setRepeated(repeated);
         }
         if (std::holds_alternative<const sf::Texture*>(m_texture))
         {

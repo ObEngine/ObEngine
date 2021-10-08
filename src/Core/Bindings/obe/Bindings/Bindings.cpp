@@ -9,7 +9,6 @@ namespace obe::Bindings::Bindings
     void LoadFunctionIndexAllBindings(sol::state_view state)
     {
         sol::table BindingsNamespace = state["obe"]["Bindings"].get<sol::table>();
-        BindingsNamespace.set_function(
-            "IndexAllBindings", obe::Bindings::IndexAllBindings);
+        BindingsNamespace.set_function("IndexAllBindings", obe::Bindings::IndexAllBindings);
     }
 };

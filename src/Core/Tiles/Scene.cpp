@@ -7,8 +7,8 @@ namespace obe::Tiles
 {
     void TileScene::build()
     {
-        Debug::Log->info("Build TileScene @{} with Animations @{}", fmt::ptr(this),
-            fmt::ptr(&m_animatedTiles));
+        Debug::Log->info(
+            "Build TileScene @{} with Animations @{}", fmt::ptr(this), fmt::ptr(&m_animatedTiles));
         for (auto& layer : m_layers)
         {
             layer->build();
@@ -39,9 +39,9 @@ namespace obe::Tiles
         const vili::node& tilesets = data["sources"];
         for (const auto& [tilesetId, tileset] : tilesets.items())
         {
-            m_tilesets.addTileset(tileset["firstTileId"], tilesetId,
-                tileset["image"]["path"], tileset["columns"], tileset["tile"]["width"],
-                tileset["tile"]["height"], tileset["tilecount"]);
+            m_tilesets.addTileset(tileset["firstTileId"], tilesetId, tileset["image"]["path"],
+                tileset["columns"], tileset["tile"]["width"], tileset["tile"]["height"],
+                tileset["tilecount"]);
 
             const Tileset& currentTileset = m_tilesets.tilesetFromId(tilesetId);
             if (tileset.contains("animations"))
@@ -143,8 +143,7 @@ namespace obe::Tiles
     {
         std::vector<TileLayer*> layers;
         std::transform(m_layers.begin(), m_layers.end(), std::back_inserter(layers),
-            [](const auto& layer) { return layer.get();
-            });
+            [](const auto& layer) { return layer.get(); });
         return layers;
     }
 

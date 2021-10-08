@@ -5,7 +5,9 @@
 
 namespace obe::Debug::Render
 {
-    void drawPolygon(const Graphics::RenderTarget target, Transform::Polygon& polygon, bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel, Transform::UnitVector offset)
+    void drawPolygon(const Graphics::RenderTarget target, Transform::Polygon& polygon,
+        bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel,
+        Transform::UnitVector offset)
     {
         if (polygon.getPointsAmount() >= 3)
         {
@@ -21,11 +23,10 @@ namespace obe::Debug::Render
             const Transform::PolygonPath& polygonPoints = polygon.getAllPoints();
             pixelPoints.reserve(polygonPoints.size());
             drawPoints.reserve(polygonPoints.size());
-            
+
             std::transform(polygonPoints.begin(), polygonPoints.end(),
-                std::back_inserter(pixelPoints), [](const auto& point) {
-                    return point->to(Transform::Units::ScenePixels);
-                });
+                std::back_inserter(pixelPoints),
+                [](const auto& point) { return point->to(Transform::Units::ScenePixels); });
 
             for (const Transform::UnitVector& point : pixelPoints)
             {
@@ -40,16 +41,16 @@ namespace obe::Debug::Render
                 polyPt.setPosition(
                     sf::Vector2f(centroid.x - offset.x - r, centroid.y - offset.y - r));
                 polyPt.setRadius(r);
-                
+
                 polyPt.setFillColor(centroidColor);
                 target.draw(polyPt);
                 if (drawSkel)
                 {
                     for (const Transform::UnitVector& point : pixelPoints)
                     {
-                        
-                        Graphics::Utils::drawLine(target, point.x - offset.x, point.y - offset.y, centroid.x - offset.x,
-                            centroid.y - offset.y, 2, skeletonColor);
+
+                        Graphics::Utils::drawLine(target, point.x - offset.x, point.y - offset.y,
+                            centroid.x - offset.x, centroid.y - offset.y, 2, skeletonColor);
                     }
                 }
             }

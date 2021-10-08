@@ -9,8 +9,7 @@ namespace obe::Utils::File::Bindings
     void LoadFunctionGetDirectoryList(sol::state_view state)
     {
         sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function(
-            "getDirectoryList", obe::Utils::File::getDirectoryList);
+        FileNamespace.set_function("getDirectoryList", obe::Utils::File::getDirectoryList);
     }
     void LoadFunctionGetFileList(sol::state_view state)
     {
@@ -55,8 +54,7 @@ namespace obe::Utils::File::Bindings
     void LoadFunctionGetCurrentDirectory(sol::state_view state)
     {
         sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function(
-            "getCurrentDirectory", obe::Utils::File::getCurrentDirectory);
+        FileNamespace.set_function("getCurrentDirectory", obe::Utils::File::getCurrentDirectory);
     }
     void LoadFunctionSeparator(sol::state_view state)
     {
@@ -72,7 +70,6 @@ namespace obe::Utils::File::Bindings
     void LoadFunctionGetExecutablePath(sol::state_view state)
     {
         sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function(
-            "getExecutablePath", obe::Utils::File::getExecutablePath);
+        FileNamespace.set_function("getExecutablePath", obe::Utils::File::getExecutablePath);
     }
 };

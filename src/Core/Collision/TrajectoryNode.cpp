@@ -15,8 +15,7 @@ namespace obe::Collision
         m_probe = probe;
     }
 
-    Trajectory& TrajectoryNode::addTrajectory(
-        const std::string& id, Transform::Units unit)
+    Trajectory& TrajectoryNode::addTrajectory(const std::string& id, Transform::Units unit)
     {
         m_trajectories[id] = std::make_unique<Trajectory>(unit);
         return *m_trajectories[id].get();
@@ -34,9 +33,9 @@ namespace obe::Collision
 
     void TrajectoryNode::update(const double dt)
     {
-        auto getOffset = [&dt](Trajectory& trajectory) {
-            const double speed
-                = trajectory.getSpeed() + trajectory.getAcceleration() * dt;
+        auto getOffset = [&dt](Trajectory& trajectory)
+        {
+            const double speed = trajectory.getSpeed() + trajectory.getAcceleration() * dt;
             const double radAngle = (Utils::Math::pi / 180.0) * -trajectory.getAngle();
             const double addX = std::cos(radAngle) * (speed * dt);
             const double addY = std::sin(radAngle) * (speed * dt);
@@ -55,22 +54,20 @@ namespace obe::Collision
                 }
                 if (!currentTrajectory->getStatic())
                 {
-                    currentTrajectory->setSpeed(currentTrajectory->m_speed
-                        + currentTrajectory->m_acceleration * dt);
+                    currentTrajectory->setSpeed(
+                        currentTrajectory->m_speed + currentTrajectory->m_acceleration * dt);
                     baseOffset = getOffset(*currentTrajectory);
                     obe::Collision::CollisionData collData;
                     collData.offset = baseOffset;
                     if (m_probe != nullptr)
                     {
-                        collData
-                            = m_probe->getMaximumDistanceBeforeCollision(collData.offset);
+                        collData = m_probe->getMaximumDistanceBeforeCollision(collData.offset);
                     }
                     m_sceneNode.move(collData.offset);
                     auto onCollideCallback = trajectory.second->getOnCollideCallback();
                     if (collData.offset != baseOffset && onCollideCallback)
                     {
-                        onCollideCallback(
-                            *trajectory.second.get(), baseOffset, collData);
+                        onCollideCallback(*trajectory.second.get(), baseOffset, collData);
                     }
                 }
             }

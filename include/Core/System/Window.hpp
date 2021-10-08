@@ -2,10 +2,10 @@
 
 #include <string>
 
+#include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
-#include <SFML/Graphics/Image.hpp>
 #include <vili/node.hpp>
 
 #include <Graphics/Color.hpp>
@@ -46,6 +46,7 @@ namespace obe::System
         Graphics::Color m_background = Graphics::Color(0, 0, 0);
 
         void applyView();
+
     public:
         explicit Window(vili::node configuration);
         void create();
@@ -60,8 +61,7 @@ namespace obe::System
         /**
          * \nobind
          */
-        void draw(const sf::Vertex* vertices, std::size_t vertexCount,
-            sf::PrimitiveType type,
+        void draw(const sf::Vertex* vertices, std::size_t vertexCount, sf::PrimitiveType type,
             const sf::RenderStates& states = sf::RenderStates::Default);
         [[nodiscard]] Transform::UnitVector getRenderSize() const;
         [[nodiscard]] Transform::UnitVector getWindowSize() const;

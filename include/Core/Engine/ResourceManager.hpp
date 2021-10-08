@@ -7,17 +7,20 @@
 #include <Graphics/Font.hpp>
 #include <Graphics/Texture.hpp>
 
-namespace obe {
-    namespace System {
+namespace obe
+{
+    namespace System
+    {
         class Path;
     }
 }
 
 namespace obe::Engine
 {
-    template <class T> using ResourceStore = std::unordered_map<std::string, T>;
-    using TexturePair = std::pair<std::unique_ptr<Graphics::Texture>,
-        std::unique_ptr<Graphics::Texture>>;
+    template <class T>
+    using ResourceStore = std::unordered_map<std::string, T>;
+    using TexturePair
+        = std::pair<std::unique_ptr<Graphics::Texture>, std::unique_ptr<Graphics::Texture>>;
     /**
      * \brief Class that manages and caches textures}
      */

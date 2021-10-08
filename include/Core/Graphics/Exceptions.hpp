@@ -12,8 +12,7 @@ namespace obe::Graphics::Exceptions
             : Exception(info)
         {
             this->error(
-                "Impossible to call method Texture::{} when Texture is in readonly-mode",
-                method);
+                "Impossible to call method Texture::{} when Texture is in readonly-mode", method);
         }
     };
 
@@ -35,8 +34,7 @@ namespace obe::Graphics::Exceptions
         InvalidColorName(std::string_view color, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Impossible to find a color with the following name : '{}'", color);
+            this->error("Impossible to find a color with the following name : '{}'", color);
         }
     };
 
@@ -44,8 +42,8 @@ namespace obe::Graphics::Exceptions
     {
     public:
         using Exception::Exception;
-        InvalidRgbFormat(const double r, const double g, const double b, const double a,
-            DebugInfo info)
+        InvalidRgbFormat(
+            const double r, const double g, const double b, const double a, DebugInfo info)
             : Exception(info)
         {
             this->error("Invalid RGB format, values should be between 0 and 255, got "
@@ -61,9 +59,8 @@ namespace obe::Graphics::Exceptions
         InvalidHsvFormat(const int H, const double S, const double V, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Invalid HSV format, values should be between 0 and 365 for Hue and 0.0 "
-                "and 1.0 for Saturation and Value, got [H={}, S={}, V={}]",
+            this->error("Invalid HSV format, values should be between 0 and 365 for Hue and 0.0 "
+                        "and 1.0 for Saturation and Value, got [H={}, S={}, V={}]",
                 H, S, V);
         }
     };
@@ -76,8 +73,7 @@ namespace obe::Graphics::Exceptions
             : Exception(info)
         {
             this->error(
-                "Impossible to find a color with following hexadecimal code : '{}'",
-                hexCode);
+                "Impossible to find a color with following hexadecimal code : '{}'", hexCode);
         }
     };
 
@@ -98,8 +94,7 @@ namespace obe::Graphics::Exceptions
     {
     public:
         using Exception::Exception;
-        InvalidSpriteColorType(
-            std::string_view type, std::string_view value, DebugInfo info)
+        InvalidSpriteColorType(std::string_view type, std::string_view value, DebugInfo info)
             : Exception(info)
         {
             this->error("Invalid value for 'color' attribute, expected 'object' or "

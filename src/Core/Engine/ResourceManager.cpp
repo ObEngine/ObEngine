@@ -80,15 +80,14 @@ namespace obe::Engine
     {
         if (m_fonts.find(path) == m_fonts.end())
         {
-            const System::FindResult findResult
-                = System::Path(path).find(System::PathType::File);
+            const System::FindResult findResult = System::Path(path).find(System::PathType::File);
             std::shared_ptr<Graphics::Font> newFont = std::make_shared<Graphics::Font>();
             newFont->loadFromFile(findResult);
 
             if (findResult.success())
             {
-                Debug::Log->debug("[ResourceManager] Loading <Font> {} from {}", path,
-                    findResult.path());
+                Debug::Log->debug(
+                    "[ResourceManager] Loading <Font> {} from {}", path, findResult.path());
                 m_fonts[path] = move(newFont);
             }
             else

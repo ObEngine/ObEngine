@@ -69,15 +69,13 @@ namespace obe::Graphics
             Rect::getPosition(Transform::Referential::TopLeft), pixelCamera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
         vertices[1] = toSfVertex(m_positionTransformer(
-            Rect::getPosition(Transform::Referential::BottomLeft), pixelCamera,
-            m_layer)
+            Rect::getPosition(Transform::Referential::BottomLeft), pixelCamera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
         vertices[2] = toSfVertex(m_positionTransformer(
             Rect::getPosition(Transform::Referential::TopRight), pixelCamera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
         vertices[3] = toSfVertex(m_positionTransformer(
-            Rect::getPosition(Transform::Referential::BottomRight), pixelCamera,
-            m_layer)
+            Rect::getPosition(Transform::Referential::BottomRight), pixelCamera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
 
         /*if (m_positionTransformer.getXTransformerName() == "Parallax"
@@ -140,8 +138,7 @@ namespace obe::Graphics
     {
         // m_texture = std::shared_ptr<Texture>(std::shared_ptr<Texture>(), texture);
         m_sprite.setTexture(texture);
-        m_sprite.setTextureRect(
-            sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
+        m_sprite.setTextureRect(sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
     }
 
     void Sprite::setTextureRect(
@@ -206,17 +203,17 @@ namespace obe::Graphics
         {
             const Transform::UnitVector refPoint
                 = Rect::getPosition(ref).to<Transform::Units::ScenePixels>();
-            int lowerXBound = std::min(refPoint.x - SpriteHandlePoint::radius,
-                refPoint.x + SpriteHandlePoint::radius);
-            int upperXBound = std::max(refPoint.x - SpriteHandlePoint::radius,
-                refPoint.x + SpriteHandlePoint::radius);
+            int lowerXBound = std::min(
+                refPoint.x - SpriteHandlePoint::radius, refPoint.x + SpriteHandlePoint::radius);
+            int upperXBound = std::max(
+                refPoint.x - SpriteHandlePoint::radius, refPoint.x + SpriteHandlePoint::radius);
             if (obe::Utils::Math::isBetween(targetPos.x, lowerXBound, upperXBound)
                 && ref != Transform::Referential::Center)
             {
-                int lowerYBound = std::min(refPoint.y - SpriteHandlePoint::radius,
-                    refPoint.y + SpriteHandlePoint::radius);
-                int upperYBound = std::max(refPoint.y - SpriteHandlePoint::radius,
-                    refPoint.y + SpriteHandlePoint::radius);
+                int lowerYBound = std::min(
+                    refPoint.y - SpriteHandlePoint::radius, refPoint.y + SpriteHandlePoint::radius);
+                int upperYBound = std::max(
+                    refPoint.y - SpriteHandlePoint::radius, refPoint.y + SpriteHandlePoint::radius);
                 if (obe::Utils::Math::isBetween(targetPos.y, lowerYBound, upperYBound))
                     return &m_handlePoints[i];
             }
@@ -227,8 +224,7 @@ namespace obe::Graphics
         const double cosAngle = std::cos(radAngle);
         const double sinAngle = std::sin(radAngle);
         const Transform::UnitVector topPos
-            = this->getPosition(Transform::Referential::Top)
-                  .to<Transform::Units::ScenePixels>();
+            = this->getPosition(Transform::Referential::Top).to<Transform::Units::ScenePixels>();
         Transform::UnitVector rotHandle = topPos;
         Transform::UnitVector result;
         const double dy = m_size.y / 4;
@@ -236,16 +232,16 @@ namespace obe::Graphics
         result.y = (dy * cosAngle) * -1;
         rotHandle.add(result);
 
-        const int lowerXBound = std::min(rotHandle.x - SpriteHandlePoint::radius,
-            rotHandle.x + SpriteHandlePoint::radius);
-        const int upperXBound = std::max(rotHandle.x - SpriteHandlePoint::radius,
-            rotHandle.x + SpriteHandlePoint::radius);
+        const int lowerXBound = std::min(
+            rotHandle.x - SpriteHandlePoint::radius, rotHandle.x + SpriteHandlePoint::radius);
+        const int upperXBound = std::max(
+            rotHandle.x - SpriteHandlePoint::radius, rotHandle.x + SpriteHandlePoint::radius);
         if (obe::Utils::Math::isBetween(targetPos.x, lowerXBound, upperXBound))
         {
-            const int lowerYBound = std::min(rotHandle.y - SpriteHandlePoint::radius,
-                rotHandle.y + SpriteHandlePoint::radius);
-            const int upperYBound = std::max(rotHandle.y - SpriteHandlePoint::radius,
-                rotHandle.y + SpriteHandlePoint::radius);
+            const int lowerYBound = std::min(
+                rotHandle.y - SpriteHandlePoint::radius, rotHandle.y + SpriteHandlePoint::radius);
+            const int upperYBound = std::max(
+                rotHandle.y - SpriteHandlePoint::radius, rotHandle.y + SpriteHandlePoint::radius);
             if (obe::Utils::Math::isBetween(targetPos.y, lowerYBound, upperYBound))
                 return &m_handlePoints.back();
         }
@@ -364,8 +360,7 @@ namespace obe::Graphics
             const Transform::UnitVector pos
                 = m_sprite.getPosition(m_referential).to<Transform::Units::ScenePixels>();
             const Transform::UnitVector oppositePos
-                = m_sprite.getPosition(m_referential.flip())
-                      .to<Transform::Units::ScenePixels>();
+                = m_sprite.getPosition(m_referential.flip()).to<Transform::Units::ScenePixels>();
 
             if (m_referential.isOnCorner())
             {
@@ -374,17 +369,14 @@ namespace obe::Graphics
                 const double spriteAngle = m_sprite.getRotation();
                 const Transform::UnitVector oppositePosInRef
                     = oppositePos.rotate(spriteAngle, centerSpritePos);
-                const Transform::UnitVector posInRef
-                    = pos.rotate(spriteAngle, centerSpritePos);
-                const Transform::UnitVector cursorInRef
-                    = m_dp.rotate(spriteAngle, centerSpritePos);
+                const Transform::UnitVector posInRef = pos.rotate(spriteAngle, centerSpritePos);
+                const Transform::UnitVector cursorInRef = m_dp.rotate(spriteAngle, centerSpritePos);
                 const Transform::UnitVector scaleVector
                     = (cursorInRef - oppositePosInRef) / (posInRef - oppositePosInRef);
                 const double vScale = std::max(scaleVector.x, scaleVector.y);
                 if ((cursorInRef - oppositePosInRef).x != 0
                     && (cursorInRef - oppositePosInRef).y != 0)
-                    m_sprite.scale(
-                        Transform::UnitVector(vScale, vScale, m_sprite.getSize().unit),
+                    m_sprite.scale(Transform::UnitVector(vScale, vScale, m_sprite.getSize().unit),
                         m_referential.flip());
             }
             else
@@ -397,8 +389,8 @@ namespace obe::Graphics
 
                 /*m_dp.x = pos.x + (valDp * e1.x) / len;
                 m_dp.y = pos.y + (valDp * e1.y) / len;*/
-                const Transform::UnitVector npp(pos.x + (valDp * e1.x) / len,
-                    pos.y + (valDp * e1.y) / len, m_dp.unit);
+                const Transform::UnitVector npp(
+                    pos.x + (valDp * e1.x) / len, pos.y + (valDp * e1.y) / len, m_dp.unit);
                 m_sprite.setPointPosition(npp, m_referential);
             }
         }
@@ -408,8 +400,7 @@ namespace obe::Graphics
                 = m_sprite.getPosition(Transform::Referential::Center)
                       .to<Transform::Units::ScenePixels>();
             const double n = (90 + ((m_sprite.getScaleFactor().y < 0) ? 180 : 0))
-                - (std::atan2(center.y - m_dp.y, center.x - m_dp.x)) * 180.0
-                    / obe::Utils::Math::pi;
+                - (std::atan2(center.y - m_dp.y, center.x - m_dp.x)) * 180.0 / obe::Utils::Math::pi;
 
             m_sprite.setRotation(std::fmod(n, 360));
         }
@@ -456,8 +447,8 @@ namespace obe::Graphics
         if (color != Color::White)
         {
             result.emplace("color",
-                vili::object { { "r", color.r }, { "g", color.g }, { "b", color.b },
-                    { "a", color.a } });
+                vili::object {
+                    { "r", color.r }, { "g", color.g }, { "b", color.b }, { "a", color.a } });
         }
         return result;
     }
@@ -488,8 +479,7 @@ namespace obe::Graphics
             spritePos = spritePos.to<Transform::Units::SceneUnits>();
             spriteSize = spriteSize.to<Transform::Units::SceneUnits>();
             if (rect.contains("referential"))
-                referentialPos
-                    = obe::Transform::Referential::FromString(rect.at("referential"));
+                referentialPos = obe::Transform::Referential::FromString(rect.at("referential"));
             this->setPosition(spritePos, referentialPos);
             this->setSize(spriteSize, referentialPos);
         }
@@ -527,8 +517,7 @@ namespace obe::Graphics
             {
                 spriteYTransformer = transform.at("y");
             }
-            const PositionTransformer positionTransformer(
-                spriteXTransformer, spriteYTransformer);
+            const PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
             this->setPositionTransformer(positionTransformer);
         }
 
@@ -541,8 +530,7 @@ namespace obe::Graphics
                 const double r = color.at("r").as<vili::number>();
                 const double g = color.at("g").as<vili::number>();
                 const double b = color.at("b").as<vili::number>();
-                const double a
-                    = color.contains("a") ? color.at("a").as<vili::number>() : 255.f;
+                const double a = color.contains("a") ? color.at("a").as<vili::number>() : 255.f;
                 spriteColor.fromRgb(r, g, b, a);
             }
             else if (color.is<vili::object>() && color.contains("H"))

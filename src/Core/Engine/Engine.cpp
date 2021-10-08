@@ -4,8 +4,8 @@
 #include <Engine/Exceptions.hpp>
 #include <Utils/FileUtils.hpp>
 
-int lua_exception_handler(lua_State* L,
-    sol::optional<const std::exception&> maybe_exception, sol::string_view description)
+int lua_exception_handler(lua_State* L, sol::optional<const std::exception&> maybe_exception,
+    sol::string_view description)
 {
     if (maybe_exception)
     {
@@ -45,9 +45,9 @@ namespace obe::Engine
     void Engine::initScript()
     {
         m_lua = std::make_unique<sol::state>();
-        m_lua->open_libraries(sol::lib::base, sol::lib::string, sol::lib::table,
-            sol::lib::package, sol::lib::os, sol::lib::coroutine, sol::lib::math,
-            sol::lib::count, sol::lib::debug, sol::lib::io, sol::lib::bit32);
+        m_lua->open_libraries(sol::lib::base, sol::lib::string, sol::lib::table, sol::lib::package,
+            sol::lib::os, sol::lib::coroutine, sol::lib::math, sol::lib::count, sol::lib::debug,
+            sol::lib::io, sol::lib::bit32);
 
         m_lua->safe_script("LuaCore = {}");
         m_lua->safe_script_file("obe://Lib/Internal/ScriptInit.lua"_fs);
@@ -108,13 +108,12 @@ namespace obe::Engine
     {
         for (const auto& mountedPath : System::MountablePath::Paths())
         {
-            Debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}",
-                mountedPath->basePath);
+            Debug::Log->info(
+                "<Bindings> Checking Plugins on Mounted Path : {0}", mountedPath->basePath);
             System::Path cPluginPath = System::Path(mountedPath->basePath).add("Plugins");
             if (Utils::File::directoryExists(cPluginPath.toString()))
             {
-                for (const std::string& filename :
-                    Utils::File::getFileList(cPluginPath.toString()))
+                for (const std::string& filename : Utils::File::getFileList(cPluginPath.toString()))
                 {
                     const std::string pluginPath = cPluginPath.add(filename).toString();
                     const std::string pluginName = Utils::String::split(filename, ".")[0];
@@ -317,10 +316,8 @@ namespace obe::Engine
 
         const std::string bootScript = "*://boot.lua"_fs;
         if (bootScript.empty())
-            throw Exceptions::BootScriptMissing(
-                System::MountablePath::StringPaths(), EXC_INFO);
-        const sol::protected_function_result loadResult
-            = m_lua->safe_script_file(bootScript);
+            throw Exceptions::BootScriptMissing(System::MountablePath::StringPaths(), EXC_INFO);
+        const sol::protected_function_result loadResult = m_lua->safe_script_file(bootScript);
 
         if (!loadResult.valid())
         {
@@ -335,8 +332,7 @@ namespace obe::Engine
         if (!bootResult.valid())
         {
             const auto errObj = bootResult.get<sol::error>();
-            throw Exceptions::BootScriptExecutionError(
-                "Game.Start", errObj.what(), EXC_INFO);
+            throw Exceptions::BootScriptExecutionError("Game.Start", errObj.what(), EXC_INFO);
         }
 
         m_framerate->start();
@@ -371,8 +367,8 @@ namespace obe::Engine
         {
             dtSum += dt.as<double>();
         }
-        Debug::Log->info("Execution completed with {} ticks in {} seconds (dt sum: {})",
-            dts.size(), totalTime, dtSum);
+        Debug::Log->info("Execution completed with {} ticks in {} seconds (dt sum: {})", dts.size(),
+            totalTime, dtSum);
         vili::node profiler = m_events->dumpProfilerResults();
         profiler.emplace("dts", dts);
         std::ofstream profilerOutput;

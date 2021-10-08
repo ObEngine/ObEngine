@@ -83,8 +83,7 @@ namespace obe::Utils::String
         return (isStringFloat(str) || isStringInt(str));
     }
 
-    void replaceInPlace(
-        std::string& subject, const std::string& search, const std::string& replace)
+    void replaceInPlace(std::string& subject, const std::string& search, const std::string& replace)
     {
         size_t pos = 0;
         while ((pos = subject.find(search, pos)) != std::string::npos)
@@ -94,8 +93,7 @@ namespace obe::Utils::String
         }
     }
 
-    std::string replace(
-        std::string subject, const std::string& search, const std::string& replace)
+    std::string replace(std::string subject, const std::string& search, const std::string& replace)
     {
         size_t pos = 0;
         while ((pos = subject.find(search, pos)) != std::string::npos)
@@ -129,8 +127,7 @@ namespace obe::Utils::String
     {
         if (string.size() < search.size())
             return false;
-        return (std::mismatch(search.begin(), search.end(), string.begin()).first
-            == search.end());
+        return (std::mismatch(search.begin(), search.end(), string.begin()).first == search.end());
     }
 
     bool endsWith(const std::string& string, const std::string& search)
@@ -139,8 +136,8 @@ namespace obe::Utils::String
         {
             return false;
         }
-        return (std::mismatch(search.rbegin(), search.rend(), string.rbegin()).first
-            == search.rend());
+        return (
+            std::mismatch(search.rbegin(), search.rend(), string.rbegin()).first == search.rend());
     }
 
     std::size_t distance(std::string_view source, std::string_view target)
@@ -172,9 +169,8 @@ namespace obe::Utils::String
                 }
                 else
                 {
-                    lev_dist[i] = std::min(std::min(lev_dist[i - 1], lev_dist[i]),
-                                      previous_diagonal)
-                        + 1;
+                    lev_dist[i]
+                        = std::min(std::min(lev_dist[i - 1], lev_dist[i]), previous_diagonal) + 1;
                 }
                 previous_diagonal = previous_diagonal_save;
             }
@@ -183,15 +179,13 @@ namespace obe::Utils::String
         return lev_dist[min_size];
     }
 
-    std::vector<std::string> sortByDistance(const std::string& source,
-        const std::vector<std::string>& words, std::size_t limit)
+    std::vector<std::string> sortByDistance(
+        const std::string& source, const std::vector<std::string>& words, std::size_t limit)
     {
         std::vector<std::string> sortedByDistance = words;
         std::sort(sortedByDistance.begin(), sortedByDistance.end(),
-            [source](const std::string& s1, const std::string& s2) {
-                return Utils::String::distance(s1, source)
-                    < Utils::String::distance(s2, source);
-            });
+            [source](const std::string& s1, const std::string& s2)
+            { return Utils::String::distance(s1, source) < Utils::String::distance(s2, source); });
         if (limit && !sortedByDistance.empty())
         {
             return std::vector<std::string>(sortedByDistance.begin(),

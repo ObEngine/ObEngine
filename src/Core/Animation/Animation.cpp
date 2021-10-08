@@ -131,12 +131,10 @@ namespace obe::Animation
         return m_defaultState.isOver();
     }
 
-    void Animation::loadAnimation(
-        const System::Path& path, Engine::ResourceManager* resources)
+    void Animation::loadAnimation(const System::Path& path, Engine::ResourceManager* resources)
     {
         Debug::Log->debug("<Animation> Loading Animation at {0}", path.toString());
-        const std::string animationConfigFile
-            = path.add(path.last() + ".ani.vili").find();
+        const std::string animationConfigFile = path.add(path.last() + ".ani.vili").find();
         vili::node animationConfig = vili::parser::from_file(
             animationConfigFile, Config::Templates::getAnimationTemplates());
 
@@ -179,8 +177,7 @@ namespace obe::Animation
             m_feedInstructions = true;
             m_sleep = currentCommand.at("time");
         }
-        else if (currentCommand.at("command").as_string()
-            == Config::Templates::play_group_command)
+        else if (currentCommand.at("command").as_string() == Config::Templates::play_group_command)
         {
             if (!m_currentGroupName.empty())
                 m_groups[m_currentGroupName]->reset();
@@ -210,8 +207,7 @@ namespace obe::Animation
 
     void AnimationState::updateCurrentGroup()
     {
-        Debug::Log->trace(
-            "    <Animation> Updating AnimationGroup '{}'", m_currentGroupName);
+        Debug::Log->trace("    <Animation> Updating AnimationGroup '{}'", m_currentGroupName);
         m_groups[m_currentGroupName]->next();
         if (m_groups[m_currentGroupName]->isOver())
         {
@@ -225,8 +221,7 @@ namespace obe::Animation
             }
             else
             {
-                Debug::Log->trace(
-                    "    <Animation> Animation '{}' has no more code to execute");
+                Debug::Log->trace("    <Animation> Animation '{}' has no more code to execute");
                 if (m_parent.m_playMode == AnimationPlayMode::OneTime)
                 {
                     Debug::Log->trace("    <Animation> Animation '{}' will stay on "
@@ -236,8 +231,7 @@ namespace obe::Animation
                 }
                 else
                 {
-                    Debug::Log->trace(
-                        "    <Animation> Animation '{}' will reset code execution");
+                    Debug::Log->trace("    <Animation> Animation '{}' will reset code execution");
                     m_feedInstructions = true;
                     m_groups[m_currentGroupName]->reset();
                     m_codeIndex = 0;
@@ -273,8 +267,8 @@ namespace obe::Animation
         }
     }
 
-    void Animation::loadImages(const vili::node& images, const System::Path& path,
-        Engine::ResourceManager* resources)
+    void Animation::loadImages(
+        const vili::node& images, const System::Path& path, Engine::ResourceManager* resources)
     {
         const vili::node& imageList = images.at("images");
         std::string model;
@@ -309,13 +303,11 @@ namespace obe::Animation
             }
 
             std::string pathToTexture = path.add(textureName).toString();
-            Debug::Log->trace(
-                "    <Animation> Found Texture Path at '{}'", pathToTexture);
+            Debug::Log->trace("    <Animation> Found Texture Path at '{}'", pathToTexture);
             if (resources)
             {
                 Debug::Log->trace(
-                    "    <Animation> Loading Texture {0} (using ResourceManager)",
-                    textureName);
+                    "    <Animation> Loading Texture {0} (using ResourceManager)", textureName);
                 m_textures.emplace_back(
                     resources->getTexture(path.add(textureName), m_antiAliasing));
             }
@@ -340,8 +332,7 @@ namespace obe::Animation
             {
                 Debug::Log->trace("      <Animation> Pushing Texture {} into group",
                     currentTexture.as<vili::integer>());
-                m_groups[groupName]->pushTexture(
-                    m_textures[currentTexture.as<vili::integer>()]);
+                m_groups[groupName]->pushTexture(m_textures[currentTexture.as<vili::integer>()]);
             }
 
             if (group.contains("clock"))
@@ -353,8 +344,7 @@ namespace obe::Animation
             else
             {
                 Debug::Log->trace(
-                    "      <Animation> No delay specified, using parent delay : {}",
-                    m_delay);
+                    "      <Animation> No delay specified, using parent delay : {}", m_delay);
                 m_groups[groupName]->setDelay(m_delay);
             }
         }
@@ -391,8 +381,7 @@ namespace obe::Animation
             {
                 m_clock = Time::epoch();
                 m_sleep = 0;
-                Debug::Log->trace(
-                    "<Animation> Updating Animation '{0}'", m_parent.m_name);
+                Debug::Log->trace("<Animation> Updating Animation '{0}'", m_parent.m_name);
 
                 if (m_feedInstructions)
                 {
@@ -451,8 +440,7 @@ namespace obe::Animation
     {
         if (index < m_textures.size())
             return m_textures[index];
-        throw Exceptions::AnimationTextureIndexOverflow(
-            m_name, index, m_textures.size(), EXC_INFO);
+        throw Exceptions::AnimationTextureIndexOverflow(m_name, index, m_textures.size(), EXC_INFO);
     }
 
     const Graphics::Texture& AnimationState::getTexture()

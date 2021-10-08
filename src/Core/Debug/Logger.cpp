@@ -21,8 +21,7 @@ namespace obe::Debug
         auto dist_sink = std::make_shared<spdlog::sinks::dist_sink_st>();
 
         const auto sink1 = std::make_shared<spdlog::sinks::stdout_color_sink_st>();
-        const auto sink2
-            = std::make_shared<spdlog::sinks::basic_file_sink_st>("debug.log");
+        const auto sink2 = std::make_shared<spdlog::sinks::basic_file_sink_st>("debug.log");
 
         dist_sink->add_sink(sink1);
         dist_sink->add_sink(sink2);

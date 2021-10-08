@@ -23,8 +23,7 @@ namespace vili::parser::Bindings
     {
         sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
         sol::usertype<vili::parser::state> bindstate
-            = parserNamespace.new_usertype<vili::parser::state>("state",
-                sol::call_constructor,
+            = parserNamespace.new_usertype<vili::parser::state>("state", sol::call_constructor,
                 sol::constructors<vili::parser::state(),
                     vili::parser::state(const vili::parser::state&),
                     vili::parser::state(vili::parser::state &&)>());
@@ -35,11 +34,10 @@ namespace vili::parser::Bindings
         bindstate["open_block"] = &vili::parser::state::open_block;
         bindstate["close_block"] = &vili::parser::state::close_block;
         bindstate["push"] = &vili::parser::state_push_proxy;
-        bindstate["push_template"]
-            = sol::overload(static_cast<void (vili::parser::state::*)()>(
-                                &vili::parser::state::push_template),
-                static_cast<void (vili::parser::state::*)(const std::string&,
-                    const vili::node&)>(&vili::parser::state::push_template));
+        bindstate["push_template"] = sol::overload(
+            static_cast<void (vili::parser::state::*)()>(&vili::parser::state::push_template),
+            static_cast<void (vili::parser::state::*)(const std::string&, const vili::node&)>(
+                &vili::parser::state::push_template));
         bindstate["specialize_template"] = &vili::parser::state::specialize_template;
         bindstate["get_template"] = &vili::parser::state::get_template;
         bindstate["root"] = &vili::parser::state::root;

@@ -26,18 +26,16 @@ namespace obe::Config
             if (canonicalPaths.find(basePath) == canonicalPaths.end())
             {
                 configMounts.push_back(std::make_shared<System::MountablePath>(
-                    System::MountablePathType::Path, basePath, mountIt->get()->prefix, 0,
-                    true));
+                    System::MountablePathType::Path, basePath, mountIt->get()->prefix, 0, true));
                 canonicalPaths.emplace(basePath);
             }
         }
-        const auto loadResult
-            = System::Path(configMounts).set("*://config.vili").findAll();
+        const auto loadResult = System::Path(configMounts).set("*://config.vili").findAll();
         for (const auto& findResult : loadResult)
         {
             Debug::Log->info("Loading config file from {}", findResult.path());
-            vili::node conf = vili::parser::from_file(
-                findResult.path(), Templates::getConfigTemplates());
+            vili::node conf
+                = vili::parser::from_file(findResult.path(), Templates::getConfigTemplates());
             this->merge(conf);
         }
         try

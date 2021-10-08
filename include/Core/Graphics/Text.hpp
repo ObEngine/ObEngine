@@ -14,7 +14,8 @@ namespace sf
 {
     class Font;
     class String;
-    template <class T> class Rect;
+    template <class T>
+    class Rect;
     typedef Rect<float> FloatRect;
 }
 
@@ -82,8 +83,8 @@ namespace obe::Graphics
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     private:
-        sf::Text createText(const sf::String& string, const Color& color,
-            const Color& outline, unsigned int thickness, sf::Text::Style style) const;
+        sf::Text createText(const sf::String& string, const Color& color, const Color& outline,
+            unsigned int thickness, sf::Text::Style style) const;
         void updateGeometry() const;
         mutable std::vector<Line> m_lines;
         Font m_font;

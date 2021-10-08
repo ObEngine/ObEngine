@@ -18,7 +18,8 @@ namespace obe::Event
     public:
         LuaEventListener(sol::protected_function callback);
 
-        template <class EventType> void operator()(const EventType& event) const;
+        template <class EventType>
+        void operator()(const EventType& event) const;
     };
 
     template <class EventType>

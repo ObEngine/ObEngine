@@ -13,8 +13,8 @@ namespace obe::Config::Bindings
         sol::usertype<obe::Config::ConfigurationManager> bindConfigurationManager
             = ConfigNamespace.new_usertype<obe::Config::ConfigurationManager>(
                 "ConfigurationManager", sol::call_constructor,
-                sol::constructors<obe::Config::ConfigurationManager()>(),
-                sol::base_classes, sol::bases<vili::node>());
+                sol::constructors<obe::Config::ConfigurationManager()>(), sol::base_classes,
+                sol::bases<vili::node>());
         bindConfigurationManager["load"] = &obe::Config::ConfigurationManager::load;
     }
     void LoadFunctionConfigValidator(sol::state_view state)

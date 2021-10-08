@@ -9,18 +9,15 @@ namespace vili::writer::Bindings
     void LoadEnumDelimiterNewlinePolicy(sol::state_view state)
     {
         sol::table writerNamespace = state["vili"]["writer"].get<sol::table>();
-        writerNamespace.new_enum<vili::writer::delimiter_newline_policy>(
-            "delimiter_newline_policy",
+        writerNamespace.new_enum<vili::writer::delimiter_newline_policy>("delimiter_newline_policy",
             { { "never", vili::writer::delimiter_newline_policy::never },
-                { "only_if_multiline",
-                    vili::writer::delimiter_newline_policy::only_if_multiline },
+                { "only_if_multiline", vili::writer::delimiter_newline_policy::only_if_multiline },
                 { "always", vili::writer::delimiter_newline_policy::always } });
     }
     void LoadEnumCommaSpacingPolicy(sol::state_view state)
     {
         sol::table writerNamespace = state["vili"]["writer"].get<sol::table>();
-        writerNamespace.new_enum<vili::writer::comma_spacing_policy>(
-            "comma_spacing_policy",
+        writerNamespace.new_enum<vili::writer::comma_spacing_policy>("comma_spacing_policy",
             { { "left_side", vili::writer::comma_spacing_policy::left_side },
                 { "right_side", vili::writer::comma_spacing_policy::right_side },
                 { "both", vili::writer::comma_spacing_policy::both } });
