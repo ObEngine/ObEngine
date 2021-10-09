@@ -14,3 +14,4 @@ target_include_directories(sol2
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )
 target_compile_definitions(sol2 INTERFACE SOL_ALL_SAFETIES_ON)
+target_compile_definitions(sol2 INTERFACE SOL_USING_CXX_LUA)
