@@ -9,7 +9,7 @@
 
 #include <array>
 #ifndef SD_JOURNAL_SUPPRESS_LOCATION
-#define SD_JOURNAL_SUPPRESS_LOCATION
+#    define SD_JOURNAL_SUPPRESS_LOCATION
 #endif
 #include <systemd/sd-journal.h>
 
@@ -72,7 +72,7 @@ protected:
 
         if (err)
         {
-            SPDLOG_THROW(spdlog_ex("Failed writing to systemd", errno));
+            throw_spdlog_ex("Failed writing to systemd", errno);
         }
     }
 

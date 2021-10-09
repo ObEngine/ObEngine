@@ -4,7 +4,7 @@
 #pragma once
 
 #ifndef SPDLOG_HEADER_ONLY
-#include <spdlog/details/pattern_formatter.h>
+#    include <spdlog/pattern_formatter.h>
 #endif
 
 #include <spdlog/details/fmt_helper.h>
@@ -13,11 +13,13 @@
 #include <spdlog/fmt/fmt.h>
 #include <spdlog/formatter.h>
 
+#include <algorithm>
 #include <array>
 #include <chrono>
 #include <ctime>
 #include <cctype>
 #include <cstring>
+#include <iterator>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -45,18 +47,24 @@ public:
             return;
         }
 
-        if (padinfo_.side_ == padding_info::left)
+        if (padinfo_.side_ == padding_info::pad_side::left)
         {
             pad_it(remaining_pad_);
             remaining_pad_ = 0;
         }
-        else if (padinfo_.side_ == padding_info::center)
+        else if (padinfo_.side_ == padding_info::pad_side::center)
         {
             auto half_pad = remaining_pad_ / 2;
             auto reminder = remaining_pad_ & 1;
             pad_it(half_pad);
             remaining_pad_ = half_pad + reminder; // for the right side
         }
+    }
+
+    template<typename T>
+    static unsigned int count_digits(T n)
+    {
+        return fmt_helper::count_digits(n);
     }
 
     ~scoped_padder()
@@ -87,10 +95,16 @@ private:
 struct null_scoped_padder
 {
     null_scoped_padder(size_t /*wrapped_size*/, const padding_info & /*padinfo*/, memory_buf_t & /*dest*/) {}
+
+    template<typename T>
+    static unsigned int count_digits(T /* number */)
+    {
+        return 0;
+    }
 };
 
 template<typename ScopedPadder>
-class name_formatter : public flag_formatter
+class name_formatter final : public flag_formatter
 {
 public:
     explicit name_formatter(padding_info padinfo)
@@ -106,7 +120,7 @@ public:
 
 // log level appender
 template<typename ScopedPadder>
-class level_formatter : public flag_formatter
+class level_formatter final : public flag_formatter
 {
 public:
     explicit level_formatter(padding_info padinfo)
@@ -115,7 +129,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
     {
-        string_view_t &level_name = level::to_string_view(msg.level);
+        const string_view_t &level_name = level::to_string_view(msg.level);
         ScopedPadder p(level_name.size(), padinfo_, dest);
         fmt_helper::append_string_view(level_name, dest);
     }
@@ -123,7 +137,7 @@ public:
 
 // short log level appender
 template<typename ScopedPadder>
-class short_level_formatter : public flag_formatter
+class short_level_formatter final : public flag_formatter
 {
 public:
     explicit short_level_formatter(padding_info padinfo)
@@ -156,7 +170,7 @@ static int to12h(const tm &t)
 static std::array<const char *, 7> days{{"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"}};
 
 template<typename ScopedPadder>
-class a_formatter : public flag_formatter
+class a_formatter final : public flag_formatter
 {
 public:
     explicit a_formatter(padding_info padinfo)
@@ -194,7 +208,7 @@ public:
 static const std::array<const char *, 12> months{{"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sept", "Oct", "Nov", "Dec"}};
 
 template<typename ScopedPadder>
-class b_formatter : public flag_formatter
+class b_formatter final : public flag_formatter
 {
 public:
     explicit b_formatter(padding_info padinfo)
@@ -214,7 +228,7 @@ static const std::array<const char *, 12> full_months{
     {"January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"}};
 
 template<typename ScopedPadder>
-class B_formatter : public flag_formatter
+class B_formatter final : public flag_formatter
 {
 public:
     explicit B_formatter(padding_info padinfo)
@@ -638,7 +652,7 @@ public:
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
     {
-        const auto field_size = fmt_helper::count_digits(msg.thread_id);
+        const auto field_size = ScopedPadder::count_digits(msg.thread_id);
         ScopedPadder p(field_size, padinfo_, dest);
         fmt_helper::append_int(msg.thread_id, dest);
     }
@@ -656,7 +670,7 @@ public:
     void format(const details::log_msg &, const std::tm &, memory_buf_t &dest) override
     {
         const auto pid = static_cast<uint32_t>(details::os::pid());
-        auto field_size = fmt_helper::count_digits(pid);
+        auto field_size = ScopedPadder::count_digits(pid);
         ScopedPadder p(field_size, padinfo_, dest);
         fmt_helper::append_int(pid, dest);
     }
@@ -755,8 +769,16 @@ public:
             return;
         }
 
-        size_t text_size =
-            padinfo_.enabled() ? std::char_traits<char>::length(msg.source.filename) + fmt_helper::count_digits(msg.source.line) + 1 : 0;
+        size_t text_size;
+        if (padinfo_.enabled())
+        {
+            // calc text size for padding based on "filename:line"
+            text_size = std::char_traits<char>::length(msg.source.filename) + ScopedPadder::count_digits(msg.source.line) + 1;
+        }
+        else
+        {
+            text_size = 0;
+        }
 
         ScopedPadder p(text_size, padinfo_, dest);
         fmt_helper::append_string_view(msg.source.filename, dest);
@@ -794,11 +816,31 @@ public:
         : flag_formatter(padinfo)
     {}
 
+#ifdef _MSC_VER
+#    pragma warning(push)
+#    pragma warning(disable : 4127) // consider using 'if constexpr' instead
+#endif                              // _MSC_VER
     static const char *basename(const char *filename)
     {
-        const char *rv = std::strrchr(filename, os::folder_sep);
-        return rv != nullptr ? rv + 1 : filename;
+        // if the size is 2 (1 character + null terminator) we can use the more efficient strrchr
+        // the branch will be elided by optimizations
+        if (sizeof(os::folder_seps) == 2)
+        {
+            const char *rv = std::strrchr(filename, os::folder_seps[0]);
+            return rv != nullptr ? rv + 1 : filename;
+        }
+        else
+        {
+            const std::reverse_iterator<const char *> begin(filename + std::strlen(filename));
+            const std::reverse_iterator<const char *> end(filename);
+
+            const auto it = std::find_first_of(begin, end, std::begin(os::folder_seps), std::end(os::folder_seps) - 1);
+            return it != end ? it.base() : filename;
+        }
     }
+#ifdef _MSC_VER
+#    pragma warning(pop)
+#endif // _MSC_VER
 
     void format(const details::log_msg &msg, const std::tm &, memory_buf_t &dest) override
     {
@@ -828,7 +870,7 @@ public:
             return;
         }
 
-        auto field_size = fmt_helper::count_digits(msg.source.line);
+        auto field_size = ScopedPadder::count_digits(msg.source.line);
         ScopedPadder p(field_size, padinfo_, dest);
         fmt_helper::append_int(msg.source.line, dest);
     }
@@ -857,7 +899,6 @@ public:
 
 // print elapsed time since last message
 template<typename ScopedPadder, typename Units>
-
 class elapsed_formatter final : public flag_formatter
 {
 public:
@@ -874,7 +915,7 @@ public:
         auto delta_units = std::chrono::duration_cast<DurationUnits>(delta);
         last_message_time_ = msg.time;
         auto delta_count = static_cast<size_t>(delta_units.count());
-        auto n_digits = static_cast<size_t>(fmt_helper::count_digits(delta_count));
+        auto n_digits = static_cast<size_t>(ScopedPadder::count_digits(delta_count));
         ScopedPadder p(n_digits, padinfo_, dest);
         fmt_helper::append_int(delta_count, dest);
     }
@@ -884,7 +925,7 @@ private:
 };
 
 // Full info formatter
-// pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] %v
+// pattern: [%Y-%m-%d %H:%M:%S.%e] [%n] [%l] [%s:%#] %v
 class full_formatter final : public flag_formatter
 {
 public:
@@ -933,16 +974,15 @@ public:
         dest.push_back(']');
         dest.push_back(' ');
 
-#ifndef SPDLOG_NO_NAME
+        // append logger name if exists
         if (msg.logger_name.size() > 0)
         {
             dest.push_back('[');
-            // fmt_helper::append_str(*msg.logger_name, dest);
             fmt_helper::append_string_view(msg.logger_name, dest);
             dest.push_back(']');
             dest.push_back(' ');
         }
-#endif
+
         dest.push_back('[');
         // wrap the level name with color
         msg.color_range_start = dest.size();
@@ -974,11 +1014,13 @@ private:
 
 } // namespace details
 
-SPDLOG_INLINE pattern_formatter::pattern_formatter(std::string pattern, pattern_time_type time_type, std::string eol)
+SPDLOG_INLINE pattern_formatter::pattern_formatter(
+    std::string pattern, pattern_time_type time_type, std::string eol, custom_flags custom_user_flags)
     : pattern_(std::move(pattern))
     , eol_(std::move(eol))
     , pattern_time_type_(time_type)
     , last_log_secs_(0)
+    , custom_handlers_(std::move(custom_user_flags))
 {
     std::memset(&cached_tm_, 0, sizeof(cached_tm_));
     compile_pattern_(pattern_);
@@ -997,7 +1039,12 @@ SPDLOG_INLINE pattern_formatter::pattern_formatter(pattern_time_type time_type, 
 
 SPDLOG_INLINE std::unique_ptr<formatter> pattern_formatter::clone() const
 {
-    return details::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_);
+    custom_flags cloned_custom_formatters;
+    for (auto &it : custom_handlers_)
+    {
+        cloned_custom_formatters[it.first] = it.second->clone();
+    }
+    return details::make_unique<pattern_formatter>(pattern_, pattern_time_type_, eol_, std::move(cloned_custom_formatters));
 }
 
 SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory_buf_t &dest)
@@ -1017,6 +1064,12 @@ SPDLOG_INLINE void pattern_formatter::format(const details::log_msg &msg, memory
     details::fmt_helper::append_string_view(eol_, dest);
 }
 
+SPDLOG_INLINE void pattern_formatter::set_pattern(std::string pattern)
+{
+    pattern_ = std::move(pattern);
+    compile_pattern_(pattern_);
+}
+
 SPDLOG_INLINE std::tm pattern_formatter::get_time_(const details::log_msg &msg)
 {
     if (pattern_time_type_ == pattern_time_type::local)
@@ -1029,9 +1082,19 @@ SPDLOG_INLINE std::tm pattern_formatter::get_time_(const details::log_msg &msg)
 template<typename Padder>
 SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_info padding)
 {
+    // process custom flags
+    auto it = custom_handlers_.find(flag);
+    if (it != custom_handlers_.end())
+    {
+        auto custom_handler = it->second->clone();
+        custom_handler->set_padding_info(padding);
+        formatters_.push_back(std::move(custom_handler));
+        return;
+    }
+
+    // process built-in flags
     switch (flag)
     {
-
     case ('+'): // default formatter
         formatters_.push_back(details::make_unique<details::full_formatter>(padding));
         break;
@@ -1205,9 +1268,24 @@ SPDLOG_INLINE void pattern_formatter::handle_flag_(char flag, details::padding_i
 
     default: // Unknown flag appears as is
         auto unknown_flag = details::make_unique<details::aggregate_formatter>();
-        unknown_flag->add_ch('%');
-        unknown_flag->add_ch(flag);
-        formatters_.push_back((std::move(unknown_flag)));
+
+        if (!padding.truncate_)
+        {
+            unknown_flag->add_ch('%');
+            unknown_flag->add_ch(flag);
+            formatters_.push_back((std::move(unknown_flag)));
+        }
+        // fix issue #1617 (prev char was '!' and should have been treated as funcname flag instead of truncating flag)
+        // spdlog::set_pattern("[%10!] %v") => "[      main] some message"
+        // spdlog::set_pattern("[%3!!] %v") => "[mai] some message"
+        else
+        {
+            padding.truncate_ = false;
+            formatters_.push_back(details::make_unique<details::source_funcname_formatter<Padder>>(padding));
+            unknown_flag->add_ch(flag);
+            formatters_.push_back((std::move(unknown_flag)));
+        }
+
         break;
     }
 }
@@ -1229,15 +1307,15 @@ SPDLOG_INLINE details::padding_info pattern_formatter::handle_padspec_(std::stri
     switch (*it)
     {
     case '-':
-        side = padding_info::right;
+        side = padding_info::pad_side::right;
         ++it;
         break;
     case '=':
-        side = padding_info::center;
+        side = padding_info::pad_side::center;
         ++it;
         break;
     default:
-        side = details::padding_info::left;
+        side = details::padding_info::pad_side::left;
         break;
     }
 

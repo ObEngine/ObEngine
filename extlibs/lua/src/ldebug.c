@@ -34,10 +34,6 @@
 #define noLuaClosure(f)		((f) == NULL || (f)->c.tt == LUA_VCCL)
 
 
-/* Active Lua function (given call info) */
-#define ci_func(ci)		(clLvalue(s2v((ci)->func)))
-
-
 static const char *funcnamefromcode (lua_State *L, CallInfo *ci,
                                     const char **name);
 
@@ -50,10 +46,16 @@ static int currentpc (CallInfo *ci) {
 
 /*
 ** Get a "base line" to find the line corresponding to an instruction.
-** For that, search the array of absolute line info for the largest saved
-** instruction smaller or equal to the wanted instruction. A special
-** case is when there is no absolute info or the instruction is before
-** the first absolute one.
+** Base lines are regularly placed at MAXIWTHABS intervals, so usually
+** an integer division gets the right place. When the source file has
+** large sequences of empty/comment lines, it may need extra entries,
+** so the original estimate needs a correction.
+** If the original estimate is -1, the initial 'if' ensures that the
+** 'while' will run at least once.
+** The assertion that the estimate is a lower bound for the correct base
+** is valid as long as the debug info has been generated with the same
+** value for MAXIWTHABS or smaller. (Previous releases use a little
+** smaller value.)
 */
 static int getbaseline (const Proto *f, int pc, int *basepc) {
   if (f->sizeabslineinfo == 0 || pc < f->abslineinfo[0].pc) {
@@ -61,20 +63,12 @@ static int getbaseline (const Proto *f, int pc, int *basepc) {
     return f->linedefined;
   }
   else {
-    unsigned int i;
-    if (pc >= f->abslineinfo[f->sizeabslineinfo - 1].pc)
-      i = f->sizeabslineinfo - 1;  /* instruction is after last saved one */
-    else {  /* binary search */
-      unsigned int j = f->sizeabslineinfo - 1;  /* pc < anchorlines[j] */
-      i = 0;  /* abslineinfo[i] <= pc */
-      while (i < j - 1) {
-        unsigned int m = (j + i) / 2;
-        if (pc >= f->abslineinfo[m].pc)
-          i = m;
-        else
-          j = m;
-      }
-    }
+    int i = cast_uint(pc) / MAXIWTHABS - 1;  /* get an estimate */
+    /* estimate must be a lower bond of the correct base */
+    lua_assert(i < 0 ||
+              (i < f->sizeabslineinfo && f->abslineinfo[i].pc <= pc));
+    while (i + 1 < f->sizeabslineinfo && pc >= f->abslineinfo[i + 1].pc)
+      i++;  /* low estimate; adjust it */
     *basepc = f->abslineinfo[i].pc;
     return f->abslineinfo[i].line;
   }
@@ -107,13 +101,15 @@ static int getcurrentline (CallInfo *ci) {
 
 
 /*
-** This function can be called asynchronously (e.g. during a signal),
-** under "reasonable" assumptions. A new 'ci' is completely linked
-** in the list before it becomes part of the "active" list, and
-** we assume that pointers are atomic (see comment in next function).
-** (If we traverse one more item, there is no problem. If we traverse
-** one less item, the worst that can happen is that the signal will
-** not interrupt the script.)
+** Set 'trap' for all active Lua frames.
+** This function can be called during a signal, under "reasonable"
+** assumptions. A new 'ci' is completely linked in the list before it
+** becomes part of the "active" list, and we assume that pointers are
+** atomic; see comment in next function.
+** (A compiler doing interprocedural optimizations could, theoretically,
+** reorder memory writes in such a way that the list could be
+** temporarily broken while inserting a new element. We simply assume it
+** has no good reasons to do that.)
 */
 static void settraps (CallInfo *ci) {
   for (; ci != NULL; ci = ci->previous)
@@ -123,22 +119,20 @@ static void settraps (CallInfo *ci) {
 
 
 /*
-** This function can be called asynchronously (e.g. during a signal),
-** under "reasonable" assumptions.
-** Fields 'oldpc', 'basehookcount', and 'hookcount' (set by
-** 'resethookcount') are for debug only, and it is no problem if they
-** get arbitrary values (causes at most one wrong hook call). 'hookmask'
-** is an atomic value. We assume that pointers are atomic too (e.g., gcc
-** ensures that for all platforms where it runs). Moreover, 'hook' is
-** always checked before being called (see 'luaD_hook').
+** This function can be called during a signal, under "reasonable"
+** assumptions.
+** Fields 'basehookcount' and 'hookcount' (set by 'resethookcount')
+** are for debug only, and it is no problem if they get arbitrary
+** values (causes at most one wrong hook call). 'hookmask' is an atomic
+** value. We assume that pointers are atomic too (e.g., gcc ensures that
+** for all platforms where it runs). Moreover, 'hook' is always checked
+** before being called (see 'luaD_hook').
 */
 LUA_API void lua_sethook (lua_State *L, lua_Hook func, int mask, int count) {
   if (func == NULL || mask == 0) {  /* turn off hooks? */
     mask = 0;
     func = NULL;
   }
-  if (isLua(L->ci))
-    L->oldpc = L->ci->u.l.savedpc;
   L->hook = func;
   L->basehookcount = count;
   resethookcount(L);
@@ -190,8 +184,8 @@ static const char *upvalname (const Proto *p, int uv) {
 static const char *findvararg (CallInfo *ci, int n, StkId *pos) {
   if (clLvalue(s2v(ci->func))->p->is_vararg) {
     int nextra = ci->u.l.nextraargs;
-    if (n <= nextra) {
-      *pos = ci->func - nextra + (n - 1);
+    if (n >= -nextra) {  /* 'n' is negative */
+      *pos = ci->func - nextra - (n + 1);
       return "(vararg)";  /* generic name for any vararg */
     }
   }
@@ -204,7 +198,7 @@ const char *luaG_findlocal (lua_State *L, CallInfo *ci, int n, StkId *pos) {
   const char *name = NULL;
   if (isLua(ci)) {
     if (n < 0)  /* access to vararg values? */
-      return findvararg(ci, -n, pos);
+      return findvararg(ci, n, pos);
     else
       name = luaF_getlocalname(ci_func(ci)->p, n, currentpc(ci));
   }
@@ -307,8 +301,8 @@ static void collectvalidlines (lua_State *L, Closure *f) {
     sethvalue2s(L, L->top, t);  /* push it on stack */
     api_incr_top(L);
     setbtvalue(&v);  /* boolean 'true' to be the value of all indices */
-    for (i = 0; i < p->sizelineinfo; i++) {  /* for all lines with code */
-      currentline = nextline(p, currentline, i);
+    for (i = 0; i < p->sizelineinfo; i++) {  /* for all instructions */
+      currentline = nextline(p, currentline, i);  /* get its line */
       luaH_setint(L, t, currentline, &v);  /* table[line] = true */
     }
   }
@@ -631,12 +625,10 @@ static const char *funcnamefromcode (lua_State *L, CallInfo *ci,
     case OP_LEN: tm = TM_LEN; break;
     case OP_CONCAT: tm = TM_CONCAT; break;
     case OP_EQ: tm = TM_EQ; break;
-    case OP_LT: case OP_LE: case OP_LTI: case OP_LEI:
-      *name = "order";  /* '<=' can call '__lt', etc. */
-      return "metamethod";
-    case OP_CLOSE: case OP_RETURN:
-      *name = "close";
-      return "metamethod";
+    /* no cases for OP_EQI and OP_EQK, as they don't call metamethods */
+    case OP_LT: case OP_LTI: case OP_GTI: tm = TM_LT; break;
+    case OP_LE: case OP_LEI: case OP_GEI: tm = TM_LE; break;
+    case OP_CLOSE: case OP_RETURN: tm = TM_CLOSE; break;
     default:
       return NULL;  /* cannot find a reasonable name */
   }
@@ -649,14 +641,18 @@ static const char *funcnamefromcode (lua_State *L, CallInfo *ci,
 
 
 /*
-** The subtraction of two potentially unrelated pointers is
-** not ISO C, but it should not crash a program; the subsequent
-** checks are ISO C and ensure a correct result.
+** Check whether pointer 'o' points to some value in the stack
+** frame of the current function. Because 'o' may not point to a
+** value in this stack, we cannot compare it with the region
+** boundaries (undefined behaviour in ISO C).
 */
 static int isinstack (CallInfo *ci, const TValue *o) {
-  StkId base = ci->func + 1;
-  ptrdiff_t i = cast(StkId, o) - base;
-  return (0 <= i && i < (ci->top - base) && s2v(base + i) == o);
+  StkId pos;
+  for (pos = ci->func + 1; pos < ci->top; pos++) {
+    if (o == s2v(pos))
+      return 1;
+  }
+  return 0;  /* not found */
 }
 
 
@@ -699,6 +695,19 @@ l_noret luaG_typeerror (lua_State *L, const TValue *o, const char *op) {
 }
 
 
+l_noret luaG_callerror (lua_State *L, const TValue *o) {
+  CallInfo *ci = L->ci;
+  const char *name = NULL;  /* to avoid warnings */
+  const char *what = (isLua(ci)) ? funcnamefromcode(L, ci, &name) : NULL;
+  if (what != NULL) {
+    const char *t = luaT_objtypename(L, o);
+    luaG_runerror(L, "%s '%s' is not callable (a %s value)", what, name, t);
+  }
+  else
+    luaG_typeerror(L, o, "call");
+}
+
+
 l_noret luaG_forerror (lua_State *L, const TValue *o, const char *what) {
   luaG_runerror(L, "bad 'for' %s (number expected, got %s)",
                    what, luaT_objtypename(L, o));
@@ -724,7 +733,7 @@ l_noret luaG_opinterror (lua_State *L, const TValue *p1,
 */
 l_noret luaG_tointerror (lua_State *L, const TValue *p1, const TValue *p2) {
   lua_Integer temp;
-  if (!tointegerns(p1, &temp))
+  if (!luaV_tointegerns(p1, &temp, LUA_FLOORN2I))
     p2 = p1;
   luaG_runerror(L, "number%s has no integer representation", varinfo(L, p2));
 }
@@ -782,20 +791,49 @@ l_noret luaG_runerror (lua_State *L, const char *fmt, ...) {
 
 /*
 ** Check whether new instruction 'newpc' is in a different line from
-** previous instruction 'oldpc'.
+** previous instruction 'oldpc'. More often than not, 'newpc' is only
+** one or a few instructions after 'oldpc' (it must be after, see
+** caller), so try to avoid calling 'luaG_getfuncline'. If they are
+** too far apart, there is a good chance of a ABSLINEINFO in the way,
+** so it goes directly to 'luaG_getfuncline'.
 */
 static int changedline (const Proto *p, int oldpc, int newpc) {
-  while (oldpc++ < newpc) {
-    if (p->lineinfo[oldpc] != 0)
-      return (luaG_getfuncline(p, oldpc - 1) != luaG_getfuncline(p, newpc));
+  if (p->lineinfo == NULL)  /* no debug information? */
+    return 0;
+  if (newpc - oldpc < MAXIWTHABS / 2) {  /* not too far apart? */
+    int delta = 0;  /* line diference */
+    int pc = oldpc;
+    for (;;) {
+      int lineinfo = p->lineinfo[++pc];
+      if (lineinfo == ABSLINEINFO)
+        break;  /* cannot compute delta; fall through */
+      delta += lineinfo;
+      if (pc == newpc)
+        return (delta != 0);  /* delta computed successfully */
+    }
   }
-  return 0;  /* no line changes in the way */
+  /* either instructions are too far apart or there is an absolute line
+     info in the way; compute line difference explicitly */
+  return (luaG_getfuncline(p, oldpc) != luaG_getfuncline(p, newpc));
 }
 
 
+/*
+** Traces the execution of a Lua function. Called before the execution
+** of each opcode, when debug is on. 'L->oldpc' stores the last
+** instruction traced, to detect line changes. When entering a new
+** function, 'npci' will be zero and will test as a new line whatever
+** the value of 'oldpc'.  Some exceptional conditions may return to
+** a function without setting 'oldpc'. In that case, 'oldpc' may be
+** invalid; if so, use zero as a valid value. (A wrong but valid 'oldpc'
+** at most causes an extra call to a line hook.)
+** This function is not "Protected" when called, so it should correct
+** 'L->top' before calling anything that can run the GC.
+*/
 int luaG_traceexec (lua_State *L, const Instruction *pc) {
   CallInfo *ci = L->ci;
   lu_byte mask = L->hookmask;
+  const Proto *p = ci_func(ci)->p;
   int counthook;
   if (!(mask & (LUA_MASKLINE | LUA_MASKCOUNT))) {  /* no hooks? */
     ci->u.l.trap = 0;  /* don't need to stop again */
@@ -812,20 +850,20 @@ int luaG_traceexec (lua_State *L, const Instruction *pc) {
     ci->callstatus &= ~CIST_HOOKYIELD;  /* erase mark */
     return 1;  /* do not call hook again (VM yielded, so it did not move) */
   }
-  if (!isIT(*(ci->u.l.savedpc - 1)))
-    L->top = ci->top;  /* prepare top */
+  if (!isIT(*(ci->u.l.savedpc - 1)))  /* top not being used? */
+    L->top = ci->top;  /* correct top */
   if (counthook)
     luaD_hook(L, LUA_HOOKCOUNT, -1, 0, 0);  /* call count hook */
   if (mask & LUA_MASKLINE) {
-    const Proto *p = ci_func(ci)->p;
+    /* 'L->oldpc' may be invalid; use zero in this case */
+    int oldpc = (L->oldpc < p->sizecode) ? L->oldpc : 0;
     int npci = pcRel(pc, p);
-    if (npci == 0 ||  /* call linehook when enter a new function, */
-        pc <= L->oldpc ||  /* when jump back (loop), or when */
-        changedline(p, pcRel(L->oldpc, p), npci)) {  /* enter new line */
+    if (npci <= oldpc ||  /* call hook when jump back (loop), */
+        changedline(p, oldpc, npci)) {  /* or when enter new line */
       int newline = luaG_getfuncline(p, npci);
       luaD_hook(L, LUA_HOOKLINE, newline, 0, 0);  /* call line hook */
     }
-    L->oldpc = pc;  /* 'pc' of last call to line hook */
+    L->oldpc = npci;  /* 'pc' of last call to line hook */
   }
   if (L->status == LUA_YIELD) {  /* did hook yield? */
     if (counthook)
