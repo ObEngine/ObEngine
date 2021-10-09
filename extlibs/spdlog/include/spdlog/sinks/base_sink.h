@@ -21,8 +21,14 @@ class base_sink : public sink
 public:
     base_sink();
     explicit base_sink(std::unique_ptr<spdlog::formatter> formatter);
+    ~base_sink() override = default;
+
     base_sink(const base_sink &) = delete;
+    base_sink(base_sink &&) = delete;
+
     base_sink &operator=(const base_sink &) = delete;
+    base_sink &operator=(base_sink &&) = delete;
+
     void log(const details::log_msg &msg) final;
     void flush() final;
     void set_pattern(const std::string &pattern) final;
@@ -31,7 +37,7 @@ public:
 protected:
     // sink formatter
     std::unique_ptr<spdlog::formatter> formatter_;
-    Mutex mutex_;
+    mutable Mutex mutex_;
 
     virtual void sink_it_(const details::log_msg &msg) = 0;
     virtual void flush_() = 0;
@@ -42,5 +48,5 @@ protected:
 } // namespace spdlog
 
 #ifdef SPDLOG_HEADER_ONLY
-#include "base_sink-inl.h"
+#    include "base_sink-inl.h"
 #endif

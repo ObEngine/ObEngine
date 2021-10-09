@@ -26,7 +26,7 @@
 
 
 #if !defined(luai_verifycode)
-#define luai_verifycode(L,b,f)  /* empty */
+#define luai_verifycode(L,f)  /* empty */
 #endif
 
 
@@ -105,30 +105,36 @@ static lua_Integer loadInteger (LoadState *S) {
 
 
 /*
-** Load a nullable string.
+** Load a nullable string into prototype 'p'.
 */
-static TString *loadStringN (LoadState *S) {
+static TString *loadStringN (LoadState *S, Proto *p) {
+  lua_State *L = S->L;
+  TString *ts;
   size_t size = loadSize(S);
-  if (size == 0)
+  if (size == 0)  /* no string? */
     return NULL;
   else if (--size <= LUAI_MAXSHORTLEN) {  /* short string? */
     char buff[LUAI_MAXSHORTLEN];
-    loadVector(S, buff, size);
-    return luaS_newlstr(S->L, buff, size);
+    loadVector(S, buff, size);  /* load string into buffer */
+    ts = luaS_newlstr(L, buff, size);  /* create string */
   }
   else {  /* long string */
-    TString *ts = luaS_createlngstrobj(S->L, size);
+    ts = luaS_createlngstrobj(L, size);  /* create string */
+    setsvalue2s(L, L->top, ts);  /* anchor it ('loadVector' can GC) */
+    luaD_inctop(L);
     loadVector(S, getstr(ts), size);  /* load directly in final place */
-    return ts;
+    L->top--;  /* pop string */
   }
+  luaC_objbarrier(L, p, ts);
+  return ts;
 }
 
 
 /*
-** Load a non-nullable string.
+** Load a non-nullable string into prototype 'p'.
 */
-static TString *loadString (LoadState *S) {
-  TString *st = loadStringN(S);
+static TString *loadString (LoadState *S, Proto *p) {
+  TString *st = loadStringN(S, p);
   if (st == NULL)
     error(S, "bad format for constant string");
   return st;
@@ -174,7 +180,7 @@ static void loadConstants (LoadState *S, Proto *f) {
         break;
       case LUA_VSHRSTR:
       case LUA_VLNGSTR:
-        setsvalue2n(S->L, o, loadString(S));
+        setsvalue2n(S->L, o, loadString(S, f));
         break;
       default: lua_assert(0);
     }
@@ -191,18 +197,26 @@ static void loadProtos (LoadState *S, Proto *f) {
     f->p[i] = NULL;
   for (i = 0; i < n; i++) {
     f->p[i] = luaF_newproto(S->L);
+    luaC_objbarrier(S->L, f, f->p[i]);
     loadFunction(S, f->p[i], f->source);
   }
 }
 
 
+/*
+** Load the upvalues for a function. The names must be filled first,
+** because the filling of the other fields can raise read errors and
+** the creation of the error message can call an emergency collection;
+** in that case all prototypes must be consistent for the GC.
+*/
 static void loadUpvalues (LoadState *S, Proto *f) {
   int i, n;
   n = loadInt(S);
   f->upvalues = luaM_newvectorchecked(S->L, n, Upvaldesc);
   f->sizeupvalues = n;
-  for (i = 0; i < n; i++) {
+  for (i = 0; i < n; i++)  /* make array valid for GC */
     f->upvalues[i].name = NULL;
+  for (i = 0; i < n; i++) {  /* following calls can raise errors */
     f->upvalues[i].instack = loadByte(S);
     f->upvalues[i].idx = loadByte(S);
     f->upvalues[i].kind = loadByte(S);
@@ -229,18 +243,18 @@ static void loadDebug (LoadState *S, Proto *f) {
   for (i = 0; i < n; i++)
     f->locvars[i].varname = NULL;
   for (i = 0; i < n; i++) {
-    f->locvars[i].varname = loadStringN(S);
+    f->locvars[i].varname = loadStringN(S, f);
     f->locvars[i].startpc = loadInt(S);
     f->locvars[i].endpc = loadInt(S);
   }
   n = loadInt(S);
   for (i = 0; i < n; i++)
-    f->upvalues[i].name = loadStringN(S);
+    f->upvalues[i].name = loadStringN(S, f);
 }
 
 
 static void loadFunction (LoadState *S, Proto *f, TString *psource) {
-  f->source = loadStringN(S);
+  f->source = loadStringN(S, f);
   if (f->source == NULL)  /* no source in dump? */
     f->source = psource;  /* reuse parent's source */
   f->linedefined = loadInt(S);
@@ -276,7 +290,7 @@ static void fchecksize (LoadState *S, size_t size, const char *tname) {
 static void checkHeader (LoadState *S) {
   /* skip 1st char (already read and checked) */
   checkliteral(S, &LUA_SIGNATURE[1], "not a binary chunk");
-  if (loadInt(S) != LUAC_VERSION)
+  if (loadByte(S) != LUAC_VERSION)
     error(S, "version mismatch");
   if (loadByte(S) != LUAC_FORMAT)
     error(S, "format mismatch");
@@ -310,9 +324,10 @@ LClosure *luaU_undump(lua_State *L, ZIO *Z, const char *name) {
   setclLvalue2s(L, L->top, cl);
   luaD_inctop(L);
   cl->p = luaF_newproto(L);
+  luaC_objbarrier(L, cl, cl->p);
   loadFunction(&S, cl->p, NULL);
   lua_assert(cl->nupvalues == cl->p->sizeupvalues);
-  luai_verifycode(L, buff, cl->p);
+  luai_verifycode(L, cl->p);
   return cl;
 }
 

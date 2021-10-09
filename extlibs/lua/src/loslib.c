@@ -10,6 +10,7 @@
 #include "lprefix.h"
 
 
+#include <errno.h>
 #include <locale.h>
 #include <stdlib.h>
 #include <string.h>
@@ -91,7 +92,7 @@
 
 /* ISO C definitions */
 #define l_gmtime(t,r)		((void)(r)->tm_sec, gmtime(t))
-#define l_localtime(t,r)  	((void)(r)->tm_sec, localtime(t))
+#define l_localtime(t,r)	((void)(r)->tm_sec, localtime(t))
 
 #endif				/* } */
 
@@ -138,10 +139,11 @@
 
 
 
-
 static int os_execute (lua_State *L) {
   const char *cmd = luaL_optstring(L, 1, NULL);
-  int stat = system(cmd);
+  int stat;
+  errno = 0;
+  stat = system(cmd);
   if (cmd != NULL)
     return luaL_execresult(L, stat);
   else {
@@ -168,7 +170,7 @@ static int os_tmpname (lua_State *L) {
   char buff[LUA_TMPNAMBUFSIZE];
   int err;
   lua_tmpnam(buff, err);
-  if (err)
+  if (l_unlikely(err))
     return luaL_error(L, "unable to generate a unique filename");
   lua_pushstring(L, buff);
   return 1;
@@ -206,7 +208,7 @@ static int os_clock (lua_State *L) {
 */
 static void setfield (lua_State *L, const char *key, int value, int delta) {
   #if (defined(LUA_NUMTIME) && LUA_MAXINTEGER <= INT_MAX)
-    if (value > LUA_MAXINTEGER - delta)
+    if (l_unlikely(value > LUA_MAXINTEGER - delta))
       luaL_error(L, "field '%s' is out-of-bound", key);
   #endif
   lua_pushinteger(L, (lua_Integer)value + delta);
@@ -251,9 +253,9 @@ static int getfield (lua_State *L, const char *key, int d, int delta) {
   int t = lua_getfield(L, -1, key);  /* get field and its type */
   lua_Integer res = lua_tointegerx(L, -1, &isnum);
   if (!isnum) {  /* field is not an integer? */
-    if (t != LUA_TNIL)  /* some other value? */
+    if (l_unlikely(t != LUA_TNIL))  /* some other value? */
       return luaL_error(L, "field '%s' is not an integer", key);
-    else if (d < 0)  /* absent field; no default? */
+    else if (l_unlikely(d < 0))  /* absent field; no default? */
       return luaL_error(L, "field '%s' missing in date table", key);
     res = d;
   }

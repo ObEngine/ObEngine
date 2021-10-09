@@ -37,6 +37,26 @@ static lua_State *globalL = NULL;
 static const char *progname = LUA_PROGNAME;
 
 
+#if defined(LUA_USE_POSIX)   /* { */
+
+/*
+** Use 'sigaction' when available.
+*/
+static void setsignal (int sig, void (*handler)(int)) {
+  struct sigaction sa;
+  sa.sa_handler = handler;
+  sa.sa_flags = 0;
+  sigemptyset(&sa.sa_mask);  /* do not mask any signal */
+  sigaction(sig, &sa, NULL);
+}
+
+#else           /* }{ */
+
+#define setsignal            signal
+
+#endif                               /* } */
+
+
 /*
 ** Hook set by signal function to stop the interpreter.
 */
@@ -54,8 +74,9 @@ static void lstop (lua_State *L, lua_Debug *ar) {
 ** interpreter.
 */
 static void laction (int i) {
-  signal(i, SIG_DFL); /* if another SIGINT happens, terminate process */
-  lua_sethook(globalL, lstop, LUA_MASKCALL | LUA_MASKRET | LUA_MASKCOUNT, 1);
+  int flag = LUA_MASKCALL | LUA_MASKRET | LUA_MASKLINE | LUA_MASKCOUNT;
+  setsignal(i, SIG_DFL); /* if another SIGINT happens, terminate process */
+  lua_sethook(globalL, lstop, flag, 1);
 }
 
 
@@ -134,9 +155,9 @@ static int docall (lua_State *L, int narg, int nres) {
   lua_pushcfunction(L, msghandler);  /* push message handler */
   lua_insert(L, base);  /* put it under function and args */
   globalL = L;  /* to be available to 'laction' */
-  signal(SIGINT, laction);  /* set C-signal handler */
+  setsignal(SIGINT, laction);  /* set C-signal handler */
   status = lua_pcall(L, narg, nres, base);
-  signal(SIGINT, SIG_DFL); /* reset C-signal handler */
+  setsignal(SIGINT, SIG_DFL); /* reset C-signal handler */
   lua_remove(L, base);  /* remove message handler from the stack */
   return status;
 }
@@ -415,14 +436,18 @@ static int handle_luainit (lua_State *L) {
 
 
 /*
-** Returns the string to be used as a prompt by the interpreter.
+** Return the string to be used as a prompt by the interpreter. Leave
+** the string (or nil, if using the default value) on the stack, to keep
+** it anchored.
 */
 static const char *get_prompt (lua_State *L, int firstline) {
-  const char *p;
-  lua_getglobal(L, firstline ? "_PROMPT" : "_PROMPT2");
-  p = lua_tostring(L, -1);
-  if (p == NULL) p = (firstline ? LUA_PROMPT : LUA_PROMPT2);
-  return p;
+  if (lua_getglobal(L, firstline ? "_PROMPT" : "_PROMPT2") == LUA_TNIL)
+    return (firstline ? LUA_PROMPT : LUA_PROMPT2);  /* use the default */
+  else {  /* apply 'tostring' over the value */
+    const char *p = luaL_tolstring(L, -1, NULL);
+    lua_remove(L, -2);  /* remove original value */
+    return p;
+  }
 }
 
 /* mark in error messages for incomplete statements */

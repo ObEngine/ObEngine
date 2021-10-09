@@ -19,7 +19,11 @@
 #define MEMERRMSG       "not enough memory"
 
 
-#define sizelstring(l)  (sizeof(TString) + ((l) + 1) * sizeof(char))
+/*
+** Size of a TString: Size of the header plus space for the string
+** itself (including final '\0').
+*/
+#define sizelstring(l)  (offsetof(TString, contents) + ((l) + 1) * sizeof(char))
 
 #define luaS_newliteral(L, s)	(luaS_newlstr(L, "" s, \
                                  (sizeof(s)/sizeof(char))-1))
@@ -37,8 +41,7 @@
 #define eqshrstr(a,b)	check_exp((a)->tt == LUA_VSHRSTR, (a) == (b))
 
 
-LUAI_FUNC unsigned int luaS_hash (const char *str, size_t l,
-                                  unsigned int seed, size_t step);
+LUAI_FUNC unsigned int luaS_hash (const char *str, size_t l, unsigned int seed);
 LUAI_FUNC unsigned int luaS_hashlongstr (TString *ts);
 LUAI_FUNC int luaS_eqlngstr (TString *a, TString *b);
 LUAI_FUNC void luaS_resize (lua_State *L, int newsize);
