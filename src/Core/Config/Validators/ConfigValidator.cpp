@@ -234,6 +234,35 @@ namespace obe::Config::Validators
                         }
                     }
                 }
+            },
+            {
+                "Script", vili::object {
+                    {"type", vili::object_typename},
+                    {
+                        "properties", vili::object {
+                            {
+                                "Lua", vili::object {
+                                    {"type", vili::object_typename},
+                                    {
+                                        "properties", vili::object {
+                                            {
+                                                "patchIO", vili::object {
+                                                    {"type", vili::boolean_typename},
+                                                }
+                                            },
+                                            {
+                                                "garbageCollector", vili::object {
+                                                    {"type", vili::string_typename},
+                                                    {"values", vili::array {"stop", "incremental", "generational"}},
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         };
         // clang-format on

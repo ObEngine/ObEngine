@@ -44,7 +44,7 @@ namespace obe::Engine
 
     void Engine::initScript()
     {
-        m_lua = std::make_unique<sol::state>();
+        m_lua = std::make_unique<Script::LuaState>();
         m_lua->open_libraries(sol::lib::base, sol::lib::string, sol::lib::table, sol::lib::package,
             sol::lib::os, sol::lib::coroutine, sol::lib::math, sol::lib::count, sol::lib::debug,
             sol::lib::io, sol::lib::bit32);
@@ -54,6 +54,9 @@ namespace obe::Engine
         m_lua->safe_script_file("obe://Lib/Internal/Events.lua"_fs);
 
         Bindings::IndexAllBindings(*m_lua);
+
+        m_lua->loadConfig(m_config.at("Script").at("Lua"));
+
         m_lua->safe_script_file("obe://Lib/Internal/Helpers.lua"_fs);
         m_lua->safe_script_file("obe://Lib/Internal/GameInit.lua"_fs);
         m_lua->safe_script_file("obe://Lib/Internal/Logger.lua"_fs);

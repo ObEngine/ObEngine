@@ -1,9 +1,3 @@
-__PATCH_LUA_FUNCTIONS = true;
-
-if not __PATCH_LUA_FUNCTIONS then
-    return;
-end
-
 local function realpath(path)
     return obe.System.Path(path):find():hypotheticalPath();
 end

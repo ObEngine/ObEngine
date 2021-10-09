@@ -27,3 +27,8 @@ Window:
 Debug:
     Logging:
         level: debug
+
+Script:
+    Lua:
+        patchIO: true
+        garbageCollector: "generational"

@@ -6,11 +6,11 @@
 #include <Event/EventManager.hpp>
 #include <Input/InputManager.hpp>
 #include <Scene/Scene.hpp>
+#include <Script/LuaState.hpp>
 #include <System/Cursor.hpp>
 #include <System/Plugin.hpp>
 #include <System/Window.hpp>
 #include <Time/FramerateManager.hpp>
-#include <sol/sol.hpp>
 
 namespace obe::Bindings
 {
@@ -49,7 +49,7 @@ namespace obe::Engine
     protected:
         bool m_initialized = false;
         std::vector<std::unique_ptr<System::Plugin>> m_plugins;
-        std::unique_ptr<sol::state> m_lua;
+        std::unique_ptr<Script::LuaState> m_lua;
         std::unique_ptr<Scene::Scene> m_scene;
         std::unique_ptr<System::Cursor> m_cursor;
         std::unique_ptr<System::Window> m_window;
