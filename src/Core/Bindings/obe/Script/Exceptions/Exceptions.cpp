@@ -6,6 +6,17 @@
 
 namespace obe::Script::Exceptions::Bindings
 {
+    void LoadClassGameObjectScriptError(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Script::Exceptions::GameObjectScriptError> bindGameObjectScriptError
+            = ExceptionsNamespace.new_usertype<obe::Script::Exceptions::GameObjectScriptError>(
+                "GameObjectScriptError", sol::call_constructor,
+                sol::constructors<obe::Script::Exceptions::GameObjectScriptError(
+                    std::string_view, std::string_view, std::string_view, obe::DebugInfo)>(),
+                sol::base_classes,
+                sol::bases<obe::Exception<GameObjectScriptError>, obe::BaseException>());
+    }
     void LoadClassInvalidScript(sol::state_view state)
     {
         sol::table ExceptionsNamespace = state["obe"]["Script"]["Exceptions"].get<sol::table>();
@@ -14,7 +25,18 @@ namespace obe::Script::Exceptions::Bindings
                 "InvalidScript", sol::call_constructor,
                 sol::constructors<obe::Script::Exceptions::InvalidScript(
                     std::string_view, std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes, sol::bases<obe::Exception<InvalidScript>, obe::BaseException>());
+    }
+    void LoadClassLuaExecutionError(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Script::Exceptions::LuaExecutionError> bindLuaExecutionError
+            = ExceptionsNamespace.new_usertype<obe::Script::Exceptions::LuaExecutionError>(
+                "LuaExecutionError", sol::call_constructor,
+                sol::constructors<obe::Script::Exceptions::LuaExecutionError(
+                    std::string_view, obe::DebugInfo)>(),
+                sol::base_classes,
+                sol::bases<obe::Exception<LuaExecutionError>, obe::BaseException>());
     }
     void LoadClassNoSuchComponent(sol::state_view state)
     {
@@ -24,7 +46,8 @@ namespace obe::Script::Exceptions::Bindings
                 "NoSuchComponent", sol::call_constructor,
                 sol::constructors<obe::Script::Exceptions::NoSuchComponent(
                     std::string_view, std::string_view, std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<NoSuchComponent>, obe::BaseException>());
     }
     void LoadClassObjectDefinitionNotFound(sol::state_view state)
     {
@@ -35,7 +58,8 @@ namespace obe::Script::Exceptions::Bindings
                 "ObjectDefinitionNotFound", sol::call_constructor,
                 sol::constructors<obe::Script::Exceptions::ObjectDefinitionNotFound(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<ObjectDefinitionNotFound>, obe::BaseException>());
     }
     void LoadClassScriptFileNotFound(sol::state_view state)
     {
@@ -45,7 +69,8 @@ namespace obe::Script::Exceptions::Bindings
                 "ScriptFileNotFound", sol::call_constructor,
                 sol::constructors<obe::Script::Exceptions::ScriptFileNotFound(
                     std::string_view, std::string_view, std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<ScriptFileNotFound>, obe::BaseException>());
     }
     void LoadClassWrongSourceAttributeType(sol::state_view state)
     {
@@ -57,6 +82,7 @@ namespace obe::Script::Exceptions::Bindings
                 sol::constructors<obe::Script::Exceptions::WrongSourceAttributeType(
                     std::string_view, std::string_view, std::string_view, std::string_view,
                     obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<WrongSourceAttributeType>, obe::BaseException>());
     }
 };

@@ -40,10 +40,6 @@ namespace obe::Graphics::Shapes::Bindings
         bindCircle["rotate"] = &obe::Graphics::Shapes::Circle::rotate;
         bindCircle["scale"] = &obe::Graphics::Shapes::Circle::scale;
         bindCircle["draw"] = &obe::Graphics::Shapes::Circle::draw;
-        bindCircle["operator sf::CircleShape &"]
-            = &obe::Graphics::Shapes::Circle::operator sf::CircleShape&;
-        bindCircle["operator const sf::CircleShape &"]
-            = &obe::Graphics::Shapes::Circle::operator const sf::CircleShape&;
         bindCircle["setRadius"] = &obe::Graphics::Shapes::Circle::setRadius;
         bindCircle["getRadius"] = &obe::Graphics::Shapes::Circle::getRadius;
         bindCircle["shape"] = &obe::Graphics::Shapes::Circle::shape;
@@ -82,10 +78,6 @@ namespace obe::Graphics::Shapes::Bindings
         bindPolygon["rotate"] = &obe::Graphics::Shapes::Polygon::rotate;
         bindPolygon["scale"] = &obe::Graphics::Shapes::Polygon::scale;
         bindPolygon["draw"] = &obe::Graphics::Shapes::Polygon::draw;
-        bindPolygon["operator sf::ConvexShape &"]
-            = &obe::Graphics::Shapes::Polygon::operator sf::ConvexShape&;
-        bindPolygon["operator const sf::ConvexShape &"]
-            = &obe::Graphics::Shapes::Polygon::operator const sf::ConvexShape&;
         bindPolygon["setPointPosition"] = &obe::Graphics::Shapes::Polygon::setPointPosition;
         bindPolygon["getPointPosition"] = &obe::Graphics::Shapes::Polygon::getPointPosition;
         bindPolygon["shape"] = &obe::Graphics::Shapes::Polygon::shape;
@@ -128,10 +120,6 @@ namespace obe::Graphics::Shapes::Bindings
         bindRectangle["draw"] = &obe::Graphics::Shapes::Rectangle::draw;
         bindRectangle["getSize"] = &obe::Graphics::Shapes::Rectangle::getSize;
         bindRectangle["setSize"] = &obe::Graphics::Shapes::Rectangle::setSize;
-        bindRectangle["operator sf::RectangleShape &"]
-            = &obe::Graphics::Shapes::Rectangle::operator sf::RectangleShape&;
-        bindRectangle["operator const sf::RectangleShape &"]
-            = &obe::Graphics::Shapes::Rectangle::operator const sf::RectangleShape&;
         bindRectangle["shape"] = &obe::Graphics::Shapes::Rectangle::shape;
     }
     void LoadClassText(sol::state_view state)
@@ -158,9 +146,6 @@ namespace obe::Graphics::Shapes::Bindings
         bindText["rotate"] = &obe::Graphics::Shapes::Text::rotate;
         bindText["scale"] = &obe::Graphics::Shapes::Text::scale;
         bindText["draw"] = &obe::Graphics::Shapes::Text::draw;
-        bindText["operator RichText &"] = &obe::Graphics::Shapes::Text::operator RichText&;
-        bindText["operator const RichText &"]
-            = &obe::Graphics::Shapes::Text::operator const RichText&;
         bindText["clear"] = &obe::Graphics::Shapes::Text::clear;
         bindText["append"] = &obe::Graphics::Shapes::Text::append;
         bindText["getFont"] = &obe::Graphics::Shapes::Text::getFont;

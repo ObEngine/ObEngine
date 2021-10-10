@@ -16,7 +16,8 @@ namespace obe::Graphics::Exceptions::Bindings
                       "CanvasElementAlreadyExists", sol::call_constructor,
                       sol::constructors<obe::Graphics::Exceptions::CanvasElementAlreadyExists(
                           std::string_view, std::string_view, std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::BaseException>());
+                      sol::base_classes,
+                      sol::bases<obe::Exception<CanvasElementAlreadyExists>, obe::BaseException>());
     }
     void LoadClassImageFileNotFound(sol::state_view state)
     {
@@ -26,7 +27,8 @@ namespace obe::Graphics::Exceptions::Bindings
                 "ImageFileNotFound", sol::call_constructor,
                 sol::constructors<obe::Graphics::Exceptions::ImageFileNotFound(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<ImageFileNotFound>, obe::BaseException>());
     }
     void LoadClassInvalidColorName(sol::state_view state)
     {
@@ -36,7 +38,8 @@ namespace obe::Graphics::Exceptions::Bindings
                 "InvalidColorName", sol::call_constructor,
                 sol::constructors<obe::Graphics::Exceptions::InvalidColorName(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<InvalidColorName>, obe::BaseException>());
     }
     void LoadClassInvalidHexFormat(sol::state_view state)
     {
@@ -46,7 +49,8 @@ namespace obe::Graphics::Exceptions::Bindings
                 "InvalidHexFormat", sol::call_constructor,
                 sol::constructors<obe::Graphics::Exceptions::InvalidHexFormat(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<InvalidHexFormat>, obe::BaseException>());
     }
     void LoadClassInvalidHsvFormat(sol::state_view state)
     {
@@ -56,7 +60,8 @@ namespace obe::Graphics::Exceptions::Bindings
                 "InvalidHsvFormat", sol::call_constructor,
                 sol::constructors<obe::Graphics::Exceptions::InvalidHsvFormat(
                     const int, const double, const double, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<InvalidHsvFormat>, obe::BaseException>());
     }
     void LoadClassInvalidRgbFormat(sol::state_view state)
     {
@@ -66,7 +71,8 @@ namespace obe::Graphics::Exceptions::Bindings
                 "InvalidRgbFormat", sol::call_constructor,
                 sol::constructors<obe::Graphics::Exceptions::InvalidRgbFormat(
                     const double, const double, const double, const double, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<InvalidRgbFormat>, obe::BaseException>());
     }
     void LoadClassInvalidSpriteColorType(sol::state_view state)
     {
@@ -76,7 +82,8 @@ namespace obe::Graphics::Exceptions::Bindings
                 "InvalidSpriteColorType", sol::call_constructor,
                 sol::constructors<obe::Graphics::Exceptions::InvalidSpriteColorType(
                     std::string_view, std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<InvalidSpriteColorType>, obe::BaseException>());
     }
     void LoadClassReadOnlyTexture(sol::state_view state)
     {
@@ -86,6 +93,7 @@ namespace obe::Graphics::Exceptions::Bindings
                 "ReadOnlyTexture", sol::call_constructor,
                 sol::constructors<obe::Graphics::Exceptions::ReadOnlyTexture(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<ReadOnlyTexture>, obe::BaseException>());
     }
 };

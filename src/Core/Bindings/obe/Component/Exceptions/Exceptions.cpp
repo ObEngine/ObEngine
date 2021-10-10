@@ -15,6 +15,7 @@ namespace obe::Component::Exceptions::Bindings
                 "ComponentIdAlreadyTaken", sol::call_constructor,
                 sol::constructors<obe::Component::Exceptions::ComponentIdAlreadyTaken(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<ComponentIdAlreadyTaken>, obe::BaseException>());
     }
 };

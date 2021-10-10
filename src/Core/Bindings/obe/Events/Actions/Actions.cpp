@@ -13,9 +13,9 @@ namespace obe::Events::Actions::Bindings
             = ActionsNamespace.new_usertype<obe::Events::Actions::Action>("Action");
         bindAction["action"] = sol::property(
             [](obe::Events::Actions::Action* self) -> Input::InputAction& { return self->action; });
-        bindAction["condition"] = sol::property(
-            [](obe::Events::Actions::Action* self) -> Input::InputCondition& {
-                return self->condition;
-            });
+        bindAction["condition"]
+            = sol::property([](obe::Events::Actions::Action* self) -> Input::InputCondition& {
+                  return self->condition;
+              });
     }
 };

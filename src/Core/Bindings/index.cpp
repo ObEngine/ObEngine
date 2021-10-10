@@ -6,15 +6,16 @@
 #include <Bindings/obe/Animation/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Audio/Audio.hpp>
 #include <Bindings/obe/Audio/Exceptions/Exceptions.hpp>
-#include <Bindings/obe/Bindings/Bindings.hpp>
-#include <Bindings/obe/Bindings/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Collision/Collision.hpp>
 #include <Bindings/obe/Collision/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Component/Component.hpp>
 #include <Bindings/obe/Component/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Config/Config.hpp>
+#include <Bindings/obe/Config/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Config/Templates/Templates.hpp>
+#include <Bindings/obe/Config/Validators/Validators.hpp>
 #include <Bindings/obe/Debug/Debug.hpp>
+#include <Bindings/obe/Debug/Render/Render.hpp>
 #include <Bindings/obe/Engine/Engine.hpp>
 #include <Bindings/obe/Engine/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Event/Event.hpp>
@@ -41,6 +42,9 @@
 #include <Bindings/obe/System/Constraints/Constraints.hpp>
 #include <Bindings/obe/System/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/System/Package/Package.hpp>
+#include <Bindings/obe/System/Prefixes/Prefixes.hpp>
+#include <Bindings/obe/System/Priorities/Priorities.hpp>
+#include <Bindings/obe/System/Project/Prefixes/Prefixes.hpp>
 #include <Bindings/obe/System/Project/Project.hpp>
 #include <Bindings/obe/System/System.hpp>
 #include <Bindings/obe/Tiles/Exceptions/Exceptions.hpp>
@@ -61,18 +65,12 @@
 #include <Bindings/vili/utils/string/string.hpp>
 #include <Bindings/vili/vili.hpp>
 #include <Bindings/vili/writer/writer.hpp>
+#include <sol/sol.hpp>
 namespace obe::Bindings
 {
-    void IndexAllBindings(sol::state_view state)
+    void IndexCoreBindings(sol::state_view state)
     {
         state["obe"].get_or_create<sol::table>();
-        state["obe"]["System"].get_or_create<sol::table>();
-
-        obe::System::Bindings::LoadClassMountablePath(state);
-        obe::System::Bindings::LoadClassFindResult(state);
-        obe::System::Bindings::LoadClassPath(state);
-
-        state["vili"].get_or_create<sol::table>();
         state["obe"]["Animation"].get_or_create<sol::table>();
         state["obe"]["Audio"].get_or_create<sol::table>();
         state["obe"]["Collision"].get_or_create<sol::table>();
@@ -85,23 +83,21 @@ namespace obe::Bindings
         state["obe"]["Network"].get_or_create<sol::table>();
         state["obe"]["Scene"].get_or_create<sol::table>();
         state["obe"]["Script"].get_or_create<sol::table>();
+        state["obe"]["System"].get_or_create<sol::table>();
         state["obe"]["Tiles"].get_or_create<sol::table>();
         state["obe"]["Time"].get_or_create<sol::table>();
         state["obe"]["Transform"].get_or_create<sol::table>();
         state["obe"]["Types"].get_or_create<sol::table>();
-        state["vili"]["exceptions"].get_or_create<sol::table>();
-        state["vili"]["parser"].get_or_create<sol::table>();
-        state["vili"]["writer"].get_or_create<sol::table>();
         state["obe"]["Bindings"].get_or_create<sol::table>();
         state["obe"]["Debug"].get_or_create<sol::table>();
         state["obe"]["Utils"].get_or_create<sol::table>();
         state["obe"]["Events"].get_or_create<sol::table>();
-        state["vili"]["utils"].get_or_create<sol::table>();
         state["obe"]["Animation"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Audio"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Bindings"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Collision"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Component"]["Exceptions"].get_or_create<sol::table>();
+        state["obe"]["Config"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Engine"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Event"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Graphics"]["Canvas"].get_or_create<sol::table>();
@@ -111,6 +107,7 @@ namespace obe::Bindings
         state["obe"]["Scene"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Script"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["System"]["Exceptions"].get_or_create<sol::table>();
+        state["obe"]["System"]["Project"].get_or_create<sol::table>();
         state["obe"]["Tiles"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Transform"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Utils"]["Exec"].get_or_create<sol::table>();
@@ -120,31 +117,39 @@ namespace obe::Bindings
         state["obe"]["Events"]["Keys"].get_or_create<sol::table>();
         state["obe"]["Events"]["Network"].get_or_create<sol::table>();
         state["obe"]["Events"]["Scene"].get_or_create<sol::table>();
-        state["vili"]["parser"]["rules"].get_or_create<sol::table>();
+        state["obe"]["Graphics"]["Utils"].get_or_create<sol::table>();
         state["obe"]["Animation"]["Easing"].get_or_create<sol::table>();
         state["obe"]["Config"]["Templates"].get_or_create<sol::table>();
-        state["obe"]["Graphics"]["Utils"].get_or_create<sol::table>();
+        state["obe"]["Config"]["Validators"].get_or_create<sol::table>();
+        state["obe"]["Debug"]["Render"].get_or_create<sol::table>();
         state["obe"]["Script"]["ViliLuaBridge"].get_or_create<sol::table>();
         state["obe"]["System"]["Package"].get_or_create<sol::table>();
-        state["obe"]["System"]["Project"].get_or_create<sol::table>();
         state["obe"]["Utils"]["File"].get_or_create<sol::table>();
         state["obe"]["Utils"]["Math"].get_or_create<sol::table>();
         state["obe"]["Utils"]["String"].get_or_create<sol::table>();
         state["obe"]["Utils"]["Vector"].get_or_create<sol::table>();
-        state["vili"]["utils"]["string"].get_or_create<sol::table>();
         state["obe"]["System"]["Constraints"].get_or_create<sol::table>();
+        state["obe"]["System"]["Prefixes"].get_or_create<sol::table>();
+        state["obe"]["System"]["Priorities"].get_or_create<sol::table>();
+        state["obe"]["System"]["Project"]["Prefixes"].get_or_create<sol::table>();
+
+        obe::System::Bindings::LoadClassMountablePath(state);
+        obe::System::Bindings::LoadClassFindResult(state);
+        obe::System::Bindings::LoadClassPath(state);
         obe::Animation::Bindings::LoadClassAnimation(state);
         obe::Animation::Bindings::LoadClassAnimationGroup(state);
+        obe::Animation::Bindings::LoadClassAnimationState(state);
         obe::Animation::Bindings::LoadClassAnimator(state);
+        obe::Animation::Bindings::LoadClassAnimatorState(state);
         obe::Animation::Bindings::LoadClassValueTweening(state);
         obe::Animation::Bindings::LoadEnumAnimationPlayMode(state);
         obe::Animation::Bindings::LoadEnumAnimationStatus(state);
         obe::Animation::Bindings::LoadEnumAnimatorTargetScaleMode(state);
         obe::Animation::Bindings::LoadFunctionStringToAnimationPlayMode(state);
         obe::Animation::Bindings::LoadFunctionStringToAnimatorTargetScaleMode(state);
-
         obe::Animation::Exceptions::Bindings::LoadClassAnimationGroupTextureIndexOverflow(state);
         obe::Animation::Exceptions::Bindings::LoadClassAnimationTextureIndexOverflow(state);
+        obe::Animation::Exceptions::Bindings::LoadClassInvalidAnimationFile(state);
         obe::Animation::Exceptions::Bindings::LoadClassNoSelectedAnimation(state);
         obe::Animation::Exceptions::Bindings::LoadClassNoSelectedAnimationGroup(state);
         obe::Animation::Exceptions::Bindings::LoadClassUnknownAnimation(state);
@@ -154,46 +159,36 @@ namespace obe::Bindings
         obe::Animation::Exceptions::Bindings::LoadClassUnknownEasingFromEnum(state);
         obe::Animation::Exceptions::Bindings::LoadClassUnknownEasingFromString(state);
         obe::Animation::Exceptions::Bindings::LoadClassUnknownTargetScaleMode(state);
-
         obe::Audio::Bindings::LoadClassAudioManager(state);
         obe::Audio::Bindings::LoadClassSound(state);
         obe::Audio::Bindings::LoadEnumLoadPolicy(state);
         obe::Audio::Bindings::LoadEnumSoundStatus(state);
-
         obe::Audio::Exceptions::Bindings::LoadClassAudioFileNotFound(state);
-
-        obe::Bindings::Exceptions::Bindings::LoadClassBindingTreeNodeNotFound(state);
-
+        obe::Bindings::LoadClassBaseException(state);
+        obe::Bindings::LoadClassDebugInfo(state);
+        obe::Bindings::LoadFunctionGetTypeName(state);
+        obe::Bindings::LoadFunctionInitEngine(state);
         obe::Collision::Bindings::LoadClassCollisionData(state);
         obe::Collision::Bindings::LoadClassPolygonalCollider(state);
         obe::Collision::Bindings::LoadClassTrajectory(state);
         obe::Collision::Bindings::LoadClassTrajectoryNode(state);
         obe::Collision::Bindings::LoadEnumColliderTagType(state);
-
         obe::Collision::Exceptions::Bindings::LoadClassInvalidTagFormat(state);
-
         obe::Component::Bindings::LoadClassComponentBase(state);
-
         obe::Component::Exceptions::Bindings::LoadClassComponentIdAlreadyTaken(state);
-
         obe::Config::Bindings::LoadClassConfigurationManager(state);
-        obe::Config::Bindings::LoadFunctionConfigValidator(state);
-
-        obe::Bindings::LoadClassDebugInfo(state);
-        obe::Bindings::LoadClassException(state);
-        obe::Bindings::LoadFunctionInitEngine(state);
-
+        obe::Config::Bindings::LoadClassVersion(state);
+        obe::Config::Exceptions::Bindings::LoadClassConfigError(state);
+        obe::Config::Exceptions::Bindings::LoadClassInvalidVersionFormat(state);
         obe::Engine::Bindings::LoadClassEngine(state);
         obe::Engine::Bindings::LoadClassResourceManagedObject(state);
         obe::Engine::Bindings::LoadClassResourceManager(state);
-
         obe::Engine::Exceptions::Bindings::LoadClassBootScriptExecutionError(state);
         obe::Engine::Exceptions::Bindings::LoadClassBootScriptLoadingError(state);
         obe::Engine::Exceptions::Bindings::LoadClassBootScriptMissing(state);
         obe::Engine::Exceptions::Bindings::LoadClassFontNotFound(state);
         obe::Engine::Exceptions::Bindings::LoadClassTextureNotFound(state);
         obe::Engine::Exceptions::Bindings::LoadClassUnitializedEngine(state);
-
         obe::Event::Bindings::LoadClassCallbackProfiler(state);
         obe::Event::Bindings::LoadClassCallbackScheduler(state);
         obe::Event::Bindings::LoadClassEventBase(state);
@@ -206,18 +201,15 @@ namespace obe::Bindings
         obe::Event::Bindings::LoadClassScopeProfiler(state);
         obe::Event::Bindings::LoadEnumCallbackSchedulerState(state);
         obe::Event::Bindings::LoadEnumListenerChangeState(state);
-
         obe::Event::Exceptions::Bindings::LoadClassCallbackCreationError(state);
         obe::Event::Exceptions::Bindings::LoadClassEventAlreadyExists(state);
         obe::Event::Exceptions::Bindings::LoadClassEventExecutionError(state);
         obe::Event::Exceptions::Bindings::LoadClassEventGroupAlreadyExists(state);
         obe::Event::Exceptions::Bindings::LoadClassEventGroupNotJoinable(state);
         obe::Event::Exceptions::Bindings::LoadClassEventNamespaceAlreadyExists(state);
-        obe::Event::Exceptions::Bindings::LoadClassLuaExecutionError(state);
         obe::Event::Exceptions::Bindings::LoadClassUnknownEvent(state);
         obe::Event::Exceptions::Bindings::LoadClassUnknownEventGroup(state);
         obe::Event::Exceptions::Bindings::LoadClassUnknownEventNamespace(state);
-
         obe::Graphics::Canvas::Bindings::LoadClassBezier(state);
         obe::Graphics::Canvas::Bindings::LoadClassCanvas(state);
         obe::Graphics::Canvas::Bindings::LoadClassCanvasElement(state);
@@ -231,12 +223,11 @@ namespace obe::Bindings
         obe::Graphics::Canvas::Bindings::LoadEnumTextHorizontalAlign(state);
         obe::Graphics::Canvas::Bindings::LoadEnumTextVerticalAlign(state);
         obe::Graphics::Canvas::Bindings::LoadFunctionCanvasElementTypeToString(state);
-
         obe::Graphics::Bindings::LoadClassColor(state);
         obe::Graphics::Bindings::LoadClassFont(state);
         obe::Graphics::Bindings::LoadClassPositionTransformer(state);
-        obe::Graphics::Bindings::LoadClassRenderable(state);
         obe::Graphics::Bindings::LoadClassRenderTarget(state);
+        obe::Graphics::Bindings::LoadClassRenderable(state);
         obe::Graphics::Bindings::LoadClassRichText(state);
         obe::Graphics::Bindings::LoadClassShader(state);
         obe::Graphics::Bindings::LoadClassSprite(state);
@@ -250,7 +241,6 @@ namespace obe::Bindings
         obe::Graphics::Bindings::LoadGlobalParallax(state);
         obe::Graphics::Bindings::LoadGlobalCamera(state);
         obe::Graphics::Bindings::LoadGlobalPosition(state);
-
         obe::Graphics::Exceptions::Bindings::LoadClassCanvasElementAlreadyExists(state);
         obe::Graphics::Exceptions::Bindings::LoadClassImageFileNotFound(state);
         obe::Graphics::Exceptions::Bindings::LoadClassInvalidColorName(state);
@@ -259,20 +249,18 @@ namespace obe::Bindings
         obe::Graphics::Exceptions::Bindings::LoadClassInvalidRgbFormat(state);
         obe::Graphics::Exceptions::Bindings::LoadClassInvalidSpriteColorType(state);
         obe::Graphics::Exceptions::Bindings::LoadClassReadOnlyTexture(state);
-
         obe::Graphics::Shapes::Bindings::LoadClassCircle(state);
         obe::Graphics::Shapes::Bindings::LoadClassPolygon(state);
         obe::Graphics::Shapes::Bindings::LoadClassRectangle(state);
         obe::Graphics::Shapes::Bindings::LoadClassText(state);
-
         obe::Input::Exceptions::Bindings::LoadClassInputButtonAlreadyInCombination(state);
         obe::Input::Exceptions::Bindings::LoadClassInputButtonInvalidOperation(state);
+        obe::Input::Exceptions::Bindings::LoadClassInvalidGamepadButton(state);
         obe::Input::Exceptions::Bindings::LoadClassInvalidInputButtonState(state);
         obe::Input::Exceptions::Bindings::LoadClassInvalidInputCombinationCode(state);
         obe::Input::Exceptions::Bindings::LoadClassInvalidInputTypeEnumValue(state);
         obe::Input::Exceptions::Bindings::LoadClassUnknownInputAction(state);
         obe::Input::Exceptions::Bindings::LoadClassUnknownInputButton(state);
-
         obe::Input::Bindings::LoadClassInputAction(state);
         obe::Input::Bindings::LoadClassInputButton(state);
         obe::Input::Bindings::LoadClassInputButtonMonitor(state);
@@ -285,19 +273,17 @@ namespace obe::Bindings
         obe::Input::Bindings::LoadFunctionInputButtonStateToString(state);
         obe::Input::Bindings::LoadFunctionStringToInputButtonState(state);
         obe::Input::Bindings::LoadFunctionInputTypeToString(state);
-
         obe::Network::Bindings::LoadClassLuaPacket(state);
         obe::Network::Bindings::LoadClassNetworkHandler(state);
         obe::Network::Bindings::LoadClassTcpServer(state);
         obe::Network::Bindings::LoadClassTcpSocket(state);
-
         obe::Scene::Bindings::LoadClassCamera(state);
         obe::Scene::Bindings::LoadClassScene(state);
         obe::Scene::Bindings::LoadClassSceneNode(state);
+        obe::Scene::Bindings::LoadClassSceneRenderOptions(state);
         obe::Scene::Bindings::LoadFunctionSceneGetGameObjectProxy(state);
         obe::Scene::Bindings::LoadFunctionSceneCreateGameObjectProxy(state);
         obe::Scene::Bindings::LoadFunctionSceneGetAllGameObjectsProxy(state);
-
         obe::Scene::Exceptions::Bindings::LoadClassChildNotInSceneNode(state);
         obe::Scene::Exceptions::Bindings::LoadClassGameObjectAlreadyExists(state);
         obe::Scene::Exceptions::Bindings::LoadClassMissingSceneFileBlock(state);
@@ -306,50 +292,62 @@ namespace obe::Bindings
         obe::Scene::Exceptions::Bindings::LoadClassUnknownCollider(state);
         obe::Scene::Exceptions::Bindings::LoadClassUnknownGameObject(state);
         obe::Scene::Exceptions::Bindings::LoadClassUnknownSprite(state);
-
+        obe::Script::Exceptions::Bindings::LoadClassGameObjectScriptError(state);
         obe::Script::Exceptions::Bindings::LoadClassInvalidScript(state);
+        obe::Script::Exceptions::Bindings::LoadClassLuaExecutionError(state);
         obe::Script::Exceptions::Bindings::LoadClassNoSuchComponent(state);
         obe::Script::Exceptions::Bindings::LoadClassObjectDefinitionNotFound(state);
         obe::Script::Exceptions::Bindings::LoadClassScriptFileNotFound(state);
         obe::Script::Exceptions::Bindings::LoadClassWrongSourceAttributeType(state);
-
         obe::Script::Bindings::LoadClassGameObject(state);
         obe::Script::Bindings::LoadClassGameObjectDatabase(state);
-
+        obe::Script::Bindings::LoadClassLuaState(state);
+        obe::Script::Bindings::LoadFunctionSafeLuaCall(state);
+        obe::System::Bindings::LoadClassContextualPathFactory(state);
         obe::System::Bindings::LoadClassCursor(state);
         obe::System::Bindings::LoadClassPlugin(state);
         obe::System::Bindings::LoadClassWindow(state);
         obe::System::Bindings::LoadEnumMountablePathType(state);
+        obe::System::Bindings::LoadEnumSamePrefixPolicy(state);
         obe::System::Bindings::LoadEnumPathType(state);
         obe::System::Bindings::LoadEnumWindowContext(state);
         obe::System::Bindings::LoadEnumStretchMode(state);
+        obe::System::Bindings::LoadFunctionSplitPathAndPrefix(state);
         obe::System::Bindings::LoadFunctionStringToStretchMode(state);
-
+        obe::System::Exceptions::Bindings::LoadClassInvalidMountFile(state);
         obe::System::Exceptions::Bindings::LoadClassInvalidMouseButtonEnumValue(state);
-        obe::System::Exceptions::Bindings::LoadClassMountablePathIndexOverflow(state);
+        obe::System::Exceptions::Bindings::LoadClassInvalidProjectFile(state);
+        obe::System::Exceptions::Bindings::LoadClassMissingDefaultMountPoint(state);
         obe::System::Exceptions::Bindings::LoadClassMountFileMissing(state);
+        obe::System::Exceptions::Bindings::LoadClassMountablePathIndexOverflow(state);
         obe::System::Exceptions::Bindings::LoadClassPackageAlreadyInstalled(state);
         obe::System::Exceptions::Bindings::LoadClassPackageFileNotFound(state);
+        obe::System::Exceptions::Bindings::LoadClassPathError(state);
         obe::System::Exceptions::Bindings::LoadClassResourceNotFound(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownPackage(state);
-        obe::System::Exceptions::Bindings::LoadClassUnknownStretchMode(state);
+        obe::System::Exceptions::Bindings::LoadClassUnknownPathPrefix(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownProject(state);
-
+        obe::System::Exceptions::Bindings::LoadClassUnknownStretchMode(state);
+        obe::System::Project::Bindings::LoadClassProject(state);
+        obe::System::Project::Bindings::LoadClassProjectURLs(state);
+        obe::System::Project::Bindings::LoadFunctionGetProjectLocation(state);
+        obe::System::Project::Bindings::LoadFunctionProjectExists(state);
+        obe::System::Project::Bindings::LoadFunctionLoad(state);
+        obe::System::Project::Bindings::LoadFunctionListProjects(state);
         obe::Tiles::Bindings::LoadClassAnimatedTile(state);
-        obe::Tiles::Bindings::LoadClassTileset(state);
-        obe::Tiles::Bindings::LoadClassTilesetCollection(state);
         obe::Tiles::Bindings::LoadClassTileLayer(state);
         obe::Tiles::Bindings::LoadClassTileScene(state);
+        obe::Tiles::Bindings::LoadClassTileset(state);
+        obe::Tiles::Bindings::LoadClassTilesetCollection(state);
         obe::Tiles::Bindings::LoadClassTextureQuadsIndex(state);
         obe::Tiles::Bindings::LoadClassTileInfo(state);
         obe::Tiles::Bindings::LoadFunctionGetTileInfo(state);
         obe::Tiles::Bindings::LoadFunctionStripTileFlags(state);
         obe::Tiles::Bindings::LoadFunctionApplyTextureQuadsTransforms(state);
-
         obe::Tiles::Exceptions::Bindings::LoadClassTilePositionOutsideLayer(state);
-        obe::Tiles::Exceptions::Bindings::LoadClassUnknownTileset(state);
         obe::Tiles::Exceptions::Bindings::LoadClassUnknownTileId(state);
-
+        obe::Tiles::Exceptions::Bindings::LoadClassUnknownTileLayer(state);
+        obe::Tiles::Exceptions::Bindings::LoadClassUnknownTileset(state);
         obe::Time::Bindings::LoadClassChronometer(state);
         obe::Time::Bindings::LoadClassFramerateCounter(state);
         obe::Time::Bindings::LoadClassFramerateManager(state);
@@ -361,13 +359,11 @@ namespace obe::Bindings
         obe::Time::Bindings::LoadGlobalHours(state);
         obe::Time::Bindings::LoadGlobalDays(state);
         obe::Time::Bindings::LoadGlobalWeeks(state);
-
         obe::Transform::Exceptions::Bindings::LoadClassInvalidUnitsEnumValue(state);
         obe::Transform::Exceptions::Bindings::LoadClassPolygonNotEnoughPoints(state);
         obe::Transform::Exceptions::Bindings::LoadClassPolygonPointIndexOverflow(state);
         obe::Transform::Exceptions::Bindings::LoadClassUnknownReferential(state);
         obe::Transform::Exceptions::Bindings::LoadClassUnknownUnit(state);
-
         obe::Transform::Bindings::LoadClassMatrix2D(state);
         obe::Transform::Bindings::LoadClassMovable(state);
         obe::Transform::Bindings::LoadClassPolygon(state);
@@ -384,147 +380,30 @@ namespace obe::Bindings
         obe::Transform::Bindings::LoadEnumUnits(state);
         obe::Transform::Bindings::LoadFunctionStringToUnits(state);
         obe::Transform::Bindings::LoadFunctionUnitsToString(state);
-
         obe::Types::Bindings::LoadClassIdentifiable(state);
         obe::Types::Bindings::LoadClassProtectedIdentifiable(state);
         obe::Types::Bindings::LoadClassSelectable(state);
         obe::Types::Bindings::LoadClassSerializable(state);
         obe::Types::Bindings::LoadClassTogglable(state);
-
         obe::Utils::Exec::Bindings::LoadClassRunArgsParser(state);
-
-        vili::Bindings::LoadClassConstNodeIterator(state);
-        vili::Bindings::LoadClassNode(state);
-        vili::Bindings::LoadClassNodeIterator(state);
-        vili::Bindings::LoadEnumNodeType(state);
-        vili::Bindings::LoadFunctionFromString(state);
-        vili::Bindings::LoadFunctionToString(state);
-        vili::Bindings::LoadGlobalPERMISSIVECAST(state);
-        vili::Bindings::LoadGlobalVERBOSEEXCEPTIONS(state);
-        vili::Bindings::LoadGlobalTrueValue(state);
-        vili::Bindings::LoadGlobalFalseValue(state);
-        vili::Bindings::LoadGlobalNullTypename(state);
-        vili::Bindings::LoadGlobalBooleanTypename(state);
-        vili::Bindings::LoadGlobalIntegerTypename(state);
-        vili::Bindings::LoadGlobalNumberTypename(state);
-        vili::Bindings::LoadGlobalStringTypename(state);
-        vili::Bindings::LoadGlobalObjectTypename(state);
-        vili::Bindings::LoadGlobalArrayTypename(state);
-
-        vili::exceptions::Bindings::LoadClassArrayIndexOverflow(state);
-        vili::exceptions::Bindings::LoadClassBaseException(state);
-        vili::exceptions::Bindings::LoadClassDebugInfo(state);
-        vili::exceptions::Bindings::LoadClassFileNotFound(state);
-        vili::exceptions::Bindings::LoadClassInconsistentIndentation(state);
-        vili::exceptions::Bindings::LoadClassIntegerDumpError(state);
-        vili::exceptions::Bindings::LoadClassInvalidCast(state);
-        vili::exceptions::Bindings::LoadClassInvalidDataType(state);
-        vili::exceptions::Bindings::LoadClassInvalidMerge(state);
-        vili::exceptions::Bindings::LoadClassInvalidNodeType(state);
-        vili::exceptions::Bindings::LoadClassNumberDumpError(state);
-        vili::exceptions::Bindings::LoadClassParsingError(state);
-        vili::exceptions::Bindings::LoadClassTooMuchIndentation(state);
-        vili::exceptions::Bindings::LoadClassUnknownChildNode(state);
-        vili::exceptions::Bindings::LoadClassUnknownTemplate(state);
-        vili::exceptions::Bindings::LoadFunctionIndentString(state);
-
-        vili::parser::Bindings::LoadClassNodeInStack(state);
-        vili::parser::Bindings::LoadClassState(state);
-        vili::parser::Bindings::LoadClassError(state);
-        vili::parser::Bindings::LoadFunctionStatePushProxy(state);
-        vili::parser::Bindings::LoadFunctionFromString(state);
-        vili::parser::Bindings::LoadFunctionFromFile(state);
-
         obe::Events::Actions::Bindings::LoadClassAction(state);
-
         obe::Events::Cursor::Bindings::LoadClassHold(state);
         obe::Events::Cursor::Bindings::LoadClassMove(state);
         obe::Events::Cursor::Bindings::LoadClassPress(state);
         obe::Events::Cursor::Bindings::LoadClassRelease(state);
-
         obe::Events::Game::Bindings::LoadClassEnd(state);
         obe::Events::Game::Bindings::LoadClassRender(state);
         obe::Events::Game::Bindings::LoadClassStart(state);
         obe::Events::Game::Bindings::LoadClassUpdate(state);
-
         obe::Events::Keys::Bindings::LoadClassStateChanged(state);
-
         obe::Events::Network::Bindings::LoadClassConnected(state);
         obe::Events::Network::Bindings::LoadClassDataReceived(state);
         obe::Events::Network::Bindings::LoadClassDisconnected(state);
-
         obe::Events::Scene::Bindings::LoadClassLoaded(state);
-
-        vili::parser::rules::Bindings::LoadClassAffectation(state);
-        vili::parser::rules::Bindings::LoadClassAffectationSeparator(state);
-        vili::parser::rules::Bindings::LoadClassArray(state);
-        vili::parser::rules::Bindings::LoadClassArrayElements(state);
-        vili::parser::rules::Bindings::LoadClassArraySeparator(state);
-        vili::parser::rules::Bindings::LoadClassBlock(state);
-        vili::parser::rules::Bindings::LoadClassBoolean(state);
-        vili::parser::rules::Bindings::LoadClassBraceBasedObject(state);
-        vili::parser::rules::Bindings::LoadClassChar_(state);
-        vili::parser::rules::Bindings::LoadClassCloseArray(state);
-        vili::parser::rules::Bindings::LoadClassCloseObject(state);
-        vili::parser::rules::Bindings::LoadClassComment(state);
-        vili::parser::rules::Bindings::LoadClassData(state);
-        vili::parser::rules::Bindings::LoadClassDigits(state);
-        vili::parser::rules::Bindings::LoadClassElement(state);
-        vili::parser::rules::Bindings::LoadClassEmptyLine(state);
-        vili::parser::rules::Bindings::LoadClassEndline(state);
-        vili::parser::rules::Bindings::LoadClassEscaped(state);
-        vili::parser::rules::Bindings::LoadClassEscapedChar(state);
-        vili::parser::rules::Bindings::LoadClassFalse_(state);
-        vili::parser::rules::Bindings::LoadClassFloatingPoint(state);
-        vili::parser::rules::Bindings::LoadClassFullNode(state);
-        vili::parser::rules::Bindings::LoadClassGrammar(state);
-        vili::parser::rules::Bindings::LoadClassIdentifier(state);
-        vili::parser::rules::Bindings::LoadClassIndent(state);
-        vili::parser::rules::Bindings::LoadClassIndentBasedObject(state);
-        vili::parser::rules::Bindings::LoadClassInlineComment(state);
-        vili::parser::rules::Bindings::LoadClassInlineElement(state);
-        vili::parser::rules::Bindings::LoadClassInlineNode(state);
-        vili::parser::rules::Bindings::LoadClassInteger(state);
-        vili::parser::rules::Bindings::LoadClassMultilineComment(state);
-        vili::parser::rules::Bindings::LoadClassMultilineCommentBlock(state);
-        vili::parser::rules::Bindings::LoadClassNode(state);
-        vili::parser::rules::Bindings::LoadClassNumber(state);
-        vili::parser::rules::Bindings::LoadClassObject(state);
-        vili::parser::rules::Bindings::LoadClassObjectElements(state);
-        vili::parser::rules::Bindings::LoadClassObjectSeparator(state);
-        vili::parser::rules::Bindings::LoadClassOpenArray(state);
-        vili::parser::rules::Bindings::LoadClassOpenObject(state);
-        vili::parser::rules::Bindings::LoadClassSign(state);
-        vili::parser::rules::Bindings::LoadClassSpaceOrComment(state);
-        vili::parser::rules::Bindings::LoadClassString(state);
-        vili::parser::rules::Bindings::LoadClassStringContent(state);
-        vili::parser::rules::Bindings::LoadClassStringDelimiter(state);
-        vili::parser::rules::Bindings::LoadClassTemplateBegin(state);
-        vili::parser::rules::Bindings::LoadClassTemplateDecl(state);
-        vili::parser::rules::Bindings::LoadClassTemplateDeclContent(state);
-        vili::parser::rules::Bindings::LoadClassTemplateIdentifier(state);
-        vili::parser::rules::Bindings::LoadClassTemplateIdentifierUsage(state);
-        vili::parser::rules::Bindings::LoadClassTemplateKeyword(state);
-        vili::parser::rules::Bindings::LoadClassTemplateSpecialization(state);
-        vili::parser::rules::Bindings::LoadClassTemplateUsage(state);
-        vili::parser::rules::Bindings::LoadClassTrue_(state);
-        vili::parser::rules::Bindings::LoadClassUnescaped(state);
-        vili::parser::rules::Bindings::LoadClassUnicode(state);
-        vili::parser::rules::Bindings::LoadClassViliGrammar(state);
-        vili::parser::rules::Bindings::LoadClassXdigit(state);
-
-        vili::writer::Bindings::LoadClassDumpOptions(state);
-        vili::writer::Bindings::LoadEnumDelimiterNewlinePolicy(state);
-        vili::writer::Bindings::LoadEnumCommaSpacingPolicy(state);
-        vili::writer::Bindings::LoadEnumObjectStyle(state);
-        vili::writer::Bindings::LoadFunctionDumpInteger(state);
-        vili::writer::Bindings::LoadFunctionDumpNumber(state);
-        vili::writer::Bindings::LoadFunctionDumpBoolean(state);
-        vili::writer::Bindings::LoadFunctionDumpString(state);
-        vili::writer::Bindings::LoadFunctionDumpArray(state);
-        vili::writer::Bindings::LoadFunctionDumpObject(state);
-        vili::writer::Bindings::LoadFunctionDump(state);
-
+        obe::Graphics::Utils::Bindings::LoadClassDrawPolygonOptions(state);
+        obe::Graphics::Utils::Bindings::LoadFunctionDrawPoint(state);
+        obe::Graphics::Utils::Bindings::LoadFunctionDrawLine(state);
+        obe::Graphics::Utils::Bindings::LoadFunctionDrawPolygon(state);
         obe::Animation::Easing::Bindings::LoadEnumEasingType(state);
         obe::Animation::Easing::Bindings::LoadFunctionLinear(state);
         obe::Animation::Easing::Bindings::LoadFunctionInSine(state);
@@ -558,9 +437,6 @@ namespace obe::Bindings
         obe::Animation::Easing::Bindings::LoadFunctionOutBounce(state);
         obe::Animation::Easing::Bindings::LoadFunctionInOutBounce(state);
         obe::Animation::Easing::Bindings::LoadFunctionGet(state);
-
-        obe::Bindings::Bindings::LoadFunctionIndexAllBindings(state);
-
         obe::Config::Templates::Bindings::LoadFunctionGetAnimationTemplates(state);
         obe::Config::Templates::Bindings::LoadFunctionGetConfigTemplates(state);
         obe::Config::Templates::Bindings::LoadFunctionGetGameObjectTemplates(state);
@@ -569,7 +445,10 @@ namespace obe::Bindings
         obe::Config::Templates::Bindings::LoadGlobalWaitCommand(state);
         obe::Config::Templates::Bindings::LoadGlobalPlayGroupCommand(state);
         obe::Config::Templates::Bindings::LoadGlobalSetAnimationCommand(state);
-
+        obe::Config::Validators::Bindings::LoadFunctionAnimationValidator(state);
+        obe::Config::Validators::Bindings::LoadFunctionConfigValidator(state);
+        obe::Config::Validators::Bindings::LoadFunctionMountValidator(state);
+        obe::Config::Validators::Bindings::LoadFunctionProjectValidator(state);
         obe::Debug::Bindings::LoadFunctionInitLogger(state);
         obe::Debug::Bindings::LoadFunctionTrace(state);
         obe::Debug::Bindings::LoadFunctionDebug(state);
@@ -578,11 +457,7 @@ namespace obe::Bindings
         obe::Debug::Bindings::LoadFunctionError(state);
         obe::Debug::Bindings::LoadFunctionCritical(state);
         obe::Debug::Bindings::LoadGlobalLog(state);
-
-        obe::Graphics::Utils::Bindings::LoadFunctionDrawPoint(state);
-        obe::Graphics::Utils::Bindings::LoadFunctionDrawLine(state);
-        obe::Graphics::Utils::Bindings::LoadFunctionDrawPolygon(state);
-
+        obe::Debug::Render::Bindings::LoadFunctionDrawPolygon(state);
         obe::Script::ViliLuaBridge::Bindings::LoadFunctionViliToLua(state);
         obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaToVili(state);
         obe::Script::ViliLuaBridge::Bindings::LoadFunctionViliObjectToLuaTable(state);
@@ -591,18 +466,11 @@ namespace obe::Bindings
         obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaTableToViliObject(state);
         obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaValueToViliPrimitive(state);
         obe::Script::ViliLuaBridge::Bindings::LoadFunctionLuaTableToViliArray(state);
-
         obe::System::Package::Bindings::LoadFunctionGetPackageLocation(state);
         obe::System::Package::Bindings::LoadFunctionPackageExists(state);
         obe::System::Package::Bindings::LoadFunctionListPackages(state);
         obe::System::Package::Bindings::LoadFunctionInstall(state);
         obe::System::Package::Bindings::LoadFunctionLoad(state);
-
-        obe::System::Project::Bindings::LoadFunctionGetProjectLocation(state);
-        obe::System::Project::Bindings::LoadFunctionProjectExists(state);
-        obe::System::Project::Bindings::LoadFunctionLoad(state);
-        obe::System::Project::Bindings::LoadFunctionListProjects(state);
-
         obe::Utils::File::Bindings::LoadFunctionGetDirectoryList(state);
         obe::Utils::File::Bindings::LoadFunctionGetFileList(state);
         obe::Utils::File::Bindings::LoadFunctionFileExists(state);
@@ -616,7 +484,9 @@ namespace obe::Bindings
         obe::Utils::File::Bindings::LoadFunctionSeparator(state);
         obe::Utils::File::Bindings::LoadFunctionGetExecutableDirectory(state);
         obe::Utils::File::Bindings::LoadFunctionGetExecutablePath(state);
-
+        obe::Utils::File::Bindings::LoadFunctionNormalizePath(state);
+        obe::Utils::File::Bindings::LoadFunctionCanonicalPath(state);
+        obe::Utils::File::Bindings::LoadFunctionJoin(state);
         obe::Utils::Math::Bindings::LoadFunctionRandint(state);
         obe::Utils::Math::Bindings::LoadFunctionRandfloat(state);
         obe::Utils::Math::Bindings::LoadFunctionGetMin(state);
@@ -628,7 +498,6 @@ namespace obe::Bindings
         obe::Utils::Math::Bindings::LoadFunctionConvertToDegree(state);
         obe::Utils::Math::Bindings::LoadFunctionNormalize(state);
         obe::Utils::Math::Bindings::LoadGlobalPi(state);
-
         obe::Utils::String::Bindings::LoadFunctionSplit(state);
         obe::Utils::String::Bindings::LoadFunctionOccurencesInString(state);
         obe::Utils::String::Bindings::LoadFunctionIsStringAlpha(state);
@@ -647,18 +516,23 @@ namespace obe::Bindings
         obe::Utils::String::Bindings::LoadFunctionQuote(state);
         obe::Utils::String::Bindings::LoadGlobalAlphabet(state);
         obe::Utils::String::Bindings::LoadGlobalNumbers(state);
-
         obe::Utils::Vector::Bindings::LoadFunctionContains(state);
         obe::Utils::Vector::Bindings::LoadFunctionJoin(state);
-
-        vili::utils::string::Bindings::LoadFunctionReplace(state);
-        vili::utils::string::Bindings::LoadFunctionIsInt(state);
-        vili::utils::string::Bindings::LoadFunctionIsFloat(state);
-        vili::utils::string::Bindings::LoadFunctionTruncateFloat(state);
-        vili::utils::string::Bindings::LoadFunctionQuote(state);
-        vili::utils::string::Bindings::LoadFunctionToDouble(state);
-        vili::utils::string::Bindings::LoadFunctionToLong(state);
-
         obe::System::Constraints::Bindings::LoadGlobalDefault(state);
+        obe::System::Prefixes::Bindings::LoadGlobalObe(state);
+        obe::System::Prefixes::Bindings::LoadGlobalCwd(state);
+        obe::System::Prefixes::Bindings::LoadGlobalExe(state);
+        obe::System::Prefixes::Bindings::LoadGlobalCfg(state);
+        obe::System::Prefixes::Bindings::LoadGlobalMount(state);
+        obe::System::Prefixes::Bindings::LoadGlobalExtlibs(state);
+        obe::System::Prefixes::Bindings::LoadGlobalRoot(state);
+        obe::System::Priorities::Bindings::LoadGlobalHigh(state);
+        obe::System::Priorities::Bindings::LoadGlobalProjectmount(state);
+        obe::System::Priorities::Bindings::LoadGlobalProject(state);
+        obe::System::Priorities::Bindings::LoadGlobalMount(state);
+        obe::System::Priorities::Bindings::LoadGlobalDefaults(state);
+        obe::System::Priorities::Bindings::LoadGlobalLow(state);
+        obe::System::Project::Prefixes::Bindings::LoadGlobalObjects(state);
+        obe::System::Project::Prefixes::Bindings::LoadGlobalScenes(state);
     }
 }

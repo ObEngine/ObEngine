@@ -53,7 +53,7 @@ namespace obe::Engine
         m_lua->safe_script_file("obe://Lib/Internal/ScriptInit.lua"_fs);
         m_lua->safe_script_file("obe://Lib/Internal/Events.lua"_fs);
 
-        Bindings::IndexAllBindings(*m_lua);
+        Bindings::IndexCoreBindings(*m_lua);
 
         m_lua->loadConfig(m_config.at("Script").at("Lua"));
 

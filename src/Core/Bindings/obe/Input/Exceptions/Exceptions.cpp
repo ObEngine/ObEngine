@@ -10,13 +10,13 @@ namespace obe::Input::Exceptions::Bindings
     {
         sol::table ExceptionsNamespace = state["obe"]["Input"]["Exceptions"].get<sol::table>();
         sol::usertype<obe::Input::Exceptions::InputButtonAlreadyInCombination>
-            bindInputButtonAlreadyInCombination
-            = ExceptionsNamespace
-                  .new_usertype<obe::Input::Exceptions::InputButtonAlreadyInCombination>(
-                      "InputButtonAlreadyInCombination", sol::call_constructor,
-                      sol::constructors<obe::Input::Exceptions::InputButtonAlreadyInCombination(
-                          std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes, sol::bases<obe::BaseException>());
+            bindInputButtonAlreadyInCombination = ExceptionsNamespace.new_usertype<
+                obe::Input::Exceptions::InputButtonAlreadyInCombination>(
+                "InputButtonAlreadyInCombination", sol::call_constructor,
+                sol::constructors<obe::Input::Exceptions::InputButtonAlreadyInCombination(
+                    std::string_view, obe::DebugInfo)>(),
+                sol::base_classes,
+                sol::bases<obe::Exception<InputButtonAlreadyInCombination>, obe::BaseException>());
     }
     void LoadClassInputButtonInvalidOperation(sol::state_view state)
     {
@@ -27,7 +27,19 @@ namespace obe::Input::Exceptions::Bindings
                 "InputButtonInvalidOperation", sol::call_constructor,
                 sol::constructors<obe::Input::Exceptions::InputButtonInvalidOperation(
                     std::string_view, std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<InputButtonInvalidOperation>, obe::BaseException>());
+    }
+    void LoadClassInvalidGamepadButton(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace = state["obe"]["Input"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Input::Exceptions::InvalidGamepadButton> bindInvalidGamepadButton
+            = ExceptionsNamespace.new_usertype<obe::Input::Exceptions::InvalidGamepadButton>(
+                "InvalidGamepadButton", sol::call_constructor,
+                sol::constructors<obe::Input::Exceptions::InvalidGamepadButton(
+                    std::string_view, obe::DebugInfo)>(),
+                sol::base_classes,
+                sol::bases<obe::Exception<InvalidGamepadButton>, obe::BaseException>());
     }
     void LoadClassInvalidInputButtonState(sol::state_view state)
     {
@@ -37,7 +49,8 @@ namespace obe::Input::Exceptions::Bindings
                 "InvalidInputButtonState", sol::call_constructor,
                 sol::constructors<obe::Input::Exceptions::InvalidInputButtonState(
                     std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<InvalidInputButtonState>, obe::BaseException>());
     }
     void LoadClassInvalidInputCombinationCode(sol::state_view state)
     {
@@ -48,7 +61,8 @@ namespace obe::Input::Exceptions::Bindings
                 "InvalidInputCombinationCode", sol::call_constructor,
                 sol::constructors<obe::Input::Exceptions::InvalidInputCombinationCode(
                     std::string_view, std::string_view, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<InvalidInputCombinationCode>, obe::BaseException>());
     }
     void LoadClassInvalidInputTypeEnumValue(sol::state_view state)
     {
@@ -59,7 +73,8 @@ namespace obe::Input::Exceptions::Bindings
                 "InvalidInputTypeEnumValue", sol::call_constructor,
                 sol::constructors<obe::Input::Exceptions::InvalidInputTypeEnumValue(
                     int, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<InvalidInputTypeEnumValue>, obe::BaseException>());
     }
     void LoadClassUnknownInputAction(sol::state_view state)
     {
@@ -69,7 +84,8 @@ namespace obe::Input::Exceptions::Bindings
                 "UnknownInputAction", sol::call_constructor,
                 sol::constructors<obe::Input::Exceptions::UnknownInputAction(
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<UnknownInputAction>, obe::BaseException>());
     }
     void LoadClassUnknownInputButton(sol::state_view state)
     {
@@ -79,6 +95,7 @@ namespace obe::Input::Exceptions::Bindings
                 "UnknownInputButton", sol::call_constructor,
                 sol::constructors<obe::Input::Exceptions::UnknownInputButton(
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<UnknownInputButton>, obe::BaseException>());
     }
 };

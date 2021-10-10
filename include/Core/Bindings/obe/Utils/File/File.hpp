@@ -19,4 +19,7 @@ namespace obe::Utils::File::Bindings
     void LoadFunctionSeparator(sol::state_view state);
     void LoadFunctionGetExecutableDirectory(sol::state_view state);
     void LoadFunctionGetExecutablePath(sol::state_view state);
+    void LoadFunctionNormalizePath(sol::state_view state);
+    void LoadFunctionCanonicalPath(sol::state_view state);
+    void LoadFunctionJoin(sol::state_view state);
 };

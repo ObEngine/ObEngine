@@ -7,6 +7,16 @@
 
 namespace obe::Bindings
 {
+    void LoadClassBaseException(sol::state_view state)
+    {
+        sol::table obeNamespace = state["obe"].get<sol::table>();
+        sol::usertype<obe::BaseException> bindBaseException
+            = obeNamespace.new_usertype<obe::BaseException>("BaseException", sol::call_constructor,
+                sol::constructors<obe::BaseException(),
+                    obe::BaseException(const std::exception&)>());
+        bindBaseException["what"] = &obe::BaseException::what;
+        bindBaseException["traceback"] = &obe::BaseException::traceback;
+    }
     void LoadClassDebugInfo(sol::state_view state)
     {
         sol::table obeNamespace = state["obe"].get<sol::table>();
@@ -17,13 +27,8 @@ namespace obe::Bindings
         bindDebugInfo["line"] = &obe::DebugInfo::line;
         bindDebugInfo["function"] = &obe::DebugInfo::function;
     }
-    void LoadClassException(sol::state_view state)
+    void LoadFunctionGetTypeName(sol::state_view state)
     {
-        sol::table obeNamespace = state["obe"].get<sol::table>();
-        sol::usertype<obe::BaseException> bindException
-            = obeNamespace.new_usertype<obe::BaseException>("Exception", sol::call_constructor,
-                sol::constructors<obe::BaseException(const std::exception&)>());
-        bindException["what"] = &obe::BaseException::what;
     }
     void LoadFunctionInitEngine(sol::state_view state)
     {

@@ -80,17 +80,17 @@ namespace obe::Input::Bindings
     void LoadClassInputButton(sol::state_view state)
     {
         sol::table InputNamespace = state["obe"]["Input"].get<sol::table>();
-        sol::usertype<obe::Input::InputButton> bindInputButton
-            = InputNamespace.new_usertype<obe::Input::InputButton>("InputButton",
-                sol::call_constructor,
-                sol::constructors<obe::Input::InputButton(sf::Keyboard::Key, const std::string&,
-                                      const std::string&, obe::Input::InputType),
-                    obe::Input::InputButton(sf::Mouse::Button, const std::string&),
-                    obe::Input::InputButton(unsigned int, unsigned int, const std::string&),
-                    obe::Input::InputButton(unsigned int, sf::Joystick::Axis,
-                        std::pair<obe::Input::AxisThresholdDirection, float>, const std::string&),
-                    obe::Input::InputButton(
-                        obe::Input::MouseWheelScrollDirection, const std::string&)>());
+        sol::usertype<obe::Input::InputButton> bindInputButton = InputNamespace.new_usertype<
+            obe::Input::InputButton>("InputButton", sol::call_constructor,
+            sol::constructors<obe::Input::InputButton(sf::Keyboard::Key, const std::string&,
+                                  const std::string&, obe::Input::InputType),
+                obe::Input::InputButton(sf::Mouse::Button, const std::string&),
+                obe::Input::InputButton(unsigned int, unsigned int, const std::string&),
+                obe::Input::InputButton(unsigned int, sf::Joystick::Axis,
+                    std::pair<obe::Input::AxisThresholdDirection, float>, const std::string&),
+                obe::Input::InputButton(obe::Input::MouseWheelScrollDirection, const std::string&),
+                obe::Input::InputButton(const obe::Input::InputButton&)>());
+        bindInputButton["reload"] = &obe::Input::InputButton::reload;
         bindInputButton["getAxisPosition"] = &obe::Input::InputButton::getAxisPosition;
         bindInputButton["getWheelDelta"] = &obe::Input::InputButton::getWheelDelta;
         bindInputButton["getKey"] = &obe::Input::InputButton::getKey;
@@ -110,6 +110,8 @@ namespace obe::Input::Bindings
         bindInputButtonMonitor["getButton"] = &obe::Input::InputButtonMonitor::getButton;
         bindInputButtonMonitor["getState"] = &obe::Input::InputButtonMonitor::getState;
         bindInputButtonMonitor["update"] = &obe::Input::InputButtonMonitor::update;
+        bindInputButtonMonitor["checkForRefresh"]
+            = &obe::Input::InputButtonMonitor::checkForRefresh;
     }
     void LoadClassInputCondition(sol::state_view state)
     {
@@ -156,6 +158,8 @@ namespace obe::Input::Bindings
             static_cast<obe::Input::InputButtonMonitorPtr (obe::Input::InputManager::*)(
                 obe::Input::InputButton&)>(&obe::Input::InputManager::monitor));
         bindInputManager["requireRefresh"] = &obe::Input::InputManager::requireRefresh;
+        bindInputManager["initializeGamepads"] = &obe::Input::InputManager::initializeGamepads;
+        bindInputManager["initializeGamepad"] = &obe::Input::InputManager::initializeGamepad;
     }
     void LoadFunctionInputButtonStateToString(sol::state_view state)
     {

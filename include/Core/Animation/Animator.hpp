@@ -15,7 +15,7 @@ namespace obe
 }
 
 /**
- * \additionalincludes{Graphics/Sprite.hpp}
+ * \additionalinclude{Graphics/Sprite.hpp}
  */
 namespace obe::Animation
 {

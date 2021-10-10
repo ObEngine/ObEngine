@@ -15,42 +15,34 @@ namespace obe::Scene::Bindings
             = SceneNamespace.new_usertype<obe::Scene::Camera>("Camera", sol::call_constructor,
                 sol::constructors<obe::Scene::Camera()>(), sol::base_classes,
                 sol::bases<obe::Transform::Rect, obe::Transform::Movable>());
-        bindCamera["getPosition"]
-            = sol::overload([](obe::Scene::Camera* self) -> obe::Transform::UnitVector
-                { return self->getPosition(); },
-                [](obe::Scene::Camera* self,
-                    const obe::Transform::Referential& ref) -> obe::Transform::UnitVector
-                { return self->getPosition(ref); });
+        bindCamera["getPosition"] = sol::overload(
+            [](obe::Scene::Camera* self) -> obe::Transform::UnitVector {
+                return self->getPosition();
+            },
+            [](obe::Scene::Camera* self, const obe::Transform::Referential& ref)
+                -> obe::Transform::UnitVector { return self->getPosition(ref); });
         bindCamera["getSize"] = &obe::Scene::Camera::getSize;
         bindCamera["move"] = &obe::Scene::Camera::move;
-        bindCamera["scale"] = sol::overload([](obe::Scene::Camera* self, double pScale) -> void
-            { return self->scale(pScale); },
-            [](obe::Scene::Camera* self, double pScale,
-                const obe::Transform::Referential& ref) -> void
-            { return self->scale(pScale, ref); });
+        bindCamera["scale"] = sol::overload(
+            [](obe::Scene::Camera* self, double pScale) -> void { return self->scale(pScale); },
+            [](obe::Scene::Camera* self, double pScale, const obe::Transform::Referential& ref)
+                -> void { return self->scale(pScale, ref); });
         bindCamera["setPosition"] = sol::overload(
-            [](obe::Scene::Camera* self, const obe::Transform::UnitVector& position) -> void
-            { return self->setPosition(position); },
+            [](obe::Scene::Camera* self, const obe::Transform::UnitVector& position) -> void {
+                return self->setPosition(position);
+            },
             [](obe::Scene::Camera* self, const obe::Transform::UnitVector& position,
-                const obe::Transform::Referential& ref) -> void
-            { return self->setPosition(position, ref); });
-        bindCamera["setSize"] = sol::overload([](obe::Scene::Camera* self, double pSize) -> void
-            { return self->setSize(pSize); },
-            [](obe::Scene::Camera* self, double pSize,
-                const obe::Transform::Referential& ref) -> void
-            { return self->setSize(pSize, ref); });
+                const obe::Transform::Referential& ref) -> void {
+                return self->setPosition(position, ref);
+            });
+        bindCamera["setSize"] = sol::overload(
+            [](obe::Scene::Camera* self, double pSize) -> void { return self->setSize(pSize); },
+            [](obe::Scene::Camera* self, double pSize, const obe::Transform::Referential& ref)
+                -> void { return self->setSize(pSize, ref); });
     }
     void LoadClassScene(sol::state_view state)
     {
         sol::table SceneNamespace = state["obe"]["Scene"].get<sol::table>();
-
-        sol::usertype<obe::Scene::SceneRenderOptions> bindSceneRenderOptions
-            = SceneNamespace.new_usertype<obe::Scene::SceneRenderOptions>(
-                "SceneRenderOptions", sol::call_constructor, sol::default_constructor);
-        bindSceneRenderOptions["collisions"] = &obe::Scene::SceneRenderOptions::collisions;
-        bindSceneRenderOptions["sceneNodes"] = &obe::Scene::SceneRenderOptions::sceneNodes;
-        bindSceneRenderOptions["sprites"] = &obe::Scene::SceneRenderOptions::sprites;
-
         sol::usertype<obe::Scene::Scene> bindScene = SceneNamespace.new_usertype<obe::Scene::Scene>(
             "Scene", sol::call_constructor,
             sol::constructors<obe::Scene::Scene(obe::Event::EventNamespace&, sol::state_view)>(),
@@ -70,12 +62,12 @@ namespace obe::Scene::Bindings
         bindScene["getLevelName"] = &obe::Scene::Scene::getLevelName;
         bindScene["setLevelName"] = &obe::Scene::Scene::setLevelName;
         bindScene["setUpdateState"] = &obe::Scene::Scene::setUpdateState;
-        bindScene["createGameObject"]
-            = sol::overload([](obe::Scene::Scene* self, const std::string& obj) -> sol::function
-                { return obe::Scene::sceneCreateGameObjectProxy(self, obj); },
-                [](obe::Scene::Scene* self, const std::string& obj,
-                    const std::string& id) -> sol::function
-                { return obe::Scene::sceneCreateGameObjectProxy(self, obj, id); });
+        bindScene["createGameObject"] = sol::overload(
+            [](obe::Scene::Scene* self, const std::string& obj) -> sol::function {
+                return obe::Scene::sceneCreateGameObjectProxy(self, obj);
+            },
+            [](obe::Scene::Scene* self, const std::string& obj, const std::string& id)
+                -> sol::function { return obe::Scene::sceneCreateGameObjectProxy(self, obj, id); });
         bindScene["getGameObjectAmount"] = &obe::Scene::Scene::getGameObjectAmount;
         bindScene["getAllGameObjects"] = sol::overload(
             [](obe::Scene::Scene* self) -> sol::nested<std::vector<sol::table>> {
@@ -129,11 +121,11 @@ namespace obe::Scene::Bindings
                 static_cast<void (obe::Scene::Scene::*)(const obe::Scene::OnSceneLoadCallback&)>(
                     &obe::Scene::Scene::reload));
         bindScene["getLevelFile"] = &obe::Scene::Scene::getLevelFile;
+        bindScene["getSceneNodeByPosition"] = &obe::Scene::Scene::getSceneNodeByPosition;
+        bindScene["hasTiles"] = &obe::Scene::Scene::hasTiles;
+        bindScene["getTiles"] = &obe::Scene::Scene::getTiles;
         bindScene["getRenderOptions"] = &obe::Scene::Scene::getRenderOptions;
         bindScene["setRenderOptions"] = &obe::Scene::Scene::setRenderOptions;
-        bindScene["getSceneNodeByPosition"] = &obe::Scene::Scene::getSceneNodeByPosition;
-        bindScene["getTiles"] = &obe::Scene::Scene::getTiles;
-        bindScene["hasTiles"] = &obe::Scene::Scene::hasTiles;
     }
     void LoadClassSceneNode(sol::state_view state)
     {
@@ -149,6 +141,16 @@ namespace obe::Scene::Bindings
         bindSceneNode["setPositionWithoutChildren"]
             = &obe::Scene::SceneNode::setPositionWithoutChildren;
         bindSceneNode["moveWithoutChildren"] = &obe::Scene::SceneNode::moveWithoutChildren;
+    }
+    void LoadClassSceneRenderOptions(sol::state_view state)
+    {
+        sol::table SceneNamespace = state["obe"]["Scene"].get<sol::table>();
+        sol::usertype<obe::Scene::SceneRenderOptions> bindSceneRenderOptions
+            = SceneNamespace.new_usertype<obe::Scene::SceneRenderOptions>(
+                "SceneRenderOptions", sol::call_constructor, sol::default_constructor);
+        bindSceneRenderOptions["sprites"] = &obe::Scene::SceneRenderOptions::sprites;
+        bindSceneRenderOptions["collisions"] = &obe::Scene::SceneRenderOptions::collisions;
+        bindSceneRenderOptions["sceneNodes"] = &obe::Scene::SceneRenderOptions::sceneNodes;
     }
     void LoadFunctionSceneGetGameObjectProxy(sol::state_view state)
     {

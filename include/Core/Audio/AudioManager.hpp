@@ -18,8 +18,8 @@ namespace obe
 }
 
 /**
- * \additionalincludes{System/Path.hpp}
- * \additionalincludes{soloud/soloud.h}
+ * \additionalinclude{System/Path.hpp}
+ * \additionalinclude{soloud/soloud.h}
  */
 namespace obe::Audio
 {

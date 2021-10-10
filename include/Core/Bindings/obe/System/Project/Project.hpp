@@ -6,6 +6,8 @@ namespace sol
 };
 namespace obe::System::Project::Bindings
 {
+    void LoadClassProject(sol::state_view state);
+    void LoadClassProjectURLs(sol::state_view state);
     void LoadFunctionGetProjectLocation(sol::state_view state);
     void LoadFunctionProjectExists(sol::state_view state);
     void LoadFunctionLoad(sol::state_view state);

@@ -45,7 +45,7 @@ namespace obe::Event::Bindings
                 sol::call_constructor, sol::constructors<obe::Event::CallbackScheduler()>());
         bindCallbackScheduler["after"] = &obe::Event::CallbackScheduler::after;
         bindCallbackScheduler["every"] = &obe::Event::CallbackScheduler::every;
-        bindCallbackScheduler["loop"] = &obe::Event::CallbackScheduler::repeat;
+        bindCallbackScheduler["repeat"] = &obe::Event::CallbackScheduler::repeat;
         bindCallbackScheduler["run"] = &obe::Event::CallbackScheduler::run;
         bindCallbackScheduler["stop"] = &obe::Event::CallbackScheduler::stop;
     }
@@ -75,6 +75,7 @@ namespace obe::Event::Bindings
         bindEventGroup["get"] = sol::overload(
             static_cast<obe::Event::EventBase& (obe::Event::EventGroup::*)(const std::string&)
                     const>(&obe::Event::EventGroup::get));
+        bindEventGroup["contains"] = &obe::Event::EventGroup::contains;
         bindEventGroup["remove"] = &obe::Event::EventGroup::remove;
         bindEventGroup["getEventsNames"] = &obe::Event::EventGroup::getEventsNames;
         bindEventGroup["getEvents"] = &obe::Event::EventGroup::getEvents;

@@ -14,6 +14,7 @@ namespace obe::Audio::Exceptions::Bindings
                 "AudioFileNotFound", sol::call_constructor,
                 sol::constructors<obe::Audio::Exceptions::AudioFileNotFound(
                     std::string_view, std::vector<std::string>, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<AudioFileNotFound>, obe::BaseException>());
     }
 };
