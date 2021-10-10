@@ -15,6 +15,11 @@ namespace obe::System
         File
     };
 
+    /**
+     * \brief represents the result of the `find`, `findAll` and `list` operations of Path
+     *
+     * \loadpriority{11} (before obe::System::Path)
+     */
     class FindResult
     {
     private:
@@ -48,7 +53,7 @@ namespace obe::System
      * \brief Class used to manipulate paths and dynamically load resources
      *        (Based on multiple mounted paths)
      * \bind{Path}
-     * \loadpriority{1}
+     * \loadpriority{10}
      * \helper{obe://Lib/Internal/Require.lua}
      * \helper{obe://Lib/Internal/Filesystem.lua}
      */

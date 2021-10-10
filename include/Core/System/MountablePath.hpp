@@ -75,6 +75,8 @@ namespace obe::System
     using MountList = std::vector<std::shared_ptr<MountablePath>>;
     /**
      * \brief Class used to encapsulate mounted Paths
+     *
+     * \loadpriority{12} (before obe::System::Path)
      */
     class MountablePath
     {
