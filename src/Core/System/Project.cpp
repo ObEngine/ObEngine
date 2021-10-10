@@ -6,6 +6,7 @@
 #include <Debug/Logger.hpp>
 #include <System/Path.hpp>
 #include <System/Project.hpp>
+#include <Utils/FileUtils.hpp>
 
 namespace obe::System::Project
 {
@@ -223,12 +224,14 @@ namespace obe::System::Project
         const std::string projectRoot
             = System::Path(System::Prefixes::root, ".").find(PathType::Directory).path();
 
-        const MountablePath objectsPath(
-            MountablePathType::Path, projectRoot, Prefixes::objects, Priorities::projectmount);
+        const MountablePath objectsPath(MountablePathType::Path,
+            Utils::File::join({ projectRoot, "GameObjects" }), Prefixes::objects,
+            Priorities::projectmount);
         MountablePath::Mount(objectsPath, SamePrefixPolicy::Skip);
 
-        const MountablePath scenesPath(
-            MountablePathType::Path, projectRoot, Prefixes::objects, Priorities::projectmount);
+        const MountablePath scenesPath(MountablePathType::Path,
+            Utils::File::join({ projectRoot, "Scenes" }), Prefixes::objects,
+            Priorities::projectmount);
         MountablePath::Mount(scenesPath, SamePrefixPolicy::Skip);
     }
 

@@ -269,7 +269,7 @@ namespace obe::System
     FindResult Path::find(PathType pathType) const
     {
         const std::string query = fmt::format("{}://{}", m_prefix, m_path);
-        if (const auto cacheResult = PathCache.find(m_path); cacheResult != PathCache.end())
+        if (const auto cacheResult = PathCache.find(query); cacheResult != PathCache.end())
         {
             return cacheResult->second;
         }
@@ -292,7 +292,7 @@ namespace obe::System
             {
                 const std::string result = Utils::File::join({ mountedPath->basePath, m_path });
                 return PathCache
-                    .emplace(m_path, FindResult(PathType::File, mountedPath, result, query))
+                    .emplace(query, FindResult(PathType::File, mountedPath, result, query))
                     .first->second;
             }
             else if ((pathType == PathType::All || pathType == PathType::Directory)
@@ -300,7 +300,7 @@ namespace obe::System
             {
                 const std::string result = Utils::File::join({ mountedPath->basePath, m_path });
                 return PathCache
-                    .emplace(m_path, FindResult(PathType::Directory, mountedPath, result, query))
+                    .emplace(query, FindResult(PathType::Directory, mountedPath, result, query))
                     .first->second;
             }
         }

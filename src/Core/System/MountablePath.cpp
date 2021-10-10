@@ -212,6 +212,15 @@ namespace obe::System
         {
             MountedPaths.push_back(std::make_shared<MountablePath>(path));
         }
+        else
+        {
+            const auto existingPrefixIt = std::find_if(MountedPaths.begin(), MountedPaths.end(),
+                [path](const auto& mountablePath) { return mountablePath->prefix == path.prefix; });
+            if (existingPrefixIt == MountedPaths.end())
+            {
+                MountedPaths.push_back(std::make_shared<MountablePath>(path));
+            }
+        }
         Sort();
     }
 
