@@ -9,7 +9,15 @@ namespace obe::Utils::String::Bindings
     void LoadFunctionSplit(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("split", obe::Utils::String::split);
+        StringNamespace.set_function("split",
+            sol::overload(
+                [](const std::string& str) -> std::vector<std::string> {
+                    return obe::Utils::String::split(str);
+                },
+                [](const std::string& str,
+                    const std::string& delimiters) -> std::vector<std::string> {
+                    return obe::Utils::String::split(str, delimiters);
+                }));
     }
     void LoadFunctionOccurencesInString(sol::state_view state)
     {
@@ -80,7 +88,16 @@ namespace obe::Utils::String::Bindings
     void LoadFunctionSortByDistance(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("sortByDistance", obe::Utils::String::sortByDistance);
+        StringNamespace.set_function("sortByDistance",
+            sol::overload(
+                [](const std::string& source,
+                    const std::vector<std::string>& words) -> std::vector<std::string> {
+                    return obe::Utils::String::sortByDistance(source, words);
+                },
+                [](const std::string& source, const std::vector<std::string>& words,
+                    std::size_t limit) -> std::vector<std::string> {
+                    return obe::Utils::String::sortByDistance(source, words, limit);
+                }));
     }
     void LoadFunctionQuote(sol::state_view state)
     {

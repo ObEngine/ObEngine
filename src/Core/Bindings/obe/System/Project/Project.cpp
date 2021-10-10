@@ -46,7 +46,11 @@ namespace obe::System::Project::Bindings
     void LoadFunctionLoad(sol::state_view state)
     {
         sol::table ProjectNamespace = state["obe"]["System"]["Project"].get<sol::table>();
-        ProjectNamespace.set_function("Load", obe::System::Project::Load);
+        ProjectNamespace.set_function("Load",
+            sol::overload([](const std::string& projectName, const std::string& prefix)
+                              -> bool { return obe::System::Project::Load(projectName, prefix); },
+                [](const std::string& projectName, const std::string& prefix, unsigned int priority)
+                    -> bool { return obe::System::Project::Load(projectName, prefix, priority); }));
     }
     void LoadFunctionListProjects(sol::state_view state)
     {

@@ -241,7 +241,15 @@ namespace obe::System::Bindings
     void LoadFunctionSplitPathAndPrefix(sol::state_view state)
     {
         sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
-        SystemNamespace.set_function("splitPathAndPrefix", obe::System::splitPathAndPrefix);
+        SystemNamespace.set_function("splitPathAndPrefix",
+            sol::overload(
+                [](const std::string& path) -> std::pair<std::string, std::string> {
+                    return obe::System::splitPathAndPrefix(path);
+                },
+                [](const std::string& path,
+                    bool warnOnMissingPrefix) -> std::pair<std::string, std::string> {
+                    return obe::System::splitPathAndPrefix(path, warnOnMissingPrefix);
+                }));
     }
     void LoadFunctionStringToStretchMode(sol::state_view state)
     {

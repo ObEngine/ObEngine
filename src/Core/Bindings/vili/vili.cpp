@@ -38,9 +38,9 @@ namespace vili::Bindings
             = viliNamespace.new_usertype<vili::node>("node", sol::call_constructor,
                 sol::constructors<vili::node(), vili::node(int), vili::node(vili::integer),
                     vili::node(vili::number), vili::node(const vili::string&),
-                    vili::node(vili::boolean), vili::node(const char*),
-                    vili::node(const vili::array&), vili::node(const vili::object&),
-                    vili::node(const vili::node&), vili::node(vili::node &&)>());
+                    vili::node(std::string_view), vili::node(vili::boolean),
+                    vili::node(const char*), vili::node(const vili::array&),
+                    vili::node(const vili::object&), vili::node(const vili::node&)>());
         bindnode["operator="] = &vili::node::operator=;
         bindnode["type"] = &vili::node::type;
         bindnode["dump"]
@@ -101,13 +101,6 @@ namespace vili::Bindings
         bindnode["size"] = &vili::node::size;
         bindnode["empty"] = &vili::node::empty;
         bindnode["clear"] = &vili::node::clear;
-        bindnode["operator std::string_view"] = &vili::node::operator std::string_view;
-        bindnode["operator const std::string &"] = &vili::node::operator const std::string&;
-        bindnode["operator integer"] = &vili::node::operator integer;
-        bindnode["operator int"] = &vili::node::operator int;
-        bindnode["operator number"] = &vili::node::operator number;
-        bindnode["operator boolean"] = &vili::node::operator boolean;
-        bindnode["operator unsigned"] = &vili::node::operator unsigned;
         bindnode[sol::meta_function::equal_to] = &vili::node::operator==;
         bindnode["from_type"] = &vili::node::from_type;
         state.script_file("obe://Lib/Internal/Vili.lua"_fs);
@@ -188,5 +181,15 @@ namespace vili::Bindings
     {
         sol::table viliNamespace = state["vili"].get<sol::table>();
         viliNamespace["array_typename"] = vili::array_typename;
+    }
+    void LoadGlobalUnknownTypename(sol::state_view state)
+    {
+        sol::table viliNamespace = state["vili"].get<sol::table>();
+        viliNamespace["unknown_typename"] = vili::unknown_typename;
+    }
+    void LoadGlobalContainerTypename(sol::state_view state)
+    {
+        sol::table viliNamespace = state["vili"].get<sol::table>();
+        viliNamespace["container_typename"] = vili::container_typename;
     }
 };

@@ -186,6 +186,15 @@ namespace vili::exceptions::Bindings
     void LoadFunctionIndentString(sol::state_view state)
     {
         sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
-        exceptionsNamespace.set_function("indent_string", vili::exceptions::indent_string);
+        exceptionsNamespace.set_function("indent_string",
+            sol::overload([](const std::string& input)
+                              -> std::string { return vili::exceptions::indent_string(input); },
+                [](const std::string& input, unsigned int indent_level) -> std::string {
+                    return vili::exceptions::indent_string(input, indent_level);
+                },
+                [](const std::string& input, unsigned int indent_level,
+                    bool pad_left) -> std::string {
+                    return vili::exceptions::indent_string(input, indent_level, pad_left);
+                }));
     }
 };
