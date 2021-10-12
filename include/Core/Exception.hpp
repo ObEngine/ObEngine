@@ -9,12 +9,18 @@
 
 namespace obe
 {
+    /**
+     * \brief wrapper class containing informations about the place that threw an exception
+     */
     class DebugInfo
     {
     public:
         std::string_view file;
         int line;
         std::string_view function;
+        /**
+         * \paramrename{function,funcname}
+         */
         DebugInfo(std::string_view file, int line, std::string_view function)
             : file(file)
             , line(line)

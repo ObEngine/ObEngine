@@ -3,6 +3,17 @@
 namespace vili
 {
     class node;
+
+    namespace exceptions
+    {
+        /**
+         * \flagsurrogate{vili::exceptions::debug_info::debug_info}
+         * \paramrename{function,funcname}
+         */
+        class _Patch_debug_info
+        {
+        };
+    }
 }
 
 namespace vili::parser

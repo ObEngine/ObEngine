@@ -95,6 +95,9 @@ namespace obe::Utils::Math
      * \param start Lower bound
      * \param end Higher bound
      * \return Normalized value
+     *
+     * \paramrename{start,low}
+     * \paramrename{end,high}
      */
     double normalize(double value, double start, double end);
 
