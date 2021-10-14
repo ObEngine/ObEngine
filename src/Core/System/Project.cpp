@@ -1,5 +1,3 @@
-#include <filesystem>
-
 #include <vili/parser.hpp>
 #include <vld8/exceptions.hpp>
 #include <vld8/validator.hpp>
@@ -233,7 +231,7 @@ namespace obe::System::Project
                 Priorities::projectmount);
             MountablePath::Mount(objectsPath, SamePrefixPolicy::Skip);
         }
-        catch (const std::filesystem::filesystem_error& exc)
+        catch (const std::exception& exc)
         {
             Debug::Log->error("Unable to find directory for GameObjects");
         }
@@ -244,7 +242,7 @@ namespace obe::System::Project
                 Priorities::projectmount);
             MountablePath::Mount(scenesPath, SamePrefixPolicy::Skip);
         }
-        catch (const std::filesystem::filesystem_error& exc)
+        catch (const std::exception& exc)
         {
             Debug::Log->error("Unable to find directory for Scenes");
         }
