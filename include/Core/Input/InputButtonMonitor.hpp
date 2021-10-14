@@ -26,7 +26,6 @@ namespace obe::Input
 
     /**
      * \brief A class to monitor and update states of an InputButton
-     * \bind{InputButtonMonitor}
      */
     class InputButtonMonitor
     {

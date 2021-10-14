@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <optional>
 #include <unordered_map>
 
 #include <dynamicLinker/dynamicLinker.hpp>
@@ -8,10 +9,16 @@
 
 #include <Types/Identifiable.hpp>
 
+namespace obe::Engine
+{
+    class Engine;
+}
+
 namespace obe::System
 {
     template <class T>
-    using PluginFunction = std::unique_ptr<dynamicLinker::dynamicLinker::dlSymbol<T>>;
+    using PluginFunction
+        = std::optional<std::unique_ptr<dynamicLinker::dynamicLinker::dlSymbol<T>>>;
     /**
      * \nobind
      */
@@ -22,29 +29,25 @@ namespace obe::System
     class Plugin : public Types::Identifiable
     {
     private:
+        bool m_valid = false;
         std::shared_ptr<dynamicLinker::dynamicLinker> m_dl;
-        bool m_hasOnInitFn;
-        PluginFunction<void()> m_onInitFn;
-        bool m_hasOnLoadBindingsFn;
-        PluginFunction<void(sol::state_view)> m_onLoadBindingsFn;
-        bool m_hasOnUpdateFn;
+
+        PluginFunction<void(Engine::Engine&)> m_onInitFn;
         PluginFunction<void(double)> m_onUpdateFn;
-        bool m_hasOnRenderFn;
         PluginFunction<void()> m_onRenderFn;
-        bool m_hasOnExitFn;
         PluginFunction<void()> m_onExitFn;
 
     public:
         Plugin(const std::string& id, const std::string& path);
-        void onLoadBindings(sol::state_view lua) const;
+        void onInit(Engine::Engine& engine) const;
         void onUpdate(double dt) const;
         void onRender() const;
         void onExit() const;
         [[nodiscard]] bool hasOnInit() const;
-        [[nodiscard]] bool hasOnLoadBindings() const;
         [[nodiscard]] bool hasOnUpdate() const;
         [[nodiscard]] bool hasOnRender() const;
         [[nodiscard]] bool hasOnExit() const;
+        [[nodiscard]] bool isValid() const;
     };
 
     template <class T>

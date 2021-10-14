@@ -22,7 +22,6 @@ namespace obe::Collision
     /**
      * \brief A Trajectory makes a TrajectoryNode moves using angle, speed and
      *        acceleration (Linear Trajectory)
-     * \bind{Trajectory}
      */
     class Trajectory : public Types::Togglable
     {

@@ -54,7 +54,6 @@ namespace obe::Transform
     /**
      * \brief Class used for all Collisions in the engine, it's a Polygon
      *        containing n points
-     * \bind{Polygon}
      */
     class Polygon : public Transform::UnitBasedObject, public Transform::Movable
     {

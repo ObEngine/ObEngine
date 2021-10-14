@@ -40,9 +40,10 @@ namespace obe::Transform
             m_angle = Utils::Math::normalize(m_angle, 0, 360);
     }
 
-    void Rect::transformRef(UnitVector& vec, const Referential& ref, ConversionType type) const
+    void Rect::transformRef(
+        UnitVector& vec, const Referential& ref, ReferentialConversionType type) const
     {
-        const double factor = (type == ConversionType::From) ? 1.0 : -1.0;
+        const double factor = (type == ReferentialConversionType::From) ? 1.0 : -1.0;
         const double radAngle = Utils::Math::convertToRadian(-m_angle);
         const double cosAngle = std::cos(radAngle);
         const double sinAngle = std::sin(radAngle);
@@ -73,7 +74,7 @@ namespace obe::Transform
         for (uint8_t i = 0; i < 8; ++i)
         {
             UnitVector pt;
-            this->transformRef(pt, fixDisplayOrder[i], ConversionType::From);
+            this->transformRef(pt, fixDisplayOrder[i], ReferentialConversionType::From);
 
             UnitVector world = (pt + dPos).to<Units::ScenePixels>();
             drawPoints.push_back(world);
@@ -83,7 +84,7 @@ namespace obe::Transform
         const double cosAngle = std::cos(radAngle);
         const double sinAngle = std::sin(radAngle);
         UnitVector topPos;
-        this->transformRef(topPos, Referential::Top, ConversionType::From);
+        this->transformRef(topPos, Referential::Top, ReferentialConversionType::From);
         topPos = topPos.to<Units::ScenePixels>();
         topPos += dPos;
         UnitVector vec = topPos;
@@ -244,14 +245,14 @@ namespace obe::Transform
     UnitVector Rect::getPosition(const Referential& ref) const
     {
         UnitVector getPosVec = m_position;
-        this->transformRef(getPosVec, ref, ConversionType::From);
+        this->transformRef(getPosVec, ref, ReferentialConversionType::From);
         return getPosVec;
     }
 
     void Rect::setPosition(const UnitVector& position, const Referential& ref)
     {
         UnitVector pVec = position.to<Units::SceneUnits>();
-        this->transformRef(pVec, ref, ConversionType::To);
+        this->transformRef(pVec, ref, ReferentialConversionType::To);
         m_position.set(pVec);
     }
 

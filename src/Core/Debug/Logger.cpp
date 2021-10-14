@@ -14,7 +14,7 @@
 
 namespace obe::Debug
 {
-    std::shared_ptr<spdlog::logger> Log;
+    Logger Log;
     void InitLogger()
     {
         Utils::File::deleteFile("debug.log");

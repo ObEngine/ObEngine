@@ -2,6 +2,7 @@
 
 #include <Audio/AudioManager.hpp>
 #include <Config/Config.hpp>
+#include <Debug/Logger.hpp>
 #include <Engine/ResourceManager.hpp>
 #include <Event/EventManager.hpp>
 #include <Input/InputManager.hpp>
@@ -53,6 +54,7 @@ namespace obe::Engine
         std::unique_ptr<Scene::Scene> m_scene;
         std::unique_ptr<System::Cursor> m_cursor;
         std::unique_ptr<System::Window> m_window;
+        Debug::Logger::weak_type m_log;
 
         // Managers
         Audio::AudioManager m_audio {};
@@ -87,6 +89,7 @@ namespace obe::Engine
         // Cleaning
         void clean() const;
         void purge();
+        void deinitPlugins() const;
 
     public:
         Engine();
@@ -141,5 +144,13 @@ namespace obe::Engine
          * \asproperty
          */
         System::Window& getWindow() const;
+        /**
+         * \nobind
+         */
+        Script::LuaState& getLuaState() const;
+        /**
+         * \nobind
+         */
+        Debug::Logger getLogger() const;
     };
 }

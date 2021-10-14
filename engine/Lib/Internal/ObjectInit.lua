@@ -13,7 +13,7 @@ function ObjectInit()
         if (__INIT_ARG_TABLE[i]) then
             table.insert(Lua_Func_CallArgs, __INIT_ARG_TABLE[i]);
         else
-            table.insert(Lua_Func_CallArgs, __nil_table);
+            table.insert(Lua_Func_CallArgs, ArgMirror.__nil_table);
         end
     end
     if Local.Init then Local.Init(ArgMirror.Unpack(Lua_Func_CallArgs)); end

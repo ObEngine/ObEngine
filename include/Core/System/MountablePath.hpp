@@ -34,7 +34,6 @@ namespace obe::System
 
     /**
      * \brief Defines the source of a mounted path
-     * \bind{MountablePathType}
      */
     enum class MountablePathType
     {

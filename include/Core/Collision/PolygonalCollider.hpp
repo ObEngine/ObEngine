@@ -18,7 +18,6 @@ namespace obe::Collision
 {
     /**
      * \brief Enum used when manipulating tags in the Collider
-     * \bind{ColliderTagType}
      */
     enum class ColliderTagType
     {
@@ -33,7 +32,6 @@ namespace obe::Collision
     class PolygonalCollider;
     /**
     * \brief Struct containing data of a collision applied to a collider
-    * \bind{CollisionData}
     */
     class CollisionData
     {
@@ -51,7 +49,6 @@ namespace obe::Collision
     /**
      * \brief Class used for all Collisions in the engine, it's a Polygon
      * containing n points
-     * \bind{PolygonalCollider}
      */
     class PolygonalCollider : public Transform::Polygon,
                               public Types::Selectable,

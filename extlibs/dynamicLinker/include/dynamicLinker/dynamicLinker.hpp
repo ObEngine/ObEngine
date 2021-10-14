@@ -4,6 +4,7 @@
 #include <iostream>
 #include <functional>
 #include <stdexcept>
+#include <string>
 
 extern "C"
 {
@@ -78,6 +79,14 @@ namespace dynamicLinker {
         #endif
       }
 
+      std::string getError() {
+        #ifdef _WIN32
+          return std::string("Error code : ") + std::to_string(GetLastError());
+        #else
+          return std::string(dlerror());
+        #endif
+      }
+
     public:
       dlSymbol( std::shared_ptr<dynamicLinker> p, std::string n )
         : parent(p), name(n) {
@@ -101,9 +110,7 @@ namespace dynamicLinker {
         sym = std::function< R(A...) >(reinterpret_cast<  R(*)(A...)  >( getSymbol() ));
 
         if( sym == nullptr ) {
-          char* err = nullptr;  //dlerror();
-          std::string s = (err == nullptr) ? "FATAL ERROR: No error!" : std::string(err);
-          throw symbolException(s);
+          throw symbolException(getError());
         }
       }
     };

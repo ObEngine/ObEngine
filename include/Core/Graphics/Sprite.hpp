@@ -89,7 +89,6 @@ namespace obe::Graphics
 
     /**
      * \brief An element meant to be displayed in a Scene
-     * \bind{Sprite}
      */
     class Sprite : public Transform::UnitBasedObject,
                    public Types::Selectable,

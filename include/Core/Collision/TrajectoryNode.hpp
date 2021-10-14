@@ -11,7 +11,6 @@ namespace obe::Collision
     /**
      * \brief A Node containing trajectories, a SceneNode to drive and a probe to check
      * for collisions
-     * \bind{TrajectoryNode}
      */
     class TrajectoryNode
     {

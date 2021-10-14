@@ -1,5 +1,7 @@
 project(lua LANGUAGES CXX)
 
+file(GLOB LUA_HEADERS include/lua/*.h include/lua/*.hpp)
+
 set(LUA_SOURCES
     "src/ldblib.c"
     "src/ldebug.c"
@@ -50,6 +52,8 @@ target_include_directories(lua
     PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/lua>
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/lua
     PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/lua>
 )

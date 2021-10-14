@@ -9,9 +9,22 @@
 namespace obe::Transform
 {
     /**
+     * \brief Conversion Type for Referential Usage
+     */
+    enum class ReferentialConversionType
+    {
+        /**
+            * \brief Factor x1 (GetPosition)
+            */
+        From,
+        /**
+            * \brief Factor x-1 (SetPosition)
+            */
+        To
+    };
+    /**
      * \brief A Class that does represent a Rectangle with various methods to
      *        manipulate it
-     * \bind{Rect}
      */
     class Rect : public Movable
     {
@@ -24,20 +37,6 @@ namespace obe::Transform
 
     public:
         /**
-         * \brief Conversion Type for Referential Usage
-         */
-        enum class ConversionType
-        {
-            /**
-             * \brief Factor x1 (GetPosition)
-             */
-            From,
-            /**
-             * \brief Factor x-1 (SetPosition)
-             */
-            To
-        };
-        /**
          * \brief Transform the UnitVector passed by reference using the given
          * Referential
          * \param vec The UnitVector you want to transform
@@ -46,7 +45,8 @@ namespace obe::Transform
          *          - From : Referential::TopLeft to ref
          *          - To : ref to Referential::TopLeft
          */
-        void transformRef(UnitVector& vec, const Referential& ref, ConversionType type) const;
+        void transformRef(
+            UnitVector& vec, const Referential& ref, ReferentialConversionType type) const;
 
         Rect() = default;
         Rect(const Transform::UnitVector& position, const Transform::UnitVector& size);

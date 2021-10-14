@@ -10,7 +10,7 @@ namespace obe::Transform
     /**
      * \brief Class widely used in the Engine to scale and position elements in
      * a Scene
-     * \bind{Vector2}
+     * TODO: /bind{Vector2}
      */
     class UnitVector
     {
@@ -32,10 +32,12 @@ namespace obe::Transform
 
         /**
          * \brief Struct used for UnitVector conversions, do not modify !
+         * \nobind
          */
         static ViewStruct View;
         /**
          * \brief Struct used for UnitVector conversions, do not modify !
+         * \nobind
          */
         static ScreenStruct Screen;
 

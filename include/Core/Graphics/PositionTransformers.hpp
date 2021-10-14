@@ -18,24 +18,20 @@ namespace obe::Graphics
     /**
      * \brief CoordinateTransformer which uses the layer and camera position to give a
      * parallax effect
-     * \bind{PositionTransformer.Parallax}
      */
     extern CoordinateTransformer Parallax;
     /**
      * \brief CoordinateTransformer which uses the camera position
-     * \bind{PositionTransformer.Camera}
      */
     extern CoordinateTransformer Camera;
     /**
      * \brief CoordinateTransformer which only uses the base position (no transformation)
-     * \bind{PositionTransformer.Position}
      */
     extern CoordinateTransformer Position;
 
     /**
      * \brief A PositionTransformer tells how a Coordinate should be transformed
      * depending of multiple parameters
-     * \bind{PositionTransformer}
      */
     class PositionTransformer
     {

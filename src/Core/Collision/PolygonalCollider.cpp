@@ -336,7 +336,7 @@ namespace obe::Collision
         const Transform::Units pxUnit = Transform::Units::ScenePixels;
         const Transform::UnitVector tOffset = offset.to(pxUnit);
         if (doAABBfilter && AABBfilter(*this, offset, { &collider }).empty())
-            return tOffset;
+            return offset;
         bool inFront = false;
         Transform::UnitVector minDep;
         const auto calcMinDistanceDep

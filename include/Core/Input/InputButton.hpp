@@ -28,7 +28,6 @@ namespace obe::Input
     };
     /**
      * \brief Trigger condition on an AxisButton input
-     * \bind{AxisThresholdDirection}
      */
     enum class AxisThresholdDirection
     {
@@ -51,7 +50,6 @@ namespace obe::Input
 
     /**
      * \brief Class that does represent an Input button
-     * \bind{InputButton}
      */
     class InputButton
     {

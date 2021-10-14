@@ -12,7 +12,6 @@ namespace obe::Input
 {
     /**
      * \brief Class used to manage KeyClass and KeyboardAction
-     * \bind{InputManager}
      */
     class InputManager : public Types::Togglable
     {

@@ -65,9 +65,18 @@ namespace obe
 
     public:
         BaseException() = default;
+        /**
+         * \nobind
+         */
         explicit BaseException(const std::exception& e) noexcept;
+        /**
+         * \nobind
+         */
         template <class... Args>
         void error(Args&&... args);
+        /**
+         * \nobind
+         */
         template <class... Args>
         void hint(Args&&... args);
         [[nodiscard]] const char* what() const noexcept override;
