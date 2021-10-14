@@ -32,7 +32,7 @@ namespace obe::Animation
      * \brief The Play Mode of an Animation.
      *        It indicates whether an Animation can be interrupted or not and
      *        what to do when the Animation is over
-     * \bind{AnimationPlayMode}
+     * TODO: /bind{AnimationPlayMode}
      */
     enum class AnimationPlayMode
     {
@@ -58,7 +58,7 @@ namespace obe::Animation
      *        form
      * \return The converted value which is an AnimationPlayMode enum value
      * \throw UnknownAnimationPlayMode if the string does not represent one of the enum values
-     * \bind{[mt]AnimationPlayMode.__call}
+     * TODO: /bind{[mt]AnimationPlayMode.__call}
      */
     AnimationPlayMode stringToAnimationPlayMode(const std::string& animationPlayMode);
     std::ostream& operator<<(std::ostream& os, const AnimationPlayMode& m);
@@ -66,7 +66,6 @@ namespace obe::Animation
     /**
      * \brief The AnimationStatus indicates whether the current Animation should
      *        continue to play or call another one.
-     * \bind{AnimationStatus}
      */
     enum class AnimationStatus
     {
@@ -162,7 +161,7 @@ namespace obe::Animation
 
     /**
      * \brief A whole Animation that contains one or more AnimationGroup.
-     * \bind{Animation}
+     * TODO: /bind{Animation}
      */
     class Animation
     {

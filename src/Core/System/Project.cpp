@@ -1,3 +1,5 @@
+#include <filesystem>
+
 #include <vili/parser.hpp>
 #include <vld8/exceptions.hpp>
 #include <vld8/validator.hpp>
@@ -224,15 +226,28 @@ namespace obe::System::Project
         const std::string projectRoot
             = System::Path(System::Prefixes::root, ".").find(PathType::Directory).path();
 
-        const MountablePath objectsPath(MountablePathType::Path,
-            Utils::File::join({ projectRoot, "GameObjects" }), Prefixes::objects,
-            Priorities::projectmount);
-        MountablePath::Mount(objectsPath, SamePrefixPolicy::Skip);
-
-        const MountablePath scenesPath(MountablePathType::Path,
-            Utils::File::join({ projectRoot, "Scenes" }), Prefixes::objects,
-            Priorities::projectmount);
-        MountablePath::Mount(scenesPath, SamePrefixPolicy::Skip);
+        try
+        {
+            const MountablePath objectsPath(MountablePathType::Path,
+                Utils::File::join({ projectRoot, "GameObjects" }), Prefixes::objects,
+                Priorities::projectmount);
+            MountablePath::Mount(objectsPath, SamePrefixPolicy::Skip);
+        }
+        catch (const std::filesystem::filesystem_error& exc)
+        {
+            Debug::Log->error("Unable to find directory for GameObjects");
+        }
+        try
+        {
+            const MountablePath scenesPath(MountablePathType::Path,
+                Utils::File::join({ projectRoot, "Scenes" }), Prefixes::objects,
+                Priorities::projectmount);
+            MountablePath::Mount(scenesPath, SamePrefixPolicy::Skip);
+        }
+        catch (const std::filesystem::filesystem_error& exc)
+        {
+            Debug::Log->error("Unable to find directory for Scenes");
+        }
     }
 
     Project::Project()

@@ -8,7 +8,6 @@ namespace obe::Time
 {
     /**
      * \brief A Chronometer class to measure time
-     * \bind{Chronometer}
      */
     class Chronometer
     {

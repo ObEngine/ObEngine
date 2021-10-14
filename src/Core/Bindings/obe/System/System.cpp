@@ -85,14 +85,12 @@ namespace obe::System::Bindings
         bindCursor["update"] = &obe::System::Cursor::update;
         bindCursor["setConstraint"] = sol::overload(
             [](obe::System::Cursor* self,
-                std::function<std::pair<int, int>(obe::System::Cursor*)> constraint) -> void {
-                return self->setConstraint(constraint);
-            },
+                std::function<std::pair<int, int>(obe::System::Cursor*)> constraint) -> void
+            { return self->setConstraint(constraint); },
             [](obe::System::Cursor* self,
                 std::function<std::pair<int, int>(obe::System::Cursor*)> constraint,
-                std::function<bool()> condition) -> void {
-                return self->setConstraint(constraint, condition);
-            });
+                std::function<bool()> condition) -> void
+            { return self->setConstraint(constraint, condition); });
         bindCursor["isPressed"] = &obe::System::Cursor::isPressed;
     }
     void LoadClassFindResult(sol::state_view state)
@@ -131,20 +129,16 @@ namespace obe::System::Bindings
         bindMountablePath[sol::meta_function::equal_to] = &obe::System::MountablePath::operator==;
         bindMountablePath["LoadMountFile"] = sol::overload(
             [](obe::System::MountablePath* self) -> void { return self->LoadMountFile(); },
-            [](obe::System::MountablePath* self, bool fromCWD) -> void {
-                return self->LoadMountFile(fromCWD);
-            },
-            [](obe::System::MountablePath* self, bool fromCWD, bool fromExe) -> void {
-                return self->LoadMountFile(fromCWD, fromExe);
-            });
+            [](obe::System::MountablePath* self, bool fromCWD) -> void
+            { return self->LoadMountFile(fromCWD); },
+            [](obe::System::MountablePath* self, bool fromCWD, bool fromExe) -> void
+            { return self->LoadMountFile(fromCWD, fromExe); });
         bindMountablePath["Mount"] = sol::overload(
-            [](obe::System::MountablePath* self, obe::System::MountablePath path) -> void {
-                return self->Mount(path);
-            },
+            [](obe::System::MountablePath* self, obe::System::MountablePath path) -> void
+            { return self->Mount(path); },
             [](obe::System::MountablePath* self, obe::System::MountablePath path,
-                obe::System::SamePrefixPolicy samePrefixPolicy) -> void {
-                return self->Mount(path, samePrefixPolicy);
-            });
+                obe::System::SamePrefixPolicy samePrefixPolicy) -> void
+            { return self->Mount(path, samePrefixPolicy); });
         bindMountablePath["Unmount"] = &obe::System::MountablePath::Unmount;
         bindMountablePath["UnmountAll"] = &obe::System::MountablePath::UnmountAll;
         bindMountablePath["Paths"] = &obe::System::MountablePath::Paths;
@@ -176,11 +170,10 @@ namespace obe::System::Bindings
             },
             [](obe::System::Path* self, obe::System::PathType pathType)
                 -> std::vector<obe::System::FindResult> { return self->list(pathType); });
-        bindPath["find"] = sol::overload(
-            [](obe::System::Path* self) -> obe::System::FindResult { return self->find(); },
-            [](obe::System::Path* self, obe::System::PathType pathType) -> obe::System::FindResult {
-                return self->find(pathType);
-            });
+        bindPath["find"] = sol::overload([](obe::System::Path* self) -> obe::System::FindResult
+            { return self->find(); },
+            [](obe::System::Path* self, obe::System::PathType pathType) -> obe::System::FindResult
+            { return self->find(pathType); });
         bindPath["findAll"] = sol::overload(
             [](obe::System::Path* self) -> std::vector<obe::System::FindResult> {
                 return self->findAll();
@@ -199,12 +192,10 @@ namespace obe::System::Bindings
             = SystemNamespace.new_usertype<obe::System::Plugin>("Plugin", sol::call_constructor,
                 sol::constructors<obe::System::Plugin(const std::string&, const std::string&)>(),
                 sol::base_classes, sol::bases<obe::Types::Identifiable>());
-        bindPlugin["onLoadBindings"] = &obe::System::Plugin::onLoadBindings;
         bindPlugin["onUpdate"] = &obe::System::Plugin::onUpdate;
         bindPlugin["onRender"] = &obe::System::Plugin::onRender;
         bindPlugin["onExit"] = &obe::System::Plugin::onExit;
         bindPlugin["hasOnInit"] = &obe::System::Plugin::hasOnInit;
-        bindPlugin["hasOnLoadBindings"] = &obe::System::Plugin::hasOnLoadBindings;
         bindPlugin["hasOnUpdate"] = &obe::System::Plugin::hasOnUpdate;
         bindPlugin["hasOnRender"] = &obe::System::Plugin::hasOnRender;
         bindPlugin["hasOnExit"] = &obe::System::Plugin::hasOnExit;

@@ -247,7 +247,6 @@ namespace obe::Graphics::Canvas
 
     /**
      * \brief A Canvas where you can draw CanvasElements
-     * \bind{Canvas}
      * \helper{obe://Lib/Internal/Canvas.lua}
      */
     class Canvas
@@ -339,8 +338,8 @@ namespace obe::Graphics::Canvas
             m_sortRequired = true;
             std::unique_ptr<T> newElement = std::make_unique<T>(*this, id);
             auto insert_it = std::find_if(m_elements.begin(), m_elements.end(),
-                [&newElement](const CanvasElement::Ptr& elem)
-                { return newElement->layer <= elem->layer; });
+                [&newElement](
+                    const CanvasElement::Ptr& elem) { return newElement->layer <= elem->layer; });
             auto elem_it = m_elements.insert(insert_it, std::move(newElement));
             return *static_cast<T*>(elem_it->get());
         }

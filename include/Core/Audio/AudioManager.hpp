@@ -46,7 +46,6 @@ namespace obe::Audio
 
     /**
      * \brief Class to handle audio playback
-     * \bind{AudioManager}
      */
     class AudioManager
     {

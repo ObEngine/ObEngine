@@ -8,7 +8,6 @@ namespace obe::Graphics
 {
     /**
      * \brief A class to handle colors
-     * \bind{Color}
      */
     class Color
     {

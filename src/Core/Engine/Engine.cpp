@@ -49,6 +49,8 @@ namespace obe::Engine
             sol::lib::os, sol::lib::coroutine, sol::lib::math, sol::lib::count, sol::lib::debug,
             sol::lib::io, sol::lib::bit32);
 
+        this->initPlugins();
+
         m_lua->safe_script("LuaCore = {}");
         m_lua->safe_script_file("obe://Lib/Internal/ScriptInit.lua"_fs);
         m_lua->safe_script_file("obe://Lib/Internal/Events.lua"_fs);
@@ -109,21 +111,26 @@ namespace obe::Engine
 
     void Engine::initPlugins()
     {
-        for (const auto& mountedPath : System::MountablePath::Paths())
+        Debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}",
+            System::MountablePath::FromPrefix("cwd").basePath);
+        System::Path cPluginPath
+            = System::Path(System::MountablePath::FromPrefix("cwd").basePath).add("Plugins");
+        if (Utils::File::directoryExists(cPluginPath.toString()))
         {
-            Debug::Log->info(
-                "<Bindings> Checking Plugins on Mounted Path : {0}", mountedPath->basePath);
-            System::Path cPluginPath = System::Path(mountedPath->basePath).add("Plugins");
-            if (Utils::File::directoryExists(cPluginPath.toString()))
+            for (const std::string& filename : Utils::File::getFileList(cPluginPath.toString()))
             {
-                for (const std::string& filename : Utils::File::getFileList(cPluginPath.toString()))
+                const std::string pluginPath = cPluginPath.add(filename).toString();
+                const std::string pluginName = Utils::String::split(filename, ".")[0];
+                auto plugin = std::make_unique<System::Plugin>(pluginName, pluginPath);
+                if (plugin->isValid())
                 {
-                    const std::string pluginPath = cPluginPath.add(filename).toString();
-                    const std::string pluginName = Utils::String::split(filename, ".")[0];
-                    m_plugins.emplace_back(
-                        std::make_unique<System::Plugin>(pluginName, pluginPath));
+                    m_plugins.emplace_back(std::move(plugin));
                 }
             }
+        }
+        for (const auto& plugin : m_plugins)
+        {
+            plugin->onInit(*this);
         }
     }
 
@@ -203,6 +210,14 @@ namespace obe::Engine
         m_lua.reset();
     }
 
+    void Engine::deinitPlugins() const
+    {
+        for (const auto& plugin : m_plugins)
+        {
+            plugin->onExit();
+        }
+    }
+
     void Engine::handleWindowEvents() const
     {
         sf::Event event;
@@ -279,11 +294,13 @@ namespace obe::Engine
     }
 
     Engine::Engine()
+        : m_log(Debug::Log)
     {
     }
 
     Engine::~Engine()
     {
+        this->deinitPlugins();
         try
         {
             this->clean();
@@ -306,7 +323,7 @@ namespace obe::Engine
         this->initWindow();
         this->initCursor();
         this->initFramerate();
-        this->initPlugins();
+        // this->initPlugins();
         this->initResources();
         this->initScene();
         m_initialized = true;
@@ -424,6 +441,16 @@ namespace obe::Engine
     System::Window& Engine::getWindow() const
     {
         return *m_window;
+    }
+
+    Script::LuaState& Engine::getLuaState() const
+    {
+        return *m_lua;
+    }
+
+    Debug::Logger Engine::getLogger() const
+    {
+        return m_log.lock();
     }
 
     void Engine::update() const
