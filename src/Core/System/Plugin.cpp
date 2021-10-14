@@ -92,7 +92,7 @@ namespace obe::System
 
     void Plugin::onExit() const
     {
-        if (m_onInitFn)
+        if (m_onExitFn)
         {
             (**m_onExitFn)();
         }
