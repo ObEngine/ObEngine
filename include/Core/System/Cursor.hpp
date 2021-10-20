@@ -74,6 +74,8 @@ namespace obe::System
         std::map<sf::Mouse::Button, bool> m_buttonState;
 
     public:
+        using PositionConstraint = std::function<std::pair<int, int>(Cursor* cursor)>;
+        using ConstraintCondition = std::function<bool()>;
         /**
          * \brief Creates a Cursor
          */
@@ -137,13 +139,12 @@ namespace obe::System
         /**
          * \brief Sets the Cursor's constraint
          * \param constraint A function returning the constrained Position of
-         *        the Cursor (a std::pair<int, int>) and taking the Cursor pointer in
+         *        the Cursor (x, y coordinates) and taking the Cursor pointer in
          *        parameter
          * \param condition condition for the constraint to apply
          */
         void setConstraint(
-            std::function<std::pair<int, int>(Cursor*)> constraint,
-            std::function<bool()> condition = []() { return true; });
+            PositionConstraint constraint, ConstraintCondition condition = []() { return true; });
         bool isPressed(sf::Mouse::Button button);
     };
 

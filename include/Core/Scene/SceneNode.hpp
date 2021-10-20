@@ -14,19 +14,19 @@ namespace obe::Scene
     class SceneNode : public Transform::Movable, public Types::Selectable
     {
     private:
-        std::vector<Movable*> m_children;
+        std::vector<Transform::Movable*> m_children;
 
     public:
         /**
          * \brief Adds a child to the SceneNode
          * \param child Pointer to the new SceneNode child
          */
-        void addChild(Movable& child);
+        void addChild(Transform::Movable& child);
         /**
          * \brief Removes a child from the SceneNode
          * \param child Reference to the SceneNode child to remove
          */
-        void removeChild(Movable& child);
+        void removeChild(Transform::Movable& child);
         /**
          * \brief Set the position of the SceneNode and all of its children
          *        using an UnitVector
