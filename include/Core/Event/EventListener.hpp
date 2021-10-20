@@ -7,6 +7,9 @@
 
 namespace obe::Event
 {
+    /**
+     * \nobind
+     */
     template <class EventType>
     using CppEventListener = std::function<void(const EventType&)>;
 
