@@ -457,6 +457,12 @@ namespace obe::Engine
     {
         // Events
         this->handleWindowEvents();
+
+        for (const auto& plugin : m_plugins)
+        {
+            plugin->onUpdate(m_framerate->getGameSpeed());
+        }
+
         m_scene->update();
         m_events->update();
         m_input->update();
@@ -468,6 +474,10 @@ namespace obe::Engine
         if (m_framerate->doRender())
         {
             m_window->clear();
+            for (const auto& plugin : m_plugins)
+            {
+                plugin->onRender();
+            }
             m_scene->draw(m_window->getTarget());
             m_window->display();
         }
