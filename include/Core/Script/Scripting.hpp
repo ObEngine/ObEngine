@@ -13,10 +13,23 @@ namespace obe::Script
         {
             if (result.return_count() > 0)
             {
-                const auto errObj = result.get<sol::error>();
-                const std::string errMsg = "\n        \""
-                    + Utils::String::replace(errObj.what(), "\n", "\n        ") + "\"";
-                throw Exceptions::LuaExecutionError(errMsg, EXC_INFO);
+                try
+                {
+                    const auto errObj = result.get<sol::error>();
+                    const std::string errMsg = "\n        \""
+                        + Utils::String::replace(errObj.what(), "\n", "\n        ") + "\"";
+                    throw Exceptions::LuaExecutionError(errMsg, EXC_INFO);
+                }
+                catch (const sol::error& err)
+                {
+                    throw Exceptions::LuaExecutionError(
+                        fmt::format(
+                            "An exception occured while trying to retrieve the previous exception : '{}'",
+                            err.what()
+                        ),
+                        EXC_INFO
+                    );
+                }
             }
             else
             {

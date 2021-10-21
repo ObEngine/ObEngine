@@ -111,9 +111,7 @@ namespace obe
     {
         const std::string errorMsg = fmt::format(std::forward<Args>(args)...);
         m_message += fmt::format("  Error: {}\n", errorMsg);
-#if defined(_DEBUG)
         fprintf(stderr, "%s", m_message.c_str());
-#endif
     }
 
     template <class... Args>
