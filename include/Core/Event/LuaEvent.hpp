@@ -18,5 +18,5 @@ namespace obe::Event
      * \proxy{obe::Event::EventGroup::trigger}
      * \bind{trigger}
      */
-    void triggerLuaEvent(EventGroup* self, const std::string& name, sol::table data = sol::nil);
+    void triggerLuaEvent(EventGroup* self, const std::string& name, sol::table data = sol::lua_nil);
 }
