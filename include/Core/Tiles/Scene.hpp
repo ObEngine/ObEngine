@@ -44,7 +44,7 @@ namespace obe::Tiles
 
     public:
         explicit TileScene(Scene::Scene& scene);
-        vili::node dump() const;
+        [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
 
         void update();
