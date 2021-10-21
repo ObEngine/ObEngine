@@ -13,11 +13,10 @@ namespace obe::Event
      * \proxy{obe::Event::EventGroup::add}
      * \bind{add}
      */
-    void addLuaEvent(obe::Event::EventGroup* self, const std::string& name);
+    void addLuaEvent(EventGroup* self, const std::string& name);
     /**
      * \proxy{obe::Event::EventGroup::trigger}
      * \bind{trigger}
      */
-    void triggerLuaEvent(
-        obe::Event::EventGroup* self, const std::string& name, sol::table data = sol::nil);
+    void triggerLuaEvent(EventGroup* self, const std::string& name, sol::table data = sol::nil);
 }
