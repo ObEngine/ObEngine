@@ -4,6 +4,7 @@
 
 #include <Transform/UnitStructures.hpp>
 #include <Transform/Units.hpp>
+#include <Types/Tweenable.hpp>
 
 namespace obe::Transform
 {
@@ -12,7 +13,7 @@ namespace obe::Transform
      * a Scene
      * TODO: /bind{Vector2}
      */
-    class UnitVector
+    class UnitVector : public Types::Tweenable<2>
     {
     public:
         /**
@@ -266,6 +267,18 @@ namespace obe::Transform
          * \brief Return the length of the UnitVector
          */
         [[nodiscard]] double magnitude() const;
+
+        void setNumericalComponents(const NumericalComponents& components) override
+        {
+            x = components[0];
+            y = components[1];
+        }
+
+        [[nodiscard]] NumericalComponents getNumericalComponents() override
+        {
+            return { x, y };
+        }
+
     };
 
     template <>

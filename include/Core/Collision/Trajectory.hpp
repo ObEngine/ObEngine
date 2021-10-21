@@ -7,6 +7,7 @@
 #include <Transform/UnitVector.hpp>
 #include <Transform/Units.hpp>
 #include <Types/Togglable.hpp>
+#include <Types/Tweenable.hpp>
 
 namespace obe::Collision
 {
@@ -23,7 +24,7 @@ namespace obe::Collision
      * \brief A Trajectory makes a TrajectoryNode moves using angle, speed and
      *        acceleration (Linear Trajectory)
      */
-    class Trajectory : public Types::Togglable
+    class Trajectory : public Types::Togglable, public Types::Tweenable<3>
     {
     private:
         double m_acceleration = 0;
@@ -53,5 +54,16 @@ namespace obe::Collision
         Trajectory& setAngle(double angle);
         Trajectory& setSpeed(double speed);
         Trajectory& setStatic(bool tStatic);
+        void setNumericalComponents(const NumericalComponents& components) override
+        {
+            m_acceleration = components[0];
+            m_angle = components[1];
+            m_speed = components[2];
+        }
+
+        [[nodiscard]] NumericalComponents getNumericalComponents() override
+        {
+            return { m_acceleration, m_angle, m_speed };
+        }
     };
 } // namespace obe::Collision
