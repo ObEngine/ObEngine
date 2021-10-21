@@ -13,6 +13,7 @@ namespace obe::Event
 
     public:
         EventNamespaceView(const EventNamespace& eventNamespace);
+        EventGroupPtr joinGroup(const std::string& group) const;
         EventGroupView getGroup(const std::string& group) const;
         /**
          * \brief Get all the names of the EventGroup in the given Namespace
@@ -34,6 +35,7 @@ namespace obe::Event
     private:
         std::string m_name;
         std::map<std::string, std::weak_ptr<EventGroup>> m_groups;
+        bool m_joinable = false;
 
     public:
         explicit EventNamespace(const std::string& name);
@@ -50,7 +52,7 @@ namespace obe::Event
          * \param group Name of the EventGroup to join
          * \return Pointer to the newly joined EventGroup
          */
-        EventGroupPtr joinGroup(const std::string& group);
+        EventGroupPtr joinGroup(const std::string& group) const;
         EventGroupView getGroup(const std::string& group) const;
         /**
          * \brief Get all the names of the EventGroup in the given Namespace
@@ -71,5 +73,16 @@ namespace obe::Event
          */
         bool doesGroupExists(const std::string& group) const;
         [[nodiscard]] EventNamespaceView getView() const;
+        /**
+         * \brief Sets if the EventNamespace is joinable or not
+         * \param joinable true if the EventNamespace should be joinable, false
+         *        otherwise
+         */
+        void setJoinable(bool joinable);
+        /**
+         * \brief Get if the EventNamespace is joinable or not
+         * \return true if the EventNamespace is joinable, false otherwise
+         */
+        [[nodiscard]] bool isJoinable() const;
     };
 }

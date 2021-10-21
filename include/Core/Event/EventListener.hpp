@@ -4,6 +4,7 @@
 #include <string>
 
 #include <Script/Scripting.hpp>
+#include <Script/ViliLuaBridge.hpp>
 
 namespace obe::Event
 {
@@ -20,7 +21,6 @@ namespace obe::Event
 
     public:
         LuaEventListener(sol::protected_function callback);
-
         template <class EventType>
         void operator()(const EventType& event) const;
     };

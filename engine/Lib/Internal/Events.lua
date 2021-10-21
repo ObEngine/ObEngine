@@ -40,6 +40,9 @@ function LuaCore.EventGroupHooks(id, namespace)
                     :removeExternalListener(id);
             end
         end,
+        __call = function(object)
+            return Engine.Events:getNamespace(namespace):joinGroup(object.id);
+        end,
         __storage = {}
     };
 end
@@ -64,6 +67,9 @@ function LuaCore.EventNamespaceHooks(id, namespace)
             for k, _ in pairs(object) do
                 getmetatable(object[k]).__clean(object[k]);
             end
+        end,
+        __call = function(object)
+            return Engine.Events:joinNamespace(namespace);
         end
     };
     return setmetatable({}, hook_mt);
