@@ -72,12 +72,17 @@ namespace obe::Engine
     {
         m_events = std::make_unique<Event::EventManager>();
         m_eventNamespace = &m_events->createNamespace("Event");
-        e_game = m_eventNamespace->createGroup("Game");
+        m_userEventNamespace = &m_events->createNamespace("UserEvent");
+        m_userEventNamespace->setJoinable(true);
 
+        e_game = m_eventNamespace->createGroup("Game");
         e_game->add<Events::Game::Start>();
         e_game->add<Events::Game::End>();
         e_game->add<Events::Game::Update>();
         e_game->add<Events::Game::Render>();
+
+        e_custom = m_userEventNamespace->createGroup("Custom");
+        e_custom->setJoinable(true);
 
         e_game->trigger(Events::Game::Start {});
     }
@@ -197,6 +202,7 @@ namespace obe::Engine
         m_resources.reset();
         Debug::Log->debug("Cleaning Game Events");
         e_game.reset();
+        e_custom.reset();
         Debug::Log->debug("Cleaning InputManager");
         m_input.reset();
         Debug::Log->debug("Cleaning Events");

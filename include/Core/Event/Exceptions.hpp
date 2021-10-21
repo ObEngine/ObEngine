@@ -148,4 +148,20 @@ namespace obe::Event::Exceptions
                        "group.setJoinable(true) from its manager");
         }
     };
+
+    class EventNamespaceNotJoinable : public Exception<EventNamespaceNotJoinable>
+    {
+    public:
+        using Exception::Exception;
+        EventNamespaceNotJoinable(
+            std::string_view eventNamespace, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("Impossible to join EventNamespace "
+                        "'{}' as it is defined as non-joinable",
+                eventNamespace);
+            this->hint("If you want this EventNamespace to be able to be joined, use "
+                       "eventNamespace.setJoinable(true) from its manager");
+        }
+    };
 }

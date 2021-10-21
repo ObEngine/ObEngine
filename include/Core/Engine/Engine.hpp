@@ -64,9 +64,11 @@ namespace obe::Engine
         std::unique_ptr<Time::FramerateManager> m_framerate;
         std::unique_ptr<Event::EventManager> m_events;
         Event::EventNamespace* m_eventNamespace;
+        Event::EventNamespace* m_userEventNamespace;
 
-        // TriggerGroups
+        // EventGroups
         Event::EventGroupPtr e_game {};
+        Event::EventGroupPtr e_custom {};
 
         // Initialization
         void initConfig();

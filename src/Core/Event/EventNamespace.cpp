@@ -7,6 +7,11 @@ namespace obe::Event
     {
     }
 
+    EventGroupPtr EventNamespaceView::joinGroup(const std::string& group) const
+    {
+        return m_namespace.joinGroup(group);
+    }
+
     EventGroupView EventNamespaceView::getGroup(const std::string& group) const
     {
         return m_namespace.getGroup(group);
@@ -61,11 +66,11 @@ namespace obe::Event
         throw Exceptions::EventGroupAlreadyExists(m_name, group, EXC_INFO);
     }
 
-    EventGroupPtr EventNamespace::joinGroup(const std::string& group)
+    EventGroupPtr EventNamespace::joinGroup(const std::string& group) const
     {
         Debug::Log->debug(
             "<EventNamespace> Joining EventGroup '{}' in Namespace '{}'", group, m_name);
-        if (auto groupPtr = m_groups.find(group); groupPtr != m_groups.end())
+        if (const auto groupPtr = m_groups.find(group); groupPtr != m_groups.end())
         {
             if (groupPtr->second.lock()->isJoinable())
             {
@@ -79,7 +84,11 @@ namespace obe::Event
 
     EventGroupView EventNamespace::getGroup(const std::string& group) const
     {
-        return m_groups.at(group).lock()->getView();
+        if (const auto groupPtr = m_groups.find(group); groupPtr != m_groups.end())
+        {
+            return groupPtr->second.lock()->getView();
+        }
+        throw Exceptions::UnknownEventGroup(m_name, group, this->getAllGroupsNames(), EXC_INFO);
     }
 
     std::vector<std::string> EventNamespace::getAllGroupsNames() const
@@ -108,5 +117,15 @@ namespace obe::Event
     EventNamespaceView EventNamespace::getView() const
     {
         return EventNamespaceView(*this);
+    }
+
+    void EventNamespace::setJoinable(bool joinable)
+    {
+        m_joinable = joinable;
+    }
+
+    bool EventNamespace::isJoinable() const
+    {
+        return m_joinable;
     }
 }
