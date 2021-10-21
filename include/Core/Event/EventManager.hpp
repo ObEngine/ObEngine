@@ -34,9 +34,23 @@ namespace obe::Event
          * \brief Gets the root EventGroup
          */
         EventNamespace& createNamespace(const std::string& eventNamespace);
+        EventNamespace& joinNamespace(const std::string& eventNamespace);
         EventNamespaceView getNamespace(const std::string& eventNamespace);
+
+        std::vector<std::string> getAllNamespacesNames() const;
 
         CallbackScheduler& schedule();
         vili::node dumpProfilerResults() const;
     };
+
+    inline std::vector<std::string> EventManager::getAllNamespacesNames() const
+    {
+        std::vector<std::string> allNames;
+        allNames.reserve(m_namespaces.size());
+        for (const auto& eventNamespace : m_namespaces)
+        {
+            allNames.push_back(eventNamespace.first);
+        }
+        return allNames;
+    }
 } // namespace obe::Event

@@ -6,6 +6,7 @@
 #include <Event/EventListener.hpp>
 #include <Event/EventManager.hpp>
 #include <Event/EventNamespace.hpp>
+#include <Event/LuaEvent.hpp>
 
 #include <Bindings/Config.hpp>
 
@@ -84,6 +85,8 @@ namespace obe::Event::Bindings
         bindEventGroup["onAddListener"] = &obe::Event::EventGroup::onAddListener;
         bindEventGroup["onRemoveListener"] = &obe::Event::EventGroup::onRemoveListener;
         bindEventGroup["getProfilerResults"] = &obe::Event::EventGroup::getProfilerResults;
+        bindEventGroup["add"] = &obe::Event::addLuaEvent;
+        bindEventGroup["trigger"] = &obe::Event::triggerLuaEvent;
     }
     void LoadClassEventGroupView(sol::state_view state)
     {
@@ -112,6 +115,7 @@ namespace obe::Event::Bindings
         bindEventManager["clear"] = &obe::Event::EventManager::clear;
         bindEventManager["createNamespace"] = &obe::Event::EventManager::createNamespace;
         bindEventManager["getNamespace"] = &obe::Event::EventManager::getNamespace;
+        bindEventManager["joinNamespace"] = &obe::Event::EventManager::joinNamespace;
         bindEventManager["schedule"] = &obe::Event::EventManager::schedule;
         bindEventManager["dumpProfilerResults"] = &obe::Event::EventManager::dumpProfilerResults;
     }
@@ -129,6 +133,8 @@ namespace obe::Event::Bindings
         bindEventNamespace["removeGroup"] = &obe::Event::EventNamespace::removeGroup;
         bindEventNamespace["doesGroupExists"] = &obe::Event::EventNamespace::doesGroupExists;
         bindEventNamespace["getView"] = &obe::Event::EventNamespace::getView;
+        bindEventNamespace["isJoinable"] = &obe::Event::EventNamespace::isJoinable;
+        bindEventNamespace["setJoinable"] = &obe::Event::EventNamespace::setJoinable;
     }
     void LoadClassEventNamespaceView(sol::state_view state)
     {
@@ -139,6 +145,7 @@ namespace obe::Event::Bindings
                 sol::constructors<obe::Event::EventNamespaceView(
                     const obe::Event::EventNamespace&)>());
         bindEventNamespaceView["getGroup"] = &obe::Event::EventNamespaceView::getGroup;
+        bindEventNamespaceView["joinGroup"] = &obe::Event::EventNamespaceView::joinGroup;
         bindEventNamespaceView["getAllGroupsNames"]
             = &obe::Event::EventNamespaceView::getAllGroupsNames;
         bindEventNamespaceView["doesGroupExists"]

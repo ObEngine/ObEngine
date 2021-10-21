@@ -119,7 +119,7 @@ namespace obe::Event
          * \param eventName Name of the Event to create
          */
         template <class EventType>
-        typename std::enable_if<HasId<EventType>::value>::type add();
+        typename std::enable_if_t<HasId<EventType>::value> add();
         template <class EventType>
         void add(const std::string& eventName);
         /**
@@ -134,7 +134,7 @@ namespace obe::Event
          * \return Pointer to the EventGroup to chain calls
          */
         template <class EventType>
-        void trigger(EventType event);
+        typename std::enable_if_t<HasId<EventType>::value> trigger(EventType event);
         /**
          * \brief Triggers a Event
          * \param eventName name of the Event to trigger
@@ -198,7 +198,7 @@ namespace obe::Event
     }
 
     template <class EventType>
-    typename std::enable_if<HasId<EventType>::value>::type EventGroup::add()
+    typename std::enable_if_t<HasId<EventType>::value> EventGroup::add()
     {
         this->add<EventType>(EventType::id.data());
     }
@@ -220,7 +220,7 @@ namespace obe::Event
     }
 
     template <class EventType>
-    void EventGroup::trigger(EventType event)
+    typename std::enable_if_t<HasId<EventType>::value> EventGroup::trigger(EventType event)
     {
         this->trigger(EventType::id.data(), event);
     }

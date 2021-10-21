@@ -19,8 +19,17 @@ function ObjectInit()
     if Local.Init then Local.Init(ArgMirror.Unpack(Lua_Func_CallArgs)); end
 end
 
+local __EVENT_EVENTHOOKS = {};
+
+function listen(namespace)
+    local hook = LuaCore.EventNamespaceHooks(__ENV_ID, namespace);
+    table.insert(__EVENT_EVENTHOOKS, hook);
+    return hook;
+end
+
 -- Engine Events
-Event = LuaCore.EventNamespaceHooks(Object.type .. "." .. Object.id, "Event");
+Event = listen("Event");
+UserEvent = listen("UserEvent");
 
 function ObjectInitFromLua(argtable)
     argtable = argtable or {};
@@ -38,7 +47,9 @@ function Schedule()
 end
 
 function ObjectDelete()
-    getmetatable(Event).__clean(Event);
+    for _, eventHook in pairs(__EVENT_EVENTHOOKS) do
+        getmetatable(eventHook).__clean(eventHook);
+    end
     for _, scheduler in pairs(__ENV_SCHEDULERS) do scheduler:stop(); end
     if Local.Delete then Local.Delete(); end
 end
