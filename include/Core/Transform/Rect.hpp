@@ -165,8 +165,8 @@ namespace obe::Transform
 
         void setNumericalComponents(const NumericalComponents& components) override
         {
-            m_size.set(components[0], components[1]);
-            m_angle = components[2];
+            m_size.set(components.at(0), components.at(1));
+            m_angle = components.at(2);
         }
 
         [[nodiscard]] NumericalComponents getNumericalComponents() override

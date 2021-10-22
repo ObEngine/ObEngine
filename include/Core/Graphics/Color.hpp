@@ -34,10 +34,10 @@ namespace obe::Graphics
         [[nodiscard]] std::string toName() const;
         void setNumericalComponents(const NumericalComponents& components) override
         {
-            r = components[0];
-            g = components[1];
-            b = components[2];
-            a = components[3];
+            r = components.at(0);
+            g = components.at(1);
+            b = components.at(2);
+            a = components.at(3);
         }
 
         [[nodiscard]] NumericalComponents getNumericalComponents() override

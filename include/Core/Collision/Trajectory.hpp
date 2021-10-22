@@ -56,9 +56,9 @@ namespace obe::Collision
         Trajectory& setStatic(bool tStatic);
         void setNumericalComponents(const NumericalComponents& components) override
         {
-            m_acceleration = components[0];
-            m_angle = components[1];
-            m_speed = components[2];
+            m_acceleration = components.at(0);
+            m_angle = components.at(1);
+            m_speed = components.at(2);
         }
 
         [[nodiscard]] NumericalComponents getNumericalComponents() override

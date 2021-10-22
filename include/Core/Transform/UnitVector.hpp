@@ -270,8 +270,8 @@ namespace obe::Transform
 
         void setNumericalComponents(const NumericalComponents& components) override
         {
-            x = components[0];
-            y = components[1];
+            x = components.at(0);
+            y = components.at(1);
         }
 
         [[nodiscard]] NumericalComponents getNumericalComponents() override
