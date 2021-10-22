@@ -71,6 +71,10 @@ namespace obe::Animation
     {
     }
 
+    AnimatorState::AnimatorState(const AnimatorState& state) : m_parent(state.getAnimator())
+    {
+    }
+
     void AnimatorState::load()
     {
         for (const auto& [animationName, animation] : m_parent.m_animations)

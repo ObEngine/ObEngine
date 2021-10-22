@@ -54,6 +54,7 @@ namespace obe::Animation
 
     public:
         AnimatorState(const Animator& parent);
+        AnimatorState(const AnimatorState& state);
         /**
          * \brief Get the name of the currently played Animation
          * \return A std::string containing the name of the currently played

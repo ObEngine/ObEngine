@@ -3,6 +3,8 @@
 #include <functional>
 #include <string>
 
+#include <sol/sol.hpp>
+
 #include <Script/Scripting.hpp>
 #include <Script/ViliLuaBridge.hpp>
 
@@ -40,4 +42,12 @@ namespace obe::Event
     };
 
     using OnListenerChange = std::function<void(ListenerChangeState, const std::string&)>;
+}
+
+namespace sol
+{
+    template <>
+    struct is_callable<obe::Event::LuaEventListener> : std::false_type
+    {
+    };
 }

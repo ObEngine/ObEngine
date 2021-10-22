@@ -104,6 +104,8 @@ namespace obe::Animation
 
     public:
         AnimationState(const Animation& parent);
+        AnimationState(const AnimationState& state);
+
         void load();
         /**
          * \brief Get the Animation Status

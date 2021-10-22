@@ -46,6 +46,10 @@ namespace obe::Animation
     {
     }
 
+    AnimationState::AnimationState(const AnimationState& state) : m_parent(state.getAnimation())
+    {
+    }
+
     void AnimationState::load()
     {
         for (const auto& [groupName, group] : m_parent.m_groups)

@@ -69,7 +69,8 @@ namespace obe::Animation::Bindings
         bindAnimation["update"] = &obe::Animation::Animation::update;
         bindAnimation["setAntiAliasing"] = &obe::Animation::Animation::setAntiAliasing;
         bindAnimation["getAntiAliasing"] = &obe::Animation::Animation::getAntiAliasing;
-        bindAnimation["makeState"] = &obe::Animation::Animation::makeState;
+        bindAnimation["makeState"]
+            = [](obe::Animation::Animation* self) { return self->makeState(); };
     }
     void LoadClassAnimationGroup(sol::state_view state)
     {
@@ -122,7 +123,8 @@ namespace obe::Animation::Bindings
         bindAnimationState["isOver"] = &obe::Animation::AnimationState::isOver;
         bindAnimationState["reset"] = &obe::Animation::AnimationState::reset;
         bindAnimationState["update"] = &obe::Animation::AnimationState::update;
-        bindAnimationState["getAnimation"] = &obe::Animation::AnimationState::getAnimation;
+        bindAnimationState["getAnimation"]
+            = [](obe::Animation::AnimationState* self) { return &self->getAnimation(); };
     }
     void LoadClassAnimator(sol::state_view state)
     {
@@ -183,7 +185,8 @@ namespace obe::Animation::Bindings
         bindAnimatorState["getCurrentAnimation"]
             = &obe::Animation::AnimatorState::getCurrentAnimation;
         bindAnimatorState["getTexture"] = &obe::Animation::AnimatorState::getTexture;
-        bindAnimatorState["getAnimator"] = &obe::Animation::AnimatorState::getAnimator;
+        bindAnimatorState["getAnimator"]
+            = [](obe::Animation::AnimatorState* self) { return &self->getAnimator(); };
     }
     void LoadClassValueTweening(sol::state_view state)
     {
