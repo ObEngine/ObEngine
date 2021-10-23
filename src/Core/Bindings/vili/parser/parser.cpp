@@ -1,9 +1,9 @@
 #include <Bindings/vili/parser/parser.hpp>
 
+#include <../../vili/include/vili/parser.hpp>
+#include <../../vili/include/vili/parser/grammar_errors.hpp>
+#include <../../vili/include/vili/parser/parser_state.hpp>
 #include <Bindings/Patches.hpp>
-#include <vili/parser.hpp>
-#include <vili/parser/grammar_errors.hpp>
-#include <vili/parser/parser_state.hpp>
 
 #include <Bindings/Config.hpp>
 

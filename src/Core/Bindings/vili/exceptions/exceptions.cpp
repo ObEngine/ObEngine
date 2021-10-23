@@ -1,6 +1,6 @@
 #include <Bindings/vili/exceptions/exceptions.hpp>
 
-#include <vili/exceptions.hpp>
+#include <../../vili/include/vili/exceptions.hpp>
 
 #include <Bindings/Config.hpp>
 

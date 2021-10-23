@@ -14,7 +14,9 @@
 #include <Bindings/obe/Component/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Config/Config.hpp>
 #include <Bindings/obe/Config/Templates/Templates.hpp>
+#include <Bindings/obe/Config/Validators/Validators.hpp>
 #include <Bindings/obe/Debug/Debug.hpp>
+#include <Bindings/obe/Debug/Render/Render.hpp>
 #include <Bindings/obe/Engine/Engine.hpp>
 #include <Bindings/obe/Engine/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Event/Event.hpp>
@@ -55,6 +57,12 @@
 #include <Bindings/obe/Utils/String/String.hpp>
 #include <Bindings/obe/Utils/Vector/Vector.hpp>
 #include <Bindings/obe/obe.hpp>
+#include <Bindings/tgui/bind_functions/bind_functions.hpp>
+#include <Bindings/tgui/keyboard/keyboard.hpp>
+#include <Bindings/tgui/priv/dev/dev.hpp>
+#include <Bindings/tgui/priv/priv.hpp>
+#include <Bindings/tgui/tgui.hpp>
+#include <Bindings/tgui/utf/utf.hpp>
 #include <Bindings/vili/exceptions/exceptions.hpp>
 #include <Bindings/vili/parser/parser.hpp>
 #include <Bindings/vili/parser/rules/rules.hpp>
@@ -67,6 +75,7 @@ namespace obe::Bindings
     void IndexAllBindings(sol::state_view state)
     {
         state["obe"].get_or_create<sol::table>();
+        state["tgui"].get_or_create<sol::table>();
         state["vili"].get_or_create<sol::table>();
         state["obe"]["Animation"].get_or_create<sol::table>();
         state["obe"]["Audio"].get_or_create<sol::table>();
@@ -85,11 +94,15 @@ namespace obe::Bindings
         state["obe"]["Time"].get_or_create<sol::table>();
         state["obe"]["Transform"].get_or_create<sol::table>();
         state["obe"]["Types"].get_or_create<sol::table>();
+        state["tgui"]["priv"].get_or_create<sol::table>();
         state["vili"]["exceptions"].get_or_create<sol::table>();
         state["vili"]["parser"].get_or_create<sol::table>();
         state["vili"]["writer"].get_or_create<sol::table>();
         state["obe"]["Bindings"].get_or_create<sol::table>();
         state["obe"]["Debug"].get_or_create<sol::table>();
+        state["tgui"]["bind_functions"].get_or_create<sol::table>();
+        state["tgui"]["keyboard"].get_or_create<sol::table>();
+        state["tgui"]["utf"].get_or_create<sol::table>();
         state["obe"]["Utils"].get_or_create<sol::table>();
         state["obe"]["Events"].get_or_create<sol::table>();
         state["vili"]["utils"].get_or_create<sol::table>();
@@ -110,6 +123,7 @@ namespace obe::Bindings
         state["obe"]["Tiles"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Transform"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["Utils"]["Exec"].get_or_create<sol::table>();
+        state["tgui"]["priv"]["dev"].get_or_create<sol::table>();
         state["obe"]["Events"]["Actions"].get_or_create<sol::table>();
         state["obe"]["Events"]["Cursor"].get_or_create<sol::table>();
         state["obe"]["Events"]["Game"].get_or_create<sol::table>();
@@ -119,6 +133,8 @@ namespace obe::Bindings
         state["vili"]["parser"]["rules"].get_or_create<sol::table>();
         state["obe"]["Animation"]["Easing"].get_or_create<sol::table>();
         state["obe"]["Config"]["Templates"].get_or_create<sol::table>();
+        state["obe"]["Config"]["Validators"].get_or_create<sol::table>();
+        state["obe"]["Debug"]["Render"].get_or_create<sol::table>();
         state["obe"]["Graphics"]["Utils"].get_or_create<sol::table>();
         state["obe"]["Script"]["ViliLuaBridge"].get_or_create<sol::table>();
         state["obe"]["System"]["Package"].get_or_create<sol::table>();
@@ -131,7 +147,9 @@ namespace obe::Bindings
         state["obe"]["System"]["Constraints"].get_or_create<sol::table>();
         obe::Animation::Bindings::LoadClassAnimation(state);
         obe::Animation::Bindings::LoadClassAnimationGroup(state);
+        obe::Animation::Bindings::LoadClassAnimationState(state);
         obe::Animation::Bindings::LoadClassAnimator(state);
+        obe::Animation::Bindings::LoadClassAnimatorState(state);
         obe::Animation::Bindings::LoadClassValueTweening(state);
         obe::Animation::Bindings::LoadEnumAnimationPlayMode(state);
         obe::Animation::Bindings::LoadEnumAnimationStatus(state);
@@ -175,7 +193,6 @@ namespace obe::Bindings
         obe::Component::Exceptions::Bindings::LoadClassComponentIdAlreadyTaken(state);
 
         obe::Config::Bindings::LoadClassConfigurationManager(state);
-        obe::Config::Bindings::LoadFunctionConfigValidator(state);
 
         obe::Bindings::LoadClassDebugInfo(state);
         obe::Bindings::LoadClassException(state);
@@ -292,6 +309,7 @@ namespace obe::Bindings
         obe::Scene::Bindings::LoadClassCamera(state);
         obe::Scene::Bindings::LoadClassScene(state);
         obe::Scene::Bindings::LoadClassSceneNode(state);
+        obe::Scene::Bindings::LoadClassSceneRenderOptions(state);
         obe::Scene::Bindings::LoadFunctionSceneGetGameObjectProxy(state);
         obe::Scene::Bindings::LoadFunctionSceneCreateGameObjectProxy(state);
         obe::Scene::Bindings::LoadFunctionSceneGetAllGameObjectsProxy(state);
@@ -315,6 +333,7 @@ namespace obe::Bindings
         obe::Script::Bindings::LoadClassGameObject(state);
         obe::Script::Bindings::LoadClassGameObjectDatabase(state);
 
+        obe::System::Bindings::LoadClassContextualPathFactory(state);
         obe::System::Bindings::LoadClassCursor(state);
         obe::System::Bindings::LoadClassFindResult(state);
         obe::System::Bindings::LoadClassMountablePath(state);
@@ -325,6 +344,7 @@ namespace obe::Bindings
         obe::System::Bindings::LoadEnumPathType(state);
         obe::System::Bindings::LoadEnumWindowContext(state);
         obe::System::Bindings::LoadEnumStretchMode(state);
+        obe::System::Bindings::LoadFunctionSplitPathAndPrefix(state);
         obe::System::Bindings::LoadFunctionStringToStretchMode(state);
 
         obe::System::Exceptions::Bindings::LoadClassInvalidMouseButtonEnumValue(state);
@@ -334,6 +354,7 @@ namespace obe::Bindings
         obe::System::Exceptions::Bindings::LoadClassPackageFileNotFound(state);
         obe::System::Exceptions::Bindings::LoadClassResourceNotFound(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownPackage(state);
+        obe::System::Exceptions::Bindings::LoadClassUnknownPathPrefix(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownStretchMode(state);
         obe::System::Exceptions::Bindings::LoadClassUnknownWorkspace(state);
 
@@ -394,6 +415,190 @@ namespace obe::Bindings
         obe::Types::Bindings::LoadClassTogglable(state);
 
         obe::Utils::Exec::Bindings::LoadClassRunArgsParser(state);
+
+        tgui::priv::dev::Bindings::LoadClassBackgroundComponent(state);
+        tgui::priv::dev::Bindings::LoadClassComponent(state);
+        tgui::priv::dev::Bindings::LoadClassGroupComponent(state);
+        tgui::priv::dev::Bindings::LoadClassImageComponent(state);
+        tgui::priv::dev::Bindings::LoadClassMessageBroker(state);
+        tgui::priv::dev::Bindings::LoadClassStylePropertyBase(state);
+        tgui::priv::dev::Bindings::LoadClassTextComponent(state);
+        tgui::priv::dev::Bindings::LoadClassStylePropertyBackground(state);
+        tgui::priv::dev::Bindings::LoadClassStylePropertyText(state);
+        tgui::priv::dev::Bindings::LoadEnumComponentState(state);
+        tgui::priv::dev::Bindings::LoadEnumAlignLayout(state);
+        tgui::priv::dev::Bindings::LoadEnumPositionAlignment(state);
+        tgui::priv::dev::Bindings::LoadFunctionGetStateFromFlags(state);
+        tgui::priv::dev::Bindings::LoadFunctionSetOptionalPropertyValue(state);
+
+        tgui::priv::Bindings::LoadClassAnimation(state);
+        tgui::priv::Bindings::LoadClassFadeAnimation(state);
+        tgui::priv::Bindings::LoadClassMoveAnimation(state);
+        tgui::priv::Bindings::LoadClassResizeAnimation(state);
+        tgui::priv::Bindings::LoadFunctionCheckAndLogOpenGlError(state);
+
+        tgui::Bindings::LoadClassAbsoluteOrRelativeValue(state);
+        tgui::Bindings::LoadClassBackendBase(state);
+        tgui::Bindings::LoadClassBackendFontBase(state);
+        tgui::Bindings::LoadClassBackendRenderTargetBase(state);
+        tgui::Bindings::LoadClassBackendTextureBase(state);
+        tgui::Bindings::LoadClassBackendTextBase(state);
+        tgui::Bindings::LoadClassBaseThemeLoader(state);
+        tgui::Bindings::LoadClassBitmapButton(state);
+        tgui::Bindings::LoadClassBoxLayout(state);
+        tgui::Bindings::LoadClassBoxLayoutRatios(state);
+        tgui::Bindings::LoadClassBoxLayoutRenderer(state);
+        tgui::Bindings::LoadClassButton(state);
+        tgui::Bindings::LoadClassButtonBase(state);
+        tgui::Bindings::LoadClassButtonRenderer(state);
+        tgui::Bindings::LoadClassChatBox(state);
+        tgui::Bindings::LoadClassChatBoxRenderer(state);
+        tgui::Bindings::LoadClassCheckBox(state);
+        tgui::Bindings::LoadClassCheckBoxRenderer(state);
+        tgui::Bindings::LoadClassChildWindow(state);
+        tgui::Bindings::LoadClassChildWindowRenderer(state);
+        tgui::Bindings::LoadClassClickableWidget(state);
+        tgui::Bindings::LoadClassColor(state);
+        tgui::Bindings::LoadClassColorPicker(state);
+        tgui::Bindings::LoadClassColorPickerRenderer(state);
+        tgui::Bindings::LoadClassComboBox(state);
+        tgui::Bindings::LoadClassComboBoxRenderer(state);
+        tgui::Bindings::LoadClassContainer(state);
+        tgui::Bindings::LoadClassCursor(state);
+        tgui::Bindings::LoadClassCustomWidgetForBindings(state);
+        tgui::Bindings::LoadClassDataIO(state);
+        tgui::Bindings::LoadClassDefaultBackendWindow(state);
+        tgui::Bindings::LoadClassDefaultThemeLoader(state);
+        tgui::Bindings::LoadClassDeserializer(state);
+        tgui::Bindings::LoadClassDuration(state);
+        tgui::Bindings::LoadClassEditBox(state);
+        tgui::Bindings::LoadClassEditBoxRenderer(state);
+        tgui::Bindings::LoadClassException(state);
+        tgui::Bindings::LoadClassFilesystem(state);
+        tgui::Bindings::LoadClassFileDialog(state);
+        tgui::Bindings::LoadClassFileDialogIconLoader(state);
+        tgui::Bindings::LoadClassFileDialogRenderer(state);
+        tgui::Bindings::LoadClassFont(state);
+        tgui::Bindings::LoadClassGrid(state);
+        tgui::Bindings::LoadClassGroup(state);
+        tgui::Bindings::LoadClassGroupRenderer(state);
+        tgui::Bindings::LoadClassGuiBase(state);
+        tgui::Bindings::LoadClassHorizontalLayout(state);
+        tgui::Bindings::LoadClassHorizontalWrap(state);
+        tgui::Bindings::LoadClassKnob(state);
+        tgui::Bindings::LoadClassKnobRenderer(state);
+        tgui::Bindings::LoadClassLabel(state);
+        tgui::Bindings::LoadClassLabelRenderer(state);
+        tgui::Bindings::LoadClassLayout(state);
+        tgui::Bindings::LoadClassLayout2d(state);
+        tgui::Bindings::LoadClassListBox(state);
+        tgui::Bindings::LoadClassListBoxRenderer(state);
+        tgui::Bindings::LoadClassListView(state);
+        tgui::Bindings::LoadClassListViewRenderer(state);
+        tgui::Bindings::LoadClassMenuBar(state);
+        tgui::Bindings::LoadClassMenuBarMenuPlaceholder(state);
+        tgui::Bindings::LoadClassMenuBarRenderer(state);
+        tgui::Bindings::LoadClassMessageBox(state);
+        tgui::Bindings::LoadClassMessageBoxRenderer(state);
+        tgui::Bindings::LoadClassObjectConverter(state);
+        tgui::Bindings::LoadClassOutline(state);
+        tgui::Bindings::LoadClassPanel(state);
+        tgui::Bindings::LoadClassPanelRenderer(state);
+        tgui::Bindings::LoadClassPicture(state);
+        tgui::Bindings::LoadClassPictureRenderer(state);
+        tgui::Bindings::LoadClassProgressBar(state);
+        tgui::Bindings::LoadClassProgressBarRenderer(state);
+        tgui::Bindings::LoadClassRadioButton(state);
+        tgui::Bindings::LoadClassRadioButtonGroup(state);
+        tgui::Bindings::LoadClassRadioButtonRenderer(state);
+        tgui::Bindings::LoadClassRangeSlider(state);
+        tgui::Bindings::LoadClassRangeSliderRenderer(state);
+        tgui::Bindings::LoadClassRootContainer(state);
+        tgui::Bindings::LoadClassScrollablePanel(state);
+        tgui::Bindings::LoadClassScrollablePanelRenderer(state);
+        tgui::Bindings::LoadClassScrollbar(state);
+        tgui::Bindings::LoadClassScrollbarChildWidget(state);
+        tgui::Bindings::LoadClassScrollbarRenderer(state);
+        tgui::Bindings::LoadClassSeparatorLine(state);
+        tgui::Bindings::LoadClassSeparatorLineRenderer(state);
+        tgui::Bindings::LoadClassSerializer(state);
+        tgui::Bindings::LoadClassSignal(state);
+        tgui::Bindings::LoadClassSignalAnimation(state);
+        tgui::Bindings::LoadClassSignalChildWindow(state);
+        tgui::Bindings::LoadClassSignalItem(state);
+        tgui::Bindings::LoadClassSignalItemHierarchy(state);
+        tgui::Bindings::LoadClassSignalManager(state);
+        tgui::Bindings::LoadClassSlider(state);
+        tgui::Bindings::LoadClassSliderRenderer(state);
+        tgui::Bindings::LoadClassSpinButton(state);
+        tgui::Bindings::LoadClassSpinButtonRenderer(state);
+        tgui::Bindings::LoadClassSpinControl(state);
+        tgui::Bindings::LoadClassSprite(state);
+        tgui::Bindings::LoadClassString(state);
+        tgui::Bindings::LoadClassSubwidgetContainer(state);
+        tgui::Bindings::LoadClassSvgImage(state);
+        tgui::Bindings::LoadClassTabs(state);
+        tgui::Bindings::LoadClassTabsRenderer(state);
+        tgui::Bindings::LoadClassTabContainer(state);
+        tgui::Bindings::LoadClassText(state);
+        tgui::Bindings::LoadClassTexture(state);
+        tgui::Bindings::LoadClassTextureManager(state);
+        tgui::Bindings::LoadClassTextArea(state);
+        tgui::Bindings::LoadClassTextAreaRenderer(state);
+        tgui::Bindings::LoadClassTextStyles(state);
+        tgui::Bindings::LoadClassTheme(state);
+        tgui::Bindings::LoadClassTimer(state);
+        tgui::Bindings::LoadClassToggleButton(state);
+        tgui::Bindings::LoadClassToolTip(state);
+        tgui::Bindings::LoadClassTransform(state);
+        tgui::Bindings::LoadClassTreeView(state);
+        tgui::Bindings::LoadClassTreeViewRenderer(state);
+        tgui::Bindings::LoadClassVerticalLayout(state);
+        tgui::Bindings::LoadClassWidget(state);
+        tgui::Bindings::LoadClassWidgetFactory(state);
+        tgui::Bindings::LoadClassWidgetRenderer(state);
+        tgui::Bindings::LoadClassAny(state);
+        tgui::Bindings::LoadClassEvent(state);
+        tgui::Bindings::LoadClassFontGlyph(state);
+        tgui::Bindings::LoadClassImageLoader(state);
+        tgui::Bindings::LoadClassRelativeValue(state);
+        tgui::Bindings::LoadClassRelFloatRect(state);
+        tgui::Bindings::LoadClassRendererData(state);
+        tgui::Bindings::LoadClassRenderStates(state);
+        tgui::Bindings::LoadClassTextureData(state);
+        tgui::Bindings::LoadClassTextureDataHolder(state);
+        tgui::Bindings::LoadClassVertex(state);
+        tgui::Bindings::LoadEnumShowAnimationType(state);
+        tgui::Bindings::LoadEnumTextStyle(state);
+        tgui::Bindings::LoadFunctionAnyCast(state);
+        tgui::Bindings::LoadFunctionIsBackendSet(state);
+        tgui::Bindings::LoadFunctionSetBackend(state);
+        tgui::Bindings::LoadFunctionGetBackend(state);
+        tgui::Bindings::LoadFunctionSetGlobalTextSize(state);
+        tgui::Bindings::LoadFunctionGetGlobalTextSize(state);
+        tgui::Bindings::LoadFunctionSetDoubleClickTime(state);
+        tgui::Bindings::LoadFunctionGetDoubleClickTime(state);
+        tgui::Bindings::LoadFunctionSetResourcePath(state);
+        tgui::Bindings::LoadFunctionGetResourcePath(state);
+        tgui::Bindings::LoadFunctionSetEditCursorBlinkRate(state);
+        tgui::Bindings::LoadFunctionGetEditCursorBlinkRate(state);
+        tgui::Bindings::LoadFunctionReadFileToMemory(state);
+        tgui::Bindings::LoadFunctionBindPosX(state);
+        tgui::Bindings::LoadFunctionBindPosY(state);
+        tgui::Bindings::LoadFunctionBindLeft(state);
+        tgui::Bindings::LoadFunctionBindTop(state);
+        tgui::Bindings::LoadFunctionBindWidth(state);
+        tgui::Bindings::LoadFunctionBindHeight(state);
+        tgui::Bindings::LoadFunctionBindInnerWidth(state);
+        tgui::Bindings::LoadFunctionBindInnerHeight(state);
+        tgui::Bindings::LoadFunctionBindRight(state);
+        tgui::Bindings::LoadFunctionBindBottom(state);
+        tgui::Bindings::LoadFunctionBindPosition(state);
+        tgui::Bindings::LoadFunctionBindSize(state);
+        tgui::Bindings::LoadFunctionBindInnerSize(state);
+        tgui::Bindings::LoadFunctionBindMin(state);
+        tgui::Bindings::LoadFunctionBindMax(state);
+        tgui::Bindings::LoadFunctionIsWhitespace(state);
 
         vili::Bindings::LoadClassConstNodeIterator(state);
         vili::Bindings::LoadClassNode(state);
@@ -572,6 +777,10 @@ namespace obe::Bindings
         obe::Config::Templates::Bindings::LoadGlobalPlayGroupCommand(state);
         obe::Config::Templates::Bindings::LoadGlobalSetAnimationCommand(state);
 
+        obe::Config::Validators::Bindings::LoadFunctionAnimationValidator(state);
+        obe::Config::Validators::Bindings::LoadFunctionConfigValidator(state);
+        obe::Config::Validators::Bindings::LoadFunctionMountValidator(state);
+
         obe::Debug::Bindings::LoadFunctionInitLogger(state);
         obe::Debug::Bindings::LoadFunctionTrace(state);
         obe::Debug::Bindings::LoadFunctionDebug(state);
@@ -580,6 +789,8 @@ namespace obe::Bindings
         obe::Debug::Bindings::LoadFunctionError(state);
         obe::Debug::Bindings::LoadFunctionCritical(state);
         obe::Debug::Bindings::LoadGlobalLog(state);
+
+        obe::Debug::Render::Bindings::LoadFunctionDrawPolygon(state);
 
         obe::Graphics::Utils::Bindings::LoadFunctionDrawPoint(state);
         obe::Graphics::Utils::Bindings::LoadFunctionDrawLine(state);
@@ -650,6 +861,51 @@ namespace obe::Bindings
 
         obe::Utils::Vector::Bindings::LoadFunctionContains(state);
         obe::Utils::Vector::Bindings::LoadFunctionJoin(state);
+
+        tgui::bind_functions::Bindings::LoadFunctionBindPosX(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindPosY(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindLeft(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindTop(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindWidth(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindHeight(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindInnerWidth(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindInnerHeight(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindRight(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindBottom(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindPosition(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindSize(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindInnerSize(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindMin(state);
+        tgui::bind_functions::Bindings::LoadFunctionBindMax(state);
+
+        tgui::keyboard::Bindings::LoadFunctionIsShiftPressed(state);
+        tgui::keyboard::Bindings::LoadFunctionOpenVirtualKeyboard(state);
+        tgui::keyboard::Bindings::LoadFunctionCloseVirtualKeyboard(state);
+        tgui::keyboard::Bindings::LoadFunctionIsMultiselectModifierPressed(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressCopy(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressCut(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressPaste(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressSelectAll(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressMoveCaretLeft(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressMoveCaretRight(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressMoveCaretWordBegin(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressMoveCaretWordEnd(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressMoveCaretUp(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressMoveCaretDown(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressMoveCaretLineStart(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressMoveCaretLineEnd(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressMoveCaretDocumentBegin(state);
+        tgui::keyboard::Bindings::LoadFunctionIsKeyPressMoveCaretDocumentEnd(state);
+
+        tgui::utf::Bindings::LoadFunctionEncodeCharUtf8(state);
+        tgui::utf::Bindings::LoadFunctionDecodeCharUtf8(state);
+        tgui::utf::Bindings::LoadFunctionConvertUtf8toUtf32(state);
+        tgui::utf::Bindings::LoadFunctionConvertUtf16toUtf32(state);
+        tgui::utf::Bindings::LoadFunctionConvertWidetoUtf32(state);
+        tgui::utf::Bindings::LoadFunctionConvertUtf32toLatin1(state);
+        tgui::utf::Bindings::LoadFunctionConvertUtf32toStdStringUtf8(state);
+        tgui::utf::Bindings::LoadFunctionConvertUtf32toWide(state);
+        tgui::utf::Bindings::LoadFunctionConvertUtf32toUtf16(state);
 
         vili::utils::string::Bindings::LoadFunctionReplace(state);
         vili::utils::string::Bindings::LoadFunctionIsInt(state);

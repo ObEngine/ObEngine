@@ -1,6 +1,6 @@
 #include <Bindings/vili/utils/string/string.hpp>
 
-#include <vili/utils.hpp>
+#include <../../vili/include/vili/utils.hpp>
 
 #include <Bindings/Config.hpp>
 

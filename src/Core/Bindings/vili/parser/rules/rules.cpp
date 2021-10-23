@@ -1,6 +1,6 @@
 #include <Bindings/vili/parser/rules/rules.hpp>
 
-#include <vili/parser/grammar.hpp>
+#include <../../vili/include/vili/parser/grammar.hpp>
 
 #include <Bindings/Config.hpp>
 

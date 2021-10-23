@@ -9,6 +9,7 @@ namespace obe::Scene::Bindings
     void LoadClassCamera(sol::state_view state);
     void LoadClassScene(sol::state_view state);
     void LoadClassSceneNode(sol::state_view state);
+    void LoadClassSceneRenderOptions(sol::state_view state);
     void LoadFunctionSceneGetGameObjectProxy(sol::state_view state);
     void LoadFunctionSceneCreateGameObjectProxy(sol::state_view state);
     void LoadFunctionSceneGetAllGameObjectsProxy(sol::state_view state);

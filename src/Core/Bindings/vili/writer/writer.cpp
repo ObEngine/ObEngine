@@ -1,6 +1,6 @@
 #include <Bindings/vili/writer/writer.hpp>
 
-#include <vili/writer.hpp>
+#include <../../vili/include/vili/writer.hpp>
 
 #include <Bindings/Config.hpp>
 

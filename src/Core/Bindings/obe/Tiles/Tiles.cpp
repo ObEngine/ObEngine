@@ -115,6 +115,7 @@ namespace obe::Tiles::Bindings
         bindTileScene["getHeight"] = &obe::Tiles::TileScene::getHeight;
         bindTileScene["getTileWidth"] = &obe::Tiles::TileScene::getTileWidth;
         bindTileScene["getTileHeight"] = &obe::Tiles::TileScene::getTileHeight;
+        bindTileScene["isSmooth"] = &obe::Tiles::TileScene::isSmooth;
         bindTileScene["getScene"] = &obe::Tiles::TileScene::getScene;
     }
     void LoadClassTextureQuadsIndex(sol::state_view state)

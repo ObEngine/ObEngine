@@ -1,9 +1,9 @@
 #include <Bindings/vili/vili.hpp>
 
+#include <../../vili/include/vili/config.hpp>
+#include <../../vili/include/vili/node.hpp>
+#include <../../vili/include/vili/types.hpp>
 #include <System/Path.hpp>
-#include <vili/config.hpp>
-#include <vili/node.hpp>
-#include <vili/types.hpp>
 
 #include <Bindings/Config.hpp>
 
@@ -36,13 +36,14 @@ namespace vili::Bindings
     void LoadClassNode(sol::state_view state)
     {
         sol::table viliNamespace = state["vili"].get<sol::table>();
-        sol::usertype<vili::node> bindnode = viliNamespace.new_usertype<vili::node>(
-            "node", sol::call_constructor,
-            sol::constructors<vili::node(), vili::node(int), vili::node(vili::integer),
-                vili::node(vili::number), vili::node(const vili::string&),
-                vili::node(vili::boolean), vili::node(const char*),
-                vili::node(const vili::array&), vili::node(const vili::object&),
-                vili::node(const vili::node&), vili::node(vili::node &&)>());
+        sol::usertype<vili::node> bindnode
+            = viliNamespace.new_usertype<vili::node>("node", sol::call_constructor,
+                sol::constructors<vili::node(), vili::node(int),
+                    vili::node(vili::integer), vili::node(vili::number),
+                    vili::node(const vili::string&), vili::node(std::string_view),
+                    vili::node(vili::boolean), vili::node(const char*),
+                    vili::node(const vili::array&), vili::node(const vili::object&),
+                    vili::node(const vili::node&), vili::node(vili::node &&)>());
         bindnode["operator="] = &vili::node::operator=;
         bindnode["type"] = &vili::node::type;
         bindnode["dump"] = sol::overload(
@@ -113,7 +114,7 @@ namespace vili::Bindings
         bindnode["clear"] = &vili::node::clear;
         bindnode["operator std::string_view"] = &vili::node::operator std::string_view;
         bindnode["operator const std::string &"]
-            = &vili::node::operator const std::string &;
+            = &vili::node::operator const std::string&;
         bindnode["operator integer"] = &vili::node::operator integer;
         bindnode["operator int"] = &vili::node::operator int;
         bindnode["operator number"] = &vili::node::operator number;
