@@ -4,6 +4,10 @@
 #include <Animation/AnimationGroup.hpp>
 #include <Animation/Animator.hpp>
 #include <Animation/Tweening.hpp>
+#include <Transform/Rect.hpp>
+#include <Graphics/Color.hpp>
+#include <Transform/UnitVector.hpp>
+#include <Collision/Trajectory.hpp>
 #include <Graphics/Sprite.hpp>
 
 #include <Bindings/Config.hpp>
@@ -188,16 +192,21 @@ namespace obe::Animation::Bindings
     void LoadClassValueTweening(sol::state_view state)
     {
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
-        sol::usertype<obe::Animation::ValueTweening> bindValueTweening
-            = AnimationNamespace.new_usertype<obe::Animation::ValueTweening>("ValueTweening",
+        AnimationNamespace.set_function("ValueTweening",
+            sol::overload(sol::constructors<obe::Animation::ValueTweening<int>(obe::Time::TimeUnit),
+                obe::Animation::ValueTweening<int>(double, double, obe::Time::TimeUnit)>()));
+
+        sol::usertype<obe::Animation::ValueTweening<int>> bindValueTweeningInt
+            = AnimationNamespace.new_usertype<obe::Animation::ValueTweening<int>>("ValueTweeningInt",
                 sol::call_constructor,
-                sol::constructors<obe::Animation::ValueTweening(obe::Time::TimeUnit),
-                    obe::Animation::ValueTweening(double, double, obe::Time::TimeUnit)>());
-        bindValueTweening["from"] = &obe::Animation::ValueTweening::from;
-        bindValueTweening["to"] = &obe::Animation::ValueTweening::to;
-        bindValueTweening["ease"] = &obe::Animation::ValueTweening::ease;
-        bindValueTweening["done"] = &obe::Animation::ValueTweening::done;
-        bindValueTweening["step"] = &obe::Animation::ValueTweening::step;
+                sol::constructors<obe::Animation::ValueTweening<int>(obe::Time::TimeUnit),
+                    obe::Animation::ValueTweening<int>(double, double, obe::Time::TimeUnit)>());
+        bindValueTweeningInt["from"] = &obe::Animation::ValueTweening<int>::from;
+        bindValueTweeningInt["to"] = &obe::Animation::ValueTweening<int>::to;
+        bindValueTweeningInt["ease"] = &obe::Animation::ValueTweening<int>::ease;
+        bindValueTweeningInt["done"] = &obe::Animation::ValueTweening<int>::done;
+        bindValueTweeningInt["step"] = &obe::Animation::ValueTweening<int>::step<int>;
+
     }
     void LoadFunctionStringToAnimationPlayMode(sol::state_view state)
     {
