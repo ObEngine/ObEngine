@@ -207,6 +207,96 @@ namespace obe::Animation::Bindings
         bindValueTweeningInt["done"] = &obe::Animation::ValueTweening<int>::done;
         bindValueTweeningInt["step"] = &obe::Animation::ValueTweening<int>::step<int>;
 
+        sol::usertype<obe::Animation::ValueTweening<double>> bindValueTweeningDouble
+            = AnimationNamespace.new_usertype<obe::Animation::ValueTweening<double>>("ValueTweeningDouble",
+                sol::call_constructor,
+                sol::constructors<obe::Animation::ValueTweening<double>(obe::Time::TimeUnit),
+                    obe::Animation::ValueTweening<double>(double, double, obe::Time::TimeUnit)>());
+        bindValueTweeningDouble["from"] = &obe::Animation::ValueTweening<double>::from;
+        bindValueTweeningDouble["to"] = &obe::Animation::ValueTweening<double>::to;
+        bindValueTweeningDouble["ease"] = &obe::Animation::ValueTweening<double>::ease;
+        bindValueTweeningDouble["done"] = &obe::Animation::ValueTweening<double>::done;
+        bindValueTweeningDouble["step"] = &obe::Animation::ValueTweening<double>::step<double>;
+
+        sol::usertype<obe::Animation::ValueTweening<obe::Graphics::Color>>
+            bindValueTweeningColor
+            = AnimationNamespace
+                  .new_usertype<obe::Animation::ValueTweening<obe::Graphics::Color>>(
+                      "ValueTweeningColor", sol::call_constructor,
+                      sol::constructors<obe::Animation::ValueTweening<obe::Graphics::Color>(
+                                            obe::Time::TimeUnit),
+                          obe::Animation::ValueTweening<obe::Graphics::Color>(
+                              double, double, obe::Time::TimeUnit)>());
+        bindValueTweeningColor["from"]
+            = &obe::Animation::ValueTweening<obe::Graphics::Color>::from;
+        bindValueTweeningColor["to"]
+            = &obe::Animation::ValueTweening<obe::Graphics::Color>::to;
+        bindValueTweeningColor["ease"]
+            = &obe::Animation::ValueTweening<obe::Graphics::Color>::ease;
+        bindValueTweeningColor["done"]
+            = &obe::Animation::ValueTweening<obe::Graphics::Color>::done;
+        bindValueTweeningColor["step"]
+            = &obe::Animation::ValueTweening<obe::Graphics::Color>::step<obe::Graphics::Color>;
+
+        sol::usertype<obe::Animation::ValueTweening<obe::Transform::Rect>>
+            bindValueTweeningRect
+            = AnimationNamespace
+                  .new_usertype<obe::Animation::ValueTweening<obe::Transform::Rect>>(
+                      "ValueTweeningRect", sol::call_constructor,
+                      sol::constructors<obe::Animation::ValueTweening<obe::Transform::Rect>(
+                                            obe::Time::TimeUnit),
+                          obe::Animation::ValueTweening<obe::Transform::Rect>(
+                              double, double, obe::Time::TimeUnit)>());
+        bindValueTweeningRect["from"]
+            = &obe::Animation::ValueTweening<obe::Transform::Rect>::from;
+        bindValueTweeningRect["to"]
+            = &obe::Animation::ValueTweening<obe::Transform::Rect>::to;
+        bindValueTweeningRect["ease"]
+            = &obe::Animation::ValueTweening<obe::Transform::Rect>::ease;
+        bindValueTweeningRect["done"]
+            = &obe::Animation::ValueTweening<obe::Transform::Rect>::done;
+        bindValueTweeningRect["step"]
+            = &obe::Animation::ValueTweening<obe::Transform::Rect>::step<obe::Transform::Rect>;
+
+        sol::usertype<obe::Animation::ValueTweening<obe::Transform::UnitVector>>
+            bindValueTweeningUnitVector
+            = AnimationNamespace
+                  .new_usertype<obe::Animation::ValueTweening<obe::Transform::UnitVector>>(
+                      "ValueTweeningUnitVector", sol::call_constructor,
+                      sol::constructors<obe::Animation::ValueTweening<obe::Transform::UnitVector>(
+                                            obe::Time::TimeUnit),
+                          obe::Animation::ValueTweening<obe::Transform::UnitVector>(
+                              double, double, obe::Time::TimeUnit)>());
+        bindValueTweeningUnitVector["from"]
+            = &obe::Animation::ValueTweening<obe::Transform::UnitVector>::from;
+        bindValueTweeningUnitVector["to"]
+            = &obe::Animation::ValueTweening<obe::Transform::UnitVector>::to;
+        bindValueTweeningUnitVector["ease"]
+            = &obe::Animation::ValueTweening<obe::Transform::UnitVector>::ease;
+        bindValueTweeningUnitVector["done"]
+            = &obe::Animation::ValueTweening<obe::Transform::UnitVector>::done;
+        bindValueTweeningUnitVector["step"] = &obe::Animation::ValueTweening<
+            obe::Transform::UnitVector>::step<obe::Transform::UnitVector>;
+
+        sol::usertype<obe::Animation::ValueTweening<obe::Collision::Trajectory>>
+            bindValueTweeningTrajectory
+            = AnimationNamespace
+                  .new_usertype<obe::Animation::ValueTweening<obe::Collision::Trajectory>>(
+                      "ValueTweeningTrajectory", sol::call_constructor,
+                      sol::constructors<obe::Animation::ValueTweening<obe::Collision::Trajectory>(
+                                            obe::Time::TimeUnit),
+                          obe::Animation::ValueTweening<obe::Collision::Trajectory>(
+                              double, double, obe::Time::TimeUnit)>());
+        bindValueTweeningTrajectory["from"]
+            = &obe::Animation::ValueTweening<obe::Collision::Trajectory>::from;
+        bindValueTweeningTrajectory["to"]
+            = &obe::Animation::ValueTweening<obe::Collision::Trajectory>::to;
+        bindValueTweeningTrajectory["ease"]
+            = &obe::Animation::ValueTweening<obe::Collision::Trajectory>::ease;
+        bindValueTweeningTrajectory["done"]
+            = &obe::Animation::ValueTweening<obe::Collision::Trajectory>::done;
+        bindValueTweeningTrajectory["step"] = &obe::Animation::ValueTweening<
+            obe::Collision::Trajectory>::step<obe::Collision::Trajectory>;
     }
     void LoadFunctionStringToAnimationPlayMode(sol::state_view state)
     {
