@@ -194,7 +194,21 @@ namespace obe::Animation::Bindings
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
         AnimationNamespace.set_function("ValueTweening",
             sol::overload(sol::constructors<obe::Animation::ValueTweening<int>(obe::Time::TimeUnit),
-                obe::Animation::ValueTweening<int>(double, double, obe::Time::TimeUnit)>()));
+                obe::Animation::ValueTweening<int>(double, double, obe::Time::TimeUnit),
+                obe::Animation::ValueTweening<double>(obe::Time::TimeUnit),
+                obe::Animation::ValueTweening<double>(double, double, obe::Time::TimeUnit),
+                obe::Animation::ValueTweening<obe::Graphics::Color>(obe::Time::TimeUnit),
+                obe::Animation::ValueTweening<obe::Graphics::Color>(
+                    double, double, obe::Time::TimeUnit),
+                obe::Animation::ValueTweening<obe::Transform::UnitVector>(obe::Time::TimeUnit),
+                obe::Animation::ValueTweening<obe::Transform::UnitVector>(
+                    double, double, obe::Time::TimeUnit),
+                obe::Animation::ValueTweening<obe::Transform::Rect>(obe::Time::TimeUnit),
+                obe::Animation::ValueTweening<obe::Transform::Rect>(
+                    double, double, obe::Time::TimeUnit),
+                obe::Animation::ValueTweening<obe::Collision::Trajectory>(obe::Time::TimeUnit),
+                obe::Animation::ValueTweening<obe::Collision::Trajectory>(
+                    double, double, obe::Time::TimeUnit)>()));
 
         sol::usertype<obe::Animation::ValueTweening<int>> bindValueTweeningInt
             = AnimationNamespace.new_usertype<obe::Animation::ValueTweening<int>>("ValueTweeningInt",
