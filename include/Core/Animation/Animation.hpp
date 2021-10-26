@@ -161,7 +161,8 @@ namespace obe::Animation
 
     /**
      * \brief A whole Animation that contains one or more AnimationGroup.
-     * TODO: /bind{Animation}
+     *
+     * \meta{NonCopyable}
      */
     class Animation
     {
