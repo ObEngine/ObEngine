@@ -11,11 +11,11 @@ namespace obe::Bindings
     {
         sol::table obeNamespace = state["obe"].get<sol::table>();
         sol::usertype<obe::BaseException> bindBaseException
-            = obeNamespace.new_usertype<obe::BaseException>("BaseException", sol::call_constructor,
-                sol::constructors<obe::BaseException(),
-                    obe::BaseException(const std::exception&)>());
+            = obeNamespace.new_usertype<obe::BaseException>(
+                "BaseException", sol::call_constructor, sol::constructors<obe::BaseException()>());
         bindBaseException["what"] = &obe::BaseException::what;
-        bindBaseException["traceback"] = &obe::BaseException::traceback;
+        bindBaseException["traceback"]
+            = [](obe::BaseException* self) { return &self->traceback(); };
     }
     void LoadClassDebugInfo(sol::state_view state)
     {

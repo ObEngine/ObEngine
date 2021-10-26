@@ -46,7 +46,7 @@ namespace obe::Event::Bindings
                 sol::call_constructor, sol::constructors<obe::Event::CallbackScheduler()>());
         bindCallbackScheduler["after"] = &obe::Event::CallbackScheduler::after;
         bindCallbackScheduler["every"] = &obe::Event::CallbackScheduler::every;
-        bindCallbackScheduler["repeat"] = &obe::Event::CallbackScheduler::repeat;
+        bindCallbackScheduler["replay"] = &obe::Event::CallbackScheduler::repeat;
         bindCallbackScheduler["run"] = &obe::Event::CallbackScheduler::run;
         bindCallbackScheduler["stop"] = &obe::Event::CallbackScheduler::stop;
     }
@@ -62,7 +62,8 @@ namespace obe::Event::Bindings
         bindEventBase["getIdentifier"] = &obe::Event::EventBase::getIdentifier;
         bindEventBase["addExternalListener"] = &obe::Event::EventBase::addExternalListener;
         bindEventBase["removeExternalListener"] = &obe::Event::EventBase::removeExternalListener;
-        bindEventBase["getProfiler"] = &obe::Event::EventBase::getProfiler;
+        bindEventBase["getProfiler"]
+            = [](obe::Event::EventBase* self) { return &self->getProfiler(); };
     }
     void LoadClassEventGroup(sol::state_view state)
     {
@@ -85,8 +86,6 @@ namespace obe::Event::Bindings
         bindEventGroup["onAddListener"] = &obe::Event::EventGroup::onAddListener;
         bindEventGroup["onRemoveListener"] = &obe::Event::EventGroup::onRemoveListener;
         bindEventGroup["getProfilerResults"] = &obe::Event::EventGroup::getProfilerResults;
-        bindEventGroup["add"] = &obe::Event::addLuaEvent;
-        bindEventGroup["trigger"] = &obe::Event::triggerLuaEvent;
     }
     void LoadClassEventGroupView(sol::state_view state)
     {
@@ -114,8 +113,10 @@ namespace obe::Event::Bindings
         bindEventManager["update"] = &obe::Event::EventManager::update;
         bindEventManager["clear"] = &obe::Event::EventManager::clear;
         bindEventManager["createNamespace"] = &obe::Event::EventManager::createNamespace;
-        bindEventManager["getNamespace"] = &obe::Event::EventManager::getNamespace;
         bindEventManager["joinNamespace"] = &obe::Event::EventManager::joinNamespace;
+        bindEventManager["getNamespace"] = &obe::Event::EventManager::getNamespace;
+        bindEventManager["getAllNamespacesNames"]
+            = &obe::Event::EventManager::getAllNamespacesNames;
         bindEventManager["schedule"] = &obe::Event::EventManager::schedule;
         bindEventManager["dumpProfilerResults"] = &obe::Event::EventManager::dumpProfilerResults;
     }
@@ -133,8 +134,8 @@ namespace obe::Event::Bindings
         bindEventNamespace["removeGroup"] = &obe::Event::EventNamespace::removeGroup;
         bindEventNamespace["doesGroupExists"] = &obe::Event::EventNamespace::doesGroupExists;
         bindEventNamespace["getView"] = &obe::Event::EventNamespace::getView;
-        bindEventNamespace["isJoinable"] = &obe::Event::EventNamespace::isJoinable;
         bindEventNamespace["setJoinable"] = &obe::Event::EventNamespace::setJoinable;
+        bindEventNamespace["isJoinable"] = &obe::Event::EventNamespace::isJoinable;
     }
     void LoadClassEventNamespaceView(sol::state_view state)
     {
@@ -144,8 +145,8 @@ namespace obe::Event::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Event::EventNamespaceView(
                     const obe::Event::EventNamespace&)>());
-        bindEventNamespaceView["getGroup"] = &obe::Event::EventNamespaceView::getGroup;
         bindEventNamespaceView["joinGroup"] = &obe::Event::EventNamespaceView::joinGroup;
+        bindEventNamespaceView["getGroup"] = &obe::Event::EventNamespaceView::getGroup;
         bindEventNamespaceView["getAllGroupsNames"]
             = &obe::Event::EventNamespaceView::getAllGroupsNames;
         bindEventNamespaceView["doesGroupExists"]
@@ -166,5 +167,20 @@ namespace obe::Event::Bindings
             = EventNamespace.new_usertype<obe::Event::ScopeProfiler>("ScopeProfiler",
                 sol::call_constructor,
                 sol::constructors<obe::Event::ScopeProfiler(obe::Event::CallbackProfiler&)>());
+    }
+    void LoadFunctionAddLuaEvent(sol::state_view state)
+    {
+        sol::table EventNamespace = state["obe"]["Event"].get<sol::table>();
+        EventNamespace.set_function("addLuaEvent", obe::Event::addLuaEvent);
+    }
+    void LoadFunctionTriggerLuaEvent(sol::state_view state)
+    {
+        sol::table EventNamespace = state["obe"]["Event"].get<sol::table>();
+        EventNamespace.set_function("triggerLuaEvent",
+            sol::overload([](obe::Event::EventGroup* self, const std::string& name)
+                              -> void { return obe::Event::triggerLuaEvent(self, name); },
+                [](obe::Event::EventGroup* self, const std::string& name, sol::table data) -> void {
+                    return obe::Event::triggerLuaEvent(self, name, data);
+                }));
     }
 };

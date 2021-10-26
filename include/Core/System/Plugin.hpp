@@ -14,6 +14,9 @@ namespace obe::Engine
     class Engine;
 }
 
+/**
+ * \additionalinclude{Engine/Engine.hpp}
+ */
 namespace obe::System
 {
     template <class T>

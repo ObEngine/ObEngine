@@ -54,8 +54,11 @@ namespace obe::Animation::Bindings
         bindAnimation["getCurrentAnimationGroup"]
             = &obe::Animation::Animation::getCurrentAnimationGroup;
         bindAnimation["getPriority"] = &obe::Animation::Animation::getPriority;
-        bindAnimation["getTexture"] = &obe::Animation::Animation::getTexture;
-        bindAnimation["getTextureAtIndex"] = &obe::Animation::Animation::getTextureAtIndex;
+        bindAnimation["getTexture"]
+            = [](obe::Animation::Animation* self) { return &self->getTexture(); };
+        bindAnimation["getTextureAtIndex"] = [](obe::Animation::Animation* self, int index) {
+            return &self->getTextureAtIndex(index);
+        };
         bindAnimation["isOver"] = &obe::Animation::Animation::isOver;
         bindAnimation["loadAnimation"] = sol::overload(
             [](obe::Animation::Animation* self, const obe::System::Path& path) -> void {
@@ -83,7 +86,8 @@ namespace obe::Animation::Bindings
         bindAnimationGroup["getIndex"] = &obe::Animation::AnimationGroup::getIndex;
         bindAnimationGroup["getName"] = &obe::Animation::AnimationGroup::getName;
         bindAnimationGroup["getSize"] = &obe::Animation::AnimationGroup::getSize;
-        bindAnimationGroup["getTexture"] = &obe::Animation::AnimationGroup::getTexture;
+        bindAnimationGroup["getTexture"]
+            = [](obe::Animation::AnimationGroup* self) { return &self->getTexture(); };
         bindAnimationGroup["isOver"] = &obe::Animation::AnimationGroup::isOver;
         bindAnimationGroup["next"] = sol::overload(
             [](obe::Animation::AnimationGroup* self) -> void { return self->next(); },
@@ -118,11 +122,13 @@ namespace obe::Animation::Bindings
             = &obe::Animation::AnimationState::getAnimationGroup;
         bindAnimationState["getCurrentAnimationGroup"]
             = &obe::Animation::AnimationState::getCurrentAnimationGroup;
-        bindAnimationState["getTexture"] = &obe::Animation::AnimationState::getTexture;
+        bindAnimationState["getTexture"]
+            = [](obe::Animation::AnimationState* self) { return &self->getTexture(); };
         bindAnimationState["isOver"] = &obe::Animation::AnimationState::isOver;
         bindAnimationState["reset"] = &obe::Animation::AnimationState::reset;
         bindAnimationState["update"] = &obe::Animation::AnimationState::update;
-        bindAnimationState["getAnimation"] = &obe::Animation::AnimationState::getAnimation;
+        bindAnimationState["getAnimation"]
+            = [](obe::Animation::AnimationState* self) { return &self->getAnimation(); };
     }
     void LoadClassAnimator(sol::state_view state)
     {
@@ -134,8 +140,12 @@ namespace obe::Animation::Bindings
         bindAnimator["getAllAnimationName"] = &obe::Animation::Animator::getAllAnimationName;
         bindAnimator["getAnimation"] = &obe::Animation::Animator::getAnimation;
         bindAnimator["getKey"] = &obe::Animation::Animator::getKey;
-        bindAnimator["getTexture"] = &obe::Animation::Animator::getTexture;
-        bindAnimator["getTextureAtKey"] = &obe::Animation::Animator::getTextureAtKey;
+        bindAnimator["getTexture"]
+            = [](obe::Animation::Animator* self) { return &self->getTexture(); };
+        bindAnimator["getTextureAtKey"]
+            = [](obe::Animation::Animator* self, const std::string& key, int index) {
+                  return &self->getTextureAtKey(key, index);
+              };
         bindAnimator["load"]
             = sol::overload([](obe::Animation::Animator* self,
                                 obe::System::Path path) -> void { return self->load(path); },
@@ -182,8 +192,10 @@ namespace obe::Animation::Bindings
         bindAnimatorState["getTarget"] = &obe::Animation::AnimatorState::getTarget;
         bindAnimatorState["getCurrentAnimation"]
             = &obe::Animation::AnimatorState::getCurrentAnimation;
-        bindAnimatorState["getTexture"] = &obe::Animation::AnimatorState::getTexture;
-        bindAnimatorState["getAnimator"] = &obe::Animation::AnimatorState::getAnimator;
+        bindAnimatorState["getTexture"]
+            = [](obe::Animation::AnimatorState* self) { return &self->getTexture(); };
+        bindAnimatorState["getAnimator"]
+            = [](obe::Animation::AnimatorState* self) { return &self->getAnimator(); };
     }
     void LoadClassValueTweening(sol::state_view state)
     {

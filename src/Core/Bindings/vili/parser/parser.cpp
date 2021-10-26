@@ -60,11 +60,6 @@ namespace vili::parser::Bindings
             = parserNamespace.new_usertype<vili::parser::error>(
                 "error", sol::call_constructor, sol::default_constructor);
     }
-    void LoadFunctionStatePushProxy(sol::state_view state)
-    {
-        sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
-        parserNamespace.set_function("state_push_proxy", vili::parser::state_push_proxy);
-    }
     void LoadFunctionFromString(sol::state_view state)
     {
         sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
@@ -84,5 +79,10 @@ namespace vili::parser::Bindings
                 [](std::string_view path, vili::parser::state parser_state) -> vili::node {
                     return vili::parser::from_file(path, parser_state);
                 }));
+    }
+    void LoadFunctionStatePushProxy(sol::state_view state)
+    {
+        sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
+        parserNamespace.set_function("state_push_proxy", vili::parser::state_push_proxy);
     }
 };

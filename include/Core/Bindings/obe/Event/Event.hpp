@@ -18,4 +18,6 @@ namespace obe::Event::Bindings
     void LoadClassScopeProfiler(sol::state_view state);
     void LoadEnumCallbackSchedulerState(sol::state_view state);
     void LoadEnumListenerChangeState(sol::state_view state);
+    void LoadFunctionAddLuaEvent(sol::state_view state);
+    void LoadFunctionTriggerLuaEvent(sol::state_view state);
 };

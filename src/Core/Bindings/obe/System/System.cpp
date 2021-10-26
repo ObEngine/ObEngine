@@ -1,5 +1,6 @@
 #include <Bindings/obe/System/System.hpp>
 
+#include <Engine/Engine.hpp>
 #include <System/Cursor.hpp>
 #include <System/MountablePath.hpp>
 #include <System/Path.hpp>
@@ -10,6 +11,24 @@
 
 namespace obe::System::Bindings
 {
+    void LoadEnumCursorType(sol::state_view state)
+    {
+        sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
+        SystemNamespace.new_enum<obe::System::CursorType>("CursorType",
+            { { "Arrow", obe::System::CursorType::Arrow },
+                { "ArrowWait", obe::System::CursorType::ArrowWait },
+                { "Wait", obe::System::CursorType::Wait },
+                { "Text", obe::System::CursorType::Text },
+                { "Hand", obe::System::CursorType::Hand },
+                { "SizeHorizontal", obe::System::CursorType::SizeHorizontal },
+                { "SizeVertical", obe::System::CursorType::SizeVertical },
+                { "SizeTopLeftBottomRight", obe::System::CursorType::SizeTopLeftBottomRight },
+                { "SizeBottomLeftTopRight", obe::System::CursorType::SizeBottomLeftTopRight },
+                { "SizeAll", obe::System::CursorType::SizeAll },
+                { "Cross", obe::System::CursorType::Cross },
+                { "Help", obe::System::CursorType::Help },
+                { "NotAllowed", obe::System::CursorType::NotAllowed } });
+    }
     void LoadEnumMountablePathType(sol::state_view state)
     {
         sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
@@ -65,16 +84,6 @@ namespace obe::System::Bindings
     void LoadClassCursor(sol::state_view state)
     {
         sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
-
-        SystemNamespace.new_enum<obe::System::CursorType>("CursorType",
-            { { "Arrow", obe::System::CursorType::Arrow },
-                { "ArrowWait", obe::System::CursorType::ArrowWait }});
-
-        sol::usertype<obe::System::CursorModel> bindCursorModel
-            = SystemNamespace.new_usertype<obe::System::CursorModel>(
-                "CursorModel", sol::call_constructor, sol::default_constructor);
-        bindCursorModel["loadFromSystem"] = &obe::System::CursorModel::loadFromSystem;
-
         sol::usertype<obe::System::Cursor> bindCursor
             = SystemNamespace.new_usertype<obe::System::Cursor>("Cursor", sol::call_constructor,
                 sol::constructors<obe::System::Cursor(
@@ -94,17 +103,23 @@ namespace obe::System::Bindings
         bindCursor["getScenePosition"] = &obe::System::Cursor::getScenePosition;
         bindCursor["update"] = &obe::System::Cursor::update;
         bindCursor["setConstraint"] = sol::overload(
-            [](obe::System::Cursor* self,
-                std::function<std::pair<int, int>(obe::System::Cursor*)> constraint) -> void {
-                return self->setConstraint(constraint);
-            },
-            [](obe::System::Cursor* self,
-                std::function<std::pair<int, int>(obe::System::Cursor*)> constraint,
-                std::function<bool()> condition) -> void {
+            [](obe::System::Cursor* self, const obe::System::Cursor::PositionConstraint& constraint)
+                -> void { return self->setConstraint(constraint); },
+            [](obe::System::Cursor* self, const obe::System::Cursor::PositionConstraint& constraint,
+                obe::System::Cursor::ConstraintCondition condition) -> void {
                 return self->setConstraint(constraint, condition);
             });
         bindCursor["isPressed"] = &obe::System::Cursor::isPressed;
         bindCursor["setCursor"] = &obe::System::Cursor::setCursor;
+    }
+    void LoadClassCursorModel(sol::state_view state)
+    {
+        sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
+        sol::usertype<obe::System::CursorModel> bindCursorModel
+            = SystemNamespace.new_usertype<obe::System::CursorModel>(
+                "CursorModel", sol::call_constructor, sol::default_constructor);
+        bindCursorModel["loadFromFile"] = &obe::System::CursorModel::loadFromFile;
+        bindCursorModel["loadFromSystem"] = &obe::System::CursorModel::loadFromSystem;
     }
     void LoadClassFindResult(sol::state_view state)
     {
@@ -121,10 +136,10 @@ namespace obe::System::Bindings
                         std::shared_ptr<obe::System::MountablePath>, const std::string&,
                         const std::string&, const std::string&)>());
         bindFindResult["hypotheticalPath"] = &obe::System::FindResult::hypotheticalPath;
-        bindFindResult["path"] = &obe::System::FindResult::path;
-        bindFindResult["mount"] = &obe::System::FindResult::mount;
-        bindFindResult["query"] = &obe::System::FindResult::query;
-        bindFindResult["element"] = &obe::System::FindResult::element;
+        bindFindResult["path"] = [](obe::System::FindResult* self) { return &self->path(); };
+        bindFindResult["mount"] = [](obe::System::FindResult* self) { return &self->mount(); };
+        bindFindResult["query"] = [](obe::System::FindResult* self) { return &self->query(); };
+        bindFindResult["element"] = [](obe::System::FindResult* self) { return &self->element(); };
         bindFindResult["success"] = &obe::System::FindResult::success;
     }
     void LoadClassMountablePath(sol::state_view state)
@@ -158,10 +173,14 @@ namespace obe::System::Bindings
             });
         bindMountablePath["Unmount"] = &obe::System::MountablePath::Unmount;
         bindMountablePath["UnmountAll"] = &obe::System::MountablePath::UnmountAll;
-        bindMountablePath["Paths"] = &obe::System::MountablePath::Paths;
+        bindMountablePath["Paths"]
+            = [](obe::System::MountablePath* self) { return &self->Paths(); };
         bindMountablePath["StringPaths"] = &obe::System::MountablePath::StringPaths;
         bindMountablePath["Sort"] = &obe::System::MountablePath::Sort;
-        bindMountablePath["FromPrefix"] = &obe::System::MountablePath::FromPrefix;
+        bindMountablePath["FromPrefix"]
+            = [](obe::System::MountablePath* self, const std::string& prefix) {
+                  return &self->FromPrefix(prefix);
+              };
         bindMountablePath["GetAllPrefixes"] = &obe::System::MountablePath::GetAllPrefixes;
         bindMountablePath["pathType"] = &obe::System::MountablePath::pathType;
         bindMountablePath["basePath"] = &obe::System::MountablePath::basePath;
@@ -210,6 +229,7 @@ namespace obe::System::Bindings
             = SystemNamespace.new_usertype<obe::System::Plugin>("Plugin", sol::call_constructor,
                 sol::constructors<obe::System::Plugin(const std::string&, const std::string&)>(),
                 sol::base_classes, sol::bases<obe::Types::Identifiable>());
+        bindPlugin["onInit"] = &obe::System::Plugin::onInit;
         bindPlugin["onUpdate"] = &obe::System::Plugin::onUpdate;
         bindPlugin["onRender"] = &obe::System::Plugin::onRender;
         bindPlugin["onExit"] = &obe::System::Plugin::onExit;
@@ -217,6 +237,7 @@ namespace obe::System::Bindings
         bindPlugin["hasOnUpdate"] = &obe::System::Plugin::hasOnUpdate;
         bindPlugin["hasOnRender"] = &obe::System::Plugin::hasOnRender;
         bindPlugin["hasOnExit"] = &obe::System::Plugin::hasOnExit;
+        bindPlugin["isValid"] = &obe::System::Plugin::isValid;
     }
     void LoadClassWindow(sol::state_view state)
     {

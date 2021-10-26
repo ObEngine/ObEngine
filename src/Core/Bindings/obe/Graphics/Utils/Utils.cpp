@@ -27,12 +27,18 @@ namespace obe::Graphics::Utils::Bindings
     void LoadFunctionDrawPoint(sol::state_view state)
     {
         sol::table UtilsNamespace = state["obe"]["Graphics"]["Utils"].get<sol::table>();
-        UtilsNamespace.set_function("drawPoint", obe::Graphics::Utils::drawPoint);
+        UtilsNamespace.set_function("drawPoint",
+            [](obe::Graphics::RenderTarget surface, int x, int y, float radius,
+                const obe::Graphics::Color* color) { drawPoint(surface, x, y, radius, *color); });
     }
     void LoadFunctionDrawLine(sol::state_view state)
     {
         sol::table UtilsNamespace = state["obe"]["Graphics"]["Utils"].get<sol::table>();
-        UtilsNamespace.set_function("drawLine", obe::Graphics::Utils::drawLine);
+        UtilsNamespace.set_function("drawLine",
+            [](obe::Graphics::RenderTarget surface, int x1, int y1, int x2, int y2, int thickness,
+                const obe::Graphics::Color* color) {
+                drawLine(surface, x1, y1, x2, y2, thickness, *color);
+            });
     }
     void LoadFunctionDrawPolygon(sol::state_view state)
     {

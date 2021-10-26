@@ -33,14 +33,8 @@ namespace obe::Graphics::Bindings
     {
         sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
         sol::usertype<obe::Graphics::Color> bindColor
-            = GraphicsNamespace.new_usertype<obe::Graphics::Color>("Color", sol::call_constructor,
-                sol::constructors<obe::Graphics::Color(),
-                    obe::Graphics::Color(double, double, double),
-                    obe::Graphics::Color(double, double, double, double),
-                    obe::Graphics::Color(const std::string&),
-                    obe::Graphics::Color(const obe::Graphics::Color&),
-                    obe::Graphics::Color(const sf::Color&)>(),
-                sol::base_classes, sol::bases<obe::Types::Serializable>());
+            = GraphicsNamespace.new_usertype<obe::Graphics::Color>(
+                "Color", sol::base_classes, sol::bases<obe::Types::Serializable>());
         bindColor["dump"] = sol::overload(
             static_cast<vili::node (obe::Graphics::Color::*)(obe::Graphics::ColorType) const>(
                 &obe::Graphics::Color::dump),
@@ -64,23 +58,37 @@ namespace obe::Graphics::Bindings
         bindColor["toInteger"] = &obe::Graphics::Color::toInteger;
         bindColor["toHex"] = &obe::Graphics::Color::toHex;
         bindColor["toName"] = &obe::Graphics::Color::toName;
-        bindColor[sol::meta_function::equal_to] = &obe::Graphics::Color::operator==;
-        bindColor[sol::meta_function::addition] = &obe::Graphics::Color::operator+;
-        bindColor[sol::meta_function::subtraction] = sol::overload(
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(const obe::Graphics::Color&)
-                    const>(&obe::Graphics::Color::operator-),
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)() const>(
-                &obe::Graphics::Color::operator-));
-        bindColor[sol::meta_function::multiplication] = sol::overload(
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(const obe::Graphics::Color&)
-                    const>(&obe::Graphics::Color::operator*),
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(double) const>(
-                &obe::Graphics::Color::operator*));
-        bindColor[sol::meta_function::division] = sol::overload(
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(const obe::Graphics::Color&)
-                    const>(&obe::Graphics::Color::operator/),
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(double) const>(
-                &obe::Graphics::Color::operator/));
+        bindColor["toHsv"] = &obe::Graphics::Color::toHsv;
+        bindColor["toString"] = &obe::Graphics::Color::toString;
+        bindColor[sol::meta_function::equal_to] =
+
+            [](obe::Graphics::Color* self, const obe::Graphics::Color* color) {
+                self->operator==(*color);
+            }
+
+        ;
+        bindColor[sol::meta_function::addition] =
+
+            [](obe::Graphics::Color* self, const obe::Graphics::Color* color) {
+                self->operator+(*color);
+            }
+
+        ;
+        bindColor[sol::meta_function::subtraction]
+            = sol::overload([](obe::Graphics::Color* self,
+                                const obe::Graphics::Color* color) { self->operator-(*color); },
+                static_cast<obe::Graphics::Color (obe::Graphics::Color::*)() const>(
+                    &obe::Graphics::Color::operator-));
+        bindColor[sol::meta_function::multiplication]
+            = sol::overload([](obe::Graphics::Color* self,
+                                const obe::Graphics::Color* color) { self->operator*(*color); },
+                static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(double) const>(
+                    &obe::Graphics::Color::operator*));
+        bindColor[sol::meta_function::division]
+            = sol::overload([](obe::Graphics::Color* self,
+                                const obe::Graphics::Color* color) { self->operator/(*color); },
+                static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(double) const>(
+                    &obe::Graphics::Color::operator/));
         bindColor["Random"] = sol::overload(
             [](obe::Graphics::Color* self) -> obe::Graphics::Color { return self->Random(); },
             [](obe::Graphics::Color* self, bool randomAlpha) -> obe::Graphics::Color {
@@ -302,9 +310,9 @@ namespace obe::Graphics::Bindings
                     obe::Graphics::RichText(const obe::Graphics::Font&)>());
         bindRichText["clear"] = &obe::Graphics::RichText::clear;
         bindRichText["append"] = &obe::Graphics::RichText::append;
-        bindRichText["getFont"] = &obe::Graphics::RichText::getFont;
+        bindRichText["getFont"] = [](obe::Graphics::RichText* self) { return &self->getFont(); };
         bindRichText["setFont"] = &obe::Graphics::RichText::setFont;
-        bindRichText["getLines"] = &obe::Graphics::RichText::getLines;
+        bindRichText["getLines"] = [](obe::Graphics::RichText* self) { return &self->getLines(); };
         bindRichText["getCharacterSize"] = &obe::Graphics::RichText::getCharacterSize;
         bindRichText["setCharacterSize"] = &obe::Graphics::RichText::setCharacterSize;
         bindRichText["getLocalBounds"] = &obe::Graphics::RichText::getLocalBounds;
@@ -329,7 +337,7 @@ namespace obe::Graphics::Bindings
             = GraphicsNamespace.new_usertype<obe::Graphics::Sprite>("Sprite", sol::base_classes,
                 sol::bases<obe::Transform::UnitBasedObject, obe::Types::Selectable,
                     obe::Transform::Rect, obe::Transform::Movable, obe::Graphics::Renderable,
-                    obe::Component::Component<Sprite>, obe::Component::ComponentBase,
+                    obe::Component::Component<obe::Graphics::Sprite>, obe::Component::ComponentBase,
                     obe::Types::Identifiable, obe::Types::Serializable,
                     obe::Engine::ResourceManagedObject>());
         bindSprite["drawHandle"] = &obe::Graphics::Sprite::drawHandle;
@@ -344,7 +352,7 @@ namespace obe::Graphics::Bindings
         bindSprite["getSprite"] = &obe::Graphics::Sprite::getSprite;
         bindSprite["getSpriteHeight"] = &obe::Graphics::Sprite::getSpriteHeight;
         bindSprite["getSpriteWidth"] = &obe::Graphics::Sprite::getSpriteWidth;
-        bindSprite["getTexture"] = &obe::Graphics::Sprite::getTexture;
+        bindSprite["getTexture"] = [](obe::Graphics::Sprite* self) { return &self->getTexture(); };
         bindSprite["getXScaleFactor"] = &obe::Graphics::Sprite::getXScaleFactor;
         bindSprite["getYScaleFactor"] = &obe::Graphics::Sprite::getYScaleFactor;
         bindSprite["getAntiAliasing"] = &obe::Graphics::Sprite::getAntiAliasing;
@@ -352,7 +360,13 @@ namespace obe::Graphics::Bindings
         bindSprite["load"] = &obe::Graphics::Sprite::load;
         bindSprite["loadTexture"] = &obe::Graphics::Sprite::loadTexture;
         bindSprite["rotate"] = &obe::Graphics::Sprite::rotate;
-        bindSprite["setColor"] = &obe::Graphics::Sprite::setColor;
+        bindSprite["setColor"] =
+
+            [](obe::Graphics::Sprite* self, const obe::Graphics::Color* color) {
+                self->setColor(*color);
+            }
+
+        ;
         bindSprite["setParentId"] = &obe::Graphics::Sprite::setParentId;
         bindSprite["setPositionTransformer"] = &obe::Graphics::Sprite::setPositionTransformer;
         bindSprite["setRotation"] = &obe::Graphics::Sprite::setRotation;

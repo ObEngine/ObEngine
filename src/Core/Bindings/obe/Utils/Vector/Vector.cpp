@@ -31,7 +31,7 @@ namespace obe::Utils::Vector::Bindings
                 [](std::vector<std::string>& vector, std::string sep, int start) -> std::string {
                     return obe::Utils::Vector::join(vector, sep, start);
                 },
-                [](std::vector<std::string>& vector, std::string sep, int start, int end)
-                    -> std::string { return obe::Utils::Vector::join(vector, sep, start, end); }));
+                [](std::vector<std::string>& vector, std::string sep, int start, int stop)
+                    -> std::string { return obe::Utils::Vector::join(vector, sep, start, stop); }));
     }
 };

@@ -16,7 +16,8 @@ namespace obe::Engine::Exceptions::Bindings
                 sol::constructors<obe::Engine::Exceptions::BootScriptExecutionError(
                     std::string_view, std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<BootScriptExecutionError>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Engine::Exceptions::BootScriptExecutionError>,
+                    obe::BaseException>());
     }
     void LoadClassBootScriptLoadingError(sol::state_view state)
     {
@@ -27,7 +28,8 @@ namespace obe::Engine::Exceptions::Bindings
                 sol::constructors<obe::Engine::Exceptions::BootScriptLoadingError(
                     std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<BootScriptLoadingError>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Engine::Exceptions::BootScriptLoadingError>,
+                    obe::BaseException>());
     }
     void LoadClassBootScriptMissing(sol::state_view state)
     {
@@ -38,7 +40,8 @@ namespace obe::Engine::Exceptions::Bindings
                 sol::constructors<obe::Engine::Exceptions::BootScriptMissing(
                     const std::vector<std::string>&, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<BootScriptMissing>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Engine::Exceptions::BootScriptMissing>,
+                    obe::BaseException>());
     }
     void LoadClassFontNotFound(sol::state_view state)
     {
@@ -48,7 +51,9 @@ namespace obe::Engine::Exceptions::Bindings
                 "FontNotFound", sol::call_constructor,
                 sol::constructors<obe::Engine::Exceptions::FontNotFound(
                     std::string_view, std::vector<std::string>, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception<FontNotFound>, obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<obe::Engine::Exceptions::FontNotFound>,
+                    obe::BaseException>());
     }
     void LoadClassTextureNotFound(sol::state_view state)
     {
@@ -59,7 +64,8 @@ namespace obe::Engine::Exceptions::Bindings
                 sol::constructors<obe::Engine::Exceptions::TextureNotFound(
                     std::string_view, std::vector<std::string>, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<TextureNotFound>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Engine::Exceptions::TextureNotFound>,
+                    obe::BaseException>());
     }
     void LoadClassUnitializedEngine(sol::state_view state)
     {
@@ -69,6 +75,7 @@ namespace obe::Engine::Exceptions::Bindings
                 "UnitializedEngine", sol::call_constructor,
                 sol::constructors<obe::Engine::Exceptions::UnitializedEngine(obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<UnitializedEngine>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Engine::Exceptions::UnitializedEngine>,
+                    obe::BaseException>());
     }
 };

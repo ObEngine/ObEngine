@@ -15,7 +15,7 @@ namespace vili::exceptions::Bindings
                 sol::constructors<vili::exceptions::array_index_overflow(
                     size_t, size_t, vili::exceptions::debug_info)>(),
                 sol::base_classes,
-                sol::bases<vili::exceptions::exception<array_index_overflow>,
+                sol::bases<vili::exceptions::exception<vili::exceptions::array_index_overflow>,
                     vili::exceptions::base_exception>());
     }
     void LoadClassBaseException(sol::state_view state)
@@ -47,7 +47,7 @@ namespace vili::exceptions::Bindings
                 sol::constructors<vili::exceptions::file_not_found(
                     std::string_view, vili::exceptions::debug_info)>(),
                 sol::base_classes,
-                sol::bases<vili::exceptions::exception<file_not_found>,
+                sol::bases<vili::exceptions::exception<vili::exceptions::file_not_found>,
                     vili::exceptions::base_exception>());
     }
     void LoadClassInconsistentIndentation(sol::state_view state)
@@ -59,7 +59,7 @@ namespace vili::exceptions::Bindings
                 sol::constructors<vili::exceptions::inconsistent_indentation(
                     int64_t, int64_t, vili::exceptions::debug_info)>(),
                 sol::base_classes,
-                sol::bases<vili::exceptions::exception<inconsistent_indentation>,
+                sol::bases<vili::exceptions::exception<vili::exceptions::inconsistent_indentation>,
                     vili::exceptions::base_exception>());
     }
     void LoadClassIntegerDumpError(sol::state_view state)
@@ -71,7 +71,7 @@ namespace vili::exceptions::Bindings
                 sol::constructors<vili::exceptions::integer_dump_error(
                     vili::integer, vili::exceptions::debug_info)>(),
                 sol::base_classes,
-                sol::bases<vili::exceptions::exception<integer_dump_error>,
+                sol::bases<vili::exceptions::exception<vili::exceptions::integer_dump_error>,
                     vili::exceptions::base_exception>());
     }
     void LoadClassInvalidCast(sol::state_view state)
@@ -83,7 +83,7 @@ namespace vili::exceptions::Bindings
                 sol::constructors<vili::exceptions::invalid_cast(
                     std::string_view, std::string_view, vili::exceptions::debug_info)>(),
                 sol::base_classes,
-                sol::bases<vili::exceptions::exception<invalid_cast>,
+                sol::bases<vili::exceptions::exception<vili::exceptions::invalid_cast>,
                     vili::exceptions::base_exception>());
     }
     void LoadClassInvalidDataType(sol::state_view state)
@@ -95,7 +95,7 @@ namespace vili::exceptions::Bindings
                 sol::constructors<vili::exceptions::invalid_data_type(
                     vili::exceptions::debug_info)>(),
                 sol::base_classes,
-                sol::bases<vili::exceptions::exception<invalid_data_type>,
+                sol::bases<vili::exceptions::exception<vili::exceptions::invalid_data_type>,
                     vili::exceptions::base_exception>());
     }
     void LoadClassInvalidMerge(sol::state_view state)
@@ -107,7 +107,7 @@ namespace vili::exceptions::Bindings
                 sol::constructors<vili::exceptions::invalid_merge(
                     std::string_view, std::string_view, vili::exceptions::debug_info)>(),
                 sol::base_classes,
-                sol::bases<vili::exceptions::exception<invalid_merge>,
+                sol::bases<vili::exceptions::exception<vili::exceptions::invalid_merge>,
                     vili::exceptions::base_exception>());
     }
     void LoadClassInvalidNodeType(sol::state_view state)
@@ -119,7 +119,7 @@ namespace vili::exceptions::Bindings
                 sol::constructors<vili::exceptions::invalid_node_type(
                     std::string_view, vili::exceptions::debug_info)>(),
                 sol::base_classes,
-                sol::bases<vili::exceptions::exception<invalid_node_type>,
+                sol::bases<vili::exceptions::exception<vili::exceptions::invalid_node_type>,
                     vili::exceptions::base_exception>());
     }
     void LoadClassNumberDumpError(sol::state_view state)
@@ -131,7 +131,7 @@ namespace vili::exceptions::Bindings
                 sol::constructors<vili::exceptions::number_dump_error(
                     vili::number, vili::exceptions::debug_info)>(),
                 sol::base_classes,
-                sol::bases<vili::exceptions::exception<number_dump_error>,
+                sol::bases<vili::exceptions::exception<vili::exceptions::number_dump_error>,
                     vili::exceptions::base_exception>());
     }
     void LoadClassParsingError(sol::state_view state)
@@ -143,7 +143,7 @@ namespace vili::exceptions::Bindings
                 sol::constructors<vili::exceptions::parsing_error(
                     std::string_view, size_t, size_t, vili::exceptions::debug_info)>(),
                 sol::base_classes,
-                sol::bases<vili::exceptions::exception<parsing_error>,
+                sol::bases<vili::exceptions::exception<vili::exceptions::parsing_error>,
                     vili::exceptions::base_exception>());
     }
     void LoadClassTooMuchIndentation(sol::state_view state)
@@ -155,7 +155,7 @@ namespace vili::exceptions::Bindings
                 sol::constructors<vili::exceptions::too_much_indentation(
                     int64_t, vili::exceptions::debug_info)>(),
                 sol::base_classes,
-                sol::bases<vili::exceptions::exception<too_much_indentation>,
+                sol::bases<vili::exceptions::exception<vili::exceptions::too_much_indentation>,
                     vili::exceptions::base_exception>());
     }
     void LoadClassUnknownChildNode(sol::state_view state)
@@ -167,7 +167,7 @@ namespace vili::exceptions::Bindings
                 sol::constructors<vili::exceptions::unknown_child_node(
                     std::string_view, vili::exceptions::debug_info)>(),
                 sol::base_classes,
-                sol::bases<vili::exceptions::exception<unknown_child_node>,
+                sol::bases<vili::exceptions::exception<vili::exceptions::unknown_child_node>,
                     vili::exceptions::base_exception>());
         bindunknown_child_node["key"] = &vili::exceptions::unknown_child_node::key;
     }
@@ -180,7 +180,7 @@ namespace vili::exceptions::Bindings
                 sol::constructors<vili::exceptions::unknown_template(
                     std::string_view, vili::exceptions::debug_info)>(),
                 sol::base_classes,
-                sol::bases<vili::exceptions::exception<unknown_template>,
+                sol::bases<vili::exceptions::exception<vili::exceptions::unknown_template>,
                     vili::exceptions::base_exception>());
     }
     void LoadFunctionIndentString(sol::state_view state)

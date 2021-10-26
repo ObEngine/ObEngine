@@ -14,7 +14,9 @@ namespace obe::Config::Exceptions::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Config::Exceptions::ConfigError(
                     std::vector<std::string>, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception<ConfigError>, obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<obe::Config::Exceptions::ConfigError>,
+                    obe::BaseException>());
     }
     void LoadClassInvalidVersionFormat(sol::state_view state)
     {
@@ -25,6 +27,7 @@ namespace obe::Config::Exceptions::Bindings
                 sol::constructors<obe::Config::Exceptions::InvalidVersionFormat(
                     std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<InvalidVersionFormat>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Config::Exceptions::InvalidVersionFormat>,
+                    obe::BaseException>());
     }
 };

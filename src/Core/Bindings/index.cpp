@@ -208,12 +208,15 @@ namespace obe::Bindings
         obe::Event::Bindings::LoadClassScopeProfiler(state);
         obe::Event::Bindings::LoadEnumCallbackSchedulerState(state);
         obe::Event::Bindings::LoadEnumListenerChangeState(state);
+        obe::Event::Bindings::LoadFunctionAddLuaEvent(state);
+        obe::Event::Bindings::LoadFunctionTriggerLuaEvent(state);
         obe::Event::Exceptions::Bindings::LoadClassCallbackCreationError(state);
         obe::Event::Exceptions::Bindings::LoadClassEventAlreadyExists(state);
         obe::Event::Exceptions::Bindings::LoadClassEventExecutionError(state);
         obe::Event::Exceptions::Bindings::LoadClassEventGroupAlreadyExists(state);
         obe::Event::Exceptions::Bindings::LoadClassEventGroupNotJoinable(state);
         obe::Event::Exceptions::Bindings::LoadClassEventNamespaceAlreadyExists(state);
+        obe::Event::Exceptions::Bindings::LoadClassEventNamespaceNotJoinable(state);
         obe::Event::Exceptions::Bindings::LoadClassUnknownEvent(state);
         obe::Event::Exceptions::Bindings::LoadClassUnknownEventGroup(state);
         obe::Event::Exceptions::Bindings::LoadClassUnknownEventNamespace(state);
@@ -314,8 +317,10 @@ namespace obe::Bindings
         obe::Script::Bindings::LoadFunctionSafeLuaCall(state);
         obe::System::Bindings::LoadClassContextualPathFactory(state);
         obe::System::Bindings::LoadClassCursor(state);
+        obe::System::Bindings::LoadClassCursorModel(state);
         obe::System::Bindings::LoadClassPlugin(state);
         obe::System::Bindings::LoadClassWindow(state);
+        obe::System::Bindings::LoadEnumCursorType(state);
         obe::System::Bindings::LoadEnumMountablePathType(state);
         obe::System::Bindings::LoadEnumSamePrefixPolicy(state);
         obe::System::Bindings::LoadEnumPathType(state);
@@ -385,6 +390,7 @@ namespace obe::Bindings
         obe::Transform::Bindings::LoadClassScreenStruct(state);
         obe::Transform::Bindings::LoadClassViewStruct(state);
         obe::Transform::Bindings::LoadEnumRelativePositionFrom(state);
+        obe::Transform::Bindings::LoadEnumReferentialConversionType(state);
         obe::Transform::Bindings::LoadEnumFlipAxis(state);
         obe::Transform::Bindings::LoadEnumUnits(state);
         obe::Transform::Bindings::LoadFunctionStringToUnits(state);
@@ -433,9 +439,9 @@ namespace obe::Bindings
         vili::parser::Bindings::LoadClassNodeInStack(state);
         vili::parser::Bindings::LoadClassState(state);
         vili::parser::Bindings::LoadClassError(state);
-        vili::parser::Bindings::LoadFunctionStatePushProxy(state);
         vili::parser::Bindings::LoadFunctionFromString(state);
         vili::parser::Bindings::LoadFunctionFromFile(state);
+        vili::parser::Bindings::LoadFunctionStatePushProxy(state);
         obe::Events::Actions::Bindings::LoadClassAction(state);
         obe::Events::Cursor::Bindings::LoadClassHold(state);
         obe::Events::Cursor::Bindings::LoadClassMove(state);
