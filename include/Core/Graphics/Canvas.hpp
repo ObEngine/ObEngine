@@ -181,7 +181,7 @@ namespace obe::Graphics::Canvas
         void draw(RenderTarget target) override;
         void refresh();
         /**
-         * \bind{text}
+         * \rename{text}
          * \asproperty
          * \brief Returns the current Text part
          */

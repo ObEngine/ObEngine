@@ -138,7 +138,7 @@ namespace obe::Script
          */
         void setUpdateState(bool state);
         /**
-         * \bind{Animator}
+         * \rename{Animator}
          * \asproperty
          * \brief Gets the Animator Component of the GameObject (Raises
          *        ObEngine.Script.GameObject.NoAnimator if no Animator Component)
@@ -146,7 +146,7 @@ namespace obe::Script
          */
         Animation::Animator& getAnimator() const;
         /**
-         * \bind{Collider}
+         * \rename{Collider}
          * \asproperty
          * \brief Gets the Collider Component of the GameObject (Raises
          *        ObEngine.Script.GameObject.NoCollider if no Collider Component)
@@ -154,7 +154,7 @@ namespace obe::Script
          */
         Collision::PolygonalCollider& getCollider() const;
         /**
-         * \bind{Sprite}
+         * \rename{Sprite}
          * \asproperty
          * \brief Gets the Sprite Component of the GameObject (Raises
          *        ObEngine.Script.GameObject.NoSprite if no Sprite Component)
@@ -162,7 +162,7 @@ namespace obe::Script
          */
         Graphics::Sprite& getSprite() const;
         /**
-         * \bind{SceneNode}
+         * \rename{SceneNode}
          * \asproperty
          * \brief Gets the Scene Node of the GameObject (SceneNode that can
          *        manipulate the position of all Scene Components) \return A reference
@@ -184,7 +184,7 @@ namespace obe::Script
         template <typename U>
         void sendInitArg(const std::string& argName, U value);
         /**
-         * \bind{sendInitArg}
+         * \rename{sendInitArg}
          * \brief Send a parameter to the Local.Init trigger from a Lua VM
          * \param argName Name of the Parameter to push
          * \param value Value of the Parameter
