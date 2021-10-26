@@ -42,7 +42,7 @@ namespace obe::Graphics::Bindings
                     obe::Graphics::Color(const sf::Color&)>(),
                 sol::base_classes, sol::bases<obe::Types::Serializable>());
         bindColor["dump"] = sol::overload(
-            static_cast<vili::node (obe::Graphics::Color::*)(obe::Graphics::ColorType)>(
+            static_cast<vili::node (obe::Graphics::Color::*)(obe::Graphics::ColorType) const>(
                 &obe::Graphics::Color::dump),
             static_cast<vili::node (obe::Graphics::Color::*)() const>(&obe::Graphics::Color::dump));
         bindColor["load"] = &obe::Graphics::Color::load;

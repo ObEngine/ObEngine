@@ -25,6 +25,8 @@ namespace obe::Graphics
      */
     class Color : public Types::Serializable
     {
+    private:
+        ColorType m_type;
     public:
 
         double r = 0;
@@ -37,9 +39,9 @@ namespace obe::Graphics
         explicit Color(const std::string& nameOrHex);
         Color(const sf::Color& color);
 
-        vili::node dump(ColorType type);
-        vili::node dump() const override;
-        void load(vili::node& data) override;
+        vili::node dump(ColorType type) const;
+        [[nodiscard]] vili::node dump() const override;
+        void load(const vili::node& data) override;
 
         void fromString(std::string string);
         bool fromName(std::string name, bool strict = true);
@@ -49,7 +51,9 @@ namespace obe::Graphics
 
         [[nodiscard]] uint32_t toInteger() const;
         [[nodiscard]] std::string toHex() const;
-        [[nodiscard]] std::string toName() const;
+        [[nodiscard]] std::optional<std::string> toName() const;
+        [[nodiscard]] Hsv toHsv() const;
+        [[nodiscard]] std::string toString() const;
 
         bool operator==(const Color& color) const;
         bool operator!=(const Color& color) const;
@@ -212,15 +216,6 @@ namespace obe::Graphics
         static Color WhiteSmoke;
         static Color Yellow;
         static Color YellowGreen;
-
-    private:
-        Hsv toHsv() const;
-        std::string toNamed() const;
-        std::string toHex() const;
-        std::string toString() const;
-
-        ColorType type;
-
     };
 
     std::ostream& operator<<(std::ostream& os, const Color& color);

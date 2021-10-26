@@ -2,7 +2,7 @@
 
 #include <Graphics/Color.hpp>
 #include <vili/node.hpp>
-#include <vili/parser/parser.hpp>
+#include <vili/parser.hpp>
 #include <fmt/format.h>
 
 
@@ -132,6 +132,13 @@ TEST_CASE("Color dump should be able to infer the desired ColorType from the las
         vili::node node = color.dump();
         REQUIRE(node.as<vili::string>() == "#7b68ee");
     }
+    SECTION("ColorType is Hex (with alpha)")
+    {
+        Color color;
+        color.fromHex("#7b68eefa");
+        vili::node node = color.dump();
+        REQUIRE(node.as<vili::string>() == "#7b68eefa");
+    }
     SECTION("ColorType is Hex using generic fromString method")
     {
         Color color;
@@ -152,5 +159,19 @@ TEST_CASE("Color dump should be able to infer the desired ColorType from the las
         color.fromString("MediumSlateBlue");
         vili::node node = color.dump();
         REQUIRE(node.as<vili::string>() == "mediumslateblue");
+    }
+}
+
+TEST_CASE("Color should output the correct name", "[obe.Graphics.Color.toName]")
+{
+    SECTION("Correct name")
+    {
+        const Color color(255, 0, 0);
+        REQUIRE(color.toName() == "red");
+    }
+    SECTION("Incorrect name")
+    {
+        const Color color(1, 2, 3);
+        REQUIRE(!color.toName().has_value());
     }
 }

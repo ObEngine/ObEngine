@@ -73,7 +73,7 @@ namespace obe::Graphics::Exceptions
             : Exception(info)
         {
             this->error(
-                "Impossible to find a color with following hexadecimal code : '{}'", hexCode);
+                "Invalid Color hex code : '{}'", hexCode);
         }
     };
 
