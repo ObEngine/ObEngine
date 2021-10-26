@@ -192,37 +192,33 @@ namespace obe::Animation::Bindings
     void LoadClassValueTweening(sol::state_view state)
     {
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
-        AnimationNamespace.set_function("ValueTweening",
-            sol::overload(sol::constructors<obe::Animation::ValueTweening<int>(obe::Time::TimeUnit),
-                obe::Animation::ValueTweening<int>(double, double, obe::Time::TimeUnit),
-                obe::Animation::ValueTweening<double>(obe::Time::TimeUnit),
-                obe::Animation::ValueTweening<double>(double, double, obe::Time::TimeUnit),
-                obe::Animation::ValueTweening<obe::Graphics::Color>(obe::Time::TimeUnit),
-                obe::Animation::ValueTweening<obe::Graphics::Color>(
-                    double, double, obe::Time::TimeUnit),
-                obe::Animation::ValueTweening<obe::Transform::UnitVector>(obe::Time::TimeUnit),
-                obe::Animation::ValueTweening<obe::Transform::UnitVector>(
-                    double, double, obe::Time::TimeUnit),
-                obe::Animation::ValueTweening<obe::Transform::Rect>(obe::Time::TimeUnit),
-                obe::Animation::ValueTweening<obe::Transform::Rect>(
-                    double, double, obe::Time::TimeUnit),
-                obe::Animation::ValueTweening<obe::Collision::Trajectory>(obe::Time::TimeUnit),
-                obe::Animation::ValueTweening<obe::Collision::Trajectory>(
-                    double, double, obe::Time::TimeUnit)>()));
 
-        sol::usertype<obe::Animation::ValueTweening<int>> bindValueTweeningInt
-            = AnimationNamespace.new_usertype<obe::Animation::ValueTweening<int>>("ValueTweeningInt",
-                sol::call_constructor,
-                sol::constructors<obe::Animation::ValueTweening<int>(obe::Time::TimeUnit),
-                    obe::Animation::ValueTweening<int>(double, double, obe::Time::TimeUnit)>());
-        bindValueTweeningInt["from"] = &obe::Animation::ValueTweening<int>::from;
-        bindValueTweeningInt["to"] = &obe::Animation::ValueTweening<int>::to;
-        bindValueTweeningInt["ease"] = &obe::Animation::ValueTweening<int>::ease;
-        bindValueTweeningInt["done"] = &obe::Animation::ValueTweening<int>::done;
-        bindValueTweeningInt["step"] = &obe::Animation::ValueTweening<int>::step<int>;
+        AnimationNamespace.set_function("ValueTweening", sol::overload(
+                [](double from, double to, obe::Time::TimeUnit duration)
+                {
+                    return obe::Animation::ValueTweening<double>(from, to, duration);
+                },
+                [](obe::Graphics::Color from, obe::Graphics::Color to, obe::Time::TimeUnit duration)
+                {
+                    return obe::Animation::ValueTweening<obe::Graphics::Color>(from, to, duration);
+                },
+                [](obe::Transform::UnitVector from, obe::Transform::UnitVector to, obe::Time::TimeUnit duration)
+                {
+                    return obe::Animation::ValueTweening<obe::Transform::UnitVector>(from, to, duration);
+                },
+                [](obe::Transform::Rect from, obe::Transform::Rect to, obe::Time::TimeUnit duration)
+                {
+                    return obe::Animation::ValueTweening<obe::Transform::Rect>(from, to, duration);
+                },
+                [](obe::Collision::Trajectory from, obe::Collision::Trajectory to, obe::Time::TimeUnit duration)
+                {
+                    return obe::Animation::ValueTweening<obe::Collision::Trajectory>(
+                        from, to, duration);
+                }
+        ));
 
         sol::usertype<obe::Animation::ValueTweening<double>> bindValueTweeningDouble
-            = AnimationNamespace.new_usertype<obe::Animation::ValueTweening<double>>("ValueTweeningDouble",
+            = AnimationNamespace.new_usertype<obe::Animation::ValueTweening<double>>("ValueTweeningNumber",
                 sol::call_constructor,
                 sol::constructors<obe::Animation::ValueTweening<double>(obe::Time::TimeUnit),
                     obe::Animation::ValueTweening<double>(double, double, obe::Time::TimeUnit)>());
@@ -230,7 +226,7 @@ namespace obe::Animation::Bindings
         bindValueTweeningDouble["to"] = &obe::Animation::ValueTweening<double>::to;
         bindValueTweeningDouble["ease"] = &obe::Animation::ValueTweening<double>::ease;
         bindValueTweeningDouble["done"] = &obe::Animation::ValueTweening<double>::done;
-        bindValueTweeningDouble["step"] = &obe::Animation::ValueTweening<double>::step<double>;
+        // bindValueTweeningDouble["step"] = &obe::Animation::ValueTweening<double>::step<double>;
 
         sol::usertype<obe::Animation::ValueTweening<obe::Graphics::Color>>
             bindValueTweeningColor
@@ -240,7 +236,7 @@ namespace obe::Animation::Bindings
                       sol::constructors<obe::Animation::ValueTweening<obe::Graphics::Color>(
                                             obe::Time::TimeUnit),
                           obe::Animation::ValueTweening<obe::Graphics::Color>(
-                              double, double, obe::Time::TimeUnit)>());
+                        obe::Graphics::Color, obe::Graphics::Color, obe::Time::TimeUnit)>());
         bindValueTweeningColor["from"]
             = &obe::Animation::ValueTweening<obe::Graphics::Color>::from;
         bindValueTweeningColor["to"]
@@ -260,7 +256,7 @@ namespace obe::Animation::Bindings
                       sol::constructors<obe::Animation::ValueTweening<obe::Transform::Rect>(
                                             obe::Time::TimeUnit),
                           obe::Animation::ValueTweening<obe::Transform::Rect>(
-                              double, double, obe::Time::TimeUnit)>());
+                        obe::Transform::Rect, obe::Transform::Rect, obe::Time::TimeUnit)>());
         bindValueTweeningRect["from"]
             = &obe::Animation::ValueTweening<obe::Transform::Rect>::from;
         bindValueTweeningRect["to"]
@@ -280,7 +276,8 @@ namespace obe::Animation::Bindings
                       sol::constructors<obe::Animation::ValueTweening<obe::Transform::UnitVector>(
                                             obe::Time::TimeUnit),
                           obe::Animation::ValueTweening<obe::Transform::UnitVector>(
-                              double, double, obe::Time::TimeUnit)>());
+                              obe::Transform::UnitVector, obe::Transform::UnitVector,
+                              obe::Time::TimeUnit)>());
         bindValueTweeningUnitVector["from"]
             = &obe::Animation::ValueTweening<obe::Transform::UnitVector>::from;
         bindValueTweeningUnitVector["to"]
@@ -300,7 +297,8 @@ namespace obe::Animation::Bindings
                       sol::constructors<obe::Animation::ValueTweening<obe::Collision::Trajectory>(
                                             obe::Time::TimeUnit),
                           obe::Animation::ValueTweening<obe::Collision::Trajectory>(
-                              double, double, obe::Time::TimeUnit)>());
+                              obe::Collision::Trajectory, obe::Collision::Trajectory,
+                              obe::Time::TimeUnit)>());
         bindValueTweeningTrajectory["from"]
             = &obe::Animation::ValueTweening<obe::Collision::Trajectory>::from;
         bindValueTweeningTrajectory["to"]
