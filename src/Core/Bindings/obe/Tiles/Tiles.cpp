@@ -60,12 +60,10 @@ namespace obe::Tiles::Bindings
         bindTileScene["getLayersIds"] = &obe::Tiles::TileScene::getLayersIds;
         bindTileScene["getLayer"] = &obe::Tiles::TileScene::getLayer;
         bindTileScene["getAnimatedTiles"] = &obe::Tiles::TileScene::getAnimatedTiles;
-        bindTileScene["getTilesets"]
-            = [](obe::Tiles::TileScene* self) { return &self->getTilesets(); };
+        bindTileScene["getTilesets"] = &obe::Tiles::TileScene::getTilesets;
         bindTileScene["getRenderables"] = &obe::Tiles::TileScene::getRenderables;
         bindTileScene["getColliderModels"] = &obe::Tiles::TileScene::getColliderModels;
-        bindTileScene["getGameObjectsModels"]
-            = [](obe::Tiles::TileScene* self) { return &self->getGameObjectsModels(); };
+        bindTileScene["getGameObjectsModels"] = &obe::Tiles::TileScene::getGameObjectsModels;
         bindTileScene["getWidth"] = &obe::Tiles::TileScene::getWidth;
         bindTileScene["getHeight"] = &obe::Tiles::TileScene::getHeight;
         bindTileScene["getTileWidth"] = &obe::Tiles::TileScene::getTileWidth;
@@ -104,14 +102,9 @@ namespace obe::Tiles::Bindings
             = TilesNamespace.new_usertype<obe::Tiles::TilesetCollection>("TilesetCollection",
                 sol::call_constructor, sol::constructors<obe::Tiles::TilesetCollection()>());
         bindTilesetCollection["addTileset"] = &obe::Tiles::TilesetCollection::addTileset;
-        bindTilesetCollection["tilesetFromId"]
-            = [](obe::Tiles::TilesetCollection* self, const std::string& id) {
-                  return &self->tilesetFromId(id);
-              };
+        bindTilesetCollection["tilesetFromId"] = &obe::Tiles::TilesetCollection::tilesetFromId;
         bindTilesetCollection["tilesetFromTileId"]
-            = [](obe::Tiles::TilesetCollection* self, uint32_t tileId) {
-                  return &self->tilesetFromTileId(tileId);
-              };
+            = &obe::Tiles::TilesetCollection::tilesetFromTileId;
         bindTilesetCollection["size"] = &obe::Tiles::TilesetCollection::size;
         bindTilesetCollection["getTilesetsFirstTilesIds"]
             = &obe::Tiles::TilesetCollection::getTilesetsFirstTilesIds;

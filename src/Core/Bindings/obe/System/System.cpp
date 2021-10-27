@@ -136,10 +136,10 @@ namespace obe::System::Bindings
                         std::shared_ptr<obe::System::MountablePath>, const std::string&,
                         const std::string&, const std::string&)>());
         bindFindResult["hypotheticalPath"] = &obe::System::FindResult::hypotheticalPath;
-        bindFindResult["path"] = [](obe::System::FindResult* self) { return &self->path(); };
-        bindFindResult["mount"] = [](obe::System::FindResult* self) { return &self->mount(); };
-        bindFindResult["query"] = [](obe::System::FindResult* self) { return &self->query(); };
-        bindFindResult["element"] = [](obe::System::FindResult* self) { return &self->element(); };
+        bindFindResult["path"] = &obe::System::FindResult::path;
+        bindFindResult["mount"] = &obe::System::FindResult::mount;
+        bindFindResult["query"] = &obe::System::FindResult::query;
+        bindFindResult["element"] = &obe::System::FindResult::element;
         bindFindResult["success"] = &obe::System::FindResult::success;
     }
     void LoadClassMountablePath(sol::state_view state)
@@ -173,14 +173,10 @@ namespace obe::System::Bindings
             });
         bindMountablePath["Unmount"] = &obe::System::MountablePath::Unmount;
         bindMountablePath["UnmountAll"] = &obe::System::MountablePath::UnmountAll;
-        bindMountablePath["Paths"]
-            = [](obe::System::MountablePath* self) { return &self->Paths(); };
+        bindMountablePath["Paths"] = &obe::System::MountablePath::Paths;
         bindMountablePath["StringPaths"] = &obe::System::MountablePath::StringPaths;
         bindMountablePath["Sort"] = &obe::System::MountablePath::Sort;
-        bindMountablePath["FromPrefix"]
-            = [](obe::System::MountablePath* self, const std::string& prefix) {
-                  return &self->FromPrefix(prefix);
-              };
+        bindMountablePath["FromPrefix"] = &obe::System::MountablePath::FromPrefix;
         bindMountablePath["GetAllPrefixes"] = &obe::System::MountablePath::GetAllPrefixes;
         bindMountablePath["pathType"] = &obe::System::MountablePath::pathType;
         bindMountablePath["basePath"] = &obe::System::MountablePath::basePath;

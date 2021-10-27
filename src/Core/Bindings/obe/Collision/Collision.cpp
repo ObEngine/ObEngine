@@ -49,8 +49,11 @@ namespace obe::Collision::Bindings
                 const obe::Transform::UnitVector&) const>(
                 &obe::Collision::PolygonalCollider::doesCollide),
             [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider* collider,
-                const obe::Transform::UnitVector& offset,
-                const bool doAABBfilter) { self->doesCollide(*collider, offset, doAABBfilter); });
+                const obe::Transform::UnitVector& offset)
+            { return self->doesCollide(*collider, offset); },
+            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider* collider,
+                const obe::Transform::UnitVector& offset, const bool doAABBfilter)
+            { return self->doesCollide(*collider, offset, doAABBfilter); });
         bindPolygonalCollider["doesHaveAnyTag"]
             = &obe::Collision::PolygonalCollider::doesHaveAnyTag;
         bindPolygonalCollider["doesHaveTag"] = &obe::Collision::PolygonalCollider::doesHaveTag;
@@ -61,9 +64,11 @@ namespace obe::Collision::Bindings
                 const obe::Transform::UnitVector&) const>(
                 &obe::Collision::PolygonalCollider::getMaximumDistanceBeforeCollision),
             [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider* collider,
-                const obe::Transform::UnitVector& offset, const bool doAABBfilter) {
-                self->getMaximumDistanceBeforeCollision(*collider, offset, doAABBfilter);
-            });
+                const obe::Transform::UnitVector& offset)
+            { return self->getMaximumDistanceBeforeCollision(*collider, offset); },
+            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider* collider,
+                const obe::Transform::UnitVector& offset, const bool doAABBfilter)
+            { return self->getMaximumDistanceBeforeCollision(*collider, offset, doAABBfilter); });
         bindPolygonalCollider["getParentId"] = &obe::Collision::PolygonalCollider::getParentId;
         bindPolygonalCollider["load"] = &obe::Collision::PolygonalCollider::load;
         bindPolygonalCollider["removeTag"] = &obe::Collision::PolygonalCollider::removeTag;

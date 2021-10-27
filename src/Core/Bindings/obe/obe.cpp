@@ -14,8 +14,7 @@ namespace obe::Bindings
             = obeNamespace.new_usertype<obe::BaseException>(
                 "BaseException", sol::call_constructor, sol::constructors<obe::BaseException()>());
         bindBaseException["what"] = &obe::BaseException::what;
-        bindBaseException["traceback"]
-            = [](obe::BaseException* self) { return &self->traceback(); };
+        bindBaseException["traceback"] = &obe::BaseException::traceback;
     }
     void LoadClassDebugInfo(sol::state_view state)
     {

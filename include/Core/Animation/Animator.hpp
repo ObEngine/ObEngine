@@ -90,7 +90,6 @@ namespace obe::Animation
     /**
      * \brief A Class that will manage a set of Animation
      *
-     * \meta{NonCopyable}
      */
     class Animator
     {
@@ -104,6 +103,7 @@ namespace obe::Animation
 
     public:
         Animator();
+        Animator(const Animator&) = delete;
         /**
          * \brief Clear the Animator of all Animation
          */

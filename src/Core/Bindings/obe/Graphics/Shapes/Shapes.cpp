@@ -20,20 +20,8 @@ namespace obe::Graphics::Shapes::Bindings
         bindCircle["setTexture"] = &obe::Graphics::Shapes::Circle::setTexture;
         bindCircle["setTextureRect"] = &obe::Graphics::Shapes::Circle::setTextureRect;
         bindCircle["setPosition"] = &obe::Graphics::Shapes::Circle::setPosition;
-        bindCircle["setFillColor"] =
-
-            [](obe::Graphics::Shapes::Circle* self, const obe::Graphics::Color* color) {
-                self->setFillColor(*color);
-            }
-
-        ;
-        bindCircle["setOutlineColor"] =
-
-            [](obe::Graphics::Shapes::Circle* self, const obe::Graphics::Color* color) {
-                self->setOutlineColor(*color);
-            }
-
-        ;
+        bindCircle["setFillColor"] = &obe::Graphics::Shapes::Circle::setFillColor;
+        bindCircle["setOutlineColor"] = &obe::Graphics::Shapes::Circle::setOutlineColor;
         bindCircle["setOutlineThickness"] = &obe::Graphics::Shapes::Circle::setOutlineThickness;
         bindCircle["getFillColor"] = &obe::Graphics::Shapes::Circle::getFillColor;
         bindCircle["getOutlineColor"] = &obe::Graphics::Shapes::Circle::getOutlineColor;
@@ -71,20 +59,8 @@ namespace obe::Graphics::Shapes::Bindings
         bindPolygon["setTexture"] = &obe::Graphics::Shapes::Polygon::setTexture;
         bindPolygon["setTextureRect"] = &obe::Graphics::Shapes::Polygon::setTextureRect;
         bindPolygon["setPosition"] = &obe::Graphics::Shapes::Polygon::setPosition;
-        bindPolygon["setFillColor"] =
-
-            [](obe::Graphics::Shapes::Polygon* self, const obe::Graphics::Color* color) {
-                self->setFillColor(*color);
-            }
-
-        ;
-        bindPolygon["setOutlineColor"] =
-
-            [](obe::Graphics::Shapes::Polygon* self, const obe::Graphics::Color* color) {
-                self->setOutlineColor(*color);
-            }
-
-        ;
+        bindPolygon["setFillColor"] = &obe::Graphics::Shapes::Polygon::setFillColor;
+        bindPolygon["setOutlineColor"] = &obe::Graphics::Shapes::Polygon::setOutlineColor;
         bindPolygon["setOutlineThickness"] = &obe::Graphics::Shapes::Polygon::setOutlineThickness;
         bindPolygon["getFillColor"] = &obe::Graphics::Shapes::Polygon::getFillColor;
         bindPolygon["getOutlineColor"] = &obe::Graphics::Shapes::Polygon::getOutlineColor;
@@ -122,20 +98,8 @@ namespace obe::Graphics::Shapes::Bindings
         bindRectangle["setTexture"] = &obe::Graphics::Shapes::Rectangle::setTexture;
         bindRectangle["setTextureRect"] = &obe::Graphics::Shapes::Rectangle::setTextureRect;
         bindRectangle["setPosition"] = &obe::Graphics::Shapes::Rectangle::setPosition;
-        bindRectangle["setFillColor"] =
-
-            [](obe::Graphics::Shapes::Rectangle* self, const obe::Graphics::Color* color) {
-                self->setFillColor(*color);
-            }
-
-        ;
-        bindRectangle["setOutlineColor"] =
-
-            [](obe::Graphics::Shapes::Rectangle* self, const obe::Graphics::Color* color) {
-                self->setOutlineColor(*color);
-            }
-
-        ;
+        bindRectangle["setFillColor"] = &obe::Graphics::Shapes::Rectangle::setFillColor;
+        bindRectangle["setOutlineColor"] = &obe::Graphics::Shapes::Rectangle::setOutlineColor;
         bindRectangle["setOutlineThickness"]
             = &obe::Graphics::Shapes::Rectangle::setOutlineThickness;
         bindRectangle["getFillColor"] = &obe::Graphics::Shapes::Rectangle::getFillColor;
@@ -188,7 +152,7 @@ namespace obe::Graphics::Shapes::Bindings
         bindText["draw"] = &obe::Graphics::Shapes::Text::draw;
         bindText["clear"] = &obe::Graphics::Shapes::Text::clear;
         bindText["append"] = &obe::Graphics::Shapes::Text::append;
-        bindText["getFont"] = [](obe::Graphics::Shapes::Text* self) { return &self->getFont(); };
+        bindText["getFont"] = &obe::Graphics::Shapes::Text::getFont;
         bindText["setFont"] = &obe::Graphics::Shapes::Text::setFont;
         bindText["getCharacterSize"] = &obe::Graphics::Shapes::Text::getCharacterSize;
         bindText["setCharacterSize"] = &obe::Graphics::Shapes::Text::setCharacterSize;

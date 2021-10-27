@@ -46,7 +46,7 @@ namespace obe::Event::Bindings
                 sol::call_constructor, sol::constructors<obe::Event::CallbackScheduler()>());
         bindCallbackScheduler["after"] = &obe::Event::CallbackScheduler::after;
         bindCallbackScheduler["every"] = &obe::Event::CallbackScheduler::every;
-        bindCallbackScheduler["replay"] = &obe::Event::CallbackScheduler::repeat;
+        bindCallbackScheduler["repeat"] = &obe::Event::CallbackScheduler::repeat;
         bindCallbackScheduler["run"] = &obe::Event::CallbackScheduler::run;
         bindCallbackScheduler["stop"] = &obe::Event::CallbackScheduler::stop;
     }
@@ -62,8 +62,7 @@ namespace obe::Event::Bindings
         bindEventBase["getIdentifier"] = &obe::Event::EventBase::getIdentifier;
         bindEventBase["addExternalListener"] = &obe::Event::EventBase::addExternalListener;
         bindEventBase["removeExternalListener"] = &obe::Event::EventBase::removeExternalListener;
-        bindEventBase["getProfiler"]
-            = [](obe::Event::EventBase* self) { return &self->getProfiler(); };
+        bindEventBase["getProfiler"] = &obe::Event::EventBase::getProfiler;
     }
     void LoadClassEventGroup(sol::state_view state)
     {
@@ -86,6 +85,8 @@ namespace obe::Event::Bindings
         bindEventGroup["onAddListener"] = &obe::Event::EventGroup::onAddListener;
         bindEventGroup["onRemoveListener"] = &obe::Event::EventGroup::onRemoveListener;
         bindEventGroup["getProfilerResults"] = &obe::Event::EventGroup::getProfilerResults;
+        bindEventGroup["add"] = &obe::Event::addLuaEvent;
+        bindEventGroup["trigger"] = &obe::Event::triggerLuaEvent;
     }
     void LoadClassEventGroupView(sol::state_view state)
     {

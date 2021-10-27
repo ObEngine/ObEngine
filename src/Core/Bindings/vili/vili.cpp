@@ -29,7 +29,7 @@ namespace vili::Bindings
                     vili::const_node_iterator(const vili::const_node_iterator&)>());
         bindconst_node_iterator["operator++"] = &vili::const_node_iterator::operator++;
         bindconst_node_iterator[sol::meta_function::multiplication]
-            = [](vili::const_node_iterator* self) { return &self->operator*(); };
+            = &vili::const_node_iterator::operator*;
     }
     void LoadClassNode(sol::state_view state)
     {
