@@ -120,12 +120,12 @@ namespace vili::Bindings
     void LoadFunctionFromString(sol::state_view state)
     {
         sol::table viliNamespace = state["vili"].get<sol::table>();
-        viliNamespace.set_function("from_string", vili::from_string);
+        viliNamespace.set_function("from_string", &vili::from_string);
     }
     void LoadFunctionToString(sol::state_view state)
     {
         sol::table viliNamespace = state["vili"].get<sol::table>();
-        viliNamespace.set_function("to_string", vili::to_string);
+        viliNamespace.set_function("to_string", &vili::to_string);
     }
     void LoadGlobalPERMISSIVECAST(sol::state_view state)
     {

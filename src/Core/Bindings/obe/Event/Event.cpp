@@ -73,11 +73,18 @@ namespace obe::Event::Bindings
         bindEventGroup["getView"] = &obe::Event::EventGroup::getView;
         bindEventGroup["setJoinable"] = &obe::Event::EventGroup::setJoinable;
         bindEventGroup["isJoinable"] = &obe::Event::EventGroup::isJoinable;
-        bindEventGroup["get"] = sol::overload(
-            static_cast<obe::Event::EventBase& (obe::Event::EventGroup::*)(const std::string&)
-                    const>(&obe::Event::EventGroup::get));
+        bindEventGroup["get"] = static_cast<obe::Event::EventBase& (
+            obe::Event::EventGroup::*)(const std::string&) const>(&obe::Event::EventGroup::get);
         bindEventGroup["contains"] = &obe::Event::EventGroup::contains;
+        bindEventGroup["add"] = &obe::Event::addLuaEvent;
         bindEventGroup["remove"] = &obe::Event::EventGroup::remove;
+        bindEventGroup["trigger"] = sol::overload(
+            [](obe::Event::EventGroup* self, const std::string& name) -> void {
+                return obe::Event::triggerLuaEvent(self, name);
+            },
+            [](obe::Event::EventGroup* self, const std::string& name, sol::table data) -> void {
+                return obe::Event::triggerLuaEvent(self, name, data);
+            });
         bindEventGroup["getEventsNames"] = &obe::Event::EventGroup::getEventsNames;
         bindEventGroup["getEvents"] = &obe::Event::EventGroup::getEvents;
         bindEventGroup["getIdentifier"] = &obe::Event::EventGroup::getIdentifier;
@@ -85,8 +92,6 @@ namespace obe::Event::Bindings
         bindEventGroup["onAddListener"] = &obe::Event::EventGroup::onAddListener;
         bindEventGroup["onRemoveListener"] = &obe::Event::EventGroup::onRemoveListener;
         bindEventGroup["getProfilerResults"] = &obe::Event::EventGroup::getProfilerResults;
-        bindEventGroup["add"] = &obe::Event::addLuaEvent;
-        bindEventGroup["trigger"] = &obe::Event::triggerLuaEvent;
     }
     void LoadClassEventGroupView(sol::state_view state)
     {
@@ -100,9 +105,9 @@ namespace obe::Event::Bindings
         bindEventGroupView["getIdentifier"] = &obe::Event::EventGroupView::getIdentifier;
         bindEventGroupView["getName"] = &obe::Event::EventGroupView::getName;
         bindEventGroupView["isJoinable"] = &obe::Event::EventGroupView::isJoinable;
-        bindEventGroupView["get"] = sol::overload(
-            static_cast<obe::Event::EventBase& (obe::Event::EventGroupView::*)(const std::string&)
-                    const>(&obe::Event::EventGroupView::get));
+        bindEventGroupView["get"]
+            = static_cast<obe::Event::EventBase& (obe::Event::EventGroupView::*)(const std::string&)
+                    const>(&obe::Event::EventGroupView::get);
         bindEventGroupView["getProfilerResults"] = &obe::Event::EventGroupView::getProfilerResults;
     }
     void LoadClassEventManager(sol::state_view state)
@@ -168,20 +173,5 @@ namespace obe::Event::Bindings
             = EventNamespace.new_usertype<obe::Event::ScopeProfiler>("ScopeProfiler",
                 sol::call_constructor,
                 sol::constructors<obe::Event::ScopeProfiler(obe::Event::CallbackProfiler&)>());
-    }
-    void LoadFunctionAddLuaEvent(sol::state_view state)
-    {
-        sol::table EventNamespace = state["obe"]["Event"].get<sol::table>();
-        EventNamespace.set_function("addLuaEvent", obe::Event::addLuaEvent);
-    }
-    void LoadFunctionTriggerLuaEvent(sol::state_view state)
-    {
-        sol::table EventNamespace = state["obe"]["Event"].get<sol::table>();
-        EventNamespace.set_function("triggerLuaEvent",
-            sol::overload([](obe::Event::EventGroup* self, const std::string& name)
-                              -> void { return obe::Event::triggerLuaEvent(self, name); },
-                [](obe::Event::EventGroup* self, const std::string& name, sol::table data) -> void {
-                    return obe::Event::triggerLuaEvent(self, name, data);
-                }));
     }
 };

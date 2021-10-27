@@ -208,8 +208,6 @@ namespace obe::Bindings
         obe::Event::Bindings::LoadClassScopeProfiler(state);
         obe::Event::Bindings::LoadEnumCallbackSchedulerState(state);
         obe::Event::Bindings::LoadEnumListenerChangeState(state);
-        obe::Event::Bindings::LoadFunctionAddLuaEvent(state);
-        obe::Event::Bindings::LoadFunctionTriggerLuaEvent(state);
         obe::Event::Exceptions::Bindings::LoadClassCallbackCreationError(state);
         obe::Event::Exceptions::Bindings::LoadClassEventAlreadyExists(state);
         obe::Event::Exceptions::Bindings::LoadClassEventExecutionError(state);
@@ -293,9 +291,6 @@ namespace obe::Bindings
         obe::Scene::Bindings::LoadClassScene(state);
         obe::Scene::Bindings::LoadClassSceneNode(state);
         obe::Scene::Bindings::LoadClassSceneRenderOptions(state);
-        obe::Scene::Bindings::LoadFunctionSceneGetGameObjectProxy(state);
-        obe::Scene::Bindings::LoadFunctionSceneCreateGameObjectProxy(state);
-        obe::Scene::Bindings::LoadFunctionSceneGetAllGameObjectsProxy(state);
         obe::Scene::Exceptions::Bindings::LoadClassChildNotInSceneNode(state);
         obe::Scene::Exceptions::Bindings::LoadClassGameObjectAlreadyExists(state);
         obe::Scene::Exceptions::Bindings::LoadClassMissingSceneFileBlock(state);
@@ -441,7 +436,6 @@ namespace obe::Bindings
         vili::parser::Bindings::LoadClassError(state);
         vili::parser::Bindings::LoadFunctionFromString(state);
         vili::parser::Bindings::LoadFunctionFromFile(state);
-        vili::parser::Bindings::LoadFunctionStatePushProxy(state);
         obe::Events::Actions::Bindings::LoadClassAction(state);
         obe::Events::Cursor::Bindings::LoadClassHold(state);
         obe::Events::Cursor::Bindings::LoadClassMove(state);

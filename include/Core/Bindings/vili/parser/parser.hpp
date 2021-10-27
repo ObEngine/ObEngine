@@ -11,5 +11,4 @@ namespace vili::parser::Bindings
     void LoadClassError(sol::state_view state);
     void LoadFunctionFromString(sol::state_view state);
     void LoadFunctionFromFile(sol::state_view state);
-    void LoadFunctionStatePushProxy(sol::state_view state);
 };

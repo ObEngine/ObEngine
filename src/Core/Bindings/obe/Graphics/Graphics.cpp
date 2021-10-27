@@ -269,12 +269,20 @@ namespace obe::Graphics::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Graphics::RenderTarget(sf::RenderTarget&),
                     obe::Graphics::RenderTarget(sf::RenderWindow&)>());
-        bindRenderTarget["draw"]
-            = sol::overload(static_cast<void (obe::Graphics::RenderTarget::*)(const sf::Drawable&,
-                                const sf::RenderStates&) const>(&obe::Graphics::RenderTarget::draw),
-                static_cast<void (obe::Graphics::RenderTarget::*)(const sf::Vertex*, std::size_t,
-                    sf::PrimitiveType, const sf::RenderStates&) const>(
-                    &obe::Graphics::RenderTarget::draw));
+        bindRenderTarget["draw"] = sol::overload(
+            [](obe::Graphics::RenderTarget* self, const sf::Drawable& drawable) -> void {
+                return self->draw(drawable);
+            },
+            [](obe::Graphics::RenderTarget* self, const sf::Drawable& drawable,
+                const sf::RenderStates& states) -> void { return self->draw(drawable, states); },
+            [](obe::Graphics::RenderTarget* self, const sf::Vertex* vertices,
+                std::size_t vertexCount,
+                sf::PrimitiveType type) -> void { return self->draw(vertices, vertexCount, type); },
+            [](obe::Graphics::RenderTarget* self, const sf::Vertex* vertices,
+                std::size_t vertexCount, sf::PrimitiveType type,
+                const sf::RenderStates& states) -> void {
+                return self->draw(vertices, vertexCount, type, states);
+            });
     }
     void LoadClassRenderable(sol::state_view state)
     {
@@ -440,12 +448,12 @@ namespace obe::Graphics::Bindings
     {
         sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
         GraphicsNamespace.set_function(
-            "InitPositionTransformer", obe::Graphics::InitPositionTransformer);
+            "InitPositionTransformer", &obe::Graphics::InitPositionTransformer);
     }
     void LoadFunctionMakeNullTexture(sol::state_view state)
     {
         sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        GraphicsNamespace.set_function("MakeNullTexture", obe::Graphics::MakeNullTexture);
+        GraphicsNamespace.set_function("MakeNullTexture", &obe::Graphics::MakeNullTexture);
     }
     void LoadGlobalTransformers(sol::state_view state)
     {

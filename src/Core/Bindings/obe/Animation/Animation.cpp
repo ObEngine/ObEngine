@@ -123,7 +123,9 @@ namespace obe::Animation::Bindings
         bindAnimationState["reset"] = &obe::Animation::AnimationState::reset;
         bindAnimationState["update"] = &obe::Animation::AnimationState::update;
         bindAnimationState["getAnimation"]
-            = [](obe::Animation::AnimationState* self) { return &self->getAnimation(); };
+            = [](obe::Animation::AnimationState* self) -> const obe::Animation::Animation* {
+            return &self->getAnimation();
+        };
     }
     void LoadClassAnimator(sol::state_view state)
     {
@@ -185,7 +187,9 @@ namespace obe::Animation::Bindings
             = &obe::Animation::AnimatorState::getCurrentAnimation;
         bindAnimatorState["getTexture"] = &obe::Animation::AnimatorState::getTexture;
         bindAnimatorState["getAnimator"]
-            = [](obe::Animation::AnimatorState* self) { return &self->getAnimator(); };
+            = [](obe::Animation::AnimatorState* self) -> const obe::Animation::Animator* {
+            return &self->getAnimator();
+        };
     }
     void LoadClassValueTweening(sol::state_view state)
     {
@@ -205,12 +209,12 @@ namespace obe::Animation::Bindings
     {
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
         AnimationNamespace.set_function(
-            "stringToAnimationPlayMode", obe::Animation::stringToAnimationPlayMode);
+            "stringToAnimationPlayMode", &obe::Animation::stringToAnimationPlayMode);
     }
     void LoadFunctionStringToAnimatorTargetScaleMode(sol::state_view state)
     {
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
         AnimationNamespace.set_function(
-            "stringToAnimatorTargetScaleMode", obe::Animation::stringToAnimatorTargetScaleMode);
+            "stringToAnimatorTargetScaleMode", &obe::Animation::stringToAnimatorTargetScaleMode);
     }
 };

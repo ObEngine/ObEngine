@@ -36,24 +36,21 @@ namespace obe::Collision::Bindings
                     obe::Component::Component<obe::Collision::PolygonalCollider>,
                     obe::Component::ComponentBase, obe::Types::Identifiable,
                     obe::Types::Serializable>());
-        bindPolygonalCollider["operator="] =
-
-            [](obe::Collision::PolygonalCollider* self,
-                const obe::Collision::PolygonalCollider* collider) { self->operator=(*collider); }
-
-        ;
+        bindPolygonalCollider["operator="] = &obe::Collision::PolygonalCollider::operator=;
         bindPolygonalCollider["addTag"] = &obe::Collision::PolygonalCollider::addTag;
         bindPolygonalCollider["clearTags"] = &obe::Collision::PolygonalCollider::clearTags;
         bindPolygonalCollider["doesCollide"] = sol::overload(
             static_cast<obe::Collision::CollisionData (obe::Collision::PolygonalCollider::*)(
                 const obe::Transform::UnitVector&) const>(
                 &obe::Collision::PolygonalCollider::doesCollide),
-            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider* collider,
-                const obe::Transform::UnitVector& offset)
-            { return self->doesCollide(*collider, offset); },
-            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider* collider,
-                const obe::Transform::UnitVector& offset, const bool doAABBfilter)
-            { return self->doesCollide(*collider, offset, doAABBfilter); });
+            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider& collider,
+                const obe::Transform::UnitVector& offset) -> bool {
+                return self->doesCollide(collider, offset);
+            },
+            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider& collider,
+                const obe::Transform::UnitVector& offset, const bool doAABBfilter) -> bool {
+                return self->doesCollide(collider, offset, doAABBfilter);
+            });
         bindPolygonalCollider["doesHaveAnyTag"]
             = &obe::Collision::PolygonalCollider::doesHaveAnyTag;
         bindPolygonalCollider["doesHaveTag"] = &obe::Collision::PolygonalCollider::doesHaveTag;
@@ -63,12 +60,15 @@ namespace obe::Collision::Bindings
             static_cast<obe::Collision::CollisionData (obe::Collision::PolygonalCollider::*)(
                 const obe::Transform::UnitVector&) const>(
                 &obe::Collision::PolygonalCollider::getMaximumDistanceBeforeCollision),
-            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider* collider,
-                const obe::Transform::UnitVector& offset)
-            { return self->getMaximumDistanceBeforeCollision(*collider, offset); },
-            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider* collider,
-                const obe::Transform::UnitVector& offset, const bool doAABBfilter)
-            { return self->getMaximumDistanceBeforeCollision(*collider, offset, doAABBfilter); });
+            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider& collider,
+                const obe::Transform::UnitVector& offset) -> obe::Transform::UnitVector {
+                return self->getMaximumDistanceBeforeCollision(collider, offset);
+            },
+            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider& collider,
+                const obe::Transform::UnitVector& offset,
+                const bool doAABBfilter) -> obe::Transform::UnitVector {
+                return self->getMaximumDistanceBeforeCollision(collider, offset, doAABBfilter);
+            });
         bindPolygonalCollider["getParentId"] = &obe::Collision::PolygonalCollider::getParentId;
         bindPolygonalCollider["load"] = &obe::Collision::PolygonalCollider::load;
         bindPolygonalCollider["removeTag"] = &obe::Collision::PolygonalCollider::removeTag;

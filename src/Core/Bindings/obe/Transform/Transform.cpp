@@ -369,11 +369,11 @@ namespace obe::Transform::Bindings
     void LoadFunctionStringToUnits(sol::state_view state)
     {
         sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
-        TransformNamespace.set_function("stringToUnits", obe::Transform::stringToUnits);
+        TransformNamespace.set_function("stringToUnits", &obe::Transform::stringToUnits);
     }
     void LoadFunctionUnitsToString(sol::state_view state)
     {
         sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
-        TransformNamespace.set_function("unitsToString", obe::Transform::unitsToString);
+        TransformNamespace.set_function("unitsToString", &obe::Transform::unitsToString);
     }
 };

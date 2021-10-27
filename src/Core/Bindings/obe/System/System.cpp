@@ -280,6 +280,6 @@ namespace obe::System::Bindings
     void LoadFunctionStringToStretchMode(sol::state_view state)
     {
         sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
-        SystemNamespace.set_function("stringToStretchMode", obe::System::stringToStretchMode);
+        SystemNamespace.set_function("stringToStretchMode", &obe::System::stringToStretchMode);
     }
 };

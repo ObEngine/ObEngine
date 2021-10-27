@@ -43,22 +43,22 @@ namespace vili::writer::Bindings
     void LoadFunctionDumpInteger(sol::state_view state)
     {
         sol::table writerNamespace = state["vili"]["writer"].get<sol::table>();
-        writerNamespace.set_function("dump_integer", vili::writer::dump_integer);
+        writerNamespace.set_function("dump_integer", &vili::writer::dump_integer);
     }
     void LoadFunctionDumpNumber(sol::state_view state)
     {
         sol::table writerNamespace = state["vili"]["writer"].get<sol::table>();
-        writerNamespace.set_function("dump_number", vili::writer::dump_number);
+        writerNamespace.set_function("dump_number", &vili::writer::dump_number);
     }
     void LoadFunctionDumpBoolean(sol::state_view state)
     {
         sol::table writerNamespace = state["vili"]["writer"].get<sol::table>();
-        writerNamespace.set_function("dump_boolean", vili::writer::dump_boolean);
+        writerNamespace.set_function("dump_boolean", &vili::writer::dump_boolean);
     }
     void LoadFunctionDumpString(sol::state_view state)
     {
         sol::table writerNamespace = state["vili"]["writer"].get<sol::table>();
-        writerNamespace.set_function("dump_string", vili::writer::dump_string);
+        writerNamespace.set_function("dump_string", &vili::writer::dump_string);
     }
     void LoadFunctionDumpArray(sol::state_view state)
     {
