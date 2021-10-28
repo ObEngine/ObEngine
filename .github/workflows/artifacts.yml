@@ -50,11 +50,6 @@ jobs:
         asset_path: ./obengine-dev.tar.gz
         asset_name: obengine-dev.linux64.tar.gz
         asset_content_type: application/zip
-    - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v2
-      with:
-        name: obengine-dev.linux64.tar.gz
-        path: ./obengine-dev.tar.gz
 
   release_windows:
     name: Release ObEngine Windows package
@@ -95,11 +90,6 @@ jobs:
         asset_path: ./obengine-dev.zip
         asset_name: obengine-dev.win64.zip
         asset_content_type: application/zip
-    - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v2
-      with:
-        name: obengine-dev.win64.zip
-        path: obengine-dev.zip
 
   release_macos:
     name: Release ObEngine MacOS package
@@ -118,7 +108,6 @@ jobs:
       run: cd build && make -j8
     - name: Run tests
       run: cd build && ./tests/ObEngineTests
-    - name: Run Static Check 
     - name: Create package
       run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
     - name: Package to archive
@@ -133,8 +122,3 @@ jobs:
         asset_path: ./obengine-dev.tar.gz
         asset_name: obengine-dev.macos64.tar.gz
         asset_content_type: application/zip
-    - name: 'Upload Artifact'
-      uses: actions/upload-artifact@v2
-      with:
-        name: obengine-dev.macos64.tar.gz
-        path: ./obengine-dev.tar.gz
