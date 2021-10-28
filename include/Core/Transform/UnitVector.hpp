@@ -4,17 +4,19 @@
 
 #include <Transform/UnitStructures.hpp>
 #include <Transform/Units.hpp>
-#include <Types/Tweenable.hpp>
 
 namespace obe::Transform
 {
+    template <class T>
+    class TweenImpl;
     /**
      * \brief Class widely used in the Engine to scale and position elements in
      * a Scene
      * TODO: /bind{Vector2}
      */
-    class UnitVector : public Types::Tweenable<2>
+    class UnitVector
     {
+        friend class TweenImpl<UnitVector>;
     public:
         /**
          * \nobind
@@ -267,18 +269,6 @@ namespace obe::Transform
          * \brief Return the length of the UnitVector
          */
         [[nodiscard]] double magnitude() const;
-
-        void setNumericalComponents(const NumericalComponents& components) override
-        {
-            x = components.at(0);
-            y = components.at(1);
-        }
-
-        [[nodiscard]] NumericalComponents getNumericalComponents() override
-        {
-            return { x, y };
-        }
-
     };
 
     template <>

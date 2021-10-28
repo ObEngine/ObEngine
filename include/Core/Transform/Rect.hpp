@@ -5,7 +5,6 @@
 #include <Graphics/RenderTarget.hpp>
 #include <Transform/Movable.hpp>
 #include <Transform/Referential.hpp>
-#include <Types/Tweenable.hpp>
 
 namespace obe::Transform
 {
@@ -23,12 +22,16 @@ namespace obe::Transform
             */
         To
     };
+
+    template <class T>
+    class TweenImpl;
     /**
      * \brief A Class that does represent a Rectangle with various methods to
      *        manipulate it
      */
-    class Rect : public Movable, public Types::Tweenable<3>
+    class Rect : public Movable
     {
+        friend class TweenImpl<Rect>;
     protected:
         /**
          * \brief Size of the Rect
@@ -162,16 +165,5 @@ namespace obe::Transform
         [[nodiscard]] std::optional<Rect> intersection(const Rect& rect) const;
         [[nodiscard]] bool contains(const Rect& rect) const;
         [[nodiscard]] bool contains(const UnitVector& position) const;
-
-        void setNumericalComponents(const NumericalComponents& components) override
-        {
-            m_size.set(components.at(0), components.at(1));
-            m_angle = components.at(2);
-        }
-
-        [[nodiscard]] NumericalComponents getNumericalComponents() override
-        {
-            return { m_size.x, m_size.y, m_angle };
-        }
     };
 } // namespace obe::Transform

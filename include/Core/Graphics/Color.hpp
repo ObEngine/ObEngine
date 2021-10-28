@@ -3,16 +3,19 @@
 #include <string>
 
 #include <SFML/Graphics/Color.hpp>
-#include <Types/Tweenable.hpp>
 
 namespace obe::Graphics
 {
+    template <class T>
+    class TweenImpl;
     /**
      * \brief A class to handle colors
      */
-    class Color : public Types::Tweenable<4>
+    class Color
     {
+        friend class TweenImpl<Color>;
     public:
+
         double r = 0;
         double g = 0;
         double b = 0;
@@ -32,18 +35,6 @@ namespace obe::Graphics
         [[nodiscard]] uint32_t toInteger() const;
         [[nodiscard]] std::string toHex() const;
         [[nodiscard]] std::string toName() const;
-        void setNumericalComponents(const NumericalComponents& components) override
-        {
-            r = components.at(0);
-            g = components.at(1);
-            b = components.at(2);
-            a = components.at(3);
-        }
-
-        [[nodiscard]] NumericalComponents getNumericalComponents() override
-        {
-            return { r, g, b, a };
-        }
 
         bool operator==(const Color& color) const;
         bool operator!=(const Color& color) const;
