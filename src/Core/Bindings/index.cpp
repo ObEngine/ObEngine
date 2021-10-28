@@ -176,6 +176,8 @@ namespace obe::Bindings
         obe::Bindings::LoadFunctionGetTypeName(state);
         obe::Bindings::LoadFunctionInitEngine(state);
         obe::Collision::Bindings::LoadClassCollisionData(state);
+        obe::Collision::Bindings::LoadClassInnerTest(state);
+        obe::Collision::Bindings::LoadClassCoolChild(state);
         obe::Collision::Bindings::LoadClassPolygonalCollider(state);
         obe::Collision::Bindings::LoadClassTrajectory(state);
         obe::Collision::Bindings::LoadClassTrajectoryNode(state);
@@ -512,6 +514,8 @@ namespace obe::Bindings
         vili::parser::rules::Bindings::LoadClassViliGrammar(state);
         vili::parser::rules::Bindings::LoadClassXdigit(state);
         vili::writer::Bindings::LoadClassDumpOptions(state);
+        vili::writer::Bindings::LoadClass_array(state);
+        vili::writer::Bindings::LoadClass_object(state);
         vili::writer::Bindings::LoadEnumDelimiterNewlinePolicy(state);
         vili::writer::Bindings::LoadEnumCommaSpacingPolicy(state);
         vili::writer::Bindings::LoadEnumObjectStyle(state);

@@ -17,9 +17,10 @@ namespace obe::Transform::Bindings
     void LoadEnumRelativePositionFrom(sol::state_view state)
     {
         sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
-        TransformNamespace.new_enum<obe::Transform::RelativePositionFrom>("RelativePositionFrom",
-            { { "Point0", obe::Transform::RelativePositionFrom::Point0 },
-                { "Centroid", obe::Transform::RelativePositionFrom::Centroid } });
+        TransformNamespace.new_enum<obe::Transform::PolygonPoint::RelativePositionFrom>(
+            "RelativePositionFrom",
+            { { "Point0", obe::Transform::PolygonPoint::RelativePositionFrom::Point0 },
+                { "Centroid", obe::Transform::PolygonPoint::RelativePositionFrom::Centroid } });
     }
     void LoadEnumReferentialConversionType(sol::state_view state)
     {
@@ -316,9 +317,10 @@ namespace obe::Transform::Bindings
             static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(
                 const obe::Transform::UnitVector&) const>(&obe::Transform::UnitVector::operator-),
             static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(double) const>(
-                &obe::Transform::UnitVector::operator-),
-            static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)() const>(
                 &obe::Transform::UnitVector::operator-));
+        bindUnitVector[sol::meta_function::unary_minus]
+            = static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)() const>(
+                &obe::Transform::UnitVector::operator-);
         bindUnitVector[sol::meta_function::multiplication] = sol::overload(
             static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(
                 const obe::Transform::UnitVector&) const>(&obe::Transform::UnitVector::operator*),

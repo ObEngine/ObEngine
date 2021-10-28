@@ -13,12 +13,6 @@ namespace obe::Transform
 {
     class Polygon;
 
-    enum class RelativePositionFrom
-    {
-        Point0,
-        Centroid
-    };
-
     using point_index_t = std::size_t;
     class PolygonPoint : public UnitVector
     {
@@ -28,6 +22,12 @@ namespace obe::Transform
         point_index_t rw_index;
 
     public:
+        enum class RelativePositionFrom
+        {
+            Point0,
+            Centroid
+        };
+
         explicit PolygonPoint(Polygon& parent, point_index_t index);
         explicit PolygonPoint(
             Polygon& parent, point_index_t index, const Transform::UnitVector& position);

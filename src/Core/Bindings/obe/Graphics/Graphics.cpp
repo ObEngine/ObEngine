@@ -65,11 +65,12 @@ namespace obe::Graphics::Bindings
         bindColor["toString"] = &obe::Graphics::Color::toString;
         bindColor[sol::meta_function::equal_to] = &obe::Graphics::Color::operator==;
         bindColor[sol::meta_function::addition] = &obe::Graphics::Color::operator+;
-        bindColor[sol::meta_function::subtraction] = sol::overload(
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(const obe::Graphics::Color&)
-                    const>(&obe::Graphics::Color::operator-),
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)() const>(
-                &obe::Graphics::Color::operator-));
+        bindColor[sol::meta_function::subtraction]
+            = static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(
+                const obe::Graphics::Color&) const>(&obe::Graphics::Color::operator-);
+        bindColor[sol::meta_function::unary_minus]
+            = static_cast<obe::Graphics::Color (obe::Graphics::Color::*)() const>(
+                &obe::Graphics::Color::operator-);
         bindColor[sol::meta_function::multiplication] = sol::overload(
             static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(const obe::Graphics::Color&)
                     const>(&obe::Graphics::Color::operator*),
@@ -80,11 +81,11 @@ namespace obe::Graphics::Bindings
                     const>(&obe::Graphics::Color::operator/),
             static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(double) const>(
                 &obe::Graphics::Color::operator/));
-        bindColor["Random"] = sol::overload(
-            [](obe::Graphics::Color* self) -> obe::Graphics::Color { return self->Random(); },
-            [](obe::Graphics::Color* self, bool randomAlpha) -> obe::Graphics::Color {
-                return self->Random(randomAlpha);
-            });
+        bindColor["Random"]
+            = sol::overload([]() -> obe::Graphics::Color { return obe::Graphics::Color::Random(); },
+                [](bool randomAlpha) -> obe::Graphics::Color {
+                    return obe::Graphics::Color::Random(randomAlpha);
+                });
         bindColor["r"] = &obe::Graphics::Color::r;
         bindColor["g"] = &obe::Graphics::Color::g;
         bindColor["b"] = &obe::Graphics::Color::b;

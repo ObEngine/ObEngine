@@ -29,4 +29,27 @@ namespace obe::Collision
         void setProbe(PolygonalCollider* probe);
         void update(double dt);
     };
+
+    class InnerTest
+    {
+    public:
+        class CoolChild
+        {
+            enum InnerEnum
+            {
+                Cool,
+                NotCool
+            };
+
+            InnerEnum yes()
+            {
+                return InnerEnum::Cool;
+            }
+        };
+
+        CoolChild build()
+        {
+            return CoolChild();
+        }
+    };
 } // namespace obe::Collision

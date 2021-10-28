@@ -25,6 +25,21 @@ namespace obe::Collision::Bindings
         bindCollisionData["colliders"] = &obe::Collision::CollisionData::colliders;
         bindCollisionData["offset"] = &obe::Collision::CollisionData::offset;
     }
+    void LoadClassInnerTest(sol::state_view state)
+    {
+        sol::table CollisionNamespace = state["obe"]["Collision"].get<sol::table>();
+        sol::usertype<obe::Collision::InnerTest> bindInnerTest
+            = CollisionNamespace.new_usertype<obe::Collision::InnerTest>(
+                "InnerTest", sol::call_constructor, sol::default_constructor);
+        bindInnerTest["build"] = &obe::Collision::InnerTest::build;
+    }
+    void LoadClassCoolChild(sol::state_view state)
+    {
+        sol::table InnerTestNamespace = state["obe"]["Collision"]["InnerTest"].get<sol::table>();
+        sol::usertype<obe::Collision::InnerTest::CoolChild> bindCoolChild
+            = InnerTestNamespace.new_usertype<obe::Collision::InnerTest::CoolChild>(
+                "CoolChild", sol::call_constructor, sol::default_constructor);
+    }
     void LoadClassPolygonalCollider(sol::state_view state)
     {
         sol::table CollisionNamespace = state["obe"]["Collision"].get<sol::table>();

@@ -156,21 +156,17 @@ namespace obe::System::Bindings
                         std::string_view, unsigned int, bool)>());
         bindMountablePath[sol::meta_function::equal_to] = &obe::System::MountablePath::operator==;
         bindMountablePath["LoadMountFile"] = sol::overload(
-            [](obe::System::MountablePath* self) -> void { return self->LoadMountFile(); },
-            [](obe::System::MountablePath* self, bool fromCWD) -> void {
-                return self->LoadMountFile(fromCWD);
-            },
-            [](obe::System::MountablePath* self, bool fromCWD, bool fromExe) -> void {
-                return self->LoadMountFile(fromCWD, fromExe);
+            []() -> void { return obe::System::MountablePath::LoadMountFile(); },
+            [](bool fromCWD) -> void { return obe::System::MountablePath::LoadMountFile(fromCWD); },
+            [](bool fromCWD, bool fromExe) -> void {
+                return obe::System::MountablePath::LoadMountFile(fromCWD, fromExe);
             });
         bindMountablePath["Mount"] = sol::overload(
-            [](obe::System::MountablePath* self, obe::System::MountablePath path) -> void {
-                return self->Mount(path);
+            [](obe::System::MountablePath path) -> void {
+                return obe::System::MountablePath::Mount(path);
             },
-            [](obe::System::MountablePath* self, obe::System::MountablePath path,
-                obe::System::SamePrefixPolicy samePrefixPolicy) -> void {
-                return self->Mount(path, samePrefixPolicy);
-            });
+            [](obe::System::MountablePath path, obe::System::SamePrefixPolicy samePrefixPolicy)
+                -> void { return obe::System::MountablePath::Mount(path, samePrefixPolicy); });
         bindMountablePath["Unmount"] = &obe::System::MountablePath::Unmount;
         bindMountablePath["UnmountAll"] = &obe::System::MountablePath::UnmountAll;
         bindMountablePath["Paths"] = &obe::System::MountablePath::Paths;
