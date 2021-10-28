@@ -23,7 +23,9 @@ function vili.to_lua(t)
 end
 
 local function realpath(path)
-    return obe.System.Path(path):find():path();
+    local systemPath = obe.System.Path(path);
+    local findResult = systemPath:find();
+    return findResult:path();
 end
 
 function vili.from_file(path, state)
@@ -50,6 +52,6 @@ function vili.to_file(path, tbl, dump_options)
     dump_options = dump_options or vili.writer.dump_options();
     local node = vili.from_lua(tbl);
     local dump = vili.writer.dump(node, dump_options);
-    local dumpfile <close> = io.open(path, "w");
+    local dumpfile<close> = io.open(path, "w");
     dumpfile:write(dump);
 end

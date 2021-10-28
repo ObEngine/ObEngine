@@ -15,7 +15,8 @@ namespace obe::Tiles::Exceptions::Bindings
                 sol::constructors<obe::Tiles::Exceptions::TilePositionOutsideLayer(
                     uint32_t, uint32_t, uint32_t, uint32_t, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<TilePositionOutsideLayer>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Tiles::Exceptions::TilePositionOutsideLayer>,
+                    obe::BaseException>());
     }
     void LoadClassUnknownTileId(sol::state_view state)
     {
@@ -25,7 +26,9 @@ namespace obe::Tiles::Exceptions::Bindings
                 "UnknownTileId", sol::call_constructor,
                 sol::constructors<obe::Tiles::Exceptions::UnknownTileId(uint32_t, uint32_t,
                     std::map<std::string, std::pair<uint32_t, uint32_t>>, obe::DebugInfo)>(),
-                sol::base_classes, sol::bases<obe::Exception<UnknownTileId>, obe::BaseException>());
+                sol::base_classes,
+                sol::bases<obe::Exception<obe::Tiles::Exceptions::UnknownTileId>,
+                    obe::BaseException>());
     }
     void LoadClassUnknownTileLayer(sol::state_view state)
     {
@@ -36,7 +39,8 @@ namespace obe::Tiles::Exceptions::Bindings
                 sol::constructors<obe::Tiles::Exceptions::UnknownTileLayer(
                     const std::string&, const std::vector<std::string>&, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<UnknownTileLayer>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Tiles::Exceptions::UnknownTileLayer>,
+                    obe::BaseException>());
     }
     void LoadClassUnknownTileset(sol::state_view state)
     {
@@ -47,6 +51,7 @@ namespace obe::Tiles::Exceptions::Bindings
                 sol::constructors<obe::Tiles::Exceptions::UnknownTileset(
                     const std::string&, const std::vector<std::string>&, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<UnknownTileset>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Tiles::Exceptions::UnknownTileset>,
+                    obe::BaseException>());
     }
 };

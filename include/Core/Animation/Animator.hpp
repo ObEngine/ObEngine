@@ -22,7 +22,6 @@ namespace obe::Animation
     class Animator;
     /**
      * \brief Sets the scaling behaviour the Animator will apply on target
-     * TODO: /bind{Animator.TargetScaleMode}
      */
     enum class AnimatorTargetScaleMode
     {
@@ -90,7 +89,7 @@ namespace obe::Animation
 
     /**
      * \brief A Class that will manage a set of Animation
-     * TODO: /bind{Animator}
+     *
      */
     class Animator
     {
@@ -104,6 +103,7 @@ namespace obe::Animation
 
     public:
         Animator();
+        Animator(const Animator&) = delete;
         /**
          * \brief Clear the Animator of all Animation
          */

@@ -9,6 +9,6 @@ namespace obe::Debug::Render::Bindings
     void LoadFunctionDrawPolygon(sol::state_view state)
     {
         sol::table RenderNamespace = state["obe"]["Debug"]["Render"].get<sol::table>();
-        RenderNamespace.set_function("drawPolygon", obe::Debug::Render::drawPolygon);
+        RenderNamespace.set_function("drawPolygon", &obe::Debug::Render::drawPolygon);
     }
 };

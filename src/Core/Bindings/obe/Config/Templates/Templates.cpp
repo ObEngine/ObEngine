@@ -14,31 +14,31 @@ namespace obe::Config::Templates::Bindings
     {
         sol::table TemplatesNamespace = state["obe"]["Config"]["Templates"].get<sol::table>();
         TemplatesNamespace.set_function(
-            "getAnimationTemplates", obe::Config::Templates::getAnimationTemplates);
+            "getAnimationTemplates", &obe::Config::Templates::getAnimationTemplates);
     }
     void LoadFunctionGetConfigTemplates(sol::state_view state)
     {
         sol::table TemplatesNamespace = state["obe"]["Config"]["Templates"].get<sol::table>();
         TemplatesNamespace.set_function(
-            "getConfigTemplates", obe::Config::Templates::getConfigTemplates);
+            "getConfigTemplates", &obe::Config::Templates::getConfigTemplates);
     }
     void LoadFunctionGetGameObjectTemplates(sol::state_view state)
     {
         sol::table TemplatesNamespace = state["obe"]["Config"]["Templates"].get<sol::table>();
         TemplatesNamespace.set_function(
-            "getGameObjectTemplates", obe::Config::Templates::getGameObjectTemplates);
+            "getGameObjectTemplates", &obe::Config::Templates::getGameObjectTemplates);
     }
     void LoadFunctionGetMountTemplates(sol::state_view state)
     {
         sol::table TemplatesNamespace = state["obe"]["Config"]["Templates"].get<sol::table>();
         TemplatesNamespace.set_function(
-            "getMountTemplates", obe::Config::Templates::getMountTemplates);
+            "getMountTemplates", &obe::Config::Templates::getMountTemplates);
     }
     void LoadFunctionGetSceneTemplates(sol::state_view state)
     {
         sol::table TemplatesNamespace = state["obe"]["Config"]["Templates"].get<sol::table>();
         TemplatesNamespace.set_function(
-            "getSceneTemplates", obe::Config::Templates::getSceneTemplates);
+            "getSceneTemplates", &obe::Config::Templates::getSceneTemplates);
     }
     void LoadGlobalWaitCommand(sol::state_view state)
     {

@@ -10,14 +10,14 @@ namespace obe::Graphics::Exceptions::Bindings
     {
         sol::table ExceptionsNamespace = state["obe"]["Graphics"]["Exceptions"].get<sol::table>();
         sol::usertype<obe::Graphics::Exceptions::CanvasElementAlreadyExists>
-            bindCanvasElementAlreadyExists
-            = ExceptionsNamespace
-                  .new_usertype<obe::Graphics::Exceptions::CanvasElementAlreadyExists>(
-                      "CanvasElementAlreadyExists", sol::call_constructor,
-                      sol::constructors<obe::Graphics::Exceptions::CanvasElementAlreadyExists(
-                          std::string_view, std::string_view, std::string_view, obe::DebugInfo)>(),
-                      sol::base_classes,
-                      sol::bases<obe::Exception<CanvasElementAlreadyExists>, obe::BaseException>());
+            bindCanvasElementAlreadyExists = ExceptionsNamespace.new_usertype<
+                obe::Graphics::Exceptions::CanvasElementAlreadyExists>("CanvasElementAlreadyExists",
+                sol::call_constructor,
+                sol::constructors<obe::Graphics::Exceptions::CanvasElementAlreadyExists(
+                    std::string_view, std::string_view, std::string_view, obe::DebugInfo)>(),
+                sol::base_classes,
+                sol::bases<obe::Exception<obe::Graphics::Exceptions::CanvasElementAlreadyExists>,
+                    obe::BaseException>());
     }
     void LoadClassImageFileNotFound(sol::state_view state)
     {
@@ -28,7 +28,8 @@ namespace obe::Graphics::Exceptions::Bindings
                 sol::constructors<obe::Graphics::Exceptions::ImageFileNotFound(
                     std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<ImageFileNotFound>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Graphics::Exceptions::ImageFileNotFound>,
+                    obe::BaseException>());
     }
     void LoadClassInvalidColorName(sol::state_view state)
     {
@@ -39,7 +40,8 @@ namespace obe::Graphics::Exceptions::Bindings
                 sol::constructors<obe::Graphics::Exceptions::InvalidColorName(
                     std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<InvalidColorName>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Graphics::Exceptions::InvalidColorName>,
+                    obe::BaseException>());
     }
     void LoadClassInvalidHexFormat(sol::state_view state)
     {
@@ -50,7 +52,8 @@ namespace obe::Graphics::Exceptions::Bindings
                 sol::constructors<obe::Graphics::Exceptions::InvalidHexFormat(
                     std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<InvalidHexFormat>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Graphics::Exceptions::InvalidHexFormat>,
+                    obe::BaseException>());
     }
     void LoadClassInvalidHsvFormat(sol::state_view state)
     {
@@ -61,7 +64,8 @@ namespace obe::Graphics::Exceptions::Bindings
                 sol::constructors<obe::Graphics::Exceptions::InvalidHsvFormat(
                     const int, const double, const double, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<InvalidHsvFormat>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Graphics::Exceptions::InvalidHsvFormat>,
+                    obe::BaseException>());
     }
     void LoadClassInvalidRgbFormat(sol::state_view state)
     {
@@ -72,7 +76,8 @@ namespace obe::Graphics::Exceptions::Bindings
                 sol::constructors<obe::Graphics::Exceptions::InvalidRgbFormat(
                     const double, const double, const double, const double, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<InvalidRgbFormat>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Graphics::Exceptions::InvalidRgbFormat>,
+                    obe::BaseException>());
     }
     void LoadClassInvalidSpriteColorType(sol::state_view state)
     {
@@ -83,7 +88,8 @@ namespace obe::Graphics::Exceptions::Bindings
                 sol::constructors<obe::Graphics::Exceptions::InvalidSpriteColorType(
                     std::string_view, std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<InvalidSpriteColorType>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Graphics::Exceptions::InvalidSpriteColorType>,
+                    obe::BaseException>());
     }
     void LoadClassReadOnlyTexture(sol::state_view state)
     {
@@ -94,6 +100,7 @@ namespace obe::Graphics::Exceptions::Bindings
                 sol::constructors<obe::Graphics::Exceptions::ReadOnlyTexture(
                     std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<ReadOnlyTexture>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Graphics::Exceptions::ReadOnlyTexture>,
+                    obe::BaseException>());
     }
 };

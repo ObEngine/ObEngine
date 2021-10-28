@@ -15,7 +15,8 @@ namespace obe::Graphics::Shapes::Bindings
                 sol::constructors<obe::Graphics::Shapes::Circle(),
                     obe::Graphics::Shapes::Circle(const sf::CircleShape&),
                     obe::Graphics::Shapes::Circle(const obe::Graphics::Shapes::Circle&)>(),
-                sol::base_classes, sol::bases<obe::Graphics::Shapes::Shape<Circle>>());
+                sol::base_classes,
+                sol::bases<obe::Graphics::Shapes::Shape<obe::Graphics::Shapes::Circle>>());
         bindCircle["setTexture"] = &obe::Graphics::Shapes::Circle::setTexture;
         bindCircle["setTextureRect"] = &obe::Graphics::Shapes::Circle::setTextureRect;
         bindCircle["setPosition"] = &obe::Graphics::Shapes::Circle::setPosition;
@@ -53,7 +54,8 @@ namespace obe::Graphics::Shapes::Bindings
                 sol::constructors<obe::Graphics::Shapes::Polygon(),
                     obe::Graphics::Shapes::Polygon(const sf::ConvexShape&),
                     obe::Graphics::Shapes::Polygon(const obe::Graphics::Shapes::Polygon&)>(),
-                sol::base_classes, sol::bases<obe::Graphics::Shapes::Shape<Polygon>>());
+                sol::base_classes,
+                sol::bases<obe::Graphics::Shapes::Shape<obe::Graphics::Shapes::Polygon>>());
         bindPolygon["setTexture"] = &obe::Graphics::Shapes::Polygon::setTexture;
         bindPolygon["setTextureRect"] = &obe::Graphics::Shapes::Polygon::setTextureRect;
         bindPolygon["setPosition"] = &obe::Graphics::Shapes::Polygon::setPosition;
@@ -91,7 +93,8 @@ namespace obe::Graphics::Shapes::Bindings
                 sol::constructors<obe::Graphics::Shapes::Rectangle(),
                     obe::Graphics::Shapes::Rectangle(const sf::RectangleShape&),
                     obe::Graphics::Shapes::Rectangle(const obe::Graphics::Shapes::Rectangle&)>(),
-                sol::base_classes, sol::bases<obe::Graphics::Shapes::Shape<Rectangle>>());
+                sol::base_classes,
+                sol::bases<obe::Graphics::Shapes::Shape<obe::Graphics::Shapes::Rectangle>>());
         bindRectangle["setTexture"] = &obe::Graphics::Shapes::Rectangle::setTexture;
         bindRectangle["setTextureRect"] = &obe::Graphics::Shapes::Rectangle::setTextureRect;
         bindRectangle["setPosition"] = &obe::Graphics::Shapes::Rectangle::setPosition;
@@ -131,7 +134,8 @@ namespace obe::Graphics::Shapes::Bindings
                 sol::constructors<obe::Graphics::Shapes::Text(),
                     obe::Graphics::Shapes::Text(const obe::Graphics::RichText&),
                     obe::Graphics::Shapes::Text(const obe::Graphics::Shapes::Text&)>(),
-                sol::base_classes, sol::bases<obe::Graphics::Shapes::BaseShape<Text>>());
+                sol::base_classes,
+                sol::bases<obe::Graphics::Shapes::BaseShape<obe::Graphics::Shapes::Text>>());
         bindText["setPosition"] = &obe::Graphics::Shapes::Text::setPosition;
         bindText["getLocalBounds"] = &obe::Graphics::Shapes::Text::getLocalBounds;
         bindText["getGlobalBounds"] = &obe::Graphics::Shapes::Text::getGlobalBounds;

@@ -10,22 +10,22 @@ namespace obe::System::Package::Bindings
     {
         sol::table PackageNamespace = state["obe"]["System"]["Package"].get<sol::table>();
         PackageNamespace.set_function(
-            "GetPackageLocation", obe::System::Package::GetPackageLocation);
+            "GetPackageLocation", &obe::System::Package::GetPackageLocation);
     }
     void LoadFunctionPackageExists(sol::state_view state)
     {
         sol::table PackageNamespace = state["obe"]["System"]["Package"].get<sol::table>();
-        PackageNamespace.set_function("PackageExists", obe::System::Package::PackageExists);
+        PackageNamespace.set_function("PackageExists", &obe::System::Package::PackageExists);
     }
     void LoadFunctionListPackages(sol::state_view state)
     {
         sol::table PackageNamespace = state["obe"]["System"]["Package"].get<sol::table>();
-        PackageNamespace.set_function("ListPackages", obe::System::Package::ListPackages);
+        PackageNamespace.set_function("ListPackages", &obe::System::Package::ListPackages);
     }
     void LoadFunctionInstall(sol::state_view state)
     {
         sol::table PackageNamespace = state["obe"]["System"]["Package"].get<sol::table>();
-        PackageNamespace.set_function("Install", obe::System::Package::Install);
+        PackageNamespace.set_function("Install", &obe::System::Package::Install);
     }
     void LoadFunctionLoad(sol::state_view state)
     {

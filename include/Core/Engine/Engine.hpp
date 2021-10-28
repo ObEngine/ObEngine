@@ -101,48 +101,48 @@ namespace obe::Engine
         void run() const;
 
         /**
-         * \bind{Audio}
+         * \rename{Audio}
          * \asproperty
          */
         Audio::AudioManager& getAudioManager();
         /**
-         * \bind{Configuration}
+         * \rename{Configuration}
          * \asproperty
          */
         Config::ConfigurationManager& getConfigurationManager();
         /**
-         * \bind{Resources}
+         * \rename{Resources}
          * \asproperty
          */
         ResourceManager& getResourceManager();
         /**
-         * \bind{Input}
+         * \rename{Input}
          * \asproperty
          */
         Input::InputManager& getInputManager() const;
         /**
-         * \bind{Framerate}
+         * \rename{Framerate}
          * \asproperty
          */
         Time::FramerateManager& getFramerateManager() const;
         /**
-         * \bind{Events}
+         * \rename{Events}
          * \asproperty
          */
         Event::EventManager& getEventManager() const;
 
         /**
-         * \bind{Scene}
+         * \rename{Scene}
          * \asproperty
          */
         Scene::Scene& getScene() const;
         /**
-         * \bind{Cursor}
+         * \rename{Cursor}
          * \asproperty
          */
         System::Cursor& getCursor() const;
         /**
-         * \bind{Window}
+         * \rename{Window}
          * \asproperty
          */
         System::Window& getWindow() const;

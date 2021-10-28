@@ -3,6 +3,7 @@
 #include <string>
 
 #include <SFML/Graphics/Color.hpp>
+#include <Types/Serializable.hpp>
 
 namespace obe::Animation
 {
@@ -12,12 +13,27 @@ namespace obe::Animation
 
 namespace obe::Graphics
 {
+    struct Hsv
+    {
+        double H, S, V;
+    };
+
+    enum class ColorType
+    {
+        Rgba,
+        Hsv,
+        Hex,
+        ColorName
+    };
+
     /**
      * \brief A class to handle colors
      */
-    class Color
+    class Color : public Types::Serializable
     {
         friend class Animation::TweenImpl<Color>;
+    private:
+        ColorType m_type;
     public:
 
         double r = 0;
@@ -30,15 +46,21 @@ namespace obe::Graphics
         explicit Color(const std::string& nameOrHex);
         Color(const sf::Color& color);
 
+        vili::node dump(ColorType type) const;
+        [[nodiscard]] vili::node dump() const override;
+        void load(const vili::node& data) override;
+
         void fromString(std::string string);
         bool fromName(std::string name, bool strict = true);
         void fromHex(std::string hexCode);
         void fromRgb(double r, double g, double b, double a = 255);
-        void fromHsv(int H, double S, double V);
+        void fromHsv(double H, double S, double V);
 
         [[nodiscard]] uint32_t toInteger() const;
         [[nodiscard]] std::string toHex() const;
-        [[nodiscard]] std::string toName() const;
+        [[nodiscard]] std::optional<std::string> toName() const;
+        [[nodiscard]] Hsv toHsv() const;
+        [[nodiscard]] std::string toString() const;
 
         bool operator==(const Color& color) const;
         bool operator!=(const Color& color) const;

@@ -1,6 +1,7 @@
 #include <SFML/Window/Mouse.hpp>
 
 #include <System/Cursor.hpp>
+#include <utility>
 
 namespace obe::System
 {
@@ -167,15 +168,54 @@ namespace obe::System
         }
     }
 
-    void Cursor::setConstraint(const std::function<std::pair<int, int>(Cursor*)> constraint,
+    void Cursor::setConstraint(const std::function<std::pair<int, int>(Cursor*)>& constraint,
         std::function<bool()> condition)
     {
         m_constraint = constraint;
-        m_constraintCondition = condition;
+        m_constraintCondition = std::move(condition);
     }
 
-    bool Cursor::isPressed(sf::Mouse::Button button)
+    bool Cursor::isPressed(sf::Mouse::Button button) const
     {
-        return m_buttonState[button];
+        return m_buttonState.at(button);
+    }
+
+    void Cursor::setCursor(const System::CursorModel& newCursor)
+    {
+        m_customCursor = newCursor.getPtr();
+        m_window.getWindow().setMouseCursor(*m_customCursor);
+    }
+
+    bool CursorModel::loadFromFile(
+        const std::string& filename, unsigned int hotspotX, unsigned int hotspotY)
+    {
+        sf::Image img;
+        if (img.loadFromFile(System::Path(filename).find()))
+        {
+            std::shared_ptr<sf::Cursor> newCursor = std::make_shared<sf::Cursor>();
+            if (newCursor->loadFromPixels(
+                    img.getPixelsPtr(), img.getSize(), sf::Vector2u(hotspotX, hotspotY)))
+            {
+                m_cursor.swap(newCursor);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool CursorModel::loadFromSystem(CursorType type)
+    {
+        std::shared_ptr<sf::Cursor> newCursor = std::make_shared<sf::Cursor>();
+        if (newCursor->loadFromSystem(static_cast<sf::Cursor::Type>(type)))
+        {
+            m_cursor.swap(newCursor);
+            return true;
+        }
+        return false;
+    }
+
+    std::shared_ptr<sf::Cursor> CursorModel::getPtr() const
+    {
+        return m_cursor;
     }
 } // namespace obe::System

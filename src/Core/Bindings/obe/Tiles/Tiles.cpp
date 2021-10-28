@@ -136,17 +136,17 @@ namespace obe::Tiles::Bindings
     void LoadFunctionGetTileInfo(sol::state_view state)
     {
         sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
-        TilesNamespace.set_function("getTileInfo", obe::Tiles::getTileInfo);
+        TilesNamespace.set_function("getTileInfo", &obe::Tiles::getTileInfo);
     }
     void LoadFunctionStripTileFlags(sol::state_view state)
     {
         sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
-        TilesNamespace.set_function("stripTileFlags", obe::Tiles::stripTileFlags);
+        TilesNamespace.set_function("stripTileFlags", &obe::Tiles::stripTileFlags);
     }
     void LoadFunctionApplyTextureQuadsTransforms(sol::state_view state)
     {
         sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
         TilesNamespace.set_function(
-            "applyTextureQuadsTransforms", obe::Tiles::applyTextureQuadsTransforms);
+            "applyTextureQuadsTransforms", &obe::Tiles::applyTextureQuadsTransforms);
     }
 };

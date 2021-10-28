@@ -79,5 +79,6 @@ namespace obe::Script::Bindings
     }
     void LoadFunctionSafeLuaCall(sol::state_view state)
     {
+        sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
     }
 };

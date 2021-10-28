@@ -17,9 +17,18 @@ namespace obe::Transform::Bindings
     void LoadEnumRelativePositionFrom(sol::state_view state)
     {
         sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
-        TransformNamespace.new_enum<obe::Transform::RelativePositionFrom>("RelativePositionFrom",
-            { { "Point0", obe::Transform::RelativePositionFrom::Point0 },
-                { "Centroid", obe::Transform::RelativePositionFrom::Centroid } });
+        TransformNamespace.new_enum<obe::Transform::PolygonPoint::RelativePositionFrom>(
+            "RelativePositionFrom",
+            { { "Point0", obe::Transform::PolygonPoint::RelativePositionFrom::Point0 },
+                { "Centroid", obe::Transform::PolygonPoint::RelativePositionFrom::Centroid } });
+    }
+    void LoadEnumReferentialConversionType(sol::state_view state)
+    {
+        sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
+        TransformNamespace.new_enum<obe::Transform::ReferentialConversionType>(
+            "ReferentialConversionType",
+            { { "From", obe::Transform::ReferentialConversionType::From },
+                { "To", obe::Transform::ReferentialConversionType::To } });
     }
     void LoadEnumFlipAxis(sol::state_view state)
     {
@@ -140,7 +149,9 @@ namespace obe::Transform::Bindings
             = &obe::Transform::PolygonPoint::setRelativePosition;
         bindPolygonPoint["move"] = &obe::Transform::PolygonPoint::move;
         bindPolygonPoint["index"] = sol::property(
-            [](obe::Transform::PolygonPoint* self) -> const point_index_t& { return self->index; });
+            [](obe::Transform::PolygonPoint* self) -> const obe::Transform::point_index_t& {
+                return self->index;
+            });
     }
     void LoadClassPolygonSegment(sol::state_view state)
     {
@@ -152,14 +163,14 @@ namespace obe::Transform::Bindings
                     const obe::Transform::PolygonPoint&, const obe::Transform::PolygonPoint&)>());
         bindPolygonSegment["getAngle"] = &obe::Transform::PolygonSegment::getAngle;
         bindPolygonSegment["getLength"] = &obe::Transform::PolygonSegment::getLength;
-        bindPolygonSegment["first"]
-            = sol::property([](obe::Transform::PolygonSegment* self) -> const PolygonPoint& {
-                  return self->first;
-              });
-        bindPolygonSegment["second"]
-            = sol::property([](obe::Transform::PolygonSegment* self) -> const PolygonPoint& {
-                  return self->second;
-              });
+        bindPolygonSegment["first"] = sol::property(
+            [](obe::Transform::PolygonSegment* self) -> const obe::Transform::PolygonPoint& {
+                return self->first;
+            });
+        bindPolygonSegment["second"] = sol::property(
+            [](obe::Transform::PolygonSegment* self) -> const obe::Transform::PolygonPoint& {
+                return self->second;
+            });
     }
     void LoadClassRect(sol::state_view state)
     {
@@ -306,9 +317,10 @@ namespace obe::Transform::Bindings
             static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(
                 const obe::Transform::UnitVector&) const>(&obe::Transform::UnitVector::operator-),
             static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(double) const>(
-                &obe::Transform::UnitVector::operator-),
-            static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)() const>(
                 &obe::Transform::UnitVector::operator-));
+        bindUnitVector[sol::meta_function::unary_minus]
+            = static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)() const>(
+                &obe::Transform::UnitVector::operator-);
         bindUnitVector[sol::meta_function::multiplication] = sol::overload(
             static_cast<obe::Transform::UnitVector (obe::Transform::UnitVector::*)(
                 const obe::Transform::UnitVector&) const>(&obe::Transform::UnitVector::operator*),
@@ -335,8 +347,6 @@ namespace obe::Transform::Bindings
         bindUnitVector["x"] = &obe::Transform::UnitVector::x;
         bindUnitVector["y"] = &obe::Transform::UnitVector::y;
         bindUnitVector["unit"] = &obe::Transform::UnitVector::unit;
-        bindUnitVector["View"] = sol::var(&obe::Transform::UnitVector::View);
-        bindUnitVector["Screen"] = sol::var(&obe::Transform::UnitVector::Screen);
     }
     void LoadClassScreenStruct(sol::state_view state)
     {
@@ -361,11 +371,11 @@ namespace obe::Transform::Bindings
     void LoadFunctionStringToUnits(sol::state_view state)
     {
         sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
-        TransformNamespace.set_function("stringToUnits", obe::Transform::stringToUnits);
+        TransformNamespace.set_function("stringToUnits", &obe::Transform::stringToUnits);
     }
     void LoadFunctionUnitsToString(sol::state_view state)
     {
         sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
-        TransformNamespace.set_function("unitsToString", obe::Transform::unitsToString);
+        TransformNamespace.set_function("unitsToString", &obe::Transform::unitsToString);
     }
 };

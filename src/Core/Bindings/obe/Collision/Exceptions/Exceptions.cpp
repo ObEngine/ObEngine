@@ -15,6 +15,7 @@ namespace obe::Collision::Exceptions::Bindings
                 sol::constructors<obe::Collision::Exceptions::InvalidTagFormat(
                     std::string_view, std::string_view, std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<InvalidTagFormat>, obe::BaseException>());
+                sol::bases<obe::Exception<obe::Collision::Exceptions::InvalidTagFormat>,
+                    obe::BaseException>());
     }
 };

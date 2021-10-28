@@ -176,6 +176,8 @@ namespace obe::Bindings
         obe::Bindings::LoadFunctionGetTypeName(state);
         obe::Bindings::LoadFunctionInitEngine(state);
         obe::Collision::Bindings::LoadClassCollisionData(state);
+        obe::Collision::Bindings::LoadClassInnerTest(state);
+        obe::Collision::Bindings::LoadClassCoolChild(state);
         obe::Collision::Bindings::LoadClassPolygonalCollider(state);
         obe::Collision::Bindings::LoadClassTrajectory(state);
         obe::Collision::Bindings::LoadClassTrajectoryNode(state);
@@ -214,6 +216,7 @@ namespace obe::Bindings
         obe::Event::Exceptions::Bindings::LoadClassEventGroupAlreadyExists(state);
         obe::Event::Exceptions::Bindings::LoadClassEventGroupNotJoinable(state);
         obe::Event::Exceptions::Bindings::LoadClassEventNamespaceAlreadyExists(state);
+        obe::Event::Exceptions::Bindings::LoadClassEventNamespaceNotJoinable(state);
         obe::Event::Exceptions::Bindings::LoadClassUnknownEvent(state);
         obe::Event::Exceptions::Bindings::LoadClassUnknownEventGroup(state);
         obe::Event::Exceptions::Bindings::LoadClassUnknownEventNamespace(state);
@@ -241,6 +244,8 @@ namespace obe::Bindings
         obe::Graphics::Bindings::LoadClassSpriteHandlePoint(state);
         obe::Graphics::Bindings::LoadClassText(state);
         obe::Graphics::Bindings::LoadClassTexture(state);
+        obe::Graphics::Bindings::LoadClassHsv(state);
+        obe::Graphics::Bindings::LoadEnumColorType(state);
         obe::Graphics::Bindings::LoadEnumSpriteHandlePointType(state);
         obe::Graphics::Bindings::LoadFunctionInitPositionTransformer(state);
         obe::Graphics::Bindings::LoadFunctionMakeNullTexture(state);
@@ -288,9 +293,6 @@ namespace obe::Bindings
         obe::Scene::Bindings::LoadClassScene(state);
         obe::Scene::Bindings::LoadClassSceneNode(state);
         obe::Scene::Bindings::LoadClassSceneRenderOptions(state);
-        obe::Scene::Bindings::LoadFunctionSceneGetGameObjectProxy(state);
-        obe::Scene::Bindings::LoadFunctionSceneCreateGameObjectProxy(state);
-        obe::Scene::Bindings::LoadFunctionSceneGetAllGameObjectsProxy(state);
         obe::Scene::Exceptions::Bindings::LoadClassChildNotInSceneNode(state);
         obe::Scene::Exceptions::Bindings::LoadClassGameObjectAlreadyExists(state);
         obe::Scene::Exceptions::Bindings::LoadClassMissingSceneFileBlock(state);
@@ -312,8 +314,10 @@ namespace obe::Bindings
         obe::Script::Bindings::LoadFunctionSafeLuaCall(state);
         obe::System::Bindings::LoadClassContextualPathFactory(state);
         obe::System::Bindings::LoadClassCursor(state);
+        obe::System::Bindings::LoadClassCursorModel(state);
         obe::System::Bindings::LoadClassPlugin(state);
         obe::System::Bindings::LoadClassWindow(state);
+        obe::System::Bindings::LoadEnumCursorType(state);
         obe::System::Bindings::LoadEnumMountablePathType(state);
         obe::System::Bindings::LoadEnumSamePrefixPolicy(state);
         obe::System::Bindings::LoadEnumPathType(state);
@@ -383,6 +387,7 @@ namespace obe::Bindings
         obe::Transform::Bindings::LoadClassScreenStruct(state);
         obe::Transform::Bindings::LoadClassViewStruct(state);
         obe::Transform::Bindings::LoadEnumRelativePositionFrom(state);
+        obe::Transform::Bindings::LoadEnumReferentialConversionType(state);
         obe::Transform::Bindings::LoadEnumFlipAxis(state);
         obe::Transform::Bindings::LoadEnumUnits(state);
         obe::Transform::Bindings::LoadFunctionStringToUnits(state);
@@ -431,7 +436,6 @@ namespace obe::Bindings
         vili::parser::Bindings::LoadClassNodeInStack(state);
         vili::parser::Bindings::LoadClassState(state);
         vili::parser::Bindings::LoadClassError(state);
-        vili::parser::Bindings::LoadFunctionStatePushProxy(state);
         vili::parser::Bindings::LoadFunctionFromString(state);
         vili::parser::Bindings::LoadFunctionFromFile(state);
         obe::Events::Actions::Bindings::LoadClassAction(state);
@@ -510,6 +514,8 @@ namespace obe::Bindings
         vili::parser::rules::Bindings::LoadClassViliGrammar(state);
         vili::parser::rules::Bindings::LoadClassXdigit(state);
         vili::writer::Bindings::LoadClassDumpOptions(state);
+        vili::writer::Bindings::LoadClass_array(state);
+        vili::writer::Bindings::LoadClass_object(state);
         vili::writer::Bindings::LoadEnumDelimiterNewlinePolicy(state);
         vili::writer::Bindings::LoadEnumCommaSpacingPolicy(state);
         vili::writer::Bindings::LoadEnumObjectStyle(state);
