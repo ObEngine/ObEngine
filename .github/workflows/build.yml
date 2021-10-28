@@ -78,6 +78,7 @@ jobs:
       run: mkdir build
     - name: Run CMake on ObEngine
       run: cd build && cmake -DBUILD_TESTS=ON ..
+    - name: Run Static Check  
     - name: Compile ObEngine
       run: cd build && make -j8
     - name: Run tests

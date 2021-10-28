@@ -118,6 +118,7 @@ jobs:
       run: cd build && make -j8
     - name: Run tests
       run: cd build && ./tests/ObEngineTests
+    - name: Run Static Check 
     - name: Create package
       run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
     - name: Package to archive
