@@ -6,6 +6,12 @@
 #include <Transform/Movable.hpp>
 #include <Transform/Referential.hpp>
 
+namespace obe::Animation
+{
+   template <class T>
+   class TweenImpl;
+}
+
 namespace obe::Transform
 {
     /**
@@ -23,15 +29,13 @@ namespace obe::Transform
         To
     };
 
-    template <class T>
-    class TweenImpl;
     /**
      * \brief A Class that does represent a Rectangle with various methods to
      *        manipulate it
      */
     class Rect : public Movable
     {
-        friend class TweenImpl<Rect>;
+        friend class Animation::TweenImpl<Rect>;
     protected:
         /**
          * \brief Size of the Rect

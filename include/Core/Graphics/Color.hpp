@@ -4,16 +4,20 @@
 
 #include <SFML/Graphics/Color.hpp>
 
-namespace obe::Graphics
+namespace obe::Animation
 {
     template <class T>
     class TweenImpl;
+}
+
+namespace obe::Graphics
+{
     /**
      * \brief A class to handle colors
      */
     class Color
     {
-        friend class TweenImpl<Color>;
+        friend class Animation::TweenImpl<Color>;
     public:
 
         double r = 0;

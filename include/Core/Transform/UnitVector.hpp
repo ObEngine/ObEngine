@@ -5,10 +5,14 @@
 #include <Transform/UnitStructures.hpp>
 #include <Transform/Units.hpp>
 
-namespace obe::Transform
+namespace obe::Animation
 {
     template <class T>
     class TweenImpl;
+}
+
+namespace obe::Transform
+{
     /**
      * \brief Class widely used in the Engine to scale and position elements in
      * a Scene
@@ -16,7 +20,7 @@ namespace obe::Transform
      */
     class UnitVector
     {
-        friend class TweenImpl<UnitVector>;
+        friend class Animation::TweenImpl<UnitVector>;
     public:
         /**
          * \nobind

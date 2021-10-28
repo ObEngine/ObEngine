@@ -171,7 +171,7 @@ namespace obe::Animation
         {
             m_current += dt;
             const double progression = m_current / m_duration;
-            return TweenImpl<TweenableClass>::step(m_easing(progression), from, to);
+            return TweenImpl<TweenableClass>::step(m_easing(progression), m_from, m_to);
         }
     };
 }

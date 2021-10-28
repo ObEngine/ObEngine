@@ -226,7 +226,7 @@ namespace obe::Animation::Bindings
         bindValueTweeningDouble["to"] = &obe::Animation::ValueTweening<double>::to;
         bindValueTweeningDouble["ease"] = &obe::Animation::ValueTweening<double>::ease;
         bindValueTweeningDouble["done"] = &obe::Animation::ValueTweening<double>::done;
-        bindValueTweeningDouble["step"] = &obe::Animation::ValueTweening<double>::step<double>;
+        bindValueTweeningDouble["step"] = &obe::Animation::ValueTweening<double>::step;
 
         sol::usertype<obe::Animation::ValueTweening<obe::Graphics::Color>>
             bindValueTweeningColor
@@ -246,7 +246,7 @@ namespace obe::Animation::Bindings
         bindValueTweeningColor["done"]
             = &obe::Animation::ValueTweening<obe::Graphics::Color>::done;
         bindValueTweeningColor["step"]
-            = &obe::Animation::ValueTweening<obe::Graphics::Color>::step<obe::Graphics::Color>;
+            = &obe::Animation::ValueTweening<obe::Graphics::Color>::step;
 
         sol::usertype<obe::Animation::ValueTweening<obe::Transform::Rect>>
             bindValueTweeningRect
@@ -266,7 +266,7 @@ namespace obe::Animation::Bindings
         bindValueTweeningRect["done"]
             = &obe::Animation::ValueTweening<obe::Transform::Rect>::done;
         bindValueTweeningRect["step"]
-            = &obe::Animation::ValueTweening<obe::Transform::Rect>::step<obe::Transform::Rect>;
+            = &obe::Animation::ValueTweening<obe::Transform::Rect>::step;
 
         sol::usertype<obe::Animation::ValueTweening<obe::Transform::UnitVector>>
             bindValueTweeningUnitVector
@@ -287,7 +287,7 @@ namespace obe::Animation::Bindings
         bindValueTweeningUnitVector["done"]
             = &obe::Animation::ValueTweening<obe::Transform::UnitVector>::done;
         bindValueTweeningUnitVector["step"] = &obe::Animation::ValueTweening<
-            obe::Transform::UnitVector>::step<obe::Transform::UnitVector>;
+            obe::Transform::UnitVector>::step;
 
         sol::usertype<obe::Animation::ValueTweening<obe::Collision::Trajectory>>
             bindValueTweeningTrajectory
@@ -308,7 +308,7 @@ namespace obe::Animation::Bindings
         bindValueTweeningTrajectory["done"]
             = &obe::Animation::ValueTweening<obe::Collision::Trajectory>::done;
         bindValueTweeningTrajectory["step"] = &obe::Animation::ValueTweening<
-            obe::Collision::Trajectory>::step<obe::Collision::Trajectory>;
+            obe::Collision::Trajectory>::step;
     }
     void LoadFunctionStringToAnimationPlayMode(sol::state_view state)
     {
