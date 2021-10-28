@@ -226,7 +226,7 @@ namespace obe::Animation::Bindings
         bindValueTweeningDouble["to"] = &obe::Animation::ValueTweening<double>::to;
         bindValueTweeningDouble["ease"] = &obe::Animation::ValueTweening<double>::ease;
         bindValueTweeningDouble["done"] = &obe::Animation::ValueTweening<double>::done;
-        // bindValueTweeningDouble["step"] = &obe::Animation::ValueTweening<double>::step<double>;
+        bindValueTweeningDouble["step"] = &obe::Animation::ValueTweening<double>::step<double>;
 
         sol::usertype<obe::Animation::ValueTweening<obe::Graphics::Color>>
             bindValueTweeningColor

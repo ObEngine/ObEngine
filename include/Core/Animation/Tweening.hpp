@@ -90,7 +90,7 @@ namespace obe::Animation
             {
                 const double valueFrom = componentsFrom.at(i);
                 const double valueTo = componentsTo.at(i);
-                componentsFrom.at(i) = (m_easing(progression) * (valueFrom - valueTo)) + valueFrom;
+                componentsFrom.at(i) = (m_easing(progression) * (valueTo - valueFrom)) + valueFrom;
             }
             step.setNumericalComponents(componentsFrom);
             return step;
@@ -102,7 +102,7 @@ namespace obe::Animation
         {
             m_current += dt;
             const double progression = m_current / m_duration;
-            return (m_easing(progression) * (m_from - m_to)) + m_from;
+            return (m_easing(progression) * (m_to - m_from)) + m_from;
         }
     };
 }
