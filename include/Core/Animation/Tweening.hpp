@@ -13,7 +13,10 @@ namespace obe::Animation
     class TweenImpl
     {
     public:
-        static T step(double progression, const T& from, const T& to) = 0;
+        static T step(double progression, const T& from, const T& to)
+        {
+            return from;
+        }
     };
     template <>
     class TweenImpl<Graphics::Color>
