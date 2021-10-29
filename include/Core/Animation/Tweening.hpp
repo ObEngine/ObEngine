@@ -9,26 +9,23 @@
 
 namespace obe::Animation
 {
-    template<class T>
+    template <class T>
     class TweenImpl
     {
     public:
-        static T step(double multiplier, const T& from, const T& to)
-        {
-            return T();
-        }
+        static T step(double progression, const T& from, const T& to) = 0;
     };
     template <>
     class TweenImpl<Graphics::Color>
     {
     public:
-        static Graphics::Color step(double multiplier, const Graphics::Color& from, const Graphics::Color& to)
+        static Graphics::Color step(double progression, const Graphics::Color& from, const Graphics::Color& to)
         {
             Graphics::Color step = from;
-            step.r = (multiplier * (to.r - from.r)) + from.r;
-            step.g = (multiplier * (to.g - from.g)) + from.g;
-            step.b = (multiplier * (to.b - from.b)) + from.b;
-            step.a = (multiplier * (to.a - from.a)) + from.a;
+            step.r = (progression * (to.r - from.r)) + from.r;
+            step.g = (progression * (to.g - from.g)) + from.g;
+            step.b = (progression * (to.b - from.b)) + from.b;
+            step.a = (progression * (to.a - from.a)) + from.a;
             return step;
         }
     };
@@ -37,11 +34,11 @@ namespace obe::Animation
     {
     public:
         static Transform::UnitVector step(
-            double multiplier, const Transform::UnitVector& from, const Transform::UnitVector& to)
+            double progression, const Transform::UnitVector& from, const Transform::UnitVector& to)
         {
             Transform::UnitVector step = from;
-            step.x = (multiplier * (to.x - from.x)) + from.x;
-            step.y = (multiplier * (to.y - from.y)) + from.y;
+            step.x = (progression * (to.x - from.x)) + from.x;
+            step.y = (progression * (to.y - from.y)) + from.y;
             return step;
         }
     };
@@ -50,12 +47,12 @@ namespace obe::Animation
     {
     public:
         static Transform::Rect step(
-            double multiplier, const Transform::Rect& from, const Transform::Rect& to)
+            double progression, const Transform::Rect& from, const Transform::Rect& to)
         {
             Transform::Rect step = from;
-            step.m_size.x = (multiplier * (to.m_size.x - from.m_size.x)) + from.m_size.x;
-            step.m_size.y = (multiplier * (to.m_size.y - from.m_size.y)) + from.m_size.y;
-            step.m_angle = (multiplier * (to.m_angle - from.m_angle)) + from.m_angle;
+            step.m_size.x = (progression * (to.m_size.x - from.m_size.x)) + from.m_size.x;
+            step.m_size.y = (progression * (to.m_size.y - from.m_size.y)) + from.m_size.y;
+            step.m_angle = (progression * (to.m_angle - from.m_angle)) + from.m_angle;
             return step;
         }
     };
@@ -64,13 +61,13 @@ namespace obe::Animation
     {
     public:
         static Collision::Trajectory step(
-            double multiplier, const Collision::Trajectory& from, const Collision::Trajectory& to)
+            double progression, const Collision::Trajectory& from, const Collision::Trajectory& to)
         {
             Collision::Trajectory step = from;
             step.m_acceleration
-                = (multiplier * (to.m_acceleration - from.m_acceleration)) + from.m_acceleration;
-            step.m_angle = (multiplier * (to.m_angle - from.m_angle)) + from.m_angle;
-            step.m_speed = (multiplier * (to.m_speed - from.m_speed)) + from.m_speed;
+                = (progression * (to.m_acceleration - from.m_acceleration)) + from.m_acceleration;
+            step.m_angle = (progression * (to.m_angle - from.m_angle)) + from.m_angle;
+            step.m_speed = (progression * (to.m_speed - from.m_speed)) + from.m_speed;
             return step;
         }
     };
@@ -78,9 +75,9 @@ namespace obe::Animation
     class TweenImpl<int>
     {
     public:
-        static int step(int multiplier, const int& from, const int& to)
+        static int step(int progression, const int& from, const int& to)
         {
-            return (multiplier * (to - from)) + from;
+            return (progression * (to - from)) + from;
         }
     };
 
@@ -89,11 +86,22 @@ namespace obe::Animation
     {
     public:
         static double step(
-            double multiplier, const double& from, const double& to)
+            double progression, const double& from, const double& to)
         {
-            return (multiplier * (to - from)) + from;
+            return (progression * (to - from)) + from;
         }
     };
+
+    template <class T, std::size_t = sizeof(T)>
+    std::true_type template_specialization_exists_impl(T*);
+
+    std::false_type template_specialization_exists_impl(...);
+
+    template <class T>
+    using template_specialization_exists
+        = decltype(template_specialization_exists_impl(std::declval<T*>()));
+
+
     /**
          * \thints
          * \thint{Color, T=obe::Graphics::Color}
@@ -116,17 +124,10 @@ namespace obe::Animation
         double m_current = 0;
 
     public:
-        ValueTweening(Time::TimeUnit duration)
+        explicit ValueTweening(Time::TimeUnit duration)
             : m_duration(duration)
         {
-            static_assert(
-                std::is_same_v<int, TweenableClass> || 
-                std::is_same_v<double, TweenableClass> ||
-                std::is_same_v<Graphics::Color, TweenableClass> ||
-                std::is_same_v<Transform::UnitVector, TweenableClass> ||
-                std::is_same_v<Transform::Rect, TweenableClass> || 
-                std::is_same_v<Collision::Trajectory, TweenableClass>
-                );
+            static_assert(template_specialization_exists<TweenImpl<TweenableClass>>());
         }
 
         ValueTweening(TweenableClass from, TweenableClass to, Time::TimeUnit duration)
@@ -134,14 +135,7 @@ namespace obe::Animation
             , m_from(from)
             , m_to(to)
         {
-            static_assert(
-                std::is_same_v<int, TweenableClass> ||
-                std::is_same_v<double, TweenableClass> ||
-                std::is_same_v<Graphics::Color, TweenableClass> ||
-                std::is_same_v<Transform::UnitVector, TweenableClass> ||
-                std::is_same_v<Transform::Rect, TweenableClass> ||
-                std::is_same_v<Collision::Trajectory, TweenableClass>
-                );
+            static_assert(template_specialization_exists<TweenImpl<TweenableClass>>());
         }
 
         ValueTweening& from(TweenableClass from)
