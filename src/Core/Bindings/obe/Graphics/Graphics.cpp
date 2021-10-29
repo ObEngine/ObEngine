@@ -14,6 +14,14 @@
 
 namespace obe::Graphics::Bindings
 {
+    void LoadEnumColorType(sol::state_view state)
+    {
+        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
+        GraphicsNamespace.new_enum<obe::Graphics::ColorType>("ColorType",
+            { { "Rgba", obe::Graphics::ColorType::Rgba }, { "Hsv", obe::Graphics::ColorType::Hsv },
+                { "Hex", obe::Graphics::ColorType::Hex },
+                { "ColorName", obe::Graphics::ColorType::ColorName } });
+    }
     void LoadEnumSpriteHandlePointType(sol::state_view state)
     {
         sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
@@ -24,13 +32,17 @@ namespace obe::Graphics::Bindings
     void LoadClassColor(sol::state_view state)
     {
         sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::Color> bindColor
-            = GraphicsNamespace.new_usertype<obe::Graphics::Color>("Color", sol::call_constructor,
-                sol::constructors<obe::Graphics::Color(),
-                    obe::Graphics::Color(double, double, double),
-                    obe::Graphics::Color(double, double, double, double),
-                    obe::Graphics::Color(const std::string&),
-                    obe::Graphics::Color(const sf::Color&)>());
+        sol::usertype<obe::Graphics::Color> bindColor = GraphicsNamespace.new_usertype<
+            obe::Graphics::Color>("Color", sol::call_constructor,
+            sol::constructors<obe::Graphics::Color(), obe::Graphics::Color(double, double, double),
+                obe::Graphics::Color(double, double, double, double),
+                obe::Graphics::Color(const std::string&), obe::Graphics::Color(const sf::Color&)>(),
+            sol::base_classes, sol::bases<obe::Types::Serializable>());
+        bindColor["dump"] = sol::overload(
+            static_cast<vili::node (obe::Graphics::Color::*)(obe::Graphics::ColorType) const>(
+                &obe::Graphics::Color::dump),
+            static_cast<vili::node (obe::Graphics::Color::*)() const>(&obe::Graphics::Color::dump));
+        bindColor["load"] = &obe::Graphics::Color::load;
         bindColor["fromString"] = &obe::Graphics::Color::fromString;
         bindColor["fromName"]
             = sol::overload([](obe::Graphics::Color* self,
@@ -49,13 +61,16 @@ namespace obe::Graphics::Bindings
         bindColor["toInteger"] = &obe::Graphics::Color::toInteger;
         bindColor["toHex"] = &obe::Graphics::Color::toHex;
         bindColor["toName"] = &obe::Graphics::Color::toName;
+        bindColor["toHsv"] = &obe::Graphics::Color::toHsv;
+        bindColor["toString"] = &obe::Graphics::Color::toString;
         bindColor[sol::meta_function::equal_to] = &obe::Graphics::Color::operator==;
         bindColor[sol::meta_function::addition] = &obe::Graphics::Color::operator+;
-        bindColor[sol::meta_function::subtraction] = sol::overload(
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(const obe::Graphics::Color&)
-                    const>(&obe::Graphics::Color::operator-),
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)() const>(
-                &obe::Graphics::Color::operator-));
+        bindColor[sol::meta_function::subtraction]
+            = static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(
+                const obe::Graphics::Color&) const>(&obe::Graphics::Color::operator-);
+        bindColor[sol::meta_function::unary_minus]
+            = static_cast<obe::Graphics::Color (obe::Graphics::Color::*)() const>(
+                &obe::Graphics::Color::operator-);
         bindColor[sol::meta_function::multiplication] = sol::overload(
             static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(const obe::Graphics::Color&)
                     const>(&obe::Graphics::Color::operator*),
@@ -66,11 +81,11 @@ namespace obe::Graphics::Bindings
                     const>(&obe::Graphics::Color::operator/),
             static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(double) const>(
                 &obe::Graphics::Color::operator/));
-        bindColor["Random"] = sol::overload(
-            [](obe::Graphics::Color* self) -> obe::Graphics::Color { return self->Random(); },
-            [](obe::Graphics::Color* self, bool randomAlpha) -> obe::Graphics::Color {
-                return self->Random(randomAlpha);
-            });
+        bindColor["Random"]
+            = sol::overload([]() -> obe::Graphics::Color { return obe::Graphics::Color::Random(); },
+                [](bool randomAlpha) -> obe::Graphics::Color {
+                    return obe::Graphics::Color::Random(randomAlpha);
+                });
         bindColor["r"] = &obe::Graphics::Color::r;
         bindColor["g"] = &obe::Graphics::Color::g;
         bindColor["b"] = &obe::Graphics::Color::b;
@@ -255,12 +270,20 @@ namespace obe::Graphics::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Graphics::RenderTarget(sf::RenderTarget&),
                     obe::Graphics::RenderTarget(sf::RenderWindow&)>());
-        bindRenderTarget["draw"]
-            = sol::overload(static_cast<void (obe::Graphics::RenderTarget::*)(const sf::Drawable&,
-                                const sf::RenderStates&) const>(&obe::Graphics::RenderTarget::draw),
-                static_cast<void (obe::Graphics::RenderTarget::*)(const sf::Vertex*, std::size_t,
-                    sf::PrimitiveType, const sf::RenderStates&) const>(
-                    &obe::Graphics::RenderTarget::draw));
+        bindRenderTarget["draw"] = sol::overload(
+            [](obe::Graphics::RenderTarget* self, const sf::Drawable& drawable) -> void {
+                return self->draw(drawable);
+            },
+            [](obe::Graphics::RenderTarget* self, const sf::Drawable& drawable,
+                const sf::RenderStates& states) -> void { return self->draw(drawable, states); },
+            [](obe::Graphics::RenderTarget* self, const sf::Vertex* vertices,
+                std::size_t vertexCount,
+                sf::PrimitiveType type) -> void { return self->draw(vertices, vertexCount, type); },
+            [](obe::Graphics::RenderTarget* self, const sf::Vertex* vertices,
+                std::size_t vertexCount, sf::PrimitiveType type,
+                const sf::RenderStates& states) -> void {
+                return self->draw(vertices, vertexCount, type, states);
+            });
     }
     void LoadClassRenderable(sol::state_view state)
     {
@@ -314,7 +337,7 @@ namespace obe::Graphics::Bindings
             = GraphicsNamespace.new_usertype<obe::Graphics::Sprite>("Sprite", sol::base_classes,
                 sol::bases<obe::Transform::UnitBasedObject, obe::Types::Selectable,
                     obe::Transform::Rect, obe::Transform::Movable, obe::Graphics::Renderable,
-                    obe::Component::Component<Sprite>, obe::Component::ComponentBase,
+                    obe::Component::Component<obe::Graphics::Sprite>, obe::Component::ComponentBase,
                     obe::Types::Identifiable, obe::Types::Serializable,
                     obe::Engine::ResourceManagedObject>());
         bindSprite["drawHandle"] = &obe::Graphics::Sprite::drawHandle;
@@ -412,16 +435,26 @@ namespace obe::Graphics::Bindings
                 obe::Graphics::Texture::*)(std::shared_ptr<sf::Texture>)>(
                 &obe::Graphics::Texture::operator=));
     }
+    void LoadClassHsv(sol::state_view state)
+    {
+        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
+        sol::usertype<obe::Graphics::Hsv> bindHsv
+            = GraphicsNamespace.new_usertype<obe::Graphics::Hsv>(
+                "Hsv", sol::call_constructor, sol::default_constructor);
+        bindHsv["H"] = &obe::Graphics::Hsv::H;
+        bindHsv["S"] = &obe::Graphics::Hsv::S;
+        bindHsv["V"] = &obe::Graphics::Hsv::V;
+    }
     void LoadFunctionInitPositionTransformer(sol::state_view state)
     {
         sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
         GraphicsNamespace.set_function(
-            "InitPositionTransformer", obe::Graphics::InitPositionTransformer);
+            "InitPositionTransformer", &obe::Graphics::InitPositionTransformer);
     }
     void LoadFunctionMakeNullTexture(sol::state_view state)
     {
         sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        GraphicsNamespace.set_function("MakeNullTexture", obe::Graphics::MakeNullTexture);
+        GraphicsNamespace.set_function("MakeNullTexture", &obe::Graphics::MakeNullTexture);
     }
     void LoadGlobalTransformers(sol::state_view state)
     {

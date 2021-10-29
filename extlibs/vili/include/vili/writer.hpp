@@ -22,7 +22,7 @@ namespace vili::writer
     struct dump_options
     {
         unsigned int indent = 4;
-        struct array
+        struct _array
         {
             unsigned int items_per_line = 0;
             unsigned int max_line_length = 0;
@@ -35,9 +35,9 @@ namespace vili::writer
             unsigned int inline_spacing = 1;
             comma_spacing_policy comma_spacing = comma_spacing_policy::right_side;
         };
-        array array;
+        _array array;
 
-        struct object
+        struct _object
         {
             unsigned int items_per_line = 0;
             unsigned int max_line_length = 0;
@@ -53,7 +53,7 @@ namespace vili::writer
             comma_spacing_policy comma_spacing = comma_spacing_policy::right_side;
             object_style style = object_style::indent;
         };
-        object object;
+        _object object;
 
         bool root = true;
     };

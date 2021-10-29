@@ -25,6 +25,21 @@ namespace obe::Collision::Bindings
         bindCollisionData["colliders"] = &obe::Collision::CollisionData::colliders;
         bindCollisionData["offset"] = &obe::Collision::CollisionData::offset;
     }
+    void LoadClassInnerTest(sol::state_view state)
+    {
+        sol::table CollisionNamespace = state["obe"]["Collision"].get<sol::table>();
+        sol::usertype<obe::Collision::InnerTest> bindInnerTest
+            = CollisionNamespace.new_usertype<obe::Collision::InnerTest>(
+                "InnerTest", sol::call_constructor, sol::default_constructor);
+        bindInnerTest["build"] = &obe::Collision::InnerTest::build;
+    }
+    void LoadClassCoolChild(sol::state_view state)
+    {
+        sol::table InnerTestNamespace = state["obe"]["Collision"]["InnerTest"].get<sol::table>();
+        sol::usertype<obe::Collision::InnerTest::CoolChild> bindCoolChild
+            = InnerTestNamespace.new_usertype<obe::Collision::InnerTest::CoolChild>(
+                "CoolChild", sol::call_constructor, sol::default_constructor);
+    }
     void LoadClassPolygonalCollider(sol::state_view state)
     {
         sol::table CollisionNamespace = state["obe"]["Collision"].get<sol::table>();
@@ -33,25 +48,24 @@ namespace obe::Collision::Bindings
                 "PolygonalCollider", sol::base_classes,
                 sol::bases<obe::Transform::Polygon, obe::Transform::UnitBasedObject,
                     obe::Transform::Movable, obe::Types::Selectable,
-                    obe::Component::Component<PolygonalCollider>, obe::Component::ComponentBase,
-                    obe::Types::Identifiable, obe::Types::Serializable>());
-        bindPolygonalCollider["operator="] =
-
-            [](obe::Collision::PolygonalCollider* self,
-                const obe::Collision::PolygonalCollider* collider) { self->operator=(*collider); }
-
-        ;
+                    obe::Component::Component<obe::Collision::PolygonalCollider>,
+                    obe::Component::ComponentBase, obe::Types::Identifiable,
+                    obe::Types::Serializable>());
+        bindPolygonalCollider["operator="] = &obe::Collision::PolygonalCollider::operator=;
         bindPolygonalCollider["addTag"] = &obe::Collision::PolygonalCollider::addTag;
         bindPolygonalCollider["clearTags"] = &obe::Collision::PolygonalCollider::clearTags;
         bindPolygonalCollider["doesCollide"] = sol::overload(
             static_cast<obe::Collision::CollisionData (obe::Collision::PolygonalCollider::*)(
                 const obe::Transform::UnitVector&) const>(
                 &obe::Collision::PolygonalCollider::doesCollide),
-            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider* collider,
-                const obe::Transform::UnitVector& offset) { return self->doesCollide(*collider, offset); },
-            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider* collider,
-                const obe::Transform::UnitVector& offset, const bool doAABBfilter)
-            { return self->doesCollide(*collider, offset, doAABBfilter); });
+            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider& collider,
+                const obe::Transform::UnitVector& offset) -> bool {
+                return self->doesCollide(collider, offset);
+            },
+            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider& collider,
+                const obe::Transform::UnitVector& offset, const bool doAABBfilter) -> bool {
+                return self->doesCollide(collider, offset, doAABBfilter);
+            });
         bindPolygonalCollider["doesHaveAnyTag"]
             = &obe::Collision::PolygonalCollider::doesHaveAnyTag;
         bindPolygonalCollider["doesHaveTag"] = &obe::Collision::PolygonalCollider::doesHaveTag;
@@ -61,14 +75,15 @@ namespace obe::Collision::Bindings
             static_cast<obe::Collision::CollisionData (obe::Collision::PolygonalCollider::*)(
                 const obe::Transform::UnitVector&) const>(
                 &obe::Collision::PolygonalCollider::getMaximumDistanceBeforeCollision),
-            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider* collider,
-                const obe::Transform::UnitVector& offset)
-            {
-                return self->getMaximumDistanceBeforeCollision(*collider, offset);
+            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider& collider,
+                const obe::Transform::UnitVector& offset) -> obe::Transform::UnitVector {
+                return self->getMaximumDistanceBeforeCollision(collider, offset);
             },
-            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider* collider,
-                const obe::Transform::UnitVector& offset, const bool doAABBfilter)
-            { return self->getMaximumDistanceBeforeCollision(*collider, offset, doAABBfilter); });
+            [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider& collider,
+                const obe::Transform::UnitVector& offset,
+                const bool doAABBfilter) -> obe::Transform::UnitVector {
+                return self->getMaximumDistanceBeforeCollision(collider, offset, doAABBfilter);
+            });
         bindPolygonalCollider["getParentId"] = &obe::Collision::PolygonalCollider::getParentId;
         bindPolygonalCollider["load"] = &obe::Collision::PolygonalCollider::load;
         bindPolygonalCollider["removeTag"] = &obe::Collision::PolygonalCollider::removeTag;
@@ -77,9 +92,8 @@ namespace obe::Collision::Bindings
         bindPolygonalCollider["getBoundingBox"]
             = &obe::Collision::PolygonalCollider::getBoundingBox;
         bindPolygonalCollider["addPoint"] = sol::overload(
-            [](obe::Collision::PolygonalCollider* self,
-                const obe::Transform::UnitVector& position) -> void
-            { return self->addPoint(position); },
+            [](obe::Collision::PolygonalCollider* self, const obe::Transform::UnitVector& position)
+                -> void { return self->addPoint(position); },
             [](obe::Collision::PolygonalCollider* self, const obe::Transform::UnitVector& position,
                 int pointIndex) -> void { return self->addPoint(position, pointIndex); });
         bindPolygonalCollider["move"] = &obe::Collision::PolygonalCollider::move;
@@ -123,12 +137,12 @@ namespace obe::Collision::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Collision::TrajectoryNode(obe::Scene::SceneNode&)>());
         bindTrajectoryNode["addTrajectory"]
-            = sol::overload([](obe::Collision::TrajectoryNode* self,
-                                const std::string& id) -> obe::Collision::Trajectory&
-                { return self->addTrajectory(id); },
+            = sol::overload([](obe::Collision::TrajectoryNode* self, const std::string& id)
+                                -> obe::Collision::Trajectory& { return self->addTrajectory(id); },
                 [](obe::Collision::TrajectoryNode* self, const std::string& id,
-                    obe::Transform::Units unit) -> obe::Collision::Trajectory&
-                { return self->addTrajectory(id, unit); });
+                    obe::Transform::Units unit) -> obe::Collision::Trajectory& {
+                    return self->addTrajectory(id, unit);
+                });
         bindTrajectoryNode["getSceneNode"] = &obe::Collision::TrajectoryNode::getSceneNode;
         bindTrajectoryNode["getTrajectory"] = &obe::Collision::TrajectoryNode::getTrajectory;
         bindTrajectoryNode["removeTrajectory"] = &obe::Collision::TrajectoryNode::removeTrajectory;

@@ -73,11 +73,18 @@ namespace obe::Event::Bindings
         bindEventGroup["getView"] = &obe::Event::EventGroup::getView;
         bindEventGroup["setJoinable"] = &obe::Event::EventGroup::setJoinable;
         bindEventGroup["isJoinable"] = &obe::Event::EventGroup::isJoinable;
-        bindEventGroup["get"] = sol::overload(
-            static_cast<obe::Event::EventBase& (obe::Event::EventGroup::*)(const std::string&)
-                    const>(&obe::Event::EventGroup::get));
+        bindEventGroup["get"] = static_cast<obe::Event::EventBase& (
+            obe::Event::EventGroup::*)(const std::string&) const>(&obe::Event::EventGroup::get);
         bindEventGroup["contains"] = &obe::Event::EventGroup::contains;
+        bindEventGroup["add"] = &obe::Event::addLuaEvent;
         bindEventGroup["remove"] = &obe::Event::EventGroup::remove;
+        bindEventGroup["trigger"] = sol::overload(
+            [](obe::Event::EventGroup* self, const std::string& name) -> void {
+                return obe::Event::triggerLuaEvent(self, name);
+            },
+            [](obe::Event::EventGroup* self, const std::string& name, sol::table data) -> void {
+                return obe::Event::triggerLuaEvent(self, name, data);
+            });
         bindEventGroup["getEventsNames"] = &obe::Event::EventGroup::getEventsNames;
         bindEventGroup["getEvents"] = &obe::Event::EventGroup::getEvents;
         bindEventGroup["getIdentifier"] = &obe::Event::EventGroup::getIdentifier;
@@ -85,8 +92,6 @@ namespace obe::Event::Bindings
         bindEventGroup["onAddListener"] = &obe::Event::EventGroup::onAddListener;
         bindEventGroup["onRemoveListener"] = &obe::Event::EventGroup::onRemoveListener;
         bindEventGroup["getProfilerResults"] = &obe::Event::EventGroup::getProfilerResults;
-        bindEventGroup["add"] = &obe::Event::addLuaEvent;
-        bindEventGroup["trigger"] = &obe::Event::triggerLuaEvent;
     }
     void LoadClassEventGroupView(sol::state_view state)
     {
@@ -100,9 +105,9 @@ namespace obe::Event::Bindings
         bindEventGroupView["getIdentifier"] = &obe::Event::EventGroupView::getIdentifier;
         bindEventGroupView["getName"] = &obe::Event::EventGroupView::getName;
         bindEventGroupView["isJoinable"] = &obe::Event::EventGroupView::isJoinable;
-        bindEventGroupView["get"] = sol::overload(
-            static_cast<obe::Event::EventBase& (obe::Event::EventGroupView::*)(const std::string&)
-                    const>(&obe::Event::EventGroupView::get));
+        bindEventGroupView["get"]
+            = static_cast<obe::Event::EventBase& (obe::Event::EventGroupView::*)(const std::string&)
+                    const>(&obe::Event::EventGroupView::get);
         bindEventGroupView["getProfilerResults"] = &obe::Event::EventGroupView::getProfilerResults;
     }
     void LoadClassEventManager(sol::state_view state)
@@ -114,8 +119,10 @@ namespace obe::Event::Bindings
         bindEventManager["update"] = &obe::Event::EventManager::update;
         bindEventManager["clear"] = &obe::Event::EventManager::clear;
         bindEventManager["createNamespace"] = &obe::Event::EventManager::createNamespace;
-        bindEventManager["getNamespace"] = &obe::Event::EventManager::getNamespace;
         bindEventManager["joinNamespace"] = &obe::Event::EventManager::joinNamespace;
+        bindEventManager["getNamespace"] = &obe::Event::EventManager::getNamespace;
+        bindEventManager["getAllNamespacesNames"]
+            = &obe::Event::EventManager::getAllNamespacesNames;
         bindEventManager["schedule"] = &obe::Event::EventManager::schedule;
         bindEventManager["dumpProfilerResults"] = &obe::Event::EventManager::dumpProfilerResults;
     }
@@ -133,8 +140,8 @@ namespace obe::Event::Bindings
         bindEventNamespace["removeGroup"] = &obe::Event::EventNamespace::removeGroup;
         bindEventNamespace["doesGroupExists"] = &obe::Event::EventNamespace::doesGroupExists;
         bindEventNamespace["getView"] = &obe::Event::EventNamespace::getView;
-        bindEventNamespace["isJoinable"] = &obe::Event::EventNamespace::isJoinable;
         bindEventNamespace["setJoinable"] = &obe::Event::EventNamespace::setJoinable;
+        bindEventNamespace["isJoinable"] = &obe::Event::EventNamespace::isJoinable;
     }
     void LoadClassEventNamespaceView(sol::state_view state)
     {
@@ -144,8 +151,8 @@ namespace obe::Event::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Event::EventNamespaceView(
                     const obe::Event::EventNamespace&)>());
-        bindEventNamespaceView["getGroup"] = &obe::Event::EventNamespaceView::getGroup;
         bindEventNamespaceView["joinGroup"] = &obe::Event::EventNamespaceView::joinGroup;
+        bindEventNamespaceView["getGroup"] = &obe::Event::EventNamespaceView::getGroup;
         bindEventNamespaceView["getAllGroupsNames"]
             = &obe::Event::EventNamespaceView::getAllGroupsNames;
         bindEventNamespaceView["doesGroupExists"]

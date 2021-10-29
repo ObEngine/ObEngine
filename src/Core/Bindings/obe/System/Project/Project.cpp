@@ -36,12 +36,12 @@ namespace obe::System::Project::Bindings
     {
         sol::table ProjectNamespace = state["obe"]["System"]["Project"].get<sol::table>();
         ProjectNamespace.set_function(
-            "GetProjectLocation", obe::System::Project::GetProjectLocation);
+            "GetProjectLocation", &obe::System::Project::GetProjectLocation);
     }
     void LoadFunctionProjectExists(sol::state_view state)
     {
         sol::table ProjectNamespace = state["obe"]["System"]["Project"].get<sol::table>();
-        ProjectNamespace.set_function("ProjectExists", obe::System::Project::ProjectExists);
+        ProjectNamespace.set_function("ProjectExists", &obe::System::Project::ProjectExists);
     }
     void LoadFunctionLoad(sol::state_view state)
     {
@@ -55,6 +55,6 @@ namespace obe::System::Project::Bindings
     void LoadFunctionListProjects(sol::state_view state)
     {
         sol::table ProjectNamespace = state["obe"]["System"]["Project"].get<sol::table>();
-        ProjectNamespace.set_function("ListProjects", obe::System::Project::ListProjects);
+        ProjectNamespace.set_function("ListProjects", &obe::System::Project::ListProjects);
     }
 };

@@ -66,7 +66,7 @@ namespace obe::Time::Bindings
     void LoadFunctionEpoch(sol::state_view state)
     {
         sol::table TimeNamespace = state["obe"]["Time"].get<sol::table>();
-        TimeNamespace.set_function("epoch", obe::Time::epoch);
+        TimeNamespace.set_function("epoch", &obe::Time::epoch);
     }
     void LoadGlobalSeconds(sol::state_view state)
     {

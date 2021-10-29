@@ -7,6 +7,8 @@ namespace sol
 namespace vili::writer::Bindings
 {
     void LoadClassDumpOptions(sol::state_view state);
+    void LoadClass_array(sol::state_view state);
+    void LoadClass_object(sol::state_view state);
     void LoadEnumDelimiterNewlinePolicy(sol::state_view state);
     void LoadEnumCommaSpacingPolicy(sol::state_view state);
     void LoadEnumObjectStyle(sol::state_view state);

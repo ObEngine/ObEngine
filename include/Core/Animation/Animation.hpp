@@ -161,7 +161,7 @@ namespace obe::Animation
 
     /**
      * \brief A whole Animation that contains one or more AnimationGroup.
-     * TODO: /bind{Animation}
+     *
      */
     class Animation
     {
@@ -191,6 +191,7 @@ namespace obe::Animation
 
     public:
         Animation();
+        Animation(const Animation&) = delete;
         /**
          * \todo Make Animation a serializable type instead of this "applyParameters"
          * \brief Apply global Animation parameters (Sprite offset and priority)

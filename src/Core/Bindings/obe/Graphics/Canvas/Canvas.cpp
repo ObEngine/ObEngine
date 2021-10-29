@@ -203,6 +203,6 @@ namespace obe::Graphics::Canvas::Bindings
     {
         sol::table CanvasNamespace = state["obe"]["Graphics"]["Canvas"].get<sol::table>();
         CanvasNamespace.set_function(
-            "canvasElementTypeToString", obe::Graphics::Canvas::canvasElementTypeToString);
+            "canvasElementTypeToString", &obe::Graphics::Canvas::canvasElementTypeToString);
     }
 };

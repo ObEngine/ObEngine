@@ -96,13 +96,14 @@ namespace obe::Scene
          */
         void loadFromFile(const std::string& path);
         /**
-         * \bind{loadFromFile}
+         * \rename{loadFromFile}
          * \brief Same that loadFromFile excepts the map will load at the next
          *        update
          * \param path Path to the Scene file
          */
         void setFutureLoadFromFile(const std::string& path);
         /**
+         * \rename{loadFromFile}
          * \brief Same that loadFromFile excepts the map will load at the next
          * update
          * \param path Path to the Scene file
