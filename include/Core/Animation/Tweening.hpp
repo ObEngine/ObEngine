@@ -198,7 +198,7 @@ namespace obe::Animation
         {
             if (!m_started)
             {
-                return;
+                return m_from;
             }
             m_current += dt;
             const double progression = m_current / m_duration;
