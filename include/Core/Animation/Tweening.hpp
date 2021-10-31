@@ -125,18 +125,22 @@ namespace obe::Animation
         TweenableClass m_to;
         double m_duration;
         double m_current = 0;
+        bool m_started = false;
 
     public:
-        explicit ValueTweening(Time::TimeUnit duration)
+        explicit ValueTweening(Time::TimeUnit duration, const Easing::EasingFunction& easing = Easing::Linear)
             : m_duration(duration)
+            , m_easing(easing)
         {
             static_assert(template_specialization_exists<TweenImpl<TweenableClass>>());
         }
 
-        ValueTweening(TweenableClass from, TweenableClass to, Time::TimeUnit duration)
+        ValueTweening(TweenableClass from, TweenableClass to, Time::TimeUnit duration,
+            const Easing::EasingFunction& easing = Easing::Linear)
             : m_duration(duration)
             , m_from(from)
             , m_to(to)
+            , m_easing(easing)
         {
             static_assert(template_specialization_exists<TweenImpl<TweenableClass>>());
         }
@@ -159,6 +163,32 @@ namespace obe::Animation
             return *this;
         }
 
+        void start()
+        {
+            m_current = 0;
+            m_started = true;
+        }
+
+        void stop()
+        {
+            m_started = false;
+        }
+
+        void seek(double progression)
+        {
+            m_current = m_duration * progression;
+        }
+
+        void reset()
+        {
+            m_current = 0;
+        }
+
+        void resume()
+        {
+            m_started = true;
+        }
+
         bool done() const
         {
             return (m_current / m_duration) >= 1;
@@ -166,6 +196,10 @@ namespace obe::Animation
 
         TweenableClass step(double dt)
         {
+            if (!m_started)
+            {
+                return;
+            }
             m_current += dt;
             const double progression = m_current / m_duration;
             return TweenImpl<TweenableClass>::step(m_easing(progression), m_from, m_to);
