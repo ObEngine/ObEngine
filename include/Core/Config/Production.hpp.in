@@ -1,0 +1,7 @@
+#pragma once
+#cmakedefine01 BUILD_PRODUCTION
+
+namespace obe::Config
+{
+    constexpr bool OBENGINE_PRODUCTION = BUILD_PRODUCTION;
+} // namespace obe::Config

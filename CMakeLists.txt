@@ -115,6 +115,15 @@ if (NOT DEFINED RUN_CI_TOOLS)
     set(RUN_CI_TOOLS OFF CACHE BOOL "Run CI tools ?")
 endif()
 
+if (NOT DEFINED BUILD_PRODUCTION)
+    set(BUILD_PRODUCTION OFF CACHE BOOL "Build ObEngine for Production ?")
+endif()
+
+configure_file(
+    "${ObEngine_SOURCE_DIR}/include/Core/Config/Production.hpp.in"
+    "${ObEngine_BINARY_DIR}/include/Core/Config/Production.hpp"
+)
+
 set(CMAKE_CXX_CLANG_TIDY "")
 set(CMAKE_CXX_CPPCHECK "")
 set(MAKE_CXX_INCLUDE_WHAT_YOU_USE "")
