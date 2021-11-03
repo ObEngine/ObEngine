@@ -36,6 +36,11 @@ namespace obe::Event
         explicit CallbackScheduler() = default;
         CallbackScheduler& after(double amount);
         CallbackScheduler& every(double amount);
+        /**
+         * \brief calls the callback `amount` times at the rate configured in the `every(x)` call
+         *
+         * \bind{replay}
+         */
         CallbackScheduler& repeat(unsigned int amount);
         void run(const Callback& callback);
         void stop();

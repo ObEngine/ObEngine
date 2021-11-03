@@ -4,11 +4,12 @@
 
 namespace obe::Component::Exceptions
 {
-    class ComponentIdAlreadyTaken : public Exception
+    class ComponentIdAlreadyTaken : public Exception<ComponentIdAlreadyTaken>
     {
     public:
+        using Exception::Exception;
         ComponentIdAlreadyTaken(std::string_view id, DebugInfo info)
-            : Exception("ComponentIdAlreadyTaken", info)
+            : Exception(info)
         {
             this->error("Component with id '{}' already exists");
         }

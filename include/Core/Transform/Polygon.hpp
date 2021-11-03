@@ -13,12 +13,6 @@ namespace obe::Transform
 {
     class Polygon;
 
-    enum class RelativePositionFrom
-    {
-        Point0,
-        Centroid
-    };
-
     using point_index_t = std::size_t;
     class PolygonPoint : public UnitVector
     {
@@ -28,6 +22,12 @@ namespace obe::Transform
         point_index_t rw_index;
 
     public:
+        enum class RelativePositionFrom
+        {
+            Point0,
+            Centroid
+        };
+
         explicit PolygonPoint(Polygon& parent, point_index_t index);
         explicit PolygonPoint(
             Polygon& parent, point_index_t index, const Transform::UnitVector& position);
@@ -35,8 +35,7 @@ namespace obe::Transform
         void remove() const;
         [[nodiscard]] double distance(const Transform::UnitVector& position) const;
         [[nodiscard]] UnitVector getRelativePosition(RelativePositionFrom from) const;
-        void setRelativePosition(
-            RelativePositionFrom from, const Transform::UnitVector& position);
+        void setRelativePosition(RelativePositionFrom from, const Transform::UnitVector& position);
         void move(const Transform::UnitVector& position);
     };
 
@@ -55,7 +54,6 @@ namespace obe::Transform
     /**
      * \brief Class used for all Collisions in the engine, it's a Polygon
      *        containing n points
-     * \bind{Polygon}
      */
     class Polygon : public Transform::UnitBasedObject, public Transform::Movable
     {
@@ -96,8 +94,8 @@ namespace obe::Transform
          * \return The index of the Point (or one of its neighbor)
          *         that is the closest one of the given Position
          */
-        PolygonPoint& findClosestPoint(const Transform::UnitVector& position,
-            bool neighbor = false, const std::vector<point_index_t>& excludedPoints = {});
+        PolygonPoint& findClosestPoint(const Transform::UnitVector& position, bool neighbor = false,
+            const std::vector<point_index_t>& excludedPoints = {});
         /**
          * \brief Get all the Points of the Polygon
          * \return A Path containing all the Points of the Polygon
@@ -150,8 +148,8 @@ namespace obe::Transform
          * \return true if the MasterPoint is on the given Position, false
          *         otherwise
          */
-        [[nodiscard]] bool isCentroidAroundPosition(const Transform::UnitVector& position,
-            const Transform::UnitVector& tolerance) const;
+        [[nodiscard]] bool isCentroidAroundPosition(
+            const Transform::UnitVector& position, const Transform::UnitVector& tolerance) const;
         /**
          * \brief Check if a point of the Polygon is on Position
          *        (x - tolerance <= x <= x + tolerance,
@@ -161,8 +159,7 @@ namespace obe::Transform
          * \return An optional containing a PolygonPoint if found
          */
         std::optional<PolygonPoint*> getPointAroundPosition(
-            const Transform::UnitVector& position,
-            const Transform::UnitVector& tolerance);
+            const Transform::UnitVector& position, const Transform::UnitVector& tolerance);
         /**
          * \brief Moves the Polygon (relative to the current position)
          * \param position UnitVector containing the offset to move the Polygon

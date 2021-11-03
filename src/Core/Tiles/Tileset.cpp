@@ -1,17 +1,12 @@
+#include <System/Path.hpp>
 #include <Tiles/Exceptions.hpp>
 #include <Tiles/Tileset.hpp>
-#include <set>
-
-#include <SFML/Graphics/Sprite.hpp>
-
-#include "Debug/Logger.hpp"
-#include "System/Path.hpp"
 
 namespace obe::Tiles
 {
     Tileset::Tileset(const std::string& id, uint32_t firstTileId, uint32_t tileCount,
-        const std::string& imagePath, uint32_t columns, uint32_t tileWidth,
-        uint32_t tileHeight, uint32_t margin, uint32_t spacing)
+        const std::string& imagePath, uint32_t columns, uint32_t tileWidth, uint32_t tileHeight,
+        uint32_t margin, uint32_t spacing)
         : Identifiable(id)
     {
         m_imagePath = imagePath;
@@ -92,13 +87,11 @@ namespace obe::Tiles
         const std::string& source, uint32_t columns, uint32_t width, uint32_t height,
         uint32_t count)
     {
-        m_tilesets.push_back(std::make_unique<Tileset>(
-            id, firstTileId, count, source, columns, width, height));
+        m_tilesets.push_back(
+            std::make_unique<Tileset>(id, firstTileId, count, source, columns, width, height));
         std::sort(m_tilesets.begin(), m_tilesets.end(),
-            [](const std::unique_ptr<Tileset>& tileset1,
-                const std::unique_ptr<Tileset>& tileset2) {
-                return tileset1->getFirstTileId() > tileset2->getFirstTileId();
-            });
+            [](const std::unique_ptr<Tileset>& tileset1, const std::unique_ptr<Tileset>& tileset2)
+            { return tileset1->getFirstTileId() > tileset2->getFirstTileId(); });
     }
 
     const Tileset& TilesetCollection::tilesetFromId(const std::string& id) const

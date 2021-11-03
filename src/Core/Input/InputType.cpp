@@ -1,9 +1,9 @@
 #include <Input/Exceptions.hpp>
 #include <Input/InputType.hpp>
 
-#define OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(TYPE)                                       \
-    case InputType::TYPE:                                                                \
-        return #TYPE;                                                                    \
+#define OBE_INPUT_WRITE_INPUT_TYPE_TO_STRING(TYPE)                                                 \
+    case InputType::TYPE:                                                                          \
+        return #TYPE;                                                                              \
         break;
 
 namespace obe::Input

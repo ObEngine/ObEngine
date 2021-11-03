@@ -1,13 +1,12 @@
-local Route = require("Lib/Toolkit/Route");
+local Commands = require("Lib/Toolkit/Commands");
+
+local function _exit_()
+    print("Exiting Toolkit")
+    TOOLKIT_CONTEXTS["interactive"] = false;
+end
 
 return {
-    Functions = {
-        exit = function()
-            _term_close();
-        end
-    },
-    Routes = {
-        Route.Call("exit");
-        Route.Help("Exits the Toolkit Console");
-    }
+    Commands.call(_exit_);
+    Commands.help("Exits the Toolkit Console");
+    Commands.context("interactive")
 };

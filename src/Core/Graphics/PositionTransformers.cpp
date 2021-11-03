@@ -4,9 +4,8 @@ namespace obe::Graphics
 {
     std::map<std::string, CoordinateTransformer> Transformers;
 
-    CoordinateTransformer Parallax = [](double pos, double cam, int layer) -> double {
-        return (pos * layer - cam) / double(layer);
-    };
+    CoordinateTransformer Parallax = [](double pos, double cam, int layer) -> double
+    { return (pos * layer - cam) / double(layer); };
     CoordinateTransformer Camera
         = [](double pos, double cam, int layer) -> double { return pos - cam; };
     CoordinateTransformer Position
@@ -28,14 +27,11 @@ namespace obe::Graphics
     }
 
     Transform::UnitVector PositionTransformer::operator()(
-        const Transform::UnitVector& position, const Transform::UnitVector& camera,
-        int layer) const
+        const Transform::UnitVector& position, const Transform::UnitVector& camera, int layer) const
     {
         Transform::UnitVector transformedPosition(position.unit);
-        transformedPosition.x
-            = m_xTransformer(position.x, camera.to(position.unit).x, layer);
-        transformedPosition.y
-            = m_yTransformer(position.y, camera.to(position.unit).y, layer);
+        transformedPosition.x = m_xTransformer(position.x, camera.to(position.unit).x, layer);
+        transformedPosition.y = m_yTransformer(position.y, camera.to(position.unit).y, layer);
         return transformedPosition;
     }
 

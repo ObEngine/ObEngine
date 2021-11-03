@@ -1,7 +1,5 @@
 #include <Network/NetworkHandler.hpp>
 
-#include <iostream>
-
 namespace obe::Network
 {
     NetworkHandler::NetworkHandler(Event::EventNamespace& eventNamespace)

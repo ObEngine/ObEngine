@@ -1,12 +1,26 @@
 #pragma once
 
+#include <memory>
 #include <unordered_map>
 
-#include <System/Path.hpp>
+namespace SoLoud
+{
+    class Wav;
+    class Soloud;
+}
 
-#include <soloud/soloud.h>
-#include <soloud/soloud_wav.h>
+namespace obe
+{
+    namespace System
+    {
+        class Path;
+    }
+}
 
+/**
+ * \additionalinclude{System/Path.hpp}
+ * \additionalinclude{soloud/soloud.h}
+ */
 namespace obe::Audio
 {
     class Sound;
@@ -32,12 +46,11 @@ namespace obe::Audio
 
     /**
      * \brief Class to handle audio playback
-     * \bind{AudioManager}
      */
     class AudioManager
     {
     private:
-        SoLoud::Soloud m_engine;
+        std::unique_ptr<SoLoud::Soloud> m_engine;
         std::unordered_map<std::string, std::shared_ptr<SoLoud::Wav>> m_cache;
 
     public:

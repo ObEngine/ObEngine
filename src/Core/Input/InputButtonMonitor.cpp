@@ -1,5 +1,4 @@
 #include <Debug/Logger.hpp>
-#include <Event/EventGroup.hpp>
 #include <Input/InputButtonMonitor.hpp>
 
 namespace obe::Input
@@ -54,8 +53,8 @@ namespace obe::Input
         if (oldState != m_buttonState)
         {
             m_shouldRefresh = true;
-            events->trigger(m_button.getName(),
-                Events::Keys::StateChanged { m_buttonState, oldState });
+            events->trigger(
+                m_button.getName(), Events::Keys::StateChanged { m_buttonState, oldState });
         }
     }
 

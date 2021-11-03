@@ -1,0 +1,19 @@
+column_limit: 100
+keep_simple_control_block_one_line: false
+keep_simple_function_one_line: false
+break_after_functioncall_lp: true
+break_before_functioncall_rp: true
+
+break_after_functiondef_lp: true
+break_before_functiondef_rp: true
+continuation_indent_width: 4
+
+align_args: false
+align_parameter: false
+chop_down_parameter: true
+
+align_table_field: false
+break_after_table_lb: true
+break_before_table_rb: true
+chop_down_table: true
+chop_down_kv_table: true

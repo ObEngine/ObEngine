@@ -1,7 +1,5 @@
 #include <cmath>
 
-#include <SFML/Graphics/RenderWindow.hpp>
-
 #include <Graphics/DrawUtils.hpp>
 #include <Transform/Rect.hpp>
 #include <Utils/MathUtils.hpp>
@@ -43,9 +41,9 @@ namespace obe::Transform
     }
 
     void Rect::transformRef(
-        UnitVector& vec, const Referential& ref, ConversionType type) const
+        UnitVector& vec, const Referential& ref, ReferentialConversionType type) const
     {
-        const double factor = (type == ConversionType::From) ? 1.0 : -1.0;
+        const double factor = (type == ReferentialConversionType::From) ? 1.0 : -1.0;
         const double radAngle = Utils::Math::convertToRadian(-m_angle);
         const double cosAngle = std::cos(radAngle);
         const double sinAngle = std::sin(radAngle);
@@ -64,20 +62,19 @@ namespace obe::Transform
 
     void Rect::draw(Graphics::RenderTarget surface, int x, int y) const
     {
-        int r = 6;
+        float radius = 6.f;
 
         std::vector<Transform::UnitVector> drawPoints;
         const UnitVector dPos(x, y, Transform::Units::ScenePixels);
 
-        const std::vector<Referential> fixDisplayOrder
-            = { Referential::TopLeft, Referential::Top, Referential::TopRight,
-                  Referential::Right, Referential::BottomRight, Referential::Bottom,
-                  Referential::BottomLeft, Referential::Left };
+        const std::vector<Referential> fixDisplayOrder = { Referential::TopLeft, Referential::Top,
+            Referential::TopRight, Referential::Right, Referential::BottomRight,
+            Referential::Bottom, Referential::BottomLeft, Referential::Left };
 
         for (uint8_t i = 0; i < 8; ++i)
         {
             UnitVector pt;
-            this->transformRef(pt, fixDisplayOrder[i], ConversionType::From);
+            this->transformRef(pt, fixDisplayOrder[i], ReferentialConversionType::From);
 
             UnitVector world = (pt + dPos).to<Units::ScenePixels>();
             drawPoints.push_back(world);
@@ -87,7 +84,7 @@ namespace obe::Transform
         const double cosAngle = std::cos(radAngle);
         const double sinAngle = std::sin(radAngle);
         UnitVector topPos;
-        this->transformRef(topPos, Referential::Top, ConversionType::From);
+        this->transformRef(topPos, Referential::Top, ReferentialConversionType::From);
         topPos = topPos.to<Units::ScenePixels>();
         topPos += dPos;
         UnitVector vec = topPos;
@@ -96,21 +93,23 @@ namespace obe::Transform
         result.x = (-dy * sinAngle) * -1;
         result.y = (dy * cosAngle) * -1;
         vec += result;
-        Graphics::Utils::drawPoint(surface, vec.x - r, vec.y - r, r, sf::Color::White);
-        Graphics::Utils::drawLine(
-            surface, vec.x, vec.y, topPos.x, topPos.y, 2, sf::Color::White);
+        Graphics::Utils::drawPoint(surface, static_cast<int>(vec.x - radius),
+            static_cast<int>(vec.y - radius), radius, sf::Color::White);
+        Graphics::Utils::drawLine(surface, static_cast<int>(vec.x), static_cast<int>(vec.y),
+            static_cast<int>(topPos.x), static_cast<int>(topPos.y), 2, sf::Color::White);
 
-        Graphics::Utils::drawPolygon(surface, drawPoints,
-            { { "lines", true }, { "points", true }, { "radius", r },
-                { "point_color", sf::Color::White }, { "point_color_0", sf::Color::Red },
-                { "point_color_1", sf::Color(255, 128, 0) },
-                { "point_color_2", sf::Color::Yellow },
-                { "point_color_3", sf::Color(128, 255, 0) },
-                { "point_color_4", sf::Color::Green },
-                { "point_color_5", sf::Color(0, 255, 128) },
-                { "point_color_6", sf::Color::Magenta },
-                { "point_color_7", sf::Color(0, 128, 255) },
-                { "point_color_8", sf::Color::White } });
+        std::unordered_map<unsigned int, Graphics::Color> pointsColor
+            = { { 0, Graphics::Color::Red }, { 1, Graphics::Color(255, 128, 0) },
+                  { 2, Graphics::Color::Yellow }, { 3, Graphics::Color(128, 255, 0) },
+                  { 4, Graphics::Color::Green }, { 5, Graphics::Color(0, 255, 128) },
+                  { 6, Graphics::Color::Magenta }, { 7, Graphics::Color(0, 128, 255) },
+                  { 8, Graphics::Color::Blue } };
+
+        // TODO: Refactor using C++20 designated initializers
+        Graphics::Utils::DrawPolygonOptions options { true, true, radius, Graphics::Color::White,
+            Graphics::Color::White, {}, pointsColor };
+
+        Graphics::Utils::drawPolygon(surface, drawPoints, options);
     }
 
     double Rect::x() const
@@ -133,48 +132,39 @@ namespace obe::Transform
         return m_size.y;
     }
 
-    bool Rect::doesIntersects(const Rect& rect) const
+    bool Rect::intersects(const Rect& rect) const
     {
         const auto r1MinX = std::min(m_position.x, m_position.x + m_size.x);
         const auto r1MaxX = std::max(m_position.x, m_position.x + m_size.x);
         const auto r1MinY = std::min(m_position.y, m_position.y + m_size.y);
         const auto r1MaxY = std::max(m_position.y, m_position.y + m_size.y);
 
-        const auto r2MinX
-            = std::min(rect.m_position.x, rect.m_position.x + rect.m_size.x);
-        const auto r2MaxX
-            = std::max(rect.m_position.x, rect.m_position.x + rect.m_size.x);
-        const auto r2MinY
-            = std::min(rect.m_position.y, rect.m_position.y + rect.m_size.y);
-        const auto r2MaxY
-            = std::max(rect.m_position.y, rect.m_position.y + rect.m_size.y);
+        const auto r2MinX = std::min(rect.m_position.x, rect.m_position.x + rect.m_size.x);
+        const auto r2MaxX = std::max(rect.m_position.x, rect.m_position.x + rect.m_size.x);
+        const auto r2MinY = std::min(rect.m_position.y, rect.m_position.y + rect.m_size.y);
+        const auto r2MaxY = std::max(rect.m_position.y, rect.m_position.y + rect.m_size.y);
 
         return !(r2MinX > r1MaxX || r2MaxX < r1MinX || r2MinY > r1MaxY || r2MaxY < r1MinY);
     }
 
-    std::optional<Rect> Rect::getIntersection(const Rect& rect) const
+    std::optional<Rect> Rect::intersection(const Rect& rect) const
     {
         const auto r1MinX = std::min(m_position.x, m_position.x + m_size.x);
         const auto r1MaxX = std::max(m_position.x, m_position.x + m_size.x);
         const auto r1MinY = std::min(m_position.y, m_position.y + m_size.y);
         const auto r1MaxY = std::max(m_position.y, m_position.y + m_size.y);
 
-        const auto r2MinX
-            = std::min(rect.m_position.x, rect.m_position.x + rect.m_size.x);
-        const auto r2MaxX
-            = std::max(rect.m_position.x, rect.m_position.x + rect.m_size.x);
-        const auto r2MinY
-            = std::min(rect.m_position.y, rect.m_position.y + rect.m_size.y);
-        const auto r2MaxY
-            = std::max(rect.m_position.y, rect.m_position.y + rect.m_size.y);
+        const auto r2MinX = std::min(rect.m_position.x, rect.m_position.x + rect.m_size.x);
+        const auto r2MaxX = std::max(rect.m_position.x, rect.m_position.x + rect.m_size.x);
+        const auto r2MinY = std::min(rect.m_position.y, rect.m_position.y + rect.m_size.y);
+        const auto r2MaxY = std::max(rect.m_position.y, rect.m_position.y + rect.m_size.y);
 
         const auto intersectionLeft = std::max(r1MinX, r2MinX);
         const auto intersectionTop = std::max(r1MinY, r2MinY);
         const auto intersectionRight = std::min(r1MaxX, r2MaxX);
         const auto intersectionBottom = std::min(r1MaxY, r2MaxY);
 
-        if ((intersectionLeft < intersectionRight)
-            && (intersectionTop < intersectionBottom))
+        if ((intersectionLeft < intersectionRight) && (intersectionTop < intersectionBottom))
         {
             Rect intersection;
             intersection.setPosition(
@@ -220,13 +210,11 @@ namespace obe::Transform
         {
             if (ref.isOnTopSide())
             {
-                this->setSize(
-                    { movedPoint.x - position.x, movedPoint.y - position.y }, ref);
+                this->setSize({ movedPoint.x - position.x, movedPoint.y - position.y }, ref);
             }
             else
             {
-                this->setSize(
-                    { position.x - movedPoint.x, position.y - movedPoint.y }, ref);
+                this->setSize({ position.x - movedPoint.x, position.y - movedPoint.y }, ref);
             }
         }
         if (ref.isOnLeftSide() || ref.isOnRightSide())
@@ -257,14 +245,14 @@ namespace obe::Transform
     UnitVector Rect::getPosition(const Referential& ref) const
     {
         UnitVector getPosVec = m_position;
-        this->transformRef(getPosVec, ref, ConversionType::From);
+        this->transformRef(getPosVec, ref, ReferentialConversionType::From);
         return getPosVec;
     }
 
     void Rect::setPosition(const UnitVector& position, const Referential& ref)
     {
         UnitVector pVec = position.to<Units::SceneUnits>();
-        this->transformRef(pVec, ref, ConversionType::To);
+        this->transformRef(pVec, ref, ReferentialConversionType::To);
         m_position.set(pVec);
     }
 

@@ -1,14 +1,11 @@
+#include <Debug/Logger.hpp>
 #include <System/Path.hpp>
-#include <Utils/StringUtils.hpp>
+#include <Utils/FileUtils.hpp>
 
 namespace obe::System
 {
-    std::string joinPath(const std::string& base, const std::string& path)
-    {
-        return base + ((!base.empty()) ? "/" : "") + path;
-    }
-
-    std::pair<std::string, std::string> splitPathAndPrefix(const std::string& path)
+    std::pair<std::string, std::string> splitPathAndPrefix(
+        const std::string& path, bool warnOnMissingPrefix)
     {
         if (const auto prefixPos = path.find("://"); prefixPos != std::string::npos)
         {
@@ -20,16 +17,19 @@ namespace obe::System
             return std::make_pair(path.substr(prefixPos + 3), prefix);
         }
 
-        Debug::Log->warn("Path '{}' has no prefix, defaulting to '*://'", path);
+        if (warnOnMissingPrefix)
+        {
+            Debug::Log->warn("Path '{}' has no prefix, defaulting to '*://'", path);
+        }
         return std::make_pair(path, "");
     }
 
-    std::vector<MountablePath> filterMountablePathsWithPrefix(const std::vector<MountablePath>& mounts, const std::string& prefix)
+    MountList filterMountablePathsWithPrefix(const MountList& mounts, const std::string& prefix)
     {
-        std::vector<MountablePath> validMounts;
-        for (const MountablePath& mountablePath : mounts)
+        std::vector<std::shared_ptr<MountablePath>> validMounts;
+        for (const auto& mountablePath : mounts)
         {
-            if (mountablePath.prefix == prefix || (prefix.empty() && mountablePath.implicit))
+            if (mountablePath->prefix == prefix || (prefix.empty() && mountablePath->implicit))
             {
                 validMounts.push_back(mountablePath);
             }
@@ -39,7 +39,7 @@ namespace obe::System
             std::vector<std::string> allPrefixes;
             allPrefixes.reserve(mounts.size());
             std::transform(mounts.begin(), mounts.end(), std::back_inserter(allPrefixes),
-                [](const MountablePath& mount) { return mount.prefix; });
+                [](const auto& mount) { return mount->prefix; });
             throw Exceptions::UnknownPathPrefix(prefix, allPrefixes, EXC_INFO);
         }
         return validMounts;
@@ -52,27 +52,54 @@ namespace obe::System
         if (!success())
         {
             std::vector<std::string> mountsAsStrings;
-            std::transform(m_mounts.begin(), m_mounts.end(),
-                std::back_inserter(mountsAsStrings), [](const MountablePath& mount) {
-                    return fmt::format("\"{}://{}\"", mount.prefix, mount.basePath);
-                });
+            std::transform(m_mounts.begin(), m_mounts.end(), std::back_inserter(mountsAsStrings),
+                [](const auto& mount)
+                { return fmt::format("\"{}:// = {}\"", mount->prefix, mount->basePath); });
             throw Exceptions::ResourceNotFound(m_path, mountsAsStrings, EXC_INFO);
         }
     }
 
-    FindResult::FindResult(const std::string& pathNotFound, const std::vector<MountablePath>& mounts)
+    FindResult::FindResult(
+        const std::string& pathNotFound, const std::string& query, const MountList& mounts)
+        : m_mounts(mounts)
     {
         m_path = pathNotFound;
-        m_mounts = mounts;
+        m_query = query;
     }
 
-    FindResult::FindResult(PathType pathType, const std::string& root,
-        const std::string& path, const std::string& element)
+    FindResult::FindResult(PathType pathType, std::shared_ptr<MountablePath> mount,
+        const std::string& path, const std::string& query, const std::string& element)
+        : m_mount(std::move(mount))
     {
         m_type = pathType;
-        m_root = root;
         m_path = path;
-        m_element = element;
+        m_query = query;
+        if (element.empty())
+        {
+            m_element = element;
+        }
+        else
+        {
+            m_element = m_path;
+        }
+    }
+
+    std::string FindResult::hypotheticalPath() const
+    {
+        if (success())
+        {
+            return m_path;
+        }
+        const auto [path, prefix] = splitPathAndPrefix(m_query, false);
+        for (const auto& mount : m_mounts)
+        {
+            if (mount->prefix == prefix)
+            {
+                return Utils::File::join({ mount->basePath, path });
+            }
+        }
+
+        return "";
     }
 
     const std::string& FindResult::path() const
@@ -81,10 +108,15 @@ namespace obe::System
         return m_path;
     }
 
-    const std::string& FindResult::root() const
+    const MountablePath& FindResult::mount() const
     {
         checkValidity();
-        return m_root;
+        return *m_mount;
+    }
+
+    const std::string& FindResult::query() const
+    {
+        return m_query;
     }
 
     const std::string& FindResult::element() const
@@ -94,7 +126,7 @@ namespace obe::System
 
     bool FindResult::success() const
     {
-        return m_type != PathType::All;
+        return static_cast<bool>(m_mount);
     }
 
     FindResult::operator bool() const
@@ -102,7 +134,7 @@ namespace obe::System
         return this->success();
     }
 
-    FindResult::operator const std::string &() const
+    FindResult::operator const std::string&() const
     {
         checkValidity();
         return m_path;
@@ -121,30 +153,48 @@ namespace obe::System
     }
 
     Path::Path()
-        : m_mounts(MountablePath::Paths())
+        : m_mounts(&MountablePath::Paths())
     {
     }
 
-    Path::Path(const std::vector<MountablePath>& mount)
-        : m_mounts(mount)
+    Path::Path(const MountList& mount)
+        : m_mounts(&m_customMounts)
+        , m_customMounts(mount)
     {
+    }
+
+    const MountList* Path::copyMountSource(const Path& path)
+    {
+        // Using the default mount source
+        if (path.m_mounts == &MountablePath::Paths())
+        {
+            return &MountablePath::Paths();
+        }
+        // Pointing to own custom mounts
+        if (path.m_mounts == &path.m_customMounts)
+        {
+            return &this->m_customMounts;
+        }
+        // Unknown origin, keeping as-is
+        return path.m_mounts;
     }
 
     Path::Path(const Path& path)
-        : m_mounts(path.m_mounts)
+        : m_mounts(copyMountSource(path))
     {
         this->m_path = path.toString();
         this->m_prefix = path.m_prefix;
+        this->m_customMounts = path.m_customMounts;
     }
 
     Path::Path(std::string_view path)
-        : m_mounts(MountablePath::Paths())
+        : m_mounts(&MountablePath::Paths())
     {
         std::tie(m_path, m_prefix) = splitPathAndPrefix(path.data());
-        
     }
 
-    Path::Path(std::string_view prefix, std::string_view path) : m_mounts(MountablePath::Paths())
+    Path::Path(std::string_view prefix, std::string_view path)
+        : m_mounts(&MountablePath::Paths())
     {
         m_prefix = prefix;
         m_path = path;
@@ -158,8 +208,8 @@ namespace obe::System
 
     Path Path::add(const std::string& path) const
     {
-        return Path(m_prefix,
-            m_path + ((!m_path.empty() && m_path.back() != '/') ? "/" : "") + path);
+        return Path(
+            m_prefix, m_path + ((!m_path.empty() && m_path.back() != '/') ? "/" : "") + path);
     }
 
     std::string Path::last() const
@@ -170,37 +220,35 @@ namespace obe::System
 
     Path Path::getPath(const std::size_t index) const
     {
-        if (index < m_mounts.size())
-            return Path(m_mounts[index].basePath).add(m_path);
+        if (index < m_mounts->size())
+            return Path(m_mounts->at(index)->basePath).add(m_path);
         std::vector<std::string> mountNames;
-        mountNames.reserve(m_mounts.size());
-        for (const auto& mount : m_mounts)
+        mountNames.reserve(m_mounts->size());
+        for (const auto& mount : *m_mounts)
         {
-            mountNames.push_back(mount.basePath);
+            mountNames.push_back(mount->basePath);
         }
-        throw Exceptions::MountablePathIndexOverflow(
-            index, m_mounts.size(), mountNames, EXC_INFO);
+        throw Exceptions::MountablePathIndexOverflow(index, m_mounts->size(), mountNames, EXC_INFO);
     }
 
     std::vector<FindResult> Path::list(PathType pathType) const
     {
         std::vector<FindResult> results;
-        const std::vector<MountablePath> validMounts
-            = filterMountablePathsWithPrefix(m_mounts, m_prefix);
-        for (const MountablePath& mountedPath : validMounts)
+        const std::string query = fmt::format("{}://{}", m_prefix, m_path);
+        const MountList validMounts = filterMountablePathsWithPrefix(*m_mounts, m_prefix);
+        for (const auto& mountedPath : validMounts)
         {
-            std::string fullPath = joinPath(mountedPath.basePath, m_path);
+            std::string fullPath = Utils::File::join({ mountedPath->basePath, m_path });
 
             if (Utils::File::directoryExists(fullPath))
             {
                 if (pathType == PathType::All || pathType == PathType::Directory)
                 {
-                    std::vector<std::string> directories
-                        = Utils::File::getDirectoryList(fullPath);
+                    std::vector<std::string> directories = Utils::File::getDirectoryList(fullPath);
                     for (const std::string& directory : directories)
                     {
-                        results.emplace_back(PathType::Directory, mountedPath.basePath,
-                            joinPath(fullPath, directory), directory);
+                        results.emplace_back(PathType::Directory, mountedPath,
+                            Utils::File::join({ fullPath, directory }), query, directory);
                     }
                 }
                 else if (pathType == PathType::All || pathType == PathType::File)
@@ -208,8 +256,8 @@ namespace obe::System
                     std::vector<std::string> files = Utils::File::getFileList(fullPath);
                     for (const std::string& file : files)
                     {
-                        results.emplace_back(PathType::File, mountedPath.basePath,
-                            joinPath(fullPath, file), file);
+                        results.emplace_back(PathType::File, mountedPath,
+                            Utils::File::join({ fullPath, file }), query, file);
                     }
                 }
             }
@@ -220,59 +268,62 @@ namespace obe::System
 
     FindResult Path::find(PathType pathType) const
     {
-        if (const auto cacheResult = PathCache.find(m_path);
-            cacheResult != PathCache.end())
+        const std::string query = fmt::format("{}://{}", m_prefix, m_path);
+        if (const auto cacheResult = PathCache.find(query); cacheResult != PathCache.end())
         {
             return cacheResult->second;
         }
-        const std::vector<MountablePath> validMounts
-            = filterMountablePathsWithPrefix(m_mounts, m_prefix);
-        for (const MountablePath& mountedPath : validMounts)
+        MountList validMounts;
+        try
         {
-            const std::string fullPath = mountedPath.basePath
-                + ((!mountedPath.basePath.empty()) ? "/" : "") + m_path;
+            validMounts = filterMountablePathsWithPrefix(*m_mounts, m_prefix);
+        }
+        catch (const Exceptions::UnknownPathPrefix& exc)
+        {
+            throw Exceptions::PathError(m_prefix, m_path, EXC_INFO).nest(exc);
+        }
+
+        for (const auto& mountedPath : validMounts)
+        {
+            const std::string fullPath
+                = mountedPath->basePath + ((!mountedPath->basePath.empty()) ? "/" : "") + m_path;
             if ((pathType == PathType::All || pathType == PathType::File)
                 && Utils::File::fileExists(fullPath))
             {
-                const std::string result = joinPath(mountedPath.basePath, m_path);
+                const std::string result = Utils::File::join({ mountedPath->basePath, m_path });
                 return PathCache
-                    .emplace(m_path,
-                        FindResult(PathType::File, mountedPath.basePath, result, m_path))
+                    .emplace(query, FindResult(PathType::File, mountedPath, result, query))
                     .first->second;
             }
             else if ((pathType == PathType::All || pathType == PathType::Directory)
                 && Utils::File::directoryExists(fullPath))
             {
-                const std::string result = joinPath(mountedPath.basePath, m_path);
+                const std::string result = Utils::File::join({ mountedPath->basePath, m_path });
                 return PathCache
-                    .emplace(m_path,
-                        FindResult(
-                            PathType::Directory, mountedPath.basePath, result, m_path))
+                    .emplace(query, FindResult(PathType::Directory, mountedPath, result, query))
                     .first->second;
             }
         }
-        return FindResult(m_path, validMounts);
+        return FindResult(m_path, query, validMounts);
     }
 
     std::vector<FindResult> Path::findAll(PathType pathType) const
     {
+        const std::string query = fmt::format("{}://{}", m_prefix, m_path);
         std::vector<FindResult> results;
-        const std::vector<MountablePath> validMounts
-            = filterMountablePathsWithPrefix(m_mounts, m_prefix);
-        for (const MountablePath& mountedPath : validMounts)
+        const MountList validMounts = filterMountablePathsWithPrefix(*m_mounts, m_prefix);
+        for (const auto& mountedPath : validMounts)
         {
-            const std::string fullPath = joinPath(mountedPath.basePath, m_path);
+            const std::string fullPath = Utils::File::join({ mountedPath->basePath, m_path });
             if ((pathType == PathType::All || pathType == PathType::File)
                 && Utils::File::fileExists(fullPath))
             {
-                results.emplace_back(
-                    PathType::File, mountedPath.basePath, fullPath, m_path);
+                results.emplace_back(PathType::File, mountedPath, fullPath, query);
             }
             else if ((pathType == PathType::All || pathType == PathType::Directory)
                 && Utils::File::directoryExists(fullPath))
             {
-                results.emplace_back(
-                    PathType::Directory, mountedPath.basePath, fullPath, m_path);
+                results.emplace_back(PathType::Directory, mountedPath, fullPath, query);
             }
         }
         return results;
@@ -285,30 +336,50 @@ namespace obe::System
 
     Path& Path::operator=(const Path& path)
     {
+        m_customMounts = path.m_customMounts;
+        m_mounts = copyMountSource(path);
         m_path = path.m_path;
         m_prefix = path.m_prefix;
-
         return *this;
     }
 
-    ContextualPathFactory::ContextualPathFactory(const std::string& base)
+    Path::operator std::string() const
     {
-        m_mounts = System::MountablePath::Paths();
-        m_mounts.push_back(
-            System::MountablePath(System::MountablePathType::Path, base, "self"));
+        return this->toString();
     }
 
-    ContextualPathFactory::ContextualPathFactory(const std::string& base,
-        const std::vector<MountablePath>& customMounts)
+    MountList ContextualPathFactory::makeMountList(const std::string& base)
     {
-        m_mounts = customMounts;
-        m_mounts.push_back(
-            System::MountablePath(System::MountablePathType::Path, base, "self"));
+        MountList customMounts = MountablePath::Paths();
+        customMounts.push_back(
+            std::make_unique<System::MountablePath>(System::MountablePathType::Path, base, "self"));
+        return customMounts;
+    }
+
+    MountList ContextualPathFactory::makeMountList(
+        const std::string& base, const MountList& customMounts)
+    {
+        MountList _customMounts = customMounts;
+        _customMounts.push_back(
+            std::make_unique<System::MountablePath>(System::MountablePathType::Path, base, "self"));
+        return _customMounts;
+    }
+
+    ContextualPathFactory::ContextualPathFactory(const std::string& base)
+        : m_base(makeMountList(base))
+    {
+    }
+
+    ContextualPathFactory::ContextualPathFactory(
+        const std::string& base, const MountList& customMounts)
+        : m_base(makeMountList(base, customMounts))
+    {
     }
 
     Path ContextualPathFactory::operator()(const std::string& path) const
     {
-        return System::Path(m_mounts).set(path);
+        Path newPath = m_base;
+        return newPath.set(path);
     }
 } // namespace obe::System
 

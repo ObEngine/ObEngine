@@ -4,8 +4,8 @@
 --
 -- Dependencies: `pl.utils`, `pl.types`
 -- @module pl.tablex
-local utils = require ('Lib.Extlibs.pl.utils')
-local types = require ('Lib.Extlibs.pl.types')
+local utils = require ('pl.utils')
+local types = require ('pl.types')
 local getmetatable,setmetatable,require = getmetatable,setmetatable,require
 local tsort,append,remove = table.sort,table.insert,table.remove
 local min = math.min
@@ -19,7 +19,7 @@ local tablex = {}
 -- However, when the source has no obvious type, then we attach appropriate metatables
 -- like List, Map, etc to the result.
 local function setmeta (res,tbl,pl_class)
-    local mt = getmetatable(tbl) or pl_class and require('Lib.Extlibs.pl.' .. pl_class)
+    local mt = getmetatable(tbl) or pl_class and require('pl.' .. pl_class)
     return mt and setmetatable(res, mt) or res
 end
 
@@ -28,7 +28,7 @@ local function makelist(l)
 end
 
 local function makemap(m)
-    return setmetatable(m, require('Lib.Extlibs.pl.Map'))
+    return setmetatable(m, require('pl.Map'))
 end
 
 local function complain (idx,msg)
@@ -548,7 +548,7 @@ local function set_op(i,v) return true,v end
 -- @return a set (a map-like table)
 function tablex.makeset (t)
     assert_arg_indexable(1,t)
-    return setmetatable(tablex.pairmap(set_op,t),require('Lib.Extlibs.pl.Set'))
+    return setmetatable(tablex.pairmap(set_op,t),require('pl.Set'))
 end
 
 --- combine two tables, either as union or intersection. Corresponds to

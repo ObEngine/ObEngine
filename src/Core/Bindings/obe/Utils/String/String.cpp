@@ -9,87 +9,100 @@ namespace obe::Utils::String::Bindings
     void LoadFunctionSplit(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("split", obe::Utils::String::split);
+        StringNamespace.set_function("split",
+            sol::overload(
+                [](const std::string& str) -> std::vector<std::string> {
+                    return obe::Utils::String::split(str);
+                },
+                [](const std::string& str,
+                    const std::string& delimiters) -> std::vector<std::string> {
+                    return obe::Utils::String::split(str, delimiters);
+                }));
     }
     void LoadFunctionOccurencesInString(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function(
-            "occurencesInString", obe::Utils::String::occurencesInString);
+        StringNamespace.set_function("occurencesInString", &obe::Utils::String::occurencesInString);
     }
     void LoadFunctionIsStringAlpha(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("isStringAlpha", obe::Utils::String::isStringAlpha);
+        StringNamespace.set_function("isStringAlpha", &obe::Utils::String::isStringAlpha);
     }
     void LoadFunctionIsStringAlphaNumeric(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
         StringNamespace.set_function(
-            "isStringAlphaNumeric", obe::Utils::String::isStringAlphaNumeric);
+            "isStringAlphaNumeric", &obe::Utils::String::isStringAlphaNumeric);
     }
     void LoadFunctionIsStringNumeric(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function(
-            "isStringNumeric", obe::Utils::String::isStringNumeric);
+        StringNamespace.set_function("isStringNumeric", &obe::Utils::String::isStringNumeric);
     }
     void LoadFunctionIsStringInt(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("isStringInt", obe::Utils::String::isStringInt);
+        StringNamespace.set_function("isStringInt", &obe::Utils::String::isStringInt);
     }
     void LoadFunctionIsStringFloat(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("isStringFloat", obe::Utils::String::isStringFloat);
+        StringNamespace.set_function("isStringFloat", &obe::Utils::String::isStringFloat);
     }
     void LoadFunctionReplace(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("replace", obe::Utils::String::replace);
+        StringNamespace.set_function("replace", &obe::Utils::String::replace);
     }
     void LoadFunctionIsSurroundedBy(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function(
-            "isSurroundedBy", obe::Utils::String::isSurroundedBy);
+        StringNamespace.set_function("isSurroundedBy", &obe::Utils::String::isSurroundedBy);
     }
     void LoadFunctionGetRandomKey(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("getRandomKey", obe::Utils::String::getRandomKey);
+        StringNamespace.set_function("getRandomKey", &obe::Utils::String::getRandomKey);
     }
     void LoadFunctionContains(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("contains", obe::Utils::String::contains);
+        StringNamespace.set_function("contains", &obe::Utils::String::contains);
     }
     void LoadFunctionStartsWith(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("startsWith", obe::Utils::String::startsWith);
+        StringNamespace.set_function("startsWith", &obe::Utils::String::startsWith);
     }
     void LoadFunctionEndsWith(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("endsWith", obe::Utils::String::endsWith);
+        StringNamespace.set_function("endsWith", &obe::Utils::String::endsWith);
     }
     void LoadFunctionDistance(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("distance", obe::Utils::String::distance);
+        StringNamespace.set_function("distance", &obe::Utils::String::distance);
     }
     void LoadFunctionSortByDistance(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function(
-            "sortByDistance", obe::Utils::String::sortByDistance);
+        StringNamespace.set_function("sortByDistance",
+            sol::overload(
+                [](const std::string& source,
+                    const std::vector<std::string>& words) -> std::vector<std::string> {
+                    return obe::Utils::String::sortByDistance(source, words);
+                },
+                [](const std::string& source, const std::vector<std::string>& words,
+                    std::size_t limit) -> std::vector<std::string> {
+                    return obe::Utils::String::sortByDistance(source, words, limit);
+                }));
     }
     void LoadFunctionQuote(sol::state_view state)
     {
         sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("quote", obe::Utils::String::quote);
+        StringNamespace.set_function("quote", &obe::Utils::String::quote);
     }
     void LoadGlobalAlphabet(sol::state_view state)
     {

@@ -1,14 +1,7 @@
-#include <set>
-
-#include <Debug/Logger.hpp>
-#include <SFML/Graphics/CircleShape.hpp>
+#include <Graphics/DrawUtils.hpp>
 #include <Scene/Scene.hpp>
 #include <Tiles/Exceptions.hpp>
 #include <Tiles/Layer.hpp>
-#include <Tiles/Scene.hpp>
-
-#include "Graphics/DrawUtils.hpp"
-#include "Utils/VectorUtils.hpp"
 
 const std::string_view fragSource = "\
 #version 130\n\
@@ -46,10 +39,9 @@ namespace obe::Tiles
             /*const Transform::UnitVector pMaster
                 = this->getCentroid().to<Transform::Units::ScenePixels>();*/
 
-            float r = 6;
-            Graphics::Utils::DrawPolygonOptions drawOptions = { { "lines", true },
-                { "points", false }, { "radius", r }, { "point_color", sf::Color::White },
-                { "line_color", sf::Color::White } };
+            const float r = 6.f;
+            // TODO: Refactor using C++20 designated initializers
+            const Graphics::Utils::DrawPolygonOptions drawOptions { true, false, r };
 
             std::vector<Transform::UnitVector> lDrawPoints;
 
@@ -58,8 +50,8 @@ namespace obe::Tiles
                 const Transform::UnitVector point
                     = collider.get(i).to<Transform::Units::ScenePixels>();
 
-                lDrawPoints.emplace_back(point.x - offset.x, point.y - offset.y,
-                    Transform::Units::ScenePixels);
+                lDrawPoints.emplace_back(
+                    point.x - offset.x, point.y - offset.y, Transform::Units::ScenePixels);
             }
 
             Graphics::Utils::drawPolygon(surface, lDrawPoints, drawOptions);
@@ -94,8 +86,7 @@ namespace obe::Tiles
                 m_colliders[tileIndex] = &m_scene.getScene().createCollider();
                 (*m_colliders[tileIndex]) = *collider;
                 m_colliders[tileIndex]->setParentId("tile_" + std::to_string(tileInfo.tileId));
-                const Transform::Rect boundingBox
-                    = m_colliders.at(tileIndex)->getBoundingBox();
+                const Transform::Rect boundingBox = m_colliders.at(tileIndex)->getBoundingBox();
                 Transform::UnitVector offset
                     = m_colliders.at(tileIndex)->get(0) - boundingBox.getPosition();
                 offset += boundingBox.getPosition();
@@ -104,8 +95,8 @@ namespace obe::Tiles
                 auto cameraSizeBackup = m_scene.getScene().getCamera().getSize().y / 2;
                 m_scene.getScene().getCamera().setSize(1);
                 m_colliders.at(tileIndex)->setPosition(
-                    Transform::UnitVector(x * tileset.getTileWidth(),
-                        y * tileset.getTileHeight(), Transform::Units::ScenePixels)
+                    Transform::UnitVector(x * tileset.getTileWidth(), y * tileset.getTileHeight(),
+                        Transform::Units::ScenePixels)
                     + offset);
                 m_scene.getScene().getCamera().setSize(cameraSizeBackup);
             }
@@ -114,7 +105,8 @@ namespace obe::Tiles
         {
             if (gameObject.at("tileId").as<vili::integer>() == tileInfo.tileId)
             {
-                std::string gameObjectId = Utils::String::replace(gameObject.at("id"), "{index}", std::to_string(m_scene.getScene().getGameObjectAmount()));
+                std::string gameObjectId = Utils::String::replace(gameObject.at("id"), "{index}",
+                    std::to_string(m_scene.getScene().getGameObjectAmount()));
                 vili::node requirements = gameObject.at("Requires");
                 Transform::UnitVector gameObjectPosition(x * tileset.getTileWidth(),
                     y * tileset.getTileHeight(), Transform::Units::ScenePixels);
@@ -143,14 +135,11 @@ namespace obe::Tiles
         quad[2].position = sf::Vector2f((x + 1) * tileWidth, (y + 1) * tileHeight);
         quad[3].position = sf::Vector2f(x * tileWidth, (y + 1) * tileHeight);
 
-        quad[quads.q0].texCoords
-            = sf::Vector2f(textureX * tileWidth, textureY * tileHeight);
-        quad[quads.q1].texCoords
-            = sf::Vector2f((textureX + 1) * tileWidth, textureY * tileHeight);
+        quad[quads.q0].texCoords = sf::Vector2f(textureX * tileWidth, textureY * tileHeight);
+        quad[quads.q1].texCoords = sf::Vector2f((textureX + 1) * tileWidth, textureY * tileHeight);
         quad[quads.q2].texCoords
             = sf::Vector2f((textureX + 1) * tileWidth, (textureY + 1) * tileHeight);
-        quad[quads.q3].texCoords
-            = sf::Vector2f(textureX * tileWidth, (textureY + 1) * tileHeight);
+        quad[quads.q3].texCoords = sf::Vector2f(textureX * tileWidth, (textureY + 1) * tileHeight);
     }
 
     void TileLayer::clearTile(uint32_t x, uint32_t y)
@@ -166,12 +155,13 @@ namespace obe::Tiles
                 break;
             }
         }
-        if (const auto tileCollision = m_colliders.find(tileIndex); tileCollision != m_colliders.end())
+        if (const auto tileCollision = m_colliders.find(tileIndex);
+            tileCollision != m_colliders.end())
         {
             m_scene.getScene().removeCollider(tileCollision->second->getId());
             m_colliders.erase(tileCollision);
         }
-        
+
         // TODO: Clear GameObjects when necessary
         this->clearQuad(quad);
         m_positions.erase(tileIndex);
@@ -190,22 +180,17 @@ namespace obe::Tiles
         const uint32_t tileWidth = tileset.getTileWidth();
         const uint32_t tileHeight = tileset.getTileHeight();
 
-        const int textureX
-            = (tileId - firstTileId) % (tileset.getImageWidth() / tileWidth);
-        const int textureY
-            = (tileId - firstTileId) / (tileset.getImageWidth() / tileWidth);
+        const int textureX = (tileId - firstTileId) % (tileset.getImageWidth() / tileWidth);
+        const int textureY = (tileId - firstTileId) / (tileset.getImageWidth() / tileWidth);
 
         TextureQuadsIndex quads;
         quads.transform(tileInfo);
 
-        quad[quads.q0].texCoords
-            = sf::Vector2f(textureX * tileWidth, textureY * tileHeight);
-        quad[quads.q1].texCoords
-            = sf::Vector2f((textureX + 1) * tileWidth, textureY * tileHeight);
+        quad[quads.q0].texCoords = sf::Vector2f(textureX * tileWidth, textureY * tileHeight);
+        quad[quads.q1].texCoords = sf::Vector2f((textureX + 1) * tileWidth, textureY * tileHeight);
         quad[quads.q2].texCoords
             = sf::Vector2f((textureX + 1) * tileWidth, (textureY + 1) * tileHeight);
-        quad[quads.q3].texCoords
-            = sf::Vector2f(textureX * tileWidth, (textureY + 1) * tileHeight);
+        quad[quads.q3].texCoords = sf::Vector2f(textureX * tileWidth, (textureY + 1) * tileHeight);
     }
 
     void TileLayer::clearQuad(sf::Vertex* quad) const
@@ -217,9 +202,8 @@ namespace obe::Tiles
         }
     }
 
-    TileLayer::TileLayer(const TileScene& scene, const std::string& id, int32_t layer,
-        uint32_t x, uint32_t y, uint32_t width, uint32_t height,
-        std::vector<uint32_t> data)
+    TileLayer::TileLayer(const TileScene& scene, const std::string& id, int32_t layer, uint32_t x,
+        uint32_t y, uint32_t width, uint32_t height, std::vector<uint32_t> data)
         : m_scene(scene)
         , m_id(id)
         , m_x(x)
@@ -240,8 +224,7 @@ namespace obe::Tiles
     void TileLayer::build()
     {
         m_cache.clear();
-        for (const uint32_t firstTileId :
-            m_scene.getTilesets().getTilesetsFirstTilesIds())
+        for (const uint32_t firstTileId : m_scene.getTilesets().getTilesetsFirstTilesIds())
         {
             m_cache[firstTileId] = sf::VertexArray {};
             m_cache[firstTileId].setPrimitiveType(sf::Quads);
@@ -275,11 +258,9 @@ namespace obe::Tiles
             const double cameraScale = 1.0 / (cameraSize.y / 2.0);
 
             states.transform.scale(cameraScale, cameraScale, middleX, middleY);
-            float translateX
-                = -(middleCamera.x * (Transform::UnitVector::Screen.h / 2.f))
+            float translateX = -(middleCamera.x * (Transform::UnitVector::Screen.h / 2.f))
                 + (Transform::UnitVector::Screen.w / 2);
-            float translateY
-                = -(middleCamera.y * (Transform::UnitVector::Screen.h / 2.f))
+            float translateY = -(middleCamera.y * (Transform::UnitVector::Screen.h / 2.f))
                 + (Transform::UnitVector::Screen.h / 2);
 
             if (!m_scene.isSmooth())
@@ -291,7 +272,7 @@ namespace obe::Tiles
             states.transform.translate(translateX, translateY);
 
             const Tileset& tileset = m_scene.getTilesets().tilesetFromTileId(firstTileId);
-            states.texture = &tileset.getTexture().operator const sf::Texture &();
+            states.texture = &tileset.getTexture().operator const sf::Texture&();
 
             surface.draw(layer, states);
         }

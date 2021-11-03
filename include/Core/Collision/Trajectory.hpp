@@ -3,10 +3,10 @@
 #include <functional>
 #include <vector>
 
+#include <Collision/PolygonalCollider.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Transform/Units.hpp>
 #include <Types/Togglable.hpp>
-#include <Collision/PolygonalCollider.hpp>
 
 namespace obe::Collision
 {
@@ -22,7 +22,6 @@ namespace obe::Collision
     /**
      * \brief A Trajectory makes a TrajectoryNode moves using angle, speed and
      *        acceleration (Linear Trajectory)
-     * \bind{Trajectory}
      */
     class Trajectory : public Types::Togglable
     {

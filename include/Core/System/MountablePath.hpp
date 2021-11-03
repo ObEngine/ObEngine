@@ -1,13 +1,39 @@
 #pragma once
 
 #include <string>
+#include <string_view>
 #include <vector>
 
 namespace obe::System
 {
+    namespace Prefixes
+    {
+        constexpr std::string_view obe = "obe";
+        constexpr std::string_view cwd = "cwd";
+        constexpr std::string_view exe = "exe";
+        constexpr std::string_view cfg = "cfg";
+        constexpr std::string_view mount = "mount";
+        constexpr std::string_view extlibs = "extlibs";
+        constexpr std::string_view root = "root";
+    }
+
+    /**
+     * \brief contains default priorities of mounts
+     *
+     * High-priority user defined(>3) > Project(3) > Mount(2) > Defaults(1) > Low-priority user defined(<0)
+     */
+    namespace Priorities
+    {
+        constexpr int high = 5;
+        constexpr int projectmount = 4;
+        constexpr int project = 3;
+        constexpr int mount = 2;
+        constexpr int defaults = 1;
+        constexpr int low = 0;
+    }
+
     /**
      * \brief Defines the source of a mounted path
-     * \bind{MountablePathType}
      */
     enum class MountablePathType
     {
@@ -20,18 +46,41 @@ namespace obe::System
          */
         Package,
         /**
-         * \brief The mounted path is a Workspace
+         * \brief The mounted path is a Project
          */
-        Workspace
+        Project
     };
 
     /**
+     * \brief action to take whenever two MountablePath with the same prefix are mounted
+     */
+    enum class SamePrefixPolicy
+    {
+        /**
+         * \brief keep both MountablePath with the same prefix
+         */
+        KeepBoth,
+        /**
+         * \brief discard the new MountablePath
+         */
+        Skip,
+        /**
+         * \brief discard the old MountablePath
+         */
+        Replace
+    };
+
+    class MountablePath;
+    using MountList = std::vector<std::shared_ptr<MountablePath>>;
+    /**
      * \brief Class used to encapsulate mounted Paths
+     *
+     * \loadpriority{12} (before obe::System::Path)
      */
     class MountablePath
     {
     private:
-        static std::vector<MountablePath> MountedPaths;
+        static MountList MountedPaths;
 
     public:
         /**
@@ -40,8 +89,8 @@ namespace obe::System
          * \param basePath Path to the mounted path
          * \param priority Priority of the mounted path
          */
-        MountablePath(MountablePathType pathType, const std::string& basePath, const std::string& prefix,
-            unsigned int priority = 0, bool implicit = true);
+        MountablePath(MountablePathType pathType, std::string_view basePath,
+            std::string_view prefix, unsigned int priority = 0, bool implicit = true);
         /**
          * \brief Type of the mounted path
          */
@@ -68,23 +117,29 @@ namespace obe::System
 
     public:
         /**
-         * \brief Function called to Mount all Paths using 'Mount.vili' file
+         * \brief Function called to Mount all Paths using 'mount.vili' file
          */
-        static void LoadMountFile();
+        static void LoadMountFile(bool fromCWD = true, bool fromExe = true);
         /**
          * \brief Add a Path to Mounted Paths
          * \param path Path to mount
+         * \param samePrefixPolicy action to take whenever two or more MountablePath with the same prefix are found
          */
-        static void Mount(MountablePath path);
+        static void Mount(
+            MountablePath path, SamePrefixPolicy samePrefixPolicy = SamePrefixPolicy::KeepBoth);
         /**
          * \brief Remove a Path from Mounted Paths
          * \param path Path to unmount
          */
         static void Unmount(MountablePath path);
         /**
+         * \brief Remove all Paths from Mounted Paths
+         */
+        static void UnmountAll();
+        /**
          * \brief All the Mounted Paths
          */
-        static const std::vector<MountablePath>& Paths();
+        static const MountList& Paths();
         /**
          * \brief All the Mounted Paths as strings
          */
@@ -93,5 +148,11 @@ namespace obe::System
          * \brief Sort the mounted paths based on their priorities
          */
         static void Sort();
+        /**
+         * \brief Retrieve a MountablePath based on the prefix
+         */
+        static const MountablePath& FromPrefix(const std::string& prefix);
+
+        static const std::vector<std::string> GetAllPrefixes();
     };
 } // namespace obe::System

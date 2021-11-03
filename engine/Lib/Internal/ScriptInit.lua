@@ -1,7 +1,7 @@
 Core = {}; -- Core Lib
 Scenes = {};
-pl = {};
 Debug = {};
+Global = {};
 
 __ENV_ID = "[Global Environment]";
 

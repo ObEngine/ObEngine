@@ -167,22 +167,22 @@ namespace vili::validator
         if (validate_validator_attribute<vili::node_type::integer>(
                 location, validator, "min_length"))
         {
-            const vili::integer min_length = validator.at("min_length").as_integer();
-            if (value.size() < min_length)
+            const vili::node& min_length = validator.at("min_length");
+            if (value.size() < static_cast<size_t>(min_length.as_integer()))
             {
                 throw exceptions::constraint_validation_failure(location, "min_length",
-                    validator.at("min_length").dump(), input.dump(), VILI_EXC_INFO);
+                    min_length.dump(), input.dump(), VILI_EXC_INFO);
             }
         }
 
         if (validate_validator_attribute<vili::node_type::integer>(
                 location, validator, "max_length"))
         {
-            const vili::integer max_length = validator.at("max_length").as_integer();
-            if (value.size() > max_length)
+            const vili::node& max_length = validator.at("max_length");
+            if (value.size() > static_cast<size_t>(max_length.as_integer()))
             {
                 throw exceptions::constraint_validation_failure(location, "max_length",
-                    validator.at("max_length").dump(), input.dump(), VILI_EXC_INFO);
+                    max_length.dump(), input.dump(), VILI_EXC_INFO);
             }
         }
 
@@ -260,34 +260,34 @@ namespace vili::validator
         if (validate_validator_attribute<vili::node_type::integer>(
                 location, validator, "min_size"))
         {
-            const vili::integer min_size = validator.at("min_size").as_integer();
-            if (input.size() < min_size)
+            const vili::node& min_size = validator.at("min_size");
+            if (input.size() < static_cast<size_t>(min_size.as_integer()))
             {
                 throw exceptions::constraint_validation_failure(location, "min_size",
-                    validator.at("min_size").dump(), input.dump(), VILI_EXC_INFO);
+                    min_size.dump(), input.dump(), VILI_EXC_INFO);
             }
         }
 
         if (validate_validator_attribute<vili::node_type::integer>(
                 location, validator, "max_size"))
         {
-            const vili::integer max_size = validator.at("max_size").as_integer();
-            if (input.size() > max_size)
+            const vili::node& max_size = validator.at("max_size");
+            if (input.size() > static_cast<size_t>(max_size.as_integer()))
             {
                 throw exceptions::constraint_validation_failure(location, "max_size",
-                    validator.at("max_size").dump(), input.dump(), VILI_EXC_INFO);
+                    max_size.dump(), input.dump(), VILI_EXC_INFO);
             }
         }
 
         if (validate_validator_attribute<vili::node_type::integer>(
                 location, validator, "exclusive_min_size"))
         {
-            const vili::integer exclusive_min_size
-                = validator.at("exclusive_min_size").as_integer();
-            if (input.size() <= exclusive_min_size)
+            const vili::node& exclusive_min_size
+                = validator.at("exclusive_min_size");
+            if (input.size() <= static_cast<size_t>(exclusive_min_size.as_integer()))
             {
                 throw exceptions::constraint_validation_failure(location,
-                    "exclusive_min_size", validator.at("exclusive_min_size").dump(),
+                    "exclusive_min_size", exclusive_min_size.dump(),
                     input.dump(), VILI_EXC_INFO);
             }
         }
@@ -295,12 +295,12 @@ namespace vili::validator
         if (validate_validator_attribute<vili::node_type::integer>(
                 location, validator, "exclusive_max_size"))
         {
-            const vili::integer exclusive_max_size
-                = validator.at("exclusive_max_size").as_integer();
-            if (input.size() >= exclusive_max_size)
+            const vili::node& exclusive_max_size
+                = validator.at("exclusive_max_size");
+            if (input.size() >= static_cast<size_t>(exclusive_max_size.as_integer()))
             {
                 throw exceptions::constraint_validation_failure(location,
-                    "exclusive_max_size", validator.at("exclusive_max_size").dump(),
+                    "exclusive_max_size", exclusive_max_size.dump(),
                     input.dump(), VILI_EXC_INFO);
             }
         }

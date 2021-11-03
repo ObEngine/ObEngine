@@ -2,7 +2,6 @@
 
 #include <Animation/Easing.hpp>
 #include <Time/TimeUtils.hpp>
-#include <Transform/UnitVector.hpp>
 
 namespace obe::Animation
 {

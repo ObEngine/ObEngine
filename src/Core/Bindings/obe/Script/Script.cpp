@@ -2,6 +2,8 @@
 
 #include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
+#include <Script/LuaState.hpp>
+#include <Script/Scripting.hpp>
 
 #include <Bindings/Config.hpp>
 
@@ -21,21 +23,20 @@ namespace obe::Script::Bindings
         bindGameObject["doesHaveAnimator"] = &obe::Script::GameObject::doesHaveAnimator;
         bindGameObject["doesHaveCollider"] = &obe::Script::GameObject::doesHaveCollider;
         bindGameObject["doesHaveSprite"] = &obe::Script::GameObject::doesHaveSprite;
-        bindGameObject["doesHaveScriptEngine"]
-            = &obe::Script::GameObject::doesHaveScriptEngine;
+        bindGameObject["doesHaveScriptEngine"] = &obe::Script::GameObject::doesHaveScriptEngine;
         bindGameObject["getUpdateState"] = &obe::Script::GameObject::getUpdateState;
         bindGameObject["setUpdateState"] = &obe::Script::GameObject::setUpdateState;
         bindGameObject["Animator"] = sol::property(&obe::Script::GameObject::getAnimator);
         bindGameObject["Collider"] = sol::property(&obe::Script::GameObject::getCollider);
         bindGameObject["Sprite"] = sol::property(&obe::Script::GameObject::getSprite);
-        bindGameObject["SceneNode"]
-            = sol::property(&obe::Script::GameObject::getSceneNode);
+        bindGameObject["SceneNode"] = sol::property(&obe::Script::GameObject::getSceneNode);
         bindGameObject["exec"] = &obe::Script::GameObject::exec;
         bindGameObject["initFromVili"] = &obe::Script::GameObject::initFromVili;
         bindGameObject["sendInitArg"] = &obe::Script::GameObject::sendInitArgFromLua;
         bindGameObject["loadGameObject"] = sol::overload(
-            [](obe::Script::GameObject* self, obe::Scene::Scene& scene,
-                vili::node& obj) -> void { return self->loadGameObject(scene, obj); },
+            [](obe::Script::GameObject* self, obe::Scene::Scene& scene, vili::node& obj) -> void {
+                return self->loadGameObject(scene, obj);
+            },
             [](obe::Script::GameObject* self, obe::Scene::Scene& scene, vili::node& obj,
                 obe::Engine::ResourceManager* resources) -> void {
                 return self->loadGameObject(scene, obj, resources);
@@ -67,5 +68,17 @@ namespace obe::Script::Bindings
         bindGameObjectDatabase["ApplyRequirements"]
             = &obe::Script::GameObjectDatabase::ApplyRequirements;
         bindGameObjectDatabase["Clear"] = &obe::Script::GameObjectDatabase::Clear;
+    }
+    void LoadClassLuaState(sol::state_view state)
+    {
+        sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
+        sol::usertype<obe::Script::LuaState> bindLuaState
+            = ScriptNamespace.new_usertype<obe::Script::LuaState>(
+                "LuaState", sol::call_constructor, sol::default_constructor);
+        bindLuaState["loadConfig"] = &obe::Script::LuaState::loadConfig;
+    }
+    void LoadFunctionSafeLuaCall(sol::state_view state)
+    {
+        sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
     }
 };

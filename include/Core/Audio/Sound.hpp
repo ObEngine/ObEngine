@@ -2,7 +2,13 @@
 
 #include <memory>
 
-#include <soloud/soloud.h>
+namespace SoLoud
+{
+    class Soloud;
+    class AudioSource;
+
+    using Handle = unsigned int; // Forward declare equivalent type "handle" without name collision
+}
 
 namespace obe::Audio
 {
@@ -30,7 +36,7 @@ namespace obe::Audio
     private:
         SoLoud::Soloud& m_manager;
         std::shared_ptr<SoLoud::AudioSource> m_source;
-        SoLoud::handle m_handle;
+        SoLoud::Handle m_handle;
         float m_baseSamplerate;
         float m_pitch = 1.f;
         bool m_looping = false;

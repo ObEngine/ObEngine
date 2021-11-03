@@ -53,8 +53,7 @@ namespace obe::Script
          * \param obj GameObject to applies the requirements to
          * \param requires ComplexNode containing the Requirements
          */
-        static void ApplyRequirements(
-            sol::environment environment, const vili::node& requires);
+        static void ApplyRequirements(sol::environment environment, const vili::node& requires);
         /**
          * \brief Clears the GameObjectDatabase (cache reload)
          */
@@ -80,6 +79,7 @@ namespace obe::Script
 
         bool m_hasScriptEngine = false;
         bool m_active = false;
+        bool m_initialized = false;
         bool m_canUpdate = true;
 
         System::ContextualPathFactory GameObjectPath;
@@ -92,8 +92,7 @@ namespace obe::Script
          * \param type Type of the GameObject
          * \param id Id of the GameObject you want to create
          */
-        explicit GameObject(
-            sol::state_view lua, const std::string& type, const std::string& id);
+        explicit GameObject(sol::state_view lua, const std::string& type, const std::string& id);
         /**
          * \brief Destructor of the GameObject
          */
@@ -139,7 +138,7 @@ namespace obe::Script
          */
         void setUpdateState(bool state);
         /**
-         * \bind{Animator}
+         * \rename{Animator}
          * \asproperty
          * \brief Gets the Animator Component of the GameObject (Raises
          *        ObEngine.Script.GameObject.NoAnimator if no Animator Component)
@@ -147,7 +146,7 @@ namespace obe::Script
          */
         Animation::Animator& getAnimator() const;
         /**
-         * \bind{Collider}
+         * \rename{Collider}
          * \asproperty
          * \brief Gets the Collider Component of the GameObject (Raises
          *        ObEngine.Script.GameObject.NoCollider if no Collider Component)
@@ -155,7 +154,7 @@ namespace obe::Script
          */
         Collision::PolygonalCollider& getCollider() const;
         /**
-         * \bind{Sprite}
+         * \rename{Sprite}
          * \asproperty
          * \brief Gets the Sprite Component of the GameObject (Raises
          *        ObEngine.Script.GameObject.NoSprite if no Sprite Component)
@@ -163,7 +162,7 @@ namespace obe::Script
          */
         Graphics::Sprite& getSprite() const;
         /**
-         * \bind{SceneNode}
+         * \rename{SceneNode}
          * \asproperty
          * \brief Gets the Scene Node of the GameObject (SceneNode that can
          *        manipulate the position of all Scene Components) \return A reference
@@ -182,9 +181,10 @@ namespace obe::Script
          * \param argName Name of the Parameter to push
          * \param value Value of the Parameter
          */
-        template <typename U> void sendInitArg(const std::string& argName, U value);
+        template <typename U>
+        void sendInitArg(const std::string& argName, U value);
         /**
-         * \bind{sendInitArg}
+         * \rename{sendInitArg}
          * \brief Send a parameter to the Local.Init trigger from a Lua VM
          * \param argName Name of the Parameter to push
          * \param value Value of the Parameter
@@ -196,8 +196,8 @@ namespace obe::Script
          * \param obj Vili Node containing the GameObject components
          * \param resources pointer to the ResourceManager
          */
-        void loadGameObject(Scene::Scene& scene, vili::node& obj,
-            Engine::ResourceManager* resources = nullptr);
+        void loadGameObject(
+            Scene::Scene& scene, vili::node& obj, Engine::ResourceManager* resources = nullptr);
         /**
          * \brief Updates the GameObject
          */
@@ -250,8 +250,7 @@ namespace obe::Script
     void GameObject::sendInitArg(const std::string& argName, U value)
     {
         Debug::Log->debug(
-            "<GameObject> Sending Local.Init argument {0} to GameObject {1}", argName,
-            m_id);
+            "<GameObject> Sending Local.Init argument {0} to GameObject {1}", argName, m_id);
         m_environment["__INIT_ARG_TABLE"][argName] = value;
     }
 } // namespace obe::Script

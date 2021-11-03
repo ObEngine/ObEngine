@@ -1,7 +1,6 @@
-inspect = require("obe://Lib/Extlibs/Inspect");
-dbg = require("obe://Lib/Extlibs/debugger");
+inspect = require("extlibs://Inspect");
+dbg = require("extlibs://debugger");
 try = require("obe://Lib/Internal/Try");
-pl.List = require("obe://Lib/Extlibs/pl/List");
-pl.String = require("obe://Lib/Extlibs/pl/stringx");
 
-pl.String:import();
+local stringx = require("extlibs://pl/stringx");
+stringx:import();

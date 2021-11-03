@@ -1,5 +1,4 @@
 #include <Event/EventManager.hpp>
-#include <Event/Exceptions.hpp>
 
 namespace obe::Event
 {
@@ -24,11 +23,9 @@ namespace obe::Event
                 }
             }
         }
-        m_schedulers.erase(std::remove_if(m_schedulers.begin(), m_schedulers.end(),
-                               [](auto& scheduler) {
-                                   return scheduler->m_state
-                                       == CallbackSchedulerState::Done;
-                               }),
+        m_schedulers.erase(
+            std::remove_if(m_schedulers.begin(), m_schedulers.end(),
+                [](auto& scheduler) { return scheduler->m_state == CallbackSchedulerState::Done; }),
             m_schedulers.end());
     }
 
@@ -44,6 +41,7 @@ namespace obe::Event
 
     EventNamespace& EventManager::createNamespace(const std::string& eventNamespace)
     {
+        Debug::Log->debug("<EventNamespace> Creating EventNamespace '{}'", eventNamespace);
         if (!m_namespaces.count(eventNamespace))
         {
             const auto insertionResult = m_namespaces.emplace(
@@ -53,9 +51,31 @@ namespace obe::Event
         throw Exceptions::EventNamespaceAlreadyExists(eventNamespace, EXC_INFO);
     }
 
+    EventNamespace& EventManager::joinNamespace(const std::string& eventNamespace)
+    {
+        Debug::Log->debug("<EventNamespace> Joining EventNamespace '{}'", eventNamespace);
+        if (const auto namespacePtr = m_namespaces.find(eventNamespace);
+            namespacePtr != m_namespaces.end())
+        {
+            if (namespacePtr->second->isJoinable())
+            {
+                return *namespacePtr->second;
+            }
+            throw Exceptions::EventNamespaceNotJoinable(eventNamespace, EXC_INFO);
+        }
+
+        throw Exceptions::UnknownEventNamespace(eventNamespace, this->getAllNamespacesNames(), EXC_INFO);
+    }
+
     EventNamespaceView EventManager::getNamespace(const std::string& eventNamespace)
     {
-        return m_namespaces.at(eventNamespace)->getView();
+        if (const auto namespacePtr = m_namespaces.find(eventNamespace);
+            namespacePtr != m_namespaces.end())
+        {
+            return namespacePtr->second->getView();
+        }
+        throw Exceptions::UnknownEventNamespace(
+            eventNamespace, this->getAllNamespacesNames(), EXC_INFO);
     }
 
     CallbackScheduler& EventManager::schedule()
@@ -75,8 +95,8 @@ namespace obe::Event
             {
                 Debug::Log->debug("Namespace group {}", groupName);
                 result.at(namespaceItr.first)
-                    .emplace(groupName,
-                        namespaceItr.second->getGroup(groupName).getProfilerResults());
+                    .emplace(
+                        groupName, namespaceItr.second->getGroup(groupName).getProfilerResults());
             }
         }
         return result;

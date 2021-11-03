@@ -1,7 +1,5 @@
 #pragma once
 
-#include <SFML/Graphics/Texture.hpp>
-
 #include <Graphics/Texture.hpp>
 #include <Time/TimeUtils.hpp>
 

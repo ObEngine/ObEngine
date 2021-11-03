@@ -18,7 +18,6 @@ namespace obe::Collision
 {
     /**
      * \brief Enum used when manipulating tags in the Collider
-     * \bind{ColliderTagType}
      */
     enum class ColliderTagType
     {
@@ -33,7 +32,6 @@ namespace obe::Collision
     class PolygonalCollider;
     /**
     * \brief Struct containing data of a collision applied to a collider
-    * \bind{CollisionData}
     */
     class CollisionData
     {
@@ -51,7 +49,6 @@ namespace obe::Collision
     /**
      * \brief Class used for all Collisions in the engine, it's a Polygon
      * containing n points
-     * \bind{PolygonalCollider}
      */
     class PolygonalCollider : public Transform::Polygon,
                               public Types::Selectable,
@@ -110,16 +107,15 @@ namespace obe::Collision
          * \param offset The offset to apply to the source collider
          * \return CollisionData containing intersected colliders (offset doesn't change)
          */
-        [[nodiscard]] CollisionData doesCollide(
-            const Transform::UnitVector& offset) const;
+        [[nodiscard]] CollisionData doesCollide(const Transform::UnitVector& offset) const;
         /**
          * \brief Checks if two polygons are intersecting
          * \param collider The other collider to test
          * \param offset The offset to apply to the source collider
          * \return true if the two polygons intersects, false otherwise
          */
-        bool doesCollide(
-            PolygonalCollider& collider, const Transform::UnitVector& offset, const bool doAABBfilter) const;
+        bool doesCollide(PolygonalCollider& collider, const Transform::UnitVector& offset,
+            const bool doAABBfilter = true) const;
         /**
          * \brief Check if the Collider contains one of the Tag in parameter
          * \param tagType List from where you want to check the Tags existence
@@ -170,9 +166,8 @@ namespace obe::Collision
          * \param offset Distance the Collider should move to (if nothing collides)
          * \return The maximum distance the Collider can travel before colliding
          */
-        Transform::UnitVector getMaximumDistanceBeforeCollision(
-            PolygonalCollider& collider, const Transform::UnitVector& offset,
-            const bool doAABBfilter) const;
+        Transform::UnitVector getMaximumDistanceBeforeCollision(PolygonalCollider& collider,
+            const Transform::UnitVector& offset, const bool doAABBfilter = true) const;
         /**
          * \brief Get the Id of the parent of the Collider (When used in a
          *        GameObject) \return A std::string containing the Id of the parent of

@@ -9,8 +9,8 @@ local strfind,format = string.find,string.format
 local mrandom = math.random
 local tsort,tappend = table.sort,table.insert
 local io = io
-local utils = require 'Lib.Extlibs.pl.utils'
-local callable = require 'Lib.Extlibs.pl.types'.is_callable
+local utils = require 'pl.utils'
+local callable = require 'pl.types'.is_callable
 local function_arg = utils.function_arg
 local assert_arg = utils.assert_arg
 local debug = require 'debug'
@@ -158,7 +158,7 @@ function seq.copy(iter)
         res[k] = v
         k = k + 1
     end
-    setmetatable(res, require('Lib.Extlibs.pl.List'))
+    setmetatable(res, require('pl.List'))
     return res
 end
 
@@ -253,7 +253,7 @@ function seq.count_map(iter)
         if v then t[s] = v + 1
         else t[s] = 1 end
     end
-    return setmetatable(t, require('Lib.Extlibs.pl.Map'))
+    return setmetatable(t, require('pl.Map'))
 end
 
 -- given a sequence, return all the unique values in that sequence.

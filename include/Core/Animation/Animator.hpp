@@ -3,16 +3,25 @@
 #include <vector>
 
 #include <Animation/Animation.hpp>
-#include <Graphics/Sprite.hpp>
-#include <Graphics/Texture.hpp>
 #include <System/Path.hpp>
 
+namespace obe
+{
+    namespace Graphics
+    {
+        class Sprite;
+        class Texture;
+    }
+}
+
+/**
+ * \additionalinclude{Graphics/Sprite.hpp}
+ */
 namespace obe::Animation
 {
     class Animator;
     /**
      * \brief Sets the scaling behaviour the Animator will apply on target
-     * \bind{Animator.TargetScaleMode}
      */
     enum class AnimatorTargetScaleMode
     {
@@ -30,7 +39,6 @@ namespace obe::Animation
     };
     AnimatorTargetScaleMode stringToAnimatorTargetScaleMode(const std::string& targetScaleMode);
 
-
     class AnimatorState
     {
     private:
@@ -42,6 +50,7 @@ namespace obe::Animation
         AnimatorTargetScaleMode m_targetScaleMode = AnimatorTargetScaleMode::Fit;
 
         void applyTexture() const;
+
     public:
         AnimatorState(const Animator& parent);
         /**
@@ -80,7 +89,7 @@ namespace obe::Animation
 
     /**
      * \brief A Class that will manage a set of Animation
-     * \bind{Animator}
+     *
      */
     class Animator
     {
@@ -88,12 +97,13 @@ namespace obe::Animation
         AnimatorState m_defaultState;
         std::unordered_map<std::string, std::unique_ptr<Animation>> m_animations;
         System::Path m_path;
-        
+
         void applyTexture() const;
         friend class AnimatorState;
 
     public:
         Animator();
+        Animator(const Animator&) = delete;
         /**
          * \brief Clear the Animator of all Animation
          */

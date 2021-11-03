@@ -23,4 +23,6 @@ namespace vili::Bindings
     void LoadGlobalStringTypename(sol::state_view state);
     void LoadGlobalObjectTypename(sol::state_view state);
     void LoadGlobalArrayTypename(sol::state_view state);
+    void LoadGlobalUnknownTypename(sol::state_view state);
+    void LoadGlobalContainerTypename(sol::state_view state);
 };

@@ -7,29 +7,32 @@
 
 namespace obe::Bindings
 {
+    void LoadClassBaseException(sol::state_view state)
+    {
+        sol::table obeNamespace = state["obe"].get<sol::table>();
+        sol::usertype<obe::BaseException> bindBaseException
+            = obeNamespace.new_usertype<obe::BaseException>(
+                "BaseException", sol::call_constructor, sol::constructors<obe::BaseException()>());
+        bindBaseException["what"] = &obe::BaseException::what;
+        bindBaseException["traceback"] = &obe::BaseException::traceback;
+    }
     void LoadClassDebugInfo(sol::state_view state)
     {
         sol::table obeNamespace = state["obe"].get<sol::table>();
-        sol::usertype<obe::DebugInfo> bindDebugInfo = obeNamespace.new_usertype<
-            obe::DebugInfo>("DebugInfo", sol::call_constructor,
-            sol::constructors<obe::DebugInfo(std::string_view, int, std::string_view)>());
+        sol::usertype<obe::DebugInfo> bindDebugInfo
+            = obeNamespace.new_usertype<obe::DebugInfo>("DebugInfo", sol::call_constructor,
+                sol::constructors<obe::DebugInfo(std::string_view, int, std::string_view)>());
         bindDebugInfo["file"] = &obe::DebugInfo::file;
         bindDebugInfo["line"] = &obe::DebugInfo::line;
         bindDebugInfo["function"] = &obe::DebugInfo::function;
     }
-    void LoadClassException(sol::state_view state)
+    void LoadFunctionGetTypeName(sol::state_view state)
     {
         sol::table obeNamespace = state["obe"].get<sol::table>();
-        sol::usertype<obe::Exception> bindException
-            = obeNamespace.new_usertype<obe::Exception>("Exception",
-                sol::call_constructor,
-                sol::constructors<obe::Exception(std::string, obe::DebugInfo)>());
-        bindException["what"] = &obe::Exception::what;
-        bindException["nest"] = &obe::Exception::nest;
     }
     void LoadFunctionInitEngine(sol::state_view state)
     {
         sol::table obeNamespace = state["obe"].get<sol::table>();
-        obeNamespace.set_function("InitEngine", obe::InitEngine);
+        obeNamespace.set_function("InitEngine", &obe::InitEngine);
     }
 };

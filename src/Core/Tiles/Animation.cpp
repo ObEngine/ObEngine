@@ -1,11 +1,11 @@
 #include <utility>
 
 #include <Tiles/Animation.hpp>
-#include <Tiles/Layer.hpp>
 
 namespace obe::Tiles
 {
-    void updateQuad(sf::Vertex* quad, const Tileset& tileset, uint32_t tileId, TileInfo additionalTileInfo)
+    void updateQuad(
+        sf::Vertex* quad, const Tileset& tileset, uint32_t tileId, TileInfo additionalTileInfo)
     {
         if (!tileId)
             return;
@@ -23,26 +23,21 @@ namespace obe::Tiles
         const uint32_t tileWidth = tileset.getTileWidth();
         const uint32_t tileHeight = tileset.getTileHeight();
 
-        const int textureX
-            = (tileId - firstTileId) % (tileset.getImageWidth() / tileWidth);
-        const int textureY
-            = (tileId - firstTileId) / (tileset.getImageWidth() / tileWidth);
+        const int textureX = (tileId - firstTileId) % (tileset.getImageWidth() / tileWidth);
+        const int textureY = (tileId - firstTileId) / (tileset.getImageWidth() / tileWidth);
 
         TextureQuadsIndex quads;
         quads.transform(tileInfo);
 
-        quad[quads.q0].texCoords
-            = sf::Vector2f(textureX * tileWidth, textureY * tileHeight);
-        quad[quads.q1].texCoords
-            = sf::Vector2f((textureX + 1) * tileWidth, textureY * tileHeight);
+        quad[quads.q0].texCoords = sf::Vector2f(textureX * tileWidth, textureY * tileHeight);
+        quad[quads.q1].texCoords = sf::Vector2f((textureX + 1) * tileWidth, textureY * tileHeight);
         quad[quads.q2].texCoords
             = sf::Vector2f((textureX + 1) * tileWidth, (textureY + 1) * tileHeight);
-        quad[quads.q3].texCoords
-            = sf::Vector2f(textureX * tileWidth, (textureY + 1) * tileHeight);
+        quad[quads.q3].texCoords = sf::Vector2f(textureX * tileWidth, (textureY + 1) * tileHeight);
     }
 
-    AnimatedTile::AnimatedTile(const Tileset& tileset, std::vector<uint32_t> tileIds,
-        std::vector<Time::TimeUnit> sleeps)
+    AnimatedTile::AnimatedTile(
+        const Tileset& tileset, std::vector<uint32_t> tileIds, std::vector<Time::TimeUnit> sleeps)
         : m_tileset(tileset)
         , m_tileIds(std::move(tileIds))
         , m_sleeps(std::move(sleeps))
@@ -57,7 +52,8 @@ namespace obe::Tiles
     void AnimatedTile::dettachQuad(sf::Vertex* quad)
     {
         m_quads.erase(std::remove_if(m_quads.begin(), m_quads.end(),
-                          [&quad](const std::pair<sf::Vertex*, TileInfo>& item) { return item.first == quad; }),
+                          [&quad](const std::pair<sf::Vertex*, TileInfo>& item)
+                          { return item.first == quad; }),
             m_quads.end());
     }
 

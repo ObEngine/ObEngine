@@ -10,7 +10,7 @@ namespace obe::Transform
     /**
      * \brief Class widely used in the Engine to scale and position elements in
      * a Scene
-     * \bind{Vector2}
+     * TODO: /bind{Vector2}
      */
     class UnitVector
     {
@@ -32,10 +32,12 @@ namespace obe::Transform
 
         /**
          * \brief Struct used for UnitVector conversions, do not modify !
+         * \nobind
          */
         static ViewStruct View;
         /**
          * \brief Struct used for UnitVector conversions, do not modify !
+         * \nobind
          */
         static ScreenStruct Screen;
 
@@ -234,7 +236,8 @@ namespace obe::Transform
          * \tparam E enum value from Transform::Units
          * \return A new UnitVector containing the converted values with the new Units
          */
-        template <Units E>[[nodiscard]] UnitVector to() const;
+        template <Units E>
+        [[nodiscard]] UnitVector to() const;
         /**
          * \brief Return an UnitVector with the converted values (x, y) to the
          *        Unit you want
@@ -257,8 +260,7 @@ namespace obe::Transform
          * \return The stream passed by reference (To chain calls)
          */
         friend std::ostream& operator<<(std::ostream& os, const UnitVector& m);
-        [[nodiscard]] UnitVector rotate(
-            double angle, UnitVector zero = UnitVector(0, 0)) const;
+        [[nodiscard]] UnitVector rotate(double angle, UnitVector zero = UnitVector(0, 0)) const;
         [[nodiscard]] double distance(const UnitVector& vec) const;
         /**
          * \brief Return the length of the UnitVector
@@ -266,7 +268,8 @@ namespace obe::Transform
         [[nodiscard]] double magnitude() const;
     };
 
-    template <> inline UnitVector UnitVector::to<Units::ViewPercentage>() const
+    template <>
+    inline UnitVector UnitVector::to<Units::ViewPercentage>() const
     {
         switch (unit)
         {
@@ -277,17 +280,17 @@ namespace obe::Transform
         case Units::ViewUnits:
             return UnitVector(x / View.w, y / View.h, Units::ViewPercentage);
         case Units::ScenePixels:
-            return UnitVector(x / Screen.w - View.x / View.w,
-                y / Screen.h - View.y / View.h, Units::ViewPercentage);
+            return UnitVector(x / Screen.w - View.x / View.w, y / Screen.h - View.y / View.h,
+                Units::ViewPercentage);
         case Units::SceneUnits:
-            return UnitVector(
-                (x - View.x) / View.w, (y - View.y) / View.h, Units::ViewPercentage);
+            return UnitVector((x - View.x) / View.w, (y - View.y) / View.h, Units::ViewPercentage);
         default:
             return UnitVector(0, 0);
         }
     }
 
-    template <> inline UnitVector UnitVector::to<Units::ViewPixels>() const
+    template <>
+    inline UnitVector UnitVector::to<Units::ViewPixels>() const
     {
         switch (unit)
         {
@@ -296,33 +299,32 @@ namespace obe::Transform
         case Units::ViewPixels:
             return UnitVector(x, y, Units::ViewPixels);
         case Units::ViewUnits:
-            return UnitVector(
-                x * Screen.w / View.w, y * Screen.h / View.h, Units::ViewPixels);
+            return UnitVector(x * Screen.w / View.w, y * Screen.h / View.h, Units::ViewPixels);
         case Units::ScenePixels:
-            return UnitVector(x - (View.x * Screen.w / View.w),
-                y - (View.y * Screen.h / View.h), Units::ViewPixels);
+            return UnitVector(x - (View.x * Screen.w / View.w), y - (View.y * Screen.h / View.h),
+                Units::ViewPixels);
         case Units::SceneUnits:
-            return UnitVector((x - View.x) / View.w * Screen.w,
-                (y - View.y) / View.h * Screen.h, Units::ViewPixels);
+            return UnitVector((x - View.x) / View.w * Screen.w, (y - View.y) / View.h * Screen.h,
+                Units::ViewPixels);
         default:
             return UnitVector(0, 0);
         }
     }
 
-    template <> inline UnitVector UnitVector::to<Units::ViewUnits>() const
+    template <>
+    inline UnitVector UnitVector::to<Units::ViewUnits>() const
     {
         switch (unit)
         {
         case Units::ViewPercentage:
             return UnitVector(x * View.w, y * View.h, Units::ViewUnits);
         case Units::ViewPixels:
-            return UnitVector(
-                x / Screen.w * View.w, y / Screen.h * View.h, Units::ViewUnits);
+            return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, Units::ViewUnits);
         case Units::ViewUnits:
             return UnitVector(x, y, Units::ViewUnits);
         case Units::ScenePixels:
-            return UnitVector(x / (Screen.w / View.w) - View.x,
-                y / (Screen.h / View.h) - View.y, Units::ViewUnits);
+            return UnitVector(x / (Screen.w / View.w) - View.x, y / (Screen.h / View.h) - View.y,
+                Units::ViewUnits);
         case Units::SceneUnits:
             return UnitVector(x - View.x, y - View.y, Units::ViewUnits);
         default:
@@ -330,44 +332,43 @@ namespace obe::Transform
         }
     }
 
-    template <> inline UnitVector UnitVector::to<Units::ScenePixels>() const
+    template <>
+    inline UnitVector UnitVector::to<Units::ScenePixels>() const
     {
         switch (unit)
         {
         case Units::ViewPercentage:
-            return UnitVector(Screen.w * (View.x / View.w + x),
-                Screen.h * (View.y / View.h + y), Units::ScenePixels);
+            return UnitVector(Screen.w * (View.x / View.w + x), Screen.h * (View.y / View.h + y),
+                Units::ScenePixels);
         case Units::ViewPixels:
-            return UnitVector(Screen.w * View.x / View.w + x,
-                Screen.h * View.y / View.h + y, Units::ScenePixels);
+            return UnitVector(
+                Screen.w * View.x / View.w + x, Screen.h * View.y / View.h + y, Units::ScenePixels);
         case Units::ViewUnits:
-            return UnitVector(Screen.w * (View.x + x) / View.w,
-                Screen.h * (View.y + y) / View.h, Units::ScenePixels);
+            return UnitVector(Screen.w * (View.x + x) / View.w, Screen.h * (View.y + y) / View.h,
+                Units::ScenePixels);
         case Units::ScenePixels:
             return UnitVector(x, y, Units::ScenePixels);
         case Units::SceneUnits:
-            return UnitVector(
-                x / View.w * Screen.w, y / View.h * Screen.h, Units::ScenePixels);
+            return UnitVector(x / View.w * Screen.w, y / View.h * Screen.h, Units::ScenePixels);
         default:
             return UnitVector(0, 0);
         }
     }
 
-    template <> inline UnitVector UnitVector::to<Units::SceneUnits>() const
+    template <>
+    inline UnitVector UnitVector::to<Units::SceneUnits>() const
     {
         switch (unit)
         {
         case Units::ViewPercentage:
-            return UnitVector(
-                (View.w * x) + View.x, (View.h * y) + View.y, Units::SceneUnits);
+            return UnitVector((View.w * x) + View.x, (View.h * y) + View.y, Units::SceneUnits);
         case Units::ViewPixels:
             return UnitVector((View.w * (x / Screen.w)) + View.x,
                 (View.h * (y / Screen.h)) + View.y, Units::SceneUnits);
         case Units::ViewUnits:
             return UnitVector(View.x + x, View.y + y, Units::SceneUnits);
         case Units::ScenePixels:
-            return UnitVector(
-                x / Screen.w * View.w, y / Screen.h * View.h, Units::SceneUnits);
+            return UnitVector(x / Screen.w * View.w, y / Screen.h * View.h, Units::SceneUnits);
         case Units::SceneUnits:
             return UnitVector(x, y, Units::SceneUnits);
         default:

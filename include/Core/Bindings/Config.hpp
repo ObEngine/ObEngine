@@ -7,7 +7,8 @@ namespace vili
 
 namespace sol
 {
-    template <> struct is_container<vili::node> : std::false_type
+    template <>
+    struct is_container<vili::node> : std::false_type
     {
     };
 }

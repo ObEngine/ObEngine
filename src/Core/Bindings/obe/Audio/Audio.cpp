@@ -2,6 +2,8 @@
 
 #include <Audio/AudioManager.hpp>
 #include <Audio/Sound.hpp>
+#include <System/Path.hpp>
+#include <soloud/soloud.h>
 
 #include <Bindings/Config.hpp>
 
@@ -30,8 +32,9 @@ namespace obe::Audio::Bindings
             = AudioNamespace.new_usertype<obe::Audio::AudioManager>("AudioManager",
                 sol::call_constructor, sol::constructors<obe::Audio::AudioManager()>());
         bindAudioManager["load"] = sol::overload(
-            [](obe::Audio::AudioManager* self, const obe::System::Path& path)
-                -> obe::Audio::Sound { return self->load(path); },
+            [](obe::Audio::AudioManager* self, const obe::System::Path& path) -> obe::Audio::Sound {
+                return self->load(path);
+            },
             [](obe::Audio::AudioManager* self, const obe::System::Path& path,
                 obe::Audio::LoadPolicy loadPolicy) -> obe::Audio::Sound {
                 return self->load(path, loadPolicy);
@@ -41,8 +44,7 @@ namespace obe::Audio::Bindings
     {
         sol::table AudioNamespace = state["obe"]["Audio"].get<sol::table>();
         sol::usertype<obe::Audio::Sound> bindSound
-            = AudioNamespace.new_usertype<obe::Audio::Sound>("Sound",
-                sol::call_constructor,
+            = AudioNamespace.new_usertype<obe::Audio::Sound>("Sound", sol::call_constructor,
                 sol::constructors<obe::Audio::Sound(
                     SoLoud::Soloud&, std::shared_ptr<SoLoud::AudioSource>)>());
         bindSound["getDuration"] = &obe::Audio::Sound::getDuration;

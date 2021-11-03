@@ -29,7 +29,8 @@ namespace obe::Utils::Math
      * \thint{getMin, N=$numerics}
      * \endthints
      */
-    template <typename N> N getMin(const N& min1, const N& min2);
+    template <typename N>
+    N getMin(const N& min1, const N& min2);
     /**
      * \brief Get the highest value between the two given values
      * \tparam N Type of both values
@@ -40,7 +41,8 @@ namespace obe::Utils::Math
      * \thint{getMax, N=$numerics}
      * \endthints
      */
-    template <typename N> N getMax(const N& max1, const N& max2);
+    template <typename N>
+    N getMax(const N& max1, const N& max2);
     /**
      * \brief Check if the given value is between the lower bound and the upper
      *        bound
@@ -72,7 +74,8 @@ namespace obe::Utils::Math
      * \thint{sign, T=$numerics}
      * \endthints
      */
-    template <typename T> int sign(T val);
+    template <typename T>
+    int sign(T val);
 
     /**
      * \brief Converts a degrees angle to radians
@@ -92,15 +95,20 @@ namespace obe::Utils::Math
      * \param start Lower bound
      * \param end Higher bound
      * \return Normalized value
+     *
+     * \paramrename{start,low}
+     * \paramrename{end,high}
      */
     double normalize(double value, double start, double end);
 
-    template <typename N> N getMin(const N& min1, const N& min2)
+    template <typename N>
+    N getMin(const N& min1, const N& min2)
     {
         return (min1 < min2) ? min1 : min2;
     }
 
-    template <typename N> N getMax(const N& max1, const N& max2)
+    template <typename N>
+    N getMax(const N& max1, const N& max2)
     {
         return (max1 > max2) ? max1 : max2;
     }
@@ -113,7 +121,8 @@ namespace obe::Utils::Math
         return false;
     }
 
-    template <typename T> int sign(T val)
+    template <typename T>
+    int sign(T val)
     {
         return (T(0) < val) - (val < T(0));
     }

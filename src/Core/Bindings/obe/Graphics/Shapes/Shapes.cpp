@@ -14,20 +14,18 @@ namespace obe::Graphics::Shapes::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Graphics::Shapes::Circle(),
                     obe::Graphics::Shapes::Circle(const sf::CircleShape&),
-                    obe::Graphics::Shapes::Circle(
-                        const obe::Graphics::Shapes::Circle&)>(),
-                sol::base_classes, sol::bases<obe::Graphics::Shapes::Shape<Circle>>());
+                    obe::Graphics::Shapes::Circle(const obe::Graphics::Shapes::Circle&)>(),
+                sol::base_classes,
+                sol::bases<obe::Graphics::Shapes::Shape<obe::Graphics::Shapes::Circle>>());
         bindCircle["setTexture"] = &obe::Graphics::Shapes::Circle::setTexture;
         bindCircle["setTextureRect"] = &obe::Graphics::Shapes::Circle::setTextureRect;
         bindCircle["setPosition"] = &obe::Graphics::Shapes::Circle::setPosition;
         bindCircle["setFillColor"] = &obe::Graphics::Shapes::Circle::setFillColor;
         bindCircle["setOutlineColor"] = &obe::Graphics::Shapes::Circle::setOutlineColor;
-        bindCircle["setOutlineThickness"]
-            = &obe::Graphics::Shapes::Circle::setOutlineThickness;
+        bindCircle["setOutlineThickness"] = &obe::Graphics::Shapes::Circle::setOutlineThickness;
         bindCircle["getFillColor"] = &obe::Graphics::Shapes::Circle::getFillColor;
         bindCircle["getOutlineColor"] = &obe::Graphics::Shapes::Circle::getOutlineColor;
-        bindCircle["getOutlineThickness"]
-            = &obe::Graphics::Shapes::Circle::getOutlineThickness;
+        bindCircle["getOutlineThickness"] = &obe::Graphics::Shapes::Circle::getOutlineThickness;
         bindCircle["getPointCount"] = &obe::Graphics::Shapes::Circle::getPointCount;
         bindCircle["getPoint"] = &obe::Graphics::Shapes::Circle::getPoint;
         bindCircle["getLocalBounds"] = &obe::Graphics::Shapes::Circle::getLocalBounds;
@@ -55,20 +53,18 @@ namespace obe::Graphics::Shapes::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Graphics::Shapes::Polygon(),
                     obe::Graphics::Shapes::Polygon(const sf::ConvexShape&),
-                    obe::Graphics::Shapes::Polygon(
-                        const obe::Graphics::Shapes::Polygon&)>(),
-                sol::base_classes, sol::bases<obe::Graphics::Shapes::Shape<Polygon>>());
+                    obe::Graphics::Shapes::Polygon(const obe::Graphics::Shapes::Polygon&)>(),
+                sol::base_classes,
+                sol::bases<obe::Graphics::Shapes::Shape<obe::Graphics::Shapes::Polygon>>());
         bindPolygon["setTexture"] = &obe::Graphics::Shapes::Polygon::setTexture;
         bindPolygon["setTextureRect"] = &obe::Graphics::Shapes::Polygon::setTextureRect;
         bindPolygon["setPosition"] = &obe::Graphics::Shapes::Polygon::setPosition;
         bindPolygon["setFillColor"] = &obe::Graphics::Shapes::Polygon::setFillColor;
         bindPolygon["setOutlineColor"] = &obe::Graphics::Shapes::Polygon::setOutlineColor;
-        bindPolygon["setOutlineThickness"]
-            = &obe::Graphics::Shapes::Polygon::setOutlineThickness;
+        bindPolygon["setOutlineThickness"] = &obe::Graphics::Shapes::Polygon::setOutlineThickness;
         bindPolygon["getFillColor"] = &obe::Graphics::Shapes::Polygon::getFillColor;
         bindPolygon["getOutlineColor"] = &obe::Graphics::Shapes::Polygon::getOutlineColor;
-        bindPolygon["getOutlineThickness"]
-            = &obe::Graphics::Shapes::Polygon::getOutlineThickness;
+        bindPolygon["getOutlineThickness"] = &obe::Graphics::Shapes::Polygon::getOutlineThickness;
         bindPolygon["getPointCount"] = &obe::Graphics::Shapes::Polygon::getPointCount;
         bindPolygon["getPoint"] = &obe::Graphics::Shapes::Polygon::getPoint;
         bindPolygon["getLocalBounds"] = &obe::Graphics::Shapes::Polygon::getLocalBounds;
@@ -84,10 +80,8 @@ namespace obe::Graphics::Shapes::Bindings
         bindPolygon["rotate"] = &obe::Graphics::Shapes::Polygon::rotate;
         bindPolygon["scale"] = &obe::Graphics::Shapes::Polygon::scale;
         bindPolygon["draw"] = &obe::Graphics::Shapes::Polygon::draw;
-        bindPolygon["setPointPosition"]
-            = &obe::Graphics::Shapes::Polygon::setPointPosition;
-        bindPolygon["getPointPosition"]
-            = &obe::Graphics::Shapes::Polygon::getPointPosition;
+        bindPolygon["setPointPosition"] = &obe::Graphics::Shapes::Polygon::setPointPosition;
+        bindPolygon["getPointPosition"] = &obe::Graphics::Shapes::Polygon::getPointPosition;
         bindPolygon["shape"] = &obe::Graphics::Shapes::Polygon::shape;
     }
     void LoadClassRectangle(sol::state_view state)
@@ -98,29 +92,24 @@ namespace obe::Graphics::Shapes::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::Graphics::Shapes::Rectangle(),
                     obe::Graphics::Shapes::Rectangle(const sf::RectangleShape&),
-                    obe::Graphics::Shapes::Rectangle(
-                        const obe::Graphics::Shapes::Rectangle&)>(),
-                sol::base_classes, sol::bases<obe::Graphics::Shapes::Shape<Rectangle>>());
+                    obe::Graphics::Shapes::Rectangle(const obe::Graphics::Shapes::Rectangle&)>(),
+                sol::base_classes,
+                sol::bases<obe::Graphics::Shapes::Shape<obe::Graphics::Shapes::Rectangle>>());
         bindRectangle["setTexture"] = &obe::Graphics::Shapes::Rectangle::setTexture;
-        bindRectangle["setTextureRect"]
-            = &obe::Graphics::Shapes::Rectangle::setTextureRect;
+        bindRectangle["setTextureRect"] = &obe::Graphics::Shapes::Rectangle::setTextureRect;
         bindRectangle["setPosition"] = &obe::Graphics::Shapes::Rectangle::setPosition;
         bindRectangle["setFillColor"] = &obe::Graphics::Shapes::Rectangle::setFillColor;
-        bindRectangle["setOutlineColor"]
-            = &obe::Graphics::Shapes::Rectangle::setOutlineColor;
+        bindRectangle["setOutlineColor"] = &obe::Graphics::Shapes::Rectangle::setOutlineColor;
         bindRectangle["setOutlineThickness"]
             = &obe::Graphics::Shapes::Rectangle::setOutlineThickness;
         bindRectangle["getFillColor"] = &obe::Graphics::Shapes::Rectangle::getFillColor;
-        bindRectangle["getOutlineColor"]
-            = &obe::Graphics::Shapes::Rectangle::getOutlineColor;
+        bindRectangle["getOutlineColor"] = &obe::Graphics::Shapes::Rectangle::getOutlineColor;
         bindRectangle["getOutlineThickness"]
             = &obe::Graphics::Shapes::Rectangle::getOutlineThickness;
         bindRectangle["getPointCount"] = &obe::Graphics::Shapes::Rectangle::getPointCount;
         bindRectangle["getPoint"] = &obe::Graphics::Shapes::Rectangle::getPoint;
-        bindRectangle["getLocalBounds"]
-            = &obe::Graphics::Shapes::Rectangle::getLocalBounds;
-        bindRectangle["getGlobalBounds"]
-            = &obe::Graphics::Shapes::Rectangle::getGlobalBounds;
+        bindRectangle["getLocalBounds"] = &obe::Graphics::Shapes::Rectangle::getLocalBounds;
+        bindRectangle["getGlobalBounds"] = &obe::Graphics::Shapes::Rectangle::getGlobalBounds;
         bindRectangle["setRotation"] = &obe::Graphics::Shapes::Rectangle::setRotation;
         bindRectangle["setScale"] = &obe::Graphics::Shapes::Rectangle::setScale;
         bindRectangle["setOrigin"] = &obe::Graphics::Shapes::Rectangle::setOrigin;
@@ -145,7 +134,8 @@ namespace obe::Graphics::Shapes::Bindings
                 sol::constructors<obe::Graphics::Shapes::Text(),
                     obe::Graphics::Shapes::Text(const obe::Graphics::RichText&),
                     obe::Graphics::Shapes::Text(const obe::Graphics::Shapes::Text&)>(),
-                sol::base_classes, sol::bases<obe::Graphics::Shapes::BaseShape<Text>>());
+                sol::base_classes,
+                sol::bases<obe::Graphics::Shapes::BaseShape<obe::Graphics::Shapes::Text>>());
         bindText["setPosition"] = &obe::Graphics::Shapes::Text::setPosition;
         bindText["getLocalBounds"] = &obe::Graphics::Shapes::Text::getLocalBounds;
         bindText["getGlobalBounds"] = &obe::Graphics::Shapes::Text::getGlobalBounds;

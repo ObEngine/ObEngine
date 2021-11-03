@@ -1,9 +1,7 @@
-#include <cmath>
+#include <thread>
 
 #include <Debug/Logger.hpp>
-#include <System/Window.hpp>
 #include <Time/FramerateManager.hpp>
-#include <thread>
 
 namespace obe::Time
 {

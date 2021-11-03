@@ -6,5 +6,5 @@ namespace sol
 };
 namespace obe::Bindings::Bindings
 {
-    void LoadFunctionIndexAllBindings(sol::state_view state);
+    void LoadFunctionIndexCoreBindings(sol::state_view state);
 };

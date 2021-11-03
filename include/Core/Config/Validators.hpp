@@ -7,4 +7,5 @@ namespace obe::Config::Validators
     vili::node AnimationValidator();
     vili::node ConfigValidator();
     vili::node MountValidator();
+    vili::node ProjectValidator();
 }

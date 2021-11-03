@@ -96,21 +96,21 @@ namespace obe::Scene
          */
         void loadFromFile(const std::string& path);
         /**
-         * \bind{loadFromFile}
+         * \rename{loadFromFile}
          * \brief Same that loadFromFile excepts the map will load at the next
          *        update
          * \param path Path to the Scene file
          */
         void setFutureLoadFromFile(const std::string& path);
         /**
+         * \rename{loadFromFile}
          * \brief Same that loadFromFile excepts the map will load at the next
          * update
          * \param path Path to the Scene file
          * \param callback Lua Function called when new map has
          *        been loaded
          */
-        void setFutureLoadFromFile(
-            const std::string& path, const OnSceneLoadCallback& callback);
+        void setFutureLoadFromFile(const std::string& path, const OnSceneLoadCallback& callback);
         /**
          * \brief Removes all elements in the Scene
          */
@@ -153,8 +153,7 @@ namespace obe::Scene
          *        generated)
          * \return A pointer to the newly created GameObject
          */
-        Script::GameObject& createGameObject(
-            const std::string& obj, const std::string& id = "");
+        Script::GameObject& createGameObject(const std::string& obj, const std::string& id = "");
         /**
          * \brief Get how many GameObjects are present in the Scene
          * \return The amount of GameObjects in the Scene
@@ -164,8 +163,7 @@ namespace obe::Scene
          * \brief Get all the GameObjects present in the Scene
          * \return
          */
-        std::vector<Script::GameObject*> getAllGameObjects(
-            const std::string& objectType = "");
+        std::vector<Script::GameObject*> getAllGameObjects(const std::string& objectType = "");
         /**
          * \brief Get a GameObject by Id (Raises an exception if not found)
          * \param id Id of the GameObject to retrieve
@@ -203,8 +201,7 @@ namespace obe::Scene
          *        true
          * \return A pointer to the newly created Sprite
          */
-        Graphics::Sprite& createSprite(
-            const std::string& id = "", bool addToSceneRoot = true);
+        Graphics::Sprite& createSprite(const std::string& id = "", bool addToSceneRoot = true);
         /**
          * \brief Get how many Sprites are present in the Scene
          * \return The amount of Sprites in the Scene
@@ -229,8 +226,7 @@ namespace obe::Scene
          * \param layer Layer where to check
          * \return The pointer to a Sprite if found, nullptr otherwise
          */
-        Graphics::Sprite* getSpriteByPosition(
-            const Transform::UnitVector& position, int layer);
+        Graphics::Sprite* getSpriteByPosition(const Transform::UnitVector& position, int layer);
         /**
          * \brief Get a Sprite by Id (Raises an exception if not found)
          * \param id Id of the Sprite to get

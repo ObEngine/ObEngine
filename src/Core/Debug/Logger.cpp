@@ -14,15 +14,14 @@
 
 namespace obe::Debug
 {
-    std::shared_ptr<spdlog::logger> Log;
+    Logger Log;
     void InitLogger()
     {
         Utils::File::deleteFile("debug.log");
         auto dist_sink = std::make_shared<spdlog::sinks::dist_sink_st>();
 
         const auto sink1 = std::make_shared<spdlog::sinks::stdout_color_sink_st>();
-        const auto sink2
-            = std::make_shared<spdlog::sinks::basic_file_sink_st>("debug.log");
+        const auto sink2 = std::make_shared<spdlog::sinks::basic_file_sink_st>("debug.log");
 
         dist_sink->add_sink(sink1);
         dist_sink->add_sink(sink2);
@@ -30,7 +29,6 @@ namespace obe::Debug
         Log->set_pattern("[%H:%M:%S.%e]<%^%l%$> : %v");
         Log->set_level(spdlog::level::info);
         Log->flush_on(spdlog::level::warn);
-        Log->info("Logger initialized");
     }
 
     void trace(const std::string& content)

@@ -2,10 +2,8 @@
 
 #include <unordered_map>
 
-#include <vili/node.hpp>
-
 #include <Animation/AnimationGroup.hpp>
-#include <System/Path.hpp>
+#include <Time/TimeUtils.hpp>
 
 namespace obe
 {
@@ -13,6 +11,19 @@ namespace obe
     {
         class ResourceManager;
     }
+    namespace Graphics
+    {
+        class Texture;
+    }
+    namespace System
+    {
+        class Path;
+    }
+}
+
+namespace vili
+{
+    class node;
 }
 
 namespace obe::Animation
@@ -21,7 +32,7 @@ namespace obe::Animation
      * \brief The Play Mode of an Animation.
      *        It indicates whether an Animation can be interrupted or not and
      *        what to do when the Animation is over
-     * \bind{AnimationPlayMode}
+     * TODO: /bind{AnimationPlayMode}
      */
     enum class AnimationPlayMode
     {
@@ -47,7 +58,7 @@ namespace obe::Animation
      *        form
      * \return The converted value which is an AnimationPlayMode enum value
      * \throw UnknownAnimationPlayMode if the string does not represent one of the enum values
-     * \bind{[mt]AnimationPlayMode.__call}
+     * TODO: /bind{[mt]AnimationPlayMode.__call}
      */
     AnimationPlayMode stringToAnimationPlayMode(const std::string& animationPlayMode);
     std::ostream& operator<<(std::ostream& os, const AnimationPlayMode& m);
@@ -55,7 +66,6 @@ namespace obe::Animation
     /**
      * \brief The AnimationStatus indicates whether the current Animation should
      *        continue to play or call another one.
-     * \bind{AnimationStatus}
      */
     enum class AnimationStatus
     {
@@ -91,6 +101,7 @@ namespace obe::Animation
         void executeInstruction();
         void updateCurrentGroup();
         void setActiveAnimationGroup(const std::string& groupName);
+
     public:
         AnimationState(const Animation& parent);
         void load();
@@ -150,7 +161,7 @@ namespace obe::Animation
 
     /**
      * \brief A whole Animation that contains one or more AnimationGroup.
-     * \bind{Animation}
+     *
      */
     class Animation
     {
@@ -163,7 +174,7 @@ namespace obe::Animation
         Time::TimeUnit m_delay = 0;
 
         std::vector<vili::node> m_code;
-        
+
         std::vector<Graphics::Texture> m_textures;
 
         AnimationPlayMode m_playMode = AnimationPlayMode::OneTime;
@@ -171,14 +182,16 @@ namespace obe::Animation
         int m_priority = 0;
 
         void loadMeta(const vili::node& meta);
-        void loadImages(const vili::node& images, const System::Path& path,
-            Engine::ResourceManager* resources);
+        void loadImages(
+            const vili::node& images, const System::Path& path, Engine::ResourceManager* resources);
         void loadGroups(const vili::node& groups);
         void loadCode(const vili::node& code);
 
         friend class AnimationState;
+
     public:
         Animation();
+        Animation(const Animation&) = delete;
         /**
          * \todo Make Animation a serializable type instead of this "applyParameters"
          * \brief Apply global Animation parameters (Sprite offset and priority)
@@ -283,8 +296,7 @@ namespace obe::Animation
          * \param resources pointer to the ResourceManager
          *        that will load the textures for the Animation
          */
-        void loadAnimation(
-            const System::Path& path, Engine::ResourceManager* resources = nullptr);
+        void loadAnimation(const System::Path& path, Engine::ResourceManager* resources = nullptr);
         /**
          * \brief Reset the Animation (Unselect current AnimationGroup and
          *        restart AnimationCode)

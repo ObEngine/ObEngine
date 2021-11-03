@@ -5,10 +5,10 @@
 -- @classmod pl.Date
 -- @pragma nostrip
 
-local class = require 'Lib.Extlibs.pl.class'
+local class = require 'pl.class'
 local os_time, os_date = os.time, os.date
-local stringx = require 'Lib.Extlibs.pl.stringx'
-local utils = require 'Lib.Extlibs.pl.utils'
+local stringx = require 'pl.stringx'
+local utils = require 'pl.utils'
 local assert_arg,assert_string = utils.assert_arg,utils.assert_string
 
 local Date = class()
@@ -510,7 +510,7 @@ Allowed patterns:
 
 ]]
 
-local function looks_like_a_month(w) 
+local function looks_like_a_month(w)
     return w:match '^%a+,*$' ~= nil
 end
 local is_number = stringx.isdigit
@@ -537,7 +537,7 @@ local function  parse_iso_end(p,ns,sec)
     -- (we're working with the date as lower case, hence 'z')
     if p:match 'z$' then -- we're UTC!
         return  sec, {h=0,m=0}
-    end 
+    end
     p = p:gsub(':','') -- turn 00:30 to 0030
     local _,_,sign,offs = p:find('^([%+%-])(%d+)')
     if not sign then return sec, nil end -- not UTC

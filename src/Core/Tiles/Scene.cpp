@@ -1,15 +1,14 @@
+#include <Debug/Logger.hpp>
 #include <Scene/Scene.hpp>
-#include <Tiles/Layer.hpp>
+#include <Tiles/Exceptions.hpp>
 #include <Tiles/Scene.hpp>
-
-#include "Debug/Logger.hpp"
 
 namespace obe::Tiles
 {
     void TileScene::build()
     {
-        Debug::Log->info("Build TileScene @{} with Animations @{}", fmt::ptr(this),
-            fmt::ptr(&m_animatedTiles));
+        Debug::Log->info(
+            "Build TileScene @{} with Animations @{}", fmt::ptr(this), fmt::ptr(&m_animatedTiles));
         for (auto& layer : m_layers)
         {
             layer->build();
@@ -40,9 +39,9 @@ namespace obe::Tiles
         const vili::node& tilesets = data["sources"];
         for (const auto& [tilesetId, tileset] : tilesets.items())
         {
-            m_tilesets.addTileset(tileset["firstTileId"], tilesetId,
-                tileset["image"]["path"], tileset["columns"], tileset["tile"]["width"],
-                tileset["tile"]["height"], tileset["tilecount"]);
+            m_tilesets.addTileset(tileset["firstTileId"], tilesetId, tileset["image"]["path"],
+                tileset["columns"], tileset["tile"]["width"], tileset["tile"]["height"],
+                tileset["tilecount"]);
 
             const Tileset& currentTileset = m_tilesets.tilesetFromId(tilesetId);
             if (tileset.contains("animations"))
@@ -56,8 +55,10 @@ namespace obe::Tiles
                         const uint32_t sleepMilliseconds = frame.at("clock");
                         sleeps.push_back(
                             static_cast<double>(sleepMilliseconds) * Time::milliseconds);
-                        tileIds.push_back(frame.at("tileid").as<vili::integer>()
-                            + tileset.at("firstTileId").as<vili::integer>());
+                        uint32_t fullTileId
+                            = static_cast<uint32_t>(frame.at("tileid").as<vili::integer>()
+                                + tileset.at("firstTileId").as<vili::integer>());
+                        tileIds.push_back(fullTileId);
                     }
                     m_animatedTiles.push_back(
                         std::make_unique<AnimatedTile>(currentTileset, tileIds, sleeps));
@@ -142,9 +143,19 @@ namespace obe::Tiles
     {
         std::vector<TileLayer*> layers;
         std::transform(m_layers.begin(), m_layers.end(), std::back_inserter(layers),
-            [](const auto& layer) { return layer.get();
-            });
+            [](const auto& layer) { return layer.get(); });
         return layers;
+    }
+
+    std::vector<std::string> TileScene::getLayersIds() const
+    {
+        std::vector<std::string> layersNames;
+        layersNames.reserve(m_layers.size());
+        for (const auto& layer : m_layers)
+        {
+            layersNames.push_back(layer->getId());
+        }
+        return layersNames;
     }
 
     TileLayer& TileScene::getLayer(const std::string& id) const
@@ -156,6 +167,8 @@ namespace obe::Tiles
                 return *layer;
             }
         }
+
+        throw Exceptions::UnknownTileLayer(id, this->getLayersIds(), EXC_INFO);
     }
 
     AnimatedTiles TileScene::getAnimatedTiles() const

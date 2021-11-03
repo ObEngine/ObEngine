@@ -3,14 +3,14 @@
 #include <functional>
 #include <string>
 
-#include <sol/sol.hpp>
-
-#include <Debug/Logger.hpp>
-#include <Event/Exceptions.hpp>
-#include <Utils/StringUtils.hpp>
+#include <Script/Scripting.hpp>
+#include <Script/ViliLuaBridge.hpp>
 
 namespace obe::Event
 {
+    /**
+     * \nobind
+     */
     template <class EventType>
     using CppEventListener = std::function<void(const EventType&)>;
 
@@ -21,24 +21,14 @@ namespace obe::Event
 
     public:
         LuaEventListener(sol::protected_function callback);
-
-        template <class EventType> void operator()(const EventType& event) const;
+        template <class EventType>
+        void operator()(const EventType& event) const;
     };
 
     template <class EventType>
     void LuaEventListener::operator()(const EventType& event) const
     {
-        const sol::protected_function_result result = m_callback(event);
-        if (!result.valid())
-        {
-            const auto errObj = result.get<sol::error>();
-            const std::string errMsg = "\n        \""
-                + Utils::String::replace(errObj.what(), "\n", "\n        ") + "\"";
-            const auto exception = Exceptions::LuaExecutionError(errMsg, EXC_INFO);
-            Debug::Log->debug(exception.what());
-
-            throw exception;
-        }
+        Script::safeLuaCall(m_callback, event);
     }
 
     using ExternalEventListener = std::variant<LuaEventListener>;

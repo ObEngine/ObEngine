@@ -1,17 +1,15 @@
+#include <vili/parser.hpp>
+
 #include <Animation/Animator.hpp>
 #include <Animation/Exceptions.hpp>
-
 #include <Graphics/Sprite.hpp>
-#include <Utils/VectorUtils.hpp>
-
-#include <vili/parser.hpp>
+#include <Transform/UnitVector.hpp>
 
 using namespace std::string_literals;
 
 namespace obe::Animation
 {
-    AnimatorTargetScaleMode stringToAnimatorTargetScaleMode(
-        const std::string& targetScaleMode)
+    AnimatorTargetScaleMode stringToAnimatorTargetScaleMode(const std::string& targetScaleMode)
     {
         if (targetScaleMode == "Fit")
         {
@@ -43,13 +41,11 @@ namespace obe::Animation
             {
                 m_target->setSize(Transform::UnitVector(m_target->getSize().x,
                     static_cast<float>(texture.getSize().y)
-                        / static_cast<float>(texture.getSize().x)
-                        * m_target->getSize().x));
+                        / static_cast<float>(texture.getSize().x) * m_target->getSize().x));
             }
             else
             {
-                m_target->setSize(Transform::UnitVector(
-                    static_cast<float>(texture.getSize().x)
+                m_target->setSize(Transform::UnitVector(static_cast<float>(texture.getSize().x)
                         / static_cast<float>(texture.getSize().y) * m_target->getSize().y,
                     m_target->getSize().y));
             }
@@ -57,21 +53,21 @@ namespace obe::Animation
         else if (m_targetScaleMode == AnimatorTargetScaleMode::FixedWidth)
         {
             m_target->setSize(Transform::UnitVector(m_target->getSize().x,
-                static_cast<float>(texture.getSize().y)
-                    / static_cast<float>(texture.getSize().x) * m_target->getSize().x));
+                static_cast<float>(texture.getSize().y) / static_cast<float>(texture.getSize().x)
+                    * m_target->getSize().x));
         }
         else if (m_targetScaleMode == AnimatorTargetScaleMode::FixedHeight)
         {
-            m_target->setSize(
-                Transform::UnitVector(static_cast<float>(texture.getSize().x)
-                        / static_cast<float>(texture.getSize().y) * m_target->getSize().y,
-                    m_target->getSize().y));
+            m_target->setSize(Transform::UnitVector(static_cast<float>(texture.getSize().x)
+                    / static_cast<float>(texture.getSize().y) * m_target->getSize().y,
+                m_target->getSize().y));
         }
         else if (m_targetScaleMode == AnimatorTargetScaleMode::TextureSize)
             m_target->useTextureSize();
     }
 
-    AnimatorState::AnimatorState(const Animator& parent) : m_parent(parent)
+    AnimatorState::AnimatorState(const Animator& parent)
+        : m_parent(parent)
     {
     }
 
@@ -100,7 +96,8 @@ namespace obe::Animation
         return m_currentAnimation;
     }
 
-    Animator::Animator() : m_defaultState(*this)
+    Animator::Animator()
+        : m_defaultState(*this)
     {
     }
 
@@ -144,8 +141,8 @@ namespace obe::Animation
     {
         if (m_parent.m_animations.find(key) == m_parent.m_animations.end())
         {
-            throw Exceptions::UnknownAnimation(m_parent.m_path.toString(), key,
-                m_parent.getAllAnimationName(), EXC_INFO);
+            throw Exceptions::UnknownAnimation(
+                m_parent.m_path.toString(), key, m_parent.getAllAnimationName(), EXC_INFO);
         }
         if (key != this->getKey())
         {
@@ -170,11 +167,10 @@ namespace obe::Animation
 
     void Animator::setKey(const std::string& key)
     {
-        Debug::Log->trace("<Animator> Set Animation Key '{0}' for Animator at {1} {2}",
-            key, m_path.toString(), m_animations.size());
+        Debug::Log->trace("<Animator> Set Animation Key '{0}' for Animator at {1} {2}", key,
+            m_path.toString(), m_animations.size());
         m_defaultState.setKey(key);
     }
-
 
     void AnimatorState::setPaused(bool pause) noexcept
     {
@@ -190,11 +186,9 @@ namespace obe::Animation
     {
         m_path = path;
         Debug::Log->debug("<Animator> Loading Animator at {0}", m_path.toString());
-        std::vector<System::FindResult> directories
-            = m_path.list(System::PathType::Directory);
+        std::vector<System::FindResult> directories = m_path.list(System::PathType::Directory);
         vili::node animatorCfgFile;
-        auto foundAnimatorCfg
-            = m_path.add("animator.cfg.vili").find(System::PathType::File);
+        auto foundAnimatorCfg = m_path.add("animator.cfg.vili").find(System::PathType::File);
         if (foundAnimatorCfg.success())
         {
             animatorCfgFile = vili::parser::from_file(foundAnimatorCfg.path());
@@ -230,17 +224,14 @@ namespace obe::Animation
         {
             Debug::Log->trace("<Animator> Updating Animator at {0}", m_parent.m_path.toString());
             if (m_currentAnimation == nullptr)
-                throw Exceptions::NoSelectedAnimation(
-                    m_parent.m_path.toString(), EXC_INFO);
+                throw Exceptions::NoSelectedAnimation(m_parent.m_path.toString(), EXC_INFO);
             if (m_currentAnimation->getStatus() == AnimationStatus::Call)
             {
                 m_currentAnimation->reset();
-                const std::string nextAnimation
-                    = m_currentAnimation->getCalledAnimation();
-                if (m_parent.m_animations.find(nextAnimation)
-                    == m_parent.m_animations.end())
-                    throw Exceptions::UnknownAnimation(m_parent.m_path.toString(),
-                        nextAnimation, m_parent.getAllAnimationName(), EXC_INFO);
+                const std::string nextAnimation = m_currentAnimation->getCalledAnimation();
+                if (m_parent.m_animations.find(nextAnimation) == m_parent.m_animations.end())
+                    throw Exceptions::UnknownAnimation(m_parent.m_path.toString(), nextAnimation,
+                        m_parent.getAllAnimationName(), EXC_INFO);
                 m_currentAnimation = m_states.at(nextAnimation).get();
             }
             if (m_currentAnimation->getStatus() == AnimationStatus::Play)
@@ -258,9 +249,7 @@ namespace obe::Animation
         m_defaultState.update();
     }
 
-
-    void AnimatorState::setTarget(
-        Graphics::Sprite& sprite, AnimatorTargetScaleMode targetScaleMode)
+    void AnimatorState::setTarget(Graphics::Sprite& sprite, AnimatorTargetScaleMode targetScaleMode)
     {
         m_target = &sprite;
         m_targetScaleMode = targetScaleMode;
@@ -270,7 +259,6 @@ namespace obe::Animation
     {
         m_defaultState.setTarget(sprite, targetScaleMode);
     }
-
 
     System::Path Animator::getPath() const
     {
@@ -301,8 +289,7 @@ namespace obe::Animation
         return m_parent;
     }
 
-    const Graphics::Texture& Animator::getTextureAtKey(
-        const std::string& key, int index) const
+    const Graphics::Texture& Animator::getTextureAtKey(const std::string& key, int index) const
     {
         return this->getAnimation(key).getTextureAtIndex(index);
     }

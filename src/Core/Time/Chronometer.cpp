@@ -1,5 +1,3 @@
-#include <iostream>
-
 #include <Time/Chronometer.hpp>
 
 namespace obe::Time

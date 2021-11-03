@@ -12,7 +12,7 @@ namespace obe::Event::Exceptions::Bindings
     void LoadClassEventGroupAlreadyExists(sol::state_view state);
     void LoadClassEventGroupNotJoinable(sol::state_view state);
     void LoadClassEventNamespaceAlreadyExists(sol::state_view state);
-    void LoadClassLuaExecutionError(sol::state_view state);
+    void LoadClassEventNamespaceNotJoinable(sol::state_view state);
     void LoadClassUnknownEvent(sol::state_view state);
     void LoadClassUnknownEventGroup(sol::state_view state);
     void LoadClassUnknownEventNamespace(sol::state_view state);

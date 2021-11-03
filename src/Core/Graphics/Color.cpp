@@ -1,12 +1,9 @@
-#include "Utils/MathUtils.hpp"
+#include <array>
+#include <cmath>
 
 #include <Graphics/Color.hpp>
 #include <Graphics/Exceptions.hpp>
-
-#include <array>
-#include <cmath>
-#include <sstream>
-#include <unordered_map>
+#include <Utils/MathUtils.hpp>
 
 namespace obe::Graphics
 {
@@ -152,92 +149,82 @@ namespace obe::Graphics
     Color Color::Yellow(255, 255, 0);
     Color Color::YellowGreen(154, 205, 50);
 
-    static std::unordered_map<std::string, Color> ColorNames = { { "aliceblue",
-                                                              Color::AliceBlue },
+    static std::unordered_map<std::string, Color> ColorNames = { { "aliceblue", Color::AliceBlue },
         { "antiquewhite", Color::AntiqueWhite }, { "aqua", Color::Aqua },
-        { "aquamarine", Color::Aquamarine }, { "azure", Color::Azure },
-        { "beige", Color::Beige }, { "bisque", Color::Bisque }, { "black", Color::Black },
+        { "aquamarine", Color::Aquamarine }, { "azure", Color::Azure }, { "beige", Color::Beige },
+        { "bisque", Color::Bisque }, { "black", Color::Black },
         { "blanchedalmond", Color::BlanchedAlmond }, { "blue", Color::Blue },
         { "blueviolet", Color::BlueViolet }, { "brown", Color::Brown },
         { "burlywood", Color::BurlyWood }, { "cadetblue", Color::CadetBlue },
         { "chartreuse", Color::Chartreuse }, { "chocolate", Color::Chocolate },
         { "coral", Color::Coral }, { "cornflowerblue", Color::CornflowerBlue },
-        { "cornsilk", Color::Cornsilk }, { "crimson", Color::Crimson },
-        { "cyan", Color::Cyan }, { "darkblue", Color::DarkBlue },
-        { "darkcyan", Color::DarkCyan }, { "darkgoldenrod", Color::DarkGoldenrod },
-        { "darkgray", Color::DarkGray }, { "darkgreen", Color::DarkGreen },
-        { "darkkhaki", Color::DarkKhaki }, { "darkmagenta", Color::DarkMagenta },
-        { "darkolivegreen", Color::DarkOliveGreen }, { "darkorange", Color::DarkOrange },
-        { "darkorchid", Color::DarkOrchid }, { "darkred", Color::DarkRed },
-        { "darksalmon", Color::DarkSalmon }, { "darkseagreen", Color::DarkSeaGreen },
-        { "darkslateblue", Color::DarkSlateBlue },
-        { "darkslategray", Color::DarkSlateGray },
-        { "darkturquoise", Color::DarkTurquoise }, { "darkviolet", Color::DarkViolet },
-        { "deeppink", Color::DeepPink }, { "deepskyblue", Color::DeepSkyBlue },
-        { "dimgray", Color::DimGray }, { "dodgerblue", Color::DodgerBlue },
-        { "firebrick", Color::FireBrick }, { "floralwhite", Color::FloralWhite },
-        { "forestgreen", Color::ForestGreen }, { "fuchsia", Color::Fuchsia },
-        { "gainsboro", Color::Gainsboro }, { "ghostwhite", Color::GhostWhite },
-        { "gold", Color::Gold }, { "goldenrod", Color::Goldenrod },
-        { "gray", Color::Gray }, { "green", Color::Green },
+        { "cornsilk", Color::Cornsilk }, { "crimson", Color::Crimson }, { "cyan", Color::Cyan },
+        { "darkblue", Color::DarkBlue }, { "darkcyan", Color::DarkCyan },
+        { "darkgoldenrod", Color::DarkGoldenrod }, { "darkgray", Color::DarkGray },
+        { "darkgreen", Color::DarkGreen }, { "darkkhaki", Color::DarkKhaki },
+        { "darkmagenta", Color::DarkMagenta }, { "darkolivegreen", Color::DarkOliveGreen },
+        { "darkorange", Color::DarkOrange }, { "darkorchid", Color::DarkOrchid },
+        { "darkred", Color::DarkRed }, { "darksalmon", Color::DarkSalmon },
+        { "darkseagreen", Color::DarkSeaGreen }, { "darkslateblue", Color::DarkSlateBlue },
+        { "darkslategray", Color::DarkSlateGray }, { "darkturquoise", Color::DarkTurquoise },
+        { "darkviolet", Color::DarkViolet }, { "deeppink", Color::DeepPink },
+        { "deepskyblue", Color::DeepSkyBlue }, { "dimgray", Color::DimGray },
+        { "dodgerblue", Color::DodgerBlue }, { "firebrick", Color::FireBrick },
+        { "floralwhite", Color::FloralWhite }, { "forestgreen", Color::ForestGreen },
+        { "fuchsia", Color::Fuchsia }, { "gainsboro", Color::Gainsboro },
+        { "ghostwhite", Color::GhostWhite }, { "gold", Color::Gold },
+        { "goldenrod", Color::Goldenrod }, { "gray", Color::Gray }, { "green", Color::Green },
         { "greenyellow", Color::GreenYellow }, { "honeydew", Color::HoneyDew },
         { "hotpink", Color::HotPink }, { "indianred", Color::IndianRed },
         { "indigo", Color::Indigo }, { "ivory", Color::Ivory }, { "khaki", Color::Khaki },
         { "lavender", Color::Lavender }, { "lavenderblush", Color::LavenderBlush },
         { "lawngreen", Color::LawnGreen }, { "lemonchiffon", Color::LemonChiffon },
         { "lightblue", Color::LightBlue }, { "lightcoral", Color::LightCoral },
-        { "lightcyan", Color::LightCyan },
-        { "lightgoldenrodyellow", Color::LightGoldenrodYellow },
+        { "lightcyan", Color::LightCyan }, { "lightgoldenrodyellow", Color::LightGoldenrodYellow },
         { "lightgray", Color::LightGray }, { "lightgreen", Color::LightGreen },
         { "lightpink", Color::LightPink }, { "lightsalmon", Color::LightSalmon },
         { "lightsalmon", Color::LightSalmon }, { "lightseagreen", Color::LightSeaGreen },
-        { "lightskyblue", Color::LightSkyBlue },
-        { "lightslategray", Color::LightSlateGray },
-        { "lightsteelblue", Color::LightSteelBlue },
-        { "lightyellow", Color::LightYellow }, { "lime", Color::Lime },
-        { "limegreen", Color::LimeGreen }, { "linen", Color::Linen },
+        { "lightskyblue", Color::LightSkyBlue }, { "lightslategray", Color::LightSlateGray },
+        { "lightsteelblue", Color::LightSteelBlue }, { "lightyellow", Color::LightYellow },
+        { "lime", Color::Lime }, { "limegreen", Color::LimeGreen }, { "linen", Color::Linen },
         { "magenta", Color::Magenta }, { "maroon", Color::Maroon },
-        { "mediumaquamarine", Color::MediumAquamarine },
-        { "mediumblue", Color::MediumBlue }, { "mediumorchid", Color::MediumOrchid },
-        { "mediumpurple", Color::MediumPurple },
-        { "mediumseagreen", Color::MediumSeaGreen },
-        { "mediumslateblue", Color::MediumSlateBlue },
+        { "mediumaquamarine", Color::MediumAquamarine }, { "mediumblue", Color::MediumBlue },
+        { "mediumorchid", Color::MediumOrchid }, { "mediumpurple", Color::MediumPurple },
+        { "mediumseagreen", Color::MediumSeaGreen }, { "mediumslateblue", Color::MediumSlateBlue },
         { "mediumslateblue", Color::MediumSlateBlue },
         { "mediumspringgreen", Color::MediumSpringGreen },
         { "mediumturquoise", Color::MediumTurquoise },
-        { "mediumvioletred", Color::MediumVioletRed },
-        { "midnightblue", Color::MidnightBlue }, { "mintcream", Color::MintCream },
-        { "mistyrose", Color::MistyRose }, { "moccasin", Color::Moccasin },
-        { "navajowhite", Color::NavajoWhite }, { "navy", Color::Navy },
-        { "oldlace", Color::OldLace }, { "olive", Color::Olive },
+        { "mediumvioletred", Color::MediumVioletRed }, { "midnightblue", Color::MidnightBlue },
+        { "mintcream", Color::MintCream }, { "mistyrose", Color::MistyRose },
+        { "moccasin", Color::Moccasin }, { "navajowhite", Color::NavajoWhite },
+        { "navy", Color::Navy }, { "oldlace", Color::OldLace }, { "olive", Color::Olive },
         { "olivedrab", Color::OliveDrab }, { "orange", Color::Orange },
         { "orangered", Color::OrangeRed }, { "orchid", Color::Orchid },
         { "palegoldenrod", Color::PaleGoldenrod }, { "palegreen", Color::PaleGreen },
-        { "paleturquoise", Color::PaleTurquoise },
-        { "palevioletred", Color::PaleVioletRed }, { "papayawhip", Color::PapayaWhip },
-        { "peachpuff", Color::PeachPuff }, { "peru", Color::Peru },
-        { "pink", Color::Pink }, { "plum", Color::Plum },
+        { "paleturquoise", Color::PaleTurquoise }, { "palevioletred", Color::PaleVioletRed },
+        { "papayawhip", Color::PapayaWhip }, { "peachpuff", Color::PeachPuff },
+        { "peru", Color::Peru }, { "pink", Color::Pink }, { "plum", Color::Plum },
         { "powderblue", Color::PowderBlue }, { "purple", Color::Purple },
         { "rebeccapurple", Color::RebeccaPurple }, { "red", Color::Red },
         { "rosybrown", Color::RosyBrown }, { "royalblue", Color::RoyalBlue },
         { "saddlebrown", Color::SaddleBrown }, { "salmon", Color::Salmon },
         { "sandybrown", Color::SandyBrown }, { "seagreen", Color::SeaGreen },
-        { "seashell", Color::SeaShell }, { "sienna", Color::Sienna },
-        { "silver", Color::Silver }, { "skyblue", Color::SkyBlue },
-        { "slateblue", Color::SlateBlue }, { "slategray", Color::SlateGray },
-        { "snow", Color::Snow }, { "springgreen", Color::SpringGreen },
-        { "steelblue", Color::SteelBlue }, { "tan", Color::Tan }, { "teal", Color::Teal },
-        { "thistle", Color::Thistle }, { "tomato", Color::Tomato },
-        { "turquoise", Color::Turquoise }, { "violet", Color::Violet },
-        { "wheat", Color::Wheat }, { "white", Color::White },
-        { "whitesmoke", Color::WhiteSmoke }, { "yellow", Color::Yellow },
-        { "yellowgreen", Color::YellowGreen } };
+        { "seashell", Color::SeaShell }, { "sienna", Color::Sienna }, { "silver", Color::Silver },
+        { "skyblue", Color::SkyBlue }, { "slateblue", Color::SlateBlue },
+        { "slategray", Color::SlateGray }, { "snow", Color::Snow },
+        { "springgreen", Color::SpringGreen }, { "steelblue", Color::SteelBlue },
+        { "tan", Color::Tan }, { "teal", Color::Teal }, { "thistle", Color::Thistle },
+        { "tomato", Color::Tomato }, { "turquoise", Color::Turquoise }, { "violet", Color::Violet },
+        { "wheat", Color::Wheat }, { "white", Color::White }, { "whitesmoke", Color::WhiteSmoke },
+        { "yellow", Color::Yellow }, { "yellowgreen", Color::YellowGreen } };
 
     Color::Color()
+        : m_type(ColorType::Rgba)
     {
     }
 
     Color::Color(const double r, const double g, const double b, const double a)
+        : m_type(ColorType::Rgba)
     {
         this->fromRgb(r, g, b, a);
     }
@@ -247,20 +234,78 @@ namespace obe::Graphics
         this->fromString(nameOrHex);
     }
 
-    Color::Color(const Color& color)
-    {
-        r = color.r;
-        g = color.g;
-        b = color.b;
-        a = color.a;
-    }
-
     Color::Color(const sf::Color& color)
+        : m_type(ColorType::Rgba)
     {
         this->r = color.r;
         this->g = color.g;
         this->b = color.b;
         this->a = color.a;
+    }
+
+    vili::node Color::dump(ColorType type) const
+    {
+        vili::node result;
+        if (type == ColorType::Hex)
+        {
+            result = toHex();
+        }
+        else if (type == ColorType::Hsv)
+        {
+            Hsv value = toHsv();
+            result = vili::object {
+                { "H", value.H },
+                { "S", value.S },
+                { "V", value.V },
+            };
+        }
+        else if (type == ColorType::ColorName)
+        {
+            result = toString();
+        }
+        else
+        {
+            result = vili::object {
+                { "r", r },
+                { "g", g },
+                { "b", b },
+                { "a", a },
+            };
+        }
+        return result;
+    }
+
+    vili::node Color::dump() const
+    {
+        return dump(m_type);
+    }
+
+    void Color::load(const vili::node& data)
+    {
+        if (data.is<vili::object>() && data.contains("r"))
+        {
+            const double r = data.at("r").as<vili::number>();
+            const double g = data.at("g").as<vili::number>();
+            const double b = data.at("b").as<vili::number>();
+            const double a = data.contains("a") ? data.at("a").as<vili::number>() : 255.f;
+            this->fromRgb(r, g, b, a);
+        }
+        else if (data.is<vili::object>() && data.contains("H"))
+        {
+            const double H = data.at("H").as<vili::number>();
+            const double S = data.at("S").as<vili::number>();
+            const double V = data.at("V").as<vili::number>();
+            this->fromHsv(H, S, V);
+        }
+        else if (data.is<vili::string>())
+        {
+            this->fromString(data);
+        }
+        else
+        {
+            throw Exceptions::InvalidSpriteColorType(
+                vili::to_string(data.type()), data.dump(), EXC_INFO);
+        }
     }
 
     void Color::fromString(std::string string)
@@ -280,6 +325,7 @@ namespace obe::Graphics
             this->g = color->second.g;
             this->b = color->second.b;
             this->a = color->second.a;
+            m_type = ColorType::ColorName;
             return true;
         }
         if (!strict)
@@ -297,9 +343,10 @@ namespace obe::Graphics
         this->g = g;
         this->b = b;
         this->a = a;
+        m_type = ColorType::Rgba;
     }
 
-    void Color::fromHsv(const int H, const double S, const double V)
+    void Color::fromHsv(const double H, const double S, const double V)
     {
 
         if (H < 0 || H > 360 || S < 0.0 || S > 1.0 || V < 0.0 || V > 1.0)
@@ -352,17 +399,17 @@ namespace obe::Graphics
         this->r = (Rs + m) * 255;
         this->g = (Gs + m) * 255;
         this->b = (Bs + m) * 255;
+        m_type = ColorType::Hsv;
     }
 
     uint32_t Color::toInteger() const
     {
-        return (static_cast<int>(r) << 24) + (static_cast<int>(g) << 16)
-            + (static_cast<int>(b) << 8) + (a);
+        return (std::lround(r) << 24) + (std::lround(g) << 16) + (std::lround(b) << 8) + std::lround(a);
     }
 
     void Color::fromHex(std::string hexCode)
     {
-        std::array<unsigned short, 3> rgb {};
+        std::array<unsigned short, 4> rgba {0, 0, 0, 255};
         std::stringstream ss;
         std::string str;
 
@@ -373,19 +420,19 @@ namespace obe::Graphics
 
         const int size = hexCode.size();
 
-        if (size != 3 && size != 6
+        if (size != 3 && size != 4 && size != 6 && size != 8
             || hexCode.find_first_not_of("AaBbCcDdEeFf0123456789") != std::string::npos)
         {
             throw Exceptions::InvalidHexFormat(hexCode, EXC_INFO);
         }
 
-        for (unsigned int i = 0; i < 3; i++)
+        for (unsigned int i = 0; i < (3 + (size % 3 ? 1 : 0)); i++)
         {
-            if (size == 3)
+            if (size == 3 || size == 4)
             {
                 str = std::string(2, hexCode[i]);
             }
-            else if (size == 6)
+            else if (size == 6 || size == 8)
             {
                 str = hexCode.substr(i * 2, 2);
             }
@@ -394,13 +441,98 @@ namespace obe::Graphics
                 break;
             }
             ss << std::hex << str;
-            ss >> rgb[i];
+            ss >> rgba[i];
             ss.clear();
         }
 
-        this->r = rgb[0];
-        this->g = rgb[1];
-        this->b = rgb[2];
+        this->r = rgba[0];
+        this->g = rgba[1];
+        this->b = rgba[2];
+        this->a = rgba[3];
+        m_type = ColorType::Hex;
+    }
+
+    Hsv Color::toHsv() const
+    {
+        double min, max, delta, Rs, Gs, Bs;
+        Hsv res;
+
+        Rs = r / 255;
+        Gs = g / 255;
+        Bs = b / 255;
+
+        min = Rs < Gs ? Rs : Gs;
+        min = min < Bs ? min : Bs;
+
+        max = Rs > Gs ? Rs : Gs;
+        max = max > Bs ? max : Bs;
+
+        res.V = max;
+        delta = max - min;
+        if (delta < 0.003)
+        {
+            res.S = 0;
+            res.H = 0;
+            return res;
+        }
+        if (max > 0.0)
+        {
+            res.S = (delta / max);
+        }
+        else
+        {
+            res.S = 0.0;
+            res.H = 0;
+            return res;
+        }
+        if (Rs >= max)
+        {
+            res.H = (Gs - Bs) / delta;
+        }
+        else if (Gs >= max)
+        {
+            res.H = 2.0 + (Bs - Rs) / delta;
+        }
+        else
+        {
+            res.H = 4.0 + (Rs - Gs) / delta;
+        }
+
+        res.H *= 60.0;
+
+        if (res.H < 0.0)
+            res.H += 360.0;
+        return res;
+    }
+
+    std::optional<std::string> Color::toName() const
+    {
+        auto it = std::find_if(ColorNames.begin(), ColorNames.end(),
+            [this](const std::pair<std::string, Color>& color) { return color.second == *this; });
+        if (it != ColorNames.end())
+        {
+            return it->first;
+        }
+        return std::nullopt;
+    }
+
+    std::string Color::toHex() const
+    {
+        std::stringstream ss;
+        ss << "#";
+        ss << std::hex
+           << (std::lround(r) << 16 | std::lround(g) << 8 | std::lround(b));
+        if (std::lround(a) != 255)
+        {
+            ss << std::hex << std::lround(a);
+        }
+        return ss.str();
+    }
+
+    std::string Color::toString() const
+    {
+        const std::optional<std::string> name = toName();
+        return name.value_or(toHex());
     }
 
     bool Color::operator==(const Color& color) const
@@ -529,16 +661,18 @@ namespace obe::Graphics
         int alpha = 255;
         if (randomAlpha)
         {
-            alpha = Utils::Math::randfloat() * 255.f;
+            alpha = Utils::Math::randint(0, 255);
         }
-        return Color(255.f * Utils::Math::randfloat(), 255.f * Utils::Math::randfloat(),
-            255.f * Utils::Math::randfloat(), alpha);
+        const int r = Utils::Math::randint(0, 255);
+        const int g = Utils::Math::randint(0, 255);
+        const int b = Utils::Math::randint(0, 255);
+        return Color(r, g, b, alpha);
     }
 
     std::ostream& operator<<(std::ostream& os, const Color& color)
     {
-        os << "Color(" << int(color.r) << ", " << int(color.g) << ", " << int(color.b)
-           << ", " << int(color.a) << ")";
+        os << "Color(" << std::lround(color.r) << ", " << std::lround(color.g) << ", "
+           << std::lround(color.b) << ", " << std::lround(color.a) << ")";
         return os;
     }
 } // namespace obe::Graphics

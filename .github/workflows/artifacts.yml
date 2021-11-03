@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: Clean previous execution
       run: rm -rf build; rm -rf SFML
     - name: Create build directory
@@ -31,9 +33,9 @@ jobs:
     - name: Compile and install SFML
       run: cd SFML; cmake .; make -j8; sudo make install
     - name: Compile ObEngine
-      run: cd build; cmake -DBUILD_TESTS=ON ..; make -j8
+      run: cd build; cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..; make -j8
     - name: Run tests
-      run: ./build/tests/ObEngineTests
+      run: export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/usr/local/lib"; ./build/tests/ObEngineTests
     - name: Create package
       run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
     - name: Package to archive
@@ -55,6 +57,8 @@ jobs:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: Create deps directory
       run: mkdir deps
     - name: Download pre-built SFML
@@ -66,7 +70,7 @@ jobs:
     - name: Create build directory
       run: mkdir build
     - name: Run CMake on ObEngine
-      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON ..
+      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..
       shell: pwsh
     - name: Compile ObEngine
       run: cmake --build build --config Release -- /m:8
@@ -94,12 +98,14 @@ jobs:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: Install SFML
       run: brew install sfml
     - name: Create build directory
       run: mkdir build
     - name: Run CMake on ObEngine
-      run: cd build && cmake -DBUILD_TESTS=ON ..
+      run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..
     - name: Compile ObEngine
       run: cd build && make -j8
     - name: Run tests

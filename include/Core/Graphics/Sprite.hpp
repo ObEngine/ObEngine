@@ -84,13 +84,11 @@ namespace obe::Graphics
          * \param position Position where the HandlePoint should move to
          * \param camera Camera used to manipulate PositionTransformers
          */
-        void moveTo(
-            const Transform::UnitVector& position, const Transform::UnitVector& camera);
+        void moveTo(const Transform::UnitVector& position, const Transform::UnitVector& camera);
     };
 
     /**
      * \brief An element meant to be displayed in a Scene
-     * \bind{Sprite}
      */
     class Sprite : public Transform::UnitBasedObject,
                    public Types::Selectable,

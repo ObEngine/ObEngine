@@ -3,17 +3,23 @@
 #include <string>
 #include <variant>
 
-#include <Transform/Rect.hpp>
-
 #include <SFML/Graphics/Texture.hpp>
+
+namespace obe
+{
+    namespace Transform
+    {
+        class Rect;
+        class UnitVector;
+    }
+}
 
 namespace obe::Graphics
 {
     class Texture
     {
     private:
-        std::variant<sf::Texture, std::shared_ptr<sf::Texture>, const sf::Texture*>
-            m_texture;
+        std::variant<sf::Texture, std::shared_ptr<sf::Texture>, const sf::Texture*> m_texture;
 
     public:
         Texture();

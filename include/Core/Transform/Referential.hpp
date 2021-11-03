@@ -29,7 +29,6 @@ namespace obe::Transform
     public:
         Referential();
         Referential(double refX, double refY);
-        Referential(const Referential& ref);
 
         bool operator==(const Referential& ref) const;
         bool operator!=(const Referential& ref) const;
@@ -93,8 +92,7 @@ namespace obe::Transform
          * \param format Format (fmt) of the string returned
          * \return The name of the Referential in std::string form
          */
-        [[nodiscard]] std::string toString(
-            const std::string& format = "Referential<{}>") const;
+        [[nodiscard]] std::string toString(const std::string& format = "Referential<{}>") const;
         /**
          * \brief Gets a Referential based on its name
          * \param ref Name of the Referential

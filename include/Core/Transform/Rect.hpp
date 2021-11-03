@@ -9,9 +9,22 @@
 namespace obe::Transform
 {
     /**
+     * \brief Conversion Type for Referential Usage
+     */
+    enum class ReferentialConversionType
+    {
+        /**
+            * \brief Factor x1 (GetPosition)
+            */
+        From,
+        /**
+            * \brief Factor x-1 (SetPosition)
+            */
+        To
+    };
+    /**
      * \brief A Class that does represent a Rectangle with various methods to
      *        manipulate it
-     * \bind{Rect}
      */
     class Rect : public Movable
     {
@@ -24,20 +37,6 @@ namespace obe::Transform
 
     public:
         /**
-         * \brief Conversion Type for Referential Usage
-         */
-        enum class ConversionType
-        {
-            /**
-             * \brief Factor x1 (GetPosition)
-             */
-            From,
-            /**
-             * \brief Factor x-1 (SetPosition)
-             */
-            To
-        };
-        /**
          * \brief Transform the UnitVector passed by reference using the given
          * Referential
          * \param vec The UnitVector you want to transform
@@ -47,7 +46,7 @@ namespace obe::Transform
          *          - To : ref to Referential::TopLeft
          */
         void transformRef(
-            UnitVector& vec, const Referential& ref, ConversionType type) const;
+            UnitVector& vec, const Referential& ref, ReferentialConversionType type) const;
 
         Rect() = default;
         Rect(const Transform::UnitVector& position, const Transform::UnitVector& size);
@@ -98,8 +97,7 @@ namespace obe::Transform
          *        Referential
          * \param ref Referential you want to move
          */
-        void movePoint(
-            const UnitVector& position, const Referential& ref = Referential::TopLeft);
+        void movePoint(const UnitVector& position, const Referential& ref = Referential::TopLeft);
 
         /**
          * \brief Set the size of the Rect
@@ -107,8 +105,7 @@ namespace obe::Transform
          * \param ref Referential used to resize the Rect (Referential that
          *        won't move)
          */
-        void setSize(
-            const UnitVector& size, const Referential& ref = Referential::TopLeft);
+        void setSize(const UnitVector& size, const Referential& ref = Referential::TopLeft);
         /**
          * \brief Scales the Rect (Relative to the current size)
          * \param size Size to multiply to the current size
@@ -160,8 +157,8 @@ namespace obe::Transform
         * \param other The other Rect to check
         * \return true if the Rect intersects the other Rect, false otherwise
         */
-        [[nodiscard]] bool doesIntersects(const Rect& rect) const;
-        [[nodiscard]] std::optional<Rect> getIntersection(const Rect& rect) const;
+        [[nodiscard]] bool intersects(const Rect& rect) const;
+        [[nodiscard]] std::optional<Rect> intersection(const Rect& rect) const;
         [[nodiscard]] bool contains(const Rect& rect) const;
         [[nodiscard]] bool contains(const UnitVector& position) const;
     };

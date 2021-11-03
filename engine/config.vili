@@ -1,0 +1,34 @@
+GameConfig:
+    scrollSensibility: 1
+
+Graphics:
+    antiAliasing: true
+
+Framerate:
+    framerateTarget: 60
+    vsync: true
+
+Window:
+    Game:
+        fullscreen: true
+        width: fill
+        height: fill
+        title: "MyGame"
+
+    Editor:
+        fullscreen: true
+        closeable: true
+        titlebar: true
+        resizeable: true
+        width: fill
+        height: fill
+        docked: false
+
+Debug:
+    Logging:
+        level: debug
+
+Script:
+    Lua:
+        patchIO: true
+        garbageCollector: "generational"

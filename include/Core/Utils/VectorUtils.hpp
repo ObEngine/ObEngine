@@ -18,20 +18,24 @@ namespace obe::Utils::Vector
      * \thint{contains, V=$primitives}
      * \endthints
      */
-    template <typename V> bool contains(V item, const std::vector<V>& vec);
+    template <typename V>
+    bool contains(V item, const std::vector<V>& vec);
     /**
      * \brief Join all elements of a std::string into a std::string using a
      *        separator
-     * \param vector Vector you want to join
-     * \param sep Separator you want to use
-     * \param start From which index of the std::vector
-     * \param end From which index (starting at the end) of the std::vector
+     * \param vector array containing the strings to join
+     * \param sep string separator used to join the string values from the array
+     * \param start start position from where to start joining values
+     * \param end from which index (starting at the end) of the array to stop joining values
      * \return A string which are all the elements of the std::vector joined
+     *
+     * \paramrename{end,stop}
      */
-    std::string join(std::vector<std::string>& vector, std::string sep = "",
-        int start = 0, int end = 0);
+    std::string join(
+        std::vector<std::string>& vector, std::string sep = "", int start = 0, int end = 0);
 
-    template <typename V> bool contains(V item, const std::vector<V>& vec)
+    template <typename V>
+    bool contains(V item, const std::vector<V>& vec)
     {
         for (size_t k = 0; k < vec.size(); k++)
         {

@@ -11,17 +11,15 @@ namespace obe::Engine::Bindings
     {
         sol::table EngineNamespace = state["obe"]["Engine"].get<sol::table>();
         sol::usertype<obe::Engine::Engine> bindEngine
-            = EngineNamespace.new_usertype<obe::Engine::Engine>("Engine",
-                sol::call_constructor, sol::constructors<obe::Engine::Engine()>());
+            = EngineNamespace.new_usertype<obe::Engine::Engine>(
+                "Engine", sol::call_constructor, sol::constructors<obe::Engine::Engine()>());
         bindEngine["init"] = &obe::Engine::Engine::init;
         bindEngine["run"] = &obe::Engine::Engine::run;
         bindEngine["Audio"] = sol::property(&obe::Engine::Engine::getAudioManager);
-        bindEngine["Configuration"]
-            = sol::property(&obe::Engine::Engine::getConfigurationManager);
+        bindEngine["Configuration"] = sol::property(&obe::Engine::Engine::getConfigurationManager);
         bindEngine["Resources"] = sol::property(&obe::Engine::Engine::getResourceManager);
         bindEngine["Input"] = sol::property(&obe::Engine::Engine::getInputManager);
-        bindEngine["Framerate"]
-            = sol::property(&obe::Engine::Engine::getFramerateManager);
+        bindEngine["Framerate"] = sol::property(&obe::Engine::Engine::getFramerateManager);
         bindEngine["Events"] = sol::property(&obe::Engine::Engine::getEventManager);
         bindEngine["Scene"] = sol::property(&obe::Engine::Engine::getScene);
         bindEngine["Cursor"] = sol::property(&obe::Engine::Engine::getCursor);
@@ -42,17 +40,16 @@ namespace obe::Engine::Bindings
     {
         sol::table EngineNamespace = state["obe"]["Engine"].get<sol::table>();
         sol::usertype<obe::Engine::ResourceManager> bindResourceManager
-            = EngineNamespace.new_usertype<obe::Engine::ResourceManager>(
-                "ResourceManager", sol::call_constructor,
-                sol::constructors<obe::Engine::ResourceManager()>());
+            = EngineNamespace.new_usertype<obe::Engine::ResourceManager>("ResourceManager",
+                sol::call_constructor, sol::constructors<obe::Engine::ResourceManager()>());
         bindResourceManager["getFont"] = &obe::Engine::ResourceManager::getFont;
-        bindResourceManager["getTexture"] = sol::overload(
-            static_cast<const obe::Graphics::Texture& (
-                obe::Engine::ResourceManager::*)(const obe::System::Path&, bool)>(
-                &obe::Engine::ResourceManager::getTexture),
-            static_cast<const obe::Graphics::Texture& (
-                obe::Engine::ResourceManager::*)(const obe::System::Path&)>(
-                &obe::Engine::ResourceManager::getTexture));
+        bindResourceManager["getTexture"]
+            = sol::overload(static_cast<const obe::Graphics::Texture& (
+                                obe::Engine::ResourceManager::*)(const obe::System::Path&, bool)>(
+                                &obe::Engine::ResourceManager::getTexture),
+                static_cast<const obe::Graphics::Texture& (
+                    obe::Engine::ResourceManager::*)(const obe::System::Path&)>(
+                    &obe::Engine::ResourceManager::getTexture));
         bindResourceManager["clean"] = &obe::Engine::ResourceManager::clean;
         bindResourceManager["defaultAntiAliasing"]
             = &obe::Engine::ResourceManager::defaultAntiAliasing;

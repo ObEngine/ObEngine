@@ -1,5 +1,6 @@
-#include <Event/EventListener.hpp>
 #include <utility>
+
+#include <Event/EventListener.hpp>
 
 namespace obe::Event
 {

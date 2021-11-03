@@ -46,7 +46,8 @@ namespace obe::Utils::Map
         return false;
     }
 
-    template <class MapType> bool keyInMap(typename MapType::key_type item, MapType&& map)
+    template <class MapType>
+    bool keyInMap(typename MapType::key_type item, MapType&& map)
     {
         for (const auto& [key, value] : map)
         {

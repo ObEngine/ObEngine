@@ -4,6 +4,7 @@
 
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Mouse.hpp>
+#include <SFML/Window/Cursor.hpp>
 
 #include <Animation/Animator.hpp>
 #include <Event/EventGroup.hpp>
@@ -55,6 +56,54 @@ namespace obe::Events::Cursor
 
 namespace obe::System
 {
+    enum class CursorType // taken from sf::Cursor::Type
+    {
+        Arrow, ///< Arrow cursor (default)
+        ArrowWait, ///< Busy arrow cursor
+        Wait, ///< Busy cursor
+        Text, ///< I-beam, cursor when hovering over a field allowing text entry
+        Hand, ///< Pointing hand cursor
+        SizeHorizontal, ///< Horizontal double arrow cursor
+        SizeVertical, ///< Vertical double arrow cursor
+        SizeTopLeftBottomRight, ///< Double arrow cursor going from top-left to bottom-right
+        SizeBottomLeftTopRight, ///< Double arrow cursor going from bottom-left to top-right
+        SizeAll, ///< Combination of SizeHorizontal and SizeVertical
+        Cross, ///< Crosshair cursor
+        Help, ///< Help cursor
+        NotAllowed ///< Action not allowed cursor
+    };
+
+    /**
+    * \brief A Class to define a custom cursor. Used for System::Cursor.setCursor()
+    */
+    class CursorModel
+    {
+    private:
+        std::shared_ptr<sf::Cursor> m_cursor;
+
+    public:
+        /**
+         * \brief Set cursor appearance and hotspot from an image file
+         * \param filename Image file to use for the cursor
+         * \param hotspotX X coordinate on image (in pixels) of the cursor hotspot
+         * \param hotspotY Y coordinate on image (in pixels) of the cursor hotspot
+         * \return true if loading succeeded, false otherwise
+         */
+        bool loadFromFile(
+            const std::string& filename, unsigned int hotspotX, unsigned int hotspotY);
+        /**
+         * \brief Loads a native system cursor
+         * \param type Native system cursor type
+         * \return true if loading succeeded, false otherwise
+         */
+        bool loadFromSystem(CursorType type);
+        /**
+         * \nobind
+         * \brief Returns cursor shared pointer
+         */
+        [[nodiscard]] std::shared_ptr<sf::Cursor> getPtr() const;
+    };
+
     /**
      * \brief A Class to manipulate and display the Cursor in the Engine
      */
@@ -72,8 +121,11 @@ namespace obe::System
         std::function<std::pair<int, int>(Cursor*)> m_constraint;
         std::function<bool()> m_constraintCondition;
         std::map<sf::Mouse::Button, bool> m_buttonState;
+        std::shared_ptr<sf::Cursor> m_customCursor;
 
     public:
+        using PositionConstraint = std::function<std::pair<int, int>(Cursor* cursor)>;
+        using ConstraintCondition = std::function<bool()>;
         /**
          * \brief Creates a Cursor
          */
@@ -137,14 +189,18 @@ namespace obe::System
         /**
          * \brief Sets the Cursor's constraint
          * \param constraint A function returning the constrained Position of
-         *        the Cursor (a std::pair<int, int>) and taking the Cursor pointer in
+         *        the Cursor (x, y coordinates) and taking the Cursor pointer in
          *        parameter
          * \param condition condition for the constraint to apply
          */
         void setConstraint(
-            std::function<std::pair<int, int>(Cursor*)> constraint,
-            std::function<bool()> condition = []() { return true; });
-        bool isPressed(sf::Mouse::Button button);
+            const PositionConstraint& constraint, ConstraintCondition condition = []() { return true; });
+        bool isPressed(sf::Mouse::Button button) const;
+        /**
+         * \brief Change the cursor
+         * \param newCursor CursorModel defining the cursor to display
+         */
+        void setCursor(const System::CursorModel& newCursor);
     };
 
     /**

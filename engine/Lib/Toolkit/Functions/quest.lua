@@ -1,7 +1,7 @@
 local Color = require("Lib/StdLib/ConsoleColor");
-local Route = require("Lib/Toolkit/Route");
+local Commands = require("Lib/Toolkit/Commands");
 local Style = require("Lib/Toolkit/Stylesheet");
-local TM = require("Lib/Toolkit/Utils");
+local TM = require("Lib/Toolkit/Interactive");
 
 local Quests = {
     MyFirstQuest = {
@@ -16,7 +16,7 @@ local Quests = {
             autocomplete.func = TM.completions {
                 {"blue", "The nice cyan-looking room"},
                 {"red", "The edgy crimson room"},
-                {"green", "Green, because you like nature and all that stuff" }
+                {"green", "Green, because you like nature and all that stuff"}
             };
             ::askcolor::
             local choice = TM.input();
@@ -28,38 +28,40 @@ local Quests = {
                 Color.print("You enter the green room ! It smells like dead mooses for some reason");
             else
                 Color.print("Even a middle schooler knows its colors ! Try again !");
-                goto askcolor;
+                goto askcolor
             end
             Color.print("You exit the room and feel a bit exhausted");
-            Color.print("Well, that's about it for this quest, now it's your turn to create new quests");
+            Color.print(
+                "Well, that's about it for this quest, now it's your turn to create new quests"
+            );
         end
     }
 };
-function getQuestsNames()
-    local questsNames = {};
+local function get_quests_names()
+    local quests_names = {};
     for id, _ in pairs(Quests) do
-        table.insert(questsNames, id);
+        table.insert(quests_names, id);
     end
-    return questsNames;
+    return quests_names;
 end
 
-local QuestFunctions = {};
-
-function QuestFunctions.create(questName)
+local function _create_(questName)
 end
 
-function QuestFunctions.list()
+local function _list_()
     for id, quest in pairs(Quests) do
-        Color.print({
-            {text = "Quest (", color = Style.Default},
-            {text = id, color = Style.Argument},
-            {text = ") : ", color = Style.Default},
-            {text = quest.description, color = Style.Help}
-        }, 2);
+        Color.print(
+            {
+                {text = "Quest (", color = Style.Default},
+                {text = id, color = Style.Argument},
+                {text = ") : ", color = Style.Default},
+                {text = quest.description, color = Style.Help}
+            }, 2
+        );
     end
 end
 
-function QuestFunctions.start(autocomplete, questName)
+local function _start_(autocomplete, questName)
     if Quests[questName] then
         Quests[questName].quest(autocomplete);
     else
@@ -68,27 +70,21 @@ function QuestFunctions.start(autocomplete, questName)
 end
 
 return {
-    Functions = QuestFunctions,
-    Routes = {
-        Route.Help("Commands to work with Workloads");
-        create = Route.Node {
-            Route.Help("Creates a new Quest");
-            questName = Route.StringArg {
-                Route.Help("Name of the new Quest to create");
-                Route.Call("create");
-            };
-        };
-        list = Route.Node {
-            Route.Help("Lists all available quests");
-            Route.Call("list");
-        };
-        start = Route.Node {
-            Route.Help("Indexes an existing Workload");
-            questName = Route.Arg {
-                Route.Call("start");
-                Route.Help("Name of the Quest you want to start");
-                Route.Autocomplete(getQuestsNames);
-            };
+    Commands.help("Commands to work with Workloads"),
+    create = Commands.command {
+        Commands.help("Creates a new Quest"),
+        quest_name = Commands.string {
+            Commands.help("Name of the new Quest to create"),
+            Commands.call(_create_)
+        }
+    },
+    list = Commands.command {Commands.help("Lists all available quests"), Commands.call(_list_)},
+    start = Commands.command {
+        Commands.help("Indexes an existing Workload"),
+        questName = Commands.arg {
+            Commands.call(_start_),
+            Commands.help("Name of the Quest you want to start"),
+            Commands.autocomplete(get_quests_names)
         }
     }
 };

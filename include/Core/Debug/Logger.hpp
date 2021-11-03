@@ -5,7 +5,8 @@
 
 namespace obe::Debug
 {
-    extern std::shared_ptr<spdlog::logger> Log;
+    using Logger = std::shared_ptr<spdlog::logger>;
+    extern Logger Log;
 
     // TODO: Create a Logger class wrapper instead of separate function with a global
     /**

@@ -1,7 +1,7 @@
+#include <SFML/Window/Joystick.hpp>
+
 #include <Input/Exceptions.hpp>
 #include <Input/InputButton.hpp>
-
-#include <SFML/Window/Joystick.hpp>
 
 namespace obe::Input
 {
@@ -33,8 +33,8 @@ namespace obe::Input
         m_type = InputType::Mouse;
     }
 
-    InputButton::InputButton(const unsigned int gamepadIndex, unsigned int buttonIndex,
-        const std::string& name)
+    InputButton::InputButton(
+        const unsigned int gamepadIndex, unsigned int buttonIndex, const std::string& name)
     {
         m_gamepadIndex = gamepadIndex;
         m_button = buttonIndex;
@@ -43,9 +43,8 @@ namespace obe::Input
         m_name = name;
     }
 
-    InputButton::InputButton(const unsigned int gamepadIndex,
-        sf::Joystick::Axis gamepadAxis, std::pair<AxisThresholdDirection, float> detect,
-        const std::string& name)
+    InputButton::InputButton(const unsigned int gamepadIndex, sf::Joystick::Axis gamepadAxis,
+        std::pair<AxisThresholdDirection, float> detect, const std::string& name)
     {
         m_gamepadIndex = gamepadIndex;
         m_type = InputType::GamepadAxis;
@@ -61,6 +60,22 @@ namespace obe::Input
         m_button = direction;
         m_returnChar = "";
         m_name = name;
+    }
+
+    InputButton::InputButton(const InputButton& other)
+    {
+        this->reload(other);
+    }
+
+    void InputButton::reload(const InputButton& other)
+    {
+        m_type = other.m_type;
+        m_button = other.m_button;
+        m_returnChar = other.m_returnChar;
+        m_name = other.m_name;
+        m_detectAxis = other.m_detectAxis;
+        m_gamepadIndex = other.m_gamepadIndex;
+        m_wheelDelta = other.m_wheelDelta;
     }
 
     sf::Keyboard::Key InputButton::getKey() const
@@ -96,8 +111,7 @@ namespace obe::Input
         if (m_type == InputType::Mouse)
             return sf::Mouse::isButtonPressed(std::get<sf::Mouse::Button>(m_button));
         if (m_type == InputType::GamepadButton)
-            return sf::Joystick::isButtonPressed(
-                m_gamepadIndex, std::get<unsigned int>(m_button));
+            return sf::Joystick::isButtonPressed(m_gamepadIndex, std::get<unsigned int>(m_button));
         if (m_type == InputType::GamepadAxis)
         {
             const float axisValue = sf::Joystick::getAxisPosition(

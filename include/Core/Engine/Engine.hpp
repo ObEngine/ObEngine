@@ -2,19 +2,20 @@
 
 #include <Audio/AudioManager.hpp>
 #include <Config/Config.hpp>
+#include <Debug/Logger.hpp>
 #include <Engine/ResourceManager.hpp>
 #include <Event/EventManager.hpp>
 #include <Input/InputManager.hpp>
 #include <Scene/Scene.hpp>
+#include <Script/LuaState.hpp>
 #include <System/Cursor.hpp>
 #include <System/Plugin.hpp>
 #include <System/Window.hpp>
 #include <Time/FramerateManager.hpp>
-#include <sol/sol.hpp>
 
 namespace obe::Bindings
 {
-    void IndexAllBindings(sol::state_view state);
+    void IndexCoreBindings(sol::state_view state);
 }
 
 namespace obe::Events::Game
@@ -49,10 +50,11 @@ namespace obe::Engine
     protected:
         bool m_initialized = false;
         std::vector<std::unique_ptr<System::Plugin>> m_plugins;
-        std::unique_ptr<sol::state> m_lua;
+        std::unique_ptr<Script::LuaState> m_lua;
         std::unique_ptr<Scene::Scene> m_scene;
         std::unique_ptr<System::Cursor> m_cursor;
         std::unique_ptr<System::Window> m_window;
+        Debug::Logger::weak_type m_log;
 
         // Managers
         Audio::AudioManager m_audio {};
@@ -62,9 +64,11 @@ namespace obe::Engine
         std::unique_ptr<Time::FramerateManager> m_framerate;
         std::unique_ptr<Event::EventManager> m_events;
         Event::EventNamespace* m_eventNamespace;
+        Event::EventNamespace* m_userEventNamespace;
 
-        // TriggerGroups
+        // EventGroups
         Event::EventGroupPtr e_game {};
+        Event::EventGroupPtr e_custom {};
 
         // Initialization
         void initConfig();
@@ -87,6 +91,7 @@ namespace obe::Engine
         // Cleaning
         void clean() const;
         void purge();
+        void deinitPlugins() const;
 
     public:
         Engine();
@@ -96,50 +101,58 @@ namespace obe::Engine
         void run() const;
 
         /**
-         * \bind{Audio}
+         * \rename{Audio}
          * \asproperty
          */
         Audio::AudioManager& getAudioManager();
         /**
-         * \bind{Configuration}
+         * \rename{Configuration}
          * \asproperty
          */
         Config::ConfigurationManager& getConfigurationManager();
         /**
-         * \bind{Resources}
+         * \rename{Resources}
          * \asproperty
          */
         ResourceManager& getResourceManager();
         /**
-         * \bind{Input}
+         * \rename{Input}
          * \asproperty
          */
         Input::InputManager& getInputManager() const;
         /**
-         * \bind{Framerate}
+         * \rename{Framerate}
          * \asproperty
          */
         Time::FramerateManager& getFramerateManager() const;
         /**
-         * \bind{Events}
+         * \rename{Events}
          * \asproperty
          */
         Event::EventManager& getEventManager() const;
 
         /**
-         * \bind{Scene}
+         * \rename{Scene}
          * \asproperty
          */
         Scene::Scene& getScene() const;
         /**
-         * \bind{Cursor}
+         * \rename{Cursor}
          * \asproperty
          */
         System::Cursor& getCursor() const;
         /**
-         * \bind{Window}
+         * \rename{Window}
          * \asproperty
          */
         System::Window& getWindow() const;
+        /**
+         * \nobind
+         */
+        Script::LuaState& getLuaState() const;
+        /**
+         * \nobind
+         */
+        Debug::Logger getLogger() const;
     };
 }

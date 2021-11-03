@@ -11,7 +11,6 @@ namespace obe::Collision
     /**
      * \brief A Node containing trajectories, a SceneNode to drive and a probe to check
      * for collisions
-     * \bind{TrajectoryNode}
      */
     class TrajectoryNode
     {
@@ -29,5 +28,28 @@ namespace obe::Collision
         void removeTrajectory(const std::string& id);
         void setProbe(PolygonalCollider* probe);
         void update(double dt);
+    };
+
+    class InnerTest
+    {
+    public:
+        class CoolChild
+        {
+            enum InnerEnum
+            {
+                Cool,
+                NotCool
+            };
+
+            InnerEnum yes()
+            {
+                return InnerEnum::Cool;
+            }
+        };
+
+        CoolChild build()
+        {
+            return CoolChild();
+        }
     };
 } // namespace obe::Collision

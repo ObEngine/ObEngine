@@ -1,18 +1,14 @@
-#include <Debug/Logger.hpp>
-#include <System/Plugin.hpp>
-
 #include <sol/sol.hpp>
+
+#include <Debug/Logger.hpp>
+#include <Engine/Engine.hpp>
+#include <System/Plugin.hpp>
 
 namespace obe::System
 {
     Plugin::Plugin(const std::string& id, const std::string& path)
         : Types::Identifiable(id)
     {
-        m_hasOnInitFn = false;
-        m_hasOnLoadBindingsFn = false;
-        m_hasOnUpdateFn = false;
-        m_hasOnRenderFn = false;
-        m_hasOnExitFn = false;
         Debug::Log->info("<System:Plugin> : Loading Plugin '{}' ...", id);
         try
         {
@@ -23,111 +19,107 @@ namespace obe::System
         {
             Debug::Log->warn(
                 "<System:Plugin> : Unloadable Plugin : '{}' (Reason : {})", id, e.what());
+            return;
         }
+        m_valid = true;
         try
         {
-            m_onInitFn = getPluginFunction<void()>(m_dl, "OnInit");
-            m_onInitFn->init();
-            Debug::Log->debug(
-                "<System:Plugins> : (Plugin '{}') > Found function OnInit", id);
-            m_hasOnInitFn = true;
-            m_onInitFn->operator()();
+            m_onInitFn = getPluginFunction<void(Engine::Engine&)>(m_dl, "OnInit");
+            (*m_onInitFn)->init();
+            Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnInit", id);
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
-        }
-        try
-        {
-            m_onLoadBindingsFn
-                = getPluginFunction<void(sol::state_view)>(m_dl, "OnLoadBindings");
-            m_onLoadBindingsFn->init();
-            m_hasOnLoadBindingsFn = true;
-            Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found "
-                              "function OnLoadBindings",
-                id);
-        }
-        catch (const dynamicLinker::dynamicLinkerException& e)
-        {
+            m_onInitFn = std::nullopt;
         }
         try
         {
             m_onUpdateFn = getPluginFunction<void(double)>(m_dl, "OnUpdate");
-            m_onUpdateFn->init();
-            m_hasOnUpdateFn = true;
-            Debug::Log->debug(
-                "<System:Plugins> : (Plugin '{}') > Found function OnUpdate", id);
+            (*m_onUpdateFn)->init();
+            Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnUpdate", id);
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
+            m_onUpdateFn = std::nullopt;
         }
         try
         {
             m_onRenderFn = getPluginFunction<void()>(m_dl, "OnRender");
-            m_onRenderFn->init();
-            m_hasOnRenderFn = true;
-            Debug::Log->debug(
-                "<System:Plugins> : (Plugin '{}') > Found function OnRender", id);
+            (*m_onRenderFn)->init();
+            Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnRender", id);
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
+            m_onRenderFn = std::nullopt;
         }
         try
         {
             m_onExitFn = getPluginFunction<void()>(m_dl, "OnExit");
-            m_onExitFn->init();
-            m_hasOnExitFn = true;
-            Debug::Log->debug(
-                "<System:Plugins> : (Plugin '{}') > Found function OnExit", id);
+            (*m_onExitFn)->init();
+            Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnExit", id);
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
+            m_onExitFn = std::nullopt;
         }
 
         Debug::Log->info("<System:Plugin> : Loaded : '{}'", id);
     }
 
-    void Plugin::onLoadBindings(sol::state_view lua) const
+    void Plugin::onInit(Engine::Engine& engine) const
     {
-        m_onLoadBindingsFn->operator()(lua);
+        if (m_onInitFn)
+        {
+            (**m_onInitFn)(engine);
+        }
     }
 
     void Plugin::onUpdate(double dt) const
     {
-        m_onUpdateFn->operator()(dt);
+        if (m_onUpdateFn)
+        {
+            (**m_onUpdateFn)(dt);
+        }
     }
 
     void Plugin::onRender() const
     {
-        m_onRenderFn->operator()();
+        if (m_onRenderFn)
+        {
+            (**m_onRenderFn)();
+        }
     }
 
     void Plugin::onExit() const
     {
-        m_onExitFn->operator()();
+        if (m_onExitFn)
+        {
+            (**m_onExitFn)();
+        }
     }
 
     bool Plugin::hasOnInit() const
     {
-        return m_hasOnInitFn;
-    }
-
-    bool Plugin::hasOnLoadBindings() const
-    {
-        return m_hasOnLoadBindingsFn;
+        return m_onInitFn.has_value();
     }
 
     bool Plugin::hasOnUpdate() const
     {
-        return m_hasOnUpdateFn;
+        return m_onUpdateFn.has_value();
     }
 
     bool Plugin::hasOnRender() const
     {
-        return m_hasOnRenderFn;
+        return m_onRenderFn.has_value();
     }
 
     bool Plugin::hasOnExit() const
     {
-        return m_hasOnExitFn;
+        return m_onExitFn.has_value();
+    }
+
+    bool Plugin::isValid() const
+    {
+        return m_valid;
     }
 } // namespace obe::System
