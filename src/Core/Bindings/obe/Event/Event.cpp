@@ -32,7 +32,7 @@ namespace obe::Event::Bindings
         sol::table EventNamespace = state["obe"]["Event"].get<sol::table>();
         sol::usertype<obe::Event::CallbackProfiler> bindCallbackProfiler
             = EventNamespace.new_usertype<obe::Event::CallbackProfiler>(
-                "CallbackProfiler");
+                "CallbackProfiler", sol::call_constructor, sol::default_constructor);
         bindCallbackProfiler["hits"] = &obe::Event::CallbackProfiler::hits;
         bindCallbackProfiler["time"] = &obe::Event::CallbackProfiler::time;
         bindCallbackProfiler["min"] = &obe::Event::CallbackProfiler::min;

@@ -114,7 +114,8 @@ namespace obe::Tiles::Bindings
     {
         sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
         sol::usertype<obe::Tiles::TextureQuadsIndex> bindTextureQuadsIndex
-            = TilesNamespace.new_usertype<obe::Tiles::TextureQuadsIndex>("TextureQuadsIndex");
+            = TilesNamespace.new_usertype<obe::Tiles::TextureQuadsIndex>(
+                "TextureQuadsIndex", sol::call_constructor, sol::default_constructor);
         bindTextureQuadsIndex["transform"] = &obe::Tiles::TextureQuadsIndex::transform;
         bindTextureQuadsIndex["q0"] = &obe::Tiles::TextureQuadsIndex::q0;
         bindTextureQuadsIndex["q1"] = &obe::Tiles::TextureQuadsIndex::q1;
@@ -125,7 +126,8 @@ namespace obe::Tiles::Bindings
     {
         sol::table TilesNamespace = state["obe"]["Tiles"].get<sol::table>();
         sol::usertype<obe::Tiles::TileInfo> bindTileInfo
-            = TilesNamespace.new_usertype<obe::Tiles::TileInfo>("TileInfo");
+            = TilesNamespace.new_usertype<obe::Tiles::TileInfo>(
+                "TileInfo", sol::call_constructor, sol::default_constructor);
         bindTileInfo["flippedHorizontally"] = &obe::Tiles::TileInfo::flippedHorizontally;
         bindTileInfo["flippedVertically"] = &obe::Tiles::TileInfo::flippedVertically;
         bindTileInfo["flippedDiagonally"] = &obe::Tiles::TileInfo::flippedDiagonally;

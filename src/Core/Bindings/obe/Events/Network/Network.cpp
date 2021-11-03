@@ -10,7 +10,8 @@ namespace obe::Events::Network::Bindings
     {
         sol::table NetworkNamespace = state["obe"]["Events"]["Network"].get<sol::table>();
         sol::usertype<obe::Events::Network::Connected> bindConnected
-            = NetworkNamespace.new_usertype<obe::Events::Network::Connected>("Connected");
+            = NetworkNamespace.new_usertype<obe::Events::Network::Connected>(
+                "Connected", sol::call_constructor, sol::default_constructor);
         bindConnected["ip"] = &obe::Events::Network::Connected::ip;
         bindConnected["id"] = sol::var(&obe::Events::Network::Connected::id);
     }
@@ -19,7 +20,7 @@ namespace obe::Events::Network::Bindings
         sol::table NetworkNamespace = state["obe"]["Events"]["Network"].get<sol::table>();
         sol::usertype<obe::Events::Network::DataReceived> bindDataReceived
             = NetworkNamespace.new_usertype<obe::Events::Network::DataReceived>(
-                "DataReceived");
+                "DataReceived", sol::call_constructor, sol::default_constructor);
         bindDataReceived["content"] = &obe::Events::Network::DataReceived::content;
         bindDataReceived["id"] = sol::var(&obe::Events::Network::DataReceived::id);
     }
@@ -28,7 +29,7 @@ namespace obe::Events::Network::Bindings
         sol::table NetworkNamespace = state["obe"]["Events"]["Network"].get<sol::table>();
         sol::usertype<obe::Events::Network::Disconnected> bindDisconnected
             = NetworkNamespace.new_usertype<obe::Events::Network::Disconnected>(
-                "Disconnected");
+                "Disconnected", sol::call_constructor, sol::default_constructor);
         bindDisconnected["id"] = sol::var(&obe::Events::Network::Disconnected::id);
     }
 };

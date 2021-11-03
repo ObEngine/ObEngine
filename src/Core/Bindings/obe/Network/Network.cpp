@@ -12,7 +12,8 @@ namespace obe::Network::Bindings
     {
         sol::table NetworkNamespace = state["obe"]["Network"].get<sol::table>();
         sol::usertype<obe::Network::LuaPacket> bindLuaPacket
-            = NetworkNamespace.new_usertype<obe::Network::LuaPacket>("LuaPacket");
+            = NetworkNamespace.new_usertype<obe::Network::LuaPacket>(
+                "LuaPacket", sol::call_constructor, sol::default_constructor);
     }
     void LoadClassNetworkHandler(sol::state_view state)
     {
@@ -39,6 +40,7 @@ namespace obe::Network::Bindings
     {
         sol::table NetworkNamespace = state["obe"]["Network"].get<sol::table>();
         sol::usertype<obe::Network::TcpSocket> bindTcpSocket
-            = NetworkNamespace.new_usertype<obe::Network::TcpSocket>("TcpSocket");
+            = NetworkNamespace.new_usertype<obe::Network::TcpSocket>(
+                "TcpSocket", sol::call_constructor, sol::default_constructor);
     }
 };

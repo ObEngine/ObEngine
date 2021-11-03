@@ -30,7 +30,7 @@ namespace obe::Engine::Bindings
         sol::table EngineNamespace = state["obe"]["Engine"].get<sol::table>();
         sol::usertype<obe::Engine::ResourceManagedObject> bindResourceManagedObject
             = EngineNamespace.new_usertype<obe::Engine::ResourceManagedObject>(
-                "ResourceManagedObject");
+                "ResourceManagedObject", sol::call_constructor, sol::default_constructor);
         bindResourceManagedObject["removeResourceManager"]
             = &obe::Engine::ResourceManagedObject::removeResourceManager;
         bindResourceManagedObject["attachResourceManager"]

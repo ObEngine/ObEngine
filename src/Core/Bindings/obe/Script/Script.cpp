@@ -60,7 +60,7 @@ namespace obe::Script::Bindings
         sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
         sol::usertype<obe::Script::GameObjectDatabase> bindGameObjectDatabase
             = ScriptNamespace.new_usertype<obe::Script::GameObjectDatabase>(
-                "GameObjectDatabase");
+                "GameObjectDatabase", sol::call_constructor, sol::default_constructor);
         bindGameObjectDatabase["GetRequirementsForGameObject"]
             = &obe::Script::GameObjectDatabase::GetRequirementsForGameObject;
         bindGameObjectDatabase["GetDefinitionForGameObject"]

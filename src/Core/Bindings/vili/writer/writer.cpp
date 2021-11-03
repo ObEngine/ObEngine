@@ -33,7 +33,8 @@ namespace vili::writer::Bindings
     {
         sol::table writerNamespace = state["vili"]["writer"].get<sol::table>();
         sol::usertype<vili::writer::dump_options> binddump_options
-            = writerNamespace.new_usertype<vili::writer::dump_options>("dump_options");
+            = writerNamespace.new_usertype<vili::writer::dump_options>(
+                "dump_options", sol::call_constructor, sol::default_constructor);
         binddump_options["indent"] = &vili::writer::dump_options::indent;
         binddump_options["array"] = &vili::writer::dump_options::array;
         binddump_options["object"] = &vili::writer::dump_options::object;

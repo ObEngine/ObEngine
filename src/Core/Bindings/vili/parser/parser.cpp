@@ -28,20 +28,8 @@ namespace vili::parser::Bindings
                     vili::parser::state(const vili::parser::state&)>());
         bindstate["set_indent"] = &vili::parser::state::set_indent;
         bindstate["use_indent"] = &vili::parser::state::use_indent;
-        bindstate["set_active_identifier"] =
-
-            [](vili::parser::state* self, std::string identifier) {
-                self->set_active_identifier(std::move(identifier));
-            }
-
-        ;
-        bindstate["set_active_template"] =
-
-            [](vili::parser::state* self, std::string identifier) {
-                self->set_active_template(std::move(identifier));
-            }
-
-        ;
+        bindstate["set_active_identifier"] = &vili::parser::state::set_active_identifier;
+        bindstate["set_active_template"] = &vili::parser::state::set_active_template;
         bindstate["open_block"] = &vili::parser::state::open_block;
         bindstate["close_block"] = &vili::parser::state::close_block;
         bindstate["push"] = &vili::parser::state_push_proxy;
@@ -57,7 +45,8 @@ namespace vili::parser::Bindings
     {
         sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
         sol::usertype<vili::parser::error> binderror
-            = parserNamespace.new_usertype<vili::parser::error>("error");
+            = parserNamespace.new_usertype<vili::parser::error>(
+                "error", sol::call_constructor, sol::default_constructor);
     }
     void LoadFunctionFromString(sol::state_view state)
     {

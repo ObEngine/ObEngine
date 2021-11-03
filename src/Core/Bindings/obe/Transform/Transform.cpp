@@ -61,7 +61,8 @@ namespace obe::Transform::Bindings
     {
         sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
         sol::usertype<obe::Transform::Movable> bindMovable
-            = TransformNamespace.new_usertype<obe::Transform::Movable>("Movable");
+            = TransformNamespace.new_usertype<obe::Transform::Movable>(
+                "Movable", sol::call_constructor, sol::default_constructor);
         bindMovable["setPosition"] = &obe::Transform::Movable::setPosition;
         bindMovable["move"] = &obe::Transform::Movable::move;
         bindMovable["getPosition"] = &obe::Transform::Movable::getPosition;
@@ -351,7 +352,8 @@ namespace obe::Transform::Bindings
     {
         sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
         sol::usertype<obe::Transform::ScreenStruct> bindScreenStruct
-            = TransformNamespace.new_usertype<obe::Transform::ScreenStruct>("ScreenStruct");
+            = TransformNamespace.new_usertype<obe::Transform::ScreenStruct>(
+                "ScreenStruct", sol::call_constructor, sol::default_constructor);
         bindScreenStruct["w"] = &obe::Transform::ScreenStruct::w;
         bindScreenStruct["h"] = &obe::Transform::ScreenStruct::h;
     }
@@ -359,7 +361,8 @@ namespace obe::Transform::Bindings
     {
         sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
         sol::usertype<obe::Transform::ViewStruct> bindViewStruct
-            = TransformNamespace.new_usertype<obe::Transform::ViewStruct>("ViewStruct");
+            = TransformNamespace.new_usertype<obe::Transform::ViewStruct>(
+                "ViewStruct", sol::call_constructor, sol::default_constructor);
         bindViewStruct["w"] = &obe::Transform::ViewStruct::w;
         bindViewStruct["h"] = &obe::Transform::ViewStruct::h;
         bindViewStruct["x"] = &obe::Transform::ViewStruct::x;
