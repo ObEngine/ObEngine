@@ -120,8 +120,8 @@ if (NOT DEFINED BUILD_PRODUCTION)
 endif()
 
 configure_file(
-    "${ObEngine_SOURCE_DIR}/include/Core/Config/Production.hpp.in"
-    "${ObEngine_BINARY_DIR}/include/Core/Config/Production.hpp"
+    "${ObEngine_SOURCE_DIR}/include/Core/Config/Flags.hpp.in"
+    "${ObEngine_BINARY_DIR}/include/Core/Config/Flags.hpp"
 )
 
 set(CMAKE_CXX_CLANG_TIDY "")
