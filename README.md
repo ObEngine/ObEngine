@@ -12,7 +12,7 @@
 | GitHub Actions | [![Build Status](https://img.shields.io/github/workflow/status/ObEngine/ObEngine/build?logo=github&style=for-the-badge)](https://github.com/ObEngine/ObEngine/actions?query=workflow%3Abuild) |
 | Travis      | [![Build Status](https://img.shields.io/travis/Sygmei/ObEngine.svg?style=for-the-badge&logo=travis)](https://travis-ci.org/Sygmei/ObEngine) |
 | AppVeyor    | [![Build status](https://img.shields.io/appveyor/ci/Sygmei/ObEngine.svg?style=for-the-badge&logo=appveyor)](https://ci.appveyor.com/project/Sygmei/obengine) |
-| Azure Pipelines | [![Build Status](https://img.shields.io/azure-devops/build/obengine/d879c6ea-1ed9-4984-b3d1-84c5dd9b8feb/1.svg?style=for-the-badge&logo=microsoft-azure)](https://dev.azure.com/obengine/%C3%96bEngine) |
+| Azure Pipelines | [![Build Status](https://img.shields.io/azure-devops/build/obengine/bb2943ed-4d02-4bdf-97d6-dac42bdb2232/2/v0.5?style=for-the-badge&logo=microsoft-azure)](https://dev.azure.com/obengine/ObEngine) |
 
 ## Useful links
 
