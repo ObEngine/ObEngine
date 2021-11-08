@@ -1,8 +1,8 @@
-name: artifacts
+name: release
 
 on:
-  push:
-    branches: '*'
+  release:
+    types: [created]
 
 jobs:
   release_linux:
@@ -40,11 +40,16 @@ jobs:
       run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
     - name: Package to archive
       run: tar -cvf obengine-dev.tar release/ ; gzip -9 obengine-dev.tar
-    - name: Upload Linux Artifact
-      uses: actions/upload-artifact@v2
+    - name: Upload Release Asset
+      id: upload-release-asset-linux
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: obengine.linux64.tar.gz
-        path: ./obengine-dev.tar.gz
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./obengine-dev.tar.gz
+        asset_name: obengine-dev.linux64.tar.gz
+        asset_content_type: application/zip
 
   release_windows:
     name: Release ObEngine Windows package
@@ -75,11 +80,16 @@ jobs:
       shell: pwsh
     - name: Package to archive
       run: Compress-Archive -path ./release/* -destinationpath obengine-dev.zip -compressionlevel optimal
-    - name: Upload Windows Artifact
-      uses: actions/upload-artifact@v2
+    - name: Upload Release Asset
+      id: upload-release-asset-win
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: obengine.win64.zip
-        path: obengine-dev.zip
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./obengine-dev.zip
+        asset_name: obengine-dev.win64.zip
+        asset_content_type: application/zip
 
   release_macos:
     name: Release ObEngine MacOS package
@@ -102,8 +112,13 @@ jobs:
       run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
     - name: Package to archive
       run: tar -cvf obengine-dev.tar release/ ; gzip -9 obengine-dev.tar
-    - name: Upload MacOS Artifact
-      uses: actions/upload-artifact@v2
+    - name: Upload Release Asset
+      id: upload-release-asset-macos
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        name: obengine.macos64.tar.gz
-        path: ./obengine-dev.tar.gz
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./obengine-dev.tar.gz
+        asset_name: obengine-dev.macos64.tar.gz
+        asset_content_type: application/zip
