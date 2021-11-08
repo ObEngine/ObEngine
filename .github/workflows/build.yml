@@ -35,9 +35,11 @@ jobs:
     - name: Compile and install SFML
       run: cd SFML; cmake .; make -j8; sudo make install
     - name: Compile ObEngine
-      run: cd build; cmake -DBUILD_TESTS=ON ..; make -j8
+      run: cd build; cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_BUILD_TYPE=Release ..; make -j8
     - name: Run tests
       run: export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/usr/local/lib"; ./build/tests/ObEngineTests
+    - name: Create package
+      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
     - name: Package to archive
       run: tar -cvf obengine-dev.tar release/ ; gzip -9 obengine-dev.tar
     - name: 'Upload Artifact'
@@ -64,12 +66,15 @@ jobs:
     - name: Create build directory
       run: mkdir build
     - name: Run CMake on ObEngine
-      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON ..
+      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..
       shell: pwsh
     - name: Compile ObEngine
       run: cmake --build build --config Release -- /m:8
     - name: Run tests
       run: ./build/tests/Release/ObEngineTests.exe
+    - name: Create package
+      run: cp -r engine/ release/; cp ./build/src/Player/Release/* ./release/
+      shell: pwsh
     - name: Package to archive
       run: Compress-Archive -path ./release/* -destinationpath obengine-dev.zip -compressionlevel optimal
     - name: 'Upload Artifact'
@@ -90,11 +95,13 @@ jobs:
     - name: Create build directory
       run: mkdir build
     - name: Run CMake on ObEngine
-      run: cd build && cmake -DBUILD_TESTS=ON ..
+      run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_BUILD_TYPE=Release ..
     - name: Compile ObEngine
       run: cd build && make -j8
     - name: Run tests
       run: cd build && ./tests/ObEngineTests
+    - name: Create package
+      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
     - name: Package to archive
       run: tar -cvf obengine-dev.tar release/ ; gzip -9 obengine-dev.tar
     - name: 'Upload Artifact'
