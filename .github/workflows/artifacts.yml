@@ -5,8 +5,8 @@ on:
     branches: '*'
 
 jobs:
-  release_linux:
-    name: Release ObEngine Linux package
+  artifact_linux:
+    name: Upload ObEngine Linux artifact
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -44,8 +44,8 @@ jobs:
         name: obengine.linux64
         path: ./release
 
-  release_windows:
-    name: Release ObEngine Windows package
+  artifact_windows:
+    name: Upload ObEngine Windows artifact
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
@@ -77,8 +77,8 @@ jobs:
         name: obengine.win64
         path: ./release
 
-  release_macos:
-    name: Release ObEngine MacOS package
+  artifact_macos:
+    name: Upload ObEngine MacOS artifact
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
