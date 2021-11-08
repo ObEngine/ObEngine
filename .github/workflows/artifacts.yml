@@ -37,7 +37,7 @@ jobs:
     - name: Run tests
       run: export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/usr/local/lib"; ./build/tests/ObEngineTests
     - name: Create package
-      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
+      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/; cp ./build/src/Toolkit/obey release/
     - name: Upload Linux Artifact
       uses: actions/upload-artifact@v2
       with:
@@ -69,7 +69,7 @@ jobs:
     - name: Run tests
       run: ./build/tests/Release/ObEngineTests.exe
     - name: Create package
-      run: cp -r engine/ release/; cp ./build/src/Player/Release/* ./release/
+      run: cp -r engine/ release/; cp ./build/src/Player/Release/* ./release/; cp ./build/src/Toolkit/Release/obey.exe ./release;
       shell: pwsh
     - name: Upload Windows Artifact
       uses: actions/upload-artifact@v2
@@ -95,7 +95,7 @@ jobs:
     - name: Run tests
       run: cd build && ./tests/ObEngineTests
     - name: Create package
-      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
+      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/; cp ./build/src/Toolkit/obey release/
     - name: Upload MacOS Artifact
       uses: actions/upload-artifact@v2
       with:
