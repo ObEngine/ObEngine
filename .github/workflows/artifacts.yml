@@ -38,13 +38,11 @@ jobs:
       run: export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/usr/local/lib"; ./build/tests/ObEngineTests
     - name: Create package
       run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
-    - name: Package to archive
-      run: tar -cvf obengine-dev.tar release/ ; gzip -9 obengine-dev.tar
     - name: Upload Linux Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: obengine.linux64.tar.gz
-        path: ./obengine-dev.tar.gz
+        name: obengine.linux64
+        path: ./release
 
   release_windows:
     name: Release ObEngine Windows package
@@ -73,13 +71,11 @@ jobs:
     - name: Create package
       run: cp -r engine/ release/; cp ./build/src/Player/Release/* ./release/
       shell: pwsh
-    - name: Package to archive
-      run: Compress-Archive -path ./release/* -destinationpath obengine-dev.zip -compressionlevel optimal
     - name: Upload Windows Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: obengine.win64.zip
-        path: obengine-dev.zip
+        name: obengine.win64
+        path: ./release
 
   release_macos:
     name: Release ObEngine MacOS package
@@ -100,10 +96,8 @@ jobs:
       run: cd build && ./tests/ObEngineTests
     - name: Create package
       run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
-    - name: Package to archive
-      run: tar -cvf obengine-dev.tar release/ ; gzip -9 obengine-dev.tar
     - name: Upload MacOS Artifact
       uses: actions/upload-artifact@v2
       with:
-        name: obengine.macos64.tar.gz
-        path: ./obengine-dev.tar.gz
+        name: obengine.macos64
+        path: ./release
