@@ -51,7 +51,6 @@ jobs:
         asset_name: obengine-dev.linux64.tar.gz
         asset_content_type: application/zip
 
-
   release_windows:
     name: Release ObEngine Windows package
     runs-on: windows-latest
@@ -91,7 +90,6 @@ jobs:
         asset_path: ./obengine-dev.zip
         asset_name: obengine-dev.win64.zip
         asset_content_type: application/zip
-
 
   release_macos:
     name: Release ObEngine MacOS package
