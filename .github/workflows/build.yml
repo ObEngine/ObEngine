@@ -38,10 +38,12 @@ jobs:
       run: cd build; cmake -DBUILD_TESTS=ON ..; make -j8
     - name: Run tests
       run: export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/usr/local/lib"; ./build/tests/ObEngineTests
+    - name: Package to archive
+      run: tar -cvf obengine-dev.tar release/ ; gzip -9 obengine-dev.tar
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:
-        name: obengine-dev.linux64.tar.gz
+        name: obengine.linux64.tar.gz
         path: ./obengine-dev.tar.gz
 
   build_windows:
@@ -68,10 +70,12 @@ jobs:
       run: cmake --build build --config Release -- /m:8
     - name: Run tests
       run: ./build/tests/Release/ObEngineTests.exe
+    - name: Package to archive
+      run: Compress-Archive -path ./release/* -destinationpath obengine-dev.zip -compressionlevel optimal
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:
-        name: obengine-dev.win64.zip
+        name: obengine.win64.zip
         path: obengine-dev.zip
 
   build_macos:
@@ -91,8 +95,10 @@ jobs:
       run: cd build && make -j8
     - name: Run tests
       run: cd build && ./tests/ObEngineTests
+    - name: Package to archive
+      run: tar -cvf obengine-dev.tar release/ ; gzip -9 obengine-dev.tar
     - name: 'Upload Artifact'
       uses: actions/upload-artifact@v2
       with:
-        name: obengine-dev.macos64.tar.gz
+        name: obengine.macos64.tar.gz
         path: ./obengine-dev.tar.gz
