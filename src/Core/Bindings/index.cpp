@@ -431,8 +431,6 @@ namespace obe::Bindings
         vili::exceptions::Bindings::LoadClassParsingError(state);
         vili::exceptions::Bindings::LoadClassTooMuchIndentation(state);
         vili::exceptions::Bindings::LoadClassUnknownChildNode(state);
-        vili::exceptions::Bindings::LoadClassUnknownTemplate(state);
-        vili::exceptions::Bindings::LoadFunctionIndentString(state);
         vili::parser::Bindings::LoadClassNodeInStack(state);
         vili::parser::Bindings::LoadClassState(state);
         vili::parser::Bindings::LoadClassError(state);

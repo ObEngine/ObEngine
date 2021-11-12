@@ -24,8 +24,7 @@ function obe.Canvas.Canvas:_init(width, height, usecache)
     self.elements = {};
     self.useCache = usecache or false;
     self.bases = {
-        Line = obe.Canvas
-            .MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Line}, self.useCache),
+        Line = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Line}, self.useCache),
         Rectangle = obe.Canvas.MakeMT(
             {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Rectangle},
                 self.useCache

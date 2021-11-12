@@ -233,18 +233,18 @@ namespace obe::System::Project
         }
         catch (const std::exception& exc)
         {
-            Debug::Log->error("Unable to find directory for GameObjects");
+            Debug::Log->warn("Unable to find default directory for GameObjects");
         }
         try
         {
             const MountablePath scenesPath(MountablePathType::Path,
-                Utils::File::join({ projectRoot, "Scenes" }), Prefixes::objects,
+                Utils::File::join({ projectRoot, "Scenes" }), Prefixes::scenes,
                 Priorities::projectmount);
             MountablePath::Mount(scenesPath, SamePrefixPolicy::Skip);
         }
         catch (const std::exception& exc)
         {
-            Debug::Log->error("Unable to find directory for Scenes");
+            Debug::Log->warn("Unable to find default directory for Scenes");
         }
     }
 

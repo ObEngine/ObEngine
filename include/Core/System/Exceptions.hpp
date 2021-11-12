@@ -11,10 +11,11 @@ namespace obe::System::Exceptions
     {
     public:
         using Exception::Exception;
-        ResourceNotFound(std::string_view path, std::vector<std::string> mounts, DebugInfo info)
+        ResourceNotFound(std::string_view path, std::string_view pathType,
+            std::vector<std::string> mounts, DebugInfo info)
             : Exception(info)
         {
-            this->error("Resource at path '{}' not found", path);
+            this->error("{} at path '{}' not found", pathType, path);
             this->hint("The following paths were used to search for the resource : ({})",
                 fmt::join(mounts, ", "));
         }

@@ -29,18 +29,17 @@ namespace obe::Script::Bindings
         bindGameObject["Animator"] = sol::property(&obe::Script::GameObject::getAnimator);
         bindGameObject["Collider"] = sol::property(&obe::Script::GameObject::getCollider);
         bindGameObject["Sprite"] = sol::property(&obe::Script::GameObject::getSprite);
+        bindGameObject["getSprite"] = &obe::Script::GameObject::getSprite;
         bindGameObject["SceneNode"] = sol::property(&obe::Script::GameObject::getSceneNode);
         bindGameObject["exec"] = &obe::Script::GameObject::exec;
         bindGameObject["initFromVili"] = &obe::Script::GameObject::initFromVili;
         bindGameObject["sendInitArg"] = &obe::Script::GameObject::sendInitArgFromLua;
         bindGameObject["loadGameObject"] = sol::overload(
-            [](obe::Script::GameObject* self, obe::Scene::Scene& scene, vili::node& obj) -> void {
-                return self->loadGameObject(scene, obj);
-            },
+            [](obe::Script::GameObject* self, obe::Scene::Scene& scene, vili::node& obj) -> void
+            { return self->loadGameObject(scene, obj); },
             [](obe::Script::GameObject* self, obe::Scene::Scene& scene, vili::node& obj,
-                obe::Engine::ResourceManager* resources) -> void {
-                return self->loadGameObject(scene, obj, resources);
-            });
+                obe::Engine::ResourceManager* resources) -> void
+            { return self->loadGameObject(scene, obj, resources); });
         bindGameObject["update"] = &obe::Script::GameObject::update;
         bindGameObject["deleteObject"] = &obe::Script::GameObject::deleteObject;
         bindGameObject["access"] = &obe::Script::GameObject::access;

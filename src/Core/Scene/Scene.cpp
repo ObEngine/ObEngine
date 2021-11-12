@@ -163,8 +163,17 @@ namespace obe::Scene
         Debug::Log->debug("<Scene> Cleared Scene");
 
         m_levelFileName = path;
-        vili::node sceneFile = vili::parser::from_file(
-            System::Path(path).find(), Config::Templates::getSceneTemplates());
+        const std::string filepath = System::Path(path).find();
+        vili::node sceneFile;
+        try
+        {
+            sceneFile
+                = vili::parser::from_file(filepath, Config::Templates::getSceneTemplates());
+        }
+        catch (const std::exception& e)
+        {
+            throw Exceptions::InvalidSceneFile(filepath, EXC_INFO).nest(e);
+        }
         this->load(sceneFile);
     }
 
@@ -443,6 +452,7 @@ namespace obe::Scene
                     const auto error = result.get<sol::error>();
                     const std::string errMsg = "\n        \""
                         + Utils::String::replace(error.what(), "\n", "\n        ") + "\"";
+                    // TODO: Remplace with nest
                     throw Exceptions::SceneOnLoadCallbackError(
                         currentScene, futureLoadBuffer, errMsg, EXC_INFO);
                 }

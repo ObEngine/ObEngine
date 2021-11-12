@@ -138,14 +138,14 @@ namespace vili::validator::exceptions
         {
             this->error("Could not validate input against any of the union types",
                 union_dump, input_dump);
-            m_message += fmt::format("  - union: {}\n",
-                vili::exceptions::indent_string(union_dump.data(), 4, false));
-            m_message += fmt::format("  - input: {}\n",
-                vili::exceptions::indent_string(input_dump.data(), 4, false));
+            m_message += fmt::format("  Union: {}\n",
+                vili::utils::string::indent(union_dump.data(), 4, false));
+            m_message += fmt::format("  Input: {}\n",
+                vili::utils::string::indent(input_dump.data(), 4, false));
             for (const std::string& cause : causes)
             {
                 m_message += fmt::format(
-                    "  - cause: {}\n", vili::exceptions::indent_string(cause, 4, false));
+                    "  Cause: {}\n", vili::utils::string::indent(cause, 4, false));
             }
         }
     };

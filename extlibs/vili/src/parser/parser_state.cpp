@@ -164,6 +164,12 @@ namespace vili::parser
         {
             return it->second;
         }
-        throw exceptions::unknown_template(template_name, VILI_EXC_INFO);
+        std::vector<std::string> templates_names;
+        templates_names.reserve(m_templates.size());
+        std::transform(m_templates.begin(), m_templates.end(), std::back_inserter(templates_names),
+            [](const auto& template_pair) {
+                return template_pair.first;
+            });
+        throw exceptions::unknown_template(template_name, templates_names, VILI_EXC_INFO);
     }
 }

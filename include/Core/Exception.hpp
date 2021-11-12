@@ -102,8 +102,10 @@ namespace obe
     Exception<ExceptionType>::Exception(DebugInfo info)
     {
         m_message = fmt::format("Exception [{}] occured\n", getTypeName<ExceptionType>());
+#if defined _DEBUG
         m_message += fmt::format("  In file: '{}' (line {})\n", info.file, info.line);
         m_message += fmt::format("  In function: {}\n", info.function);
+#endif
     }
 
     template <class... Args>

@@ -163,4 +163,66 @@ namespace vili::utils::string
         }
         return subject;
     }
+
+    std::string indent(
+        const std::string& input, unsigned int indent_level, bool pad_left)
+    {
+        return (pad_left ? std::string(indent_level, ' ') : "")
+            + utils::string::replace(input, "\n", "\n" + std::string(indent_level, ' '));
+    }
+
+    std::size_t distance(std::string_view source, std::string_view target)
+    {
+        if (source.size() > target.size())
+        {
+            return distance(target, source);
+        }
+
+        const std::size_t min_size = source.size(), max_size = target.size();
+        std::vector<std::size_t> lev_dist(min_size + 1);
+
+        for (std::size_t i = 0; i <= min_size; ++i)
+        {
+            lev_dist[i] = i;
+        }
+
+        for (std::size_t j = 1; j <= max_size; ++j)
+        {
+            std::size_t previous_diagonal = lev_dist[0];
+            ++lev_dist[0];
+
+            for (std::size_t i = 1; i <= min_size; ++i)
+            {
+                const std::size_t previous_diagonal_save = lev_dist[i];
+                if (source[i - 1] == target[j - 1])
+                {
+                    lev_dist[i] = previous_diagonal;
+                }
+                else
+                {
+                    lev_dist[i]
+                        = std::min(std::min(lev_dist[i - 1], lev_dist[i]), previous_diagonal) + 1;
+                }
+                previous_diagonal = previous_diagonal_save;
+            }
+        }
+
+        return lev_dist[min_size];
+    }
+
+    std::vector<std::string> sort_by_distance(
+        const std::string& source, const std::vector<std::string>& words, std::size_t limit)
+    {
+        std::vector<std::string> strings_sorted_by_distance = words;
+        std::sort(strings_sorted_by_distance.begin(), strings_sorted_by_distance.end(),
+            [source](const std::string& s1, const std::string& s2)
+            { return distance(s1, source) < distance(s2, source); });
+        if (limit && !strings_sorted_by_distance.empty())
+        {
+            return std::vector<std::string>(strings_sorted_by_distance.begin(),
+                strings_sorted_by_distance.begin() + std::min(strings_sorted_by_distance.size() - 1, limit));
+        }
+        else
+            return strings_sorted_by_distance;
+    }
 }

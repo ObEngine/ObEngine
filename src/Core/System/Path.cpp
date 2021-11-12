@@ -24,6 +24,21 @@ namespace obe::System
         return std::make_pair(path, "");
     }
 
+    std::string_view pathTypeToString(PathType pathType)
+    {
+        switch (pathType)
+        {
+        case PathType::All:
+            return "All";
+        case PathType::Directory:
+            return "Directory";
+        case PathType::File:
+            return "File";
+        default:
+            return "?";
+        }
+    }
+
     MountList filterMountablePathsWithPrefix(const MountList& mounts, const std::string& prefix)
     {
         std::vector<std::shared_ptr<MountablePath>> validMounts;
@@ -55,14 +70,24 @@ namespace obe::System
             std::transform(m_mounts.begin(), m_mounts.end(), std::back_inserter(mountsAsStrings),
                 [](const auto& mount)
                 { return fmt::format("\"{}:// = {}\"", mount->prefix, mount->basePath); });
-            throw Exceptions::ResourceNotFound(m_path, mountsAsStrings, EXC_INFO);
+            std::string_view pathType;
+            if (m_type == PathType::All)
+            {
+                pathType = "Resource";
+            }
+            else
+            {
+                pathType = pathTypeToString(m_type);
+            }
+            throw Exceptions::ResourceNotFound(m_path, pathType, mountsAsStrings, EXC_INFO);
         }
     }
 
-    FindResult::FindResult(
-        const std::string& pathNotFound, const std::string& query, const MountList& mounts)
+    FindResult::FindResult(PathType pathType, const std::string& pathNotFound,
+        const std::string& query, const MountList& mounts)
         : m_mounts(mounts)
     {
+        m_type = pathType;
         m_path = pathNotFound;
         m_query = query;
     }
@@ -304,7 +329,7 @@ namespace obe::System
                     .first->second;
             }
         }
-        return FindResult(m_path, query, validMounts);
+        return FindResult(pathType, m_path, query, validMounts);
     }
 
     std::vector<FindResult> Path::findAll(PathType pathType) const
