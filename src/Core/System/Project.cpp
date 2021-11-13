@@ -35,7 +35,7 @@ namespace obe::System::Project
         {
             const std::string projectLocation = GetProjectLocation(projectName);
             MountablePath::Mount(
-                MountablePath(MountablePathType::Project, projectLocation, prefix, priority));
+                MountablePath(MountablePathType::Project, projectLocation, prefix, priority, true));
             Project project;
             project.loadFromFile(Path(projectLocation).add("project.vili"));
             project.mount();

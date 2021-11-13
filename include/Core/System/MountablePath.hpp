@@ -90,7 +90,7 @@ namespace obe::System
          * \param priority Priority of the mounted path
          */
         MountablePath(MountablePathType pathType, std::string_view basePath,
-            std::string_view prefix, unsigned int priority = 0, bool implicit = true);
+            std::string_view prefix, unsigned int priority = 0, bool implicit = false);
         /**
          * \brief Type of the mounted path
          */

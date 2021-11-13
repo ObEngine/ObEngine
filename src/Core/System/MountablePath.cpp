@@ -43,19 +43,18 @@ namespace obe::System
         }
 
         MountablePath workingDirectoryPath(
-            MountablePathType::Path, "", Prefixes::cwd, Priorities::defaults, false);
-        MountablePath implicitCWDPath(MountablePathType::Path, "", "", Priorities::defaults);
+            MountablePathType::Path, "", Prefixes::cwd, Priorities::defaults);
+        MountablePath implicitCWDPath(MountablePathType::Path, "", "", Priorities::defaults, true);
         MountablePath executablePath(MountablePathType::Path, Utils::File::getExecutableDirectory(),
-            Prefixes::exe, Priorities::defaults, false);
-        MountablePath configPath(MountablePathType::Path, sago::getConfigHome(), Prefixes::cfg,
-            Priorities::defaults, false);
+            Prefixes::exe, Priorities::defaults);
+        MountablePath configPath(
+            MountablePathType::Path, sago::getConfigHome(), Prefixes::cfg, Priorities::defaults);
         MountablePath::Mount(workingDirectoryPath);
         MountablePath::Mount(implicitCWDPath);
         MountablePath::Mount(executablePath);
         MountablePath::Mount(configPath);
 
-        MountablePath basePath(
-            MountablePathType::Path, "", Prefixes::mount, Priorities::defaults, false);
+        MountablePath basePath(MountablePathType::Path, "", Prefixes::mount, Priorities::defaults);
         if (fromCWD)
         {
             basePath.basePath = workingDirectoryPath.basePath;
@@ -66,8 +65,8 @@ namespace obe::System
         }
         MountablePath::Mount(basePath);
 
-        MountablePath enginePath(MountablePathType::Path, executablePath.basePath, Prefixes::obe,
-            Priorities::defaults, false);
+        MountablePath enginePath(
+            MountablePathType::Path, executablePath.basePath, Prefixes::obe, Priorities::defaults);
         MountablePath::Mount(enginePath);
 
         FindResult mountFilePath
@@ -139,6 +138,11 @@ namespace obe::System
                     {
                         currentPriority = mount.at("priority");
                     }
+                    bool implicit = false;
+                    if (mount.contains("implicit"))
+                    {
+                        implicit = mount.at("implicit");
+                    }
                     if (currentType == "Path")
                     {
                         auto [_, pathPrefix] = splitPathAndPrefix(currentPath, false);
@@ -147,8 +151,8 @@ namespace obe::System
                             currentPath
                                 = System::Path(currentPath).find(PathType::Directory).path();
                         }
-                        MountablePath::Mount(MountablePath(
-                            MountablePathType::Path, currentPath, prefix, currentPriority));
+                        MountablePath::Mount(MountablePath(MountablePathType::Path, currentPath,
+                            prefix, currentPriority, implicit));
                         Debug::Log->info("<MountablePath> Mounted Path : '{0}' at '{1}://' "
                                          "with priority {2}",
                             currentPath, prefix, currentPriority);
