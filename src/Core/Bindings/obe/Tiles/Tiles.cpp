@@ -20,10 +20,11 @@ namespace obe::Tiles::Bindings
                 sol::constructors<obe::Tiles::AnimatedTile(const obe::Tiles::Tileset&,
                     std::vector<uint32_t>, std::vector<obe::Time::TimeUnit>)>());
         bindAnimatedTile["attachQuad"]
-            = sol::overload([](obe::Tiles::AnimatedTile* self,
-                                sf::Vertex* quad) -> void { return self->attachQuad(quad); },
-                [](obe::Tiles::AnimatedTile* self, sf::Vertex* quad, obe::Tiles::TileInfo tileInfo)
-                    -> void { return self->attachQuad(quad, tileInfo); });
+            = sol::overload([](obe::Tiles::AnimatedTile* self, sf::Vertex* quad) -> void
+                { return self->attachQuad(quad); },
+                [](obe::Tiles::AnimatedTile* self, sf::Vertex* quad,
+                    obe::Tiles::TileInfo tileInfo) -> void
+                { return self->attachQuad(quad, tileInfo); });
         bindAnimatedTile["dettachQuad"] = &obe::Tiles::AnimatedTile::dettachQuad;
         bindAnimatedTile["start"] = &obe::Tiles::AnimatedTile::start;
         bindAnimatedTile["stop"] = &obe::Tiles::AnimatedTile::stop;
@@ -60,7 +61,10 @@ namespace obe::Tiles::Bindings
         bindTileScene["getLayersIds"] = &obe::Tiles::TileScene::getLayersIds;
         bindTileScene["getLayer"] = &obe::Tiles::TileScene::getLayer;
         bindTileScene["getAnimatedTiles"] = &obe::Tiles::TileScene::getAnimatedTiles;
-        bindTileScene["getTilesets"] = &obe::Tiles::TileScene::getTilesets;
+        bindTileScene["getTilesets"]
+            = [](obe::Tiles::TileScene* self) -> const obe::Tiles::TilesetCollection* {
+            return &self->getTilesets();
+        };
         bindTileScene["getRenderables"] = &obe::Tiles::TileScene::getRenderables;
         bindTileScene["getColliderModels"] = &obe::Tiles::TileScene::getColliderModels;
         bindTileScene["getGameObjectsModels"] = &obe::Tiles::TileScene::getGameObjectsModels;

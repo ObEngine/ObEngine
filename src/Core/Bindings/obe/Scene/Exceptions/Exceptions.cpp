@@ -30,6 +30,18 @@ namespace obe::Scene::Exceptions::Bindings
                 sol::bases<obe::Exception<obe::Scene::Exceptions::GameObjectAlreadyExists>,
                     obe::BaseException>());
     }
+    void LoadClassInvalidSceneFile(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace = state["obe"]["Scene"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Scene::Exceptions::InvalidSceneFile> bindInvalidSceneFile
+            = ExceptionsNamespace.new_usertype<obe::Scene::Exceptions::InvalidSceneFile>(
+                "InvalidSceneFile", sol::call_constructor,
+                sol::constructors<obe::Scene::Exceptions::InvalidSceneFile(
+                    std::string_view, obe::DebugInfo)>(),
+                sol::base_classes,
+                sol::bases<obe::Exception<obe::Scene::Exceptions::InvalidSceneFile>,
+                    obe::BaseException>());
+    }
     void LoadClassMissingSceneFileBlock(sol::state_view state)
     {
         sol::table ExceptionsNamespace = state["obe"]["Scene"]["Exceptions"].get<sol::table>();

@@ -78,9 +78,8 @@ namespace obe::Transform::Bindings
                 sol::base_classes,
                 sol::bases<obe::Transform::UnitBasedObject, obe::Transform::Movable>());
         bindPolygon["addPoint"] = sol::overload(
-            [](obe::Transform::Polygon* self, const obe::Transform::UnitVector& position) -> void {
-                return self->addPoint(position);
-            },
+            [](obe::Transform::Polygon* self, const obe::Transform::UnitVector& position) -> void
+            { return self->addPoint(position); },
             [](obe::Transform::Polygon* self, const obe::Transform::UnitVector& position,
                 int pointIndex) -> void { return self->addPoint(position, pointIndex); });
         bindPolygon["findClosestSegment"] = &obe::Transform::Polygon::findClosestSegment;
@@ -194,33 +193,26 @@ namespace obe::Transform::Bindings
                 const obe::Transform::Referential&) const>(&obe::Transform::Rect::getPosition));
         bindRect["move"] = &obe::Transform::Rect::move;
         bindRect["setPointPosition"] = sol::overload(
-            [](obe::Transform::Rect* self, const obe::Transform::UnitVector& position) -> void {
-                return self->setPointPosition(position);
-            },
+            [](obe::Transform::Rect* self, const obe::Transform::UnitVector& position) -> void
+            { return self->setPointPosition(position); },
             [](obe::Transform::Rect* self, const obe::Transform::UnitVector& position,
-                const obe::Transform::Referential& ref) -> void {
-                return self->setPointPosition(position, ref);
-            });
+                const obe::Transform::Referential& ref) -> void
+            { return self->setPointPosition(position, ref); });
         bindRect["movePoint"] = sol::overload(
-            [](obe::Transform::Rect* self, const obe::Transform::UnitVector& position) -> void {
-                return self->movePoint(position);
-            },
+            [](obe::Transform::Rect* self, const obe::Transform::UnitVector& position) -> void
+            { return self->movePoint(position); },
             [](obe::Transform::Rect* self, const obe::Transform::UnitVector& position,
-                const obe::Transform::Referential& ref) -> void {
-                return self->movePoint(position, ref);
-            });
+                const obe::Transform::Referential& ref) -> void
+            { return self->movePoint(position, ref); });
         bindRect["setSize"] = sol::overload(
-            [](obe::Transform::Rect* self, const obe::Transform::UnitVector& size) -> void {
-                return self->setSize(size);
-            },
+            [](obe::Transform::Rect* self, const obe::Transform::UnitVector& size) -> void
+            { return self->setSize(size); },
             [](obe::Transform::Rect* self, const obe::Transform::UnitVector& size,
-                const obe::Transform::Referential& ref) -> void {
-                return self->setSize(size, ref);
-            });
+                const obe::Transform::Referential& ref) -> void
+            { return self->setSize(size, ref); });
         bindRect["scale"] = sol::overload(
-            [](obe::Transform::Rect* self, const obe::Transform::UnitVector& size) -> void {
-                return self->scale(size);
-            },
+            [](obe::Transform::Rect* self, const obe::Transform::UnitVector& size) -> void
+            { return self->scale(size); },
             [](obe::Transform::Rect* self, const obe::Transform::UnitVector& size,
                 const obe::Transform::Referential& ref) -> void { return self->scale(size, ref); });
         bindRect["getSize"] = &obe::Transform::Rect::getSize;
@@ -250,12 +242,12 @@ namespace obe::Transform::Bindings
                 sol::constructors<obe::Transform::Referential(),
                     obe::Transform::Referential(double, double)>());
         bindReferential[sol::meta_function::equal_to] = &obe::Transform::Referential::operator==;
-        bindReferential["flip"] = sol::overload(
-            [](obe::Transform::Referential* self) -> obe::Transform::Referential {
-                return self->flip();
-            },
-            [](obe::Transform::Referential* self, obe::Transform::FlipAxis axis)
-                -> obe::Transform::Referential { return self->flip(axis); });
+        bindReferential["flip"]
+            = sol::overload([](obe::Transform::Referential* self) -> obe::Transform::Referential
+                { return self->flip(); },
+                [](obe::Transform::Referential* self,
+                    obe::Transform::FlipAxis axis) -> obe::Transform::Referential
+                { return self->flip(axis); });
         bindReferential["isOnLeftSide"] = &obe::Transform::Referential::isOnLeftSide;
         bindReferential["isOnRightSide"] = &obe::Transform::Referential::isOnRightSide;
         bindReferential["isOnTopSide"] = &obe::Transform::Referential::isOnTopSide;
@@ -266,9 +258,8 @@ namespace obe::Transform::Bindings
         bindReferential["getOffset"] = &obe::Transform::Referential::getOffset;
         bindReferential["toString"] = sol::overload(
             [](obe::Transform::Referential* self) -> std::string { return self->toString(); },
-            [](obe::Transform::Referential* self, const std::string& format) -> std::string {
-                return self->toString(format);
-            });
+            [](obe::Transform::Referential* self, const std::string& format) -> std::string
+            { return self->toString(format); });
         bindReferential["FromString"] = &obe::Transform::Referential::FromString;
         bindReferential["TopLeft"] = sol::var(&obe::Transform::Referential::TopLeft);
         bindReferential["Top"] = sol::var(&obe::Transform::Referential::Top);
@@ -337,11 +328,11 @@ namespace obe::Transform::Bindings
                 obe::Transform::Units) const>(&obe::Transform::UnitVector::to);
         bindUnitVector["unpack"] = &obe::Transform::UnitVector::unpack;
         bindUnitVector["rotate"] = sol::overload(
-            [](obe::Transform::UnitVector* self, double angle) -> obe::Transform::UnitVector {
-                return self->rotate(angle);
-            },
-            [](obe::Transform::UnitVector* self, double angle, obe::Transform::UnitVector zero)
-                -> obe::Transform::UnitVector { return self->rotate(angle, zero); });
+            [](obe::Transform::UnitVector* self, double angle) -> obe::Transform::UnitVector
+            { return self->rotate(angle); },
+            [](obe::Transform::UnitVector* self, double angle,
+                obe::Transform::UnitVector zero) -> obe::Transform::UnitVector
+            { return self->rotate(angle, zero); });
         bindUnitVector["distance"] = &obe::Transform::UnitVector::distance;
         bindUnitVector["magnitude"] = &obe::Transform::UnitVector::magnitude;
         bindUnitVector["x"] = &obe::Transform::UnitVector::x;

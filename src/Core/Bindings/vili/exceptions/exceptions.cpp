@@ -171,4 +171,16 @@ namespace vili::exceptions::Bindings
                     vili::exceptions::base_exception>());
         bindunknown_child_node["key"] = &vili::exceptions::unknown_child_node::key;
     }
+    void LoadClassUnknownTemplate(sol::state_view state)
+    {
+        sol::table exceptionsNamespace = state["vili"]["exceptions"].get<sol::table>();
+        sol::usertype<vili::exceptions::unknown_template> bindunknown_template
+            = exceptionsNamespace.new_usertype<vili::exceptions::unknown_template>(
+                "unknown_template", sol::call_constructor,
+                sol::constructors<vili::exceptions::unknown_template(std::string_view,
+                    const std::vector<std::string>&, vili::exceptions::debug_info)>(),
+                sol::base_classes,
+                sol::bases<vili::exceptions::exception<vili::exceptions::unknown_template>,
+                    vili::exceptions::base_exception>());
+    }
 };

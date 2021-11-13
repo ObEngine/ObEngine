@@ -31,9 +31,10 @@ namespace obe::System::Package::Bindings
     {
         sol::table PackageNamespace = state["obe"]["System"]["Package"].get<sol::table>();
         PackageNamespace.set_function("Load",
-            sol::overload([](const std::string& packageName, const std::string& prefix)
-                              -> bool { return obe::System::Package::Load(packageName, prefix); },
-                [](const std::string& packageName, const std::string& prefix, unsigned int priority)
-                    -> bool { return obe::System::Package::Load(packageName, prefix, priority); }));
+            sol::overload([](const std::string& packageName, const std::string& prefix) -> bool
+                { return obe::System::Package::Load(packageName, prefix); },
+                [](const std::string& packageName, const std::string& prefix,
+                    unsigned int priority) -> bool
+                { return obe::System::Package::Load(packageName, prefix, priority); }));
     }
 };

@@ -29,7 +29,6 @@ namespace obe::Script::Bindings
         bindGameObject["Animator"] = sol::property(&obe::Script::GameObject::getAnimator);
         bindGameObject["Collider"] = sol::property(&obe::Script::GameObject::getCollider);
         bindGameObject["Sprite"] = sol::property(&obe::Script::GameObject::getSprite);
-        bindGameObject["getSprite"] = &obe::Script::GameObject::getSprite;
         bindGameObject["SceneNode"] = sol::property(&obe::Script::GameObject::getSceneNode);
         bindGameObject["exec"] = &obe::Script::GameObject::exec;
         bindGameObject["initFromVili"] = &obe::Script::GameObject::initFromVili;

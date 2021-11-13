@@ -45,18 +45,16 @@ namespace obe::Graphics::Bindings
         bindColor["load"] = &obe::Graphics::Color::load;
         bindColor["fromString"] = &obe::Graphics::Color::fromString;
         bindColor["fromName"]
-            = sol::overload([](obe::Graphics::Color* self,
-                                std::string name) -> bool { return self->fromName(name); },
-                [](obe::Graphics::Color* self, std::string name, bool strict) -> bool {
-                    return self->fromName(name, strict);
-                });
+            = sol::overload([](obe::Graphics::Color* self, std::string name) -> bool
+                { return self->fromName(name); },
+                [](obe::Graphics::Color* self, std::string name, bool strict) -> bool
+                { return self->fromName(name, strict); });
         bindColor["fromHex"] = &obe::Graphics::Color::fromHex;
         bindColor["fromRgb"]
-            = sol::overload([](obe::Graphics::Color* self, double r, double g,
-                                double b) -> void { return self->fromRgb(r, g, b); },
-                [](obe::Graphics::Color* self, double r, double g, double b, double a) -> void {
-                    return self->fromRgb(r, g, b, a);
-                });
+            = sol::overload([](obe::Graphics::Color* self, double r, double g, double b) -> void
+                { return self->fromRgb(r, g, b); },
+                [](obe::Graphics::Color* self, double r, double g, double b, double a) -> void
+                { return self->fromRgb(r, g, b, a); });
         bindColor["fromHsv"] = &obe::Graphics::Color::fromHsv;
         bindColor["toInteger"] = &obe::Graphics::Color::toInteger;
         bindColor["toHex"] = &obe::Graphics::Color::toHex;
@@ -83,9 +81,8 @@ namespace obe::Graphics::Bindings
                 &obe::Graphics::Color::operator/));
         bindColor["Random"]
             = sol::overload([]() -> obe::Graphics::Color { return obe::Graphics::Color::Random(); },
-                [](bool randomAlpha) -> obe::Graphics::Color {
-                    return obe::Graphics::Color::Random(randomAlpha);
-                });
+                [](bool randomAlpha) -> obe::Graphics::Color
+                { return obe::Graphics::Color::Random(randomAlpha); });
         bindColor["r"] = &obe::Graphics::Color::r;
         bindColor["g"] = &obe::Graphics::Color::g;
         bindColor["b"] = &obe::Graphics::Color::b;
@@ -271,19 +268,17 @@ namespace obe::Graphics::Bindings
                 sol::constructors<obe::Graphics::RenderTarget(sf::RenderTarget&),
                     obe::Graphics::RenderTarget(sf::RenderWindow&)>());
         bindRenderTarget["draw"] = sol::overload(
-            [](obe::Graphics::RenderTarget* self, const sf::Drawable& drawable) -> void {
-                return self->draw(drawable);
-            },
+            [](obe::Graphics::RenderTarget* self, const sf::Drawable& drawable) -> void
+            { return self->draw(drawable); },
             [](obe::Graphics::RenderTarget* self, const sf::Drawable& drawable,
                 const sf::RenderStates& states) -> void { return self->draw(drawable, states); },
             [](obe::Graphics::RenderTarget* self, const sf::Vertex* vertices,
-                std::size_t vertexCount,
-                sf::PrimitiveType type) -> void { return self->draw(vertices, vertexCount, type); },
+                std::size_t vertexCount, sf::PrimitiveType type) -> void
+            { return self->draw(vertices, vertexCount, type); },
             [](obe::Graphics::RenderTarget* self, const sf::Vertex* vertices,
                 std::size_t vertexCount, sf::PrimitiveType type,
-                const sf::RenderStates& states) -> void {
-                return self->draw(vertices, vertexCount, type, states);
-            });
+                const sf::RenderStates& states) -> void
+            { return self->draw(vertices, vertexCount, type, states); });
     }
     void LoadClassRenderable(sol::state_view state)
     {

@@ -8,6 +8,7 @@ namespace obe::Scene::Exceptions::Bindings
 {
     void LoadClassChildNotInSceneNode(sol::state_view state);
     void LoadClassGameObjectAlreadyExists(sol::state_view state);
+    void LoadClassInvalidSceneFile(sol::state_view state);
     void LoadClassMissingSceneFileBlock(sol::state_view state);
     void LoadClassSceneOnLoadCallbackError(sol::state_view state);
     void LoadClassSceneScriptLoadingError(sol::state_view state);

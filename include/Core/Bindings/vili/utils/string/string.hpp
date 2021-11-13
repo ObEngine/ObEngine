@@ -13,4 +13,7 @@ namespace vili::utils::string::Bindings
     void LoadFunctionQuote(sol::state_view state);
     void LoadFunctionToDouble(sol::state_view state);
     void LoadFunctionToLong(sol::state_view state);
+    void LoadFunctionIndent(sol::state_view state);
+    void LoadFunctionDistance(sol::state_view state);
+    void LoadFunctionSortByDistance(sol::state_view state);
 };

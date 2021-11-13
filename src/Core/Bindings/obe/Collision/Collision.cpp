@@ -59,13 +59,11 @@ namespace obe::Collision::Bindings
                 const obe::Transform::UnitVector&) const>(
                 &obe::Collision::PolygonalCollider::doesCollide),
             [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider& collider,
-                const obe::Transform::UnitVector& offset) -> bool {
-                return self->doesCollide(collider, offset);
-            },
+                const obe::Transform::UnitVector& offset) -> bool
+            { return self->doesCollide(collider, offset); },
             [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider& collider,
-                const obe::Transform::UnitVector& offset, const bool doAABBfilter) -> bool {
-                return self->doesCollide(collider, offset, doAABBfilter);
-            });
+                const obe::Transform::UnitVector& offset, const bool doAABBfilter) -> bool
+            { return self->doesCollide(collider, offset, doAABBfilter); });
         bindPolygonalCollider["doesHaveAnyTag"]
             = &obe::Collision::PolygonalCollider::doesHaveAnyTag;
         bindPolygonalCollider["doesHaveTag"] = &obe::Collision::PolygonalCollider::doesHaveTag;
@@ -76,14 +74,12 @@ namespace obe::Collision::Bindings
                 const obe::Transform::UnitVector&) const>(
                 &obe::Collision::PolygonalCollider::getMaximumDistanceBeforeCollision),
             [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider& collider,
-                const obe::Transform::UnitVector& offset) -> obe::Transform::UnitVector {
-                return self->getMaximumDistanceBeforeCollision(collider, offset);
-            },
+                const obe::Transform::UnitVector& offset) -> obe::Transform::UnitVector
+            { return self->getMaximumDistanceBeforeCollision(collider, offset); },
             [](obe::Collision::PolygonalCollider* self, obe::Collision::PolygonalCollider& collider,
                 const obe::Transform::UnitVector& offset,
-                const bool doAABBfilter) -> obe::Transform::UnitVector {
-                return self->getMaximumDistanceBeforeCollision(collider, offset, doAABBfilter);
-            });
+                const bool doAABBfilter) -> obe::Transform::UnitVector
+            { return self->getMaximumDistanceBeforeCollision(collider, offset, doAABBfilter); });
         bindPolygonalCollider["getParentId"] = &obe::Collision::PolygonalCollider::getParentId;
         bindPolygonalCollider["load"] = &obe::Collision::PolygonalCollider::load;
         bindPolygonalCollider["removeTag"] = &obe::Collision::PolygonalCollider::removeTag;
@@ -92,8 +88,9 @@ namespace obe::Collision::Bindings
         bindPolygonalCollider["getBoundingBox"]
             = &obe::Collision::PolygonalCollider::getBoundingBox;
         bindPolygonalCollider["addPoint"] = sol::overload(
-            [](obe::Collision::PolygonalCollider* self, const obe::Transform::UnitVector& position)
-                -> void { return self->addPoint(position); },
+            [](obe::Collision::PolygonalCollider* self,
+                const obe::Transform::UnitVector& position) -> void
+            { return self->addPoint(position); },
             [](obe::Collision::PolygonalCollider* self, const obe::Transform::UnitVector& position,
                 int pointIndex) -> void { return self->addPoint(position, pointIndex); });
         bindPolygonalCollider["move"] = &obe::Collision::PolygonalCollider::move;

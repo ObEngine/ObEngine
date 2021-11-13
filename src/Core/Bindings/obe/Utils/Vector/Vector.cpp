@@ -23,15 +23,14 @@ namespace obe::Utils::Vector::Bindings
     {
         sol::table VectorNamespace = state["obe"]["Utils"]["Vector"].get<sol::table>();
         VectorNamespace.set_function("join",
-            sol::overload([](std::vector<std::string>& vector)
-                              -> std::string { return obe::Utils::Vector::join(vector); },
-                [](std::vector<std::string>& vector, std::string sep) -> std::string {
-                    return obe::Utils::Vector::join(vector, sep);
-                },
-                [](std::vector<std::string>& vector, std::string sep, int start) -> std::string {
-                    return obe::Utils::Vector::join(vector, sep, start);
-                },
-                [](std::vector<std::string>& vector, std::string sep, int start, int stop)
-                    -> std::string { return obe::Utils::Vector::join(vector, sep, start, stop); }));
+            sol::overload([](std::vector<std::string>& vector) -> std::string
+                { return obe::Utils::Vector::join(vector); },
+                [](std::vector<std::string>& vector, std::string sep) -> std::string
+                { return obe::Utils::Vector::join(vector, sep); },
+                [](std::vector<std::string>& vector, std::string sep, int start) -> std::string
+                { return obe::Utils::Vector::join(vector, sep, start); },
+                [](std::vector<std::string>& vector, std::string sep, int start,
+                    int stop) -> std::string
+                { return obe::Utils::Vector::join(vector, sep, start, stop); }));
     }
 };

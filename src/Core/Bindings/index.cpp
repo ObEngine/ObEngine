@@ -295,6 +295,7 @@ namespace obe::Bindings
         obe::Scene::Bindings::LoadClassSceneRenderOptions(state);
         obe::Scene::Exceptions::Bindings::LoadClassChildNotInSceneNode(state);
         obe::Scene::Exceptions::Bindings::LoadClassGameObjectAlreadyExists(state);
+        obe::Scene::Exceptions::Bindings::LoadClassInvalidSceneFile(state);
         obe::Scene::Exceptions::Bindings::LoadClassMissingSceneFileBlock(state);
         obe::Scene::Exceptions::Bindings::LoadClassSceneOnLoadCallbackError(state);
         obe::Scene::Exceptions::Bindings::LoadClassSceneScriptLoadingError(state);
@@ -324,6 +325,7 @@ namespace obe::Bindings
         obe::System::Bindings::LoadEnumWindowContext(state);
         obe::System::Bindings::LoadEnumStretchMode(state);
         obe::System::Bindings::LoadFunctionSplitPathAndPrefix(state);
+        obe::System::Bindings::LoadFunctionPathTypeToString(state);
         obe::System::Bindings::LoadFunctionStringToStretchMode(state);
         obe::System::Exceptions::Bindings::LoadClassInvalidMountFile(state);
         obe::System::Exceptions::Bindings::LoadClassInvalidMouseButtonEnumValue(state);
@@ -431,6 +433,7 @@ namespace obe::Bindings
         vili::exceptions::Bindings::LoadClassParsingError(state);
         vili::exceptions::Bindings::LoadClassTooMuchIndentation(state);
         vili::exceptions::Bindings::LoadClassUnknownChildNode(state);
+        vili::exceptions::Bindings::LoadClassUnknownTemplate(state);
         vili::parser::Bindings::LoadClassNodeInStack(state);
         vili::parser::Bindings::LoadClassState(state);
         vili::parser::Bindings::LoadClassError(state);
@@ -646,6 +649,9 @@ namespace obe::Bindings
         vili::utils::string::Bindings::LoadFunctionQuote(state);
         vili::utils::string::Bindings::LoadFunctionToDouble(state);
         vili::utils::string::Bindings::LoadFunctionToLong(state);
+        vili::utils::string::Bindings::LoadFunctionIndent(state);
+        vili::utils::string::Bindings::LoadFunctionDistance(state);
+        vili::utils::string::Bindings::LoadFunctionSortByDistance(state);
         obe::System::Constraints::Bindings::LoadGlobalDefault(state);
         obe::System::Prefixes::Bindings::LoadGlobalObe(state);
         obe::System::Prefixes::Bindings::LoadGlobalCwd(state);

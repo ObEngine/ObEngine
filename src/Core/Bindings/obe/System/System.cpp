@@ -270,6 +270,11 @@ namespace obe::System::Bindings
                     return obe::System::splitPathAndPrefix(path, warnOnMissingPrefix);
                 }));
     }
+    void LoadFunctionPathTypeToString(sol::state_view state)
+    {
+        sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
+        SystemNamespace.set_function("pathTypeToString", &obe::System::pathTypeToString);
+    }
     void LoadFunctionStringToStretchMode(sol::state_view state)
     {
         sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
