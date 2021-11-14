@@ -12,7 +12,7 @@ int main(int argc, char** argv)
 {
     const unsigned int surfaceWidth = sf::VideoMode::getDesktopMode().width;
     const unsigned int surfaceHeight = sf::VideoMode::getDesktopMode().height;
-#if defined _DEBUG
+#if defined _DEBUGi
     InitEngine(surfaceWidth, surfaceHeight);
 #else
     try

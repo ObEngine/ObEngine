@@ -1,3 +1,4 @@
+#include <platformfolders/platform_folders.h>
 #include <vili/parser.hpp>
 #include <vld8/exceptions.hpp>
 #include <vld8/validator.hpp>
@@ -36,9 +37,34 @@ namespace obe::System::Project
             const std::string projectLocation = GetProjectLocation(projectName);
             MountablePath::Mount(
                 MountablePath(MountablePathType::Project, projectLocation, prefix, priority, true));
+
             Project project;
             project.loadFromFile(Path(projectLocation).add("project.vili"));
             project.mount();
+
+            std::string projectCfgPath;
+            if (project.isStandalone())
+            {
+                std::string cfgPath = sago::getConfigHome();
+                projectCfgPath = Utils::File::join({ cfgPath, project.getId() });
+            }
+            else
+            {
+                std::string cfgPath
+                    = MountablePath::FromPrefix(obe::System::Prefixes::cfg.data()).basePath;
+                projectCfgPath = Utils::File::join({ cfgPath, "Projects", project.getId() });
+            }
+            if (!Utils::File::directoryExists(projectCfgPath))
+            {
+                Debug::Log->debug("<Project> Could not find Project configuration directory, "
+                                  "creating a new one...");
+                Utils::File::createDirectory(projectCfgPath);
+                Debug::Log->debug(
+                    "<Project> Project configuration directory created at '{}'", projectCfgPath);
+            }
+            MountablePath projectCfg(
+                MountablePathType::Path, projectCfgPath, "projectcfg", Priorities::projectmount);
+            MountablePath::Mount(projectCfg);
             return true;
         }
         throw Exceptions::UnknownProject(projectName, ListProjects(), EXC_INFO);
@@ -127,6 +153,10 @@ namespace obe::System::Project
             m_version = data.at("version");
             m_obengineVersion = data.at("obengine_version").as_string();
 
+            if (data.contains("standalone"))
+            {
+                m_standalone = data.at("standalone");
+            }
             if (data.contains("authors"))
             {
                 for (const auto& author : data.at("authors").as<vili::array>())
@@ -287,5 +317,13 @@ namespace obe::System::Project
         {
             MountablePath::Unmount(*mount);
         }
+    }
+    std::string Project::getId() const
+    {
+        return m_id;
+    }
+    bool Project::isStandalone() const
+    {
+        return m_standalone;
     }
 } // namespace obe::System::Project

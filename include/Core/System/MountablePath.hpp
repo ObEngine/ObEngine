@@ -20,7 +20,7 @@ namespace obe::System
     /**
      * \brief contains default priorities of mounts
      *
-     * High-priority user defined(>3) > Project(3) > Mount(2) > Defaults(1) > Low-priority user defined(<0)
+     * High-priority user defined(>5) > High-priority(5) > ProjectMount(4) > Project(3) > Mount(2) > Defaults(1) > Low-priority(0) > Low-priority user defined(<0)
      */
     namespace Priorities
     {

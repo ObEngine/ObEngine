@@ -47,8 +47,22 @@ namespace obe::System
         MountablePath implicitCWDPath(MountablePathType::Path, "", "", Priorities::defaults, true);
         MountablePath executablePath(MountablePathType::Path, Utils::File::getExecutableDirectory(),
             Prefixes::exe, Priorities::defaults);
+
+        const std::string engineConfigPath
+            = Utils::File::join({ sago::getConfigHome(), "ObEngine" });
+        if (!Utils::File::directoryExists(engineConfigPath))
+        {
+            Utils::File::createDirectory(engineConfigPath);
+        }
+        const std::string engineConfigProjectSubdirectory
+            = Utils::File::join({ engineConfigPath, "Projects" });
+        if (!Utils::File::directoryExists(engineConfigProjectSubdirectory))
+        {
+            Utils::File::createDirectory(engineConfigProjectSubdirectory);
+        }
+
         MountablePath configPath(
-            MountablePathType::Path, sago::getConfigHome(), Prefixes::cfg, Priorities::defaults);
+            MountablePathType::Path, engineConfigPath, Prefixes::cfg, Priorities::defaults);
         MountablePath::Mount(workingDirectoryPath);
         MountablePath::Mount(implicitCWDPath);
         MountablePath::Mount(executablePath);
