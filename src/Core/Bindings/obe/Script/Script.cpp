@@ -40,7 +40,7 @@ namespace obe::Script::Bindings
                 obe::Engine::ResourceManager* resources) -> void
             { return self->loadGameObject(scene, obj, resources); });
         bindGameObject["update"] = &obe::Script::GameObject::update;
-        bindGameObject["deleteObject"] = &obe::Script::GameObject::deleteObject;
+        bindGameObject["delete"] = &obe::Script::GameObject::deleteObject;
         bindGameObject["access"] = &obe::Script::GameObject::access;
         bindGameObject["getConstructor"] = &obe::Script::GameObject::getConstructor;
         bindGameObject["initialize"] = &obe::Script::GameObject::initialize;

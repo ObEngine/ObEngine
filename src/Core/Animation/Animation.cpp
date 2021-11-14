@@ -315,7 +315,7 @@ namespace obe::Animation
             {
                 Debug::Log->trace("    <Animation> Loading Texture {0}", textureName);
                 Graphics::Texture newTexture;
-                newTexture.loadFromFile(path.add(textureName).find());
+                newTexture.loadFromFile(path.add(textureName).find(System::PathType::File));
                 // TODO: Add a way to configure anti-aliasing for textures without ResourceManager
                 m_textures.push_back(std::move(newTexture));
             }
