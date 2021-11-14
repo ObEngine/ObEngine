@@ -16,17 +16,22 @@ namespace obe
 
 namespace obe::Graphics
 {
+    using TextureWrapper
+        = std::variant<sf::Texture, std::shared_ptr<sf::Texture>, const sf::Texture*>;
+
     class Texture
     {
     private:
-        std::variant<sf::Texture, std::shared_ptr<sf::Texture>, const sf::Texture*> m_texture;
+        TextureWrapper m_texture;
+
+        sf::Texture& getMutableTexture();
+        const sf::Texture& getTexture() const;
 
     public:
         Texture();
         Texture(std::shared_ptr<sf::Texture> texture);
         Texture(const sf::Texture& texture);
         Texture(const Texture& copy);
-        ~Texture();
 
         bool create(unsigned int width, unsigned int height);
         bool loadFromFile(const std::string& filename);

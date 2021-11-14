@@ -56,7 +56,11 @@ namespace obe::Animation::Easing
 
     double InOutCubic(double t)
     {
+<<<<<<< HEAD
         return t < 0.5 ? 4 * t * t * t : 1 + 4 * (t - 2) * (t - 2) * (t - 2);
+=======
+        return t < 0.5 ? 4 * t * t * t : 1 + 4 * (t-2) * (t-2) * (t-2);
+>>>>>>> 5de50c9a7d5112150dac4bb463d7f63191439b43
     }
 
     double InQuart(double t)
