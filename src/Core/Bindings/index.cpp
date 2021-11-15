@@ -53,11 +53,13 @@
 #include <Bindings/obe/Time/Time.hpp>
 #include <Bindings/obe/Transform/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Transform/Transform.hpp>
+#include <Bindings/obe/Triggers/Triggers.hpp>
 #include <Bindings/obe/Types/Types.hpp>
 #include <Bindings/obe/Utils/Exec/Exec.hpp>
 #include <Bindings/obe/Utils/File/File.hpp>
 #include <Bindings/obe/Utils/Math/Math.hpp>
 #include <Bindings/obe/Utils/String/String.hpp>
+#include <Bindings/obe/Utils/Utils.hpp>
 #include <Bindings/obe/Utils/Vector/Vector.hpp>
 #include <Bindings/obe/obe.hpp>
 #include <Bindings/vili/exceptions/exceptions.hpp>
@@ -90,12 +92,12 @@ namespace obe::Bindings
         state["obe"]["Time"].get_or_create<sol::table>();
         state["obe"]["Transform"].get_or_create<sol::table>();
         state["obe"]["Types"].get_or_create<sol::table>();
+        state["obe"]["Utils"].get_or_create<sol::table>();
         state["vili"]["exceptions"].get_or_create<sol::table>();
         state["vili"]["parser"].get_or_create<sol::table>();
         state["vili"]["writer"].get_or_create<sol::table>();
         state["obe"]["Bindings"].get_or_create<sol::table>();
         state["obe"]["Debug"].get_or_create<sol::table>();
-        state["obe"]["Utils"].get_or_create<sol::table>();
         state["obe"]["Events"].get_or_create<sol::table>();
         state["vili"]["utils"].get_or_create<sol::table>();
         state["obe"]["Animation"]["Exceptions"].get_or_create<sol::table>();
@@ -242,9 +244,11 @@ namespace obe::Bindings
         obe::Graphics::Bindings::LoadClassShader(state);
         obe::Graphics::Bindings::LoadClassSprite(state);
         obe::Graphics::Bindings::LoadClassSpriteHandlePoint(state);
+        obe::Graphics::Bindings::LoadClassSvgTexture(state);
         obe::Graphics::Bindings::LoadClassText(state);
         obe::Graphics::Bindings::LoadClassTexture(state);
         obe::Graphics::Bindings::LoadClassHsv(state);
+        obe::Graphics::Bindings::LoadClassSizeHint(state);
         obe::Graphics::Bindings::LoadEnumColorType(state);
         obe::Graphics::Bindings::LoadEnumSpriteHandlePointType(state);
         obe::Graphics::Bindings::LoadFunctionInitPositionTransformer(state);
@@ -305,6 +309,7 @@ namespace obe::Bindings
         obe::Script::Exceptions::Bindings::LoadClassGameObjectScriptError(state);
         obe::Script::Exceptions::Bindings::LoadClassInvalidScript(state);
         obe::Script::Exceptions::Bindings::LoadClassLuaExecutionError(state);
+        obe::Script::Exceptions::Bindings::LoadClassLuaNestedExceptionError(state);
         obe::Script::Exceptions::Bindings::LoadClassNoSuchComponent(state);
         obe::Script::Exceptions::Bindings::LoadClassObjectDefinitionNotFound(state);
         obe::Script::Exceptions::Bindings::LoadClassScriptFileNotFound(state);

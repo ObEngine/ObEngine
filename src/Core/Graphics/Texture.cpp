@@ -1,7 +1,8 @@
-#include <lunasvg/svgdocument.h>
+#include <lunasvg.h>
 
 #include <Graphics/Exceptions.hpp>
 #include <Graphics/Texture.hpp>
+#include <Transform/Rect.hpp>
 #include <Utils/Visitor.hpp>
 
 namespace obe::Graphics
@@ -17,17 +18,92 @@ namespace obe::Graphics
             const sf::IntRect sfRect(position.x, position.y, size.x, size.y);
             return sfRect;
         }
+    }
 
-        sf::Image loadSvgFromFile(const std::string filename)
+    void SvgTexture::render() const
+    {
+        if (!success())
         {
-            lunasvg::SVGDocument document;
-            document.loadFontFromFile(filename);
-            //renderToBitmap by default uses the original document's dimension
-            const auto bitmap = document.renderToBitmap();
-            sf::Image image;
-            image.create(bitmap.width(), bitmap.height(), bitmap.data());
-            return image;
+            return;
         }
+        const auto bitmap = m_document->renderToBitmap(m_sizeHint.width, m_sizeHint.height);
+        sf::Image image;
+        image.create(bitmap.width(), bitmap.height(), bitmap.data());
+        m_texture->loadFromImage(image);
+    }
+
+    SvgTexture::SvgTexture(const std::string& filename) : m_path(filename)
+    {
+        m_document = lunasvg::Document::loadFromFile(filename);
+        m_texture = std::make_unique<sf::Texture>();
+        render();
+    }
+
+    SvgTexture::SvgTexture(const SvgTexture& texture) : SvgTexture(texture.m_path)
+    {
+        m_sizeHint.width = texture.m_sizeHint.width;
+        m_sizeHint.height = texture.m_sizeHint.height;
+    }
+
+    SvgTexture& SvgTexture::operator=(const SvgTexture& texture)
+    {
+        m_path = texture.m_path;
+        m_document = lunasvg::Document::loadFromFile(m_path);
+        m_sizeHint.width = texture.m_sizeHint.width;
+        m_sizeHint.height = texture.m_sizeHint.height;
+        render();
+
+        return *this;
+    }
+
+    SvgTexture& SvgTexture::operator=(SvgTexture&& texture)
+    {
+        m_path = std::move(texture.m_path);
+        m_document = std::move(texture.m_document);
+        m_texture = std::move(texture.m_texture);
+        m_sizeHint.width = texture.m_sizeHint.width;
+        m_sizeHint.height = texture.m_sizeHint.height;
+        render();
+
+        return *this;
+    }
+
+    bool SvgTexture::getAutoscaling() const
+    {
+        return m_autoscaling;
+    }
+
+    void SvgTexture::setAutoscaling(const bool autoscaling)
+    {
+        m_autoscaling = autoscaling;
+    }
+
+    void SvgTexture::setSizeHint(unsigned width, unsigned height)
+    {
+        if (m_sizeHint.width != width || m_sizeHint.height != height)
+        {
+            m_sizeHint.width = width;
+            m_sizeHint.height = height;
+            if (m_autoscaling)
+            {
+                render();
+            }
+        }
+    }
+
+    bool SvgTexture::success() const
+    {
+        return static_cast<bool>(m_document);
+    }
+
+    const sf::Texture& SvgTexture::getTexture() const
+    {
+        return *m_texture;
+    }
+
+    sf::Texture& SvgTexture::getTexture()
+    {
+        return *m_texture;
     }
 
     sf::Texture& Texture::getMutableTexture()
@@ -38,8 +114,9 @@ namespace obe::Graphics
             [](const sf::Texture*) -> sf::Texture& {
                 throw Exceptions::ReadOnlyTexture("create", EXC_INFO);
             },
+            [](SvgTexture& texture) -> sf::Texture& { return texture.getTexture(); }
         };
-        return std::visit(visitor, texture);
+        return std::visit(visitor, m_texture);
     }
 
     const sf::Texture& Texture::getTexture() const
@@ -50,8 +127,15 @@ namespace obe::Graphics
                 return *texture;
             },
             [](const sf::Texture* texture) -> const sf::Texture& { return *texture; },
+            [](const SvgTexture& texture) -> const sf::Texture& { return texture.getTexture(); }
         };
-        return std::visit(visitor, texture);
+        return std::visit(visitor, m_texture);
+    }
+
+    Texture Texture::MakeSharedTexture()
+    {
+        std::shared_ptr<sf::Texture> empty = std::make_shared<sf::Texture>();
+        return Texture(empty);
     }
 
     Texture::Texture()
@@ -61,8 +145,8 @@ namespace obe::Graphics
     }
 
     Texture::Texture(std::shared_ptr<sf::Texture> texture)
+        : m_texture(texture)
     {
-        m_texture = texture;
     }
 
     Texture::Texture(const sf::Texture& texture)
@@ -84,17 +168,17 @@ namespace obe::Graphics
 
     bool Texture::create(unsigned width, unsigned height)
     {
-        return getMutableTexture(m_texture).create(width, height);
+        return getMutableTexture().create(width, height);
     }
 
     bool Texture::loadFromFile(const std::string& filename)
     {
         if (Utils::String::endsWith(filename, ".svg"))
         {
-            const auto image = loadSvgFromFile(filename);
-            return getMutableTexture(m_texture).loadFromImage(image);
+            m_texture = SvgTexture(filename);
+            return std::get<SvgTexture>(m_texture).success();
         }
-        return getMutableTexture(m_texture).loadFromFile(filename);
+        return getMutableTexture().loadFromFile(filename);
     }
 
     bool Texture::loadFromFile(const std::string& filename, const Transform::Rect& rect)
@@ -102,41 +186,67 @@ namespace obe::Graphics
         const sf::IntRect sfRect = toSfRect(rect);
         if (Utils::String::endsWith(filename, ".svg"))
         {
-            const auto image = loadSvgFromFile(filename);
-            return getMutableTexture(m_texture).loadFromImage(image, sfRect);
+            m_texture = SvgTexture(filename);
+            // TODO: Implement loadFromFile(path, rect)
+            return std::get<SvgTexture>(m_texture).success();
         }
-        return getMutableTexture(m_texture).loadFromFile(filename, sfRect);
+        return getMutableTexture().loadFromFile(filename, sfRect);
     }
 
     bool Texture::loadFromImage(const sf::Image& image)
     {
-        return getMutableTexture(m_texture).loadFromImage(image);
+        return getMutableTexture().loadFromImage(image);
     }
 
     Transform::UnitVector Texture::getSize() const
     {
-        const sf::Vector2u textureSize = getTexture(m_texture).getSize();
+        const sf::Vector2u textureSize = getTexture().getSize();
         return Transform::UnitVector(textureSize.x, textureSize.y, Transform::Units::ScenePixels);
+    }
+
+    void Texture::setSizeHint(unsigned width, unsigned height)
+    {
+        if (std::holds_alternative<SvgTexture>(m_texture))
+        {
+            std::get<SvgTexture>(m_texture).setSizeHint(width, height);
+        }
+    }
+
+    bool Texture::getAutoscaling() const
+    {
+        if (std::holds_alternative<SvgTexture>(m_texture))
+        {
+            return std::get<SvgTexture>(m_texture).getAutoscaling();
+        }
+        return false;
+    }
+
+    void Texture::setAutoscaling(bool autoscaling)
+    {
+        if (std::holds_alternative<SvgTexture>(m_texture))
+        {
+            return std::get<SvgTexture>(m_texture).setAutoscaling(autoscaling);
+        }
     }
 
     void Texture::setAntiAliasing(bool antiAliasing)
     {
-        getMutableTexture(m_texture).setSmooth(antiAliasing);
+        getMutableTexture().setSmooth(antiAliasing);
     }
 
     bool Texture::isAntiAliased() const
     {
-        return getTexture(m_texture).isSmooth();
+        return getTexture().isSmooth();
     }
 
     void Texture::setRepeated(bool repeated)
     {
-        getMutableTexture(m_texture).setRepeated(repeated);
+        getMutableTexture().setRepeated(repeated);
     }
 
     bool Texture::isRepeated() const
     {
-        return getTexture(m_texture).isRepeated();
+        return getTexture().isRepeated();
     }
 
     void Texture::reset()
@@ -144,7 +254,7 @@ namespace obe::Graphics
         m_texture = sf::Texture {};
     }
 
-    unsigned Texture::useCount()
+    unsigned int Texture::useCount() const
     {
         if (std::holds_alternative<sf::Texture>(m_texture))
         {
@@ -161,14 +271,24 @@ namespace obe::Graphics
         return 0;
     }
 
+    bool Texture::isVector() const
+    {
+        return std::holds_alternative<SvgTexture>(m_texture);
+    }
+
+    bool Texture::isBitmap() const
+    {
+        return !isVector();
+    }
+
     Texture::operator sf::Texture&()
     {
-        return getMutableTexture(m_texture);
+        return getMutableTexture();
     }
 
     Texture::operator const sf::Texture&() const
     {
-        return getTexture(m_texture);
+        return getTexture();
     }
 
     Texture& Texture::operator=(const Texture& copy)

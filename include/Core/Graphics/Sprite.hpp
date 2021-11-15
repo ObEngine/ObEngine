@@ -108,6 +108,8 @@ namespace obe::Graphics
         bool m_antiAliasing = true;
 
         void resetUnit(Transform::Units unit) override;
+        void refreshVectorTexture(
+            const Transform::UnitVector& surfaceSize, const std::array<sf::Vertex, 4>& vertices);
 
     public:
         /**
@@ -193,6 +195,12 @@ namespace obe::Graphics
          * \return A reference to the current texture of the Sprite
          */
         [[nodiscard]] const Graphics::Texture& getTexture() const;
+
+        /**
+         * \brief Gets a reference to the texture of the Sprite
+         * \return A reference to the current texture of the Sprite
+         */
+        [[nodiscard]] Graphics::Texture& getTexture();
         /**
          * \brief Get the x Coordinate of the scale factor of the Sprite
          * \return -1 if the Sprite has been horizontally flipped, 1

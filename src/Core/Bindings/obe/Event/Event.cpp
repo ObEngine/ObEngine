@@ -78,11 +78,13 @@ namespace obe::Event::Bindings
         bindEventGroup["contains"] = &obe::Event::EventGroup::contains;
         bindEventGroup["add"] = &obe::Event::addLuaEvent;
         bindEventGroup["remove"] = &obe::Event::EventGroup::remove;
-        bindEventGroup["trigger"]
-            = sol::overload([](obe::Event::EventGroup* self, const std::string& name) -> void
-                { return obe::Event::triggerLuaEvent(self, name); },
-                [](obe::Event::EventGroup* self, const std::string& name, sol::table data) -> void
-                { return obe::Event::triggerLuaEvent(self, name, data); });
+        bindEventGroup["trigger"] = sol::overload(
+            [](obe::Event::EventGroup* self, const std::string& name) -> void {
+                return obe::Event::triggerLuaEvent(self, name);
+            },
+            [](obe::Event::EventGroup* self, const std::string& name, sol::table data) -> void {
+                return obe::Event::triggerLuaEvent(self, name, data);
+            });
         bindEventGroup["getEventsNames"] = &obe::Event::EventGroup::getEventsNames;
         bindEventGroup["getEvents"] = &obe::Event::EventGroup::getEvents;
         bindEventGroup["getIdentifier"] = &obe::Event::EventGroup::getIdentifier;

@@ -45,13 +45,15 @@ namespace vili::utils::string::Bindings
     {
         sol::table stringNamespace = state["vili"]["utils"]["string"].get<sol::table>();
         stringNamespace.set_function("indent",
-            sol::overload([](const std::string& input) -> std::string
-                { return vili::utils::string::indent(input); },
-                [](const std::string& input, unsigned int indent_level) -> std::string
-                { return vili::utils::string::indent(input, indent_level); },
+            sol::overload([](const std::string& input)
+                              -> std::string { return vili::utils::string::indent(input); },
+                [](const std::string& input, unsigned int indent_level) -> std::string {
+                    return vili::utils::string::indent(input, indent_level);
+                },
                 [](const std::string& input, unsigned int indent_level,
-                    bool pad_left) -> std::string
-                { return vili::utils::string::indent(input, indent_level, pad_left); }));
+                    bool pad_left) -> std::string {
+                    return vili::utils::string::indent(input, indent_level, pad_left);
+                }));
     }
     void LoadFunctionDistance(sol::state_view state)
     {

@@ -20,7 +20,7 @@ namespace obe::Config
         System::MountList configMounts;
         const auto& allMounts = System::MountablePath::Paths();
         std::set<std::string> canonicalPaths;
-        for (const auto& mountIt = allMounts.rbegin(); mountIt != allMounts.rend(); ++mountIt)
+        for (auto mountIt = allMounts.rbegin(); mountIt != allMounts.rend(); ++mountIt)
         {
             const std::string basePath = mountIt->get()->basePath;
             if (canonicalPaths.find(basePath) == canonicalPaths.end())

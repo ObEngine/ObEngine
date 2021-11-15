@@ -34,13 +34,15 @@ namespace obe::Script::Bindings
         bindGameObject["initFromVili"] = &obe::Script::GameObject::initFromVili;
         bindGameObject["sendInitArg"] = &obe::Script::GameObject::sendInitArgFromLua;
         bindGameObject["loadGameObject"] = sol::overload(
-            [](obe::Script::GameObject* self, obe::Scene::Scene& scene, vili::node& obj) -> void
-            { return self->loadGameObject(scene, obj); },
+            [](obe::Script::GameObject* self, obe::Scene::Scene& scene, vili::node& obj) -> void {
+                return self->loadGameObject(scene, obj);
+            },
             [](obe::Script::GameObject* self, obe::Scene::Scene& scene, vili::node& obj,
-                obe::Engine::ResourceManager* resources) -> void
-            { return self->loadGameObject(scene, obj, resources); });
+                obe::Engine::ResourceManager* resources) -> void {
+                return self->loadGameObject(scene, obj, resources);
+            });
         bindGameObject["update"] = &obe::Script::GameObject::update;
-        bindGameObject["delete"] = &obe::Script::GameObject::deleteObject;
+        bindGameObject["deleteObject"] = &obe::Script::GameObject::deleteObject;
         bindGameObject["access"] = &obe::Script::GameObject::access;
         bindGameObject["getConstructor"] = &obe::Script::GameObject::getConstructor;
         bindGameObject["initialize"] = &obe::Script::GameObject::initialize;

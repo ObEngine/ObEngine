@@ -3,6 +3,8 @@
 #include <string>
 #include <variant>
 
+#include <lunasvg.h>
+
 #include <SFML/Graphics/Texture.hpp>
 
 namespace obe
@@ -16,8 +18,41 @@ namespace obe
 
 namespace obe::Graphics
 {
+    class SvgTexture
+    {
+    private:
+        std::string m_path;
+        std::unique_ptr<lunasvg::Document> m_document;
+        std::unique_ptr<sf::Texture> m_texture;
+        struct SizeHint
+        {
+            int width = 0;
+            int height = 0;
+        };
+        SizeHint m_sizeHint;
+        bool m_autoscaling = true;
+
+        void render() const;
+
+    public:
+        SvgTexture(const std::string& filename);
+
+        SvgTexture(const SvgTexture& texture);
+        SvgTexture& operator=(const SvgTexture& texture);
+        SvgTexture& operator=(SvgTexture&& texture);
+
+        [[nodiscard]] bool getAutoscaling() const;
+        void setAutoscaling(bool autoscaling);
+        void setSizeHint(unsigned int width, unsigned int height);
+
+        bool success() const;
+
+        const sf::Texture& getTexture() const;
+        sf::Texture& getTexture();
+    };
+
     using TextureWrapper
-        = std::variant<sf::Texture, std::shared_ptr<sf::Texture>, const sf::Texture*>;
+        = std::variant<sf::Texture, std::shared_ptr<sf::Texture>, const sf::Texture*, SvgTexture>;
 
     class Texture
     {
@@ -28,6 +63,8 @@ namespace obe::Graphics
         const sf::Texture& getTexture() const;
 
     public:
+        static Texture MakeSharedTexture();
+
         Texture();
         Texture(std::shared_ptr<sf::Texture> texture);
         Texture(const sf::Texture& texture);
@@ -40,6 +77,10 @@ namespace obe::Graphics
 
         [[nodiscard]] Transform::UnitVector getSize() const;
 
+        void setSizeHint(unsigned int width, unsigned int height);
+        [[nodiscard]] bool getAutoscaling() const;
+        void setAutoscaling(bool autoscaling);
+
         void setAntiAliasing(bool antiAliasing);
         [[nodiscard]] bool isAntiAliased() const;
 
@@ -48,7 +89,10 @@ namespace obe::Graphics
 
         void reset();
 
-        unsigned int useCount();
+        unsigned int useCount() const;
+
+        bool isVector() const;
+        bool isBitmap() const;
 
         operator sf::Texture&();
         operator const sf::Texture&() const;

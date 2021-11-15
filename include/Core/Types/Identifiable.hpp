@@ -15,7 +15,6 @@ namespace obe::Types
 
     public:
         virtual ~Identifiable() = default;
-        Identifiable& operator=(Identifiable&&) = delete;
 
         /**
          * \brief Creates a new Identifiable

@@ -62,7 +62,7 @@ namespace obe::Engine::Exceptions::Bindings
             = ExceptionsNamespace.new_usertype<obe::Engine::Exceptions::TextureNotFound>(
                 "TextureNotFound", sol::call_constructor,
                 sol::constructors<obe::Engine::Exceptions::TextureNotFound(
-                    std::string_view, std::vector<std::string>, obe::DebugInfo)>(),
+                    std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
                 sol::bases<obe::Exception<obe::Engine::Exceptions::TextureNotFound>,
                     obe::BaseException>());
