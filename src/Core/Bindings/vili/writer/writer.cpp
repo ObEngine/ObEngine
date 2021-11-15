@@ -107,27 +107,27 @@ namespace vili::writer::Bindings
     {
         sol::table writerNamespace = state["vili"]["writer"].get<sol::table>();
         writerNamespace.set_function("dump_array",
-            sol::overload([](const vili::node& data) -> std::string
-                { return vili::writer::dump_array(data); },
-                [](const vili::node& data, const vili::writer::dump_options& options) -> std::string
-                { return vili::writer::dump_array(data, options); }));
+            sol::overload([](const vili::node& data)
+                              -> std::string { return vili::writer::dump_array(data); },
+                [](const vili::node& data, const vili::writer::dump_options& options)
+                    -> std::string { return vili::writer::dump_array(data, options); }));
     }
     void LoadFunctionDumpObject(sol::state_view state)
     {
         sol::table writerNamespace = state["vili"]["writer"].get<sol::table>();
         writerNamespace.set_function("dump_object",
-            sol::overload([](const vili::node& data) -> std::string
-                { return vili::writer::dump_object(data); },
-                [](const vili::node& data, const vili::writer::dump_options& options) -> std::string
-                { return vili::writer::dump_object(data, options); }));
+            sol::overload([](const vili::node& data)
+                              -> std::string { return vili::writer::dump_object(data); },
+                [](const vili::node& data, const vili::writer::dump_options& options)
+                    -> std::string { return vili::writer::dump_object(data, options); }));
     }
     void LoadFunctionDump(sol::state_view state)
     {
         sol::table writerNamespace = state["vili"]["writer"].get<sol::table>();
         writerNamespace.set_function("dump",
-            sol::overload([](const vili::node& data) -> std::string
-                { return vili::writer::dump(data); },
-                [](const vili::node& data, const vili::writer::dump_options& options) -> std::string
-                { return vili::writer::dump(data, options); }));
+            sol::overload(
+                [](const vili::node& data) -> std::string { return vili::writer::dump(data); },
+                [](const vili::node& data, const vili::writer::dump_options& options)
+                    -> std::string { return vili::writer::dump(data, options); }));
     }
 };

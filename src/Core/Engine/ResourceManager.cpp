@@ -12,15 +12,16 @@ namespace obe::Engine
             || (!m_textures[pathAsString].first && !antiAliasing)
             || (!m_textures[pathAsString].second && antiAliasing))
         {
-            std::shared_ptr<sf::Texture> tempTexture = std::make_shared<sf::Texture>();
-            const std::string realPath = path.find();
+            Graphics::Texture tempTexture = Graphics::Texture::MakeSharedTexture();
+            const System::FindResult findResult = path.find();
+            const std::string texturePath = findResult.path();
             Debug::Log->debug(
-                "[ResourceManager] Loading <Texture> {} from {}", pathAsString, realPath);
+                "[ResourceManager] Loading <Texture> {} from {}", pathAsString, texturePath);
 
-            const bool success = tempTexture->loadFromFile(realPath);
+            const bool success = tempTexture.loadFromFile(texturePath);
             if (success)
             {
-                tempTexture->setSmooth(antiAliasing);
+                tempTexture.setAntiAliasing(antiAliasing);
                 if (!antiAliasing)
                 {
                     m_textures[pathAsString].first
@@ -35,8 +36,7 @@ namespace obe::Engine
                 }
             }
             else
-                throw Exceptions::TextureNotFound(
-                    pathAsString, System::MountablePath::StringPaths(), EXC_INFO);
+                throw Exceptions::TextureNotFound(texturePath, EXC_INFO);
         }
         else
         {

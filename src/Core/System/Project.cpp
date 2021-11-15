@@ -75,7 +75,7 @@ namespace obe::System::Project
         const std::string projectsFileLocation = "obe://projects.vili"_fs;
         vili::node projects = vili::parser::from_file(projectsFileLocation);
         std::vector<std::string> projectsNames;
-        for (auto [projectName, _] : projects.items())
+        for (const auto& [projectName, _] : projects.items())
         {
             projectsNames.push_back(projectName);
         }

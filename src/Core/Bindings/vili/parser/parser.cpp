@@ -52,18 +52,20 @@ namespace vili::parser::Bindings
     {
         sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
         parserNamespace.set_function("from_string",
-            sol::overload([](std::string_view data) -> vili::node
-                { return vili::parser::from_string(data); },
-                [](std::string_view data, vili::parser::state parser_state) -> vili::node
-                { return vili::parser::from_string(data, parser_state); }));
+            sol::overload(
+                [](std::string_view data) -> vili::node { return vili::parser::from_string(data); },
+                [](std::string_view data, vili::parser::state parser_state) -> vili::node {
+                    return vili::parser::from_string(data, parser_state);
+                }));
     }
     void LoadFunctionFromFile(sol::state_view state)
     {
         sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
         parserNamespace.set_function("from_file",
-            sol::overload([](std::string_view path) -> vili::node
-                { return vili::parser::from_file(path); },
-                [](std::string_view path, vili::parser::state parser_state) -> vili::node
-                { return vili::parser::from_file(path, parser_state); }));
+            sol::overload(
+                [](std::string_view path) -> vili::node { return vili::parser::from_file(path); },
+                [](std::string_view path, vili::parser::state parser_state) -> vili::node {
+                    return vili::parser::from_file(path, parser_state);
+                }));
     }
 };

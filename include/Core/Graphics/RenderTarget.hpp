@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Transform/UnitVector.hpp"
+
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
@@ -18,6 +20,8 @@ namespace obe::Graphics
             const sf::RenderStates& states = sf::RenderStates::Default) const;
         void draw(const sf::Vertex* vertices, std::size_t vertexCount, sf::PrimitiveType type,
             const sf::RenderStates& states = sf::RenderStates::Default) const;
+
+        Transform::UnitVector getSize() const;
 
         operator sf::RenderTarget&();
         operator const sf::RenderTarget&() const;
@@ -43,6 +47,12 @@ namespace obe::Graphics
         sf::PrimitiveType type, const sf::RenderStates& states) const
     {
         m_target.draw(vertices, vertexCount, type, states);
+    }
+
+    inline Transform::UnitVector RenderTarget::getSize() const
+    {
+        sf::Vector2u size = m_target.getSize();
+        return Transform::UnitVector(size.x, size.y, Transform::Units::ScenePixels);
     }
 
     inline RenderTarget::operator sf::RenderTarget&()

@@ -42,6 +42,18 @@ namespace obe::Script::Exceptions::Bindings
                 sol::bases<obe::Exception<obe::Script::Exceptions::LuaExecutionError>,
                     obe::BaseException>());
     }
+    void LoadClassLuaNestedExceptionError(sol::state_view state)
+    {
+        sol::table ExceptionsNamespace = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Script::Exceptions::LuaNestedExceptionError> bindLuaNestedExceptionError
+            = ExceptionsNamespace.new_usertype<obe::Script::Exceptions::LuaNestedExceptionError>(
+                "LuaNestedExceptionError", sol::call_constructor,
+                sol::constructors<obe::Script::Exceptions::LuaNestedExceptionError(
+                    const std::exception&, obe::DebugInfo)>(),
+                sol::base_classes,
+                sol::bases<obe::Exception<obe::Script::Exceptions::LuaNestedExceptionError>,
+                    obe::BaseException>());
+    }
     void LoadClassNoSuchComponent(sol::state_view state)
     {
         sol::table ExceptionsNamespace = state["obe"]["Script"]["Exceptions"].get<sol::table>();

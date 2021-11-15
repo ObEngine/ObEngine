@@ -45,16 +45,18 @@ namespace obe::Graphics::Bindings
         bindColor["load"] = &obe::Graphics::Color::load;
         bindColor["fromString"] = &obe::Graphics::Color::fromString;
         bindColor["fromName"]
-            = sol::overload([](obe::Graphics::Color* self, std::string name) -> bool
-                { return self->fromName(name); },
-                [](obe::Graphics::Color* self, std::string name, bool strict) -> bool
-                { return self->fromName(name, strict); });
+            = sol::overload([](obe::Graphics::Color* self,
+                                std::string name) -> bool { return self->fromName(name); },
+                [](obe::Graphics::Color* self, std::string name, bool strict) -> bool {
+                    return self->fromName(name, strict);
+                });
         bindColor["fromHex"] = &obe::Graphics::Color::fromHex;
         bindColor["fromRgb"]
-            = sol::overload([](obe::Graphics::Color* self, double r, double g, double b) -> void
-                { return self->fromRgb(r, g, b); },
-                [](obe::Graphics::Color* self, double r, double g, double b, double a) -> void
-                { return self->fromRgb(r, g, b, a); });
+            = sol::overload([](obe::Graphics::Color* self, double r, double g,
+                                double b) -> void { return self->fromRgb(r, g, b); },
+                [](obe::Graphics::Color* self, double r, double g, double b, double a) -> void {
+                    return self->fromRgb(r, g, b, a);
+                });
         bindColor["fromHsv"] = &obe::Graphics::Color::fromHsv;
         bindColor["toInteger"] = &obe::Graphics::Color::toInteger;
         bindColor["toHex"] = &obe::Graphics::Color::toHex;
@@ -81,8 +83,9 @@ namespace obe::Graphics::Bindings
                 &obe::Graphics::Color::operator/));
         bindColor["Random"]
             = sol::overload([]() -> obe::Graphics::Color { return obe::Graphics::Color::Random(); },
-                [](bool randomAlpha) -> obe::Graphics::Color
-                { return obe::Graphics::Color::Random(randomAlpha); });
+                [](bool randomAlpha) -> obe::Graphics::Color {
+                    return obe::Graphics::Color::Random(randomAlpha);
+                });
         bindColor["r"] = &obe::Graphics::Color::r;
         bindColor["g"] = &obe::Graphics::Color::g;
         bindColor["b"] = &obe::Graphics::Color::b;
@@ -268,17 +271,20 @@ namespace obe::Graphics::Bindings
                 sol::constructors<obe::Graphics::RenderTarget(sf::RenderTarget&),
                     obe::Graphics::RenderTarget(sf::RenderWindow&)>());
         bindRenderTarget["draw"] = sol::overload(
-            [](obe::Graphics::RenderTarget* self, const sf::Drawable& drawable) -> void
-            { return self->draw(drawable); },
+            [](obe::Graphics::RenderTarget* self, const sf::Drawable& drawable) -> void {
+                return self->draw(drawable);
+            },
             [](obe::Graphics::RenderTarget* self, const sf::Drawable& drawable,
                 const sf::RenderStates& states) -> void { return self->draw(drawable, states); },
             [](obe::Graphics::RenderTarget* self, const sf::Vertex* vertices,
-                std::size_t vertexCount, sf::PrimitiveType type) -> void
-            { return self->draw(vertices, vertexCount, type); },
+                std::size_t vertexCount,
+                sf::PrimitiveType type) -> void { return self->draw(vertices, vertexCount, type); },
             [](obe::Graphics::RenderTarget* self, const sf::Vertex* vertices,
                 std::size_t vertexCount, sf::PrimitiveType type,
-                const sf::RenderStates& states) -> void
-            { return self->draw(vertices, vertexCount, type, states); });
+                const sf::RenderStates& states) -> void {
+                return self->draw(vertices, vertexCount, type, states);
+            });
+        bindRenderTarget["getSize"] = &obe::Graphics::RenderTarget::getSize;
     }
     void LoadClassRenderable(sol::state_view state)
     {
@@ -347,7 +353,10 @@ namespace obe::Graphics::Bindings
         bindSprite["getSprite"] = &obe::Graphics::Sprite::getSprite;
         bindSprite["getSpriteHeight"] = &obe::Graphics::Sprite::getSpriteHeight;
         bindSprite["getSpriteWidth"] = &obe::Graphics::Sprite::getSpriteWidth;
-        bindSprite["getTexture"] = &obe::Graphics::Sprite::getTexture;
+        bindSprite["getConstTexture"] = static_cast<const obe::Graphics::Texture& (obe::Graphics::Sprite::*)() const>(&obe::Graphics::Sprite::getTexture);
+        bindSprite["getTexture"]
+            = static_cast<obe::Graphics::Texture& (obe::Graphics::Sprite::*)()>(
+                &obe::Graphics::Sprite::getTexture);
         bindSprite["getXScaleFactor"] = &obe::Graphics::Sprite::getXScaleFactor;
         bindSprite["getYScaleFactor"] = &obe::Graphics::Sprite::getYScaleFactor;
         bindSprite["getAntiAliasing"] = &obe::Graphics::Sprite::getAntiAliasing;
@@ -383,6 +392,24 @@ namespace obe::Graphics::Bindings
         bindSpriteHandlePoint["m_dp"] = &obe::Graphics::SpriteHandlePoint::m_dp;
         bindSpriteHandlePoint["radius"] = sol::var(&obe::Graphics::SpriteHandlePoint::radius);
     }
+    void LoadClassSvgTexture(sol::state_view state)
+    {
+        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
+        sol::usertype<obe::Graphics::SvgTexture> bindSvgTexture
+            = GraphicsNamespace.new_usertype<obe::Graphics::SvgTexture>("SvgTexture",
+                sol::call_constructor,
+                sol::constructors<obe::Graphics::SvgTexture(const std::string&),
+                    obe::Graphics::SvgTexture(const obe::Graphics::SvgTexture&)>());
+        bindSvgTexture["getAutoscaling"] = &obe::Graphics::SvgTexture::getAutoscaling;
+        bindSvgTexture["setAutoscaling"] = &obe::Graphics::SvgTexture::setAutoscaling;
+        bindSvgTexture["setSizeHint"] = &obe::Graphics::SvgTexture::setSizeHint;
+        bindSvgTexture["success"] = &obe::Graphics::SvgTexture::success;
+        bindSvgTexture["getTexture"]
+            = sol::overload(static_cast<const sf::Texture& (obe::Graphics::SvgTexture::*)() const>(
+                                &obe::Graphics::SvgTexture::getTexture),
+                static_cast<sf::Texture& (obe::Graphics::SvgTexture::*)()>(
+                    &obe::Graphics::SvgTexture::getTexture));
+    }
     void LoadClassText(sol::state_view state)
     {
         sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
@@ -414,12 +441,17 @@ namespace obe::Graphics::Bindings
                     const obe::Transform::Rect&)>(&obe::Graphics::Texture::loadFromFile));
         bindTexture["loadFromImage"] = &obe::Graphics::Texture::loadFromImage;
         bindTexture["getSize"] = &obe::Graphics::Texture::getSize;
+        bindTexture["setSizeHint"] = &obe::Graphics::Texture::setSizeHint;
+        bindTexture["getAutoscaling"] = &obe::Graphics::Texture::getAutoscaling;
+        bindTexture["setAutoscaling"] = &obe::Graphics::Texture::setAutoscaling;
         bindTexture["setAntiAliasing"] = &obe::Graphics::Texture::setAntiAliasing;
         bindTexture["isAntiAliased"] = &obe::Graphics::Texture::isAntiAliased;
         bindTexture["setRepeated"] = &obe::Graphics::Texture::setRepeated;
         bindTexture["isRepeated"] = &obe::Graphics::Texture::isRepeated;
         bindTexture["reset"] = &obe::Graphics::Texture::reset;
         bindTexture["useCount"] = &obe::Graphics::Texture::useCount;
+        bindTexture["isVector"] = &obe::Graphics::Texture::isVector;
+        bindTexture["isBitmap"] = &obe::Graphics::Texture::isBitmap;
         bindTexture["operator="] = sol::overload(
             static_cast<obe::Graphics::Texture& (
                 obe::Graphics::Texture::*)(const obe::Graphics::Texture&)>(
@@ -429,6 +461,7 @@ namespace obe::Graphics::Bindings
             static_cast<obe::Graphics::Texture& (
                 obe::Graphics::Texture::*)(std::shared_ptr<sf::Texture>)>(
                 &obe::Graphics::Texture::operator=));
+        bindTexture["MakeSharedTexture"] = &obe::Graphics::Texture::MakeSharedTexture;
     }
     void LoadClassHsv(sol::state_view state)
     {
@@ -439,6 +472,9 @@ namespace obe::Graphics::Bindings
         bindHsv["H"] = &obe::Graphics::Hsv::H;
         bindHsv["S"] = &obe::Graphics::Hsv::S;
         bindHsv["V"] = &obe::Graphics::Hsv::V;
+    }
+    void LoadClassSizeHint(sol::state_view state)
+    {
     }
     void LoadFunctionInitPositionTransformer(sol::state_view state)
     {

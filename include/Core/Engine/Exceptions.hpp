@@ -47,12 +47,10 @@ namespace obe::Engine::Exceptions
     {
     public:
         using Exception::Exception;
-        TextureNotFound(std::string_view path, std::vector<std::string> mounts, DebugInfo info)
+        TextureNotFound(std::string_view path, DebugInfo info)
             : Exception(info)
         {
-            this->error("Could not find Texture with path '{}'", path);
-            this->hint("The following paths were used to search for the Texture ({})",
-                fmt::join(mounts, ", "));
+            this->error("Could not load Texture with path '{}'", path);
         }
     };
 

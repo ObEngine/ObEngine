@@ -42,6 +42,7 @@ add_subdirectory(extlibs/vili-d8)
 
 # Audio library
 add_subdirectory(extlibs/soloud)
+add_subdirectory(extlibs/lunasvg)
 
 if (APPLE OR USE_FILESYSTEM_FALLBACK)
     set(USE_FILESYSTEM_FALLBACK TRUE CACHE BOOL "Use filesystem fallback" FORCE)
