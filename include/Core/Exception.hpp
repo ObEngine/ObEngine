@@ -63,6 +63,9 @@ namespace obe
         std::string m_message;
         std::vector<std::runtime_error> m_traceback;
 
+        void nestInPlace(const std::exception& exception);
+        void nestInPlace(const BaseException& exception);
+
     public:
         BaseException() = default;
         /**
@@ -90,8 +93,24 @@ namespace obe
         using BaseException::BaseException;
         explicit Exception(DebugInfo info);
         ExceptionType nest(const std::exception& exception);
-        ExceptionType nest(BaseException& exception);
+        ExceptionType nest(const BaseException& exception);
     };
+
+    inline void BaseException::nestInPlace(const std::exception& exception)
+    {
+        m_traceback = std::vector { std::runtime_error(exception.what()) };
+        m_message += "  Cause:\n";
+        m_message += "    " + Utils::String::replace(exception.what(), "\n", "\n    ");
+    }
+
+    inline void BaseException::nestInPlace(const BaseException& exception)
+    {
+        const std::vector<std::runtime_error>& traceback = exception.traceback();
+        m_traceback = std::vector<std::runtime_error>(traceback.begin(), traceback.end());
+        m_traceback.push_back(std::runtime_error(exception.what()));
+        m_message += "  Cause:\n";
+        m_message += "    " + Utils::String::replace(exception.what(), "\n", "\n    ");
+    }
 
     inline BaseException::BaseException(const std::exception& e) noexcept
         : m_message(e.what())
@@ -102,8 +121,10 @@ namespace obe
     Exception<ExceptionType>::Exception(DebugInfo info)
     {
         m_message = fmt::format("Exception [{}] occured\n", getTypeName<ExceptionType>());
+#if defined _DEBUG
         m_message += fmt::format("  In file: '{}' (line {})\n", info.file, info.line);
         m_message += fmt::format("  In function: {}\n", info.function);
+#endif
     }
 
     template <class... Args>
@@ -135,23 +156,15 @@ namespace obe
     ExceptionType Exception<ExceptionType>::nest(const std::exception& exception)
     {
         ExceptionType nestedException(*this);
-        nestedException.m_traceback = std::vector { std::runtime_error(exception.what()) };
-        nestedException.m_message += "  Cause:\n";
-        nestedException.m_message
-            += "    " + Utils::String::replace(exception.what(), "\n", "\n    ");
+        nestedException.nestInPlace(exception);
         return nestedException;
     }
 
     template <class ExceptionType>
-    ExceptionType Exception<ExceptionType>::nest(BaseException& exception)
+    ExceptionType Exception<ExceptionType>::nest(const BaseException& exception)
     {
         ExceptionType nestedException(*this);
-        const std::vector<std::runtime_error>& traceback = exception.traceback();
-        nestedException.m_traceback = std::vector(traceback.begin(), traceback.end());
-        nestedException.m_traceback.push_back(std::runtime_error(exception.what()));
-        nestedException.m_message += "  Cause:\n";
-        nestedException.m_message
-            += "    " + Utils::String::replace(exception.what(), "\n", "\n    ");
+        nestedException.nestInPlace(exception);
         return nestedException;
     }
 }

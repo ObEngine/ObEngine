@@ -31,13 +31,18 @@ function LuaCore.EventGroupHooks(id, namespace)
         end,
         __clean = function(object)
             local mt = getmetatable(object);
+            local groupExists = Engine.Events
+                :getNamespace(namespace)
+                :doesGroupExists(object.id);
             for key, _ in pairs(mt.__storage) do
                 mt.__storage[key] = nil;
-                Engine.Events
-                    :getNamespace(namespace)
-                    :getGroup(object.id)
-                    :get(key)
-                    :removeExternalListener(id);
+                if groupExists then
+                    Engine.Events
+                        :getNamespace(namespace)
+                        :getGroup(object.id)
+                        :get(key)
+                        :removeExternalListener(id);
+                end
             end
         end,
         __call = function(object)

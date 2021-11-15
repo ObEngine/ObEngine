@@ -203,6 +203,7 @@ namespace obe::Script
          */
         void update();
         /**
+         * \bind delete
          * \brief Deletes the GameObject
          */
         void deleteObject();

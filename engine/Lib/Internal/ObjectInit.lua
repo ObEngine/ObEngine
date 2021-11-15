@@ -7,6 +7,9 @@ Local = {};
 
 local ArgMirror = require('obe://Lib/Internal/ArgMirror');
 function ObjectInit()
+    if Local.Init == nil then
+        return;
+    end
     local Lua_Func_ArgList = ArgMirror.GetArgs(Local.Init);
     local Lua_Func_CallArgs = {};
     for _, i in pairs(Lua_Func_ArgList) do
@@ -16,7 +19,7 @@ function ObjectInit()
             table.insert(Lua_Func_CallArgs, ArgMirror.__nil_table);
         end
     end
-    if Local.Init then Local.Init(ArgMirror.Unpack(Lua_Func_CallArgs)); end
+    Local.Init(ArgMirror.Unpack(Lua_Func_CallArgs));
 end
 
 local __EVENT_EVENTHOOKS = {};
@@ -50,6 +53,10 @@ function ObjectDelete()
     for _, eventHook in pairs(__EVENT_EVENTHOOKS) do
         getmetatable(eventHook).__clean(eventHook);
     end
-    for _, scheduler in pairs(__ENV_SCHEDULERS) do scheduler:stop(); end
-    if Local.Delete then Local.Delete(); end
+    for _, scheduler in pairs(__ENV_SCHEDULERS) do
+        scheduler:stop();
+    end
+    if Local.Delete then
+        Local.Delete();
+    end
 end

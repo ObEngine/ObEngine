@@ -97,6 +97,8 @@ namespace obe::Engine
         Engine();
         ~Engine();
 
+        Engine& operator=(Engine&&) = delete;
+
         void init();
         void run() const;
 

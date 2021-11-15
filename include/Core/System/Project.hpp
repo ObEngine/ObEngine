@@ -73,6 +73,7 @@ namespace obe::System::Project
         std::vector<std::string> m_exclude;
 
         std::string m_source;
+        bool m_standalone = false;
 
         // Metadata
         std::string m_name;
@@ -104,5 +105,8 @@ namespace obe::System::Project
 
         void mount();
         void unmount();
+
+        [[nodiscard]] std::string getId() const;
+        [[nodiscard]] bool isStandalone() const;
     };
 } // namespace obe::System::Project

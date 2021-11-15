@@ -15,6 +15,7 @@ namespace obe::Types
 
     public:
         virtual ~Identifiable() = default;
+
         /**
          * \brief Creates a new Identifiable
          * \param id A std::string containing the id of the Identifiable

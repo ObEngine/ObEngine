@@ -62,6 +62,9 @@ namespace obe::Audio
          * \brief Closes the underlying audio engine
          */
         ~AudioManager();
+
+        AudioManager& operator=(AudioManager&&) = delete;
+
         /**
          * \brief Loads a sound file at a given path
          * \param path Path to the sound file

@@ -123,7 +123,7 @@ namespace obe::System::Exceptions::Bindings
         sol::usertype<obe::System::Exceptions::ResourceNotFound> bindResourceNotFound
             = ExceptionsNamespace.new_usertype<obe::System::Exceptions::ResourceNotFound>(
                 "ResourceNotFound", sol::call_constructor,
-                sol::constructors<obe::System::Exceptions::ResourceNotFound(
+                sol::constructors<obe::System::Exceptions::ResourceNotFound(std::string_view,
                     std::string_view, std::vector<std::string>, obe::DebugInfo)>(),
                 sol::base_classes,
                 sol::bases<obe::Exception<obe::System::Exceptions::ResourceNotFound>,

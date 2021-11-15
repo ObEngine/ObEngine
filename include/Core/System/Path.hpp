@@ -15,6 +15,8 @@ namespace obe::System
         File
     };
 
+    std::string_view pathTypeToString(PathType pathType);
+
     /**
      * \brief represents the result of the `find`, `findAll` and `list` operations of Path
      *
@@ -33,8 +35,8 @@ namespace obe::System
         void checkValidity() const;
 
     public:
-        FindResult(
-            const std::string& pathNotFound, const std::string& query, const MountList& mounts);
+        FindResult(PathType pathType, const std::string& pathNotFound, const std::string& query,
+            const MountList& mounts);
         FindResult(PathType pathType, std::shared_ptr<MountablePath> mount, const std::string& path,
             const std::string& query, const std::string& element = "");
         [[nodiscard]] std::string hypotheticalPath() const;

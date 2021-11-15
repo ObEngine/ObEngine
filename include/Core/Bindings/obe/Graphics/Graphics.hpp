@@ -15,9 +15,11 @@ namespace obe::Graphics::Bindings
     void LoadClassShader(sol::state_view state);
     void LoadClassSprite(sol::state_view state);
     void LoadClassSpriteHandlePoint(sol::state_view state);
+    void LoadClassSvgTexture(sol::state_view state);
     void LoadClassText(sol::state_view state);
     void LoadClassTexture(sol::state_view state);
     void LoadClassHsv(sol::state_view state);
+    void LoadClassSizeHint(sol::state_view state);
     void LoadEnumColorType(sol::state_view state);
     void LoadEnumSpriteHandlePointType(sol::state_view state);
     void LoadFunctionInitPositionTransformer(sol::state_view state);

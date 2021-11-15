@@ -44,6 +44,7 @@ namespace obe::Tiles
 
     public:
         explicit TileScene(Scene::Scene& scene);
+        TileScene(const TileScene&) = delete;
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
 

@@ -127,8 +127,8 @@ namespace obe::System::Bindings
         sol::usertype<obe::System::FindResult> bindFindResult
             = SystemNamespace.new_usertype<obe::System::FindResult>("FindResult",
                 sol::call_constructor,
-                sol::constructors<obe::System::FindResult(const std::string&, const std::string&,
-                                      const obe::System::MountList&),
+                sol::constructors<obe::System::FindResult(obe::System::PathType, const std::string&,
+                                      const std::string&, const obe::System::MountList&),
                     obe::System::FindResult(obe::System::PathType,
                         std::shared_ptr<obe::System::MountablePath>, const std::string&,
                         const std::string&),
@@ -272,6 +272,11 @@ namespace obe::System::Bindings
                     bool warnOnMissingPrefix) -> std::pair<std::string, std::string> {
                     return obe::System::splitPathAndPrefix(path, warnOnMissingPrefix);
                 }));
+    }
+    void LoadFunctionPathTypeToString(sol::state_view state)
+    {
+        sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
+        SystemNamespace.set_function("pathTypeToString", &obe::System::pathTypeToString);
     }
     void LoadFunctionStringToStretchMode(sol::state_view state)
     {
