@@ -387,63 +387,59 @@ namespace obe::Animation::Bindings
         AnimationNamespace["Tween"] = sol::overload(
             [](obe::Graphics::Color from, obe::Graphics::Color to,
                 obe::Time::TimeUnit duration) -> ValueTweening<obe::Graphics::Color> {
-                return obe::Animation::ValueTweening<obe::Graphics::Color>::ValueTweening(
-                    from, to, duration);
+                return obe::Animation::ValueTweening<obe::Graphics::Color>(from, to, duration);
             },
             [](obe::Graphics::Color from, obe::Graphics::Color to, obe::Time::TimeUnit duration,
                 const obe::Animation::Easing::EasingFunction& easing)
                 -> ValueTweening<obe::Graphics::Color> {
-                return obe::Animation::ValueTweening<obe::Graphics::Color>::ValueTweening(
+                return obe::Animation::ValueTweening<obe::Graphics::Color>(
                     from, to, duration, easing);
             },
             [](obe::Transform::UnitVector from, obe::Transform::UnitVector to,
                 obe::Time::TimeUnit duration) -> ValueTweening<obe::Transform::UnitVector> {
-                return obe::Animation::ValueTweening<obe::Transform::UnitVector>::ValueTweening(
+                return obe::Animation::ValueTweening<obe::Transform::UnitVector>(
                     from, to, duration);
             },
             [](obe::Transform::UnitVector from, obe::Transform::UnitVector to,
                 obe::Time::TimeUnit duration, const obe::Animation::Easing::EasingFunction& easing)
                 -> ValueTweening<obe::Transform::UnitVector> {
-                return obe::Animation::ValueTweening<obe::Transform::UnitVector>::ValueTweening(
+                return obe::Animation::ValueTweening<obe::Transform::UnitVector>(
                     from, to, duration, easing);
             },
             [](obe::Transform::Rect from, obe::Transform::Rect to,
                 obe::Time::TimeUnit duration) -> ValueTweening<obe::Transform::Rect> {
-                return obe::Animation::ValueTweening<obe::Transform::Rect>::ValueTweening(
-                    from, to, duration);
+                return obe::Animation::ValueTweening<obe::Transform::Rect>(from, to, duration);
             },
             [](obe::Transform::Rect from, obe::Transform::Rect to, obe::Time::TimeUnit duration,
                 const obe::Animation::Easing::EasingFunction& easing)
                 -> ValueTweening<obe::Transform::Rect> {
-                return obe::Animation::ValueTweening<obe::Transform::Rect>::ValueTweening(
+                return obe::Animation::ValueTweening<obe::Transform::Rect>(
                     from, to, duration, easing);
             },
             [](obe::Collision::Trajectory from, obe::Collision::Trajectory to,
                 obe::Time::TimeUnit duration) -> ValueTweening<obe::Collision::Trajectory> {
-                return obe::Animation::ValueTweening<obe::Collision::Trajectory>::ValueTweening(
+                return obe::Animation::ValueTweening<obe::Collision::Trajectory>(
                     from, to, duration);
             },
             [](obe::Collision::Trajectory from, obe::Collision::Trajectory to,
                 obe::Time::TimeUnit duration, const obe::Animation::Easing::EasingFunction& easing)
                 -> ValueTweening<obe::Collision::Trajectory> {
-                return obe::Animation::ValueTweening<obe::Collision::Trajectory>::ValueTweening(
+                return obe::Animation::ValueTweening<obe::Collision::Trajectory>(
                     from, to, duration, easing);
             },
             [](int from, int to, obe::Time::TimeUnit duration) -> ValueTweening<int> {
-                return obe::Animation::ValueTweening<int>::ValueTweening(from, to, duration);
+                return obe::Animation::ValueTweening<int>(from, to, duration);
             },
             [](int from, int to, obe::Time::TimeUnit duration,
                 const obe::Animation::Easing::EasingFunction& easing) -> ValueTweening<int> {
-                return obe::Animation::ValueTweening<int>::ValueTweening(
-                    from, to, duration, easing);
+                return obe::Animation::ValueTweening<int>(from, to, duration, easing);
             },
             [](double from, double to, obe::Time::TimeUnit duration) -> ValueTweening<double> {
-                return obe::Animation::ValueTweening<double>::ValueTweening(from, to, duration);
+                return obe::Animation::ValueTweening<double>(from, to, duration);
             },
             [](double from, double to, obe::Time::TimeUnit duration,
                 const obe::Animation::Easing::EasingFunction& easing) -> ValueTweening<double> {
-                return obe::Animation::ValueTweening<double>::ValueTweening(
-                    from, to, duration, easing);
+                return obe::Animation::ValueTweening<double>(from, to, duration, easing);
             });
     }
 };
