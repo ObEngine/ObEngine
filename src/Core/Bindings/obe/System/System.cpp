@@ -210,7 +210,6 @@ namespace obe::System::Bindings
             [](obe::System::Path* self, obe::System::PathType pathType)
                 -> std::vector<obe::System::FindResult> { return self->findAll(pathType); });
         bindPath["toString"] = &obe::System::Path::toString;
-        bindPath["operator="] = &obe::System::Path::operator=;
         state.script_file("obe://Lib/Internal/Require.lua"_fs);
         state.script_file("obe://Lib/Internal/Filesystem.lua"_fs);
     }

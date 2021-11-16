@@ -41,7 +41,6 @@ namespace vili::Bindings
                     vili::node(std::string_view), vili::node(vili::boolean),
                     vili::node(const char*), vili::node(const vili::array&),
                     vili::node(const vili::object&), vili::node(const vili::node&)>());
-        bindnode["operator="] = &vili::node::operator=;
         bindnode["type"] = &vili::node::type;
         bindnode["dump"]
             = sol::overload([](vili::node* self) -> std::string { return self->dump(); },
