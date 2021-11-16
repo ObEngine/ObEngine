@@ -353,10 +353,11 @@ namespace obe::Graphics::Bindings
         bindSprite["getSprite"] = &obe::Graphics::Sprite::getSprite;
         bindSprite["getSpriteHeight"] = &obe::Graphics::Sprite::getSpriteHeight;
         bindSprite["getSpriteWidth"] = &obe::Graphics::Sprite::getSpriteWidth;
-        bindSprite["getConstTexture"] = static_cast<const obe::Graphics::Texture& (obe::Graphics::Sprite::*)() const>(&obe::Graphics::Sprite::getTexture);
-        bindSprite["getTexture"]
-            = static_cast<obe::Graphics::Texture& (obe::Graphics::Sprite::*)()>(
-                &obe::Graphics::Sprite::getTexture);
+        bindSprite["getTexture"] = sol::overload(
+            static_cast<const obe::Graphics::Texture& (obe::Graphics::Sprite::*)() const>(
+                &obe::Graphics::Sprite::getTexture),
+            static_cast<obe::Graphics::Texture& (obe::Graphics::Sprite::*)()>(
+                &obe::Graphics::Sprite::getTexture));
         bindSprite["getXScaleFactor"] = &obe::Graphics::Sprite::getXScaleFactor;
         bindSprite["getYScaleFactor"] = &obe::Graphics::Sprite::getYScaleFactor;
         bindSprite["getAntiAliasing"] = &obe::Graphics::Sprite::getAntiAliasing;
@@ -452,15 +453,6 @@ namespace obe::Graphics::Bindings
         bindTexture["useCount"] = &obe::Graphics::Texture::useCount;
         bindTexture["isVector"] = &obe::Graphics::Texture::isVector;
         bindTexture["isBitmap"] = &obe::Graphics::Texture::isBitmap;
-        bindTexture["operator="] = sol::overload(
-            static_cast<obe::Graphics::Texture& (
-                obe::Graphics::Texture::*)(const obe::Graphics::Texture&)>(
-                &obe::Graphics::Texture::operator=),
-            static_cast<obe::Graphics::Texture& (obe::Graphics::Texture::*)(const sf::Texture&)>(
-                &obe::Graphics::Texture::operator=),
-            static_cast<obe::Graphics::Texture& (
-                obe::Graphics::Texture::*)(std::shared_ptr<sf::Texture>)>(
-                &obe::Graphics::Texture::operator=));
         bindTexture["MakeSharedTexture"] = &obe::Graphics::Texture::MakeSharedTexture;
     }
     void LoadClassHsv(sol::state_view state)
@@ -472,9 +464,6 @@ namespace obe::Graphics::Bindings
         bindHsv["H"] = &obe::Graphics::Hsv::H;
         bindHsv["S"] = &obe::Graphics::Hsv::S;
         bindHsv["V"] = &obe::Graphics::Hsv::V;
-    }
-    void LoadClassSizeHint(sol::state_view state)
-    {
     }
     void LoadFunctionInitPositionTransformer(sol::state_view state)
     {

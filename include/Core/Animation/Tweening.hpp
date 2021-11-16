@@ -1,11 +1,12 @@
 #pragma once
 
 #include <Animation/Easing.hpp>
+#include <Collision/Trajectory.hpp>
+#include <Graphics/Color.hpp>
 #include <Time/TimeUtils.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Transform/Rect.hpp>
-#include <Collision/Trajectory.hpp>
-#include <Graphics/Color.hpp>
+
 
 namespace obe::Animation
 {
@@ -98,24 +99,30 @@ namespace obe::Animation
     template <class T, std::size_t = sizeof(T)>
     std::true_type template_specialization_exists_impl(T*);
 
+    /**
+     * \nobind
+     */
     std::false_type template_specialization_exists_impl(...);
 
+    /**
+     * \nobind
+     */
     template <class T>
     using template_specialization_exists
         = decltype(template_specialization_exists_impl(std::declval<T*>()));
 
 
     /**
-         * \thints
-         * \thint{Color, T=obe::Graphics::Color}
-         * \thint{UnitVector, T=obe::Transform::UnitVector}
-         * \thint{Rect, T=obe::Transform::Rect}
-         * \thint{Trajectory, T=obe::Collision::Trajectory}
-         * \thint{Int, T=int}
-         * \thint{Double, T=double}
-         * \endthints
-         *
-         */
+     * \thints
+     * \thint{ColorTweening     , TweenableClass=obe::Graphics::Color}
+     * \thint{UnitVectorTweening, TweenableClass=obe::Transform::UnitVector}
+     * \thint{RectTweening      , TweenableClass=obe::Transform::Rect}
+     * \thint{TrajectoryTweening, TweenableClass=obe::Collision::Trajectory}
+     * \thint{IntTweening       , TweenableClass=int}
+     * \thint{DoubleTweening    , TweenableClass=double}
+     * \endthints
+     *
+     */
     template <class TweenableClass>
     class ValueTweening
     {
@@ -129,18 +136,22 @@ namespace obe::Animation
 
     public:
         explicit ValueTweening(Time::TimeUnit duration, const Easing::EasingFunction& easing = Easing::Linear)
-            : m_duration(duration)
-            , m_easing(easing)
+            : m_easing(easing)
+            , m_duration(duration)
+            
         {
             static_assert(template_specialization_exists<TweenImpl<TweenableClass>>());
         }
 
+        /**
+         * \mergetemplatespecialisations{Tween}
+         */
         ValueTweening(TweenableClass from, TweenableClass to, Time::TimeUnit duration,
             const Easing::EasingFunction& easing = Easing::Linear)
-            : m_duration(duration)
+            : m_easing(easing)
             , m_from(from)
             , m_to(to)
-            , m_easing(easing)
+            , m_duration(duration)
         {
             static_assert(template_specialization_exists<TweenImpl<TweenableClass>>());
         }
@@ -189,12 +200,12 @@ namespace obe::Animation
             m_started = true;
         }
 
-        bool done() const
+        [[nodiscard]] bool done() const
         {
             return (m_current / m_duration) >= 1;
         }
 
-        TweenableClass step(double dt)
+        TweenableClass step(const double dt)
         {
             if (!m_started)
             {

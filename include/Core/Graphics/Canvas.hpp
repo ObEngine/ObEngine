@@ -102,7 +102,6 @@ namespace obe::Graphics::Canvas
     };
 
     /**
-     * \forceabstract
      * \brief Base class for CanvasElement classes with a position attribute
      */
     class CanvasPositionable : public CanvasElement

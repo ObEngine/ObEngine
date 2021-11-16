@@ -149,12 +149,19 @@ namespace obe::Bindings
         obe::Animation::Bindings::LoadClassAnimationState(state);
         obe::Animation::Bindings::LoadClassAnimator(state);
         obe::Animation::Bindings::LoadClassAnimatorState(state);
-        obe::Animation::Bindings::LoadClassValueTweening(state);
+        obe::Animation::Bindings::LoadClassColorTweening(state);
+        obe::Animation::Bindings::LoadClassUnitVectorTweening(state);
+        obe::Animation::Bindings::LoadClassRectTweening(state);
+        obe::Animation::Bindings::LoadClassTrajectoryTweening(state);
+        obe::Animation::Bindings::LoadClassIntTweening(state);
+        obe::Animation::Bindings::LoadClassDoubleTweening(state);
         obe::Animation::Bindings::LoadEnumAnimationPlayMode(state);
         obe::Animation::Bindings::LoadEnumAnimationStatus(state);
         obe::Animation::Bindings::LoadEnumAnimatorTargetScaleMode(state);
         obe::Animation::Bindings::LoadFunctionStringToAnimationPlayMode(state);
         obe::Animation::Bindings::LoadFunctionStringToAnimatorTargetScaleMode(state);
+        obe::Animation::Bindings::LoadFunctionTemplateSpecializationExistsImpl(state);
+        obe::Animation::Bindings::LoadFunctionTween(state);
         obe::Animation::Exceptions::Bindings::LoadClassAnimationGroupTextureIndexOverflow(state);
         obe::Animation::Exceptions::Bindings::LoadClassAnimationTextureIndexOverflow(state);
         obe::Animation::Exceptions::Bindings::LoadClassInvalidAnimationFile(state);
@@ -247,7 +254,6 @@ namespace obe::Bindings
         obe::Graphics::Bindings::LoadClassText(state);
         obe::Graphics::Bindings::LoadClassTexture(state);
         obe::Graphics::Bindings::LoadClassHsv(state);
-        obe::Graphics::Bindings::LoadClassSizeHint(state);
         obe::Graphics::Bindings::LoadEnumColorType(state);
         obe::Graphics::Bindings::LoadEnumSpriteHandlePointType(state);
         obe::Graphics::Bindings::LoadFunctionInitPositionTransformer(state);

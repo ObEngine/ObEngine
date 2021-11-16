@@ -62,21 +62,27 @@ namespace obe::Graphics::Canvas::Bindings
         bindCanvas["Line"] = static_cast<obe::Graphics::Canvas::Line& (
             obe::Graphics::Canvas::Canvas::*)(const std::string&)>(
             &obe::Graphics::Canvas::Canvas::add);
+        ;
         bindCanvas["Rectangle"] = static_cast<obe::Graphics::Canvas::Rectangle& (
             obe::Graphics::Canvas::Canvas::*)(const std::string&)>(
             &obe::Graphics::Canvas::Canvas::add);
+        ;
         bindCanvas["Text"] = static_cast<obe::Graphics::Canvas::Text& (
             obe::Graphics::Canvas::Canvas::*)(const std::string&)>(
             &obe::Graphics::Canvas::Canvas::add);
+        ;
         bindCanvas["Circle"] = static_cast<obe::Graphics::Canvas::Circle& (
             obe::Graphics::Canvas::Canvas::*)(const std::string&)>(
             &obe::Graphics::Canvas::Canvas::add);
+        ;
         bindCanvas["Polygon"] = static_cast<obe::Graphics::Canvas::Polygon& (
             obe::Graphics::Canvas::Canvas::*)(const std::string&)>(
             &obe::Graphics::Canvas::Canvas::add);
+        ;
         bindCanvas["Bezier"] = static_cast<obe::Graphics::Canvas::Bezier& (
             obe::Graphics::Canvas::Canvas::*)(const std::string&)>(
             &obe::Graphics::Canvas::Canvas::add);
+        ;
         bindCanvas["get"] = &obe::Graphics::Canvas::Canvas::get;
         bindCanvas["render"] = &obe::Graphics::Canvas::Canvas::render;
         bindCanvas["clear"] = &obe::Graphics::Canvas::Canvas::clear;

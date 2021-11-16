@@ -24,6 +24,10 @@ namespace obe::Graphics
         std::string m_path;
         std::unique_ptr<lunasvg::Document> m_document;
         std::unique_ptr<sf::Texture> m_texture;
+        /**
+         * \nobind
+         * TODO: remove nobind when we have inner class bindings
+         */
         struct SizeHint
         {
             int width = 0;
