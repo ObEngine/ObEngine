@@ -46,7 +46,7 @@ Check this tutorial to learn how to build ÖbEngine : [Building ÖbEngine](https
 |[dynamicLinker](https://github.com/Marqin/dynamicLinker)|Dynamic Libs wrapper|MIT License|
 |[fmt](https://github.com/fmtlib/fmt)|Formatting library|BSD 2-Clause "Simplified" License|
 |[Sol](https://github.com/ThePhD/sol)|C++ binding library to Lua|MIT License|
-|[Lua 5.3](http://lua-users.org/wiki/LuaBinaries)|Scripting language|zlib License|
+|[Lua 5.4](http://lua-users.org/wiki/LuaBinaries)|Scripting language|zlib License|
 |[RichText](https://github.com/Skyrpex/RichText)|sf::Text extension|MIT License|
 |[spdlog](https://github.com/gabime/spdlog)|Logging library|MIT License|
 |[Vili](https://github.com/Sygmei/Vili)|Homemade Data language (YAML-like)|MIT License|
