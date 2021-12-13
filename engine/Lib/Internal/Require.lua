@@ -7,7 +7,7 @@ local function checkstring(s)
     elseif t == "number" then
         return tostring(s)
     else
-        error("bad argument #1 to 'require' (string expected, got "..t..")", 3)
+        error("bad argument #1 to 'require' (string expected, got " .. t .. ")", 3)
     end
 end
 
@@ -35,8 +35,14 @@ local function make_prefix_searcher(prefix)
 
         local find_result = obe.System.Path(module_name):find();
         if find_result:success() then
-            local loadfile_env = setmetatable({require=make_base_require(module_prefix or prefix)}, {__index=_G});
-            return loadfile(find_result:path(), "bt", loadfile_env);
+            local loadfile_env = setmetatable(
+                {require = make_base_require(module_prefix or prefix)}, {__index = _G}
+            );
+            local func, err = loadfile(find_result:path(), "bt", loadfile_env);
+            if err then
+                error(err);
+            end
+            return func;
         else
             return "\n        no file " .. module_name .. " (default prefix: " .. prefix .. ")";
         end
@@ -47,21 +53,24 @@ end
 -- Allows to use upvalue system instead of globally replace `require` (unsafe)
 function make_base_require(prefix)
     local env_searchers = setmetatable(
-        {[#package.searchers] = make_prefix_searcher(prefix)},
-        {__index=package.searchers}
+        {[#package.searchers] = make_prefix_searcher(prefix)}, {__index = package.searchers}
     );
-    local env_package = setmetatable({searchers = env_searchers}, {__index=package});
-    local _ENV = setmetatable({package = env_package}, {__index=_G});
+    local env_package = setmetatable({searchers = env_searchers}, {__index = package});
+    local _ENV = setmetatable({package = env_package}, {__index = _G});
     return function(name)
         name = checkstring(name)
         local module = package.loaded[name]
-        if module then return module end
+        if module then
+            return module
+        end
 
         local msg = {}
         local loader, param
         for _, searcher in ipairs(package.searchers) do
             loader, param = searcher(name)
-            if type(loader) == "function" then break end
+            if type(loader) == "function" then
+                break
+            end
             if type(loader) == "string" then
                 -- `loader` is actually an error message
                 msg[#msg + 1] = loader
@@ -69,7 +78,7 @@ function make_base_require(prefix)
             loader = nil
         end
         if loader == nil then
-            error("module '" .. name .. "' not found:\n".. table.concat(msg), 2)
+            error("module '" .. name .. "' not found:\n" .. table.concat(msg), 2)
         end
         local res = loader(name, param)
         if res ~= nil then
@@ -77,7 +86,7 @@ function make_base_require(prefix)
         elseif not package.loaded[name] then
             module = true
         else
-        module = package.loaded[name]
+            module = package.loaded[name]
         end
 
         package.loaded[name] = module

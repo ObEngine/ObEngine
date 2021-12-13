@@ -36,12 +36,12 @@ namespace obe::Graphics
     {
         const Transform::UnitVector pxSize = m_size.to<Transform::Units::ScenePixels>();
         const unsigned int newWidth = static_cast<unsigned int>(pxSize.x);
-        const unsigned int newHeight = static_cast<unsigned int>(pxSize.x);
+        const unsigned int newHeight = static_cast<unsigned int>(pxSize.y);
 
         const Transform::UnitVector textureSize = m_texture.getSize();
 
         if (newWidth != static_cast<unsigned int>(textureSize.x)
-            || newHeight != static_cast<unsigned int>(textureSize.x))
+            || newHeight != static_cast<unsigned int>(textureSize.y))
         {
             m_sprite.setTextureRect(sf::IntRect(0, 0, pxSize.x, pxSize.y));
             const auto [minVX, maxVX] = std::minmax_element(vertices.begin(), vertices.end(),
