@@ -61,6 +61,12 @@ namespace obe::Event
         [[nodiscard]] bool isJoinable() const;
         [[nodiscard]] EventBase& get(const std::string& eventName) const;
         /**
+         * \brief Checks whether the EventGroup contains an Event with a given name or not
+         * \param eventName Name of the Event to check the existence of
+         * \return true if the EventGroup contains an Event with the given name, false otherwise
+         */
+        [[nodiscard]] bool contains(const std::string& eventName) const;
+        /**
          * \brief Get a Event contained in the EventGroup
          * \return A pointer to the Event if found (throws an error otherwise)
          */
@@ -113,7 +119,7 @@ namespace obe::Event
          * \param eventName Name of the Event to check the existence of
          * \return true if the EventGroup contains an Event with the given name, false otherwise
          */
-        [[nodiscard]] bool contains(const std::string& eventName);
+        [[nodiscard]] bool contains(const std::string& eventName) const;
         /**
          * \brief Creates a new Event in the EventGroup
          * \param eventName Name of the Event to create

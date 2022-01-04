@@ -108,6 +108,7 @@ namespace obe::Event::Bindings
         bindEventGroupView["get"]
             = static_cast<obe::Event::EventBase& (obe::Event::EventGroupView::*)(const std::string&)
                     const>(&obe::Event::EventGroupView::get);
+        bindEventGroupView["contains"] = &obe::Event::EventGroupView::contains;
         bindEventGroupView["getProfilerResults"] = &obe::Event::EventGroupView::getProfilerResults;
     }
     void LoadClassEventManager(sol::state_view state)
