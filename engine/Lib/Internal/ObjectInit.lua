@@ -22,17 +22,49 @@ function ObjectInit()
     Local.Init(ArgMirror.Unpack(Lua_Func_CallArgs));
 end
 
-local __EVENT_EVENTHOOKS = {};
+local __ENV_EVENTHOOKS = {};
 
-function listen(namespace)
-    local hook = LuaCore.EventNamespaceHooks(__ENV_ID, namespace);
-    table.insert(__EVENT_EVENTHOOKS, hook);
+function listen(listen_target, callback, listener_id)
+    if listener_id == nil then
+        listener_id = __ENV_ID;
+    elseif type(listener_id) == "string" then
+        listener_id = ("%s.%s"):format(__ENV_ID, listener_id);
+    else
+        error(("expect listener_id parameter to be a <string> (got <%s>)"):format(type(listener_id)));
+    end
+    local suffix = #__ENV_EVENTHOOKS;
+    while __ENV_EVENTHOOKS[listener_id .. "." .. tostring(suffix)] do
+        suffix = suffix + 1;
+    end
+    listener_id = listener_id .. "." .. tostring(suffix);
+    local hook = LuaCore.Listen(listen_target, callback, listener_id);
+    __ENV_EVENTHOOKS[listener_id] = hook;
     return hook;
+end
+
+function unlisten(hook)
+    local listener_id = getmetatable(hook).listener_id;
+    getmetatable(hook).__clean(hook);
+    setmetatable(hook, nil);
+    __ENV_EVENTHOOKS[listener_id] = nil;
+end
+
+local __ENV_SCHEDULERS = {};
+
+function schedule()
+    local scheduler = Engine.Events:schedule();
+    table.insert(__ENV_SCHEDULERS, scheduler);
+    return scheduler;
 end
 
 -- Engine Events
 Event = listen("Event");
 UserEvent = listen("UserEvent");
+
+-- Task Manager
+local TaskManager = require("obe://Lib/Internal/Tasks").TaskManager;
+__TM = TaskManager({listen = listen, unlisten = unlisten, schedule = schedule});
+Task = __TM:make_task_hook();
 
 function ObjectInitFromLua(argtable)
     argtable = argtable or {};
@@ -41,17 +73,9 @@ function ObjectInitFromLua(argtable)
     return Object;
 end
 
-local __ENV_SCHEDULERS = {};
-
-function Schedule()
-    local scheduler = Engine.Events:schedule();
-    table.insert(__ENV_SCHEDULERS, scheduler);
-    return scheduler;
-end
-
 function ObjectDelete()
-    for _, eventHook in pairs(__EVENT_EVENTHOOKS) do
-        getmetatable(eventHook).__clean(eventHook);
+    for _, hook in pairs(__ENV_EVENTHOOKS) do
+        unlisten(hook);
     end
     for _, scheduler in pairs(__ENV_SCHEDULERS) do
         scheduler:stop();
@@ -59,4 +83,7 @@ function ObjectDelete()
     if Local.Delete then
         Local.Delete();
     end
+    __TM:clean();
+    collectgarbage("collect");
+    collectgarbage("collect");
 end

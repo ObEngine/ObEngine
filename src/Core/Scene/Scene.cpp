@@ -469,6 +469,7 @@ namespace obe::Scene
                     [this](const std::unique_ptr<Script::GameObject>& ptr) {
                         if (ptr->deletable)
                         {
+                            m_gameObjectIds.erase(ptr->getId());
                             Debug::Log->debug("<Scene> Removing GameObject {}", ptr->getId());
                             if (ptr->m_sprite)
                                 this->removeSprite(ptr->getSprite().getId());

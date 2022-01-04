@@ -38,6 +38,11 @@ namespace obe::Event
         return m_group.get(eventName);
     }
 
+    bool EventGroupView::contains(const std::string& eventName) const
+    {
+        return m_group.contains(eventName);
+    }
+
     vili::node EventGroupView::getProfilerResults() const
     {
         return m_group.getProfilerResults();
@@ -63,7 +68,7 @@ namespace obe::Event
         throw Exceptions::UnknownEvent(m_identifier, eventName, this->getEventsNames(), EXC_INFO);
     }
 
-    bool EventGroup::contains(const std::string& eventName)
+    bool EventGroup::contains(const std::string& eventName) const
     {
         return (m_events.find(eventName) != m_events.end());
     }
