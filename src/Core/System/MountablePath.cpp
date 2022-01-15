@@ -18,13 +18,18 @@ namespace obe::System
     MountList MountablePath::MountedPaths;
 
     MountablePath::MountablePath(MountablePathType pathType, std::string_view basePath,
-        std::string_view prefix, unsigned int priority, bool implicit)
+        std::string_view prefix, unsigned int priority, bool implicit, bool deferResolution)
         : pathType(pathType)
-        , basePath(Utils::File::canonicalPath(basePath.data()))
+        , basePath(basePath)
         , prefix(prefix)
         , priority(priority)
         , implicit(implicit)
+        , deferredResolution(deferResolution)
     {
+        if (!deferredResolution)
+        {
+            this->resolveBasePath();
+        }
     }
 
     bool MountablePath::operator==(const MountablePath& other) const
@@ -122,17 +127,11 @@ namespace obe::System
             {
                 if (mount.is_string())
                 {
-                    std::string currentPath = mount;
-                    auto [_, pathPrefix] = splitPathAndPrefix(currentPath, false);
-                    if (!pathPrefix.empty())
-                    {
-                        currentPath = System::Path(currentPath).find(PathType::Directory).path();
-                    }
                     MountablePath::Mount(MountablePath(
-                        MountablePathType::Path, currentPath, mountName, Priorities::mount));
+                        MountablePathType::Path, mount, mountName, Priorities::mount));
                     Debug::Log->info("<MountablePath> Mounted Path : '{0}' at '{1}://' "
                                      "with priority {2}",
-                        currentPath, mountName, 0);
+                        mount, mountName, 0);
                 }
                 else if (mount.is_object())
                 {
@@ -141,7 +140,7 @@ namespace obe::System
                     {
                         currentType = mount.at("type");
                     }
-                    std::string currentPath = mount.at("path");
+                    const std::string currentPath = mount.at("path");
                     std::string prefix = mountName;
                     if (mount.contains("prefix"))
                     {
@@ -159,12 +158,6 @@ namespace obe::System
                     }
                     if (currentType == "Path")
                     {
-                        auto [_, pathPrefix] = splitPathAndPrefix(currentPath, false);
-                        if (!pathPrefix.empty())
-                        {
-                            currentPath
-                                = System::Path(currentPath).find(PathType::Directory).path();
-                        }
                         MountablePath::Mount(MountablePath(MountablePathType::Path, currentPath,
                             prefix, currentPriority, implicit));
                         Debug::Log->info("<MountablePath> Mounted Path : '{0}' at '{1}://' "
@@ -208,6 +201,10 @@ namespace obe::System
 
     void MountablePath::Mount(const MountablePath path, SamePrefixPolicy samePrefixPolicy)
     {
+        if (path.deferredResolution)
+        {
+            throw Exceptions::InvalidDeferredMountablePath(path.prefix, EXC_INFO);
+        }
         auto pathCmp = [&path](const auto& mountedPath) { return path == *mountedPath; };
         bool pathAlreadyExists
             = std::find_if(MountedPaths.begin(), MountedPaths.end(), pathCmp) != MountedPaths.end();
@@ -298,5 +295,16 @@ namespace obe::System
         std::transform(mounts.begin(), mounts.end(), std::back_inserter(allPrefixes),
             [](const auto& mount) { return mount->prefix; });
         return allPrefixes;
+    }
+
+    void MountablePath::resolveBasePath()
+    {
+        auto [_, prefixInPath] = splitPathAndPrefix(basePath, false);
+        if (!prefixInPath.empty())
+        {
+            basePath = System::Path(basePath).find(PathType::Directory).path();
+        }
+        basePath = Utils::File::canonicalPath(basePath);
+        deferredResolution = false;
     }
 } // namespace obe::System

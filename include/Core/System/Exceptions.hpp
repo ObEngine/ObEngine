@@ -194,4 +194,16 @@ namespace obe::System::Exceptions
                 projectFilePath);
         }
     };
+
+    class InvalidDeferredMountablePath : public Exception<InvalidDeferredMountablePath>
+    {
+    public:
+        using Exception::Exception;
+        InvalidDeferredMountablePath(std::string_view prefix, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("MountablePath with prefix '{}' can not be mounted as the basePath has not been resolved yet",
+                prefix);
+        }
+    };
 }

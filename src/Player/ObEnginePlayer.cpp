@@ -12,7 +12,7 @@ int main(int argc, char** argv)
 {
     const unsigned int surfaceWidth = sf::VideoMode::getDesktopMode().width;
     const unsigned int surfaceHeight = sf::VideoMode::getDesktopMode().height;
-#if defined _DEBUGi
+#if defined _DEBUG
     InitEngine(surfaceWidth, surfaceHeight);
 #else
     try
@@ -30,7 +30,7 @@ int main(int argc, char** argv)
     Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
         Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
 
-#if defined _DEBUGi
+#if defined _DEBUG
     Modes::startGame();
 #else
     try
