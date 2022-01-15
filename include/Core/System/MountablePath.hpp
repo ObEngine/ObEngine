@@ -88,9 +88,10 @@ namespace obe::System
          * \param pathType Type of the mounted path
          * \param basePath Path to the mounted path
          * \param priority Priority of the mounted path
+         * \param deferResolution whether or not to resolve basePath on construction
          */
         MountablePath(MountablePathType pathType, std::string_view basePath,
-            std::string_view prefix, unsigned int priority = 0, bool implicit = false);
+            std::string_view prefix, unsigned int priority = 0, bool implicit = false, bool deferResolution = false);
         /**
          * \brief Type of the mounted path
          */
@@ -112,6 +113,11 @@ namespace obe::System
          * \brief Allows the path to be used implicitly (without prefix)
          */
         bool implicit;
+
+        /**
+         * \brief Allows to defer basePath resolution to a later time
+         */
+        bool deferredResolution = false;
 
         bool operator==(const MountablePath& other) const;
 
@@ -154,5 +160,7 @@ namespace obe::System
         static const MountablePath& FromPrefix(const std::string& prefix);
 
         static const std::vector<std::string> GetAllPrefixes();
+
+        void resolveBasePath();
     };
 } // namespace obe::System

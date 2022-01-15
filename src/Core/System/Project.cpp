@@ -229,13 +229,8 @@ namespace obe::System::Project
                             prefix = mount.at("prefix");
                         }
                     }
-                    auto [_, pathPrefix] = splitPathAndPrefix(mountPath, false);
-                    if (!pathPrefix.empty())
-                    {
-                        mountPath = System::Path(mountPath).find(PathType::Directory).path();
-                    }
                     m_mounts.push_back(std::make_shared<MountablePath>(
-                        MountablePathType::Path, mountPath, prefix, priority, implicit));
+                        MountablePathType::Path, mountPath, prefix, priority, implicit, true));
                 }
             }
             if (data.contains("urls"))
@@ -306,6 +301,7 @@ namespace obe::System::Project
     {
         for (const auto& mount : m_mounts)
         {
+            mount->resolveBasePath();
             MountablePath::Mount(*mount);
         }
         this->mountDefaults();
