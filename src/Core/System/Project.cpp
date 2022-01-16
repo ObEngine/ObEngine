@@ -247,7 +247,7 @@ namespace obe::System::Project
     void Project::mountDefaults()
     {
         const std::string projectRoot
-            = System::Path(System::Prefixes::root, ".").find(PathType::Directory).path();
+            = System::Path(System::Prefixes::game, ".").find(PathType::Directory).path();
 
         try
         {

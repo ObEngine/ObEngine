@@ -30,7 +30,6 @@ end
 
 function vili.from_file(path, state)
     path = realpath(path)
-    print("VILI FROM FILE", path)
     state = parser_state or vili.parser.state();
     local node = vili.parser.from_file(path, state);
     return vili.to_lua(node);

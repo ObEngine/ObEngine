@@ -230,7 +230,7 @@ namespace obe::Utils::File
 
     std::string canonicalPath(const std::string& path)
     {
-        return std::filesystem::canonical((path.empty()) ? "." : path).string();
+        return std::filesystem::canonical(path).string();
     }
 
     std::string join(const std::vector<std::string> parts)
