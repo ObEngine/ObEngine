@@ -19,7 +19,7 @@ namespace obe::System
 
         if (warnOnMissingPrefix)
         {
-            Debug::Log->warn("Path '{}' has no prefix, defaulting to '*://'", path);
+            Debug::Log->debug("Path '{}' has no prefix, defaulting to '*://'", path);
         }
         return std::make_pair(path, "");
     }

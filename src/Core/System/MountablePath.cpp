@@ -47,9 +47,11 @@ namespace obe::System
             throw Exceptions::MissingDefaultMountPoint(EXC_INFO);
         }
 
+        MountablePath rootPath(MountablePathType::Path, "", Prefixes::root, Priorities::defaults);
         MountablePath workingDirectoryPath(
-            MountablePathType::Path, "", Prefixes::cwd, Priorities::defaults);
-        MountablePath implicitCWDPath(MountablePathType::Path, "", "", Priorities::defaults, true);
+            MountablePathType::Path, ".", Prefixes::cwd, Priorities::defaults);
+        MountablePath implicitCWDPath(MountablePathType::Path, ".", "", Priorities::defaults, true);
+        MountablePath implicitRootPath(MountablePathType::Path, "", "", Priorities::defaults, true); 
         MountablePath executablePath(MountablePathType::Path, Utils::File::getExecutableDirectory(),
             Prefixes::exe, Priorities::defaults);
 
@@ -68,8 +70,10 @@ namespace obe::System
 
         MountablePath configPath(
             MountablePathType::Path, engineConfigPath, Prefixes::cfg, Priorities::defaults);
+        MountablePath::Mount(rootPath);
         MountablePath::Mount(workingDirectoryPath);
         MountablePath::Mount(implicitCWDPath);
+        MountablePath::Mount(implicitRootPath);
         MountablePath::Mount(executablePath);
         MountablePath::Mount(configPath);
 
@@ -183,7 +187,7 @@ namespace obe::System
         }
         if (mountedPaths.contains("project"))
         {
-            Project::Load(mountedPaths.at("project"), Prefixes::root.data(), Priorities::project);
+            Project::Load(mountedPaths.at("project"), Prefixes::game.data(), Priorities::project);
         }
         Debug::Log->info("<MountablePath> List of mounted paths : ");
         for (const auto& currentPath : MountablePath::MountedPaths)

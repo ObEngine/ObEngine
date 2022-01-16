@@ -75,7 +75,7 @@ void run(std::string command)
     using namespace obe;
 
     Debug::InitLogger();
-    Debug::Log->set_level(spdlog::level::debug);
+    Debug::Log->set_level(spdlog::level::warn);
     System::MountablePath::LoadMountFile(false, true);
 
     sol::state lua;
