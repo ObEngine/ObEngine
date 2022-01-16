@@ -18,5 +18,5 @@ urls:
     license: "https://github.com/ObEngine/SampleProject/tree/master/LICENSE"
 
 mounts:
-    scenes: "root://Scenes"
-    objects: "root://GameObjects"
+    scenes: "game://Scenes"
+    objects: "game://GameObjects"
