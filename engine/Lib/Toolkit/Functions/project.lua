@@ -156,7 +156,7 @@ local function _create_(project_name)
         version = "0.1.0",
         obengine_version = "0.5.0",
         source = "",
-        mounts = {scenes = "root://Scenes", sprites = "root://Sprites"}
+        mounts = {scenes = "game://Scenes", sprites = "game://Sprites"}
     };
     local project_file_content = vili.writer.dump(
         vili.from_lua(project_file), vili.writer.dump_options()
