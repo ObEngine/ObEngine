@@ -107,6 +107,7 @@ namespace obe::Graphics
         Graphics::Texture m_texture;
         bool m_antiAliasing = true;
 
+
         void resetUnit(Transform::Units unit) override;
         void refreshVectorTexture(
             const Transform::UnitVector& surfaceSize, const std::array<sf::Vertex, 4>& vertices);
@@ -289,5 +290,12 @@ namespace obe::Graphics
         void draw(RenderTarget& surface, const Scene::Camera& camera) override;
         void attachResourceManager(Engine::ResourceManager& resources) override;
         [[nodiscard]] std::string_view type() const override;
+
+        void flip(const std::string direction);
+        /**
+         * \brief Flips sprite in desired fashion (vertically or horizontally or both)
+         * \param direction Direction to Flip ("x", horizontal; "y" vertical; "xy", both)
+        */
+        
     };
 } // namespace obe::Graphics

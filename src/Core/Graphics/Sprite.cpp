@@ -589,4 +589,18 @@ namespace obe::Graphics
     {
         return (m_shader != nullptr);
     }
+
+    void Sprite::flip(const std::string direction)
+    {
+        //should only be done after scaling origin is set (with setScalingOrigin method)
+        std::int scaleX = this.getXScaleFactor();
+        std::int scaleY = this.getYScaleFactor();
+
+        if (direction == "x")
+            this.setScale(-1 * scaleX, 1 * scaleY);
+        else if (direction == "y")
+            this.setScale(1 * scaleX, -1 * scaleY);
+        else if (direction == "xy")
+            this.setScale(-1 * scaleX, -1 * scaleY);
+    }
 } // namespace obe::Graphics
