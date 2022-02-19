@@ -1,9 +1,0 @@
-[14:17:02.188]<error> : The following error occurred while running obey
-[14:17:02.188]<error> : Exception [class obe::Script::Exceptions::LuaExecutionError] occured
-  Error: Lua encountered an error
-  Cause:
-    D:/Dev/Projects/ObEngine/Tools/Lib/Toolkit/Toolkit.lua:207: D:/Dev/Projects/ObEngine/Tools/Lib/Toolkit/Toolkit.lua:188: ...v\Projects\ObEngine\Tools\Lib/Toolkit/Functions/vili.lua:25: attempt to index a nil value (local 'tbl')
-    stack traceback:
-    	[C]: in function 'base.error'
-    	D:/Dev/Projects/ObEngine/Tools/Lib/Toolkit/Toolkit.lua:207: in upvalue 'buildCommandExecution'
-    	D:/Dev/Projects/ObEngine/Tools/Lib/Toolkit/Toolkit.lua:716: in function 'base.evaluate'
