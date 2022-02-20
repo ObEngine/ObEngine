@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2020 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2014-2021 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
 #ifndef TAO_PEGTL_INTERNAL_ONE_HPP
@@ -21,15 +21,26 @@ namespace TAO_PEGTL_NAMESPACE::internal
    template< result_on_found R, typename Peek, typename Peek::data_t... Cs >
    struct one
    {
+      using peek_t = Peek;
+      using data_t = typename Peek::data_t;
+
       using rule_t = one;
       using subs_t = empty_list;
+
+      [[nodiscard]] static constexpr bool test( const data_t c ) noexcept
+      {
+         return ( ( c == Cs ) || ... ) == bool( R );
+      }
+
+      template< int Eol >
+      static constexpr bool can_match_eol = test( Eol );
 
       template< typename ParseInput >
       [[nodiscard]] static bool match( ParseInput& in ) noexcept( noexcept( Peek::peek( in ) ) )
       {
          if( const auto t = Peek::peek( in ) ) {
-            if( ( ( t.data == Cs ) || ... ) == bool( R ) ) {
-               bump_help< R, ParseInput, typename Peek::data_t, Cs... >( in, t.size );
+            if( test( t.data ) ) {
+               bump_help< one >( in, t.size );
                return true;
             }
          }

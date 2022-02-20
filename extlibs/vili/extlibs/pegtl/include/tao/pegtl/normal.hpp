@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2020 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2014-2021 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
 #ifndef TAO_PEGTL_NORMAL_HPP
@@ -10,13 +10,19 @@
 
 #include "apply_mode.hpp"
 #include "config.hpp"
-#include "demangle.hpp"
 #include "match.hpp"
 #include "parse_error.hpp"
 #include "rewind_mode.hpp"
 
 #include "internal/enable_control.hpp"
 #include "internal/has_match.hpp"
+
+#if defined( __cpp_exceptions )
+#include "demangle.hpp"
+#else
+#include "internal/dependent_false.hpp"
+#include <exception>
+#endif
 
 namespace TAO_PEGTL_NAMESPACE
 {
@@ -40,7 +46,13 @@ namespace TAO_PEGTL_NAMESPACE
       template< typename ParseInput, typename... States >
       [[noreturn]] static void raise( const ParseInput& in, States&&... /*unused*/ )
       {
+#if defined( __cpp_exceptions )
          throw parse_error( "parse error matching " + std::string( demangle< Rule >() ), in );
+#else
+         static_assert( internal::dependent_false< Rule >, "exception support required for normal< Rule >::raise()" );
+         (void)in;
+         std::terminate();
+#endif
       }
 
       template< template< typename... > class Action,

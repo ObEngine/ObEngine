@@ -1,4 +1,4 @@
-// Copyright (c) 2019-2020 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2019-2021 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
 #ifndef TAO_PEGTL_INTERNAL_MISSING_APPLY0_HPP
@@ -15,7 +15,10 @@ namespace TAO_PEGTL_NAMESPACE::internal
              typename... States >
    void missing_apply0( ParseInput& in, States&&... st )
    {
+      // This function only exists for better error messages, which means that it is only called when we know that it won't compile.
+      // LCOV_EXCL_START
       (void)Control::template apply0< Action >( in, st... );
+      // LCOV_EXCL_STOP
    }
 
 }  // namespace TAO_PEGTL_NAMESPACE::internal

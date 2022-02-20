@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2020 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2014-2021 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
 #ifndef TAO_PEGTL_INTERNAL_STRING_HPP
@@ -11,6 +11,7 @@
 
 #include "bump_help.hpp"
 #include "enable_control.hpp"
+#include "one.hpp"
 #include "result_on_found.hpp"
 #include "success.hpp"
 
@@ -31,18 +32,26 @@ namespace TAO_PEGTL_NAMESPACE::internal
       : success
    {};
 
+   // template< char C >
+   // struct string
+   //    : one< C >
+   // {};
+
    template< char... Cs >
    struct string
    {
       using rule_t = string;
       using subs_t = empty_list;
 
+      template< int Eol >
+      static constexpr bool can_match_eol = one< result_on_found::success, peek_char, Cs... >::template can_match_eol< Eol >;
+
       template< typename ParseInput >
       [[nodiscard]] static bool match( ParseInput& in ) noexcept( noexcept( in.size( 0 ) ) )
       {
          if( in.size( sizeof...( Cs ) ) >= sizeof...( Cs ) ) {
             if( unsafe_equals( in.current(), { Cs... } ) ) {
-               bump_help< result_on_found::success, ParseInput, char, Cs... >( in, sizeof...( Cs ) );
+               bump_help< string >( in, sizeof...( Cs ) );
                return true;
             }
          }
