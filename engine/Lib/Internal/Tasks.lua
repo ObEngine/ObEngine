@@ -1,6 +1,4 @@
-local class = require("extlibs://pl.class");
-
-TaskManagerContext = class();
+local TaskManagerContext = class();
 
 function TaskManagerContext:_init(task_manager)
     self.task_manager = task_manager;
@@ -20,11 +18,9 @@ function TaskManagerContext:wait_for(condition, ...)
     if type(condition) == "number" then
         -- Amount of seconds
         local scheduler = Engine.Events:schedule();
-        table.insert(
-            task.on_clean, function()
-                scheduler:stop();
-            end
-        );
+        task:on_clean(function()
+            scheduler:stop();
+        end);
         scheduler:after(condition):run(
             function()
                 ctx:wake(co);
@@ -34,11 +30,9 @@ function TaskManagerContext:wait_for(condition, ...)
         -- Event in string form
         local listener_id = "taskwaitfor." .. condition;
         local ref = {};
-        table.insert(
-            task.on_clean, function()
-                getmetatable(ref.hook).__clean(ref.hook);
-            end
-        );
+        task:on_clean(function()
+            getmetatable(ref.hook).clean(ref.hook);
+        end);
         local event_callback = ...;
         ref.hook = self.task_manager.listen(
             condition, function(evt)
@@ -46,35 +40,31 @@ function TaskManagerContext:wait_for(condition, ...)
                     return;
                 end
                 ctx:wake(co);
-                getmetatable(ref.hook).__clean(ref.hook);
+                getmetatable(ref.hook).clean(ref.hook);
             end, listener_id
         );
     elseif type(condition) == "function" then
         -- Arbitrary conditional continuation function
         local listener_id = "taskwaitfor.funccondition";
         local ref = {};
-        table.insert(
-            task.on_clean, function()
-                getmetatable(ref.hook).__clean(ref.hook);
-            end
-        );
+        task:on_clean(function()
+            getmetatable(ref.hook).clean(ref.hook);
+        end);
         ref.hook = self.task_manager.listen(
             "Event.Game.Update", function(evt)
                 if condition(evt) then
                     ctx:wake(co);
-                    getmetatable(ref.hook).__clean(ref.hook);
+                    getmetatable(ref.hook).clean(ref.hook);
                 end
             end, listener_id
         );
     elseif type(condition) == "table" then
         local condition_mt = getmetatable(condition);
-        if condition.__type == "task" then
+        if condition.__type == "Task" then
             -- Tasks
-            table.insert(
-                condition.on_complete, function(object)
-                    ctx:wake(co);
-                end
-            );
+            condition:on_complete(function(object)
+                ctx:wake(co);
+            end);
             condition(...);
         elseif condition_mt and condition_mt.event_id then
             -- Events in hook form
@@ -89,7 +79,55 @@ function TaskManagerContext:wait_for(condition, ...)
     return coroutine.yield(co)
 end
 
-TaskManager = class();
+local Task = class();
+Task.__type = "Task";
+
+function Task:_init(task_manager, func, name)
+    self.task_manager = task_manager;
+    self.func = func;
+    self.co = nil;
+    self.name = name or "anonymous_task";
+    self.on_complete_callbacks = {};
+    self.on_clean_callbacks = {};
+end
+
+function Task:__call(...)
+    local co = coroutine.create(self.func);
+    self.task_manager.tasks[co] = self;
+    self.co = co;
+    return self.task_manager:_resume(self, ...);
+end
+
+function Task:on_complete(callback)
+    if type(callback) ~= "function" then
+        error(("argument #1: callback must be a function (got %s)"):format(type(callback)));
+    end
+    table.insert(self.on_complete_callbacks, callback);
+end
+
+function Task:on_clean(callback)
+    if type(callback) ~= "function" then
+        error(("argument #1: callback must be a function (got %s)"):format(type(callback)));
+    end
+    table.insert(self.on_clean_callbacks, callback);
+end
+
+function Task:clean()
+    for _, on_clean_func in pairs(self.on_clean_callbacks) do
+        on_clean_func(self);
+    end
+    if self.co then
+        coroutine.close(self.co);
+    end
+end
+
+function Task:complete()
+    for _, on_complete_func in pairs(self.on_complete_callbacks) do
+        on_complete_func(self);
+    end
+end
+
+local TaskManager = class();
 
 function TaskManager:_init(event_functions)
     self.listen = event_functions.listen;
@@ -99,7 +137,6 @@ function TaskManager:_init(event_functions)
     self.pump_hook = nil;
     self.tasks_to_resume = {};
     self.tasks = {};
-    local task_manager = self;
     self.ctx = TaskManagerContext(self);
 end
 
@@ -136,41 +173,14 @@ function TaskManager:_resume(task, ...)
         error(full_err);
     end
     if coroutine.status(task.co) == "dead" then
-        for _, callback in pairs(task.on_complete) do
-            callback(task);
-        end
+        task:complete();
         self.tasks[task.co] = nil;
     end
     return table.unpack(results, 2);
 end
 
-function TaskManager:_make_task(func)
-    local task_manager = self;
-    local task = setmetatable(
-        {
-            __type = "task",
-            name = "anonymous_task",
-            co = nil,
-            on_complete = {},
-            on_clean = {},
-            clean = function(object)
-                for _, on_clean_func in pairs(object.on_clean) do
-                    on_clean_func(object);
-                end
-                if object.co then
-                    coroutine.close(object.co);
-                end
-            end
-        }, {
-            __call = function(object, ...)
-                local co = coroutine.create(func);
-                task_manager.tasks[co] = object;
-                object.co = co;
-                return task_manager:_resume(object, ...);
-            end
-        }
-    );
-    return task;
+function TaskManager:_make_task(func, name)
+    return Task(self, func, name);
 end
 
 function TaskManager:make_task_hook()

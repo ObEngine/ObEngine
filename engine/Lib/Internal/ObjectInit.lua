@@ -24,6 +24,8 @@ end
 
 local __ENV_EVENTHOOKS = {};
 
+local Events = require('obe://Lib/Internal/Events');
+
 function listen(listen_target, callback, listener_id)
     if listener_id == nil then
         listener_id = __ENV_ID;
@@ -37,14 +39,14 @@ function listen(listen_target, callback, listener_id)
         suffix = suffix + 1;
     end
     listener_id = listener_id .. "." .. tostring(suffix);
-    local hook = LuaCore.Listen(listen_target, callback, listener_id);
+    local hook = Events.listen(listen_target, callback, listener_id);
     __ENV_EVENTHOOKS[listener_id] = hook;
     return hook;
 end
 
 function unlisten(hook)
     local listener_id = getmetatable(hook).listener_id;
-    getmetatable(hook).__clean(hook);
+    getmetatable(hook).clean(hook);
     setmetatable(hook, nil);
     __ENV_EVENTHOOKS[listener_id] = nil;
 end
@@ -74,6 +76,7 @@ function ObjectInitFromLua(argtable)
 end
 
 function ObjectDelete()
+    __TM:clean();
     for _, hook in pairs(__ENV_EVENTHOOKS) do
         unlisten(hook);
     end
@@ -83,7 +86,6 @@ function ObjectDelete()
     if Local.Delete then
         Local.Delete();
     end
-    __TM:clean();
     collectgarbage("collect");
     collectgarbage("collect");
 end

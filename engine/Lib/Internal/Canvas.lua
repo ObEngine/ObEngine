@@ -1,4 +1,4 @@
-local class = require("extlibs://pl.class");
+local class = require("extlibs://pl.class"); -- NOTE: we are not using the global class() since it is not loaded yet
 local tablex = require("extlibs://pl.tablex");
 
 obe.Canvas = {};

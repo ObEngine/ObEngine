@@ -1,15 +1,18 @@
-function LuaCore.EventHook(listener_id, namespace, group, event, callback)
-    Engine.Events:getNamespace(namespace):getGroup(group):get(event):addExternalListener(
-        listener_id, obe.Event.LuaEventListener(callback)
-    );
+local function EventHook(listener_id, namespace, group, event, callback)
+    local lua_listener = obe.Event.LuaEventListener(callback);
+    Engine.Events:getNamespace(namespace)
+                 :getGroup(group)
+                 :get(event)
+                 :addExternalListener(listener_id, lua_listener);
     local hook_mt = {
         __call = function(object, ...)
             object.callback(...);
         end,
-        __clean = function(object)
-            Engine.Events:getNamespace(namespace):getGroup(group):get(event):removeExternalListener(
-                listener_id
-            );
+        clean = function(object)
+            Engine.Events:getNamespace(namespace)
+                         :getGroup(group)
+                         :get(event)
+                         :removeExternalListener(listener_id);
         end,
         listener_id = listener_id,
         event_id = ("%s.%s.%s"):format(namespace, group, event)
@@ -17,7 +20,7 @@ function LuaCore.EventHook(listener_id, namespace, group, event, callback)
     return setmetatable({callback = callback}, hook_mt);
 end
 
-function LuaCore.EventGroupHooks(listener_id, namespace, group)
+local function EventGroupHook(listener_id, namespace, group)
     local hook_mt = {
         __newindex = function(object, event, callback)
             if type(callback) == "function" then
@@ -72,7 +75,7 @@ function LuaCore.EventGroupHooks(listener_id, namespace, group)
                 end
             end
         end,
-        __clean = function(object)
+        clean = function(object)
             local mt = getmetatable(object);
             local group_exists = Engine.Events:getNamespace(namespace):doesGroupExists(group);
             for event_name, _ in pairs(mt.__storage) do
@@ -94,7 +97,7 @@ function LuaCore.EventGroupHooks(listener_id, namespace, group)
     return setmetatable({}, hook_mt);
 end
 
-function LuaCore.EventNamespaceHooks(listener_id, namespace)
+local function EventNamespaceHook(listener_id, namespace)
     local hook_mt = {
         __index = function(object, key)
             local mt = getmetatable(object);
@@ -102,17 +105,17 @@ function LuaCore.EventNamespaceHooks(listener_id, namespace)
             for _, v in pairs(groups) do
                 if v == key then
                     if mt.__storage[key] == nil then
-                        mt.__storage[key] = LuaCore.EventGroupHooks(listener_id, namespace, key);
+                        mt.__storage[key] = EventGroupHook(listener_id, namespace, key);
                     end
                     return mt.__storage[key];
                 end
             end
             error("EventGroup " .. key .. " doesn't exists in namespace " .. namespace);
         end,
-        __clean = function(object)
+        clean = function(object)
             local mt = getmetatable(object);
             for event_group_name, group_hook in pairs(mt.__storage) do
-                getmetatable(group_hook).__clean(group_hook);
+                getmetatable(group_hook).clean(group_hook);
             end
         end,
         __call = function(object)
@@ -124,20 +127,27 @@ function LuaCore.EventNamespaceHooks(listener_id, namespace)
     return setmetatable({}, hook_mt);
 end
 
-function LuaCore.Listen(listen_target, callback, listener_id)
+local function listen(listen_target, callback, listener_id)
     local _, dots_in_listen_target = string.gsub(listen_target, "%.", "")
     if dots_in_listen_target == 0 then
-        return LuaCore.EventNamespaceHooks(listener_id, listen_target);
+        return EventNamespaceHook(listener_id, listen_target);
     elseif dots_in_listen_target == 1 then
         local match = string.gmatch(listen_target, "([^.]+).([^.]+)");
         local event_namespace, event_group = match();
-        return LuaCore.EventGroupHooks(listener_id, event_namespace, event_group);
+        return EventGroupHook(listener_id, event_namespace, event_group);
     elseif dots_in_listen_target == 2 then
         if type(callback) ~= "function" then
             error("must specify second argument 'callback' to listen of type <function>");
         end
         local match = string.gmatch(listen_target, "([^.]+).([^.]+).([^.]+)");
         local event_namespace, event_group, event_name = match();
-        return LuaCore.EventHook(listener_id, event_namespace, event_group, event_name, callback);
+        return EventHook(listener_id, event_namespace, event_group, event_name, callback);
     end
 end
+
+return {
+    EventHook = EventHook,
+    EventGroupHook = EventGroupHook,
+    EventNamespaceHook = EventNamespaceHook,
+    listen = listen
+}

@@ -53,13 +53,13 @@ namespace obe::Engine
 
         m_lua->safe_script("LuaCore = {}");
         m_lua->safe_script_file("obe://Lib/Internal/ScriptInit.lua"_fs);
-        m_lua->safe_script_file("obe://Lib/Internal/Events.lua"_fs);
 
         Bindings::IndexCoreBindings(*m_lua);
 
         m_lua->loadConfig(m_config.at("Script").at("Lua"));
 
         m_lua->safe_script_file("obe://Lib/Internal/Helpers.lua"_fs);
+        m_lua->safe_script_file("obe://Lib/Internal/Events.lua"_fs);
         m_lua->safe_script_file("obe://Lib/Internal/GameInit.lua"_fs);
         m_lua->safe_script_file("obe://Lib/Internal/Logger.lua"_fs);
         m_lua->set_exception_handler(&lua_exception_handler);
