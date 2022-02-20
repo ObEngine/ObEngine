@@ -10,10 +10,14 @@ namespace obe::Component
 {
     class ComponentBase : public Types::Identifiable, public Types::Serializable
     {
+    public:
+        // using Caster = std::function<sol::lua_value(ComponentBase*)>;
     protected:
         static std::vector<ComponentBase*> Components;
         static void AddComponent(ComponentBase* component);
         static void RemoveComponent(ComponentBase* component);
+
+        // static std::unordered_map<std::string_view, Caster> ComponentCasters;
 
     public:
         /**
@@ -28,12 +32,15 @@ namespace obe::Component
         void load(const vili::node& data) override = 0;
 
         [[nodiscard]] virtual std::string_view type() const = 0;
+
+        // sol::lua_value cast();
     };
 
-    template <class T>
+    template <class DerivedComponent>
     class Component : public ComponentBase
     {
     public:
+        // static void Register();
         /**
          * \nobind
          */
@@ -41,7 +48,7 @@ namespace obe::Component
         explicit Component(const std::string& id);
         ~Component() override;
 
-        static std::vector<T*> Pool;
+        static std::vector<DerivedComponent*> Pool;
         // static T& create(const std::string& id);
 
         void remove() override;
@@ -51,15 +58,23 @@ namespace obe::Component
         void load(const vili::node& data) override = 0;
 
         [[nodiscard]] std::string_view type() const override;
-        using Ref = std::reference_wrapper<T>;
-        using Ptr = T*;
+        using Ref = std::reference_wrapper<DerivedComponent>;
+        using Ptr = DerivedComponent*;
     };
 
-    template <class T>
-    Component<T>::Component(const std::string& id)
+    /* template <class DerivedComponent>
+    void Component<DerivedComponent>::Register()
+    {
+        ComponentCasters[DerivedComponent::ComponentType] = [](ComponentBase* component) -> sol::lua_value {
+            return static_cast<DerivedComponent*>(component);
+        };
+    }*/
+
+    template <class DerivedComponent>
+    Component<DerivedComponent>::Component(const std::string& id)
         : ComponentBase(id)
     {
-        Pool.emplace_back(static_cast<T*>(this));
+        Pool.emplace_back(static_cast<DerivedComponent*>(this));
     }
 
     template <class T>
@@ -88,7 +103,7 @@ namespace obe::Component
     template <class T>
     std::string_view Component<T>::type() const
     {
-        return ComponentType;
+        return Component::ComponentType;
     }
 
     template <class T>
