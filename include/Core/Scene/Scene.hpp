@@ -77,6 +77,8 @@ namespace obe::Scene
         Event::EventGroupPtr e_scene;
         sol::state_view m_lua;
 
+        std::unordered_map<std::string, Component::ComponentBase*> m_components;
+
         bool m_sortRenderables = true;
         std::vector<Graphics::Renderable*> m_renderCache;
         void _reorganizeLayers();
@@ -329,6 +331,9 @@ namespace obe::Scene
         const Tiles::TileScene& getTiles() const;
         SceneRenderOptions getRenderOptions() const;
         void setRenderOptions(SceneRenderOptions options);
+
+        // Components
+        Component::ComponentBase* getComponent(const std::string& id) const;
     };
 
     /**

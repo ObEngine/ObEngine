@@ -128,6 +128,7 @@ namespace obe::Scene::Bindings
         };
         bindScene["getRenderOptions"] = &obe::Scene::Scene::getRenderOptions;
         bindScene["setRenderOptions"] = &obe::Scene::Scene::setRenderOptions;
+        bindScene["getComponent"] = &obe::Scene::Scene::getComponent;
     }
     void LoadClassSceneNode(sol::state_view state)
     {

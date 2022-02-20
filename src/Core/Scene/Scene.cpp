@@ -90,6 +90,7 @@ namespace obe::Scene
             Graphics::Sprite* returnSprite = newSprite.get();
             m_spriteArray.push_back(move(newSprite));
             m_spriteIds.insert(createId);
+            m_components[createId] = returnSprite;
 
             if (addToSceneRoot)
                 m_sceneRoot.addChild(*returnSprite);
@@ -119,11 +120,15 @@ namespace obe::Scene
         }
         if (!this->doesColliderExists(createId))
         {
-            m_colliderArray.push_back(std::make_unique<Collision::PolygonalCollider>(createId));
+            std::unique_ptr<Collision::PolygonalCollider> newCollider
+                = std::make_unique<Collision::PolygonalCollider>(createId);
+            Collision::PolygonalCollider* colliderPtr = newCollider.get();
+            m_colliderArray.push_back(std::move(newCollider));
             m_colliderIds.insert(createId);
+            m_components[createId] = colliderPtr;
             if (addToSceneRoot)
                 m_sceneRoot.addChild(*m_colliderArray.back());
-            return *m_colliderArray.back().get();
+            return *colliderPtr;
         }
         else
         {
@@ -797,6 +802,11 @@ namespace obe::Scene
     void Scene::setRenderOptions(SceneRenderOptions options)
     {
         m_renderOptions = options;
+    }
+
+    Component::ComponentBase* Scene::getComponent(const std::string& id) const
+    {
+        return m_components.at(id);
     }
 
     std::pair<Collision::PolygonalCollider*, int> Scene::getColliderPointByPosition(
