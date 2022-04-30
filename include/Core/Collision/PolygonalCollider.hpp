@@ -137,11 +137,6 @@ namespace obe::Collision
          */
         bool doesHaveTag(ColliderTagType tagType, const std::string& tag);
         /**
-         * \brief Dumps the content of the PolygonalCollider to a ComplexNode
-         * \param target ComplexNode where to serialize the PolygonalCollider
-         */
-        vili::node dump() const override;
-        /**
          * \brief Gets all the Tags from one of the Lists
          * \param tagType List where you want to get all the Tags from (Tag /
          *        Accepted / Rejected)
@@ -174,6 +169,12 @@ namespace obe::Collision
          *        the Collider
          */
         [[nodiscard]] std::string getParentId() const;
+        [[nodiscard]] vili::node schema() const override;
+        /**
+         * \brief Dumps the content of the PolygonalCollider
+         * \return vili::node containing the PolygonalCollider details
+         */
+        vili::node dump() const override;
         /**
          * \brief Loads the PolygonalCollider from a ComplexNode
          * \param data ComplexNode containing the data of the PolygonalCollider

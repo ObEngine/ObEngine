@@ -13,4 +13,5 @@ namespace obe::System::Prefixes::Bindings
     void LoadGlobalMount(sol::state_view state);
     void LoadGlobalExtlibs(sol::state_view state);
     void LoadGlobalRoot(sol::state_view state);
+    void LoadGlobalGame(sol::state_view state);
 };

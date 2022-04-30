@@ -76,11 +76,11 @@ namespace vili::parser::rules
     // Templates
     struct template_keyword : peg::string<'t', 'e', 'm', 'p', 'l', 'a', 't', 'e'> {};
     struct template_identifier : peg::identifier {};
-    struct template_decl_content : peg::seq<peg::blank, template_identifier, peg::pad<peg::one<':'>, peg::blank>, inline_element> {};
+    struct template_decl_content : peg::seq<peg::blank, template_identifier, peg::pad<peg::one<':'>, peg::blank>, element> {};
     struct template_begin : peg::seq<peg::bol, peg::star<multiline_comment>, template_keyword> {};
     struct template_decl : peg::if_must<template_begin, template_decl_content> {};
     struct template_identifier_usage : template_identifier {};
-    struct template_specialization : peg::sor<array, brace_based_object> {};
+    struct template_specialization : peg::sor<array, object> {};
     struct template_usage : peg::seq<template_identifier_usage, peg::opt<peg::seq<peg::star<peg::blank>, template_specialization>>> {};
 
     // Nodes

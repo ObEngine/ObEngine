@@ -394,6 +394,11 @@ namespace obe::Script
         m_active = state;
     }
 
+    vili::node GameObject::schema() const
+    {
+        return vili::object {};
+    }
+
     vili::node GameObject::dump() const
     {
         vili::node result = vili::object {};

@@ -46,6 +46,7 @@ namespace obe::Graphics
         explicit Color(const std::string& nameOrHex);
         Color(const sf::Color& color);
 
+        vili::node schema() const override;
         vili::node dump(ColorType type) const;
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;

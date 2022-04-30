@@ -117,9 +117,11 @@ namespace obe::Scene
          * \brief Removes all elements in the Scene
          */
         void clear();
+
+        [[nodiscard]] vili::node schema() const override;
         /**
          * \brief Dumps all elements of the Scene in a vili tree
-         * \return
+         * \return vili::node containing the Scene details
          */
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;

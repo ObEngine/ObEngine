@@ -1,6 +1,8 @@
 #pragma once
 
 #include <algorithm>
+#include <any>
+#include <string_view>
 #include <vector>
 
 #include <Types/Identifiable.hpp>
@@ -8,16 +10,32 @@
 
 namespace obe::Component
 {
+    class ComponentRegistrationBehaviour
+    {
+    public:
+        LuaEventListener(sol::protected_function callback);
+        template <class EventType>
+        void operator()(const EventType& event) const;
+    };
+
     class ComponentBase : public Types::Identifiable, public Types::Serializable
     {
     public:
-        using Caster = std::function<sol::lua_value(ComponentBase*)>;
+        template <class DerivedComponent>
+        using ComponentCaster = std::function<DerivedComponent*(ComponentBase*)>;
+        using TypeErasedComponentCaster = std::any;
+        template <class DerivedComponent>
+        using OnRegisterBehaviour
+            = std::function<void(std::string_view, ComponentCaster<DerivedComponent>)>;
+        template <class DerivedComponent>
+        static void OnRegister(OnRegisterBehaviour<DerivedComponent> behaviour);
     protected:
         static std::vector<ComponentBase*> Components;
         static void AddComponent(ComponentBase* component);
         static void RemoveComponent(ComponentBase* component);
 
-        static std::unordered_map<std::string_view, Caster> ComponentCasters;
+
+        static std::vector<TypeErasedComponentCaster> m_on_register_behaviours;
 
     public:
         /**
@@ -31,15 +49,16 @@ namespace obe::Component
         void load(const vili::node& data) override = 0;
 
         [[nodiscard]] virtual std::string_view type() const = 0;
-        [[nodiscard]] sol::lua_value cast();
     };
 
     /**
-     * \hook{OnInherit, Register}
+     * \hook{Inherit, Register}
      */
     template <class DerivedComponent>
     class Component : public ComponentBase
     {
+    private:
+        
     public:
         static void Register();
         /**
@@ -61,12 +80,24 @@ namespace obe::Component
         using Ptr = DerivedComponent*;
     };
 
+    template <class BehaviourFunction>
+    void ComponentBase::OnRegister(BehaviourFunction behaviour)
+    {
+        OnRegisterBehaviour<DerivedComponent> bundled_behaviour = behaviour;
+        m_on_register_behaviours.push_back(behaviour);
+    }
+
     template <class DerivedComponent>
     void Component<DerivedComponent>::Register()
     {
-        ComponentCasters[DerivedComponent::ComponentType] = [](ComponentBase* component) -> sol::lua_value {
-            return static_cast<DerivedComponent*>(component);
-        };
+        auto caster = [](ComponentBase* component) -> DerivedComponent*
+        { return static_cast<DerivedComponent*>(component); };
+        for (std::any& untyped_behaviour : m_on_register_behaviours)
+        {
+            OnRegisterBehaviour<DerivedComponent> behaviour
+                = std::any_cast<OnRegisterBehaviour<DerivedComponent>>(untyped_behaviour);
+            behaviour(DerivedComponent::ComponentType, caster);
+        }
     }
 
     template <class DerivedComponent>

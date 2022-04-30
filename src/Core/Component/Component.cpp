@@ -6,7 +6,7 @@
 namespace obe::Component
 {
     std::vector<ComponentBase*> ComponentBase::Components;
-    std::unordered_map<std::string_view, ComponentBase::Caster> ComponentBase::ComponentCasters;
+    std::vector<ComponentBase::TypeErasedComponentCaster> ComponentBase::m_on_register_behaviours;
 
     void ComponentBase::AddComponent(ComponentBase* component)
     {

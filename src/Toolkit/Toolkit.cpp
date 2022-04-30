@@ -82,9 +82,9 @@ void run(std::string command)
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::table, sol::lib::package,
         sol::lib::os, sol::lib::coroutine, sol::lib::math, sol::lib::count, sol::lib::debug,
         sol::lib::io, sol::lib::bit32);
-
-    lua.safe_script("LuaCore = {}");
-    lua.safe_script_file("obe://Lib/Internal/ScriptInit.lua"_fs);
+    (*m_lua)["__ENV_ID"] = "[Global Environment]";
+    // Table shared across all environments, for easy value sharing
+    (*m_lua)["global"] = sol::new_table();
 
     Bindings::IndexCoreBindings(lua);
     lua.safe_script_file("obe://Lib/Internal/Require.lua"_fs);

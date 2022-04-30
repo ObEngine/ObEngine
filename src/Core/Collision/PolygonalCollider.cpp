@@ -259,6 +259,11 @@ namespace obe::Collision
         return m_parentId;
     }
 
+    vili::node PolygonalCollider::schema() const
+    {
+        return vili::object {};
+    }
+
     void PolygonalCollider::setParentId(const std::string& parent)
     {
         m_parentId = parent;

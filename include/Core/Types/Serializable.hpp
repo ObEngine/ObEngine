@@ -13,7 +13,13 @@ namespace obe::Types
         virtual ~Serializable() = default;
 
         /**
+         * \brief Gets the validation schema of the Serializable object as a vili node
+         * \return vili::node that contains the validation schema
+         */
+        [[nodiscard]] virtual vili::node schema() const = 0;
+        /**
          * \brief Dumps the content of the Serializable object to a vili node
+         * \return vili::node that contains the object in a serialized format
          */
         virtual vili::node dump() const = 0;
         /**

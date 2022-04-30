@@ -48,11 +48,11 @@ namespace obe::Engine
         m_lua->open_libraries(sol::lib::base, sol::lib::string, sol::lib::table, sol::lib::package,
             sol::lib::os, sol::lib::coroutine, sol::lib::math, sol::lib::count, sol::lib::debug,
             sol::lib::io, sol::lib::bit32);
+        (*m_lua)["__ENV_ID"] = "[Global Environment]";
+        // Table shared across all environments, for easy value sharing
+        (*m_lua)["global"] = sol::new_table();
 
         this->initPlugins();
-
-        m_lua->safe_script("LuaCore = {}");
-        m_lua->safe_script_file("obe://Lib/Internal/ScriptInit.lua"_fs);
 
         Bindings::IndexCoreBindings(*m_lua);
 

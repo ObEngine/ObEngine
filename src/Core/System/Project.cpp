@@ -82,6 +82,11 @@ namespace obe::System::Project
         return projectsNames;
     }
 
+    vili::node ProjectURLs::schema() const
+    {
+        return vili::object {};
+    }
+
     vili::node ProjectURLs::dump() const
     {
         return vili::object { { "homepage", homepage }, { "issues", issues }, { "readme", readme },
@@ -276,6 +281,11 @@ namespace obe::System::Project
     Project::Project()
         : m_obengineVersion(0, 1, 0)
     {
+    }
+
+    vili::node Project::schema() const
+    {
+        return vili::object {};
     }
 
     void Project::loadFromFile(const std::string& path)

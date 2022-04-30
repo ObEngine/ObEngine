@@ -153,8 +153,11 @@ namespace obe::System::Bindings
                     obe::System::MountablePath(obe::System::MountablePathType, std::string_view,
                         std::string_view, unsigned int),
                     obe::System::MountablePath(obe::System::MountablePathType, std::string_view,
-                        std::string_view, unsigned int, bool)>());
+                        std::string_view, unsigned int, bool),
+                    obe::System::MountablePath(obe::System::MountablePathType, std::string_view,
+                        std::string_view, unsigned int, bool, bool)>());
         bindMountablePath[sol::meta_function::equal_to] = &obe::System::MountablePath::operator==;
+        bindMountablePath["resolveBasePath"] = &obe::System::MountablePath::resolveBasePath;
         bindMountablePath["LoadMountFile"] = sol::overload(
             []() -> void { return obe::System::MountablePath::LoadMountFile(); },
             [](bool fromCWD) -> void { return obe::System::MountablePath::LoadMountFile(fromCWD); },
@@ -179,6 +182,7 @@ namespace obe::System::Bindings
         bindMountablePath["prefix"] = &obe::System::MountablePath::prefix;
         bindMountablePath["priority"] = &obe::System::MountablePath::priority;
         bindMountablePath["implicit"] = &obe::System::MountablePath::implicit;
+        bindMountablePath["deferredResolution"] = &obe::System::MountablePath::deferredResolution;
     }
     void LoadClassPath(sol::state_view state)
     {

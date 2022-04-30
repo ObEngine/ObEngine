@@ -13,6 +13,11 @@ namespace obe::Graphics
         this->loadShader(path);
     }
 
+    vili::node Shader::schema() const
+    {
+        return vili::object {};
+    }
+
     void Shader::loadShader(const std::string& path)
     {
         this->loadFromFile(System::Path(path).find(), sf::Shader::Type::Fragment);

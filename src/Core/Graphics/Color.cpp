@@ -243,6 +243,11 @@ namespace obe::Graphics
         this->a = color.a;
     }
 
+    vili::node Color::schema() const
+    {
+        return vili::object {};
+    }
+
     vili::node Color::dump(ColorType type) const
     {
         vili::node result;

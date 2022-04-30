@@ -101,6 +101,7 @@ namespace obe::Collision::Bindings
         bindPolygonalCollider["setRotation"] = &obe::Collision::PolygonalCollider::setRotation;
         bindPolygonalCollider["setPositionFromCentroid"]
             = &obe::Collision::PolygonalCollider::setPositionFromCentroid;
+
         PolygonalCollider::Register();
     }
     void LoadClassTrajectory(sol::state_view state)

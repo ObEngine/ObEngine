@@ -241,6 +241,11 @@ namespace obe::Scene
             m_tiles->clear();
     }
 
+    vili::node Scene::schema() const
+    {
+        return vili::object {};
+    }
+
     vili::node Scene::dump() const
     {
         vili::node result = vili::object {};

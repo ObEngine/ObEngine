@@ -589,4 +589,9 @@ namespace obe::Graphics
     {
         return (m_shader != nullptr);
     }
+
+    vili::node Sprite::schema() const
+    {
+        return vili::object {};
+    }
 } // namespace obe::Graphics

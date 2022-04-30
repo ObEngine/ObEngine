@@ -128,11 +128,6 @@ namespace obe::Graphics
          */
         void drawHandle(RenderTarget& surface, const Scene::Camera& camera) const;
         /**
-         * \brief Dumps the content of the Sprite to a ComplexNode
-         * \param target ComplexNode where to serialize the Sprite
-         */
-        vili::node dump() const override;
-        /**
          * \brief Get the blend color of the Sprite
          * \return A Color containing the blend color of the Sprite
          */
@@ -215,6 +210,12 @@ namespace obe::Graphics
         [[nodiscard]] int getYScaleFactor() const;
         [[nodiscard]] bool getAntiAliasing() const;
         [[nodiscard]] bool hasShader() const;
+        [[nodiscard]] vili::node schema() const override;
+        /**
+         * \brief Dumps the content of the Sprite to a ComplexNode
+         * \return vili::node containing the Sprite details
+         */
+        vili::node dump() const override;
         /**
          * \brief Loads the Sprite from a ComplexNode
          * \param data ComplexNode containing the data of the Sprite

@@ -242,6 +242,7 @@ namespace obe::Script
         sol::environment getEnvironment() const;
         void setState(bool state);
 
+        [[nodiscard]] vili::node schema() const override;
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
         void loadSource(const std::string& path);

@@ -52,10 +52,12 @@ namespace obe::System::Project
         std::string documentation;
         std::string license;
 
+
+        [[nodiscard]] vili::node schema() const override;
         /**
          * \brief Dumps the content of the Project URLs to a vili node
          */
-        vili::node dump() const override;
+        [[nodiscard]] vili::node dump() const override;
         /**
          * \brief Loads a Project URLs from a vili node
          * \param data vili node containing the data of the Project URLs
@@ -91,10 +93,11 @@ namespace obe::System::Project
 
     public:
         Project();
+        [[nodiscard]] vili::node schema() const override;
         /**
          * \brief Dumps the content of the Project to a vili node
          */
-        vili::node dump() const override;
+        [[nodiscard]] vili::node dump() const override;
         /**
          * \brief Loads a Project from a vili node
          * \param data vili node containing the data of the Project

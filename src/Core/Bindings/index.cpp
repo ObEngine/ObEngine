@@ -193,6 +193,7 @@ namespace obe::Bindings
         obe::Collision::Exceptions::Bindings::LoadClassInvalidTagFormat(state);
         obe::Component::Bindings::LoadClassComponentBase(state);
         obe::Component::Exceptions::Bindings::LoadClassComponentIdAlreadyTaken(state);
+        obe::Component::Exceptions::Bindings::LoadClassUnknownComponentType(state);
         obe::Config::Bindings::LoadClassConfigurationManager(state);
         obe::Config::Bindings::LoadClassVersion(state);
         obe::Config::Exceptions::Bindings::LoadClassConfigError(state);
@@ -337,6 +338,7 @@ namespace obe::Bindings
         obe::System::Bindings::LoadFunctionSplitPathAndPrefix(state);
         obe::System::Bindings::LoadFunctionPathTypeToString(state);
         obe::System::Bindings::LoadFunctionStringToStretchMode(state);
+        obe::System::Exceptions::Bindings::LoadClassInvalidDeferredMountablePath(state);
         obe::System::Exceptions::Bindings::LoadClassInvalidMountFile(state);
         obe::System::Exceptions::Bindings::LoadClassInvalidMouseButtonEnumValue(state);
         obe::System::Exceptions::Bindings::LoadClassInvalidProjectFile(state);
@@ -670,6 +672,7 @@ namespace obe::Bindings
         obe::System::Prefixes::Bindings::LoadGlobalMount(state);
         obe::System::Prefixes::Bindings::LoadGlobalExtlibs(state);
         obe::System::Prefixes::Bindings::LoadGlobalRoot(state);
+        obe::System::Prefixes::Bindings::LoadGlobalGame(state);
         obe::System::Priorities::Bindings::LoadGlobalHigh(state);
         obe::System::Priorities::Bindings::LoadGlobalProjectmount(state);
         obe::System::Priorities::Bindings::LoadGlobalProject(state);

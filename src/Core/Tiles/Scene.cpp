@@ -20,6 +20,11 @@ namespace obe::Tiles
     {
     }
 
+    vili::node TileScene::schema() const
+    {
+        return vili::object {};
+    }
+
     vili::node TileScene::dump() const
     {
         return vili::object {};
