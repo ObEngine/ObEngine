@@ -51,9 +51,9 @@ namespace obe::Script
          * \brief Applies the Requirements to a GameObject using a Requires
          *        ComplexNode
          * \param obj GameObject to applies the requirements to
-         * \param requires ComplexNode containing the Requirements
+         * \param requirements ComplexNode containing the Requirements
          */
-        static void ApplyRequirements(sol::environment environment, const vili::node& requires);
+        static void ApplyRequirements(sol::environment environment, const vili::node& requirements);
         /**
          * \brief Clears the GameObjectDatabase (cache reload)
          */
