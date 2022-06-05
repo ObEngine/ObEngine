@@ -1,3 +1,4 @@
+#include <platformfolders/platform_folders.h>
 #include <vili/parser.hpp>
 #include <vld8/exceptions.hpp>
 #include <vld8/validator.hpp>
@@ -35,10 +36,35 @@ namespace obe::System::Project
         {
             const std::string projectLocation = GetProjectLocation(projectName);
             MountablePath::Mount(
-                MountablePath(MountablePathType::Project, projectLocation, prefix, priority));
+                MountablePath(MountablePathType::Project, projectLocation, prefix, priority, true));
+
             Project project;
             project.loadFromFile(Path(projectLocation).add("project.vili"));
             project.mount();
+
+            std::string projectCfgPath;
+            if (project.isStandalone())
+            {
+                std::string cfgPath = sago::getConfigHome();
+                projectCfgPath = Utils::File::join({ cfgPath, project.getId() });
+            }
+            else
+            {
+                std::string cfgPath
+                    = MountablePath::FromPrefix(obe::System::Prefixes::cfg.data()).basePath;
+                projectCfgPath = Utils::File::join({ cfgPath, "Projects", project.getId() });
+            }
+            if (!Utils::File::directoryExists(projectCfgPath))
+            {
+                Debug::Log->debug("<Project> Could not find Project configuration directory, "
+                                  "creating a new one...");
+                Utils::File::createDirectory(projectCfgPath);
+                Debug::Log->debug(
+                    "<Project> Project configuration directory created at '{}'", projectCfgPath);
+            }
+            MountablePath projectCfg(
+                MountablePathType::Path, projectCfgPath, "projectcfg", Priorities::projectmount);
+            MountablePath::Mount(projectCfg);
             return true;
         }
         throw Exceptions::UnknownProject(projectName, ListProjects(), EXC_INFO);
@@ -49,11 +75,16 @@ namespace obe::System::Project
         const std::string projectsFileLocation = "obe://projects.vili"_fs;
         vili::node projects = vili::parser::from_file(projectsFileLocation);
         std::vector<std::string> projectsNames;
-        for (auto [projectName, _] : projects.items())
+        for (const auto& [projectName, _] : projects.items())
         {
             projectsNames.push_back(projectName);
         }
         return projectsNames;
+    }
+
+    vili::node ProjectURLs::schema() const
+    {
+        return vili::object {};
     }
 
     vili::node ProjectURLs::dump() const
@@ -127,6 +158,10 @@ namespace obe::System::Project
             m_version = data.at("version");
             m_obengineVersion = data.at("obengine_version").as_string();
 
+            if (data.contains("standalone"))
+            {
+                m_standalone = data.at("standalone");
+            }
             if (data.contains("authors"))
             {
                 for (const auto& author : data.at("authors").as<vili::array>())
@@ -199,13 +234,8 @@ namespace obe::System::Project
                             prefix = mount.at("prefix");
                         }
                     }
-                    auto [_, pathPrefix] = splitPathAndPrefix(mountPath, false);
-                    if (!pathPrefix.empty())
-                    {
-                        mountPath = System::Path(mountPath).find(PathType::Directory).path();
-                    }
                     m_mounts.push_back(std::make_shared<MountablePath>(
-                        MountablePathType::Path, mountPath, prefix, priority, implicit));
+                        MountablePathType::Path, mountPath, prefix, priority, implicit, true));
                 }
             }
             if (data.contains("urls"))
@@ -222,7 +252,7 @@ namespace obe::System::Project
     void Project::mountDefaults()
     {
         const std::string projectRoot
-            = System::Path(System::Prefixes::root, ".").find(PathType::Directory).path();
+            = System::Path(System::Prefixes::game, ".").find(PathType::Directory).path();
 
         try
         {
@@ -233,24 +263,29 @@ namespace obe::System::Project
         }
         catch (const std::exception& exc)
         {
-            Debug::Log->error("Unable to find directory for GameObjects");
+            Debug::Log->warn("Unable to find default directory for GameObjects");
         }
         try
         {
             const MountablePath scenesPath(MountablePathType::Path,
-                Utils::File::join({ projectRoot, "Scenes" }), Prefixes::objects,
+                Utils::File::join({ projectRoot, "Scenes" }), Prefixes::scenes,
                 Priorities::projectmount);
             MountablePath::Mount(scenesPath, SamePrefixPolicy::Skip);
         }
         catch (const std::exception& exc)
         {
-            Debug::Log->error("Unable to find directory for Scenes");
+            Debug::Log->warn("Unable to find default directory for Scenes");
         }
     }
 
     Project::Project()
         : m_obengineVersion(0, 1, 0)
     {
+    }
+
+    vili::node Project::schema() const
+    {
+        return vili::object {};
     }
 
     void Project::loadFromFile(const std::string& path)
@@ -276,6 +311,7 @@ namespace obe::System::Project
     {
         for (const auto& mount : m_mounts)
         {
+            mount->resolveBasePath();
             MountablePath::Mount(*mount);
         }
         this->mountDefaults();
@@ -287,5 +323,13 @@ namespace obe::System::Project
         {
             MountablePath::Unmount(*mount);
         }
+    }
+    std::string Project::getId() const
+    {
+        return m_id;
+    }
+    bool Project::isStandalone() const
+    {
+        return m_standalone;
     }
 } // namespace obe::System::Project

@@ -31,6 +31,37 @@ namespace obe::Graphics
         return sf::Vertex(sf::Vector2f(uv.x, uv.y));
     }
 
+    void Sprite::refreshVectorTexture(
+        const Transform::UnitVector& surfaceSize, const std::array<sf::Vertex, 4>& vertices)
+    {
+        const Transform::UnitVector pxSize = m_size.to<Transform::Units::ScenePixels>();
+        const unsigned int newWidth = static_cast<unsigned int>(pxSize.x);
+        const unsigned int newHeight = static_cast<unsigned int>(pxSize.y);
+
+        const Transform::UnitVector textureSize = m_texture.getSize();
+
+        if (newWidth != static_cast<unsigned int>(textureSize.x)
+            || newHeight != static_cast<unsigned int>(textureSize.y))
+        {
+            m_sprite.setTextureRect(sf::IntRect(0, 0, pxSize.x, pxSize.y));
+            const auto [minVX, maxVX] = std::minmax_element(vertices.begin(), vertices.end(),
+                [](const sf::Vertex& vert1, const sf::Vertex& vert2) -> float
+                { return vert1.position.x < vert2.position.x; });
+            const auto [minVY, maxVY] = std::minmax_element(vertices.begin(), vertices.end(),
+                [](const sf::Vertex& vert1, const sf::Vertex& vert2) -> float
+                { return vert1.position.y < vert2.position.y; });
+            const float minX = minVX->position.x;
+            const float maxX = maxVX->position.x;
+            const float minY = minVY->position.y;
+            const float maxY = maxVY->position.y;
+            if (((minX >= 0 && minX <= surfaceSize.x) || (maxX >= 0 && maxX <= surfaceSize.x))
+                && ((minY >= 0 && minY <= surfaceSize.y) || (maxY >= 0 && maxY <= surfaceSize.y)))
+            {
+                m_texture.setSizeHint(newWidth, newHeight);
+            }
+        }
+    }
+
     Sprite::Sprite(const std::string& id)
         : Selectable(false)
         , Component(id)
@@ -83,6 +114,12 @@ namespace obe::Graphics
         {
             Rect::setSize(size, Transform::Referential::TopLeft);
         }*/
+
+        if (m_texture.getAutoscaling())
+        {
+            const Transform::UnitVector surfaceSize = surface.getSize();
+            refreshVectorTexture(surfaceSize, vertices);
+        }
 
         m_sprite.setVertices(vertices);
 
@@ -148,6 +185,11 @@ namespace obe::Graphics
     }
 
     const Graphics::Texture& Sprite::getTexture() const
+    {
+        return m_texture;
+    }
+
+    Graphics::Texture& Sprite::getTexture()
     {
         return m_texture;
     }
@@ -546,5 +588,10 @@ namespace obe::Graphics
     bool Sprite::hasShader() const
     {
         return (m_shader != nullptr);
+    }
+
+    vili::node Sprite::schema() const
+    {
+        return vili::object {};
     }
 } // namespace obe::Graphics

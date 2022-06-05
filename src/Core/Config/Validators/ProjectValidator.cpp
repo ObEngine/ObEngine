@@ -78,6 +78,12 @@ namespace obe::Config::Validators
                 },
             },
             {
+                "standalone", vili::object {
+                    {"type", vili::boolean_typename},
+                    {"optional", true}
+                },
+            },
+            {
                 "authors", vili::object {
                     {"type", vili::array_typename},
                     {"items", vili::object {

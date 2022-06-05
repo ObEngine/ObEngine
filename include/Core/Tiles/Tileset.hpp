@@ -51,6 +51,7 @@ namespace obe::Tiles
 
     public:
         TilesetCollection();
+        TilesetCollection(const TilesetCollection&) = delete;
         void addTileset(uint32_t firstTileId, const std::string& id, const std::string& source,
             uint32_t columns, uint32_t width, uint32_t height, uint32_t count);
         [[nodiscard]] const Tileset& tilesetFromId(const std::string& id) const;

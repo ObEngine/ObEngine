@@ -51,9 +51,9 @@ namespace obe::Script
          * \brief Applies the Requirements to a GameObject using a Requires
          *        ComplexNode
          * \param obj GameObject to applies the requirements to
-         * \param requires ComplexNode containing the Requirements
+         * \param requirements ComplexNode containing the Requirements
          */
-        static void ApplyRequirements(sol::environment environment, const vili::node& requires);
+        static void ApplyRequirements(sol::environment environment, const vili::node& requirements);
         /**
          * \brief Clears the GameObjectDatabase (cache reload)
          */
@@ -203,6 +203,7 @@ namespace obe::Script
          */
         void update();
         /**
+         * \bind delete
          * \brief Deletes the GameObject
          */
         void deleteObject();
@@ -241,6 +242,7 @@ namespace obe::Script
         sol::environment getEnvironment() const;
         void setState(bool state);
 
+        [[nodiscard]] vili::node schema() const override;
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
         void loadSource(const std::string& path);

@@ -5,6 +5,12 @@
 #include <SFML/Graphics/Color.hpp>
 #include <Types/Serializable.hpp>
 
+namespace obe::Animation
+{
+    template <class T>
+    class TweenImpl;
+}
+
 namespace obe::Graphics
 {
     struct Hsv
@@ -25,6 +31,7 @@ namespace obe::Graphics
      */
     class Color : public Types::Serializable
     {
+        friend class Animation::TweenImpl<Color>;
     private:
         ColorType m_type;
     public:
@@ -39,6 +46,7 @@ namespace obe::Graphics
         explicit Color(const std::string& nameOrHex);
         Color(const sf::Color& color);
 
+        vili::node schema() const override;
         vili::node dump(ColorType type) const;
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;

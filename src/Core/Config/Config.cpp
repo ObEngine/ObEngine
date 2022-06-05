@@ -33,9 +33,10 @@ namespace obe::Config
         const auto loadResult = System::Path(configMounts).set("*://config.vili").findAll();
         for (const auto& findResult : loadResult)
         {
-            Debug::Log->info("Loading config file from {}", findResult.path());
+            Debug::Log->info("Loading config file from '{}'", findResult.path());
             vili::node conf
                 = vili::parser::from_file(findResult.path(), Templates::getConfigTemplates());
+            Debug::Log->info("Configuration '{}' content : {}", findResult.path(), conf.dump());
             this->merge(conf);
         }
         try

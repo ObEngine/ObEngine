@@ -15,12 +15,13 @@ namespace obe::System
         constexpr std::string_view mount = "mount";
         constexpr std::string_view extlibs = "extlibs";
         constexpr std::string_view root = "root";
+        constexpr std::string_view game = "game";
     }
 
     /**
      * \brief contains default priorities of mounts
      *
-     * High-priority user defined(>3) > Project(3) > Mount(2) > Defaults(1) > Low-priority user defined(<0)
+     * High-priority user defined(>5) > High-priority(5) > ProjectMount(4) > Project(3) > Mount(2) > Defaults(1) > Low-priority(0) > Low-priority user defined(<0)
      */
     namespace Priorities
     {
@@ -88,9 +89,10 @@ namespace obe::System
          * \param pathType Type of the mounted path
          * \param basePath Path to the mounted path
          * \param priority Priority of the mounted path
+         * \param deferResolution whether or not to resolve basePath on construction
          */
         MountablePath(MountablePathType pathType, std::string_view basePath,
-            std::string_view prefix, unsigned int priority = 0, bool implicit = true);
+            std::string_view prefix, unsigned int priority = 0, bool implicit = false, bool deferResolution = false);
         /**
          * \brief Type of the mounted path
          */
@@ -112,6 +114,11 @@ namespace obe::System
          * \brief Allows the path to be used implicitly (without prefix)
          */
         bool implicit;
+
+        /**
+         * \brief Allows to defer basePath resolution to a later time
+         */
+        bool deferredResolution = false;
 
         bool operator==(const MountablePath& other) const;
 
@@ -154,5 +161,7 @@ namespace obe::System
         static const MountablePath& FromPrefix(const std::string& prefix);
 
         static const std::vector<std::string> GetAllPrefixes();
+
+        void resolveBasePath();
     };
 } // namespace obe::System

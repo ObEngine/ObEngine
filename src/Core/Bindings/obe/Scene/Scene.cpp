@@ -123,9 +123,12 @@ namespace obe::Scene::Bindings
         bindScene["getLevelFile"] = &obe::Scene::Scene::getLevelFile;
         bindScene["getSceneNodeByPosition"] = &obe::Scene::Scene::getSceneNodeByPosition;
         bindScene["hasTiles"] = &obe::Scene::Scene::hasTiles;
-        bindScene["getTiles"] = &obe::Scene::Scene::getTiles;
+        bindScene["getTiles"] = [](obe::Scene::Scene* self) -> const obe::Tiles::TileScene* {
+            return &self->getTiles();
+        };
         bindScene["getRenderOptions"] = &obe::Scene::Scene::getRenderOptions;
         bindScene["setRenderOptions"] = &obe::Scene::Scene::setRenderOptions;
+        bindScene["getComponent"] = &obe::Scene::Scene::getComponent;
     }
     void LoadClassSceneNode(sol::state_view state)
     {

@@ -3,8 +3,7 @@ name: build
 on:
   push:
     branches: '*'
-  pull_request:
-    branches: [ master ]
+  pull_request: {}
 
 jobs:
   build_linux:
@@ -35,10 +34,9 @@ jobs:
     - name: Compile and install SFML
       run: cd SFML; cmake .; make -j8; sudo make install
     - name: Compile ObEngine
-      run: cd build; cmake -DBUILD_TESTS=ON ..; make -j8
+      run: cd build; cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..; make -j8
     - name: Run tests
       run: export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/usr/local/lib"; ./build/tests/ObEngineTests
-
 
   build_windows:
     name: Build ObEngine on Windows
@@ -58,13 +56,12 @@ jobs:
     - name: Create build directory
       run: mkdir build
     - name: Run CMake on ObEngine
-      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON ..
+      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..
       shell: pwsh
     - name: Compile ObEngine
-      run: cmake --build build --config Release -- /m:8
+      run: cmake --build build --config Debug -- /m:8
     - name: Run tests
-      run: ./build/tests/Release/ObEngineTests.exe
-
+      run: ./build/tests/Debug/ObEngineTests.exe
 
   build_macos:
     name: Build ObEngine on MacOS
@@ -78,7 +75,7 @@ jobs:
     - name: Create build directory
       run: mkdir build
     - name: Run CMake on ObEngine
-      run: cd build && cmake -DBUILD_TESTS=ON ..
+      run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..
     - name: Compile ObEngine
       run: cd build && make -j8
     - name: Run tests

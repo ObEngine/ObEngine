@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2020 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2014-2021 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
 #ifndef TAO_PEGTL_STRING_INPUT_HPP
@@ -30,8 +30,8 @@ namespace TAO_PEGTL_NAMESPACE
 
          ~string_holder() = default;
 
-         void operator=( const string_holder& ) = delete;
-         void operator=( string_holder&& ) = delete;
+         string_holder& operator=( const string_holder& ) = delete;
+         string_holder& operator=( string_holder&& ) = delete;
       };
 
    }  // namespace internal
@@ -52,8 +52,8 @@ namespace TAO_PEGTL_NAMESPACE
 
       ~string_input() = default;
 
-      void operator=( const string_input& ) = delete;
-      void operator=( string_input&& ) = delete;
+      string_input& operator=( const string_input& ) = delete;
+      string_input& operator=( string_input&& ) = delete;
    };
 
    template< typename... Ts >

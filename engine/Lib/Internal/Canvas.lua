@@ -1,4 +1,4 @@
-local class = require("extlibs://pl.class");
+local class = require("extlibs://pl.class"); -- NOTE: we are not using the global class() since it is not loaded yet
 local tablex = require("extlibs://pl.tablex");
 
 obe.Canvas = {};
@@ -24,8 +24,7 @@ function obe.Canvas.Canvas:_init(width, height, usecache)
     self.elements = {};
     self.useCache = usecache or false;
     self.bases = {
-        Line = obe.Canvas
-            .MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Line}, self.useCache),
+        Line = obe.Canvas.MakeMT({obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Line}, self.useCache),
         Rectangle = obe.Canvas.MakeMT(
             {obe.Canvas.Bases.Drawable, obe.Canvas.Bases.Shape, obe.Canvas.Bases.Rectangle},
                 self.useCache

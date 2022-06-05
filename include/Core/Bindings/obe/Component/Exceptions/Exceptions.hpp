@@ -7,4 +7,5 @@ namespace sol
 namespace obe::Component::Exceptions::Bindings
 {
     void LoadClassComponentIdAlreadyTaken(sol::state_view state);
+    void LoadClassUnknownComponentType(sol::state_view state);
 };

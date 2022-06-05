@@ -18,13 +18,18 @@ namespace obe::System
     MountList MountablePath::MountedPaths;
 
     MountablePath::MountablePath(MountablePathType pathType, std::string_view basePath,
-        std::string_view prefix, unsigned int priority, bool implicit)
+        std::string_view prefix, unsigned int priority, bool implicit, bool deferResolution)
         : pathType(pathType)
-        , basePath(Utils::File::canonicalPath(basePath.data()))
+        , basePath(basePath)
         , prefix(prefix)
         , priority(priority)
         , implicit(implicit)
+        , deferredResolution(deferResolution)
     {
+        if (!deferredResolution)
+        {
+            this->resolveBasePath();
+        }
     }
 
     bool MountablePath::operator==(const MountablePath& other) const
@@ -42,20 +47,37 @@ namespace obe::System
             throw Exceptions::MissingDefaultMountPoint(EXC_INFO);
         }
 
+        MountablePath rootPath(MountablePathType::Path, "", Prefixes::root, Priorities::defaults);
         MountablePath workingDirectoryPath(
-            MountablePathType::Path, "", Prefixes::cwd, Priorities::defaults, false);
-        MountablePath implicitCWDPath(MountablePathType::Path, "", "", Priorities::defaults);
+            MountablePathType::Path, ".", Prefixes::cwd, Priorities::defaults);
+        MountablePath implicitCWDPath(MountablePathType::Path, ".", "", Priorities::defaults, true);
+        MountablePath implicitRootPath(MountablePathType::Path, "", "", Priorities::defaults, true); 
         MountablePath executablePath(MountablePathType::Path, Utils::File::getExecutableDirectory(),
-            Prefixes::exe, Priorities::defaults, false);
-        MountablePath configPath(MountablePathType::Path, sago::getConfigHome(), Prefixes::cfg,
-            Priorities::defaults, false);
+            Prefixes::exe, Priorities::defaults);
+
+        const std::string engineConfigPath
+            = Utils::File::join({ sago::getConfigHome(), "ObEngine" });
+        if (!Utils::File::directoryExists(engineConfigPath))
+        {
+            Utils::File::createDirectory(engineConfigPath);
+        }
+        const std::string engineConfigProjectSubdirectory
+            = Utils::File::join({ engineConfigPath, "Projects" });
+        if (!Utils::File::directoryExists(engineConfigProjectSubdirectory))
+        {
+            Utils::File::createDirectory(engineConfigProjectSubdirectory);
+        }
+
+        MountablePath configPath(
+            MountablePathType::Path, engineConfigPath, Prefixes::cfg, Priorities::defaults);
+        MountablePath::Mount(rootPath);
         MountablePath::Mount(workingDirectoryPath);
         MountablePath::Mount(implicitCWDPath);
+        MountablePath::Mount(implicitRootPath);
         MountablePath::Mount(executablePath);
         MountablePath::Mount(configPath);
 
-        MountablePath basePath(
-            MountablePathType::Path, "", Prefixes::mount, Priorities::defaults, false);
+        MountablePath basePath(MountablePathType::Path, "", Prefixes::mount, Priorities::defaults);
         if (fromCWD)
         {
             basePath.basePath = workingDirectoryPath.basePath;
@@ -66,8 +88,8 @@ namespace obe::System
         }
         MountablePath::Mount(basePath);
 
-        MountablePath enginePath(MountablePathType::Path, executablePath.basePath, Prefixes::obe,
-            Priorities::defaults, false);
+        MountablePath enginePath(
+            MountablePathType::Path, executablePath.basePath, Prefixes::obe, Priorities::defaults);
         MountablePath::Mount(enginePath);
 
         FindResult mountFilePath
@@ -109,17 +131,11 @@ namespace obe::System
             {
                 if (mount.is_string())
                 {
-                    std::string currentPath = mount;
-                    auto [_, pathPrefix] = splitPathAndPrefix(currentPath, false);
-                    if (!pathPrefix.empty())
-                    {
-                        currentPath = System::Path(currentPath).find(PathType::Directory).path();
-                    }
                     MountablePath::Mount(MountablePath(
-                        MountablePathType::Path, currentPath, mountName, Priorities::mount));
+                        MountablePathType::Path, mount, mountName, Priorities::mount));
                     Debug::Log->info("<MountablePath> Mounted Path : '{0}' at '{1}://' "
                                      "with priority {2}",
-                        currentPath, mountName, 0);
+                        mount, mountName, 0);
                 }
                 else if (mount.is_object())
                 {
@@ -128,7 +144,7 @@ namespace obe::System
                     {
                         currentType = mount.at("type");
                     }
-                    std::string currentPath = mount.at("path");
+                    const std::string currentPath = mount.at("path");
                     std::string prefix = mountName;
                     if (mount.contains("prefix"))
                     {
@@ -139,16 +155,15 @@ namespace obe::System
                     {
                         currentPriority = mount.at("priority");
                     }
+                    bool implicit = false;
+                    if (mount.contains("implicit"))
+                    {
+                        implicit = mount.at("implicit");
+                    }
                     if (currentType == "Path")
                     {
-                        auto [_, pathPrefix] = splitPathAndPrefix(currentPath, false);
-                        if (!pathPrefix.empty())
-                        {
-                            currentPath
-                                = System::Path(currentPath).find(PathType::Directory).path();
-                        }
-                        MountablePath::Mount(MountablePath(
-                            MountablePathType::Path, currentPath, prefix, currentPriority));
+                        MountablePath::Mount(MountablePath(MountablePathType::Path, currentPath,
+                            prefix, currentPriority, implicit));
                         Debug::Log->info("<MountablePath> Mounted Path : '{0}' at '{1}://' "
                                          "with priority {2}",
                             currentPath, prefix, currentPriority);
@@ -172,7 +187,7 @@ namespace obe::System
         }
         if (mountedPaths.contains("project"))
         {
-            Project::Load(mountedPaths.at("project"), Prefixes::root.data(), Priorities::project);
+            Project::Load(mountedPaths.at("project"), Prefixes::game.data(), Priorities::project);
         }
         Debug::Log->info("<MountablePath> List of mounted paths : ");
         for (const auto& currentPath : MountablePath::MountedPaths)
@@ -190,6 +205,10 @@ namespace obe::System
 
     void MountablePath::Mount(const MountablePath path, SamePrefixPolicy samePrefixPolicy)
     {
+        if (path.deferredResolution)
+        {
+            throw Exceptions::InvalidDeferredMountablePath(path.prefix, EXC_INFO);
+        }
         auto pathCmp = [&path](const auto& mountedPath) { return path == *mountedPath; };
         bool pathAlreadyExists
             = std::find_if(MountedPaths.begin(), MountedPaths.end(), pathCmp) != MountedPaths.end();
@@ -280,5 +299,16 @@ namespace obe::System
         std::transform(mounts.begin(), mounts.end(), std::back_inserter(allPrefixes),
             [](const auto& mount) { return mount->prefix; });
         return allPrefixes;
+    }
+
+    void MountablePath::resolveBasePath()
+    {
+        auto [_, prefixInPath] = splitPathAndPrefix(basePath, false);
+        if (!prefixInPath.empty())
+        {
+            basePath = System::Path(basePath).find(PathType::Directory).path();
+        }
+        basePath = Utils::File::canonicalPath(basePath);
+        deferredResolution = false;
     }
 } // namespace obe::System

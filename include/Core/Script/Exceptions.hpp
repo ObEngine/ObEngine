@@ -95,10 +95,23 @@ namespace obe::Script::Exceptions
     {
     public:
         using Exception::Exception;
-        LuaExecutionError(std::string_view errorMessage, DebugInfo info)
+        LuaExecutionError(const std::exception& err, DebugInfo info)
             : Exception(info)
         {
-            this->error("Lua encountered an error while executing code :\n{}", errorMessage);
+            this->error("Lua encountered an error");
+            this->nestInPlace(err);
+        }
+    };
+
+    class LuaNestedExceptionError : public Exception<LuaNestedExceptionError>
+    {
+    public:
+        using Exception::Exception;
+        LuaNestedExceptionError(const std::exception& err, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("An exception occured while trying to retrieve the previous exception");
+            this->nestInPlace(err);
         }
     };
 }

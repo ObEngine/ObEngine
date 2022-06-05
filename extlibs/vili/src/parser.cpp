@@ -27,13 +27,13 @@ namespace vili::parser
         }
         catch (peg::parse_error& e)
         {
-            const auto p = e.positions.front();
+            const peg::position p = e.positions().front();
             std::stringstream ss;
             ss << e.what() << '\n'
                << input.line_at(p) << '\n'
-               << std::setw(p.byte_in_line) << ' ' << '^' << std::endl;
+               << std::setw(p.byte) << ' ' << '^' << std::endl;
             throw exceptions::parsing_error(
-                input.source(), p.line, p.byte_in_line, VILI_EXC_INFO)
+                input.source(), p.line, p.byte, VILI_EXC_INFO)
                 .nest(std::runtime_error(ss.str()));
         }
         /*catch (vili::exceptions::base_exception& e)

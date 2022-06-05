@@ -6,6 +6,9 @@
 #include <ObEngineCore.hpp>
 #include <Transform/UnitVector.hpp>
 
+#include <vili/parser.hpp>
+#include <vili/writer.hpp>
+
 using namespace obe;
 
 int main(int argc, char** argv)
@@ -29,6 +32,9 @@ int main(int argc, char** argv)
 
     Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
         Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
+
+    vili::node animation_schema = vili::parser::from_file("D:/Dev/Projects/ObEngine/Git/schemas/Animation.vili");
+    std::cout << vili::writer::dump(animation_schema) << std::endl;
 
 #if defined _DEBUG
     Modes::startGame();

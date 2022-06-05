@@ -41,4 +41,9 @@ namespace obe::System::Prefixes::Bindings
         sol::table PrefixesNamespace = state["obe"]["System"]["Prefixes"].get<sol::table>();
         PrefixesNamespace["root"] = obe::System::Prefixes::root;
     }
+    void LoadGlobalGame(sol::state_view state)
+    {
+        sol::table PrefixesNamespace = state["obe"]["System"]["Prefixes"].get<sol::table>();
+        PrefixesNamespace["game"] = obe::System::Prefixes::game;
+    }
 };

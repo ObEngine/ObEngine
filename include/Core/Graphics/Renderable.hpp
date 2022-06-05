@@ -14,7 +14,7 @@ namespace obe::Graphics
     class Renderable
     {
     protected:
-        int32_t m_layer;
+        int32_t m_layer = 1;
         int32_t m_zdepth = 1;
         bool m_visible = true;
 

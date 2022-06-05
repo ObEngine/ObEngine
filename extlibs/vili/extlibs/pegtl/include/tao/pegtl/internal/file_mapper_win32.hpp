@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2020 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2014-2021 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
 #ifndef TAO_PEGTL_INTERNAL_FILE_MAPPER_WIN32_HPP
@@ -26,51 +26,59 @@
 #undef TAO_PEGTL_WIN32_LEAN_AND_MEAN_WAS_DEFINED
 #endif
 
-#include <system_error>
-
 #include "../config.hpp"
+
+#if !defined( __cpp_exceptions )
+#include <cstdio>
+#include <exception>
+#endif
+
+#include "filesystem.hpp"
 
 namespace TAO_PEGTL_NAMESPACE::internal
 {
-   struct win32_file_opener
+   struct file_opener
    {
-      explicit win32_file_opener( const char* filename )
-         : m_source( filename ),
+      explicit file_opener( const internal::filesystem::path& path )
+         : m_path( path ),
            m_handle( open() )
       {}
 
-      win32_file_opener( const win32_file_opener& ) = delete;
-      win32_file_opener( win32_file_opener&& ) = delete;
+      file_opener( const file_opener& ) = delete;
+      file_opener( file_opener&& ) = delete;
 
-      ~win32_file_opener() noexcept
+      ~file_opener()
       {
          ::CloseHandle( m_handle );
       }
 
-      void operator=( const win32_file_opener& ) = delete;
-      void operator=( win32_file_opener&& ) = delete;
+      file_opener& operator=( const file_opener& ) = delete;
+      file_opener& operator=( file_opener&& ) = delete;
 
       [[nodiscard]] std::size_t size() const
       {
          LARGE_INTEGER size;
          if( !::GetFileSizeEx( m_handle, &size ) ) {
-            const auto ec = ::GetLastError();
-            throw std::system_error( ec, std::system_category(), std::string( "GetFileSizeEx(): " ) + m_source );
+#if defined( __cpp_exceptions )
+            internal::error_code ec( ::GetLastError(), internal::system_category() );
+            throw internal::filesystem::filesystem_error( "GetFileSizeEx() failed", m_path, ec );
+#else
+            std::perror( "GetFileSizeEx() failed" );
+            std::terminate();
+#endif
          }
          return std::size_t( size.QuadPart );
       }
 
-      const char* const m_source;
+      const internal::filesystem::path m_path;
       const HANDLE m_handle;
 
    private:
       [[nodiscard]] HANDLE open() const
       {
          SetLastError( 0 );
-         std::wstring ws( m_source, m_source + strlen( m_source ) );
-
 #if( _WIN32_WINNT >= 0x0602 )
-         const HANDLE handle = ::CreateFile2( ws.c_str(),
+         const HANDLE handle = ::CreateFile2( m_path.c_str(),
                                               GENERIC_READ,
                                               FILE_SHARE_READ,
                                               OPEN_EXISTING,
@@ -78,10 +86,15 @@ namespace TAO_PEGTL_NAMESPACE::internal
          if( handle != INVALID_HANDLE_VALUE ) {
             return handle;
          }
-         const auto ec = ::GetLastError();
-         throw std::system_error( ec, std::system_category(), std::string( "CreateFile2(): " ) + m_source );
+#if defined( __cpp_exceptions )
+         internal::error_code ec( ::GetLastError(), internal::system_category() );
+         throw internal::filesystem::filesystem_error( "CreateFile2() failed", m_path, ec );
 #else
-         const HANDLE handle = ::CreateFileW( ws.c_str(),
+         std::perror( "CreateFile2() failed" );
+         std::terminate();
+#endif
+#else
+         const HANDLE handle = ::CreateFileW( m_path.c_str(),
                                               GENERIC_READ,
                                               FILE_SHARE_READ,
                                               nullptr,
@@ -91,19 +104,24 @@ namespace TAO_PEGTL_NAMESPACE::internal
          if( handle != INVALID_HANDLE_VALUE ) {
             return handle;
          }
-         const auto ec = ::GetLastError();
-         throw std::system_error( ec, std::system_category(), std::string( "CreateFileW(): " ) + m_source );
+#if defined( __cpp_exceptions )
+         internal::error_code ec( ::GetLastError(), internal::system_category() );
+         throw internal::filesystem::filesystem_error( "CreateFileW()", m_path, ec );
+#else
+         std::perror( "CreateFileW() failed" );
+         std::terminate();
+#endif
 #endif
       }
    };
 
    struct win32_file_mapper
    {
-      explicit win32_file_mapper( const char* filename )
-         : win32_file_mapper( win32_file_opener( filename ) )
+      explicit win32_file_mapper( const internal::filesystem::path& path )
+         : win32_file_mapper( file_opener( path ) )
       {}
 
-      explicit win32_file_mapper( const win32_file_opener& reader )
+      explicit win32_file_mapper( const file_opener& reader )
          : m_size( reader.size() ),
            m_handle( open( reader ) )
       {}
@@ -111,19 +129,19 @@ namespace TAO_PEGTL_NAMESPACE::internal
       win32_file_mapper( const win32_file_mapper& ) = delete;
       win32_file_mapper( win32_file_mapper&& ) = delete;
 
-      ~win32_file_mapper() noexcept
+      ~win32_file_mapper()
       {
          ::CloseHandle( m_handle );
       }
 
-      void operator=( const win32_file_mapper& ) = delete;
-      void operator=( win32_file_mapper&& ) = delete;
+      win32_file_mapper& operator=( const win32_file_mapper& ) = delete;
+      win32_file_mapper& operator=( win32_file_mapper&& ) = delete;
 
       const size_t m_size;
       const HANDLE m_handle;
 
    private:
-      [[nodiscard]] HANDLE open( const win32_file_opener& reader ) const
+      [[nodiscard]] HANDLE open( const file_opener& reader ) const
       {
          const uint64_t file_size = reader.size();
          SetLastError( 0 );
@@ -140,16 +158,21 @@ namespace TAO_PEGTL_NAMESPACE::internal
          if( handle != NULL || file_size == 0 ) {
             return handle;
          }
-         const auto ec = ::GetLastError();
-         throw std::system_error( ec, std::system_category(), std::string( "CreateFileMappingW(): " ) + reader.m_source );
+#if defined( __cpp_exceptions )
+         internal::error_code ec( ::GetLastError(), internal::system_category() );
+         throw internal::filesystem::filesystem_error( "CreateFileMappingW() failed", reader.m_path, ec );
+#else
+         std::perror( "CreateFileMappingW() failed" );
+         std::terminate();
+#endif
       }
    };
 
    class file_mapper
    {
    public:
-      explicit file_mapper( const char* filename )
-         : file_mapper( win32_file_mapper( filename ) )
+      explicit file_mapper( const internal::filesystem::path& path )
+         : file_mapper( win32_file_mapper( path ) )
       {}
 
       explicit file_mapper( const win32_file_mapper& mapper )
@@ -161,21 +184,26 @@ namespace TAO_PEGTL_NAMESPACE::internal
                                                                 0 ) ) )
       {
          if( ( m_size != 0 ) && ( intptr_t( m_data ) == 0 ) ) {
-            const auto ec = ::GetLastError();
-            throw std::system_error( ec, std::system_category(), "MapViewOfFile()" );
+#if defined( __cpp_exceptions )
+            internal::error_code ec( ::GetLastError(), internal::system_category() );
+            throw internal::filesystem::filesystem_error( "MapViewOfFile() failed", ec );
+#else
+            std::perror( "MapViewOfFile() failed" );
+            std::terminate();
+#endif
          }
       }
 
       file_mapper( const file_mapper& ) = delete;
       file_mapper( file_mapper&& ) = delete;
 
-      ~file_mapper() noexcept
+      ~file_mapper()
       {
          ::UnmapViewOfFile( LPCVOID( m_data ) );
       }
 
-      void operator=( const file_mapper& ) = delete;
-      void operator=( file_mapper&& ) = delete;
+      file_mapper& operator=( const file_mapper& ) = delete;
+      file_mapper& operator=( file_mapper&& ) = delete;
 
       [[nodiscard]] bool empty() const noexcept
       {

@@ -58,6 +58,7 @@
 #include <Bindings/obe/Utils/File/File.hpp>
 #include <Bindings/obe/Utils/Math/Math.hpp>
 #include <Bindings/obe/Utils/String/String.hpp>
+#include <Bindings/obe/Utils/Utils.hpp>
 #include <Bindings/obe/Utils/Vector/Vector.hpp>
 #include <Bindings/obe/obe.hpp>
 #include <Bindings/vili/exceptions/exceptions.hpp>
@@ -90,12 +91,12 @@ namespace obe::Bindings
         state["obe"]["Time"].get_or_create<sol::table>();
         state["obe"]["Transform"].get_or_create<sol::table>();
         state["obe"]["Types"].get_or_create<sol::table>();
+        state["obe"]["Utils"].get_or_create<sol::table>();
         state["vili"]["exceptions"].get_or_create<sol::table>();
         state["vili"]["parser"].get_or_create<sol::table>();
         state["vili"]["writer"].get_or_create<sol::table>();
         state["obe"]["Bindings"].get_or_create<sol::table>();
         state["obe"]["Debug"].get_or_create<sol::table>();
-        state["obe"]["Utils"].get_or_create<sol::table>();
         state["obe"]["Events"].get_or_create<sol::table>();
         state["vili"]["utils"].get_or_create<sol::table>();
         state["obe"]["Animation"]["Exceptions"].get_or_create<sol::table>();
@@ -148,12 +149,19 @@ namespace obe::Bindings
         obe::Animation::Bindings::LoadClassAnimationState(state);
         obe::Animation::Bindings::LoadClassAnimator(state);
         obe::Animation::Bindings::LoadClassAnimatorState(state);
-        obe::Animation::Bindings::LoadClassValueTweening(state);
+        obe::Animation::Bindings::LoadClassColorTweening(state);
+        obe::Animation::Bindings::LoadClassUnitVectorTweening(state);
+        obe::Animation::Bindings::LoadClassRectTweening(state);
+        obe::Animation::Bindings::LoadClassTrajectoryTweening(state);
+        obe::Animation::Bindings::LoadClassIntTweening(state);
+        obe::Animation::Bindings::LoadClassDoubleTweening(state);
         obe::Animation::Bindings::LoadEnumAnimationPlayMode(state);
         obe::Animation::Bindings::LoadEnumAnimationStatus(state);
         obe::Animation::Bindings::LoadEnumAnimatorTargetScaleMode(state);
         obe::Animation::Bindings::LoadFunctionStringToAnimationPlayMode(state);
         obe::Animation::Bindings::LoadFunctionStringToAnimatorTargetScaleMode(state);
+        obe::Animation::Bindings::LoadFunctionTemplateSpecializationExistsImpl(state);
+        obe::Animation::Bindings::LoadFunctionTween(state);
         obe::Animation::Exceptions::Bindings::LoadClassAnimationGroupTextureIndexOverflow(state);
         obe::Animation::Exceptions::Bindings::LoadClassAnimationTextureIndexOverflow(state);
         obe::Animation::Exceptions::Bindings::LoadClassInvalidAnimationFile(state);
@@ -186,6 +194,7 @@ namespace obe::Bindings
         obe::Collision::Exceptions::Bindings::LoadClassInvalidTagFormat(state);
         obe::Component::Bindings::LoadClassComponentBase(state);
         obe::Component::Exceptions::Bindings::LoadClassComponentIdAlreadyTaken(state);
+        obe::Component::Exceptions::Bindings::LoadClassUnknownComponentType(state);
         obe::Config::Bindings::LoadClassConfigurationManager(state);
         obe::Config::Bindings::LoadClassVersion(state);
         obe::Config::Exceptions::Bindings::LoadClassConfigError(state);
@@ -243,6 +252,7 @@ namespace obe::Bindings
         obe::Graphics::Bindings::LoadClassShader(state);
         obe::Graphics::Bindings::LoadClassSprite(state);
         obe::Graphics::Bindings::LoadClassSpriteHandlePoint(state);
+        obe::Graphics::Bindings::LoadClassSvgTexture(state);
         obe::Graphics::Bindings::LoadClassText(state);
         obe::Graphics::Bindings::LoadClassTexture(state);
         obe::Graphics::Bindings::LoadClassHsv(state);
@@ -296,6 +306,7 @@ namespace obe::Bindings
         obe::Scene::Bindings::LoadClassSceneRenderOptions(state);
         obe::Scene::Exceptions::Bindings::LoadClassChildNotInSceneNode(state);
         obe::Scene::Exceptions::Bindings::LoadClassGameObjectAlreadyExists(state);
+        obe::Scene::Exceptions::Bindings::LoadClassInvalidSceneFile(state);
         obe::Scene::Exceptions::Bindings::LoadClassMissingSceneFileBlock(state);
         obe::Scene::Exceptions::Bindings::LoadClassSceneOnLoadCallbackError(state);
         obe::Scene::Exceptions::Bindings::LoadClassSceneScriptLoadingError(state);
@@ -305,6 +316,7 @@ namespace obe::Bindings
         obe::Script::Exceptions::Bindings::LoadClassGameObjectScriptError(state);
         obe::Script::Exceptions::Bindings::LoadClassInvalidScript(state);
         obe::Script::Exceptions::Bindings::LoadClassLuaExecutionError(state);
+        obe::Script::Exceptions::Bindings::LoadClassLuaNestedExceptionError(state);
         obe::Script::Exceptions::Bindings::LoadClassNoSuchComponent(state);
         obe::Script::Exceptions::Bindings::LoadClassObjectDefinitionNotFound(state);
         obe::Script::Exceptions::Bindings::LoadClassScriptFileNotFound(state);
@@ -325,7 +337,9 @@ namespace obe::Bindings
         obe::System::Bindings::LoadEnumWindowContext(state);
         obe::System::Bindings::LoadEnumStretchMode(state);
         obe::System::Bindings::LoadFunctionSplitPathAndPrefix(state);
+        obe::System::Bindings::LoadFunctionPathTypeToString(state);
         obe::System::Bindings::LoadFunctionStringToStretchMode(state);
+        obe::System::Exceptions::Bindings::LoadClassInvalidDeferredMountablePath(state);
         obe::System::Exceptions::Bindings::LoadClassInvalidMountFile(state);
         obe::System::Exceptions::Bindings::LoadClassInvalidMouseButtonEnumValue(state);
         obe::System::Exceptions::Bindings::LoadClassInvalidProjectFile(state);
@@ -433,7 +447,6 @@ namespace obe::Bindings
         vili::exceptions::Bindings::LoadClassTooMuchIndentation(state);
         vili::exceptions::Bindings::LoadClassUnknownChildNode(state);
         vili::exceptions::Bindings::LoadClassUnknownTemplate(state);
-        vili::exceptions::Bindings::LoadFunctionIndentString(state);
         vili::parser::Bindings::LoadClassNodeInStack(state);
         vili::parser::Bindings::LoadClassState(state);
         vili::parser::Bindings::LoadClassError(state);
@@ -649,6 +662,9 @@ namespace obe::Bindings
         vili::utils::string::Bindings::LoadFunctionQuote(state);
         vili::utils::string::Bindings::LoadFunctionToDouble(state);
         vili::utils::string::Bindings::LoadFunctionToLong(state);
+        vili::utils::string::Bindings::LoadFunctionIndent(state);
+        vili::utils::string::Bindings::LoadFunctionDistance(state);
+        vili::utils::string::Bindings::LoadFunctionSortByDistance(state);
         obe::System::Constraints::Bindings::LoadGlobalDefault(state);
         obe::System::Prefixes::Bindings::LoadGlobalObe(state);
         obe::System::Prefixes::Bindings::LoadGlobalCwd(state);
@@ -657,6 +673,7 @@ namespace obe::Bindings
         obe::System::Prefixes::Bindings::LoadGlobalMount(state);
         obe::System::Prefixes::Bindings::LoadGlobalExtlibs(state);
         obe::System::Prefixes::Bindings::LoadGlobalRoot(state);
+        obe::System::Prefixes::Bindings::LoadGlobalGame(state);
         obe::System::Priorities::Bindings::LoadGlobalHigh(state);
         obe::System::Priorities::Bindings::LoadGlobalProjectmount(state);
         obe::System::Priorities::Bindings::LoadGlobalProject(state);

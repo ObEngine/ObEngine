@@ -62,7 +62,9 @@ namespace obe::Graphics::Canvas
          * \param target Target where to render the result
          */
         virtual void draw(RenderTarget target) = 0;
+
         virtual ~CanvasElement() = default;
+        CanvasElement& operator=(CanvasElement&&) = delete;
 
         /**
          * \brief Change layer or object and will ask the Canvas to reorder
@@ -100,7 +102,6 @@ namespace obe::Graphics::Canvas
     };
 
     /**
-     * \forceabstract
      * \brief Base class for CanvasElement classes with a position attribute
      */
     class CanvasPositionable : public CanvasElement

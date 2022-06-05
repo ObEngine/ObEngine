@@ -77,6 +77,8 @@ namespace obe::Scene
         Event::EventGroupPtr e_scene;
         sol::state_view m_lua;
 
+        std::unordered_map<std::string, Component::ComponentBase*> m_components;
+
         bool m_sortRenderables = true;
         std::vector<Graphics::Renderable*> m_renderCache;
         void _reorganizeLayers();
@@ -115,9 +117,11 @@ namespace obe::Scene
          * \brief Removes all elements in the Scene
          */
         void clear();
+
+        [[nodiscard]] vili::node schema() const override;
         /**
          * \brief Dumps all elements of the Scene in a vili tree
-         * \return
+         * \return vili::node containing the Scene details
          */
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
@@ -329,6 +333,9 @@ namespace obe::Scene
         const Tiles::TileScene& getTiles() const;
         SceneRenderOptions getRenderOptions() const;
         void setRenderOptions(SceneRenderOptions options);
+
+        // Components
+        Component::ComponentBase* getComponent(const std::string& id) const;
     };
 
     /**

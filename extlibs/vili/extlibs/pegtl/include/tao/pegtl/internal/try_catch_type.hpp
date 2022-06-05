@@ -1,8 +1,12 @@
-// Copyright (c) 2014-2020 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2014-2021 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
 #ifndef TAO_PEGTL_INTERNAL_TRY_CATCH_TYPE_HPP
 #define TAO_PEGTL_INTERNAL_TRY_CATCH_TYPE_HPP
+
+#if !defined( __cpp_exceptions )
+#error "Exception support required for tao/pegtl/internal/try_catch_type.hpp"
+#else
 
 #include <type_traits>
 
@@ -61,4 +65,5 @@ namespace TAO_PEGTL_NAMESPACE::internal
 
 }  // namespace TAO_PEGTL_NAMESPACE::internal
 
+#endif
 #endif

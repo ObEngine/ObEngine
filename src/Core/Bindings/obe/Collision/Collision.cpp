@@ -51,7 +51,6 @@ namespace obe::Collision::Bindings
                     obe::Component::Component<obe::Collision::PolygonalCollider>,
                     obe::Component::ComponentBase, obe::Types::Identifiable,
                     obe::Types::Serializable>());
-        bindPolygonalCollider["operator="] = &obe::Collision::PolygonalCollider::operator=;
         bindPolygonalCollider["addTag"] = &obe::Collision::PolygonalCollider::addTag;
         bindPolygonalCollider["clearTags"] = &obe::Collision::PolygonalCollider::clearTags;
         bindPolygonalCollider["doesCollide"] = sol::overload(
@@ -102,6 +101,8 @@ namespace obe::Collision::Bindings
         bindPolygonalCollider["setRotation"] = &obe::Collision::PolygonalCollider::setRotation;
         bindPolygonalCollider["setPositionFromCentroid"]
             = &obe::Collision::PolygonalCollider::setPositionFromCentroid;
+
+        PolygonalCollider::Register();
     }
     void LoadClassTrajectory(sol::state_view state)
     {

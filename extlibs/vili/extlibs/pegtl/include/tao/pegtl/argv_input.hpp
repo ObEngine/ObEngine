@@ -1,4 +1,4 @@
-// Copyright (c) 2017-2020 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2017-2021 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
 #ifndef TAO_PEGTL_ARGV_INPUT_HPP
@@ -20,9 +20,9 @@ namespace TAO_PEGTL_NAMESPACE
    {
       [[nodiscard]] inline std::string make_argv_source( const std::size_t argn )
       {
-         std::ostringstream os;
-         os << "argv[" << argn << ']';
-         return os.str();
+         std::ostringstream oss;
+         oss << "argv[" << argn << ']';
+         return std::move( oss ).str();
       }
 
    }  // namespace internal

@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2020 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2014-2021 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
 #ifndef TAO_PEGTL_MEMORY_INPUT_HPP
@@ -62,8 +62,8 @@ namespace TAO_PEGTL_NAMESPACE
 
          ~memory_input_base() = default;
 
-         memory_input_base operator=( const memory_input_base& ) = delete;
-         memory_input_base operator=( memory_input_base&& ) = delete;
+         memory_input_base& operator=( const memory_input_base& ) = delete;
+         memory_input_base& operator=( memory_input_base&& ) = delete;
 
          [[nodiscard]] const char* current() const noexcept
          {
@@ -90,9 +90,9 @@ namespace TAO_PEGTL_NAMESPACE
             return m_current.line;
          }
 
-         [[nodiscard]] std::size_t byte_in_line() const noexcept
+         [[nodiscard]] std::size_t column() const noexcept
          {
-            return m_current.byte_in_line;
+            return m_current.column;
          }
 
          void bump( const std::size_t in_count = 1 ) noexcept
@@ -115,22 +115,26 @@ namespace TAO_PEGTL_NAMESPACE
             return TAO_PEGTL_NAMESPACE::position( it, m_source );
          }
 
-         void restart( const std::size_t in_byte = 0, const std::size_t in_line = 1, const std::size_t in_byte_in_line = 1 )
+         void restart( const std::size_t in_byte = 0, const std::size_t in_line = 1, const std::size_t in_column = 1 )
          {
             assert( in_line != 0 );
-            assert( in_byte_in_line != 0 );
+            assert( in_column != 0 );
 
             m_current.data = m_begin;
             m_current.byte = in_byte;
             m_current.line = in_line;
-            m_current.byte_in_line = in_byte_in_line;
+            m_current.column = in_column;
+            private_depth = 0;
          }
 
       protected:
          const char* const m_begin;
          iterator_t m_current;
-         const char* const m_end;
+         const char* m_end;
          const Source m_source;
+
+      public:
+         std::size_t private_depth = 0;
       };
 
       template< typename Eol, typename Source >
@@ -160,8 +164,8 @@ namespace TAO_PEGTL_NAMESPACE
 
          ~memory_input_base() = default;
 
-         memory_input_base operator=( const memory_input_base& ) = delete;
-         memory_input_base operator=( memory_input_base&& ) = delete;
+         memory_input_base& operator=( const memory_input_base& ) = delete;
+         memory_input_base& operator=( memory_input_base&& ) = delete;
 
          [[nodiscard]] const char* current() const noexcept
          {
@@ -208,13 +212,17 @@ namespace TAO_PEGTL_NAMESPACE
          void restart()
          {
             m_current = m_begin.data;
+            private_depth = 0;
          }
 
       protected:
          const internal::iterator m_begin;
          iterator_t m_current;
-         const char* const m_end;
+         const char* m_end;
          const Source m_source;
+
+      public:
+         std::size_t private_depth = 0;
       };
 
    }  // namespace internal
@@ -259,8 +267,8 @@ namespace TAO_PEGTL_NAMESPACE
       {}
 
       template< typename T >
-      memory_input( const char* in_begin, const char* in_end, T&& in_source, const std::size_t in_byte, const std::size_t in_line, const std::size_t in_byte_in_line ) noexcept( std::is_nothrow_constructible_v< Source, T&& > )
-         : memory_input( { in_begin, in_byte, in_line, in_byte_in_line }, in_end, std::forward< T >( in_source ) )
+      memory_input( const char* in_begin, const char* in_end, T&& in_source, const std::size_t in_byte, const std::size_t in_line, const std::size_t in_column ) noexcept( std::is_nothrow_constructible_v< Source, T&& > )
+         : memory_input( { in_begin, in_byte, in_line, in_column }, in_end, std::forward< T >( in_source ) )
       {}
 
       memory_input( const memory_input& ) = delete;
@@ -268,8 +276,8 @@ namespace TAO_PEGTL_NAMESPACE
 
       ~memory_input() = default;
 
-      memory_input operator=( const memory_input& ) = delete;
-      memory_input operator=( memory_input&& ) = delete;
+      memory_input& operator=( const memory_input& ) = delete;
+      memory_input& operator=( memory_input&& ) = delete;
 
       [[nodiscard]] const Source& source() const noexcept
       {
@@ -338,7 +346,7 @@ namespace TAO_PEGTL_NAMESPACE
 
       [[nodiscard]] const char* begin_of_line( const TAO_PEGTL_NAMESPACE::position& p ) const noexcept
       {
-         return at( p ) - ( p.byte_in_line - 1 );
+         return at( p ) - ( p.column - 1 );
       }
 
       [[nodiscard]] const char* end_of_line( const TAO_PEGTL_NAMESPACE::position& p ) const noexcept
@@ -354,6 +362,11 @@ namespace TAO_PEGTL_NAMESPACE
       {
          const char* b = begin_of_line( p );
          return std::string_view( b, static_cast< std::size_t >( end_of_line( p ) - b ) );
+      }
+
+      void private_set_end( const char* new_end ) noexcept
+      {
+         this->m_end = new_end;
       }
    };
 

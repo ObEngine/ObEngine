@@ -178,7 +178,7 @@ namespace obe::Script
                 vili::node& sourceNode = script.at("sources");
                 if (sourceNode.is<vili::array>())
                 {
-                    for (vili::node& source : sourceNode)
+                    for (const vili::node& source : sourceNode)
                     {
                         loadSource(source);
                     }
@@ -366,7 +366,7 @@ namespace obe::Script
             m_active = false;
             if (m_hasScriptEngine)
             {
-                for (auto [k, _] : m_environment)
+                for (const auto& [k, _] : m_environment)
                 {
                     m_environment[k] = sol::lua_nil;
                 }
@@ -392,6 +392,11 @@ namespace obe::Script
     void GameObject::setState(bool state)
     {
         m_active = state;
+    }
+
+    vili::node GameObject::schema() const
+    {
+        return vili::object {};
     }
 
     vili::node GameObject::dump() const

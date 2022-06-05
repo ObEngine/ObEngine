@@ -1,12 +1,12 @@
 name: artifacts
 
 on:
-  release:
-    types: [created]
+  push:
+    branches: '*'
 
 jobs:
-  release_linux:
-    name: Release ObEngine Linux package
+  artifact_linux:
+    name: Upload ObEngine Linux artifact
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -33,27 +33,19 @@ jobs:
     - name: Compile and install SFML
       run: cd SFML; cmake .; make -j8; sudo make install
     - name: Compile ObEngine
-      run: cd build; cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DBUILD_PRODUCTION=ON ..; make -j8
+      run: cd build; cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_PRODUCTION=ON ..; make -j8
     - name: Run tests
       run: export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/usr/local/lib"; ./build/tests/ObEngineTests
     - name: Create package
-      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
-    - name: Package to archive
-      run: tar -cvf obengine-dev.tar release/ ; gzip -9 obengine-dev.tar
-    - name: Upload Release Asset
-      id: upload-release-asset-linux
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/; cp ./build/src/Toolkit/obey release/
+    - name: Upload Linux Artifact
+      uses: actions/upload-artifact@v2
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./obengine-dev.tar.gz
-        asset_name: obengine-dev.linux64.tar.gz
-        asset_content_type: application/zip
+        name: obengine.linux64
+        path: ./release
 
-
-  release_windows:
-    name: Release ObEngine Windows package
+  artifact_windows:
+    name: Upload ObEngine Windows artifact
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v2
@@ -77,24 +69,16 @@ jobs:
     - name: Run tests
       run: ./build/tests/Release/ObEngineTests.exe
     - name: Create package
-      run: cp -r engine/ release/; cp ./build/src/Player/Release/* ./release/
+      run: cp -r engine/ release/; cp ./build/src/Player/Release/* ./release/; cp ./build/src/Toolkit/Release/obey.exe ./release;
       shell: pwsh
-    - name: Package to archive
-      run: Compress-Archive -path ./release/* -destinationpath obengine-dev.zip -compressionlevel optimal
-    - name: Upload Release Asset
-      id: upload-release-asset-win
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    - name: Upload Windows Artifact
+      uses: actions/upload-artifact@v2
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./obengine-dev.zip
-        asset_name: obengine-dev.win64.zip
-        asset_content_type: application/zip
+        name: obengine.win64
+        path: ./release
 
-
-  release_macos:
-    name: Release ObEngine MacOS package
+  artifact_macos:
+    name: Upload ObEngine MacOS artifact
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v2
@@ -105,22 +89,15 @@ jobs:
     - name: Create build directory
       run: mkdir build
     - name: Run CMake on ObEngine
-      run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DBUILD_PRODUCTION=ON ..
+      run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_PRODUCTION=ON ..
     - name: Compile ObEngine
       run: cd build && make -j8
     - name: Run tests
       run: cd build && ./tests/ObEngineTests
     - name: Create package
-      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/
-    - name: Package to archive
-      run: tar -cvf obengine-dev.tar release/ ; gzip -9 obengine-dev.tar
-    - name: Upload Release Asset
-      id: upload-release-asset-macos
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/; cp ./build/src/Toolkit/obey release/
+    - name: Upload MacOS Artifact
+      uses: actions/upload-artifact@v2
       with:
-        upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./obengine-dev.tar.gz
-        asset_name: obengine-dev.macos64.tar.gz
-        asset_content_type: application/zip
+        name: obengine.macos64
+        path: ./release

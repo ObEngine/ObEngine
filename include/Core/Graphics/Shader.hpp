@@ -18,11 +18,12 @@ namespace obe::Graphics
     public:
         Shader();
         explicit Shader(const std::string& path);
+        [[nodiscard]] vili::node schema() const override;
         /**
          * \brief Dumps the content of the Shader to a Vili Node
          * \param target Vili Node where to serialize the Shader
          */
-        vili::node dump() const override;
+        [[nodiscard]] vili::node dump() const override;
         /**
          * \brief Loads the Shader from a Vili Node
          * \param data Vili Node containing the data of the Shader

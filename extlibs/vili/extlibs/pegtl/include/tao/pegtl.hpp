@@ -1,10 +1,11 @@
-// Copyright (c) 2014-2020 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2014-2021 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
 #ifndef TAO_PEGTL_HPP
 #define TAO_PEGTL_HPP
 
 #include "pegtl/config.hpp"
+#include "pegtl/demangle.hpp"
 #include "pegtl/parse.hpp"
 #include "pegtl/version.hpp"
 
@@ -38,7 +39,10 @@
 #include "pegtl/discard_input_on_failure.hpp"
 #include "pegtl/discard_input_on_success.hpp"
 
-#include "pegtl/must_if.hpp"
 #include "pegtl/visit.hpp"
+
+#if defined( __cpp_exceptions )
+#include "pegtl/must_if.hpp"
+#endif
 
 #endif

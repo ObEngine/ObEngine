@@ -17,6 +17,8 @@ namespace obe::System::Project::Bindings
         bindProject["loadFromFile"] = &obe::System::Project::Project::loadFromFile;
         bindProject["mount"] = &obe::System::Project::Project::mount;
         bindProject["unmount"] = &obe::System::Project::Project::unmount;
+        bindProject["getId"] = &obe::System::Project::Project::getId;
+        bindProject["isStandalone"] = &obe::System::Project::Project::isStandalone;
     }
     void LoadClassProjectURLs(sol::state_view state)
     {

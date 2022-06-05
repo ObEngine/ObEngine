@@ -60,7 +60,10 @@ namespace obe::Tiles::Bindings
         bindTileScene["getLayersIds"] = &obe::Tiles::TileScene::getLayersIds;
         bindTileScene["getLayer"] = &obe::Tiles::TileScene::getLayer;
         bindTileScene["getAnimatedTiles"] = &obe::Tiles::TileScene::getAnimatedTiles;
-        bindTileScene["getTilesets"] = &obe::Tiles::TileScene::getTilesets;
+        bindTileScene["getTilesets"]
+            = [](obe::Tiles::TileScene* self) -> const obe::Tiles::TilesetCollection* {
+            return &self->getTilesets();
+        };
         bindTileScene["getRenderables"] = &obe::Tiles::TileScene::getRenderables;
         bindTileScene["getColliderModels"] = &obe::Tiles::TileScene::getColliderModels;
         bindTileScene["getGameObjectsModels"] = &obe::Tiles::TileScene::getGameObjectsModels;

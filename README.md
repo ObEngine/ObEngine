@@ -9,10 +9,8 @@
 
 | CI/CD name  | Build status |
 | ----------- | ------------ |
-| GitHub Actions | [![Build Status](https://img.shields.io/github/workflow/status/ObEngine/ObEngine/build?logo=github&style=for-the-badge)](https://github.com/ObEngine/ObEngine/actions?query=workflow%3Abuild) |
-| Travis      | [![Build Status](https://img.shields.io/travis/Sygmei/ObEngine.svg?style=for-the-badge&logo=travis)](https://travis-ci.org/Sygmei/ObEngine) |
-| AppVeyor    | [![Build status](https://img.shields.io/appveyor/ci/Sygmei/ObEngine.svg?style=for-the-badge&logo=appveyor)](https://ci.appveyor.com/project/Sygmei/obengine) |
-| Azure Pipelines | [![Build Status](https://img.shields.io/azure-devops/build/obengine/d879c6ea-1ed9-4984-b3d1-84c5dd9b8feb/1.svg?style=for-the-badge&logo=microsoft-azure)](https://dev.azure.com/obengine/%C3%96bEngine) |
+| GitHub Actions | [![Build Status](https://img.shields.io/github/workflow/status/ObEngine/ObEngine/build/v0.5?logo=github&style=for-the-badge)](https://github.com/ObEngine/ObEngine/actions?query=workflow%3Abuild) |
+| Azure Pipelines | [![Build Status](https://img.shields.io/azure-devops/build/obengine/bb2943ed-4d02-4bdf-97d6-dac42bdb2232/2/v0.5?style=for-the-badge&logo=microsoft-azure)](https://dev.azure.com/obengine/ObEngine) |
 
 ## Useful links
 
@@ -48,7 +46,7 @@ Check this tutorial to learn how to build ÖbEngine : [Building ÖbEngine](https
 |[dynamicLinker](https://github.com/Marqin/dynamicLinker)|Dynamic Libs wrapper|MIT License|
 |[fmt](https://github.com/fmtlib/fmt)|Formatting library|BSD 2-Clause "Simplified" License|
 |[Sol](https://github.com/ThePhD/sol)|C++ binding library to Lua|MIT License|
-|[Lua 5.3](http://lua-users.org/wiki/LuaBinaries)|Scripting language|zlib License|
+|[Lua 5.4](http://lua-users.org/wiki/LuaBinaries)|Scripting language|zlib License|
 |[RichText](https://github.com/Skyrpex/RichText)|sf::Text extension|MIT License|
 |[spdlog](https://github.com/gabime/spdlog)|Logging library|MIT License|
 |[Vili](https://github.com/Sygmei/Vili)|Homemade Data language (YAML-like)|MIT License|

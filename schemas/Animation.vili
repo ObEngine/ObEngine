@@ -1,0 +1,54 @@
+template test:
+    a:
+        b:
+            c: 3
+template test2: {
+    x: {
+        y: {
+            z: 4
+        }
+    }
+}
+
+Meta: object
+    ax: test {
+        zz: 1
+    }
+    ax2: test2
+    properties:
+        name: string
+            min_length: 1
+        clock: number
+            optional: true
+            min: 0
+        mode: string
+            values: ["once", "loop", "force"]
+            optional: true
+Images: object
+    properties:
+        images: array
+            items: union
+                types: [string, integer]
+            min_size: 1
+        model: string
+            optional: true
+Groups: object
+    items: object
+        properties:
+            content: array
+                items: integer
+            clock: number
+                optional: true
+Animation: object
+    properties:
+        code: array
+            items: object
+                properties:
+                    command: string
+                        values: ["play_group", "set_animation", "wait"]
+                    group: string
+                        optional: true
+                    repeat: integer
+                        optional: true
+                    animation: string
+                        optional: true

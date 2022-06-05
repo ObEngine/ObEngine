@@ -1,5 +1,7 @@
 project(ObEngineTests)
 
+include(setup_environment)
+
 file(GLOB_RECURSE OBT_HEADERS CONFIGURE_DEPENDS src/*.hpp)
 file(GLOB_RECURSE OBT_SOURCES CONFIGURE_DEPENDS src/*.cpp)
 
@@ -17,3 +19,5 @@ target_link_libraries(ObEngineTests sfml-window)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
+
+copy_required_dlls(ObEngineTests)

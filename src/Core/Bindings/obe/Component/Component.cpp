@@ -13,10 +13,10 @@ namespace obe::Component::Bindings
             = ComponentNamespace.new_usertype<obe::Component::ComponentBase>("ComponentBase",
                 sol::base_classes,
                 sol::bases<obe::Types::Identifiable, obe::Types::Serializable>());
-        bindComponentBase["inject"] = &obe::Component::ComponentBase::inject;
         bindComponentBase["remove"] = &obe::Component::ComponentBase::remove;
         bindComponentBase["dump"] = &obe::Component::ComponentBase::dump;
         bindComponentBase["load"] = &obe::Component::ComponentBase::load;
         bindComponentBase["type"] = &obe::Component::ComponentBase::type;
+        bindComponentBase["cast"] = &obe::Component::ComponentBase::cast;
     }
 };

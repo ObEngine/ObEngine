@@ -6,6 +6,7 @@ namespace sol
 };
 namespace obe::System::Exceptions::Bindings
 {
+    void LoadClassInvalidDeferredMountablePath(sol::state_view state);
     void LoadClassInvalidMountFile(sol::state_view state);
     void LoadClassInvalidMouseButtonEnumValue(sol::state_view state);
     void LoadClassInvalidProjectFile(sol::state_view state);

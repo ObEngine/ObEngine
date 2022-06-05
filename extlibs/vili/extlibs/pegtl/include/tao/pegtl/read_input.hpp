@@ -1,4 +1,4 @@
-// Copyright (c) 2014-2020 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2014-2021 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
 #ifndef TAO_PEGTL_READ_INPUT_HPP
@@ -12,46 +12,29 @@
 #include "tracking_mode.hpp"
 
 #include "internal/file_reader.hpp"
+#include "internal/filesystem.hpp"
+#include "internal/path_to_string.hpp"
 
 namespace TAO_PEGTL_NAMESPACE
 {
-   namespace internal
-   {
-      struct filename_holder
-      {
-         const std::string filename;
-
-         template< typename T >
-         explicit filename_holder( T&& in_filename )
-            : filename( std::forward< T >( in_filename ) )
-         {}
-
-         filename_holder( const filename_holder& ) = delete;
-         filename_holder( filename_holder&& ) = delete;
-
-         ~filename_holder() = default;
-
-         void operator=( const filename_holder& ) = delete;
-         void operator=( filename_holder&& ) = delete;
-      };
-
-   }  // namespace internal
-
    template< tracking_mode P = tracking_mode::eager, typename Eol = eol::lf_crlf >
    struct read_input
-      : private internal::filename_holder,
-        public string_input< P, Eol, const char* >
+      : string_input< P, Eol >
    {
-      template< typename T >
-      explicit read_input( T&& in_filename )
-         : internal::filename_holder( std::forward< T >( in_filename ) ),
-           string_input< P, Eol, const char* >( internal::file_reader( filename.c_str() ).read(), filename.c_str() )
+      read_input( const internal::filesystem::path& path, const std::string& source )
+         : string_input< P, Eol >( internal::file_reader( path ).read(), source )
       {}
 
-      template< typename T >
-      read_input( FILE* in_file, T&& in_filename )
-         : internal::filename_holder( std::forward< T >( in_filename ) ),
-           string_input< P, Eol, const char* >( internal::file_reader( in_file, filename.c_str() ).read(), filename.c_str() )
+      explicit read_input( const internal::filesystem::path& path )
+         : read_input( path, internal::path_to_string( path ) )
+      {}
+
+      read_input( FILE* file, const internal::filesystem::path& path, const std::string& source )
+         : string_input< P, Eol >( internal::file_reader( file, path ).read(), source )
+      {}
+
+      read_input( FILE* file, const internal::filesystem::path& path )
+         : read_input( file, path, internal::path_to_string( path ) )
       {}
 
       read_input( const read_input& ) = delete;
@@ -59,8 +42,8 @@ namespace TAO_PEGTL_NAMESPACE
 
       ~read_input() = default;
 
-      void operator=( const read_input& ) = delete;
-      void operator=( read_input&& ) = delete;
+      read_input& operator=( const read_input& ) = delete;
+      read_input& operator=( read_input&& ) = delete;
    };
 
    template< typename... Ts >

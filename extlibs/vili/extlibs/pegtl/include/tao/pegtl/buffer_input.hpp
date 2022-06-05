@@ -1,4 +1,4 @@
-// Copyright (c) 2016-2020 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2016-2021 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
 #ifndef TAO_PEGTL_BUFFER_INPUT_HPP
@@ -10,8 +10,14 @@
 #include <cstdint>
 #include <cstring>
 #include <memory>
-#include <stdexcept>
 #include <string>
+
+#if defined( __cpp_exceptions )
+#include <stdexcept>
+#else
+#include <cstdio>
+#include <exception>
+#endif
 
 #include "config.hpp"
 #include "eol.hpp"
@@ -60,8 +66,8 @@ namespace TAO_PEGTL_NAMESPACE
 
       ~buffer_input() = default;
 
-      void operator=( const buffer_input& ) = delete;
-      void operator=( buffer_input&& ) = delete;
+      buffer_input& operator=( const buffer_input& ) = delete;
+      buffer_input& operator=( buffer_input&& ) = delete;
 
       [[nodiscard]] bool empty()
       {
@@ -96,9 +102,9 @@ namespace TAO_PEGTL_NAMESPACE
          return m_current.line;
       }
 
-      [[nodiscard]] std::size_t byte_in_line() const noexcept
+      [[nodiscard]] std::size_t column() const noexcept
       {
-         return m_current.byte_in_line;
+         return m_current.column;
       }
 
       [[nodiscard]] const Source& source() const noexcept
@@ -147,7 +153,12 @@ namespace TAO_PEGTL_NAMESPACE
             return;
          }
          if( m_current.data + amount > m_buffer.get() + m_maximum ) {
-            throw std::overflow_error( "require beyond end of buffer" );
+#if defined( __cpp_exceptions )
+            throw std::overflow_error( "require() beyond end of buffer" );
+#else
+            std::fputs( "overflow error: require() beyond end of buffer\n", stderr );
+            std::terminate();
+#endif
          }
          if( const auto r = m_reader( m_end, ( std::min )( buffer_free_after_end(), ( std::max )( amount - buffer_occupied(), Chunk ) ) ) ) {
             m_end += r;
@@ -205,6 +216,9 @@ namespace TAO_PEGTL_NAMESPACE
       iterator_t m_current;
       char* m_end;
       const Source m_source;
+
+   public:
+      std::size_t private_depth = 0;
    };
 
 }  // namespace TAO_PEGTL_NAMESPACE

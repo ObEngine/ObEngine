@@ -41,6 +41,7 @@ target_link_libraries(ObEngineCore vili-d8)
 target_link_libraries(ObEngineCore dynamicLinker)
 target_link_libraries(ObEngineCore Soloud)
 target_link_libraries(ObEngineCore whereami)
+target_link_libraries(ObEngineCore lunasvg)
 
 # Internal / External dependencies
 target_link_libraries(ObEngineCore fmt::fmt)
@@ -79,7 +80,7 @@ group_files(
     "${ObEngine_SOURCE_DIR}/src/Core"
 )
 
-set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 17)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
 

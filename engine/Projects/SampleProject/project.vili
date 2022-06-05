@@ -12,11 +12,11 @@ source: "https://github.com/ObEngine/SampleProject"
 
 urls:
     homepage: "https://github.com/ObEngine/SampleProject"
-    issues: "hhttps://github.com/ObEngine/SampleProject/issues"
+    issues: "https://github.com/ObEngine/SampleProject/issues"
     readme: "https://github.com/ObEngine/SampleProject/tree/master/README.md"
     documentation: "https://github.com/ObEngine/SampleProject/wiki"
     license: "https://github.com/ObEngine/SampleProject/tree/master/LICENSE"
 
 mounts:
-    scenes: "root://Scenes"
-    objects: "root://GameObjects"
+    scenes: "game://Scenes"
+    objects: "game://GameObjects"

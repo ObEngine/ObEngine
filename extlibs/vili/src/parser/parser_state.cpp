@@ -6,21 +6,29 @@ namespace vili::parser
         : root(object {})
     {
         m_stack.emplace(&root, 0);
+        m_templates["integer"] = vili::object {{"type", "integer"}};
+        m_templates["number"] = vili::object {{"type", "number"}};
+        m_templates["string"] = vili::object {{"type", "string"}};
+        m_templates["boolean"] = vili::object {{"type", "boolean"}};
+        m_templates["array"] = vili::object {{"type", "array"}};
+        m_templates["object"] = vili::object {{"type", "object"}};
+        m_templates["any"] = vili::object {{"type", "any"}};
+        m_templates["union"] = vili::object {{"type", "union"}};
     }
 
     state::state(const state& state)
+        : m_indent_base(state.m_indent_base)
+        , m_templates(state.m_templates)
+        , root(state.root)
     {
-        m_templates = state.m_templates;
-        m_indent_base = state.m_indent_base;
-        root = state.root;
         m_stack.emplace(&root, 0);
     }
 
     state::state(state&& state)
+        : m_indent_base(state.m_indent_base)
+        , m_templates(std::move(state.m_templates))
+        , root(state.root)
     {
-        m_templates = std::move(state.m_templates);
-        m_indent_base = state.m_indent_base;
-        root = state.root;
         m_stack.emplace(&root, 0);
     }
 
@@ -164,6 +172,12 @@ namespace vili::parser
         {
             return it->second;
         }
-        throw exceptions::unknown_template(template_name, VILI_EXC_INFO);
+        std::vector<std::string> templates_names;
+        templates_names.reserve(m_templates.size());
+        std::transform(m_templates.begin(), m_templates.end(), std::back_inserter(templates_names),
+            [](const auto& template_pair) {
+                return template_pair.first;
+            });
+        throw exceptions::unknown_template(template_name, templates_names, VILI_EXC_INFO);
     }
 }

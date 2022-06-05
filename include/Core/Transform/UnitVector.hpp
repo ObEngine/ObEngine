@@ -5,6 +5,12 @@
 #include <Transform/UnitStructures.hpp>
 #include <Transform/Units.hpp>
 
+namespace obe::Animation
+{
+    template <class T>
+    class TweenImpl;
+}
+
 namespace obe::Transform
 {
     /**
@@ -14,6 +20,7 @@ namespace obe::Transform
      */
     class UnitVector
     {
+        friend class Animation::TweenImpl<UnitVector>;
     public:
         /**
          * \nobind

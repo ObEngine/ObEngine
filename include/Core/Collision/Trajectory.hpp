@@ -8,6 +8,12 @@
 #include <Transform/Units.hpp>
 #include <Types/Togglable.hpp>
 
+namespace obe::Animation
+{
+    template <class T>
+    class TweenImpl;
+}
+
 namespace obe::Collision
 {
     class TrajectoryNode;
@@ -19,12 +25,14 @@ namespace obe::Collision
     using TrajectoryCheckFunction
         = std::function<void(Trajectory&, Transform::UnitVector&, PolygonalCollider*)>;
 
+ 
     /**
      * \brief A Trajectory makes a TrajectoryNode moves using angle, speed and
      *        acceleration (Linear Trajectory)
      */
     class Trajectory : public Types::Togglable
     {
+        friend class Animation::TweenImpl<Trajectory>;
     private:
         double m_acceleration = 0;
         double m_angle = 0;

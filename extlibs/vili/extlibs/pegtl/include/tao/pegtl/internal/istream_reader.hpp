@@ -1,11 +1,17 @@
-// Copyright (c) 2016-2020 Dr. Colin Hirsch and Daniel Frey
+// Copyright (c) 2016-2021 Dr. Colin Hirsch and Daniel Frey
 // Please see LICENSE for license or visit https://github.com/taocpp/PEGTL/
 
 #ifndef TAO_PEGTL_INTERNAL_ISTREAM_READER_HPP
 #define TAO_PEGTL_INTERNAL_ISTREAM_READER_HPP
 
 #include <istream>
+
+#if defined( __cpp_exceptions )
 #include <system_error>
+#else
+#include <cstdio>
+#include <exception>
+#endif
 
 #include "../config.hpp"
 
@@ -27,8 +33,13 @@ namespace TAO_PEGTL_NAMESPACE::internal
          if( m_istream.eof() ) {
             return 0;
          }
+#if defined( __cpp_exceptions )
          const auto ec = errno;
          throw std::system_error( ec, std::system_category(), "std::istream::read() failed" );
+#else
+         std::fputs( "std::istream::read() failed\n", stderr );
+         std::terminate();
+#endif
       }
 
       std::istream& m_istream;

@@ -21,5 +21,6 @@ namespace obe::System::Bindings
     void LoadEnumWindowContext(sol::state_view state);
     void LoadEnumStretchMode(sol::state_view state);
     void LoadFunctionSplitPathAndPrefix(sol::state_view state);
+    void LoadFunctionPathTypeToString(sol::state_view state);
     void LoadFunctionStringToStretchMode(sol::state_view state);
 };

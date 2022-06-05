@@ -127,8 +127,8 @@ namespace obe::System::Bindings
         sol::usertype<obe::System::FindResult> bindFindResult
             = SystemNamespace.new_usertype<obe::System::FindResult>("FindResult",
                 sol::call_constructor,
-                sol::constructors<obe::System::FindResult(const std::string&, const std::string&,
-                                      const obe::System::MountList&),
+                sol::constructors<obe::System::FindResult(obe::System::PathType, const std::string&,
+                                      const std::string&, const obe::System::MountList&),
                     obe::System::FindResult(obe::System::PathType,
                         std::shared_ptr<obe::System::MountablePath>, const std::string&,
                         const std::string&),
@@ -153,8 +153,11 @@ namespace obe::System::Bindings
                     obe::System::MountablePath(obe::System::MountablePathType, std::string_view,
                         std::string_view, unsigned int),
                     obe::System::MountablePath(obe::System::MountablePathType, std::string_view,
-                        std::string_view, unsigned int, bool)>());
+                        std::string_view, unsigned int, bool),
+                    obe::System::MountablePath(obe::System::MountablePathType, std::string_view,
+                        std::string_view, unsigned int, bool, bool)>());
         bindMountablePath[sol::meta_function::equal_to] = &obe::System::MountablePath::operator==;
+        bindMountablePath["resolveBasePath"] = &obe::System::MountablePath::resolveBasePath;
         bindMountablePath["LoadMountFile"] = sol::overload(
             []() -> void { return obe::System::MountablePath::LoadMountFile(); },
             [](bool fromCWD) -> void { return obe::System::MountablePath::LoadMountFile(fromCWD); },
@@ -179,6 +182,7 @@ namespace obe::System::Bindings
         bindMountablePath["prefix"] = &obe::System::MountablePath::prefix;
         bindMountablePath["priority"] = &obe::System::MountablePath::priority;
         bindMountablePath["implicit"] = &obe::System::MountablePath::implicit;
+        bindMountablePath["deferredResolution"] = &obe::System::MountablePath::deferredResolution;
     }
     void LoadClassPath(sol::state_view state)
     {
@@ -210,7 +214,6 @@ namespace obe::System::Bindings
             [](obe::System::Path* self, obe::System::PathType pathType)
                 -> std::vector<obe::System::FindResult> { return self->findAll(pathType); });
         bindPath["toString"] = &obe::System::Path::toString;
-        bindPath["operator="] = &obe::System::Path::operator=;
         state.script_file("obe://Lib/Internal/Require.lua"_fs);
         state.script_file("obe://Lib/Internal/Filesystem.lua"_fs);
     }
@@ -272,6 +275,11 @@ namespace obe::System::Bindings
                     bool warnOnMissingPrefix) -> std::pair<std::string, std::string> {
                     return obe::System::splitPathAndPrefix(path, warnOnMissingPrefix);
                 }));
+    }
+    void LoadFunctionPathTypeToString(sol::state_view state)
+    {
+        sol::table SystemNamespace = state["obe"]["System"].get<sol::table>();
+        SystemNamespace.set_function("pathTypeToString", &obe::System::pathTypeToString);
     }
     void LoadFunctionStringToStretchMode(sol::state_view state)
     {

@@ -45,7 +45,8 @@ namespace obe::Scene::Exceptions
                 = Utils::String::sortByDistance(objectId.data(), allObjectIds, 5);
             std::transform(
                 suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
-            this->hint("Try one of the GameObjects with id ({}...)", fmt::join(suggestions, ", "));
+            suggestions.push_back("...");
+            this->hint("Try one of the GameObjects with id ({})", fmt::join(suggestions, ", "));
         }
     };
 
@@ -77,7 +78,8 @@ namespace obe::Scene::Exceptions
                 = Utils::String::sortByDistance(spriteId.data(), allSpritesIds, 5);
             std::transform(
                 suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
-            this->hint("Try one of the Sprites with id ({}...)", fmt::join(suggestions, ", "));
+            suggestions.push_back("...");
+            this->hint("Try one of the Sprites with id ({})", fmt::join(suggestions, ", "));
         }
     };
 
@@ -95,7 +97,8 @@ namespace obe::Scene::Exceptions
                 = Utils::String::sortByDistance(colliderId.data(), allCollidersIds, 5);
             std::transform(
                 suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
-            this->hint("Try one of the Colliders with id ({}...)", fmt::join(suggestions, ", "));
+            suggestions.push_back("...");
+            this->hint("Try one of the Colliders with id ({})", fmt::join(suggestions, ", "));
         }
     };
 
@@ -124,6 +127,17 @@ namespace obe::Scene::Exceptions
             this->error("Encountered error while running OnLoadCallback to load Scene "
                         "'{}' from Scene '{}' : '{}'",
                 nextSceneFile, sceneFile, errorMessage);
+        }
+    };
+
+    class InvalidSceneFile : public Exception<InvalidSceneFile>
+    {
+    public:
+        using Exception::Exception;
+        InvalidSceneFile(std::string_view sceneFile, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("Encountered error while loading Scene from file '{}'", sceneFile);
         }
     };
 }

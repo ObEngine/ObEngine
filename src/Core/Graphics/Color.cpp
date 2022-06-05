@@ -243,6 +243,11 @@ namespace obe::Graphics
         this->a = color.a;
     }
 
+    vili::node Color::schema() const
+    {
+        return vili::object {};
+    }
+
     vili::node Color::dump(ColorType type) const
     {
         vili::node result;
@@ -404,12 +409,13 @@ namespace obe::Graphics
 
     uint32_t Color::toInteger() const
     {
-        return (std::lround(r) << 24) + (std::lround(g) << 16) + (std::lround(b) << 8) + std::lround(a);
+        return (std::lround(r) << 24) + (std::lround(g) << 16) + (std::lround(b) << 8)
+            + std::lround(a);
     }
 
     void Color::fromHex(std::string hexCode)
     {
-        std::array<unsigned short, 4> rgba {0, 0, 0, 255};
+        std::array<unsigned short, 4> rgba { 0, 0, 0, 255 };
         std::stringstream ss;
         std::string str;
 
@@ -520,8 +526,7 @@ namespace obe::Graphics
     {
         std::stringstream ss;
         ss << "#";
-        ss << std::hex
-           << (std::lround(r) << 16 | std::lround(g) << 8 | std::lround(b));
+        ss << std::hex << (std::lround(r) << 16 | std::lround(g) << 8 | std::lround(b));
         if (std::lround(a) != 255)
         {
             ss << std::hex << std::lround(a);

@@ -96,5 +96,11 @@ Thumbs.db
 /.qmake.stash
 *.d
 *.qmlc
-.vscode/
 .DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# ObEngine specific
+debug.log

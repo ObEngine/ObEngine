@@ -108,6 +108,8 @@ namespace obe::Graphics
         bool m_antiAliasing = true;
 
         void resetUnit(Transform::Units unit) override;
+        void refreshVectorTexture(
+            const Transform::UnitVector& surfaceSize, const std::array<sf::Vertex, 4>& vertices);
 
     public:
         /**
@@ -125,11 +127,6 @@ namespace obe::Graphics
          * \param camera contains the offset for drawing the handle
          */
         void drawHandle(RenderTarget& surface, const Scene::Camera& camera) const;
-        /**
-         * \brief Dumps the content of the Sprite to a ComplexNode
-         * \param target ComplexNode where to serialize the Sprite
-         */
-        vili::node dump() const override;
         /**
          * \brief Get the blend color of the Sprite
          * \return A Color containing the blend color of the Sprite
@@ -193,6 +190,12 @@ namespace obe::Graphics
          * \return A reference to the current texture of the Sprite
          */
         [[nodiscard]] const Graphics::Texture& getTexture() const;
+
+        /**
+         * \brief Gets a reference to the texture of the Sprite
+         * \return A reference to the current texture of the Sprite
+         */
+        [[nodiscard]] Graphics::Texture& getTexture();
         /**
          * \brief Get the x Coordinate of the scale factor of the Sprite
          * \return -1 if the Sprite has been horizontally flipped, 1
@@ -207,6 +210,12 @@ namespace obe::Graphics
         [[nodiscard]] int getYScaleFactor() const;
         [[nodiscard]] bool getAntiAliasing() const;
         [[nodiscard]] bool hasShader() const;
+        [[nodiscard]] vili::node schema() const override;
+        /**
+         * \brief Dumps the content of the Sprite to a ComplexNode
+         * \return vili::node containing the Sprite details
+         */
+        vili::node dump() const override;
         /**
          * \brief Loads the Sprite from a ComplexNode
          * \param data ComplexNode containing the data of the Sprite
