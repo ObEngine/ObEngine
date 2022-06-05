@@ -2,102 +2,102 @@ name: artifacts
 
 on:
   push:
-    branches: '*'
+    branches: "*"
 
 jobs:
   artifact_linux:
     name: Upload ObEngine Linux artifact
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Clean previous execution
-      run: rm -rf build; rm -rf SFML
-    - name: Create build directory
-      run: mkdir build
-    - name: Aptitude update
-      run: sudo apt-get update
-    - name: Install CMake
-      run: sudo apt-get install -y cmake
-    - name: Install G++ and build-essential
-      run: sudo apt-get install -y build-essential g++
-    - name: Install git
-      run: sudo apt-get install -y git
-    - name: Install ALSA
-      run: sudo apt-get install -y libasound2 alsa-utils alsa-oss libasound2-dev
-    - name: Install SFML dependencies
-      run: sudo apt install libfreetype6-dev libxrandr-dev libudev-dev libogg-dev libflac-dev libvorbis-dev libopenal-dev libgl1-mesa-dev
-    - name: Retrieve SFML 2.5.1
-      run: "git clone --branch 2.5.1 --depth 1 http://github.com/SFML/SFML.git"
-    - name: Compile and install SFML
-      run: cd SFML; cmake .; make -j8; sudo make install
-    - name: Compile ObEngine
-      run: cd build; cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_BUILD_TYPE=Release ..; make -j8
-    - name: Run tests
-      run: export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/usr/local/lib"; ./build/tests/ObEngineTests
-    - name: Create package
-      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/; cp ./build/src/Toolkit/obey release/
-    - name: Upload Linux Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: obengine.linux64
-        path: ./release
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Clean previous execution
+        run: rm -rf build; rm -rf SFML
+      - name: Create build directory
+        run: mkdir build
+      - name: Aptitude update
+        run: sudo apt-get update
+      - name: Install CMake
+        run: sudo apt-get install -y cmake
+      - name: Install G++ and build-essential
+        run: sudo apt-get install -y build-essential g++
+      - name: Install git
+        run: sudo apt-get install -y git
+      - name: Install ALSA
+        run: sudo apt-get install -y libasound2 alsa-utils alsa-oss libasound2-dev
+      - name: Install SFML dependencies
+        run: sudo apt install libfreetype6-dev libxrandr-dev libudev-dev libogg-dev libflac-dev libvorbis-dev libopenal-dev libgl1-mesa-dev
+      - name: Retrieve SFML 2.5.1
+        run: "git clone --branch 2.5.1 --depth 1 http://github.com/SFML/SFML.git"
+      - name: Compile and install SFML
+        run: cd SFML; cmake .; make -j8; sudo make install
+      - name: Compile ObEngine
+        run: cd build; cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_BUILD_TYPE=Release ..; make -j8
+      - name: Run tests
+        run: export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/usr/local/lib"; ./build/tests/ObEngineTests
+      - name: Create package
+        run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/; cp ./build/src/Toolkit/obey release/
+      - name: Upload Linux Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: obengine.linux64
+          path: ./release
 
   artifact_windows:
     name: Upload ObEngine Windows artifact
     runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Create deps directory
-      run: mkdir deps
-    - name: Download pre-built SFML
-      run: cd deps; Invoke-WebRequest -Uri "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip" -OutFile SFML-2.5.1.zip
-      shell: pwsh
-    - name: Extract SFML
-      run: Expand-Archive -LiteralPath deps/SFML-2.5.1.zip -DestinationPath deps
-      shell: pwsh
-    - name: Create build directory
-      run: mkdir build
-    - name: Run CMake on ObEngine
-      run: cd build; cmake -G "Visual Studio 16 2019" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..
-      shell: pwsh
-    - name: Compile ObEngine
-      run: cmake --build build --config Release -- /m:8
-    - name: Run tests
-      run: ./build/tests/Release/ObEngineTests.exe
-    - name: Create package
-      run: cp -r engine/ release/; cp ./build/src/Player/Release/* ./release/; cp ./build/src/Toolkit/Release/obey.exe ./release;
-      shell: pwsh
-    - name: Upload Windows Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: obengine.win64
-        path: ./release
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Create deps directory
+        run: mkdir deps
+      - name: Download pre-built SFML
+        run: cd deps; Invoke-WebRequest -Uri "https://www.sfml-dev.org/files/SFML-2.5.1-windows-vc15-64-bit.zip" -OutFile SFML-2.5.1.zip
+        shell: pwsh
+      - name: Extract SFML
+        run: Expand-Archive -LiteralPath deps/SFML-2.5.1.zip -DestinationPath deps
+        shell: pwsh
+      - name: Create build directory
+        run: mkdir build
+      - name: Run CMake on ObEngine
+        run: cd build; cmake -G "Visual Studio 17 2022" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..
+        shell: pwsh
+      - name: Compile ObEngine
+        run: cmake --build build --config Release -- /m:8
+      - name: Run tests
+        run: ./build/tests/Release/ObEngineTests.exe
+      - name: Create package
+        run: cp -r engine/ release/; cp ./build/src/Player/Release/* ./release/; cp ./build/src/Toolkit/Release/obey.exe ./release;
+        shell: pwsh
+      - name: Upload Windows Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: obengine.win64
+          path: ./release
 
   artifact_macos:
     name: Upload ObEngine MacOS artifact
     runs-on: macos-latest
     steps:
-    - uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-    - name: Install SFML
-      run: brew install sfml
-    - name: Create build directory
-      run: mkdir build
-    - name: Run CMake on ObEngine
-      run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_BUILD_TYPE=Release ..
-    - name: Compile ObEngine
-      run: cd build && make -j8
-    - name: Run tests
-      run: cd build && ./tests/ObEngineTests
-    - name: Create package
-      run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/; cp ./build/src/Toolkit/obey release/
-    - name: Upload MacOS Artifact
-      uses: actions/upload-artifact@v2
-      with:
-        name: obengine.macos64
-        path: ./release
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Install SFML
+        run: brew install sfml
+      - name: Create build directory
+        run: mkdir build
+      - name: Run CMake on ObEngine
+        run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_BUILD_TYPE=Release ..
+      - name: Compile ObEngine
+        run: cd build && make -j8
+      - name: Run tests
+        run: cd build && ./tests/ObEngineTests
+      - name: Create package
+        run: cp -r engine/ release/; cp ./build/src/Player/ObEnginePlayer release/; cp ./build/src/Toolkit/obey release/
+      - name: Upload MacOS Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: obengine.macos64
+          path: ./release
