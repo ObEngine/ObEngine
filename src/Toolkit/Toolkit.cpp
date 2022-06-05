@@ -82,9 +82,9 @@ void run(std::string command)
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::table, sol::lib::package,
         sol::lib::os, sol::lib::coroutine, sol::lib::math, sol::lib::count, sol::lib::debug,
         sol::lib::io, sol::lib::bit32);
-    (*m_lua)["__ENV_ID"] = "[Global Environment]";
+    lua["__ENV_ID"] = "[Global Environment]";
     // Table shared across all environments, for easy value sharing
-    (*m_lua)["global"] = sol::new_table();
+    lua["global"] = sol::new_table();
 
     Bindings::IndexCoreBindings(lua);
     lua.safe_script_file("obe://Lib/Internal/Require.lua"_fs);
@@ -93,20 +93,22 @@ void run(std::string command)
     lua.set_exception_handler(&lua_exception_handler2);
 
     lua["_term_display"]
-        = [](std::vector<std::string> texts, std::vector<obe::Graphics::Color> colors) {
-              for (size_t i = 0; i < texts.size(); i++)
-              {
-                  const std::string_view text = texts[i];
-                  const Graphics::Color color = colors[i];
-                  std::cout << convertColor(color) << text;
-              }
-              std::cout << std::endl;
-          };
+        = [](std::vector<std::string> texts, std::vector<obe::Graphics::Color> colors)
+    {
+        for (size_t i = 0; i < texts.size(); i++)
+        {
+            const std::string_view text = texts[i];
+            const Graphics::Color color = colors[i];
+            std::cout << convertColor(color) << text;
+        }
+        std::cout << std::endl;
+    };
 
     lua.safe_script_file("obe://Lib/Toolkit/Toolkit.lua"_fs);
     lua["TOOLKIT_CONTEXTS"] = std::map<std::string, bool> { { "terminal", true } };
 
-    auto isInteractive = [&lua]() {
+    auto isInteractive = [&lua]()
+    {
         std::map<std::string, bool> contexts
             = lua["TOOLKIT_CONTEXTS"].get<std::map<std::string, bool>>();
         if (contexts.find("interactive") == contexts.end() || !contexts.at("interactive"))
