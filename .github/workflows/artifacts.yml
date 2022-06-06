@@ -33,7 +33,7 @@ jobs:
       - name: Compile and install SFML
         run: cd SFML; cmake .; make -j8; sudo make install
       - name: Compile ObEngine
-        run: cd build; cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_BUILD_TYPE=Release ..; make -j8
+        run: cd build; cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_PRODUCTION=ON ..; make -j8
       - name: Run tests
         run: export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/usr/local/lib"; ./build/tests/ObEngineTests
       - name: Create package
@@ -62,7 +62,7 @@ jobs:
       - name: Create build directory
         run: mkdir build
       - name: Run CMake on ObEngine
-        run: cd build; cmake -G "Visual Studio 17 2022" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..
+        run: cd build; cmake -G "Visual Studio 17 2022" -A x64 -DSFML_DIR="${env:GITHUB_WORKSPACE}/deps/SFML-2.5.1/lib/cmake/SFML" -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DBUILD_PRODUCTION=ON ..
         shell: pwsh
       - name: Compile ObEngine
         run: cmake --build build --config Release -- /m:8
@@ -89,7 +89,7 @@ jobs:
       - name: Create build directory
         run: mkdir build
       - name: Run CMake on ObEngine
-        run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_BUILD_TYPE=Release ..
+        run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_PRODUCTION=ON ..
       - name: Compile ObEngine
         run: cd build && make -j8
       - name: Run tests

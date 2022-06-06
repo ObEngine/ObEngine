@@ -10,4 +10,5 @@ namespace obe::Bindings
     void LoadClassDebugInfo(sol::state_view state);
     void LoadFunctionGetTypeName(sol::state_view state);
     void LoadFunctionInitEngine(sol::state_view state);
+    void LoadGlobalObengineProduction(sol::state_view state);
 };

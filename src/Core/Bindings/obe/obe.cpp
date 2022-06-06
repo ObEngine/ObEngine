@@ -4,6 +4,7 @@
 #include <ObEngineCore.hpp>
 
 #include <Bindings/Config.hpp>
+#include <Config/Flags.hpp>
 
 namespace obe::Bindings
 {
@@ -34,5 +35,10 @@ namespace obe::Bindings
     {
         sol::table obeNamespace = state["obe"].get<sol::table>();
         obeNamespace.set_function("InitEngine", &obe::InitEngine);
+    }
+    void LoadGlobalObengineProduction(sol::state_view state)
+    {
+        sol::table obeNamespace = state["obe"].get<sol::table>();
+        obeNamespace["OBENGINE_PRODUCTION"] = obe::Config::OBENGINE_PRODUCTION;
     }
 };

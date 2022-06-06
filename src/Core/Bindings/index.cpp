@@ -178,6 +178,7 @@ namespace obe::Bindings
         obe::Bindings::LoadClassDebugInfo(state);
         obe::Bindings::LoadFunctionGetTypeName(state);
         obe::Bindings::LoadFunctionInitEngine(state);
+        obe::Bindings::LoadGlobalObengineProduction(state);
         obe::Collision::Bindings::LoadClassCollisionData(state);
         obe::Collision::Bindings::LoadClassInnerTest(state);
         obe::Collision::Bindings::LoadClassCoolChild(state);
