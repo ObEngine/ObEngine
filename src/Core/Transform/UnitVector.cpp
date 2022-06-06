@@ -281,7 +281,7 @@ namespace obe::Transform
 
     std::ostream& operator<<(std::ostream& os, const UnitVector& m)
     {
-        os << "(" << m.x << ", " << m.y << ")::" << unitsToString(m.unit).c_str();
+        os << "(" << m.x << ", " << m.y << ")::" << UnitsMeta::toString(m.unit);
         return os;
     }
 

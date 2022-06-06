@@ -42,23 +42,6 @@ namespace vili::parser
         }
     };
 
-    template <> struct action<rules::template_identifier_usage>
-    {
-        template <class ParseInput> static void apply(const ParseInput& in, state& state)
-        {
-            try
-            {
-                state.push(state.get_template(in.string()));
-            }
-            catch (exceptions::unknown_template& e)
-            {
-                throw exceptions::parsing_error(in.position().source, in.position().line,
-                    in.position().byte, VILI_EXC_INFO)
-                    .nest(e);
-            }
-        }
-    };
-
     template <> struct action<rules::identifier>
     {
         template <class ParseInput> static void apply(const ParseInput& in, state& state)
@@ -125,38 +108,6 @@ namespace vili::parser
                     in.position().byte, VILI_EXC_INFO)
                     .nest(e);
             }
-        }
-    };
-
-    template <> struct action<rules::template_keyword>
-    {
-        template <class ParseInput> static void apply(const ParseInput& in, state& state)
-        {
-            state.set_indent(0);
-        }
-    };
-
-    template <> struct action<rules::template_identifier>
-    {
-        template <class ParseInput> static void apply(const ParseInput& in, state& state)
-        {
-            state.set_active_template(std::move(in.string()));
-        }
-    };
-
-    template <> struct action<rules::template_decl>
-    {
-        template <class ParseInput> static void apply(const ParseInput& in, state& state)
-        {
-            state.push_template();
-        }
-    };
-
-    template <> struct action<rules::template_specialization>
-    {
-        template <class ParseInput> static void apply(const ParseInput& in, state& state)
-        {
-            state.specialize_template();
         }
     };
 }

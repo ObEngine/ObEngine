@@ -11,8 +11,8 @@ Framerate:
 Window:
     Game:
         fullscreen: true
-        width: fill
-        height: fill
+        width: "Screen"
+        height: "Screen"
         title: "MyGame"
 
     Editor:
@@ -20,13 +20,13 @@ Window:
         closeable: true
         titlebar: true
         resizeable: true
-        width: fill
-        height: fill
+        width: "Screen"
+        height: "Screen"
         docked: false
 
 Debug:
     Logging:
-        level: debug
+        level: "Debug"
 
 Script:
     Lua:

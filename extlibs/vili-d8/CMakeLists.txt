@@ -3,12 +3,10 @@ cmake_minimum_required(VERSION 3.6)
 project(vili-d8)
 
 set(VILI_D8_HEADERS
-    include/vld8/templates.hpp
     include/vld8/validator.hpp
     include/vld8/exceptions.hpp
 )
 set(VILI_D8_SOURCES
-    src/templates.cpp
     src/validator.cpp
     src/validator.inl
     src/regex.inl

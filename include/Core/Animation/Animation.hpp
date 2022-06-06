@@ -4,6 +4,7 @@
 
 #include <Animation/AnimationGroup.hpp>
 #include <Time/TimeUtils.hpp>
+#include <Types/SmartEnum.hpp>
 
 namespace obe
 {
@@ -51,17 +52,25 @@ namespace obe::Animation
         Force
     };
 
-    /**
-     * \brief Convert a std::string containing an AnimationPlayMode in string
-     *        form to an AnimationPlayMode enum value
-     * \param animationPlayMode The std::string containing the AnimationPlayMode in string
-     *        form
-     * \return The converted value which is an AnimationPlayMode enum value
-     * \throw UnknownAnimationPlayMode if the string does not represent one of the enum values
-     * TODO: /bind{[mt]AnimationPlayMode.__call}
-     */
-    AnimationPlayMode stringToAnimationPlayMode(const std::string& animationPlayMode);
-    std::ostream& operator<<(std::ostream& os, const AnimationPlayMode& m);
+    using AnimationPlayModeMeta = Types::SmartEnum<AnimationPlayMode>;
+
+    enum class AnimationCommand
+    {
+        /**
+         * \brief Wait for a given amount of seconds
+         */
+        Wait,
+        /**
+         * \brief Play an AnimationGroup with a given name
+         */
+        PlayGroup,
+        /**
+         * \brief Change Animation
+         */
+        SetAnimation
+    };
+
+    using AnimationCommandMeta = Types::SmartEnum<AnimationCommand>;
 
     /**
      * \brief The AnimationStatus indicates whether the current Animation should
@@ -140,7 +149,7 @@ namespace obe::Animation
          * \brief Get the current Texture displayed by the Animation
          * \return A reference to the currently displayed Texture
          */
-        const Graphics::Texture& getTexture();
+        const Graphics::Texture& getTexture() const;
         /**
          * \brief Return whether the Animation is over or not
          * \return true if the Animation is over, false otherwise
@@ -276,7 +285,7 @@ namespace obe::Animation
          * \brief Get the current Texture displayed by the Animation
          * \return A reference to the currently displayed Texture
          */
-        const Graphics::Texture& getTexture();
+        const Graphics::Texture& getTexture() const;
         /**
          * \brief Get the texture used in the Animation at the specified index
          * \param index Index of the texture to return.

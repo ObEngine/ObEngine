@@ -50,7 +50,7 @@ namespace obe::Engine
             sol::lib::io, sol::lib::bit32);
         (*m_lua)["__ENV_ID"] = "[Global Environment]";
         // Table shared across all environments, for easy value sharing
-        (*m_lua)["global"] = sol::new_table();
+        (*m_lua)["Global"] = sol::new_table();
 
         this->initPlugins();
 
@@ -155,7 +155,9 @@ namespace obe::Engine
                 vili::node logging = debug.at("Logging");
                 if (logging.contains("level"))
                 {
-                    const unsigned int logLevel = logging.at("level");
+                    std::string logLevelConfigEntry = logging.at("level");
+                    const Debug::LogLevel logLevel
+                        = Debug::LogLevelMeta::fromString(logLevelConfigEntry);
                     const auto level = static_cast<spdlog::level::level_enum>(logLevel);
                     Debug::Log->set_level(level);
                     Debug::Log->info("Log Level {}", logLevel);

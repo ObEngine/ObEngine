@@ -13,7 +13,6 @@
 #include <Bindings/obe/Component/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Config/Config.hpp>
 #include <Bindings/obe/Config/Exceptions/Exceptions.hpp>
-#include <Bindings/obe/Config/Templates/Templates.hpp>
 #include <Bindings/obe/Config/Validators/Validators.hpp>
 #include <Bindings/obe/Debug/Debug.hpp>
 #include <Bindings/obe/Debug/Render/Render.hpp>
@@ -158,8 +157,6 @@ namespace obe::Bindings
         obe::Animation::Bindings::LoadEnumAnimationPlayMode(state);
         obe::Animation::Bindings::LoadEnumAnimationStatus(state);
         obe::Animation::Bindings::LoadEnumAnimatorTargetScaleMode(state);
-        obe::Animation::Bindings::LoadFunctionStringToAnimationPlayMode(state);
-        obe::Animation::Bindings::LoadFunctionStringToAnimatorTargetScaleMode(state);
         obe::Animation::Bindings::LoadFunctionTemplateSpecializationExistsImpl(state);
         obe::Animation::Bindings::LoadFunctionTween(state);
         obe::Animation::Exceptions::Bindings::LoadClassAnimationGroupTextureIndexOverflow(state);
@@ -292,8 +289,6 @@ namespace obe::Bindings
         obe::Input::Bindings::LoadEnumAxisThresholdDirection(state);
         obe::Input::Bindings::LoadEnumInputButtonState(state);
         obe::Input::Bindings::LoadEnumInputType(state);
-        obe::Input::Bindings::LoadFunctionInputButtonStateToString(state);
-        obe::Input::Bindings::LoadFunctionStringToInputButtonState(state);
         obe::Input::Bindings::LoadFunctionInputTypeToString(state);
         obe::Network::Bindings::LoadClassLuaPacket(state);
         obe::Network::Bindings::LoadClassNetworkHandler(state);
@@ -337,7 +332,6 @@ namespace obe::Bindings
         obe::System::Bindings::LoadEnumStretchMode(state);
         obe::System::Bindings::LoadFunctionSplitPathAndPrefix(state);
         obe::System::Bindings::LoadFunctionPathTypeToString(state);
-        obe::System::Bindings::LoadFunctionStringToStretchMode(state);
         obe::System::Exceptions::Bindings::LoadClassInvalidDeferredMountablePath(state);
         obe::System::Exceptions::Bindings::LoadClassInvalidMountFile(state);
         obe::System::Exceptions::Bindings::LoadClassInvalidMouseButtonEnumValue(state);
@@ -404,8 +398,6 @@ namespace obe::Bindings
         obe::Transform::Bindings::LoadEnumReferentialConversionType(state);
         obe::Transform::Bindings::LoadEnumFlipAxis(state);
         obe::Transform::Bindings::LoadEnumUnits(state);
-        obe::Transform::Bindings::LoadFunctionStringToUnits(state);
-        obe::Transform::Bindings::LoadFunctionUnitsToString(state);
         obe::Types::Bindings::LoadClassIdentifiable(state);
         obe::Types::Bindings::LoadClassProtectedIdentifiable(state);
         obe::Types::Bindings::LoadClassSelectable(state);
@@ -445,7 +437,6 @@ namespace obe::Bindings
         vili::exceptions::Bindings::LoadClassParsingError(state);
         vili::exceptions::Bindings::LoadClassTooMuchIndentation(state);
         vili::exceptions::Bindings::LoadClassUnknownChildNode(state);
-        vili::exceptions::Bindings::LoadClassUnknownTemplate(state);
         vili::parser::Bindings::LoadClassNodeInStack(state);
         vili::parser::Bindings::LoadClassState(state);
         vili::parser::Bindings::LoadClassError(state);
@@ -513,14 +504,6 @@ namespace obe::Bindings
         vili::parser::rules::Bindings::LoadClassString(state);
         vili::parser::rules::Bindings::LoadClassStringContent(state);
         vili::parser::rules::Bindings::LoadClassStringDelimiter(state);
-        vili::parser::rules::Bindings::LoadClassTemplateBegin(state);
-        vili::parser::rules::Bindings::LoadClassTemplateDecl(state);
-        vili::parser::rules::Bindings::LoadClassTemplateDeclContent(state);
-        vili::parser::rules::Bindings::LoadClassTemplateIdentifier(state);
-        vili::parser::rules::Bindings::LoadClassTemplateIdentifierUsage(state);
-        vili::parser::rules::Bindings::LoadClassTemplateKeyword(state);
-        vili::parser::rules::Bindings::LoadClassTemplateSpecialization(state);
-        vili::parser::rules::Bindings::LoadClassTemplateUsage(state);
         vili::parser::rules::Bindings::LoadClassTrue_(state);
         vili::parser::rules::Bindings::LoadClassUnescaped(state);
         vili::parser::rules::Bindings::LoadClassUnicode(state);
@@ -573,14 +556,6 @@ namespace obe::Bindings
         obe::Animation::Easing::Bindings::LoadFunctionInOutBounce(state);
         obe::Animation::Easing::Bindings::LoadFunctionGet(state);
         obe::Bindings::Bindings::LoadFunctionIndexCoreBindings(state);
-        obe::Config::Templates::Bindings::LoadFunctionGetAnimationTemplates(state);
-        obe::Config::Templates::Bindings::LoadFunctionGetConfigTemplates(state);
-        obe::Config::Templates::Bindings::LoadFunctionGetGameObjectTemplates(state);
-        obe::Config::Templates::Bindings::LoadFunctionGetMountTemplates(state);
-        obe::Config::Templates::Bindings::LoadFunctionGetSceneTemplates(state);
-        obe::Config::Templates::Bindings::LoadGlobalWaitCommand(state);
-        obe::Config::Templates::Bindings::LoadGlobalPlayGroupCommand(state);
-        obe::Config::Templates::Bindings::LoadGlobalSetAnimationCommand(state);
         obe::Config::Validators::Bindings::LoadFunctionAnimationValidator(state);
         obe::Config::Validators::Bindings::LoadFunctionConfigValidator(state);
         obe::Config::Validators::Bindings::LoadFunctionMountValidator(state);

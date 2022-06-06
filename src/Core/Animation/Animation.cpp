@@ -5,42 +5,12 @@
 #include <Animation/Animation.hpp>
 #include <Animation/AnimationGroup.hpp>
 #include <Animation/Exceptions.hpp>
-#include <Config/Templates/Animation.hpp>
 #include <Config/Validators.hpp>
 #include <Engine/ResourceManager.hpp>
 #include <System/Path.hpp>
 
 namespace obe::Animation
 {
-    AnimationPlayMode stringToAnimationPlayMode(const std::string& animationPlayMode)
-    {
-        if (animationPlayMode == "OneTime")
-            return AnimationPlayMode::OneTime;
-        if (animationPlayMode == "Loop")
-            return AnimationPlayMode::Loop;
-        if (animationPlayMode == "Force")
-            return AnimationPlayMode::Force;
-        throw Exceptions::UnknownAnimationPlayMode(animationPlayMode, EXC_INFO);
-    }
-
-    std::ostream& operator<<(std::ostream& os, const AnimationPlayMode& m)
-    {
-        os << "AnimationPlayMode::";
-        switch (m)
-        {
-        case AnimationPlayMode::Force:
-            os << "Force";
-            break;
-        case AnimationPlayMode::Loop:
-            os << "Loop";
-            break;
-        case AnimationPlayMode::OneTime:
-            os << "OneTime";
-            break;
-        }
-        return os;
-    }
-
     AnimationState::AnimationState(const Animation& parent)
         : m_parent(parent)
     {
@@ -133,10 +103,10 @@ namespace obe::Animation
 
     void Animation::loadAnimation(const System::Path& path, Engine::ResourceManager* resources)
     {
-        Debug::Log->debug("<Animation> Loading Animation at {0}", path.toString());
+        Debug::Log->debug("<Animation> Loading Animation at {}", path.toString());
         const std::string animationConfigFile = path.add(path.last() + ".ani.vili").find();
         vili::node animationConfig = vili::parser::from_file(
-            animationConfigFile, Config::Templates::getAnimationTemplates());
+            animationConfigFile);
 
         try
         {
@@ -172,12 +142,14 @@ namespace obe::Animation
         const vili::node& currentCommand = m_parent.m_code[m_codeIndex];
         Debug::Log->trace("<Animation> Executing instruction {} / {} : {}", m_codeIndex,
             m_parent.m_code.size() - 1, currentCommand.dump());
-        if (currentCommand.at("command").as_string() == Config::Templates::wait_command)
+        const AnimationCommand command
+            = AnimationCommandMeta::fromString(currentCommand.at("command").as_string());
+        if (command == AnimationCommand::Wait)
         {
             m_feedInstructions = true;
             m_sleep = currentCommand.at("time");
         }
-        else if (currentCommand.at("command").as_string() == Config::Templates::play_group_command)
+        else if (command == AnimationCommand::PlayGroup)
         {
             if (!m_currentGroupName.empty())
                 m_groups[m_currentGroupName]->reset();
@@ -185,17 +157,11 @@ namespace obe::Animation
             m_currentGroupName = currentCommand.at("group");
             m_groups[m_currentGroupName]->setLoops(currentCommand.at("repeat"));
         }
-        else if (currentCommand.at("command").as_string()
-            == Config::Templates::set_animation_command)
+        else if (command == AnimationCommand::SetAnimation)
         {
             m_feedInstructions = false;
             m_status = AnimationStatus::Call;
             m_nextAnimation = currentCommand.at("animation");
-        }
-        else
-        {
-            throw Exceptions::UnknownAnimationCommand(
-                m_parent.m_name, currentCommand.at("command"), EXC_INFO);
         }
         m_codeIndex++;
         if (m_feedInstructions && m_codeIndex > m_parent.m_code.size() - 1
@@ -242,7 +208,7 @@ namespace obe::Animation
 
     void AnimationState::setActiveAnimationGroup(const std::string& groupName)
     {
-        if (m_groups.find(groupName) != m_groups.end())
+        if (m_groups.contains(groupName))
         {
             m_currentGroupName = groupName;
         }
@@ -262,7 +228,7 @@ namespace obe::Animation
         }
         if (meta.contains("mode"))
         {
-            m_playMode = stringToAnimationPlayMode(meta.at("mode"));
+            m_playMode = AnimationPlayModeMeta::fromString(meta.at("mode"));
             Debug::Log->trace("    <Animation> Animation play-mode = '{}'", m_playMode);
         }
     }
@@ -443,14 +409,14 @@ namespace obe::Animation
         throw Exceptions::AnimationTextureIndexOverflow(m_name, index, m_textures.size(), EXC_INFO);
     }
 
-    const Graphics::Texture& AnimationState::getTexture()
+    const Graphics::Texture& AnimationState::getTexture() const
     {
         if (!m_currentGroupName.empty())
-            return m_groups[m_currentGroupName]->getTexture();
+            return m_groups.at(m_currentGroupName)->getTexture();
         throw Exceptions::NoSelectedAnimationGroup(m_parent.m_name, EXC_INFO);
     }
 
-    const Graphics::Texture& Animation::getTexture()
+    const Graphics::Texture& Animation::getTexture() const
     {
         return m_defaultState.getTexture();
     }

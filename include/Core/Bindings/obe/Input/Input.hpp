@@ -15,7 +15,5 @@ namespace obe::Input::Bindings
     void LoadEnumAxisThresholdDirection(sol::state_view state);
     void LoadEnumInputButtonState(sol::state_view state);
     void LoadEnumInputType(sol::state_view state);
-    void LoadFunctionInputButtonStateToString(sol::state_view state);
-    void LoadFunctionStringToInputButtonState(sol::state_view state);
     void LoadFunctionInputTypeToString(sol::state_view state);
 };

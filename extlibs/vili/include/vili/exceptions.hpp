@@ -181,22 +181,6 @@ namespace vili::exceptions
         }
     };
 
-    class unknown_template : public exception<unknown_template>
-    {
-    public:
-        unknown_template(std::string_view template_name, const std::vector<std::string>& templates, debug_info info)
-            : exception("unknown_template", info)
-        {
-            this->error("Unable to get template with name '{}'", template_name);
-            std::vector<std::string> suggestions
-                = utils::string::sort_by_distance(template_name.data(), templates, 5);
-            std::transform(
-                suggestions.begin(), suggestions.end(), suggestions.begin(), utils::string::quote);
-            suggestions.push_back("...");
-            this->hint("Did you mean one of those template : ({}) ?", fmt::join(suggestions, ", "));
-        }
-    };
-
     class parsing_error : public exception<parsing_error>
     {
     public:

@@ -6,8 +6,8 @@ View:
     position:
         x: 0.0
         y: 0.0
-        unit: SceneUnits
-    referential: TopLeft
+        unit: "SceneUnits"
+    referential: "TopLeft"
 
 GameObjects:
     sampleGameObject:

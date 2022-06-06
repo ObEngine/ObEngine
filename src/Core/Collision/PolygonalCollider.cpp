@@ -469,7 +469,7 @@ namespace obe::Collision
     vili::node PolygonalCollider::dump() const
     {
         vili::node result;
-        result["unit"] = Transform::unitsToString(m_unit);
+        result["unit"] = Transform::UnitsMeta::toString(m_unit);
         result["points"] = vili::array {};
         for (auto& point : m_points)
         {
@@ -509,9 +509,7 @@ namespace obe::Collision
             }
         };
         const std::string pointsUnit = data.at("unit");
-        bool completePoint = true;
-        double pointBuffer = 0;
-        const Transform::Units pBaseUnit = Transform::stringToUnits(pointsUnit);
+        const Transform::Units pBaseUnit = Transform::UnitsMeta::fromString(pointsUnit);
         for (const vili::node& colliderPoint : data.at("points"))
         {
             const Transform::UnitVector pVector2

@@ -314,63 +314,6 @@ namespace vili::parser::rules::Bindings
             = rulesNamespace.new_usertype<vili::parser::rules::string_delimiter>(
                 "string_delimiter", sol::call_constructor, sol::default_constructor);
     }
-    void LoadClassTemplateBegin(sol::state_view state)
-    {
-        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::template_begin> bindtemplate_begin
-            = rulesNamespace.new_usertype<vili::parser::rules::template_begin>(
-                "template_begin", sol::call_constructor, sol::default_constructor);
-    }
-    void LoadClassTemplateDecl(sol::state_view state)
-    {
-        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::template_decl> bindtemplate_decl
-            = rulesNamespace.new_usertype<vili::parser::rules::template_decl>(
-                "template_decl", sol::call_constructor, sol::default_constructor);
-    }
-    void LoadClassTemplateDeclContent(sol::state_view state)
-    {
-        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::template_decl_content> bindtemplate_decl_content
-            = rulesNamespace.new_usertype<vili::parser::rules::template_decl_content>(
-                "template_decl_content", sol::call_constructor, sol::default_constructor);
-    }
-    void LoadClassTemplateIdentifier(sol::state_view state)
-    {
-        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::template_identifier> bindtemplate_identifier
-            = rulesNamespace.new_usertype<vili::parser::rules::template_identifier>(
-                "template_identifier", sol::call_constructor, sol::default_constructor);
-    }
-    void LoadClassTemplateIdentifierUsage(sol::state_view state)
-    {
-        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::template_identifier_usage> bindtemplate_identifier_usage
-            = rulesNamespace.new_usertype<vili::parser::rules::template_identifier_usage>(
-                "template_identifier_usage", sol::call_constructor, sol::default_constructor,
-                sol::base_classes, sol::bases<vili::parser::rules::template_identifier>());
-    }
-    void LoadClassTemplateKeyword(sol::state_view state)
-    {
-        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::template_keyword> bindtemplate_keyword
-            = rulesNamespace.new_usertype<vili::parser::rules::template_keyword>(
-                "template_keyword", sol::call_constructor, sol::default_constructor);
-    }
-    void LoadClassTemplateSpecialization(sol::state_view state)
-    {
-        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::template_specialization> bindtemplate_specialization
-            = rulesNamespace.new_usertype<vili::parser::rules::template_specialization>(
-                "template_specialization", sol::call_constructor, sol::default_constructor);
-    }
-    void LoadClassTemplateUsage(sol::state_view state)
-    {
-        sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();
-        sol::usertype<vili::parser::rules::template_usage> bindtemplate_usage
-            = rulesNamespace.new_usertype<vili::parser::rules::template_usage>(
-                "template_usage", sol::call_constructor, sol::default_constructor);
-    }
     void LoadClassTrue_(sol::state_view state)
     {
         sol::table rulesNamespace = state["vili"]["parser"]["rules"].get<sol::table>();

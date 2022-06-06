@@ -368,14 +368,4 @@ namespace obe::Transform::Bindings
         bindViewStruct["x"] = &obe::Transform::ViewStruct::x;
         bindViewStruct["y"] = &obe::Transform::ViewStruct::y;
     }
-    void LoadFunctionStringToUnits(sol::state_view state)
-    {
-        sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
-        TransformNamespace.set_function("stringToUnits", &obe::Transform::stringToUnits);
-    }
-    void LoadFunctionUnitsToString(sol::state_view state)
-    {
-        sol::table TransformNamespace = state["obe"]["Transform"].get<sol::table>();
-        TransformNamespace.set_function("unitsToString", &obe::Transform::unitsToString);
-    }
 };

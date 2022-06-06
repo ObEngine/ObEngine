@@ -161,18 +161,6 @@ namespace obe::Input::Bindings
         bindInputManager["initializeGamepads"] = &obe::Input::InputManager::initializeGamepads;
         bindInputManager["initializeGamepad"] = &obe::Input::InputManager::initializeGamepad;
     }
-    void LoadFunctionInputButtonStateToString(sol::state_view state)
-    {
-        sol::table InputNamespace = state["obe"]["Input"].get<sol::table>();
-        InputNamespace.set_function(
-            "inputButtonStateToString", &obe::Input::inputButtonStateToString);
-    }
-    void LoadFunctionStringToInputButtonState(sol::state_view state)
-    {
-        sol::table InputNamespace = state["obe"]["Input"].get<sol::table>();
-        InputNamespace.set_function(
-            "stringToInputButtonState", &obe::Input::stringToInputButtonState);
-    }
     void LoadFunctionInputTypeToString(sol::state_view state)
     {
         sol::table InputNamespace = state["obe"]["Input"].get<sol::table>();

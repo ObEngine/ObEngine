@@ -29,16 +29,9 @@ namespace vili::parser::Bindings
         bindstate["set_indent"] = &vili::parser::state::set_indent;
         bindstate["use_indent"] = &vili::parser::state::use_indent;
         bindstate["set_active_identifier"] = &vili::parser::state::set_active_identifier;
-        bindstate["set_active_template"] = &vili::parser::state::set_active_template;
         bindstate["open_block"] = &vili::parser::state::open_block;
         bindstate["close_block"] = &vili::parser::state::close_block;
         bindstate["push"] = &vili::parser::state_push_proxy;
-        bindstate["push_template"] = sol::overload(
-            static_cast<void (vili::parser::state::*)()>(&vili::parser::state::push_template),
-            static_cast<void (vili::parser::state::*)(const std::string&, const vili::node&)>(
-                &vili::parser::state::push_template));
-        bindstate["specialize_template"] = &vili::parser::state::specialize_template;
-        bindstate["get_template"] = &vili::parser::state::get_template;
         bindstate["root"] = &vili::parser::state::root;
     }
     void LoadClassError(sol::state_view state)
@@ -61,11 +54,6 @@ namespace vili::parser::Bindings
     void LoadFunctionFromFile(sol::state_view state)
     {
         sol::table parserNamespace = state["vili"]["parser"].get<sol::table>();
-        parserNamespace.set_function("from_file",
-            sol::overload(
-                [](std::string_view path) -> vili::node { return vili::parser::from_file(path); },
-                [](std::string_view path, vili::parser::state parser_state) -> vili::node {
-                    return vili::parser::from_file(path, parser_state);
-                }));
+        parserNamespace.set_function("from_file", &vili::parser::from_file);
     }
 };

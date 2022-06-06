@@ -1,6 +1,7 @@
+#include <magic_enum/magic_enum.hpp>
 #include <vili/node.hpp>
 
-#include <Config/Templates/Animation.hpp>
+#include <Animation/Animation.hpp>
 
 namespace obe::Config::Validators
 {
@@ -117,9 +118,9 @@ namespace obe::Config::Validators
                                                             {"type", vili::string_typename},
                                                             {
                                                                 "values", vili::array {
-                                                                    vili::string { Config::Templates::play_group_command },
-                                                                    vili::string { Config::Templates::set_animation_command },
-                                                                    vili::string { Config::Templates::wait_command }
+                                                                    magic_enum::enum_name(Animation::AnimationCommand::PlayGroup),
+                                                                    magic_enum::enum_name(Animation::AnimationCommand::SetAnimation),
+                                                                    magic_enum::enum_name(Animation::AnimationCommand::Wait)
                                                                 }
                                                             }
                                                         },

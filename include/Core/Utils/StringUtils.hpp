@@ -124,4 +124,6 @@ namespace obe::Utils::String
         const std::string& source, const std::vector<std::string>& words, std::size_t limit = 0);
 
     std::string quote(const std::string& source);
+
+    std::string titleize(const std::string& source);
 } // namespace obe::Utils::String

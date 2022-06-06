@@ -44,6 +44,9 @@ add_subdirectory(extlibs/vili-d8)
 add_subdirectory(extlibs/soloud)
 add_subdirectory(extlibs/lunasvg)
 
+# Magic enum
+add_subdirectory(extlibs/magic_enum)
+
 if (APPLE OR USE_FILESYSTEM_FALLBACK)
     set(USE_FILESYSTEM_FALLBACK TRUE CACHE BOOL "Use filesystem fallback" FORCE)
 endif()

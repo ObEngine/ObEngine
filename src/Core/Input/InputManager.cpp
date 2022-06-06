@@ -363,7 +363,7 @@ namespace obe::Input
                         if (Utils::Vector::contains(
                                 buttonState, { "Idle", "Hold", "Pressed", "Released" }))
                         {
-                            buttonStates |= stringToInputButtonState(buttonState);
+                            buttonStates |= InputButtonStateMeta::fromString(buttonState);
                         }
                         else
                         {

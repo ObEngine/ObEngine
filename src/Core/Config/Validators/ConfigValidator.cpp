@@ -80,8 +80,43 @@ namespace obe::Config::Validators
                     },
                     vili::object {
                         {"type", vili::string_typename},
-                        {"value", "fill"}
+                        {"value", "Screen"}
                     }
+                }
+            }
+        };
+
+        vili::node RenderResolutionDimensionValidator = vili::object {
+            {"type", "union"},
+            {
+                "types", vili::array {
+                    vili::object {
+                        {"type", vili::integer_typename},
+                        {"min", 0}
+                    },
+                    vili::object {
+                        {"type", vili::string_typename},
+                        {"values", vili::array {
+                            "Screen", "Window"
+                        }}
+                    }
+                }
+            }
+        };
+
+        vili::node RenderValidator = vili::object {
+            {"type", vili::object_typename},
+            {"optional", true},
+            {
+                "properties", vili::object {
+                    {"width", RenderResolutionDimensionValidator},
+                    {"height", RenderResolutionDimensionValidator},
+                    {"stretch", vili::object {
+                        {"type", vili::string_typename},
+                        {"values", vili::array {
+                            "None", "Center", "Stretch", "Fit"
+                        }}
+                    }}
                 }
             }
         };
@@ -92,6 +127,7 @@ namespace obe::Config::Validators
                 "properties", vili::object {
                     {"width", ResolutionDimensionValidator},
                     {"height", ResolutionDimensionValidator},
+                    {"render", RenderValidator},
                     {
                         "fullscreen", vili::object {
                             {"type", vili::boolean_typename}
@@ -222,9 +258,8 @@ namespace obe::Config::Validators
                                         "properties", vili::object {
                                             {
                                                 "level", vili::object {
-                                                    {"type", vili::integer_typename},
-                                                    {"min", 0},
-                                                    {"max", 6}
+                                                    {"type", vili::string_typename},
+                                                    {"values", vili::array {"Trace", "Debug", "Info", "Warn", "Error", "Critical", "Off"}},
                                                 }
                                             }
                                         }

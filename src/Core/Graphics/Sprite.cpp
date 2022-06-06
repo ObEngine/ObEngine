@@ -473,7 +473,7 @@ namespace obe::Graphics
         result.emplace("rect",
             vili::object { { "x", spritePositionRect.x }, { "y", spritePositionRect.y },
                 { "width", spriteSizeRect.x }, { "height", spriteSizeRect.y },
-                { "unit", Transform::unitsToString(m_unit) } });
+                { "unit", Transform::UnitsMeta::toString(m_unit) } });
 
         result.emplace("rotation", m_angle);
         result.emplace("layer", m_layer);
@@ -508,7 +508,7 @@ namespace obe::Graphics
             const vili::node& rect = data.at("rect");
             if (rect.contains("unit"))
             {
-                this->setWorkingUnit(Transform::stringToUnits(rect.at("unit")));
+                this->setWorkingUnit(Transform::UnitsMeta::fromString(rect.at("unit")));
             }
             spritePos.unit = m_unit;
             spritePos.x = rect.at("x");

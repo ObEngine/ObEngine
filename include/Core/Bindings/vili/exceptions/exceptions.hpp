@@ -20,5 +20,4 @@ namespace vili::exceptions::Bindings
     void LoadClassParsingError(sol::state_view state);
     void LoadClassTooMuchIndentation(sol::state_view state);
     void LoadClassUnknownChildNode(sol::state_view state);
-    void LoadClassUnknownTemplate(sol::state_view state);
 };

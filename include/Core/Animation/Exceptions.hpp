@@ -74,11 +74,11 @@ namespace obe::Animation::Exceptions
     public:
         using Exception::Exception;
         UnknownAnimationCommand(
-            std::string_view animation, std::string_view command, DebugInfo info)
+            std::string_view command, DebugInfo info)
             : Exception(info)
         {
-            this->error("Unknown command '{}' in code of Animation '{}'");
-            this->hint("Try one of the following valid commands (DELAY, PLAY_GROUP, CALL)");
+            this->error("Unknown Animation command '{}'", command);
+            this->hint("Try one of the following valid commands (PlayGroup, SetAnimation, Wait)");
         }
     };
 

@@ -1,6 +1,5 @@
 #include <vili/parser.hpp>
 
-#include <Config/Templates/Scene.hpp>
 #include <Debug/Render.hpp>
 #include <Scene/Exceptions.hpp>
 #include <Scene/Scene.hpp>
@@ -171,7 +170,7 @@ namespace obe::Scene
         vili::node sceneFile;
         try
         {
-            sceneFile = vili::parser::from_file(filepath, Config::Templates::getSceneTemplates());
+            sceneFile = vili::parser::from_file(filepath);
         }
         catch (const std::exception& e)
         {
@@ -258,7 +257,7 @@ namespace obe::Scene
         result["View"]["size"] = m_camera.getSize().y / 2;
         result["View"]["position"]
             = vili::object { { "x", m_cameraInitialPosition.x }, { "y", m_cameraInitialPosition.y },
-                  { "unit", unitsToString(m_cameraInitialPosition.unit) } };
+                  { "unit", Transform::UnitsMeta::toString(m_cameraInitialPosition.unit) } };
         result["View"]["referential"] = m_cameraInitialReferential.toString("{}");
 
         // Sprites
@@ -338,7 +337,7 @@ namespace obe::Scene
                 }
                 if (position.contains("unit"))
                 {
-                    unit = Transform::stringToUnits(position.at("unit"));
+                    unit = Transform::UnitsMeta::fromString(position.at("unit"));
                 }
             }
             m_cameraInitialPosition = Transform::UnitVector(x, y, unit);

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <string>
+#include <Types/SmartEnum.hpp>
 
 namespace obe::Transform
 {
@@ -44,16 +44,5 @@ namespace obe::Transform
         SceneUnits
     };
 
-    /**
-     * \brief Converts a std::string to an Unit
-     * \param unit Unit in string form
-     * \return The convert Units enum value
-     */
-    Units stringToUnits(const std::string& unit);
-    /**
-     * \brief Converts an Unit to a std::string
-     * \param unit The Units enum value you want to convert into a string
-     * \return A std::string containing the Units enum value in string form
-     */
-    std::string unitsToString(Units unit);
+    using UnitsMeta = Types::SmartEnum<Units>;
 } // namespace obe::Transform

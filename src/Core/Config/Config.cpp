@@ -3,7 +3,6 @@
 
 #include <Config/Config.hpp>
 #include <Config/Exceptions.hpp>
-#include <Config/Templates/Config.hpp>
 #include <Config/Validators.hpp>
 #include <Debug/Logger.hpp>
 #include <System/Path.hpp>
@@ -35,8 +34,8 @@ namespace obe::Config
         {
             Debug::Log->info("Loading config file from '{}'", findResult.path());
             vili::node conf
-                = vili::parser::from_file(findResult.path(), Templates::getConfigTemplates());
-            Debug::Log->info("Configuration '{}' content : {}", findResult.path(), conf.dump());
+                = vili::parser::from_file(findResult.path());
+            Debug::Log->trace("Configuration '{}' content : {}", findResult.path(), conf.dump());
             this->merge(conf);
         }
         try

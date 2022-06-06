@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <Types/SmartEnum.hpp>
 
 namespace obe::Input
 {
@@ -28,21 +28,5 @@ namespace obe::Input
         LAST__
     };
 
-    /**
-     * \brief Converts an InputButtonState to a std::string
-     * \param state InputButtonState to convert
-     * \return A std::string containing the name of the given InputButtonState
-     */
-    std::string inputButtonStateToString(InputButtonState state);
-    /**
-     * \nobind
-     */
-    std::ostream& operator<<(std::ostream& os, InputButtonState m);
-    /**
-     * \brief Converts a string to the corresponding InputButtonState
-     * \param state InputButtonState in string form
-     * \return The corresponding InputButtonState
-     */
-    InputButtonState stringToInputButtonState(const std::string& state);
-
+    using InputButtonStateMeta = Types::SmartEnum<InputButtonState>;
 } // namespace obe::Input

@@ -199,4 +199,13 @@ namespace obe::Utils::String
     {
         return "\"" + source + "\"";
     }
+
+    std::string titleize(const std::string& source)
+    {
+        if (!source.empty())
+        {
+            return static_cast<char>(toupper(source[0])) + source.substr(1);
+        }
+        return source;
+    }
 } // namespace obe::Utils::String

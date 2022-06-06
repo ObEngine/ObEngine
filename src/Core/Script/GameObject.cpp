@@ -2,7 +2,6 @@
 
 #include <vili/parser.hpp>
 
-#include <Config/Templates/GameObject.hpp>
 #include <Scene/Scene.hpp>
 #include <Script/GameObject.hpp>
 #include <Script/ViliLuaBridge.hpp>
@@ -57,7 +56,7 @@ namespace obe::Script
                 throw Exceptions::ObjectDefinitionNotFound(type, EXC_INFO);
 
             vili::node definitionData = vili::parser::from_file(
-                objectDefinitionPath, Config::Templates::getGameObjectTemplates());
+                objectDefinitionPath);
 
             allDefinitions[type] = definitionData;
             return definitionData;
@@ -218,7 +217,7 @@ namespace obe::Script
             Animation::AnimatorTargetScaleMode scaleMode = Animation::AnimatorTargetScaleMode::Fit;
             if (animator.contains("scaling"))
             {
-                scaleMode = Animation::stringToAnimatorTargetScaleMode(animator.at("scaling"));
+                scaleMode = Animation::AnimatorTargetScaleModeMeta::fromString(animator.at("scaling"));
             }
             if (m_sprite)
                 m_animator->setTarget(*m_sprite, scaleMode);

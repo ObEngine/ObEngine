@@ -9,27 +9,6 @@ using namespace std::string_literals;
 
 namespace obe::Animation
 {
-    AnimatorTargetScaleMode stringToAnimatorTargetScaleMode(const std::string& targetScaleMode)
-    {
-        if (targetScaleMode == "Fit")
-        {
-            return AnimatorTargetScaleMode::Fit;
-        }
-        if (targetScaleMode == "FixedHeight")
-        {
-            return AnimatorTargetScaleMode::FixedHeight;
-        }
-        if (targetScaleMode == "FixedWidth")
-        {
-            return AnimatorTargetScaleMode::FixedWidth;
-        }
-        if (targetScaleMode == "TextureSize")
-        {
-            return AnimatorTargetScaleMode::TextureSize;
-        }
-        throw Exceptions::UnknownTargetScaleMode(targetScaleMode, EXC_INFO);
-    }
-
     void AnimatorState::applyTexture() const
     {
         const Graphics::Texture& texture = this->getTexture();

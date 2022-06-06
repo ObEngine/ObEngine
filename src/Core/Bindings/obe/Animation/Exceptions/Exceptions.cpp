@@ -92,7 +92,7 @@ namespace obe::Animation::Exceptions::Bindings
             = ExceptionsNamespace.new_usertype<obe::Animation::Exceptions::UnknownAnimationCommand>(
                 "UnknownAnimationCommand", sol::call_constructor,
                 sol::constructors<obe::Animation::Exceptions::UnknownAnimationCommand(
-                    std::string_view, std::string_view, obe::DebugInfo)>(),
+                    std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
                 sol::bases<obe::Exception<obe::Animation::Exceptions::NoSelectedAnimationGroup>,
                     obe::BaseException>());

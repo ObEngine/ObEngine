@@ -7,30 +7,6 @@
 
 namespace obe::System
 {
-    StretchMode stringToStretchMode(const std::string& stretchMode)
-    {
-        if (stretchMode == "None")
-        {
-            return StretchMode::None;
-        }
-        else if (stretchMode == "Center")
-        {
-            return StretchMode::Center;
-        }
-        else if (stretchMode == "Fit")
-        {
-            return StretchMode::Fit;
-        }
-        else if (stretchMode == "Stretch")
-        {
-            return StretchMode::Stretch;
-        }
-        else
-        {
-            throw Exceptions::UnknownStretchMode(stretchMode, EXC_INFO);
-        }
-    }
-
     void Window::applyView()
     {
         const float fWidth = static_cast<float>(m_width);
@@ -99,8 +75,12 @@ namespace obe::System
                 windowWidth = configuration.at("width");
             else if (configuration.at("width").is<vili::string>())
             {
-                if (configuration.at("width").as<vili::string>() == "fill")
+                switch (WindowSizeMeta::fromString(configuration.at("width")))
+                {
+                case WindowSize::Screen:
                     windowWidth = screenSize.width;
+                    break;
+                }
             }
         }
         else
@@ -112,8 +92,12 @@ namespace obe::System
                 windowHeight = configuration.at("height");
             else if (configuration.at("height").is<vili::string>())
             {
-                if (configuration.at("height").as<vili::string>() == "fill")
+                switch (WindowSizeMeta::fromString(configuration.at("height")))
+                {
+                case WindowSize::Screen:
                     windowHeight = screenSize.height;
+                    break;
+                }
             }
         }
         else
@@ -129,10 +113,15 @@ namespace obe::System
                     renderWidth = render.at("width");
                 else if (render.at("width").is<vili::string>())
                 {
-                    if (render.at("width").as<vili::string>() == "fill")
-                        renderWidth = screenSize.width;
-                    else if (render.at("width").as<vili::string>() == "window")
+                    switch (RenderSizeMeta::fromString(render.at("width")))
+                    {
+                    case RenderSize::Window:
                         renderWidth = windowWidth;
+                        break;
+                    case RenderSize::Screen:
+                        renderWidth = screenSize.width;
+                        break;
+                    }
                 }
             }
             else
@@ -144,10 +133,15 @@ namespace obe::System
                     renderHeight = render.at("height");
                 else if (render.at("height").is<vili::string>())
                 {
-                    if (render.at("height").as<vili::string>() == "fill")
-                        renderHeight = screenSize.height;
-                    else if (render.at("height").as<vili::string>() == "window")
+                    switch (RenderSizeMeta::fromString(render.at("height")))
+                    {
+                    case RenderSize::Window:
                         renderHeight = windowHeight;
+                        break;
+                    case RenderSize::Screen:
+                        renderHeight = screenSize.height;
+                        break;
+                    }
                 }
             }
             else
@@ -155,7 +149,7 @@ namespace obe::System
 
             if (render.contains("stretch"))
             {
-                m_stretch = stringToStretchMode(render.at("stretch"));
+                m_stretch = StretchModeMeta::fromString(render.at("stretch"));
             }
         }
         else

@@ -4,7 +4,6 @@
 #include <vili/parser.hpp>
 #include <vld8/validator.hpp>
 
-#include <Config/Templates/Mount.hpp>
 #include <Config/Validators.hpp>
 #include <Debug/Logger.hpp>
 #include <System/MountablePath.hpp>
@@ -112,7 +111,7 @@ namespace obe::System
         try
         {
             mountedPaths
-                = vili::parser::from_file(mountFilePath, Config::Templates::getMountTemplates());
+                = vili::parser::from_file(mountFilePath);
         }
         catch (const vili::exceptions::file_not_found& e)
         {

@@ -365,18 +365,6 @@ namespace obe::Animation::Bindings
         bindDoubleTweening["done"] = &obe::Animation::ValueTweening<double>::done;
         bindDoubleTweening["step"] = &obe::Animation::ValueTweening<double>::step;
     }
-    void LoadFunctionStringToAnimationPlayMode(sol::state_view state)
-    {
-        sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
-        AnimationNamespace.set_function(
-            "stringToAnimationPlayMode", &obe::Animation::stringToAnimationPlayMode);
-    }
-    void LoadFunctionStringToAnimatorTargetScaleMode(sol::state_view state)
-    {
-        sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();
-        AnimationNamespace.set_function(
-            "stringToAnimatorTargetScaleMode", &obe::Animation::stringToAnimatorTargetScaleMode);
-    }
     void LoadFunctionTemplateSpecializationExistsImpl(sol::state_view state)
     {
         sol::table AnimationNamespace = state["obe"]["Animation"].get<sol::table>();

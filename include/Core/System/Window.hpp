@@ -28,7 +28,22 @@ namespace obe::System
         Fit,
     };
 
-    StretchMode stringToStretchMode(const std::string& stretchMode);
+    using StretchModeMeta = Types::SmartEnum<StretchMode>;
+
+    enum class WindowSize
+    {
+        Screen
+    };
+
+    using WindowSizeMeta = Types::SmartEnum<WindowSize>;
+
+    enum class RenderSize
+    {
+        Window,
+        Screen,
+    };
+
+    using RenderSizeMeta = Types::SmartEnum<RenderSize>;
 
     class Window
     {

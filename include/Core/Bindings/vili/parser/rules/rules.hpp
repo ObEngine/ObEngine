@@ -50,14 +50,6 @@ namespace vili::parser::rules::Bindings
     void LoadClassString(sol::state_view state);
     void LoadClassStringContent(sol::state_view state);
     void LoadClassStringDelimiter(sol::state_view state);
-    void LoadClassTemplateBegin(sol::state_view state);
-    void LoadClassTemplateDecl(sol::state_view state);
-    void LoadClassTemplateDeclContent(sol::state_view state);
-    void LoadClassTemplateIdentifier(sol::state_view state);
-    void LoadClassTemplateIdentifierUsage(sol::state_view state);
-    void LoadClassTemplateKeyword(sol::state_view state);
-    void LoadClassTemplateSpecialization(sol::state_view state);
-    void LoadClassTemplateUsage(sol::state_view state);
     void LoadClassTrue_(sol::state_view state);
     void LoadClassUnescaped(sol::state_view state);
     void LoadClassUnicode(sol::state_view state);
