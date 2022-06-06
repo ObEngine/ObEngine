@@ -165,9 +165,7 @@ namespace obe::Bindings
         obe::Animation::Exceptions::Bindings::LoadClassNoSelectedAnimation(state);
         obe::Animation::Exceptions::Bindings::LoadClassNoSelectedAnimationGroup(state);
         obe::Animation::Exceptions::Bindings::LoadClassUnknownAnimation(state);
-        obe::Animation::Exceptions::Bindings::LoadClassUnknownAnimationCommand(state);
         obe::Animation::Exceptions::Bindings::LoadClassUnknownAnimationGroup(state);
-        obe::Animation::Exceptions::Bindings::LoadClassUnknownAnimationPlayMode(state);
         obe::Animation::Exceptions::Bindings::LoadClassUnknownEasingFromEnum(state);
         obe::Animation::Exceptions::Bindings::LoadClassUnknownEasingFromString(state);
         obe::Animation::Exceptions::Bindings::LoadClassUnknownTargetScaleMode(state);

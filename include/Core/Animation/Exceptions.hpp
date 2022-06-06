@@ -4,18 +4,6 @@
 
 namespace obe::Animation::Exceptions
 {
-    class UnknownAnimationPlayMode : public Exception<UnknownAnimationPlayMode>
-    {
-    public:
-        using Exception::Exception;
-        UnknownAnimationPlayMode(std::string_view playMode, DebugInfo info)
-            : Exception(info)
-        {
-            this->error("Unable to convert the string '{}' to an AnimationPlayMode", playMode);
-            this->hint("Try one of the following values : (OneTime, Loop, Force)");
-        }
-    };
-
     class UnknownAnimationGroup : public Exception<UnknownAnimationGroup>
     {
     public:
@@ -66,19 +54,6 @@ namespace obe::Animation::Exceptions
             : Exception(info)
         {
             this->error("The Animation '{}' does not have any AnimationGroup selected", animation);
-        }
-    };
-
-    class UnknownAnimationCommand : public Exception<NoSelectedAnimationGroup>
-    {
-    public:
-        using Exception::Exception;
-        UnknownAnimationCommand(
-            std::string_view command, DebugInfo info)
-            : Exception(info)
-        {
-            this->error("Unknown Animation command '{}'", command);
-            this->hint("Try one of the following valid commands (PlayGroup, SetAnimation, Wait)");
         }
     };
 
