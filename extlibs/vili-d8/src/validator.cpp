@@ -9,7 +9,7 @@
 namespace vili::validator
 {
     vili::node validate_integer(
-        std::string location, const vili::node& validator, const vili::node& input)
+        const std::string& location, const vili::node& validator, const vili::node& input)
     {
         validate_input<vili::node_type::integer>(location, input);
         validate_validator<vili::node_type::integer>(location, validator);
@@ -78,7 +78,7 @@ namespace vili::validator
     }
 
     vili::node validate_number(
-        std::string location, const vili::node& validator, const vili::node& input)
+        const std::string& location, const vili::node& validator, const vili::node& input)
     {
         validate_input<vili::node_type::number>(location, input);
         validate_validator<vili::node_type::number>(location, validator);
@@ -145,7 +145,7 @@ namespace vili::validator
     }
 
     vili::node validate_boolean(
-        std::string location, const vili::node& validator, const vili::node& input)
+        const std::string& location, const vili::node& validator, const vili::node& input)
     {
         validate_input<vili::node_type::boolean>(location, input);
         validate_validator<vili::node_type::boolean>(location, validator);
@@ -156,7 +156,7 @@ namespace vili::validator
     }
 
     vili::node validate_string(
-        std::string location, const vili::node& validator, const vili::node& input)
+        const std::string& location, const vili::node& validator, const vili::node& input)
     {
         validate_input<vili::node_type::string>(location, input);
         validate_validator<vili::node_type::string>(location, validator);
@@ -212,7 +212,7 @@ namespace vili::validator
     }
 
     vili::node validate_array_items(
-        std::string location, const vili::node& validator, const vili::node& input)
+        const std::string& location, const vili::node& validator, const vili::node& input)
     {
         size_t index = 0;
         for (const vili::node& item : input)
@@ -224,7 +224,7 @@ namespace vili::validator
     }
 
     vili::node validate_object_items(
-        std::string location, const vili::node& validator, const vili::node& input)
+        const std::string& location, const vili::node& validator, const vili::node& input)
     {
         for (const auto& [key, item] : input.items())
         {
@@ -234,7 +234,7 @@ namespace vili::validator
     }
 
     vili::node validate_tuple_items(
-        std::string location, const vili::node& validator, const vili::node& input)
+        const std::string& location, const vili::node& validator, const vili::node& input)
     {
         if (validator.size() != input.size())
         {
@@ -251,7 +251,7 @@ namespace vili::validator
     }
 
     vili::node validate_array(
-        std::string location, const vili::node& validator, const vili::node& input)
+        const std::string& location, const vili::node& validator, const vili::node& input)
     {
         validate_input<vili::node_type::array>(location, input);
         validate_validator<vili::node_type::array>(location, validator);
@@ -328,7 +328,7 @@ namespace vili::validator
     }
 
     vili::node validate_object(
-        std::string location, const vili::node& validator, const vili::node& input)
+        const std::string& location, const vili::node& validator, const vili::node& input)
     {
         validate_input<vili::node_type::object>(location, input);
         validate_validator<vili::node_type::object>(location, validator);
@@ -382,7 +382,7 @@ namespace vili::validator
     }
 
     vili::node validate_union(
-        std::string location, const vili::node& validator, const vili::node& input)
+        const std::string& location, const vili::node& validator, const vili::node& input)
     {
         if (validate_validator_attribute<vili::node_type::array>(
                 location, validator, "types"))
@@ -413,7 +413,7 @@ namespace vili::validator
     }
 
     vili::node validate_node(
-        std::string location, const vili::node& validator, const vili::node& input)
+        const std::string& location, const vili::node& validator, const vili::node& input)
     {
         validate_validator(location, validator);
         const std::string_view validator_expect_type = validator.at("type");

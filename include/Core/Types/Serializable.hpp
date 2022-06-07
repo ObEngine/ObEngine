@@ -1,6 +1,7 @@
 #pragma once
 
 #include <vili/node.hpp>
+#include <vld8/validator.hpp>
 
 namespace obe::Types
 {
@@ -27,5 +28,13 @@ namespace obe::Types
          * \param data vili node containing the data of the object
          */
         virtual void load(const vili::node& data) = 0;
+
+        void validateAndLoad(const vili::node& data);
     };
+
+    inline void Serializable::validateAndLoad(const vili::node& data)
+    {
+        vili::validator::validate_tree(this->schema(), data);
+        this->load(data);
+    }
 } // namespace obe::Types
