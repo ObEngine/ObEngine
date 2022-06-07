@@ -4,6 +4,7 @@
 #include <ostream>
 #include <vector>
 
+#include <fmt/format.h>
 #include <magic_enum/magic_enum.hpp>
 
 #include <Exception.hpp>

@@ -4,6 +4,7 @@
 
 #include <Animation/AnimationGroup.hpp>
 #include <Time/TimeUtils.hpp>
+#include <Types/Serializable.hpp>
 #include <Types/SmartEnum.hpp>
 
 namespace obe
@@ -172,7 +173,7 @@ namespace obe::Animation
      * \brief A whole Animation that contains one or more AnimationGroup.
      *
      */
-    class Animation
+    class Animation : public Types::Serializable
     {
     private:
         AnimationState m_defaultState;
@@ -225,6 +226,8 @@ namespace obe::Animation
          * \brief Get the default delay of the Animation.
          *        The delay will be transferred to AnimationGroup children if not
          *        specified.
+         *        The delay represents the amount of seconds between each frame of
+         *        the Animation
          * \return The default delay of the Animation in seconds.
          */
         [[nodiscard]] Time::TimeUnit getDelay() const noexcept;
@@ -326,5 +329,9 @@ namespace obe::Animation
          */
         [[nodiscard]] bool getAntiAliasing() const noexcept;
         [[nodiscard]] AnimationState makeState() const;
+
+        [[nodiscard]] vili::node schema() const override;
+        vili::node dump() const override;
+        void load(const vili::node& data) override;
     };
 } // namespace obe::Animation
