@@ -142,3 +142,117 @@ namespace obe::Animation // use nested namespace here as well
     }
 }
 ```
+
+## Lua style
+
+See [.clang-format](.lua-format) for formatting style
+
+### General purpose code
+
+```lua
+-- top-level variables are snake_case
+local my_toplevel_variable = 10;
+
+-- globals are SCREAMING_SNAKE_CASE
+MY_GLOBAL = 20;
+
+-- functions are snake_case
+function cool_function()
+  -- always use local
+  -- variables are snake_case
+  local my_variable = 3; -- all statements ends-with semi-colon
+end
+
+local MyClass = class(); -- classes are PascalCase
+
+-- methods are defined using colon
+-- methods are snake_case
+function MyClass:get_thing(thing_name)
+  return self.things[thing_name];
+end
+
+-- use dot notation for module paths
+-- always use parenthesis for requires
+local canvas_module = require("obe://lib.internal.canvas");
+
+-- fetching an element directly from a module is allowed and encouraged
+local CanvasClass = require("obe://lib.internal.canvas").Canvas;
+
+-- modules should always return table
+-- never return value / class directly
+return {
+  MyClass = MyClass
+};
+```
+
+### Events and Tasks
+
+```lua
+-- Events are PascalCase.PascalCase.PascalCase
+-- Event parameter should always be named evt
+function Event.Game.Update(evt)
+  print(evt.dt); -- Event data is snake_case
+end
+
+-- Tasks are PascalCase.PascalCase
+-- Task parameter should always be named ctx
+function Task.ParentTask(ctx)
+    local start_epoch = obe.time.epoch();
+    ctx:wait_for(3);
+    local end_epoch = obe.time.epoch();
+    print("Took", end_epoch - start_epoch, "seconds");
+end
+```
+
+### Other elements
+
+Engine's global instances are provided to the Lua VM through the `Engine` (`class Engine`) object.
+
+```lua
+-- Global instances are PascalCase
+Engine.Audio:load("cwd://sounds/my_sound.ogg");
+Engine.Scene:load("cwd://scenes/my_scene.vili");
+```
+
+Game globals are shared using the `Global` table
+
+```lua
+-- Game globals are snake_case
+Global.total_lives = 3;
+```
+
+GameObject structure is the following one
+
+```lua
+local _private_object_attribute = 3; -- private attributes are snake_case
+                                    -- private attributes are defined as module-local variable
+                                    -- it is recommanded to prefix private attributes with _
+public_objet_attribute = 10; -- public attributes are snake case
+                             -- public attributes are defined as global variables
+                                -- note that they are not "true" global variables
+                                -- they are scoped to the GameObject Lua environment
+
+-- public and private attributes MUST be defined on top of the file, even if they have no default value
+  -- use nil when there is no default value
+public_attribute_without_default_value = nil;
+a = nil
+b = nil
+
+-- constructor must be public
+-- if there is a collision between constructor parameters and public attributes, use _G to disambiguate
+function _init(a, b)
+  _private_object_attribute = a + b;
+  _G.a = a;
+  _G.b = b;
+end
+
+-- private method is snake_case
+local function do_something()
+  return _private_object_attribute + a;
+end
+
+-- public method is snake_case
+function do_something_in_public()
+  return a + b;
+end
+```
