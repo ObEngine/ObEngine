@@ -138,7 +138,7 @@ public:
 #include <obe/core/animation.hpp>
 #include <obe/core/animation_group.hpp>
 
-namespace obe::Animation // use nested namespace here as well
+namespace obe::animation // use nested namespace here as well
 {
     // do not hesitate to use verbose names
     std::vector<std::string> Animation::get_all_animation_groups_names() const
