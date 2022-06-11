@@ -394,7 +394,7 @@ namespace obe::Scene
                     {
                         const vili::node& objectRequirements = gameObject.at("Requires");
                         Script::GameObjectDatabase::ApplyRequirements(
-                            newObject.getEnvironment(), objectRequirements);
+                            newObject.getOuterEnvironment(), objectRequirements);
                     }
                 }
                 else if (!this->getGameObject(gameObjectId).isPermanent())

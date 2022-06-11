@@ -5,7 +5,6 @@
 #include <Animation/Animation.hpp>
 #include <Animation/AnimationGroup.hpp>
 #include <Animation/Exceptions.hpp>
-#include <Animation/Schemas.hpp>
 #include <Config/Validators.hpp>
 #include <Engine/ResourceManager.hpp>
 #include <System/Path.hpp>
@@ -384,16 +383,20 @@ namespace obe::Animation
 
     vili::node Animation::schema() const
     {
-        return Schemas::AnimationSchema;
+        return vili::object {};
     }
 
     vili::node Animation::dump() const
     {
         vili::node result = vili::object {};
 
-        result.emplace("Meta", vili::object {});
+        result.emplace("Meta", vili::object { { "name", m_name }, { "frameDuration", m_delay } });
 
         return result;
+    }
+
+    void Animation::load(const vili::node& data)
+    {
     }
 
     void AnimationState::reset() noexcept

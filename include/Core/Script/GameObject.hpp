@@ -60,6 +60,12 @@ namespace obe::Script
         static void Clear();
     };
 
+    enum class EnvironmentTarget
+    {
+        Outer,
+        Inner
+    };
+
     /**
      * \brief A GameObject is a set of Components used in the Scene
      */
@@ -72,10 +78,11 @@ namespace obe::Script
         Collision::PolygonalCollider* m_collider = nullptr;
         Scene::SceneNode m_objectNode;
         sol::state_view m_lua;
-        sol::environment m_environment;
+        sol::environment m_outer_environment;
+        sol::table m_inner_storage;
+        sol::environment m_inner_environment;
 
         std::string m_type;
-        std::string m_privateKey;
 
         bool m_hasScriptEngine = false;
         bool m_active = false;
@@ -239,13 +246,13 @@ namespace obe::Script
          */
         [[nodiscard]] bool isPermanent() const;
 
-        sol::environment getEnvironment() const;
+        sol::environment getOuterEnvironment() const;
         void setState(bool state);
 
         [[nodiscard]] vili::node schema() const override;
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
-        void loadSource(const std::string& path);
+        void loadSource(const std::string& path, EnvironmentTarget env);
     };
 
     template <typename U>
@@ -253,6 +260,6 @@ namespace obe::Script
     {
         Debug::Log->debug(
             "<GameObject> Sending Local.Init argument {0} to GameObject {1}", argName, m_id);
-        m_environment["__INIT_ARG_TABLE"][argName] = value;
+        m_outer_environment["__INIT_ARG_TABLE"][argName] = value;
     }
 } // namespace obe::Script

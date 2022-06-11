@@ -34,14 +34,15 @@ function TaskManagerContext:wait_for(condition, ...)
             getmetatable(ref.hook).clean(ref.hook);
         end);
         local event_callback = ...;
+        ref.callback = function(evt)
+            if event_callback and not event_callback(evt) then
+                return;
+            end
+            ctx:wake(co);
+            getmetatable(ref.hook).clean(ref.hook);
+        end
         ref.hook = self.task_manager.listen(
-            condition, function(evt)
-                if event_callback and not event_callback(evt) then
-                    return;
-                end
-                ctx:wake(co);
-                getmetatable(ref.hook).clean(ref.hook);
-            end, listener_id
+            condition, ref.callback, listener_id
         );
     elseif type(condition) == "function" then
         -- Arbitrary conditional continuation function
