@@ -54,7 +54,8 @@ namespace obe::animation // namespaces are snake_case::snake_case::...
 
     // Use 4 spaces indentation everywhere (no tabs)
 
-    constexpr int MAX_AMOUNT_OF_ANIMATIONS = 100; // globals / statics are SCREAMING_SNAKE_CASE
+    constexpr int MAX_AMOUNT_OF_ANIMATIONS = 100; // const globals are SCREAMING_SNAKE_CASE
+    extern Logger Log; // global statics / externs are PascalCase
 
     enum class AnimationStatus // enums are PascalCase
     {
