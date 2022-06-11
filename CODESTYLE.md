@@ -100,6 +100,9 @@ namespace obe::animation // namespaces are snake_case::snake_case::...
                                                                 // GOOD: const std::string& group_id
         
         [[nodiscard]] bool is_paused() const; // methods returning booleans should be named is_xxx rather than get_xxx
+        
+        void set_static(bool static_); // when a variable name clashes with a C++ keywork
+                                       // add a trailing underscore to fix the collision
     };
     
     Animation make_animation_from_directory(System::Path path); // functions are snake_case
