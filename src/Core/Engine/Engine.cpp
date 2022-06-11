@@ -1,3 +1,5 @@
+#include "Script/LuaHelpers.hpp"
+
 #include <fstream>
 
 #include <Engine/Engine.hpp>
@@ -51,6 +53,12 @@ namespace obe::Engine
         (*m_lua)["__ENV_ID"] = "[Global Environment]";
         // Table shared across all environments, for easy value sharing
         (*m_lua)["Global"] = sol::new_table();
+
+        (*m_lua)["Helpers"] = sol::new_table();
+        for (const auto& [helper_name, helper] : Script::Helpers::make_all_helpers(*m_lua))
+        {
+            (*m_lua)["Helpers"][helper_name] = helper;
+        }
 
         this->initPlugins();
 

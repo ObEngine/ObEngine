@@ -48,7 +48,7 @@ namespace obe::Script::Bindings
         bindGameObject["initialize"] = &obe::Script::GameObject::initialize;
         bindGameObject["setPermanent"] = &obe::Script::GameObject::setPermanent;
         bindGameObject["isPermanent"] = &obe::Script::GameObject::isPermanent;
-        bindGameObject["getEnvironment"] = &obe::Script::GameObject::getEnvironment;
+        bindGameObject["getOuterEnvironment"] = &obe::Script::GameObject::getOuterEnvironment;
         bindGameObject["setState"] = &obe::Script::GameObject::setState;
         bindGameObject["dump"] = &obe::Script::GameObject::dump;
         bindGameObject["load"] = &obe::Script::GameObject::load;

@@ -1,5 +1,4 @@
 __ENV_ID = __OBJECT_TYPE .. "." .. __OBJECT_ID;
-Object = {type = __OBJECT_TYPE, id = __OBJECT_ID};
 
 __INIT_ARG_TABLE = {};
 
@@ -72,7 +71,7 @@ function ObjectInitFromLua(argtable)
     argtable = argtable or {};
     __INIT_ARG_TABLE = argtable;
     This:initialize();
-    return Object;
+    return This:access();
 end
 
 function ObjectDelete()
@@ -89,3 +88,15 @@ function ObjectDelete()
     collectgarbage("collect");
     collectgarbage("collect");
 end
+
+-- TODO: make into a metatable with __index and __call override
+-- Move into proper module
+-- Load at ScriptInit, not ObjectInit, call with _ENV to build metatable
+function private(values)
+    for k, v in pairs(values) do
+        _ENV[k] = v;
+    end
+end
+
+-- Table to store GameObject components
+Components = {};
