@@ -83,12 +83,15 @@ namespace obe::animation // namespaces are snake_case::snake_case::...
           // 3️⃣ public
     private:
         // within an access specifier, follow order:
-          // 1️⃣ attributes
-          // 2️⃣ methods second
-          // 3️⃣ static methods third
+          // 1️⃣ static attributes
+          // 2️⃣ static methods second
+          // 3️⃣ attributes third
+          // 4️⃣ methods fourth
         std::size_t m_code_index = 0; // attributes are snake_case
                                       // (private) attributes must be prefixed with m_
     public:
+        [[nodiscard]] constexpr std::string_view ComponentType = "AnimationState"; // static attributes are PascalCase
+
         [[nodiscard]] AnimationStatus get_status() const noexcept; // methods are snake_case
 
         AnimationGroup& get_group(const std::string& group_id); // parameters are snake_case
