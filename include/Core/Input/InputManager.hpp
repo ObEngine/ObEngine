@@ -20,8 +20,8 @@ namespace obe::Input
         std::unordered_map<std::string, std::unique_ptr<InputButton>> m_inputs;
         std::vector<std::weak_ptr<InputButtonMonitor>> m_monitors;
         std::vector<std::shared_ptr<InputButtonMonitor>> m_key_monitors;
-        Event::EventGroupPtr e_actions;
-        Event::EventGroupPtr e_inputs;
+        event::EventGroupPtr e_actions;
+        event::EventGroupPtr e_inputs;
         std::vector<std::shared_ptr<InputAction>> m_allActions {};
         std::vector<InputAction*> m_currentActions {};
         bool isActionCurrentlyInUse(const std::string& actionId);
@@ -33,7 +33,7 @@ namespace obe::Input
         /**
          * \brief Creates a new KeyboardManager
          */
-        InputManager(Event::EventNamespace& eventNamespace);
+        InputManager(event::EventNamespace& eventNamespace);
         /**
          * \brief Get if a KeyboardAction exists
          * \param actionId Id of the KeyboardAction to check the existence

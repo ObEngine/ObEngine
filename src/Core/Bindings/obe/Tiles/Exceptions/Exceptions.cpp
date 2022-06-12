@@ -8,7 +8,7 @@ namespace obe::Tiles::Exceptions::Bindings
 {
     void LoadClassTilePositionOutsideLayer(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Tiles"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Tiles"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Tiles::Exceptions::TilePositionOutsideLayer> bindTilePositionOutsideLayer
             = ExceptionsNamespace.new_usertype<obe::Tiles::Exceptions::TilePositionOutsideLayer>(
                 "TilePositionOutsideLayer", sol::call_constructor,
@@ -20,7 +20,7 @@ namespace obe::Tiles::Exceptions::Bindings
     }
     void LoadClassUnknownTileId(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Tiles"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Tiles"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Tiles::Exceptions::UnknownTileId> bindUnknownTileId
             = ExceptionsNamespace.new_usertype<obe::Tiles::Exceptions::UnknownTileId>(
                 "UnknownTileId", sol::call_constructor,
@@ -32,7 +32,7 @@ namespace obe::Tiles::Exceptions::Bindings
     }
     void LoadClassUnknownTileLayer(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Tiles"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Tiles"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Tiles::Exceptions::UnknownTileLayer> bindUnknownTileLayer
             = ExceptionsNamespace.new_usertype<obe::Tiles::Exceptions::UnknownTileLayer>(
                 "UnknownTileLayer", sol::call_constructor,
@@ -44,7 +44,7 @@ namespace obe::Tiles::Exceptions::Bindings
     }
     void LoadClassUnknownTileset(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Tiles"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Tiles"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Tiles::Exceptions::UnknownTileset> bindUnknownTileset
             = ExceptionsNamespace.new_usertype<obe::Tiles::Exceptions::UnknownTileset>(
                 "UnknownTileset", sol::call_constructor,

@@ -38,7 +38,7 @@ namespace obe::System::Package
 
     bool Install(const std::string& packageName)
     {
-        Debug::Log->info("<Package> Installing Package '{0}'", packageName);
+        debug::Log->info("<Package> Installing Package '{0}'", packageName);
         if (!Utils::Vector::contains(packageName + ".opaque", Utils::File::getFileList("Package")))
         {
             throw Exceptions::PackageFileNotFound(
@@ -56,7 +56,7 @@ namespace obe::System::Package
     bool Load(
         const std::string& packageName, const std::string& prefix, const unsigned int priority)
     {
-        Debug::Log->info("<Package> Loading Package '{0}' with priority", packageName, priority);
+        debug::Log->info("<Package> Loading Package '{0}' with priority", packageName, priority);
         if (PackageExists(packageName))
         {
             MountablePath::Mount(MountablePath(

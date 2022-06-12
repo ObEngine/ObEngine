@@ -5,13 +5,13 @@
 #include <SFML/Graphics/Color.hpp>
 #include <Types/Serializable.hpp>
 
-namespace obe::Animation
+namespace obe::animation
 {
     template <class T>
     class TweenImpl;
 }
 
-namespace obe::Graphics
+namespace obe::graphics
 {
     struct Hsv
     {
@@ -31,7 +31,7 @@ namespace obe::Graphics
      */
     class Color : public Types::Serializable
     {
-        friend class Animation::TweenImpl<Color>;
+        friend class animation::TweenImpl<Color>;
     private:
         ColorType m_type;
     public:
@@ -43,25 +43,25 @@ namespace obe::Graphics
 
         Color();
         Color(double r, double g, double b, double a = 255);
-        explicit Color(const std::string& nameOrHex);
+        explicit Color(const std::string& name_or_hex);
         Color(const sf::Color& color);
 
-        vili::node schema() const override;
-        vili::node dump(ColorType type) const;
+        [[nodiscard]] vili::node schema() const override;
+        [[nodiscard]] vili::node dump(ColorType type) const;
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
 
-        void fromString(std::string string);
-        bool fromName(std::string name, bool strict = true);
-        void fromHex(std::string hexCode);
-        void fromRgb(double r, double g, double b, double a = 255);
-        void fromHsv(double H, double S, double V);
+        void from_string(std::string string);
+        bool from_name(std::string name, bool strict = true);
+        void from_hex(std::string hex_code);
+        void from_rgb(double r, double g, double b, double a = 255);
+        void from_hsv(double H, double S, double V);
 
-        [[nodiscard]] uint32_t toInteger() const;
-        [[nodiscard]] std::string toHex() const;
-        [[nodiscard]] std::optional<std::string> toName() const;
-        [[nodiscard]] Hsv toHsv() const;
-        [[nodiscard]] std::string toString() const;
+        [[nodiscard]] uint32_t to_integer() const;
+        [[nodiscard]] std::string to_hex() const;
+        [[nodiscard]] std::optional<std::string> to_name() const;
+        [[nodiscard]] Hsv to_hsv() const;
+        [[nodiscard]] std::string to_string() const;
 
         bool operator==(const Color& color) const;
         bool operator!=(const Color& color) const;
@@ -81,7 +81,7 @@ namespace obe::Graphics
 
         operator sf::Color() const;
 
-        static Color Random(bool randomAlpha = false);
+        static Color Random(bool random_alpha = false);
 
         static Color AliceBlue;
         static Color AntiqueWhite;
@@ -227,4 +227,4 @@ namespace obe::Graphics
     };
 
     std::ostream& operator<<(std::ostream& os, const Color& color);
-} // namespace obe::Graphics
+} // namespace obe::graphics

@@ -8,7 +8,7 @@ namespace obe::Component::Exceptions::Bindings
 {
     void LoadClassComponentIdAlreadyTaken(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Component"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Component"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Component::Exceptions::ComponentIdAlreadyTaken>
             bindComponentIdAlreadyTaken
             = ExceptionsNamespace.new_usertype<obe::Component::Exceptions::ComponentIdAlreadyTaken>(
@@ -21,7 +21,7 @@ namespace obe::Component::Exceptions::Bindings
     }
     void LoadClassUnknownComponentType(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Component"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Component"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Component::Exceptions::UnknownComponentType> bindUnknownComponentType
             = ExceptionsNamespace.new_usertype<obe::Component::Exceptions::UnknownComponentType>(
                 "UnknownComponentType", sol::call_constructor,

@@ -58,7 +58,7 @@ namespace obe::System
         sf::RenderWindow m_window;
         sf::View m_view;
         sf::Image m_icon;
-        Graphics::Color m_background = Graphics::Color(0, 0, 0);
+        graphics::Color m_background = graphics::Color(0, 0, 0);
 
         void applyView();
 
@@ -92,11 +92,11 @@ namespace obe::System
         void setView(const sf::View& view);
         void setIcon(const std::string& path);
 
-        Graphics::RenderTarget getTarget();
+        graphics::RenderTarget getTarget();
         sf::RenderWindow& getWindow();
 
-        [[nodiscard]] Graphics::Color getClearColor() const;
-        void setClearColor(Graphics::Color color);
+        [[nodiscard]] graphics::Color getClearColor() const;
+        void setClearColor(graphics::Color color);
         void setMouseCursorVisible(bool visible);
     };
 } // namespace obe::System

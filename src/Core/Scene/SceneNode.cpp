@@ -18,14 +18,14 @@ namespace obe::Scene
         m_children.erase(childToRemove, m_children.end());
     }
 
-    void SceneNode::setPosition(const Transform::UnitVector& position)
+    void SceneNode::set_position(const Transform::UnitVector& position)
     {
         for (auto& child : m_children)
         {
             Transform::UnitVector offset = position - m_position;
             child->move(offset);
         }
-        Movable::setPosition(position);
+        Movable::set_position(position);
     }
 
     void SceneNode::move(const Transform::UnitVector& position)
@@ -39,7 +39,7 @@ namespace obe::Scene
 
     void SceneNode::setPositionWithoutChildren(const Transform::UnitVector& position)
     {
-        Movable::setPosition(position);
+        Movable::set_position(position);
     }
 
     void SceneNode::moveWithoutChildren(const Transform::UnitVector& position)

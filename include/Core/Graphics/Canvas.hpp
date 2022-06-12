@@ -14,7 +14,7 @@
 #include <Transform/Polygon.hpp>
 #include <Types/Identifiable.hpp>
 
-namespace obe::Graphics::Canvas
+namespace obe::graphics::canvas
 {
     /**
      * \brief Type of the CanvasElement, used for identification
@@ -31,8 +31,7 @@ namespace obe::Graphics::Canvas
         Bezier
     };
 
-    std::string canvasElementTypeToString(CanvasElementType type);
-    std::ostream& operator<<(std::ostream& os, CanvasElementType type);
+    using CanvasElementTypeMeta = Types::SmartEnum<CanvasElementType>;
 
     class Canvas;
     /**
@@ -47,7 +46,7 @@ namespace obe::Graphics::Canvas
          * \nobind
          */
         Canvas& parent;
-        unsigned int layer = 1;
+        int32_t layer = 1;
         bool visible = true;
         CanvasElementType type = CanvasElementType::CanvasElement;
 
@@ -63,14 +62,14 @@ namespace obe::Graphics::Canvas
          */
         virtual void draw(RenderTarget target) = 0;
 
-        virtual ~CanvasElement() = default;
+        ~CanvasElement() override = default;
         CanvasElement& operator=(CanvasElement&&) = delete;
 
         /**
          * \brief Change layer or object and will ask the Canvas to reorder
          *        elements automatically
          */
-        void setLayer(unsigned int layer);
+        void set_layer(unsigned int layer);
 
         using Ptr = std::unique_ptr<CanvasElement>;
     };
@@ -84,8 +83,8 @@ namespace obe::Graphics::Canvas
         Transform::UnitVector p1;
         Transform::UnitVector p2;
         unsigned int thickness = 1;
-        Color p1color;
-        Color p2color;
+        Color p1_color;
+        Color p2_color;
         static constexpr CanvasElementType Type = CanvasElementType::Line;
 
         /**
@@ -119,7 +118,7 @@ namespace obe::Graphics::Canvas
     public:
         static constexpr CanvasElementType Type = CanvasElementType::Rectangle;
 
-        Shapes::Rectangle shape;
+        shapes::Rectangle shape;
         Transform::UnitVector size;
         /**
          * \brief Create a new Rectangle
@@ -164,11 +163,11 @@ namespace obe::Graphics::Canvas
     public:
         static constexpr CanvasElementType Type = CanvasElementType::Text;
 
-        std::string fontPath;
-        Shapes::Text shape;
+        std::string font_path;
+        shapes::Text shape;
         TextHorizontalAlign h_align;
         TextVerticalAlign v_align;
-        std::vector<Graphics::Text> texts;
+        std::vector<graphics::Text> texts;
         /**
          * \brief Create a new Text
          * \param parent Reference to the Canvas
@@ -186,7 +185,7 @@ namespace obe::Graphics::Canvas
          * \asproperty
          * \brief Returns the current Text part
          */
-        Graphics::Text& currentText();
+        graphics::Text& current_text();
     };
 
     /**
@@ -197,7 +196,7 @@ namespace obe::Graphics::Canvas
     public:
         static constexpr CanvasElementType Type = CanvasElementType::Circle;
 
-        Shapes::Circle shape;
+        shapes::Circle shape;
         /**
          * \brief Create a new Circle
          * \param parent Reference to the Canvas
@@ -219,7 +218,7 @@ namespace obe::Graphics::Canvas
     public:
         static constexpr CanvasElementType Type = CanvasElementType::Polygon;
 
-        Shapes::Polygon shape;
+        shapes::Polygon shape;
         // Transform::Polygon polygon;
 
         explicit Polygon(Canvas& parent, const std::string& id);
@@ -235,7 +234,7 @@ namespace obe::Graphics::Canvas
     public:
         static constexpr CanvasElementType Type = CanvasElementType::Bezier;
         std::vector<Transform::UnitVector> points;
-        std::vector<Graphics::Color> colors;
+        std::vector<graphics::Color> colors;
         unsigned int precision = 10;
 
         explicit Bezier(Canvas& parent, const std::string& id);
@@ -255,8 +254,8 @@ namespace obe::Graphics::Canvas
     private:
         sf::RenderTexture m_canvas;
         std::vector<CanvasElement::Ptr> m_elements {};
-        bool m_sortRequired = true;
-        void sortElements();
+        bool m_sort_required = true;
+        void sort_elements();
 
     public:
         /**
@@ -275,12 +274,12 @@ namespace obe::Graphics::Canvas
          *        the given id already exists in the Canvas
          *
          * \thints
-         * \thint{Line, T=obe::Graphics::Canvas::Line}
-         * \thint{Rectangle, T=obe::Graphics::Canvas::Rectangle}
-         * \thint{Text, T=obe::Graphics::Canvas::Text}
-         * \thint{Circle, T=obe::Graphics::Canvas::Circle}
-         * \thint{Polygon, T=obe::Graphics::Canvas::Polygon}
-         * \thint{Bezier, T=obe::Graphics::Canvas::Bezier}
+         * \thint{Line, T=obe::graphics::canvas::Line}
+         * \thint{Rectangle, T=obe::graphics::canvas::Rectangle}
+         * \thint{Text, T=obe::graphics::canvas::Text}
+         * \thint{Circle, T=obe::graphics::canvas::Circle}
+         * \thint{Polygon, T=obe::graphics::canvas::Polygon}
+         * \thint{Bezier, T=obe::graphics::canvas::Bezier}
          * \endthints
          *
          */
@@ -292,7 +291,7 @@ namespace obe::Graphics::Canvas
          * \param id Id of the CanvasElement you want to retrieve
          * \return pointer to the CanvasElement with given id
          */
-        CanvasElement* get(const std::string& id);
+        CanvasElement* get(const std::string& id) const;
 
         /**
          * \brief Render all the Canvas content to the Sprite target
@@ -311,38 +310,38 @@ namespace obe::Graphics::Canvas
          * \brief Get the current Texture of the Canvas
          * \return A reference to the current Texture of the Canvas
          */
-        Texture getTexture() const;
+        Texture get_texture() const;
         /**
          * \brief Ask the Canvas to sort elements for the next rendering
          */
-        void requiresSort();
+        void requires_sort();
     };
 
     template <class T>
     inline T& Canvas::add(const std::string& id)
     {
-        if (const auto existingElement = this->get(id); existingElement)
+        if (const auto existing_element = this->get(id); existing_element)
         {
-            if (existingElement->type == T::Type)
+            if (existing_element->type == T::Type)
             {
-                Debug::Log->warn("<Scene> CanvasElement '{0}' already exists !", id);
+                debug::Log->warn("<Scene> CanvasElement '{0}' already exists !", id);
                 return *static_cast<T*>(this->get(id));
             }
             else
             {
-                throw Exceptions::CanvasElementAlreadyExists(id, canvasElementTypeToString(T::Type),
-                    canvasElementTypeToString(existingElement->type), EXC_INFO);
+                throw exceptions::CanvasElementAlreadyExists(id, CanvasElementTypeMeta::toString(T::Type),
+                    CanvasElementTypeMeta::toString(existing_element->type), EXC_INFO);
             }
         }
         else
         {
-            m_sortRequired = true;
-            std::unique_ptr<T> newElement = std::make_unique<T>(*this, id);
+            m_sort_required = true;
+            std::unique_ptr<T> new_element = std::make_unique<T>(*this, id);
             auto insert_it = std::find_if(m_elements.begin(), m_elements.end(),
-                [&newElement](
-                    const CanvasElement::Ptr& elem) { return newElement->layer <= elem->layer; });
-            auto elem_it = m_elements.insert(insert_it, std::move(newElement));
+                [&new_element](
+                    const CanvasElement::Ptr& elem) { return new_element->layer <= elem->layer; });
+            auto elem_it = m_elements.insert(insert_it, std::move(new_element));
             return *static_cast<T*>(elem_it->get());
         }
     }
-} // namespace obe::Graphics::Canvas
+} // namespace obe::graphics::canvas

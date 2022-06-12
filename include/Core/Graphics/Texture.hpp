@@ -16,7 +16,7 @@ namespace obe
     }
 }
 
-namespace obe::Graphics
+namespace obe::graphics
 {
     class SvgTexture
     {

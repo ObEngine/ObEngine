@@ -23,7 +23,7 @@ public:
     };
 };
 
-namespace obe::Event
+namespace obe::event
 {
     class EventGroup;
     class EventGroupView
@@ -32,47 +32,47 @@ namespace obe::Event
         const EventGroup& m_group;
 
     public:
-        EventGroupView(const EventGroup& eventGroup);
+        EventGroupView(const EventGroup& event_group);
         /**
          * \brief Get the name of all Events contained in the EventGroup
          * \return A std::vector of std::string containing the name of all
          *         Event contained in the EventGroup
          */
-        [[nodiscard]] std::vector<std::string> getEventsNames() const;
+        [[nodiscard]] std::vector<std::string> get_events_names() const;
         /**
          * \brief Get all the Events contained in the EventGroup
          * \return A std::vector of Event pointers
          */
-        [[nodiscard]] std::vector<EventBase*> getEvents() const;
+        [[nodiscard]] std::vector<EventBase*> get_events() const;
         /**
          * \brief Get the full name of the EventGroup (namespace + name)
          * \return A std::string containing the identifier of the EventGroup
          */
-        [[nodiscard]] std::string getIdentifier() const;
+        [[nodiscard]] std::string get_identifier() const;
         /**
          * \brief Get the name of the EventGroup
          * \return A std::string containing the name of the EventGroup
          */
-        [[nodiscard]] std::string getName() const;
+        [[nodiscard]] std::string get_name() const;
         /**
          * \brief Get if the EventGroup is joinable or not
          * \return true if the EventGroup is joinable, false otherwise
          */
-        [[nodiscard]] bool isJoinable() const;
-        [[nodiscard]] EventBase& get(const std::string& eventName) const;
+        [[nodiscard]] bool is_joinable() const;
+        [[nodiscard]] EventBase& get(const std::string& event_name) const;
         /**
          * \brief Checks whether the EventGroup contains an Event with a given name or not
-         * \param eventName Name of the Event to check the existence of
+         * \param event_name Name of the Event to check the existence of
          * \return true if the EventGroup contains an Event with the given name, false otherwise
          */
-        [[nodiscard]] bool contains(const std::string& eventName) const;
+        [[nodiscard]] bool contains(const std::string& event_name) const;
         /**
          * \brief Get a Event contained in the EventGroup
          * \return A pointer to the Event if found (throws an error otherwise)
          */
         template <class EventType>
         Event<EventType>& get() const;
-        vili::node getProfilerResults() const;
+        [[nodiscard]] vili::node get_profiler_results() const;
     };
 
     /**
@@ -89,51 +89,49 @@ namespace obe::Event
     public:
         /**
          * \brief Creates a new EventGroup
-         * \param eventNamespace Name of the Namespace the EventGroup
+         * \param event_namespace Name of the Namespace the EventGroup
          *        is in
          * \param name Name of the EventGroup
          */
-        explicit EventGroup(const std::string& eventNamespace, const std::string& name);
-        [[nodiscard]] EventGroupView getView() const;
+        explicit EventGroup(const std::string& event_namespace, const std::string& name);
+        [[nodiscard]] EventGroupView get_view() const;
         /**
          * \brief Sets if the EventGroup is joinable or not
          * \param joinable true if the EventGroup should be joinable, false
          *        otherwise
          */
-        void setJoinable(bool joinable);
+        void set_joinable(bool joinable);
         /**
          * \brief Get if the EventGroup is joinable or not
          * \return true if the EventGroup is joinable, false otherwise
          */
-        [[nodiscard]] bool isJoinable() const;
-        [[nodiscard]] EventBase& get(const std::string& eventName) const;
+        [[nodiscard]] bool is_joinable() const;
+        [[nodiscard]] EventBase& get(const std::string& event_name) const;
         /**
          * \brief Get a Event contained in the EventGroup
-         * \param eventName Name of the Event to get
+         * \param event_name Name of the Event to get
          * \return A pointer to the Event if found (throws an error otherwise)
          */
         template <class EventType>
-        [[nodiscard]] Event<EventType>& get(const std::string& eventName);
+        [[nodiscard]] Event<EventType>& get(const std::string& event_name);
         /**
          * \brief Checks whether the EventGroup contains an Event with a given name or not
-         * \param eventName Name of the Event to check the existence of
+         * \param event_name Name of the Event to check the existence of
          * \return true if the EventGroup contains an Event with the given name, false otherwise
          */
-        [[nodiscard]] bool contains(const std::string& eventName) const;
+        [[nodiscard]] bool contains(const std::string& event_name) const;
         /**
          * \brief Creates a new Event in the EventGroup
-         * \param eventName Name of the Event to create
          */
         template <class EventType>
         typename std::enable_if_t<HasId<EventType>::value> add();
         template <class EventType>
-        void add(const std::string& eventName);
+        void add(const std::string& event_name);
         /**
          * \brief Removes a Event from the EventGroup
-         * \param eventName Name of the Event to remove
-         * \return Pointer to the EventGroup to chain calls
+         * \param event_name Name of the Event to remove
          */
-        void remove(const std::string& eventName);
+        void remove(const std::string& event_name);
         /**
          * \brief Triggers a Event
          * \param event event
@@ -143,43 +141,42 @@ namespace obe::Event
         typename std::enable_if_t<HasId<EventType>::value> trigger(EventType event);
         /**
          * \brief Triggers a Event
-         * \param eventName name of the Event to trigger
+         * \param event_name name of the Event to trigger
          * \param event event
-         * \return Pointer to the EventGroup to chain calls
          */
         template <class EventType>
-        void trigger(const std::string& eventName, EventType event);
+        void trigger(const std::string& event_name, EventType event);
         /**
          * \brief Get the name of all Events contained in the EventGroup
          * \return A std::vector of std::string containing the name of all
          *         Event contained in the EventGroup
          */
-        [[nodiscard]] std::vector<std::string> getEventsNames() const;
+        [[nodiscard]] std::vector<std::string> get_events_names() const;
         /**
          * \brief Get all the Events contained in the EventGroup
          * \return A std::vector of Event pointers
          */
-        [[nodiscard]] std::vector<EventBase*> getEvents() const;
+        [[nodiscard]] std::vector<EventBase*> get_events() const;
         /**
          * \brief Get the full name of the EventGroup (namespace + name)
          * \return A std::string containing the identifier of the EventGroup
          */
-        [[nodiscard]] std::string getIdentifier() const;
+        [[nodiscard]] std::string get_identifier() const;
         /**
          * \brief Get the name of the EventGroup
          * \return A std::string containing the name of the EventGroup
          */
-        [[nodiscard]] std::string getName() const;
+        [[nodiscard]] std::string get_name() const;
 
         /**
          * \brief Register a callback for when Event::addListener is called
          */
-        void onAddListener(const std::string& eventName, OnListenerChange callback) const;
+        void on_add_listener(const std::string& event_name, OnListenerChange callback) const;
         /**
          * \brief Register a callback for when Event::removeListener is called
          */
-        void onRemoveListener(const std::string& eventName, OnListenerChange callback) const;
-        vili::node getProfilerResults() const;
+        void on_remove_listener(const std::string& event_name, OnListenerChange callback) const;
+        [[nodiscard]] vili::node get_profiler_results() const;
     };
 
     template <class EventType>
@@ -189,12 +186,12 @@ namespace obe::Event
     }
 
     template <class EventType>
-    Event<EventType>& EventGroup::get(const std::string& eventName)
+    Event<EventType>& EventGroup::get(const std::string& event_name)
     {
         std::string name;
-        if (!eventName.empty())
+        if (!event_name.empty())
         {
-            name = eventName;
+            name = event_name;
         }
         else if constexpr (HasId<EventType>::value)
         {
@@ -210,18 +207,18 @@ namespace obe::Event
     }
 
     template <class EventType>
-    void EventGroup::add(const std::string& eventName)
+    void EventGroup::add(const std::string& event_name)
     {
-        if (!m_events.count(eventName))
+        if (!m_events.contains(event_name))
         {
-            Debug::Log->debug(
-                "<EventGroup> Add Event '{}' to EventGroup '{}'", eventName, m_identifier);
+            debug::Log->debug(
+                "<EventGroup> Add Event '{}' to EventGroup '{}'", event_name, m_identifier);
             m_events.emplace(
-                eventName, std::make_unique<Event<EventType>>(m_identifier, eventName));
+                event_name, std::make_unique<Event<EventType>>(m_identifier, event_name));
         }
         else
         {
-            throw Exceptions::EventAlreadyExists(m_identifier, eventName, EXC_INFO);
+            throw Exceptions::EventAlreadyExists(m_identifier, event_name, EXC_INFO);
         }
     }
 
@@ -232,12 +229,12 @@ namespace obe::Event
     }
 
     template <class EventType>
-    void EventGroup::trigger(const std::string& eventName, EventType event)
+    void EventGroup::trigger(const std::string& event_name, EventType event)
     {
-        Debug::Log->trace(
-            "<EventGroup> Triggering Event '{}' from EventGroup '{}'", eventName, m_identifier);
-        static_cast<Event<EventType>*>(m_events.at(eventName).get())->trigger(event);
+        debug::Log->trace(
+            "<EventGroup> Triggering Event '{}' from EventGroup '{}'", event_name, m_identifier);
+        static_cast<Event<EventType>*>(m_events.at(event_name).get())->trigger(event);
     }
 
     using EventGroupPtr = std::shared_ptr<EventGroup>;
-} // namespace obe::Event
+} // namespace obe::event

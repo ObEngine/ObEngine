@@ -2,7 +2,7 @@
 
 #include <Exception.hpp>
 
-namespace obe::Graphics::Exceptions
+namespace obe::graphics::exceptions
 {
     class ReadOnlyTexture : public Exception<ReadOnlyTexture>
     {
@@ -69,11 +69,11 @@ namespace obe::Graphics::Exceptions
     {
     public:
         using Exception::Exception;
-        InvalidHexFormat(std::string_view hexCode, DebugInfo info)
+        InvalidHexFormat(std::string_view hex_code, DebugInfo info)
             : Exception(info)
         {
             this->error(
-                "Invalid Color hex code : '{}'", hexCode);
+                "Invalid Color hex code : '{}'", hex_code);
         }
     };
 
@@ -81,12 +81,12 @@ namespace obe::Graphics::Exceptions
     {
     public:
         using Exception::Exception;
-        CanvasElementAlreadyExists(std::string_view id, std::string_view newElementType,
-            std::string_view existingElementType, DebugInfo info)
+        CanvasElementAlreadyExists(std::string_view id, std::string_view new_element_type,
+            std::string_view existing_element_type, DebugInfo info)
             : Exception(info)
         {
             this->error("Impossible to create a Canvas::{} with id '{}' as there is "
-                        "already a Canvas::{} with the same id");
+                        "already a Canvas::{} with the same id", new_element_type, id, existing_element_type);
         }
     };
 

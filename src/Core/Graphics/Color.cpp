@@ -5,7 +5,7 @@
 #include <Graphics/Exceptions.hpp>
 #include <Utils/MathUtils.hpp>
 
-namespace obe::Graphics
+namespace obe::graphics
 {
     Color Color::AliceBlue(240, 248, 255);
     Color Color::AntiqueWhite(250, 235, 215);
@@ -226,12 +226,12 @@ namespace obe::Graphics
     Color::Color(const double r, const double g, const double b, const double a)
         : m_type(ColorType::Rgba)
     {
-        this->fromRgb(r, g, b, a);
+        this->from_rgb(r, g, b, a);
     }
 
-    Color::Color(const std::string& nameOrHex)
+    Color::Color(const std::string& name_or_hex)
     {
-        this->fromString(nameOrHex);
+        this->from_string(name_or_hex);
     }
 
     Color::Color(const sf::Color& color)
@@ -253,11 +253,11 @@ namespace obe::Graphics
         vili::node result;
         if (type == ColorType::Hex)
         {
-            result = toHex();
+            result = to_hex();
         }
         else if (type == ColorType::Hsv)
         {
-            Hsv value = toHsv();
+            Hsv value = to_hsv();
             result = vili::object {
                 { "H", value.H },
                 { "S", value.S },
@@ -266,7 +266,7 @@ namespace obe::Graphics
         }
         else if (type == ColorType::ColorName)
         {
-            result = toString();
+            result = to_string();
         }
         else
         {
@@ -293,35 +293,35 @@ namespace obe::Graphics
             const double g = data.at("g").as<vili::number>();
             const double b = data.at("b").as<vili::number>();
             const double a = data.contains("a") ? data.at("a").as<vili::number>() : 255.f;
-            this->fromRgb(r, g, b, a);
+            this->from_rgb(r, g, b, a);
         }
         else if (data.is<vili::object>() && data.contains("H"))
         {
             const double H = data.at("H").as<vili::number>();
             const double S = data.at("S").as<vili::number>();
             const double V = data.at("V").as<vili::number>();
-            this->fromHsv(H, S, V);
+            this->from_hsv(H, S, V);
         }
         else if (data.is<vili::string>())
         {
-            this->fromString(data);
+            this->from_string(data);
         }
         else
         {
-            throw Exceptions::InvalidSpriteColorType(
+            throw exceptions::InvalidSpriteColorType(
                 vili::to_string(data.type()), data.dump(), EXC_INFO);
         }
     }
 
-    void Color::fromString(std::string string)
+    void Color::from_string(std::string string)
     {
-        if (!this->fromName(string, false))
+        if (!this->from_name(string, false))
         {
-            this->fromHex(string);
+            this->from_hex(string);
         }
     }
 
-    bool Color::fromName(std::string name, bool strict)
+    bool Color::from_name(std::string name, bool strict)
     {
         std::for_each(name.begin(), name.end(), [](char& c) { c = std::tolower(c); });
         if (const auto& color = ColorNames.find(name); color != ColorNames.end())
@@ -335,14 +335,14 @@ namespace obe::Graphics
         }
         if (!strict)
             return false;
-        throw Exceptions::InvalidColorName(name, EXC_INFO);
+        throw exceptions::InvalidColorName(name, EXC_INFO);
     }
 
-    void Color::fromRgb(const double r, const double g, const double b, const double a)
+    void Color::from_rgb(const double r, const double g, const double b, const double a)
     {
         if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255 || a < 0 || a > 255)
         {
-            throw Exceptions::InvalidRgbFormat(r, g, b, a, EXC_INFO);
+            throw exceptions::InvalidRgbFormat(r, g, b, a, EXC_INFO);
         }
         this->r = r;
         this->g = g;
@@ -351,12 +351,12 @@ namespace obe::Graphics
         m_type = ColorType::Rgba;
     }
 
-    void Color::fromHsv(const double H, const double S, const double V)
+    void Color::from_hsv(const double H, const double S, const double V)
     {
 
         if (H < 0 || H > 360 || S < 0.0 || S > 1.0 || V < 0.0 || V > 1.0)
         {
-            throw Exceptions::InvalidHsvFormat(H, S, V, EXC_INFO);
+            throw exceptions::InvalidHsvFormat(H, S, V, EXC_INFO);
         }
 
         const double C = S * V;
@@ -407,40 +407,40 @@ namespace obe::Graphics
         m_type = ColorType::Hsv;
     }
 
-    uint32_t Color::toInteger() const
+    uint32_t Color::to_integer() const
     {
         return (std::lround(r) << 24) + (std::lround(g) << 16) + (std::lround(b) << 8)
             + std::lround(a);
     }
 
-    void Color::fromHex(std::string hexCode)
+    void Color::from_hex(std::string hex_code)
     {
         std::array<unsigned short, 4> rgba { 0, 0, 0, 255 };
         std::stringstream ss;
         std::string str;
 
-        if (hexCode[0] == '#')
+        if (hex_code[0] == '#')
         {
-            hexCode.erase(0, 1);
+            hex_code.erase(0, 1);
         }
 
-        const int size = hexCode.size();
+        const int size = hex_code.size();
 
         if (size != 3 && size != 4 && size != 6 && size != 8
-            || hexCode.find_first_not_of("AaBbCcDdEeFf0123456789") != std::string::npos)
+            || hex_code.find_first_not_of("AaBbCcDdEeFf0123456789") != std::string::npos)
         {
-            throw Exceptions::InvalidHexFormat(hexCode, EXC_INFO);
+            throw exceptions::InvalidHexFormat(hex_code, EXC_INFO);
         }
 
         for (unsigned int i = 0; i < (3 + (size % 3 ? 1 : 0)); i++)
         {
             if (size == 3 || size == 4)
             {
-                str = std::string(2, hexCode[i]);
+                str = std::string(2, hex_code[i]);
             }
             else if (size == 6 || size == 8)
             {
-                str = hexCode.substr(i * 2, 2);
+                str = hex_code.substr(i * 2, 2);
             }
             else
             {
@@ -458,62 +458,61 @@ namespace obe::Graphics
         m_type = ColorType::Hex;
     }
 
-    Hsv Color::toHsv() const
+    Hsv Color::to_hsv() const
     {
-        double min, max, delta, Rs, Gs, Bs;
-        Hsv res;
+        Hsv result;
 
-        Rs = r / 255;
-        Gs = g / 255;
-        Bs = b / 255;
+        double Rs = r / 255;
+        double Gs = g / 255;
+        double Bs = b / 255;
 
-        min = Rs < Gs ? Rs : Gs;
+        double min = Rs < Gs ? Rs : Gs;
         min = min < Bs ? min : Bs;
 
-        max = Rs > Gs ? Rs : Gs;
+        double max = Rs > Gs ? Rs : Gs;
         max = max > Bs ? max : Bs;
 
-        res.V = max;
-        delta = max - min;
+        result.V = max;
+        double delta = max - min;
         if (delta < 0.003)
         {
-            res.S = 0;
-            res.H = 0;
-            return res;
+            result.S = 0;
+            result.H = 0;
+            return result;
         }
         if (max > 0.0)
         {
-            res.S = (delta / max);
+            result.S = (delta / max);
         }
         else
         {
-            res.S = 0.0;
-            res.H = 0;
-            return res;
+            result.S = 0.0;
+            result.H = 0;
+            return result;
         }
         if (Rs >= max)
         {
-            res.H = (Gs - Bs) / delta;
+            result.H = (Gs - Bs) / delta;
         }
         else if (Gs >= max)
         {
-            res.H = 2.0 + (Bs - Rs) / delta;
+            result.H = 2.0 + (Bs - Rs) / delta;
         }
         else
         {
-            res.H = 4.0 + (Rs - Gs) / delta;
+            result.H = 4.0 + (Rs - Gs) / delta;
         }
 
-        res.H *= 60.0;
+        result.H *= 60.0;
 
-        if (res.H < 0.0)
-            res.H += 360.0;
-        return res;
+        if (result.H < 0.0)
+            result.H += 360.0;
+        return result;
     }
 
-    std::optional<std::string> Color::toName() const
+    std::optional<std::string> Color::to_name() const
     {
-        auto it = std::find_if(ColorNames.begin(), ColorNames.end(),
+        const auto it = std::ranges::find_if(ColorNames,
             [this](const std::pair<std::string, Color>& color) { return color.second == *this; });
         if (it != ColorNames.end())
         {
@@ -522,7 +521,7 @@ namespace obe::Graphics
         return std::nullopt;
     }
 
-    std::string Color::toHex() const
+    std::string Color::to_hex() const
     {
         std::stringstream ss;
         ss << "#";
@@ -534,20 +533,20 @@ namespace obe::Graphics
         return ss.str();
     }
 
-    std::string Color::toString() const
+    std::string Color::to_string() const
     {
-        const std::optional<std::string> name = toName();
-        return name.value_or(toHex());
+        const std::optional<std::string> name = to_name();
+        return name.value_or(to_hex());
     }
 
     bool Color::operator==(const Color& color) const
     {
-        return toInteger() == color.toInteger();
+        return to_integer() == color.to_integer();
     }
 
     bool Color::operator!=(const Color& color) const
     {
-        return toInteger() != color.toInteger();
+        return to_integer() != color.to_integer();
     }
 
     Color Color::operator+(const Color& color) const
@@ -661,10 +660,10 @@ namespace obe::Graphics
         return sf::Color(r, g, b, a);
     }
 
-    Color Color::Random(bool randomAlpha)
+    Color Color::Random(bool random_alpha)
     {
         int alpha = 255;
-        if (randomAlpha)
+        if (random_alpha)
         {
             alpha = Utils::Math::randint(0, 255);
         }
@@ -680,4 +679,4 @@ namespace obe::Graphics
            << std::lround(color.b) << ", " << std::lround(color.a) << ")";
         return os;
     }
-} // namespace obe::Graphics
+} // namespace obe::graphics

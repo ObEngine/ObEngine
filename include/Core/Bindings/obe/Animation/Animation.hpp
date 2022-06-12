@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Animation::Bindings
+namespace obe::animation::Bindings
 {
     void LoadClassAnimation(sol::state_view state);
     void LoadClassAnimationGroup(sol::state_view state);

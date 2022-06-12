@@ -18,7 +18,7 @@ namespace obe::Transform
          * \brief Set the position of the Movable using an UnitVector
          * \param position Position to affect to the Movable
          */
-        virtual void setPosition(const UnitVector& position);
+        virtual void set_position(const UnitVector& position);
         /**
          * \brief Moves the Movable (Adds the given position to the current one)
          * \param position Position to add to the current Position

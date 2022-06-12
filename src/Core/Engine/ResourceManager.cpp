@@ -2,108 +2,107 @@
 #include <Engine/ResourceManager.hpp>
 #include <System/Path.hpp>
 
-namespace obe::Engine
+namespace obe::engine
 {
-    const Graphics::Texture& ResourceManager::getTexture(
-        const System::Path& path, bool antiAliasing)
+    const graphics::Texture& ResourceManager::get_texture(
+        const System::Path& path, bool anti_aliasing)
     {
-        const std::string pathAsString = path.toString();
-        if (m_textures.find(pathAsString) == m_textures.end()
-            || (!m_textures[pathAsString].first && !antiAliasing)
-            || (!m_textures[pathAsString].second && antiAliasing))
+        const std::string path_as_string = path.toString();
+        if (!m_textures.contains(path_as_string)
+            || (!m_textures[path_as_string].first && !anti_aliasing)
+            || (!m_textures[path_as_string].second && anti_aliasing))
         {
-            Graphics::Texture tempTexture = Graphics::Texture::MakeSharedTexture();
-            const System::FindResult findResult = path.find();
-            const std::string texturePath = findResult.path();
-            Debug::Log->debug(
-                "[ResourceManager] Loading <Texture> {} from {}", pathAsString, texturePath);
+            graphics::Texture temp_texture = graphics::Texture::MakeSharedTexture();
+            const System::FindResult search_result = path.find();
+            const std::string& texture_path = search_result.path();
+            debug::Log->debug(
+                "[ResourceManager] Loading <Texture> {} from {}", path_as_string, texture_path);
 
-            const bool success = tempTexture.loadFromFile(texturePath);
-            if (success)
+            if (temp_texture.loadFromFile(texture_path))
             {
-                tempTexture.setAntiAliasing(antiAliasing);
-                if (!antiAliasing)
+                temp_texture.setAntiAliasing(anti_aliasing);
+                if (!anti_aliasing)
                 {
-                    m_textures[pathAsString].first
-                        = std::make_unique<Graphics::Texture>(tempTexture);
-                    return *m_textures[pathAsString].first;
+                    m_textures[path_as_string].first
+                        = std::make_unique<graphics::Texture>(temp_texture);
+                    return *m_textures[path_as_string].first;
                 }
                 else
                 {
-                    m_textures[pathAsString].second
-                        = std::make_unique<Graphics::Texture>(tempTexture);
-                    return *m_textures[pathAsString].second;
+                    m_textures[path_as_string].second
+                        = std::make_unique<graphics::Texture>(temp_texture);
+                    return *m_textures[path_as_string].second;
                 }
             }
             else
-                throw Exceptions::TextureNotFound(texturePath, EXC_INFO);
+                throw exceptions::TextureNotFound(texture_path, EXC_INFO);
         }
         else
         {
-            if (antiAliasing)
+            if (anti_aliasing)
             {
-                return *m_textures[pathAsString].second;
+                return *m_textures[path_as_string].second;
             }
             else
             {
-                return *m_textures[pathAsString].first;
+                return *m_textures[path_as_string].first;
             }
         }
     }
 
-    const Graphics::Texture& ResourceManager::getTexture(const System::Path& path)
+    const graphics::Texture& ResourceManager::get_texture(const System::Path& path)
     {
-        return getTexture(path, defaultAntiAliasing);
+        return get_texture(path, default_anti_aliasing);
     }
 
     void ResourceManager::clean()
     {
-        for (auto& texturePair : m_textures)
+        for (auto& texture_pair : m_textures)
         {
-            if (texturePair.second.first && texturePair.second.first->useCount() == 1)
+            if (texture_pair.second.first && texture_pair.second.first->useCount() == 1)
             {
-                texturePair.second.first.reset();
+                texture_pair.second.first.reset();
             }
-            if (texturePair.second.second && texturePair.second.second->useCount() == 1)
+            if (texture_pair.second.second && texture_pair.second.second->useCount() == 1)
             {
-                texturePair.second.second.reset();
+                texture_pair.second.second.reset();
             }
         }
     }
 
     ResourceManager::ResourceManager()
-        : defaultAntiAliasing(false)
+        : default_anti_aliasing(false)
     {
     }
 
-    std::shared_ptr<Graphics::Font> ResourceManager::getFont(const std::string& path)
+    std::shared_ptr<graphics::Font> ResourceManager::get_font(const std::string& path)
     {
-        if (m_fonts.find(path) == m_fonts.end())
+        if (!m_fonts.contains(path))
         {
-            const System::FindResult findResult = System::Path(path).find(System::PathType::File);
-            std::shared_ptr<Graphics::Font> newFont = std::make_shared<Graphics::Font>();
-            newFont->loadFromFile(findResult);
+            const System::FindResult search_result = System::Path(path).find(System::PathType::File);
+            std::shared_ptr<graphics::Font> new_font = std::make_shared<graphics::Font>();
+            new_font->load_from_file(search_result);
 
-            if (findResult.success())
+            if (search_result.success())
             {
-                Debug::Log->debug(
-                    "[ResourceManager] Loading <Font> {} from {}", path, findResult.path());
-                m_fonts[path] = move(newFont);
+                debug::Log->debug(
+                    "[ResourceManager] Loading <Font> {} from {}", path, search_result.path());
+                m_fonts[path] = move(new_font);
             }
             else
-                throw Exceptions::FontNotFound(
+                throw exceptions::FontNotFound(
                     path, System::MountablePath::StringPaths(), EXC_INFO);
         }
         return m_fonts[path];
     }
 
-    void ResourceManagedObject::removeResourceManager()
+    void ResourceManagedObject::remove_resource_manager()
     {
         m_resources = nullptr;
     }
 
-    void ResourceManagedObject::attachResourceManager(ResourceManager& resources)
+    void ResourceManagedObject::attach_resource_manager(ResourceManager& resources)
     {
         m_resources = &resources;
     }
-} // namespace obe::Graphics
+} // namespace obe::graphics

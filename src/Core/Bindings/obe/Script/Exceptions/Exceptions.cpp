@@ -8,7 +8,7 @@ namespace obe::Script::Exceptions::Bindings
 {
     void LoadClassGameObjectScriptError(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Script"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Script::Exceptions::GameObjectScriptError> bindGameObjectScriptError
             = ExceptionsNamespace.new_usertype<obe::Script::Exceptions::GameObjectScriptError>(
                 "GameObjectScriptError", sol::call_constructor,
@@ -20,7 +20,7 @@ namespace obe::Script::Exceptions::Bindings
     }
     void LoadClassInvalidScript(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Script"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Script::Exceptions::InvalidScript> bindInvalidScript
             = ExceptionsNamespace.new_usertype<obe::Script::Exceptions::InvalidScript>(
                 "InvalidScript", sol::call_constructor,
@@ -32,7 +32,7 @@ namespace obe::Script::Exceptions::Bindings
     }
     void LoadClassLuaExecutionError(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Script"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Script::Exceptions::LuaExecutionError> bindLuaExecutionError
             = ExceptionsNamespace.new_usertype<obe::Script::Exceptions::LuaExecutionError>(
                 "LuaExecutionError", sol::call_constructor,
@@ -44,7 +44,7 @@ namespace obe::Script::Exceptions::Bindings
     }
     void LoadClassLuaNestedExceptionError(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Script"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Script::Exceptions::LuaNestedExceptionError> bindLuaNestedExceptionError
             = ExceptionsNamespace.new_usertype<obe::Script::Exceptions::LuaNestedExceptionError>(
                 "LuaNestedExceptionError", sol::call_constructor,
@@ -56,7 +56,7 @@ namespace obe::Script::Exceptions::Bindings
     }
     void LoadClassNoSuchComponent(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Script"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Script::Exceptions::NoSuchComponent> bindNoSuchComponent
             = ExceptionsNamespace.new_usertype<obe::Script::Exceptions::NoSuchComponent>(
                 "NoSuchComponent", sol::call_constructor,
@@ -68,7 +68,7 @@ namespace obe::Script::Exceptions::Bindings
     }
     void LoadClassObjectDefinitionNotFound(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Script"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Script::Exceptions::ObjectDefinitionNotFound>
             bindObjectDefinitionNotFound
             = ExceptionsNamespace.new_usertype<obe::Script::Exceptions::ObjectDefinitionNotFound>(
@@ -81,7 +81,7 @@ namespace obe::Script::Exceptions::Bindings
     }
     void LoadClassScriptFileNotFound(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Script"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Script::Exceptions::ScriptFileNotFound> bindScriptFileNotFound
             = ExceptionsNamespace.new_usertype<obe::Script::Exceptions::ScriptFileNotFound>(
                 "ScriptFileNotFound", sol::call_constructor,
@@ -93,7 +93,7 @@ namespace obe::Script::Exceptions::Bindings
     }
     void LoadClassWrongSourceAttributeType(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Script"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Script"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Script::Exceptions::WrongSourceAttributeType>
             bindWrongSourceAttributeType
             = ExceptionsNamespace.new_usertype<obe::Script::Exceptions::WrongSourceAttributeType>(

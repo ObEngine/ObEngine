@@ -1,7 +1,7 @@
 #include <Graphics/Text.hpp>
 #include <codecvt>
 
-namespace obe::Graphics
+namespace obe::graphics
 {
     Text::Text()
     {

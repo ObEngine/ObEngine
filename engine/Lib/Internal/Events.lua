@@ -1,18 +1,18 @@
 local function EventHook(listener_id, namespace, group, event, callback)
-    local lua_listener = obe.Event.LuaEventListener(callback);
-    Engine.Events:getNamespace(namespace)
-                 :getGroup(group)
+    local lua_listener = obe.event.LuaEventListener(callback);
+    Engine.Events:get_namespace(namespace)
+                 :get_group(group)
                  :get(event)
-                 :addExternalListener(listener_id, lua_listener);
+                 :add_external_listener(listener_id, lua_listener);
     local hook_mt = {
         __call = function(object, ...)
             object.callback(...);
         end,
         clean = function(object)
-            Engine.Events:getNamespace(namespace)
-                         :getGroup(group)
+            Engine.Events:get_namespace(namespace)
+                         :get_group(group)
                          :get(event)
-                         :removeExternalListener(listener_id);
+                         :remove_external_listener(listener_id);
         end,
         listener_id = listener_id,
         event_id = ("%s.%s.%s"):format(namespace, group, event)
@@ -25,9 +25,9 @@ local function EventGroupHook(listener_id, namespace, group)
         __newindex = function(object, event, callback)
             if type(callback) == "function" then
                 local mt = getmetatable(object);
-                Engine.Events:getNamespace(namespace):getGroup(group):get(event)
-                    :addExternalListener(
-                        listener_id, obe.Event.LuaEventListener(callback)
+                Engine.Events:get_namespace(namespace):get_group(group):get(event)
+                    :add_external_listener(
+                        listener_id, obe.event.LuaEventListener(callback)
                     );
                 mt.__storage[event] = setmetatable(
                     {}, {
@@ -39,8 +39,8 @@ local function EventGroupHook(listener_id, namespace, group)
             elseif type(callback) == "nil" then
                 local mt = getmetatable(object);
                 mt.__storage[event] = nil;
-                Engine.Events:getNamespace(namespace):getGroup(group):get(event)
-                    :removeExternalListener(
+                Engine.Events:get_namespace(namespace):get_group(group):get(event)
+                    :remove_external_listener(
                         listener_id
                     );
             else
@@ -56,7 +56,7 @@ local function EventGroupHook(listener_id, namespace, group)
             if mt.__storage[event] then
                 return mt.__storage[event];
             else
-                if Engine.Events:getNamespace(namespace):getGroup(group):contains(event) then
+                if Engine.Events:get_namespace(namespace):get_group(group):contains(event) then
                     return setmetatable(
                         {}, {
                             __call = function()
@@ -77,19 +77,19 @@ local function EventGroupHook(listener_id, namespace, group)
         end,
         clean = function(object)
             local mt = getmetatable(object);
-            local group_exists = Engine.Events:getNamespace(namespace):doesGroupExists(group);
+            local group_exists = Engine.Events:get_namespace(namespace):does_group_exists(group);
             for event_name, _ in pairs(mt.__storage) do
                 mt.__storage[event_name] = nil;
                 if group_exists then
-                    Engine.Events:getNamespace(namespace):getGroup(group):get(event_name)
-                        :removeExternalListener(
+                    Engine.Events:get_namespace(namespace):get_group(group):get(event_name)
+                        :remove_external_listener(
                             listener_id
                         );
                 end
             end
         end,
         __call = function(object)
-            return Engine.Events:getNamespace(namespace):joinGroup(group);
+            return Engine.Events:get_namespace(namespace):joinGroup(group);
         end,
         __storage = {},
         listener_id = listener_id
@@ -101,7 +101,7 @@ local function EventNamespaceHook(listener_id, namespace)
     local hook_mt = {
         __index = function(object, key)
             local mt = getmetatable(object);
-            local groups = Engine.Events:getNamespace(namespace):getAllGroupsNames();
+            local groups = Engine.Events:get_namespace(namespace):get_all_groups_names();
             for _, v in pairs(groups) do
                 if v == key then
                     if mt.__storage[key] == nil then

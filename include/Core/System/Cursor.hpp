@@ -12,7 +12,7 @@
 #include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
 
-namespace obe::Events::Cursor
+namespace obe::events::Cursor
 {
     struct Move
     {
@@ -117,7 +117,7 @@ namespace obe::System
         int m_constrainedY = 0;
         bool m_visible = true;
         System::Window& m_window;
-        Event::EventGroupPtr e_cursor;
+        event::EventGroupPtr e_cursor;
         std::function<std::pair<int, int>(Cursor*)> m_constraint;
         std::function<bool()> m_constraintCondition;
         std::map<sf::Mouse::Button, bool> m_buttonState;
@@ -129,7 +129,7 @@ namespace obe::System
         /**
          * \brief Creates a Cursor
          */
-        explicit Cursor(System::Window& window, Event::EventNamespace& eventNamespace);
+        explicit Cursor(System::Window& window, event::EventNamespace& eventNamespace);
         /**
          * \brief Gets the x Coordinate of the Cursor Position (Constrained)
          * \return An int containing the x Coordinate of the Cursor Position

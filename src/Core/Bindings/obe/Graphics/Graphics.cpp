@@ -12,490 +12,489 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Graphics::Bindings
+namespace obe::graphics::Bindings
 {
     void LoadEnumColorType(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        GraphicsNamespace.new_enum<obe::Graphics::ColorType>("ColorType",
-            { { "Rgba", obe::Graphics::ColorType::Rgba }, { "Hsv", obe::Graphics::ColorType::Hsv },
-                { "Hex", obe::Graphics::ColorType::Hex },
-                { "ColorName", obe::Graphics::ColorType::ColorName } });
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        GraphicsNamespace.new_enum<obe::graphics::ColorType>("ColorType",
+            { { "Rgba", obe::graphics::ColorType::Rgba }, { "Hsv", obe::graphics::ColorType::Hsv },
+                { "Hex", obe::graphics::ColorType::Hex },
+                { "ColorName", obe::graphics::ColorType::ColorName } });
     }
     void LoadEnumSpriteHandlePointType(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        GraphicsNamespace.new_enum<obe::Graphics::SpriteHandlePointType>("SpriteHandlePointType",
-            { { "ScaleHandle", obe::Graphics::SpriteHandlePointType::ScaleHandle },
-                { "RotateHandle", obe::Graphics::SpriteHandlePointType::RotateHandle } });
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        GraphicsNamespace.new_enum<obe::graphics::SpriteHandlePointType>("SpriteHandlePointType",
+            { { "ScaleHandle", obe::graphics::SpriteHandlePointType::ScaleHandle },
+                { "RotateHandle", obe::graphics::SpriteHandlePointType::RotateHandle } });
     }
     void LoadClassColor(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::Color> bindColor = GraphicsNamespace.new_usertype<
-            obe::Graphics::Color>("Color", sol::call_constructor,
-            sol::constructors<obe::Graphics::Color(), obe::Graphics::Color(double, double, double),
-                obe::Graphics::Color(double, double, double, double),
-                obe::Graphics::Color(const std::string&), obe::Graphics::Color(const sf::Color&)>(),
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::Color> bindColor = GraphicsNamespace.new_usertype<
+            obe::graphics::Color>("Color", sol::call_constructor,
+            sol::constructors<obe::graphics::Color(), obe::graphics::Color(double, double, double),
+                obe::graphics::Color(double, double, double, double),
+                obe::graphics::Color(const std::string&), obe::graphics::Color(const sf::Color&)>(),
             sol::base_classes, sol::bases<obe::Types::Serializable>());
         bindColor["dump"] = sol::overload(
-            static_cast<vili::node (obe::Graphics::Color::*)(obe::Graphics::ColorType) const>(
-                &obe::Graphics::Color::dump),
-            static_cast<vili::node (obe::Graphics::Color::*)() const>(&obe::Graphics::Color::dump));
-        bindColor["load"] = &obe::Graphics::Color::load;
-        bindColor["fromString"] = &obe::Graphics::Color::fromString;
-        bindColor["fromName"]
-            = sol::overload([](obe::Graphics::Color* self,
-                                std::string name) -> bool { return self->fromName(name); },
-                [](obe::Graphics::Color* self, std::string name, bool strict) -> bool {
-                    return self->fromName(name, strict);
+            static_cast<vili::node (obe::graphics::Color::*)(obe::graphics::ColorType) const>(
+                &obe::graphics::Color::dump),
+            static_cast<vili::node (obe::graphics::Color::*)() const>(&obe::graphics::Color::dump));
+        bindColor["load"] = &obe::graphics::Color::load;
+        bindColor["from_string"] = &obe::graphics::Color::from_string;
+        bindColor["from_name"]
+            = sol::overload([](obe::graphics::Color* self,
+                                std::string name) -> bool { return self->from_name(name); },
+                [](obe::graphics::Color* self, std::string name, bool strict) -> bool {
+                    return self->from_name(name, strict);
                 });
-        bindColor["fromHex"] = &obe::Graphics::Color::fromHex;
-        bindColor["fromRgb"]
-            = sol::overload([](obe::Graphics::Color* self, double r, double g,
-                                double b) -> void { return self->fromRgb(r, g, b); },
-                [](obe::Graphics::Color* self, double r, double g, double b, double a) -> void {
-                    return self->fromRgb(r, g, b, a);
+        bindColor["from_hex"] = &obe::graphics::Color::from_hex;
+        bindColor["from_rgb"]
+            = sol::overload([](obe::graphics::Color* self, double r, double g,
+                                double b) -> void { return self->from_rgb(r, g, b); },
+                [](obe::graphics::Color* self, double r, double g, double b, double a) -> void {
+                    return self->from_rgb(r, g, b, a);
                 });
-        bindColor["fromHsv"] = &obe::Graphics::Color::fromHsv;
-        bindColor["toInteger"] = &obe::Graphics::Color::toInteger;
-        bindColor["toHex"] = &obe::Graphics::Color::toHex;
-        bindColor["toName"] = &obe::Graphics::Color::toName;
-        bindColor["toHsv"] = &obe::Graphics::Color::toHsv;
-        bindColor["toString"] = &obe::Graphics::Color::toString;
-        bindColor[sol::meta_function::equal_to] = &obe::Graphics::Color::operator==;
-        bindColor[sol::meta_function::addition] = &obe::Graphics::Color::operator+;
+        bindColor["from_hsv"] = &obe::graphics::Color::from_hsv;
+        bindColor["to_integer"] = &obe::graphics::Color::to_integer;
+        bindColor["to_hex"] = &obe::graphics::Color::to_hex;
+        bindColor["to_name"] = &obe::graphics::Color::to_name;
+        bindColor["to_hsv"] = &obe::graphics::Color::to_hsv;
+        bindColor["to_string"] = &obe::graphics::Color::to_string;
+        bindColor[sol::meta_function::equal_to] = &obe::graphics::Color::operator==;
+        bindColor[sol::meta_function::addition] = &obe::graphics::Color::operator+;
         bindColor[sol::meta_function::subtraction]
-            = static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(
-                const obe::Graphics::Color&) const>(&obe::Graphics::Color::operator-);
+            = static_cast<obe::graphics::Color (obe::graphics::Color::*)(
+                const obe::graphics::Color&) const>(&obe::graphics::Color::operator-);
         bindColor[sol::meta_function::unary_minus]
-            = static_cast<obe::Graphics::Color (obe::Graphics::Color::*)() const>(
-                &obe::Graphics::Color::operator-);
+            = static_cast<obe::graphics::Color (obe::graphics::Color::*)() const>(
+                &obe::graphics::Color::operator-);
         bindColor[sol::meta_function::multiplication] = sol::overload(
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(const obe::Graphics::Color&)
-                    const>(&obe::Graphics::Color::operator*),
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(double) const>(
-                &obe::Graphics::Color::operator*));
+            static_cast<obe::graphics::Color (obe::graphics::Color::*)(const obe::graphics::Color&)
+                    const>(&obe::graphics::Color::operator*),
+            static_cast<obe::graphics::Color (obe::graphics::Color::*)(double) const>(
+                &obe::graphics::Color::operator*));
         bindColor[sol::meta_function::division] = sol::overload(
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(const obe::Graphics::Color&)
-                    const>(&obe::Graphics::Color::operator/),
-            static_cast<obe::Graphics::Color (obe::Graphics::Color::*)(double) const>(
-                &obe::Graphics::Color::operator/));
+            static_cast<obe::graphics::Color (obe::graphics::Color::*)(const obe::graphics::Color&)
+                    const>(&obe::graphics::Color::operator/),
+            static_cast<obe::graphics::Color (obe::graphics::Color::*)(double) const>(
+                &obe::graphics::Color::operator/));
         bindColor["Random"]
-            = sol::overload([]() -> obe::Graphics::Color { return obe::Graphics::Color::Random(); },
-                [](bool randomAlpha) -> obe::Graphics::Color {
-                    return obe::Graphics::Color::Random(randomAlpha);
+            = sol::overload([]() -> obe::graphics::Color { return obe::graphics::Color::Random(); },
+                [](bool randomAlpha) -> obe::graphics::Color {
+                    return obe::graphics::Color::Random(randomAlpha);
                 });
-        bindColor["r"] = &obe::Graphics::Color::r;
-        bindColor["g"] = &obe::Graphics::Color::g;
-        bindColor["b"] = &obe::Graphics::Color::b;
-        bindColor["a"] = &obe::Graphics::Color::a;
-        bindColor["AliceBlue"] = sol::var(&obe::Graphics::Color::AliceBlue);
-        bindColor["AntiqueWhite"] = sol::var(&obe::Graphics::Color::AntiqueWhite);
-        bindColor["Aqua"] = sol::var(&obe::Graphics::Color::Aqua);
-        bindColor["Aquamarine"] = sol::var(&obe::Graphics::Color::Aquamarine);
-        bindColor["Azure"] = sol::var(&obe::Graphics::Color::Azure);
-        bindColor["Beige"] = sol::var(&obe::Graphics::Color::Beige);
-        bindColor["Bisque"] = sol::var(&obe::Graphics::Color::Bisque);
-        bindColor["Black"] = sol::var(&obe::Graphics::Color::Black);
-        bindColor["BlanchedAlmond"] = sol::var(&obe::Graphics::Color::BlanchedAlmond);
-        bindColor["Blue"] = sol::var(&obe::Graphics::Color::Blue);
-        bindColor["BlueViolet"] = sol::var(&obe::Graphics::Color::BlueViolet);
-        bindColor["Brown"] = sol::var(&obe::Graphics::Color::Brown);
-        bindColor["BurlyWood"] = sol::var(&obe::Graphics::Color::BurlyWood);
-        bindColor["CadetBlue"] = sol::var(&obe::Graphics::Color::CadetBlue);
-        bindColor["Chartreuse"] = sol::var(&obe::Graphics::Color::Chartreuse);
-        bindColor["Chocolate"] = sol::var(&obe::Graphics::Color::Chocolate);
-        bindColor["Coral"] = sol::var(&obe::Graphics::Color::Coral);
-        bindColor["CornflowerBlue"] = sol::var(&obe::Graphics::Color::CornflowerBlue);
-        bindColor["Cornsilk"] = sol::var(&obe::Graphics::Color::Cornsilk);
-        bindColor["Crimson"] = sol::var(&obe::Graphics::Color::Crimson);
-        bindColor["Cyan"] = sol::var(&obe::Graphics::Color::Cyan);
-        bindColor["DarkBlue"] = sol::var(&obe::Graphics::Color::DarkBlue);
-        bindColor["DarkCyan"] = sol::var(&obe::Graphics::Color::DarkCyan);
-        bindColor["DarkGoldenrod"] = sol::var(&obe::Graphics::Color::DarkGoldenrod);
-        bindColor["DarkGray"] = sol::var(&obe::Graphics::Color::DarkGray);
-        bindColor["DarkGreen"] = sol::var(&obe::Graphics::Color::DarkGreen);
-        bindColor["DarkKhaki"] = sol::var(&obe::Graphics::Color::DarkKhaki);
-        bindColor["DarkMagenta"] = sol::var(&obe::Graphics::Color::DarkMagenta);
-        bindColor["DarkOliveGreen"] = sol::var(&obe::Graphics::Color::DarkOliveGreen);
-        bindColor["DarkOrange"] = sol::var(&obe::Graphics::Color::DarkOrange);
-        bindColor["DarkOrchid"] = sol::var(&obe::Graphics::Color::DarkOrchid);
-        bindColor["DarkRed"] = sol::var(&obe::Graphics::Color::DarkRed);
-        bindColor["DarkSalmon"] = sol::var(&obe::Graphics::Color::DarkSalmon);
-        bindColor["DarkSeaGreen"] = sol::var(&obe::Graphics::Color::DarkSeaGreen);
-        bindColor["DarkSlateBlue"] = sol::var(&obe::Graphics::Color::DarkSlateBlue);
-        bindColor["DarkSlateGray"] = sol::var(&obe::Graphics::Color::DarkSlateGray);
-        bindColor["DarkTurquoise"] = sol::var(&obe::Graphics::Color::DarkTurquoise);
-        bindColor["DarkViolet"] = sol::var(&obe::Graphics::Color::DarkViolet);
-        bindColor["DeepPink"] = sol::var(&obe::Graphics::Color::DeepPink);
-        bindColor["DeepSkyBlue"] = sol::var(&obe::Graphics::Color::DeepSkyBlue);
-        bindColor["DimGray"] = sol::var(&obe::Graphics::Color::DimGray);
-        bindColor["DodgerBlue"] = sol::var(&obe::Graphics::Color::DodgerBlue);
-        bindColor["FireBrick"] = sol::var(&obe::Graphics::Color::FireBrick);
-        bindColor["FloralWhite"] = sol::var(&obe::Graphics::Color::FloralWhite);
-        bindColor["ForestGreen"] = sol::var(&obe::Graphics::Color::ForestGreen);
-        bindColor["Fuchsia"] = sol::var(&obe::Graphics::Color::Fuchsia);
-        bindColor["Gainsboro"] = sol::var(&obe::Graphics::Color::Gainsboro);
-        bindColor["GhostWhite"] = sol::var(&obe::Graphics::Color::GhostWhite);
-        bindColor["Gold"] = sol::var(&obe::Graphics::Color::Gold);
-        bindColor["Goldenrod"] = sol::var(&obe::Graphics::Color::Goldenrod);
-        bindColor["Gray"] = sol::var(&obe::Graphics::Color::Gray);
-        bindColor["Green"] = sol::var(&obe::Graphics::Color::Green);
-        bindColor["GreenYellow"] = sol::var(&obe::Graphics::Color::GreenYellow);
-        bindColor["HoneyDew"] = sol::var(&obe::Graphics::Color::HoneyDew);
-        bindColor["HotPink"] = sol::var(&obe::Graphics::Color::HotPink);
-        bindColor["IndianRed"] = sol::var(&obe::Graphics::Color::IndianRed);
-        bindColor["Indigo"] = sol::var(&obe::Graphics::Color::Indigo);
-        bindColor["Ivory"] = sol::var(&obe::Graphics::Color::Ivory);
-        bindColor["Khaki"] = sol::var(&obe::Graphics::Color::Khaki);
-        bindColor["Lavender"] = sol::var(&obe::Graphics::Color::Lavender);
-        bindColor["LavenderBlush"] = sol::var(&obe::Graphics::Color::LavenderBlush);
-        bindColor["LawnGreen"] = sol::var(&obe::Graphics::Color::LawnGreen);
-        bindColor["LemonChiffon"] = sol::var(&obe::Graphics::Color::LemonChiffon);
-        bindColor["LightBlue"] = sol::var(&obe::Graphics::Color::LightBlue);
-        bindColor["LightCoral"] = sol::var(&obe::Graphics::Color::LightCoral);
-        bindColor["LightCyan"] = sol::var(&obe::Graphics::Color::LightCyan);
-        bindColor["LightGoldenrodYellow"] = sol::var(&obe::Graphics::Color::LightGoldenrodYellow);
-        bindColor["LightGray"] = sol::var(&obe::Graphics::Color::LightGray);
-        bindColor["LightGreen"] = sol::var(&obe::Graphics::Color::LightGreen);
-        bindColor["LightPink"] = sol::var(&obe::Graphics::Color::LightPink);
-        bindColor["LightSalmon"] = sol::var(&obe::Graphics::Color::LightSalmon);
-        bindColor["LightSeaGreen"] = sol::var(&obe::Graphics::Color::LightSeaGreen);
-        bindColor["LightSkyBlue"] = sol::var(&obe::Graphics::Color::LightSkyBlue);
-        bindColor["LightSlateGray"] = sol::var(&obe::Graphics::Color::LightSlateGray);
-        bindColor["LightSteelBlue"] = sol::var(&obe::Graphics::Color::LightSteelBlue);
-        bindColor["LightYellow"] = sol::var(&obe::Graphics::Color::LightYellow);
-        bindColor["Lime"] = sol::var(&obe::Graphics::Color::Lime);
-        bindColor["LimeGreen"] = sol::var(&obe::Graphics::Color::LimeGreen);
-        bindColor["Linen"] = sol::var(&obe::Graphics::Color::Linen);
-        bindColor["Magenta"] = sol::var(&obe::Graphics::Color::Magenta);
-        bindColor["Maroon"] = sol::var(&obe::Graphics::Color::Maroon);
-        bindColor["MediumAquamarine"] = sol::var(&obe::Graphics::Color::MediumAquamarine);
-        bindColor["MediumBlue"] = sol::var(&obe::Graphics::Color::MediumBlue);
-        bindColor["MediumOrchid"] = sol::var(&obe::Graphics::Color::MediumOrchid);
-        bindColor["MediumPurple"] = sol::var(&obe::Graphics::Color::MediumPurple);
-        bindColor["MediumSeaGreen"] = sol::var(&obe::Graphics::Color::MediumSeaGreen);
-        bindColor["MediumSlateBlue"] = sol::var(&obe::Graphics::Color::MediumSlateBlue);
-        bindColor["MediumSpringGreen"] = sol::var(&obe::Graphics::Color::MediumSpringGreen);
-        bindColor["MediumTurquoise"] = sol::var(&obe::Graphics::Color::MediumTurquoise);
-        bindColor["MediumVioletRed"] = sol::var(&obe::Graphics::Color::MediumVioletRed);
-        bindColor["MidnightBlue"] = sol::var(&obe::Graphics::Color::MidnightBlue);
-        bindColor["MintCream"] = sol::var(&obe::Graphics::Color::MintCream);
-        bindColor["MistyRose"] = sol::var(&obe::Graphics::Color::MistyRose);
-        bindColor["Moccasin"] = sol::var(&obe::Graphics::Color::Moccasin);
-        bindColor["NavajoWhite"] = sol::var(&obe::Graphics::Color::NavajoWhite);
-        bindColor["Navy"] = sol::var(&obe::Graphics::Color::Navy);
-        bindColor["OldLace"] = sol::var(&obe::Graphics::Color::OldLace);
-        bindColor["Olive"] = sol::var(&obe::Graphics::Color::Olive);
-        bindColor["OliveDrab"] = sol::var(&obe::Graphics::Color::OliveDrab);
-        bindColor["Orange"] = sol::var(&obe::Graphics::Color::Orange);
-        bindColor["OrangeRed"] = sol::var(&obe::Graphics::Color::OrangeRed);
-        bindColor["Orchid"] = sol::var(&obe::Graphics::Color::Orchid);
-        bindColor["PaleGoldenrod"] = sol::var(&obe::Graphics::Color::PaleGoldenrod);
-        bindColor["PaleGreen"] = sol::var(&obe::Graphics::Color::PaleGreen);
-        bindColor["PaleTurquoise"] = sol::var(&obe::Graphics::Color::PaleTurquoise);
-        bindColor["PaleVioletRed"] = sol::var(&obe::Graphics::Color::PaleVioletRed);
-        bindColor["PapayaWhip"] = sol::var(&obe::Graphics::Color::PapayaWhip);
-        bindColor["PeachPuff"] = sol::var(&obe::Graphics::Color::PeachPuff);
-        bindColor["Peru"] = sol::var(&obe::Graphics::Color::Peru);
-        bindColor["Pink"] = sol::var(&obe::Graphics::Color::Pink);
-        bindColor["Plum"] = sol::var(&obe::Graphics::Color::Plum);
-        bindColor["PowderBlue"] = sol::var(&obe::Graphics::Color::PowderBlue);
-        bindColor["Purple"] = sol::var(&obe::Graphics::Color::Purple);
-        bindColor["RebeccaPurple"] = sol::var(&obe::Graphics::Color::RebeccaPurple);
-        bindColor["Red"] = sol::var(&obe::Graphics::Color::Red);
-        bindColor["RosyBrown"] = sol::var(&obe::Graphics::Color::RosyBrown);
-        bindColor["RoyalBlue"] = sol::var(&obe::Graphics::Color::RoyalBlue);
-        bindColor["SaddleBrown"] = sol::var(&obe::Graphics::Color::SaddleBrown);
-        bindColor["Salmon"] = sol::var(&obe::Graphics::Color::Salmon);
-        bindColor["SandyBrown"] = sol::var(&obe::Graphics::Color::SandyBrown);
-        bindColor["SeaGreen"] = sol::var(&obe::Graphics::Color::SeaGreen);
-        bindColor["SeaShell"] = sol::var(&obe::Graphics::Color::SeaShell);
-        bindColor["Sienna"] = sol::var(&obe::Graphics::Color::Sienna);
-        bindColor["Silver"] = sol::var(&obe::Graphics::Color::Silver);
-        bindColor["SkyBlue"] = sol::var(&obe::Graphics::Color::SkyBlue);
-        bindColor["SlateBlue"] = sol::var(&obe::Graphics::Color::SlateBlue);
-        bindColor["SlateGray"] = sol::var(&obe::Graphics::Color::SlateGray);
-        bindColor["Snow"] = sol::var(&obe::Graphics::Color::Snow);
-        bindColor["SpringGreen"] = sol::var(&obe::Graphics::Color::SpringGreen);
-        bindColor["SteelBlue"] = sol::var(&obe::Graphics::Color::SteelBlue);
-        bindColor["Tan"] = sol::var(&obe::Graphics::Color::Tan);
-        bindColor["Teal"] = sol::var(&obe::Graphics::Color::Teal);
-        bindColor["Thistle"] = sol::var(&obe::Graphics::Color::Thistle);
-        bindColor["Tomato"] = sol::var(&obe::Graphics::Color::Tomato);
-        bindColor["Turquoise"] = sol::var(&obe::Graphics::Color::Turquoise);
-        bindColor["Violet"] = sol::var(&obe::Graphics::Color::Violet);
-        bindColor["Wheat"] = sol::var(&obe::Graphics::Color::Wheat);
-        bindColor["White"] = sol::var(&obe::Graphics::Color::White);
-        bindColor["WhiteSmoke"] = sol::var(&obe::Graphics::Color::WhiteSmoke);
-        bindColor["Yellow"] = sol::var(&obe::Graphics::Color::Yellow);
-        bindColor["YellowGreen"] = sol::var(&obe::Graphics::Color::YellowGreen);
+        bindColor["r"] = &obe::graphics::Color::r;
+        bindColor["g"] = &obe::graphics::Color::g;
+        bindColor["b"] = &obe::graphics::Color::b;
+        bindColor["a"] = &obe::graphics::Color::a;
+        bindColor["AliceBlue"] = sol::var(&obe::graphics::Color::AliceBlue);
+        bindColor["AntiqueWhite"] = sol::var(&obe::graphics::Color::AntiqueWhite);
+        bindColor["Aqua"] = sol::var(&obe::graphics::Color::Aqua);
+        bindColor["Aquamarine"] = sol::var(&obe::graphics::Color::Aquamarine);
+        bindColor["Azure"] = sol::var(&obe::graphics::Color::Azure);
+        bindColor["Beige"] = sol::var(&obe::graphics::Color::Beige);
+        bindColor["Bisque"] = sol::var(&obe::graphics::Color::Bisque);
+        bindColor["Black"] = sol::var(&obe::graphics::Color::Black);
+        bindColor["BlanchedAlmond"] = sol::var(&obe::graphics::Color::BlanchedAlmond);
+        bindColor["Blue"] = sol::var(&obe::graphics::Color::Blue);
+        bindColor["BlueViolet"] = sol::var(&obe::graphics::Color::BlueViolet);
+        bindColor["Brown"] = sol::var(&obe::graphics::Color::Brown);
+        bindColor["BurlyWood"] = sol::var(&obe::graphics::Color::BurlyWood);
+        bindColor["CadetBlue"] = sol::var(&obe::graphics::Color::CadetBlue);
+        bindColor["Chartreuse"] = sol::var(&obe::graphics::Color::Chartreuse);
+        bindColor["Chocolate"] = sol::var(&obe::graphics::Color::Chocolate);
+        bindColor["Coral"] = sol::var(&obe::graphics::Color::Coral);
+        bindColor["CornflowerBlue"] = sol::var(&obe::graphics::Color::CornflowerBlue);
+        bindColor["Cornsilk"] = sol::var(&obe::graphics::Color::Cornsilk);
+        bindColor["Crimson"] = sol::var(&obe::graphics::Color::Crimson);
+        bindColor["Cyan"] = sol::var(&obe::graphics::Color::Cyan);
+        bindColor["DarkBlue"] = sol::var(&obe::graphics::Color::DarkBlue);
+        bindColor["DarkCyan"] = sol::var(&obe::graphics::Color::DarkCyan);
+        bindColor["DarkGoldenrod"] = sol::var(&obe::graphics::Color::DarkGoldenrod);
+        bindColor["DarkGray"] = sol::var(&obe::graphics::Color::DarkGray);
+        bindColor["DarkGreen"] = sol::var(&obe::graphics::Color::DarkGreen);
+        bindColor["DarkKhaki"] = sol::var(&obe::graphics::Color::DarkKhaki);
+        bindColor["DarkMagenta"] = sol::var(&obe::graphics::Color::DarkMagenta);
+        bindColor["DarkOliveGreen"] = sol::var(&obe::graphics::Color::DarkOliveGreen);
+        bindColor["DarkOrange"] = sol::var(&obe::graphics::Color::DarkOrange);
+        bindColor["DarkOrchid"] = sol::var(&obe::graphics::Color::DarkOrchid);
+        bindColor["DarkRed"] = sol::var(&obe::graphics::Color::DarkRed);
+        bindColor["DarkSalmon"] = sol::var(&obe::graphics::Color::DarkSalmon);
+        bindColor["DarkSeaGreen"] = sol::var(&obe::graphics::Color::DarkSeaGreen);
+        bindColor["DarkSlateBlue"] = sol::var(&obe::graphics::Color::DarkSlateBlue);
+        bindColor["DarkSlateGray"] = sol::var(&obe::graphics::Color::DarkSlateGray);
+        bindColor["DarkTurquoise"] = sol::var(&obe::graphics::Color::DarkTurquoise);
+        bindColor["DarkViolet"] = sol::var(&obe::graphics::Color::DarkViolet);
+        bindColor["DeepPink"] = sol::var(&obe::graphics::Color::DeepPink);
+        bindColor["DeepSkyBlue"] = sol::var(&obe::graphics::Color::DeepSkyBlue);
+        bindColor["DimGray"] = sol::var(&obe::graphics::Color::DimGray);
+        bindColor["DodgerBlue"] = sol::var(&obe::graphics::Color::DodgerBlue);
+        bindColor["FireBrick"] = sol::var(&obe::graphics::Color::FireBrick);
+        bindColor["FloralWhite"] = sol::var(&obe::graphics::Color::FloralWhite);
+        bindColor["ForestGreen"] = sol::var(&obe::graphics::Color::ForestGreen);
+        bindColor["Fuchsia"] = sol::var(&obe::graphics::Color::Fuchsia);
+        bindColor["Gainsboro"] = sol::var(&obe::graphics::Color::Gainsboro);
+        bindColor["GhostWhite"] = sol::var(&obe::graphics::Color::GhostWhite);
+        bindColor["Gold"] = sol::var(&obe::graphics::Color::Gold);
+        bindColor["Goldenrod"] = sol::var(&obe::graphics::Color::Goldenrod);
+        bindColor["Gray"] = sol::var(&obe::graphics::Color::Gray);
+        bindColor["Green"] = sol::var(&obe::graphics::Color::Green);
+        bindColor["GreenYellow"] = sol::var(&obe::graphics::Color::GreenYellow);
+        bindColor["HoneyDew"] = sol::var(&obe::graphics::Color::HoneyDew);
+        bindColor["HotPink"] = sol::var(&obe::graphics::Color::HotPink);
+        bindColor["IndianRed"] = sol::var(&obe::graphics::Color::IndianRed);
+        bindColor["Indigo"] = sol::var(&obe::graphics::Color::Indigo);
+        bindColor["Ivory"] = sol::var(&obe::graphics::Color::Ivory);
+        bindColor["Khaki"] = sol::var(&obe::graphics::Color::Khaki);
+        bindColor["Lavender"] = sol::var(&obe::graphics::Color::Lavender);
+        bindColor["LavenderBlush"] = sol::var(&obe::graphics::Color::LavenderBlush);
+        bindColor["LawnGreen"] = sol::var(&obe::graphics::Color::LawnGreen);
+        bindColor["LemonChiffon"] = sol::var(&obe::graphics::Color::LemonChiffon);
+        bindColor["LightBlue"] = sol::var(&obe::graphics::Color::LightBlue);
+        bindColor["LightCoral"] = sol::var(&obe::graphics::Color::LightCoral);
+        bindColor["LightCyan"] = sol::var(&obe::graphics::Color::LightCyan);
+        bindColor["LightGoldenrodYellow"] = sol::var(&obe::graphics::Color::LightGoldenrodYellow);
+        bindColor["LightGray"] = sol::var(&obe::graphics::Color::LightGray);
+        bindColor["LightGreen"] = sol::var(&obe::graphics::Color::LightGreen);
+        bindColor["LightPink"] = sol::var(&obe::graphics::Color::LightPink);
+        bindColor["LightSalmon"] = sol::var(&obe::graphics::Color::LightSalmon);
+        bindColor["LightSeaGreen"] = sol::var(&obe::graphics::Color::LightSeaGreen);
+        bindColor["LightSkyBlue"] = sol::var(&obe::graphics::Color::LightSkyBlue);
+        bindColor["LightSlateGray"] = sol::var(&obe::graphics::Color::LightSlateGray);
+        bindColor["LightSteelBlue"] = sol::var(&obe::graphics::Color::LightSteelBlue);
+        bindColor["LightYellow"] = sol::var(&obe::graphics::Color::LightYellow);
+        bindColor["Lime"] = sol::var(&obe::graphics::Color::Lime);
+        bindColor["LimeGreen"] = sol::var(&obe::graphics::Color::LimeGreen);
+        bindColor["Linen"] = sol::var(&obe::graphics::Color::Linen);
+        bindColor["Magenta"] = sol::var(&obe::graphics::Color::Magenta);
+        bindColor["Maroon"] = sol::var(&obe::graphics::Color::Maroon);
+        bindColor["MediumAquamarine"] = sol::var(&obe::graphics::Color::MediumAquamarine);
+        bindColor["MediumBlue"] = sol::var(&obe::graphics::Color::MediumBlue);
+        bindColor["MediumOrchid"] = sol::var(&obe::graphics::Color::MediumOrchid);
+        bindColor["MediumPurple"] = sol::var(&obe::graphics::Color::MediumPurple);
+        bindColor["MediumSeaGreen"] = sol::var(&obe::graphics::Color::MediumSeaGreen);
+        bindColor["MediumSlateBlue"] = sol::var(&obe::graphics::Color::MediumSlateBlue);
+        bindColor["MediumSpringGreen"] = sol::var(&obe::graphics::Color::MediumSpringGreen);
+        bindColor["MediumTurquoise"] = sol::var(&obe::graphics::Color::MediumTurquoise);
+        bindColor["MediumVioletRed"] = sol::var(&obe::graphics::Color::MediumVioletRed);
+        bindColor["MidnightBlue"] = sol::var(&obe::graphics::Color::MidnightBlue);
+        bindColor["MintCream"] = sol::var(&obe::graphics::Color::MintCream);
+        bindColor["MistyRose"] = sol::var(&obe::graphics::Color::MistyRose);
+        bindColor["Moccasin"] = sol::var(&obe::graphics::Color::Moccasin);
+        bindColor["NavajoWhite"] = sol::var(&obe::graphics::Color::NavajoWhite);
+        bindColor["Navy"] = sol::var(&obe::graphics::Color::Navy);
+        bindColor["OldLace"] = sol::var(&obe::graphics::Color::OldLace);
+        bindColor["Olive"] = sol::var(&obe::graphics::Color::Olive);
+        bindColor["OliveDrab"] = sol::var(&obe::graphics::Color::OliveDrab);
+        bindColor["Orange"] = sol::var(&obe::graphics::Color::Orange);
+        bindColor["OrangeRed"] = sol::var(&obe::graphics::Color::OrangeRed);
+        bindColor["Orchid"] = sol::var(&obe::graphics::Color::Orchid);
+        bindColor["PaleGoldenrod"] = sol::var(&obe::graphics::Color::PaleGoldenrod);
+        bindColor["PaleGreen"] = sol::var(&obe::graphics::Color::PaleGreen);
+        bindColor["PaleTurquoise"] = sol::var(&obe::graphics::Color::PaleTurquoise);
+        bindColor["PaleVioletRed"] = sol::var(&obe::graphics::Color::PaleVioletRed);
+        bindColor["PapayaWhip"] = sol::var(&obe::graphics::Color::PapayaWhip);
+        bindColor["PeachPuff"] = sol::var(&obe::graphics::Color::PeachPuff);
+        bindColor["Peru"] = sol::var(&obe::graphics::Color::Peru);
+        bindColor["Pink"] = sol::var(&obe::graphics::Color::Pink);
+        bindColor["Plum"] = sol::var(&obe::graphics::Color::Plum);
+        bindColor["PowderBlue"] = sol::var(&obe::graphics::Color::PowderBlue);
+        bindColor["Purple"] = sol::var(&obe::graphics::Color::Purple);
+        bindColor["RebeccaPurple"] = sol::var(&obe::graphics::Color::RebeccaPurple);
+        bindColor["Red"] = sol::var(&obe::graphics::Color::Red);
+        bindColor["RosyBrown"] = sol::var(&obe::graphics::Color::RosyBrown);
+        bindColor["RoyalBlue"] = sol::var(&obe::graphics::Color::RoyalBlue);
+        bindColor["SaddleBrown"] = sol::var(&obe::graphics::Color::SaddleBrown);
+        bindColor["Salmon"] = sol::var(&obe::graphics::Color::Salmon);
+        bindColor["SandyBrown"] = sol::var(&obe::graphics::Color::SandyBrown);
+        bindColor["SeaGreen"] = sol::var(&obe::graphics::Color::SeaGreen);
+        bindColor["SeaShell"] = sol::var(&obe::graphics::Color::SeaShell);
+        bindColor["Sienna"] = sol::var(&obe::graphics::Color::Sienna);
+        bindColor["Silver"] = sol::var(&obe::graphics::Color::Silver);
+        bindColor["SkyBlue"] = sol::var(&obe::graphics::Color::SkyBlue);
+        bindColor["SlateBlue"] = sol::var(&obe::graphics::Color::SlateBlue);
+        bindColor["SlateGray"] = sol::var(&obe::graphics::Color::SlateGray);
+        bindColor["Snow"] = sol::var(&obe::graphics::Color::Snow);
+        bindColor["SpringGreen"] = sol::var(&obe::graphics::Color::SpringGreen);
+        bindColor["SteelBlue"] = sol::var(&obe::graphics::Color::SteelBlue);
+        bindColor["Tan"] = sol::var(&obe::graphics::Color::Tan);
+        bindColor["Teal"] = sol::var(&obe::graphics::Color::Teal);
+        bindColor["Thistle"] = sol::var(&obe::graphics::Color::Thistle);
+        bindColor["Tomato"] = sol::var(&obe::graphics::Color::Tomato);
+        bindColor["Turquoise"] = sol::var(&obe::graphics::Color::Turquoise);
+        bindColor["Violet"] = sol::var(&obe::graphics::Color::Violet);
+        bindColor["Wheat"] = sol::var(&obe::graphics::Color::Wheat);
+        bindColor["White"] = sol::var(&obe::graphics::Color::White);
+        bindColor["WhiteSmoke"] = sol::var(&obe::graphics::Color::WhiteSmoke);
+        bindColor["Yellow"] = sol::var(&obe::graphics::Color::Yellow);
+        bindColor["YellowGreen"] = sol::var(&obe::graphics::Color::YellowGreen);
     }
     void LoadClassFont(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::Font> bindFont
-            = GraphicsNamespace.new_usertype<obe::Graphics::Font>("Font", sol::call_constructor,
-                sol::constructors<obe::Graphics::Font(),
-                    obe::Graphics::Font(const obe::Graphics::Font&),
-                    obe::Graphics::Font(const sf::Font&)>());
-        bindFont["loadFromFile"] = &obe::Graphics::Font::loadFromFile;
-        bindFont[sol::meta_function::equal_to] = &obe::Graphics::Font::operator==;
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::Font> bindFont
+            = GraphicsNamespace.new_usertype<obe::graphics::Font>("Font", sol::call_constructor,
+                sol::constructors<obe::graphics::Font(),
+                    obe::graphics::Font(const obe::graphics::Font&),
+                    obe::graphics::Font(const sf::Font&)>());
+        bindFont["load_from_file"] = &obe::graphics::Font::load_from_file;
+        bindFont[sol::meta_function::equal_to] = &obe::graphics::Font::operator==;
     }
     void LoadClassPositionTransformer(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::PositionTransformer> bindPositionTransformer
-            = GraphicsNamespace.new_usertype<obe::Graphics::PositionTransformer>(
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::PositionTransformer> bindPositionTransformer
+            = GraphicsNamespace.new_usertype<obe::graphics::PositionTransformer>(
                 "PositionTransformer", sol::call_constructor,
-                sol::constructors<obe::Graphics::PositionTransformer(),
-                    obe::Graphics::PositionTransformer(const std::string&, const std::string&)>());
-        bindPositionTransformer["getXTransformer"]
-            = &obe::Graphics::PositionTransformer::getXTransformer;
-        bindPositionTransformer["getXTransformerName"]
-            = &obe::Graphics::PositionTransformer::getXTransformerName;
-        bindPositionTransformer["getYTransformer"]
-            = &obe::Graphics::PositionTransformer::getYTransformer;
-        bindPositionTransformer["getYTransformerName"]
-            = &obe::Graphics::PositionTransformer::getYTransformerName;
+                sol::constructors<obe::graphics::PositionTransformer(),
+                    obe::graphics::PositionTransformer(const std::string&, const std::string&)>());
+        bindPositionTransformer["get_x_transformer"]
+            = &obe::graphics::PositionTransformer::get_x_transformer;
+        bindPositionTransformer["get_x_transformer_name"]
+            = &obe::graphics::PositionTransformer::get_x_transformer_name;
+        bindPositionTransformer["get_y_transformer"]
+            = &obe::graphics::PositionTransformer::get_y_transformer;
+        bindPositionTransformer["get_y_transformer_name"]
+            = &obe::graphics::PositionTransformer::get_y_transformer_name;
         bindPositionTransformer[sol::meta_function::call]
-            = &obe::Graphics::PositionTransformer::operator();
+            = &obe::graphics::PositionTransformer::operator();
     }
     void LoadClassRenderTarget(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::RenderTarget> bindRenderTarget
-            = GraphicsNamespace.new_usertype<obe::Graphics::RenderTarget>("RenderTarget",
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::RenderTarget> bindRenderTarget
+            = GraphicsNamespace.new_usertype<obe::graphics::RenderTarget>("RenderTarget",
                 sol::call_constructor,
-                sol::constructors<obe::Graphics::RenderTarget(sf::RenderTarget&),
-                    obe::Graphics::RenderTarget(sf::RenderWindow&)>());
+                sol::constructors<obe::graphics::RenderTarget(sf::RenderTarget&),
+                    obe::graphics::RenderTarget(sf::RenderWindow&)>());
         bindRenderTarget["draw"] = sol::overload(
-            [](obe::Graphics::RenderTarget* self, const sf::Drawable& drawable) -> void {
+            [](obe::graphics::RenderTarget* self, const sf::Drawable& drawable) -> void {
                 return self->draw(drawable);
             },
-            [](obe::Graphics::RenderTarget* self, const sf::Drawable& drawable,
+            [](obe::graphics::RenderTarget* self, const sf::Drawable& drawable,
                 const sf::RenderStates& states) -> void { return self->draw(drawable, states); },
-            [](obe::Graphics::RenderTarget* self, const sf::Vertex* vertices,
+            [](obe::graphics::RenderTarget* self, const sf::Vertex* vertices,
                 std::size_t vertexCount,
                 sf::PrimitiveType type) -> void { return self->draw(vertices, vertexCount, type); },
-            [](obe::Graphics::RenderTarget* self, const sf::Vertex* vertices,
+            [](obe::graphics::RenderTarget* self, const sf::Vertex* vertices,
                 std::size_t vertexCount, sf::PrimitiveType type,
                 const sf::RenderStates& states) -> void {
                 return self->draw(vertices, vertexCount, type, states);
             });
-        bindRenderTarget["getSize"] = &obe::Graphics::RenderTarget::getSize;
+        bindRenderTarget["get_size"] = &obe::graphics::RenderTarget::get_size;
     }
     void LoadClassRenderable(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::Renderable> bindRenderable
-            = GraphicsNamespace.new_usertype<obe::Graphics::Renderable>("Renderable");
-        bindRenderable["getLayer"] = &obe::Graphics::Renderable::getLayer;
-        bindRenderable["getZDepth"] = &obe::Graphics::Renderable::getZDepth;
-        bindRenderable["isVisible"] = &obe::Graphics::Renderable::isVisible;
-        bindRenderable["setLayer"] = &obe::Graphics::Renderable::setLayer;
-        bindRenderable["setZDepth"] = &obe::Graphics::Renderable::setZDepth;
-        bindRenderable["setVisible"] = &obe::Graphics::Renderable::setVisible;
-        bindRenderable["show"] = &obe::Graphics::Renderable::show;
-        bindRenderable["hide"] = &obe::Graphics::Renderable::hide;
-        bindRenderable["draw"] = &obe::Graphics::Renderable::draw;
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::Renderable> bindRenderable
+            = GraphicsNamespace.new_usertype<obe::graphics::Renderable>("Renderable");
+        bindRenderable["get_layer"] = &obe::graphics::Renderable::get_layer;
+        bindRenderable["get_sublayer"] = &obe::graphics::Renderable::get_sublayer;
+        bindRenderable["is_visible"] = &obe::graphics::Renderable::is_visible;
+        bindRenderable["set_layer"] = &obe::graphics::Renderable::set_layer;
+        bindRenderable["set_sublayer"] = &obe::graphics::Renderable::set_sublayer;
+        bindRenderable["set_visible"] = &obe::graphics::Renderable::set_visible;
+        bindRenderable["show"] = &obe::graphics::Renderable::show;
+        bindRenderable["hide"] = &obe::graphics::Renderable::hide;
+        bindRenderable["draw"] = &obe::graphics::Renderable::draw;
     }
     void LoadClassRichText(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::RichText> bindRichText
-            = GraphicsNamespace.new_usertype<obe::Graphics::RichText>("RichText",
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::RichText> bindRichText
+            = GraphicsNamespace.new_usertype<obe::graphics::RichText>("RichText",
                 sol::call_constructor,
-                sol::constructors<obe::Graphics::RichText(),
-                    obe::Graphics::RichText(const obe::Graphics::Font&)>());
-        bindRichText["clear"] = &obe::Graphics::RichText::clear;
-        bindRichText["append"] = &obe::Graphics::RichText::append;
-        bindRichText["getFont"] = &obe::Graphics::RichText::getFont;
-        bindRichText["setFont"] = &obe::Graphics::RichText::setFont;
-        bindRichText["getLines"] = &obe::Graphics::RichText::getLines;
-        bindRichText["getCharacterSize"] = &obe::Graphics::RichText::getCharacterSize;
-        bindRichText["setCharacterSize"] = &obe::Graphics::RichText::setCharacterSize;
-        bindRichText["getLocalBounds"] = &obe::Graphics::RichText::getLocalBounds;
-        bindRichText["getGlobalBounds"] = &obe::Graphics::RichText::getGlobalBounds;
+                sol::constructors<obe::graphics::RichText(),
+                    obe::graphics::RichText(const obe::graphics::Font&)>());
+        bindRichText["clear"] = &obe::graphics::RichText::clear;
+        bindRichText["append"] = &obe::graphics::RichText::append;
+        bindRichText["getFont"] = &obe::graphics::RichText::getFont;
+        bindRichText["setFont"] = &obe::graphics::RichText::setFont;
+        bindRichText["getLines"] = &obe::graphics::RichText::getLines;
+        bindRichText["getCharacterSize"] = &obe::graphics::RichText::getCharacterSize;
+        bindRichText["setCharacterSize"] = &obe::graphics::RichText::setCharacterSize;
+        bindRichText["getLocalBounds"] = &obe::graphics::RichText::getLocalBounds;
+        bindRichText["getGlobalBounds"] = &obe::graphics::RichText::getGlobalBounds;
     }
     void LoadClassShader(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::Shader> bindShader
-            = GraphicsNamespace.new_usertype<obe::Graphics::Shader>("Shader", sol::call_constructor,
-                sol::constructors<obe::Graphics::Shader(),
-                    obe::Graphics::Shader(const std::string&)>(),
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::Shader> bindShader
+            = GraphicsNamespace.new_usertype<obe::graphics::Shader>("Shader", sol::call_constructor,
+                sol::constructors<obe::graphics::Shader(),
+                    obe::graphics::Shader(const std::string&)>(),
                 sol::base_classes, sol::bases<obe::Types::Serializable>());
-        bindShader["dump"] = &obe::Graphics::Shader::dump;
-        bindShader["load"] = &obe::Graphics::Shader::load;
-        bindShader["loadShader"] = &obe::Graphics::Shader::loadShader;
+        bindShader["dump"] = &obe::graphics::Shader::dump;
+        bindShader["load"] = &obe::graphics::Shader::load;
+        bindShader["load_from_file"] = &obe::graphics::Shader::load_from_file;
     }
     void LoadClassSprite(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::Sprite> bindSprite
-            = GraphicsNamespace.new_usertype<obe::Graphics::Sprite>("Sprite", sol::base_classes,
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::Sprite> bindSprite
+            = GraphicsNamespace.new_usertype<obe::graphics::Sprite>("Sprite", sol::base_classes,
                 sol::bases<obe::Transform::UnitBasedObject, obe::Types::Selectable,
-                    obe::Transform::Rect, obe::Transform::Movable, obe::Graphics::Renderable,
-                    obe::Component::Component<obe::Graphics::Sprite>, obe::Component::ComponentBase,
+                    obe::Transform::Rect, obe::Transform::Movable, obe::graphics::Renderable,
+                    obe::Component::Component<obe::graphics::Sprite>, obe::Component::ComponentBase,
                     obe::Types::Identifiable, obe::Types::Serializable,
-                    obe::Engine::ResourceManagedObject>());
-        bindSprite["drawHandle"] = &obe::Graphics::Sprite::drawHandle;
-        bindSprite["dump"] = &obe::Graphics::Sprite::dump;
-        bindSprite["getColor"] = &obe::Graphics::Sprite::getColor;
-        bindSprite["getHandlePoint"] = &obe::Graphics::Sprite::getHandlePoint;
-        bindSprite["getParentId"] = &obe::Graphics::Sprite::getParentId;
-        bindSprite["getPath"] = &obe::Graphics::Sprite::getPath;
-        bindSprite["getPositionTransformer"] = &obe::Graphics::Sprite::getPositionTransformer;
-        bindSprite["getRect"] = &obe::Graphics::Sprite::getRect;
-        bindSprite["getShader"] = &obe::Graphics::Sprite::getShader;
-        bindSprite["getSprite"] = &obe::Graphics::Sprite::getSprite;
-        bindSprite["getSpriteHeight"] = &obe::Graphics::Sprite::getSpriteHeight;
-        bindSprite["getSpriteWidth"] = &obe::Graphics::Sprite::getSpriteWidth;
-        bindSprite["getTexture"] = sol::overload(
-            static_cast<const obe::Graphics::Texture& (obe::Graphics::Sprite::*)() const>(
-                &obe::Graphics::Sprite::getTexture),
-            static_cast<obe::Graphics::Texture& (obe::Graphics::Sprite::*)()>(
-                &obe::Graphics::Sprite::getTexture));
-        bindSprite["getXScaleFactor"] = &obe::Graphics::Sprite::getXScaleFactor;
-        bindSprite["getYScaleFactor"] = &obe::Graphics::Sprite::getYScaleFactor;
-        bindSprite["getAntiAliasing"] = &obe::Graphics::Sprite::getAntiAliasing;
-        bindSprite["hasShader"] = &obe::Graphics::Sprite::hasShader;
-        bindSprite["load"] = &obe::Graphics::Sprite::load;
-        bindSprite["loadTexture"] = &obe::Graphics::Sprite::loadTexture;
-        bindSprite["rotate"] = &obe::Graphics::Sprite::rotate;
-        bindSprite["setColor"] = &obe::Graphics::Sprite::setColor;
-        bindSprite["setParentId"] = &obe::Graphics::Sprite::setParentId;
-        bindSprite["setPositionTransformer"] = &obe::Graphics::Sprite::setPositionTransformer;
-        bindSprite["setRotation"] = &obe::Graphics::Sprite::setRotation;
-        bindSprite["setRotationOrigin"] = &obe::Graphics::Sprite::setRotationOrigin;
-        bindSprite["setScalingOrigin"] = &obe::Graphics::Sprite::setScalingOrigin;
-        bindSprite["setShader"] = &obe::Graphics::Sprite::setShader;
-        bindSprite["setTexture"] = &obe::Graphics::Sprite::setTexture;
-        bindSprite["setTextureRect"] = &obe::Graphics::Sprite::setTextureRect;
-        bindSprite["setTranslationOrigin"] = &obe::Graphics::Sprite::setTranslationOrigin;
-        bindSprite["setAntiAliasing"] = &obe::Graphics::Sprite::setAntiAliasing;
-        bindSprite["useTextureSize"] = &obe::Graphics::Sprite::useTextureSize;
-        bindSprite["draw"] = &obe::Graphics::Sprite::draw;
-        bindSprite["attachResourceManager"] = &obe::Graphics::Sprite::attachResourceManager;
-        bindSprite["type"] = &obe::Graphics::Sprite::type;
+                    obe::engine::ResourceManagedObject>());
+        bindSprite["draw_handle"] = &obe::graphics::Sprite::draw_handle;
+        bindSprite["dump"] = &obe::graphics::Sprite::dump;
+        bindSprite["get_color"] = &obe::graphics::Sprite::get_color;
+        bindSprite["get_parent_id"] = &obe::graphics::Sprite::get_parent_id;
+        bindSprite["get_filesystem_path"] = &obe::graphics::Sprite::get_filesystem_path;
+        bindSprite["get_position_transformer"] = &obe::graphics::Sprite::get_position_transformer;
+        bindSprite["get_rect"] = &obe::graphics::Sprite::get_rect;
+        bindSprite["get_shader"] = &obe::graphics::Sprite::get_shader;
+        bindSprite["get_internal_sprite"] = &obe::graphics::Sprite::get_internal_sprite;
+        bindSprite["get_height"] = &obe::graphics::Sprite::get_height;
+        bindSprite["get_width"] = &obe::graphics::Sprite::get_width;
+        bindSprite["get_texture"] = sol::overload(
+            static_cast<const obe::graphics::Texture& (obe::graphics::Sprite::*)() const>(
+                &obe::graphics::Sprite::get_texture),
+            static_cast<obe::graphics::Texture& (obe::graphics::Sprite::*)()>(
+                &obe::graphics::Sprite::get_texture));
+        bindSprite["get_x_scale_factor"] = &obe::graphics::Sprite::get_x_scale_factor;
+        bindSprite["get_y_scale_factor"] = &obe::graphics::Sprite::get_y_scale_factor;
+        bindSprite["get_anti_aliasing"] = &obe::graphics::Sprite::get_anti_aliasing;
+        bindSprite["has_shader"] = &obe::graphics::Sprite::has_shader;
+        bindSprite["load"] = &obe::graphics::Sprite::load;
+        bindSprite["load_texture"] = &obe::graphics::Sprite::load_texture;
+        bindSprite["rotate"] = &obe::graphics::Sprite::rotate;
+        bindSprite["set_color"] = &obe::graphics::Sprite::set_color;
+        bindSprite["set_parent_id"] = &obe::graphics::Sprite::set_parent_id;
+        bindSprite["set_position_transformer"] = &obe::graphics::Sprite::set_position_transformer;
+        bindSprite["set_rotation"] = &obe::graphics::Sprite::set_rotation;
+        bindSprite["set_rotation_origin"] = &obe::graphics::Sprite::set_rotation_origin;
+        bindSprite["set_scaling_origin"] = &obe::graphics::Sprite::set_scaling_origin;
+        bindSprite["set_shader"] = &obe::graphics::Sprite::set_shader;
+        bindSprite["set_texture"] = &obe::graphics::Sprite::set_texture;
+        bindSprite["set_texture_rect"] = &obe::graphics::Sprite::set_texture_rect;
+        bindSprite["set_translation_origin"] = &obe::graphics::Sprite::set_translation_origin;
+        bindSprite["set_anti_aliasing"] = &obe::graphics::Sprite::set_anti_aliasing;
+        bindSprite["use_texture_size"] = &obe::graphics::Sprite::use_texture_size;
+        bindSprite["draw"] = &obe::graphics::Sprite::draw;
+        bindSprite["attach_resource_manager"] = &obe::graphics::Sprite::attach_resource_manager;
+        bindSprite["type"] = &obe::graphics::Sprite::type;
 
         Sprite::Register();
     }
     void LoadClassSpriteHandlePoint(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::SpriteHandlePoint> bindSpriteHandlePoint
-            = GraphicsNamespace.new_usertype<obe::Graphics::SpriteHandlePoint>("SpriteHandlePoint");
-        bindSpriteHandlePoint["getRect"] = &obe::Graphics::SpriteHandlePoint::getRect;
-        bindSpriteHandlePoint["getReferential"] = &obe::Graphics::SpriteHandlePoint::getReferential;
-        bindSpriteHandlePoint["getType"] = &obe::Graphics::SpriteHandlePoint::getType;
-        bindSpriteHandlePoint["moveTo"] = &obe::Graphics::SpriteHandlePoint::moveTo;
-        bindSpriteHandlePoint["m_dp"] = &obe::Graphics::SpriteHandlePoint::m_dp;
-        bindSpriteHandlePoint["radius"] = sol::var(&obe::Graphics::SpriteHandlePoint::radius);
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::SpriteHandlePoint> bindSpriteHandlePoint
+            = GraphicsNamespace.new_usertype<obe::graphics::SpriteHandlePoint>("SpriteHandlePoint");
+        bindSpriteHandlePoint["get_rect"] = &obe::graphics::SpriteHandlePoint::get_rect;
+        bindSpriteHandlePoint["get_referential"] = &obe::graphics::SpriteHandlePoint::get_referential;
+        bindSpriteHandlePoint["get_type"] = &obe::graphics::SpriteHandlePoint::get_type;
+        bindSpriteHandlePoint["set_position"] = &obe::graphics::SpriteHandlePoint::set_position;
+        bindSpriteHandlePoint["m_dp"] = &obe::graphics::SpriteHandlePoint::m_dp;
+        bindSpriteHandlePoint["radius"] = sol::var(&obe::graphics::SpriteHandlePoint::radius);
     }
     void LoadClassSvgTexture(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::SvgTexture> bindSvgTexture
-            = GraphicsNamespace.new_usertype<obe::Graphics::SvgTexture>("SvgTexture",
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::SvgTexture> bindSvgTexture
+            = GraphicsNamespace.new_usertype<obe::graphics::SvgTexture>("SvgTexture",
                 sol::call_constructor,
-                sol::constructors<obe::Graphics::SvgTexture(const std::string&),
-                    obe::Graphics::SvgTexture(const obe::Graphics::SvgTexture&)>());
-        bindSvgTexture["getAutoscaling"] = &obe::Graphics::SvgTexture::getAutoscaling;
-        bindSvgTexture["setAutoscaling"] = &obe::Graphics::SvgTexture::setAutoscaling;
-        bindSvgTexture["setSizeHint"] = &obe::Graphics::SvgTexture::setSizeHint;
-        bindSvgTexture["success"] = &obe::Graphics::SvgTexture::success;
+                sol::constructors<obe::graphics::SvgTexture(const std::string&),
+                    obe::graphics::SvgTexture(const obe::graphics::SvgTexture&)>());
+        bindSvgTexture["getAutoscaling"] = &obe::graphics::SvgTexture::getAutoscaling;
+        bindSvgTexture["setAutoscaling"] = &obe::graphics::SvgTexture::setAutoscaling;
+        bindSvgTexture["setSizeHint"] = &obe::graphics::SvgTexture::setSizeHint;
+        bindSvgTexture["success"] = &obe::graphics::SvgTexture::success;
         bindSvgTexture["getTexture"]
-            = sol::overload(static_cast<const sf::Texture& (obe::Graphics::SvgTexture::*)() const>(
-                                &obe::Graphics::SvgTexture::getTexture),
-                static_cast<sf::Texture& (obe::Graphics::SvgTexture::*)()>(
-                    &obe::Graphics::SvgTexture::getTexture));
+            = sol::overload(static_cast<const sf::Texture& (obe::graphics::SvgTexture::*)() const>(
+                                &obe::graphics::SvgTexture::getTexture),
+                static_cast<sf::Texture& (obe::graphics::SvgTexture::*)()>(
+                    &obe::graphics::SvgTexture::getTexture));
     }
     void LoadClassText(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::Text> bindText
-            = GraphicsNamespace.new_usertype<obe::Graphics::Text>("Text", sol::call_constructor,
-                sol::constructors<obe::Graphics::Text(),
-                    obe::Graphics::Text(const std::string&)>());
-        bindText["color"] = &obe::Graphics::Text::color;
-        bindText["outline"] = &obe::Graphics::Text::outline;
-        bindText["thickness"] = &obe::Graphics::Text::thickness;
-        bindText["style"] = &obe::Graphics::Text::style;
-        bindText["string"] = &obe::Graphics::Text::string;
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::Text> bindText
+            = GraphicsNamespace.new_usertype<obe::graphics::Text>("Text", sol::call_constructor,
+                sol::constructors<obe::graphics::Text(),
+                    obe::graphics::Text(const std::string&)>());
+        bindText["color"] = &obe::graphics::Text::color;
+        bindText["outline"] = &obe::graphics::Text::outline;
+        bindText["thickness"] = &obe::graphics::Text::thickness;
+        bindText["style"] = &obe::graphics::Text::style;
+        bindText["string"] = &obe::graphics::Text::string;
     }
     void LoadClassTexture(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::Texture> bindTexture
-            = GraphicsNamespace.new_usertype<obe::Graphics::Texture>("Texture",
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::Texture> bindTexture
+            = GraphicsNamespace.new_usertype<obe::graphics::Texture>("Texture",
                 sol::call_constructor,
-                sol::constructors<obe::Graphics::Texture(),
-                    obe::Graphics::Texture(std::shared_ptr<sf::Texture>),
-                    obe::Graphics::Texture(const sf::Texture&),
-                    obe::Graphics::Texture(const obe::Graphics::Texture&)>());
-        bindTexture["create"] = &obe::Graphics::Texture::create;
+                sol::constructors<obe::graphics::Texture(),
+                    obe::graphics::Texture(std::shared_ptr<sf::Texture>),
+                    obe::graphics::Texture(const sf::Texture&),
+                    obe::graphics::Texture(const obe::graphics::Texture&)>());
+        bindTexture["create"] = &obe::graphics::Texture::create;
         bindTexture["loadFromFile"]
-            = sol::overload(static_cast<bool (obe::Graphics::Texture::*)(const std::string&)>(
-                                &obe::Graphics::Texture::loadFromFile),
-                static_cast<bool (obe::Graphics::Texture::*)(const std::string&,
-                    const obe::Transform::Rect&)>(&obe::Graphics::Texture::loadFromFile));
-        bindTexture["loadFromImage"] = &obe::Graphics::Texture::loadFromImage;
-        bindTexture["getSize"] = &obe::Graphics::Texture::getSize;
-        bindTexture["setSizeHint"] = &obe::Graphics::Texture::setSizeHint;
-        bindTexture["getAutoscaling"] = &obe::Graphics::Texture::getAutoscaling;
-        bindTexture["setAutoscaling"] = &obe::Graphics::Texture::setAutoscaling;
-        bindTexture["setAntiAliasing"] = &obe::Graphics::Texture::setAntiAliasing;
-        bindTexture["isAntiAliased"] = &obe::Graphics::Texture::isAntiAliased;
-        bindTexture["setRepeated"] = &obe::Graphics::Texture::setRepeated;
-        bindTexture["isRepeated"] = &obe::Graphics::Texture::isRepeated;
-        bindTexture["reset"] = &obe::Graphics::Texture::reset;
-        bindTexture["useCount"] = &obe::Graphics::Texture::useCount;
-        bindTexture["isVector"] = &obe::Graphics::Texture::isVector;
-        bindTexture["isBitmap"] = &obe::Graphics::Texture::isBitmap;
-        bindTexture["MakeSharedTexture"] = &obe::Graphics::Texture::MakeSharedTexture;
+            = sol::overload(static_cast<bool (obe::graphics::Texture::*)(const std::string&)>(
+                                &obe::graphics::Texture::loadFromFile),
+                static_cast<bool (obe::graphics::Texture::*)(const std::string&,
+                    const obe::Transform::Rect&)>(&obe::graphics::Texture::loadFromFile));
+        bindTexture["loadFromImage"] = &obe::graphics::Texture::loadFromImage;
+        bindTexture["getSize"] = &obe::graphics::Texture::getSize;
+        bindTexture["setSizeHint"] = &obe::graphics::Texture::setSizeHint;
+        bindTexture["getAutoscaling"] = &obe::graphics::Texture::getAutoscaling;
+        bindTexture["setAutoscaling"] = &obe::graphics::Texture::setAutoscaling;
+        bindTexture["setAntiAliasing"] = &obe::graphics::Texture::setAntiAliasing;
+        bindTexture["isAntiAliased"] = &obe::graphics::Texture::isAntiAliased;
+        bindTexture["setRepeated"] = &obe::graphics::Texture::setRepeated;
+        bindTexture["isRepeated"] = &obe::graphics::Texture::isRepeated;
+        bindTexture["reset"] = &obe::graphics::Texture::reset;
+        bindTexture["useCount"] = &obe::graphics::Texture::useCount;
+        bindTexture["isVector"] = &obe::graphics::Texture::isVector;
+        bindTexture["isBitmap"] = &obe::graphics::Texture::isBitmap;
+        bindTexture["MakeSharedTexture"] = &obe::graphics::Texture::MakeSharedTexture;
     }
     void LoadClassHsv(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        sol::usertype<obe::Graphics::Hsv> bindHsv
-            = GraphicsNamespace.new_usertype<obe::Graphics::Hsv>(
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::Hsv> bindHsv
+            = GraphicsNamespace.new_usertype<obe::graphics::Hsv>(
                 "Hsv", sol::call_constructor, sol::default_constructor);
-        bindHsv["H"] = &obe::Graphics::Hsv::H;
-        bindHsv["S"] = &obe::Graphics::Hsv::S;
-        bindHsv["V"] = &obe::Graphics::Hsv::V;
+        bindHsv["H"] = &obe::graphics::Hsv::H;
+        bindHsv["S"] = &obe::graphics::Hsv::S;
+        bindHsv["V"] = &obe::graphics::Hsv::V;
     }
     void LoadFunctionInitPositionTransformer(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
         GraphicsNamespace.set_function(
-            "InitPositionTransformer", &obe::Graphics::InitPositionTransformer);
+            "init_position_transformers", &obe::graphics::init_position_transformers);
     }
     void LoadFunctionMakeNullTexture(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        GraphicsNamespace.set_function("MakeNullTexture", &obe::Graphics::MakeNullTexture);
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        GraphicsNamespace.set_function("make_null_texture", &obe::graphics::make_null_texture);
     }
     void LoadGlobalTransformers(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        GraphicsNamespace["Transformers"] = obe::Graphics::Transformers;
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        GraphicsNamespace["Transformers"] = obe::graphics::Transformers;
     }
     void LoadGlobalParallax(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        GraphicsNamespace["Parallax"] = obe::Graphics::Parallax;
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        GraphicsNamespace["Parallax"] = obe::graphics::Parallax;
     }
     void LoadGlobalCamera(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        GraphicsNamespace["Camera"] = obe::Graphics::Camera;
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        GraphicsNamespace["Camera"] = obe::graphics::Camera;
     }
     void LoadGlobalPosition(sol::state_view state)
     {
-        sol::table GraphicsNamespace = state["obe"]["Graphics"].get<sol::table>();
-        GraphicsNamespace["Position"] = obe::Graphics::Position;
+        sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
+        GraphicsNamespace["Position"] = obe::graphics::Position;
     }
 };

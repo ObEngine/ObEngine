@@ -21,7 +21,7 @@ namespace obe::Network::Bindings
         sol::usertype<obe::Network::NetworkHandler> bindNetworkHandler
             = NetworkNamespace.new_usertype<obe::Network::NetworkHandler>("NetworkHandler",
                 sol::call_constructor,
-                sol::constructors<obe::Network::NetworkHandler(obe::Event::EventNamespace&)>());
+                sol::constructors<obe::Network::NetworkHandler(obe::event::EventNamespace&)>());
         bindNetworkHandler["handleTriggers"] = &obe::Network::NetworkHandler::handleTriggers;
     }
     void LoadClassTcpServer(sol::state_view state)
@@ -29,10 +29,10 @@ namespace obe::Network::Bindings
         sol::table NetworkNamespace = state["obe"]["Network"].get<sol::table>();
         sol::usertype<obe::Network::TcpServer> bindTcpServer = NetworkNamespace.new_usertype<
             obe::Network::TcpServer>("TcpServer", sol::call_constructor,
-            sol::constructors<obe::Network::TcpServer(obe::Event::EventNamespace&, unsigned short),
-                obe::Network::TcpServer(obe::Event::EventNamespace&, unsigned short, std::string),
+            sol::constructors<obe::Network::TcpServer(obe::event::EventNamespace&, unsigned short),
+                obe::Network::TcpServer(obe::event::EventNamespace&, unsigned short, std::string),
                 obe::Network::TcpServer(
-                    obe::Event::EventNamespace&, unsigned short, std::string, std::string)>());
+                    obe::event::EventNamespace&, unsigned short, std::string, std::string)>());
         bindTcpServer["update"] = &obe::Network::TcpServer::update;
         bindTcpServer["setBufferSize"] = &obe::Network::TcpServer::setBufferSize;
     }

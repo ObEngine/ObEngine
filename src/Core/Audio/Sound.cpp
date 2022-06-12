@@ -4,25 +4,24 @@
 #include <soloud/soloud_wav.h>
 #include <soloud/soloud_wavstream.h>
 
-namespace obe::Audio
+namespace obe::audio
 {
-    void Sound::applyChanges()
+    void Sound::apply_changes()
     {
-        this->setPitch(m_pitch);
-        this->setVolume(m_volume);
-        this->setLooping(m_looping);
+        this->set_pitch(m_pitch);
+        this->set_volume(m_volume);
+        this->set_looping(m_looping);
     }
 
     Sound::Sound(SoLoud::Soloud& manager, std::shared_ptr<SoLoud::AudioSource> source)
-        : m_manager(manager)
+        : m_manager(manager), m_source(std::move(source)),
+          m_handle(m_manager.play(*m_source, m_source->mVolume, 0, true)),
+          m_base_samplerate(m_source->mBaseSamplerate)
     {
-        m_source = std::move(source);
-        m_baseSamplerate = m_source->mBaseSamplerate;
-        m_handle = m_manager.play(*m_source, m_source->mVolume, 0, true);
     }
-    double Sound::getDuration() const
+    double Sound::get_duration() const
     {
-        if (auto source = dynamic_cast<SoLoud::WavStream*>(m_source.get()); source)
+        if (const auto source = dynamic_cast<SoLoud::WavStream*>(m_source.get()); source)
         {
             return source->getLength();
         }
@@ -40,7 +39,7 @@ namespace obe::Audio
         else
         {
             m_handle = m_manager.play(*m_source, m_source->mVolume, 0);
-            this->applyChanges();
+            this->apply_changes();
         }
     }
     void Sound::pause() const
@@ -51,27 +50,27 @@ namespace obe::Audio
     {
         m_manager.stop(m_handle);
     }
-    void Sound::setPitch(float pitch)
+    void Sound::set_pitch(float pitch)
     {
         m_pitch = pitch;
-        m_manager.setSamplerate(m_handle, float(m_baseSamplerate) * m_pitch);
+        m_manager.setSamplerate(m_handle, m_base_samplerate * m_pitch);
     }
-    float Sound::getPitch() const
+    float Sound::get_pitch() const
     {
         return m_pitch;
     }
 
-    void Sound::setSpeed(float speed) const
+    void Sound::set_speed(float speed) const
     {
         m_manager.setRelativePlaySpeed(m_handle, speed);
     }
 
-    float Sound::getSpeed() const
+    float Sound::get_speed() const
     {
         return m_manager.getRelativePlaySpeed(m_handle);
     }
 
-    SoundStatus Sound::getStatus() const
+    SoundStatus Sound::get_status() const
     {
         if (!m_manager.isValidVoiceHandle(m_handle))
         {
@@ -86,29 +85,29 @@ namespace obe::Audio
             return SoundStatus::Playing;
         }
     }
-    void Sound::setOffset(double offset) const
+    void Sound::set_offset(double offset) const
     {
         m_manager.seek(m_handle, offset);
     }
-    float Sound::getVolume() const
+    float Sound::get_volume() const
     {
         return m_manager.getVolume(m_handle);
     }
-    void Sound::setVolume(float volume)
+    void Sound::set_volume(float volume)
     {
         m_volume = volume;
         m_manager.setVolume(m_handle, volume);
     }
-    void Sound::setLooping(bool looping)
+    void Sound::set_looping(bool looping)
     {
         m_looping = looping;
         m_manager.setLooping(m_handle, looping);
     }
-    bool Sound::getLooping() const
+    bool Sound::get_looping() const
     {
         return m_manager.getLooping(m_handle);
     }
-    double Sound::getOffset() const
+    double Sound::get_offset() const
     {
         return m_manager.getStreamPosition(m_handle);
     }

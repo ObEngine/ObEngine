@@ -82,7 +82,7 @@ namespace obe::Transform
         return first.distance(second);
     }
 
-    void Polygon::resetUnit(Transform::Units unit)
+    void Polygon::reset_unit(Transform::Units unit)
     {
     }
 
@@ -104,7 +104,7 @@ namespace obe::Transform
         }
     }
 
-    void Polygon::addPoint(const Transform::UnitVector& position, int pointIndex)
+    void Polygon::add_point(const Transform::UnitVector& position, int pointIndex)
     {
         const Transform::UnitVector pVec = position.to<Transform::Units::SceneUnits>();
         if (pointIndex == -1 || pointIndex == m_points.size())
@@ -313,7 +313,7 @@ namespace obe::Transform
         return static_cast<UnitVector>(*m_points[0]);
     }
 
-    void Polygon::setRotation(const float angle, const Transform::UnitVector origin)
+    void Polygon::set_rotation(const float angle, const Transform::UnitVector origin)
     {
         this->rotate(angle - m_angle, origin);
     }
@@ -346,7 +346,7 @@ namespace obe::Transform
         }
     }
 
-    void Polygon::setPosition(const Transform::UnitVector& position)
+    void Polygon::set_position(const Transform::UnitVector& position)
     {
         if (!m_points.empty())
         {
@@ -360,7 +360,7 @@ namespace obe::Transform
         }
     }
 
-    void Polygon::setPositionFromCentroid(const Transform::UnitVector& position)
+    void Polygon::set_position_from_centroid(const Transform::UnitVector& position)
     {
         if (!m_points.empty())
         {
@@ -396,7 +396,7 @@ namespace obe::Transform
             throw Exceptions::PolygonPointIndexOverflow(this, i, m_points.size(), EXC_INFO);
     }
 
-    Rect Polygon::getBoundingBox() const
+    Rect Polygon::get_bounding_box() const
     {
         auto [minX, maxX] = std::minmax_element(m_points.begin(), m_points.end(),
             [](auto& point1, auto& point2) { return point1->x < point2->x; });

@@ -30,7 +30,7 @@ namespace obe::System::Project
     bool Load(
         const std::string& projectName, const std::string& prefix, const unsigned int priority)
     {
-        Debug::Log->info(
+        debug::Log->info(
             "<Project> Loading Project '{0}' with priority {1}", projectName, priority);
         if (ProjectExists(projectName))
         {
@@ -56,10 +56,10 @@ namespace obe::System::Project
             }
             if (!Utils::File::directoryExists(projectCfgPath))
             {
-                Debug::Log->debug("<Project> Could not find Project configuration directory, "
+                debug::Log->debug("<Project> Could not find Project configuration directory, "
                                   "creating a new one...");
                 Utils::File::createDirectory(projectCfgPath);
-                Debug::Log->debug(
+                debug::Log->debug(
                     "<Project> Project configuration directory created at '{}'", projectCfgPath);
             }
             MountablePath projectCfg(
@@ -147,7 +147,7 @@ namespace obe::System::Project
 
     void Project::load(const vili::node& data)
     {
-        const auto validator = Config::Validators::ProjectValidator();
+        const auto validator = config::validators::project_validator();
         try
         {
             vili::validator::validate_tree(validator, data);
@@ -263,7 +263,7 @@ namespace obe::System::Project
         }
         catch (const std::exception& exc)
         {
-            Debug::Log->warn("Unable to find default directory for GameObjects");
+            debug::Log->warn("Unable to find default directory for GameObjects");
         }
         try
         {
@@ -274,7 +274,7 @@ namespace obe::System::Project
         }
         catch (const std::exception& exc)
         {
-            Debug::Log->warn("Unable to find default directory for Scenes");
+            debug::Log->warn("Unable to find default directory for Scenes");
         }
     }
 

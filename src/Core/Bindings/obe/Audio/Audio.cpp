@@ -7,60 +7,60 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Audio::Bindings
+namespace obe::audio::Bindings
 {
     void LoadEnumLoadPolicy(sol::state_view state)
     {
-        sol::table AudioNamespace = state["obe"]["Audio"].get<sol::table>();
-        AudioNamespace.new_enum<obe::Audio::LoadPolicy>("LoadPolicy",
-            { { "Normal", obe::Audio::LoadPolicy::Normal },
-                { "Cache", obe::Audio::LoadPolicy::Cache },
-                { "Stream", obe::Audio::LoadPolicy::Stream } });
+        sol::table AudioNamespace = state["obe"]["audio"].get<sol::table>();
+        AudioNamespace.new_enum<obe::audio::LoadPolicy>("LoadPolicy",
+            { { "Normal", obe::audio::LoadPolicy::Normal },
+                { "Cache", obe::audio::LoadPolicy::Cache },
+                { "Stream", obe::audio::LoadPolicy::Stream } });
     }
     void LoadEnumSoundStatus(sol::state_view state)
     {
-        sol::table AudioNamespace = state["obe"]["Audio"].get<sol::table>();
-        AudioNamespace.new_enum<obe::Audio::SoundStatus>("SoundStatus",
-            { { "Playing", obe::Audio::SoundStatus::Playing },
-                { "Paused", obe::Audio::SoundStatus::Paused },
-                { "Stopped", obe::Audio::SoundStatus::Stopped } });
+        sol::table AudioNamespace = state["obe"]["audio"].get<sol::table>();
+        AudioNamespace.new_enum<obe::audio::SoundStatus>("SoundStatus",
+            { { "Playing", obe::audio::SoundStatus::Playing },
+                { "Paused", obe::audio::SoundStatus::Paused },
+                { "Stopped", obe::audio::SoundStatus::Stopped } });
     }
     void LoadClassAudioManager(sol::state_view state)
     {
-        sol::table AudioNamespace = state["obe"]["Audio"].get<sol::table>();
-        sol::usertype<obe::Audio::AudioManager> bindAudioManager
-            = AudioNamespace.new_usertype<obe::Audio::AudioManager>("AudioManager",
-                sol::call_constructor, sol::constructors<obe::Audio::AudioManager()>());
+        sol::table AudioNamespace = state["obe"]["audio"].get<sol::table>();
+        sol::usertype<obe::audio::AudioManager> bindAudioManager
+            = AudioNamespace.new_usertype<obe::audio::AudioManager>("AudioManager",
+                sol::call_constructor, sol::constructors<obe::audio::AudioManager()>());
         bindAudioManager["load"] = sol::overload(
-            [](obe::Audio::AudioManager* self, const obe::System::Path& path) -> obe::Audio::Sound {
+            [](obe::audio::AudioManager* self, const obe::System::Path& path) -> obe::audio::Sound {
                 return self->load(path);
             },
-            [](obe::Audio::AudioManager* self, const obe::System::Path& path,
-                obe::Audio::LoadPolicy loadPolicy) -> obe::Audio::Sound {
+            [](obe::audio::AudioManager* self, const obe::System::Path& path,
+                obe::audio::LoadPolicy loadPolicy) -> obe::audio::Sound {
                 return self->load(path, loadPolicy);
             });
     }
     void LoadClassSound(sol::state_view state)
     {
-        sol::table AudioNamespace = state["obe"]["Audio"].get<sol::table>();
-        sol::usertype<obe::Audio::Sound> bindSound
-            = AudioNamespace.new_usertype<obe::Audio::Sound>("Sound", sol::call_constructor,
-                sol::constructors<obe::Audio::Sound(
+        sol::table AudioNamespace = state["obe"]["audio"].get<sol::table>();
+        sol::usertype<obe::audio::Sound> bindSound
+            = AudioNamespace.new_usertype<obe::audio::Sound>("Sound", sol::call_constructor,
+                sol::constructors<obe::audio::Sound(
                     SoLoud::Soloud&, std::shared_ptr<SoLoud::AudioSource>)>());
-        bindSound["getDuration"] = &obe::Audio::Sound::getDuration;
-        bindSound["play"] = &obe::Audio::Sound::play;
-        bindSound["pause"] = &obe::Audio::Sound::pause;
-        bindSound["stop"] = &obe::Audio::Sound::stop;
-        bindSound["setPitch"] = &obe::Audio::Sound::setPitch;
-        bindSound["getPitch"] = &obe::Audio::Sound::getPitch;
-        bindSound["setSpeed"] = &obe::Audio::Sound::setSpeed;
-        bindSound["getSpeed"] = &obe::Audio::Sound::getSpeed;
-        bindSound["getStatus"] = &obe::Audio::Sound::getStatus;
-        bindSound["getOffset"] = &obe::Audio::Sound::getOffset;
-        bindSound["setOffset"] = &obe::Audio::Sound::setOffset;
-        bindSound["getVolume"] = &obe::Audio::Sound::getVolume;
-        bindSound["setVolume"] = &obe::Audio::Sound::setVolume;
-        bindSound["setLooping"] = &obe::Audio::Sound::setLooping;
-        bindSound["getLooping"] = &obe::Audio::Sound::getLooping;
+        bindSound["get_duration"] = &obe::audio::Sound::get_duration;
+        bindSound["play"] = &obe::audio::Sound::play;
+        bindSound["pause"] = &obe::audio::Sound::pause;
+        bindSound["stop"] = &obe::audio::Sound::stop;
+        bindSound["set_pitch"] = &obe::audio::Sound::set_pitch;
+        bindSound["get_pitch"] = &obe::audio::Sound::get_pitch;
+        bindSound["set_speed"] = &obe::audio::Sound::set_speed;
+        bindSound["get_speed"] = &obe::audio::Sound::get_speed;
+        bindSound["get_status"] = &obe::audio::Sound::get_status;
+        bindSound["get_offset"] = &obe::audio::Sound::get_offset;
+        bindSound["set_offset"] = &obe::audio::Sound::set_offset;
+        bindSound["get_volume"] = &obe::audio::Sound::get_volume;
+        bindSound["set_volume"] = &obe::audio::Sound::set_volume;
+        bindSound["set_looping"] = &obe::audio::Sound::set_looping;
+        bindSound["get_looping"] = &obe::audio::Sound::get_looping;
     }
 };

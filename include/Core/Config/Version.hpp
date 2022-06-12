@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace obe::Config
+namespace obe::config
 {
     class Version
     {
@@ -56,4 +56,4 @@ namespace obe::Config
     {
         return (lhs > rhs) || (lhs == rhs);
     }
-} // namespace obe::Config
+} // namespace obe::config

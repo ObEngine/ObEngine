@@ -90,7 +90,7 @@ namespace obe::Script
     {
         if (!m_initialized)
         {
-            Debug::Log->debug("<GameObject> Initializing GameObject '{0}' ({1})", m_id, m_type);
+            debug::Log->debug("<GameObject> Initializing GameObject '{0}' ({1})", m_id, m_type);
             m_initialized = true;
             if (m_hasScriptEngine)
             {
@@ -109,7 +109,7 @@ namespace obe::Script
         }
         else
         {
-            Debug::Log->warn("<GameObject> GameObject '{0}' ({1}) has already "
+            debug::Log->warn("<GameObject> GameObject '{0}' ({1}) has already "
                              "been initialized",
                 m_id, m_type);
         }
@@ -117,7 +117,7 @@ namespace obe::Script
 
     GameObject::~GameObject()
     {
-        Debug::Log->debug("<GameObject> Deleting GameObject '{0}' ({1})", m_id, m_type);
+        debug::Log->debug("<GameObject> Deleting GameObject '{0}' ({1})", m_id, m_type);
         if (m_hasScriptEngine)
         {
             m_outer_environment = sol::lua_nil;
@@ -127,16 +127,16 @@ namespace obe::Script
 
     void GameObject::sendInitArgFromLua(const std::string& argName, sol::object value)
     {
-        Debug::Log->debug("<GameObject> Sending Local.Init argument {0} to "
+        debug::Log->debug("<GameObject> Sending Local.Init argument {0} to "
                           "GameObject {1} ({2}) (From Lua)",
             argName, m_id, m_type);
         m_outer_environment["__INIT_ARG_TABLE"][argName] = value;
     }
 
     void GameObject::loadGameObject(
-        Scene::Scene& scene, vili::node& obj, Engine::ResourceManager* resources)
+        Scene::Scene& scene, vili::node& obj, engine::ResourceManager* resources)
     {
-        Debug::Log->debug("<GameObject> Loading GameObject '{0}' ({1})", m_id, m_type);
+        debug::Log->debug("<GameObject> Loading GameObject '{0}' ({1})", m_id, m_type);
 
         if (obj.contains("permanent"))
         {
@@ -206,14 +206,14 @@ namespace obe::Script
             m_sprite = &scene.createSprite(m_id, false);
             m_objectNode.addChild(*m_sprite);
             m_sprite->load(obj.at("Sprite"));
-            m_sprite->setParentId(m_id);
+            m_sprite->set_parent_id(m_id);
             if (m_hasScriptEngine)
                 m_outer_environment["Components"]["Sprite"] = m_sprite;
             scene.reorganizeLayers();
         }
         if (obj.contains("Animator"))
         {
-            m_animator = std::make_unique<Animation::Animator>();
+            m_animator = std::make_unique<animation::Animator>();
             vili::node& animator = obj.at("Animator");
             std::string animatorPath;
             if (animator.contains("path"))
@@ -221,20 +221,20 @@ namespace obe::Script
                 animatorPath = animator.at("path");
             }
 
-            Animation::AnimatorTargetScaleMode scaleMode = Animation::AnimatorTargetScaleMode::Fit;
+            animation::AnimatorTargetScaleMode scaleMode = animation::AnimatorTargetScaleMode::Fit;
             if (animator.contains("scaling"))
             {
-                scaleMode = Animation::AnimatorTargetScaleModeMeta::fromString(animator.at("scaling"));
+                scaleMode = animation::AnimatorTargetScaleModeMeta::fromString(animator.at("scaling"));
             }
             if (m_sprite)
-                m_animator->setTarget(*m_sprite, scaleMode);
+                m_animator->set_target(*m_sprite, scaleMode);
             if (!animatorPath.empty())
             {
                 m_animator->load(GameObjectPath(animatorPath), resources);
             }
             if (animator.contains("default"))
             {
-                m_animator->setKey(animator.at("default"));
+                m_animator->set_animation(animator.at("default"));
             }
             if (m_hasScriptEngine)
                 m_outer_environment["Components"]["Animation"] = m_animator.get();
@@ -245,7 +245,7 @@ namespace obe::Script
             m_collider = &scene.createCollider(m_id, false);
             m_objectNode.addChild(*m_collider);
             m_collider->load(obj.at("Collider"));
-            m_collider->setParentId(m_id);
+            m_collider->set_parent_id(m_id);
 
             if (m_hasScriptEngine)
                 m_outer_environment["Components"]["Collider"] = m_collider;
@@ -260,11 +260,11 @@ namespace obe::Script
             {
                 if (m_animator)
                 {
-                    if (!m_animator->getKey().empty())
+                    if (!m_animator->get_current_animation_name().empty())
                         m_animator->update();
                     /*if (m_sprite)
                     {
-                        m_sprite->setTexture(m_animator->getTexture());
+                        m_sprite->set_texture(m_animator->get_current_texture());
                     }*/
                 }
             }
@@ -310,7 +310,7 @@ namespace obe::Script
         m_canUpdate = state;
     }
 
-    Graphics::Sprite& GameObject::getSprite() const
+    graphics::Sprite& GameObject::getSprite() const
     {
         if (m_sprite)
             return *m_sprite;
@@ -322,14 +322,14 @@ namespace obe::Script
         return m_objectNode;
     }
 
-    Collision::PolygonalCollider& GameObject::getCollider() const
+    collision::PolygonalCollider& GameObject::getCollider() const
     {
         if (m_collider)
             return *m_collider;
         throw Exceptions::NoSuchComponent("Collider", m_type, m_id, EXC_INFO);
     }
 
-    Animation::Animator& GameObject::getAnimator() const
+    animation::Animator& GameObject::getAnimator() const
     {
         if (m_animator)
             return *m_animator.get();
@@ -343,7 +343,7 @@ namespace obe::Script
 
     void GameObject::initFromVili(const vili::node& data)
     {
-        Debug::Log->debug("<GameObject> Sending Local.Init table to "
+        debug::Log->debug("<GameObject> Sending Local.Init table to "
                           "GameObject {1} ({2}) (From Vili)",
             m_id, m_type);
         m_outer_environment["__INIT_ARG_TABLE"] = ViliLuaBridge::viliToLua(data);
@@ -353,7 +353,7 @@ namespace obe::Script
     {
         if (!this->deletable)
         {
-            Debug::Log->debug("GameObject::deleteObject called for '{0}' ({1})", m_id, m_type);
+            debug::Log->debug("GameObject::deleteObject called for '{0}' ({1})", m_id, m_type);
 
             if (m_hasScriptEngine)
             {

@@ -47,7 +47,7 @@ namespace obe::Scene
          */
         void scale(
             double pScale, const Transform::Referential& ref = Transform::Referential::Center);
-        // void setAngle(double angle);
+        // void set_angle(double angle);
         /**
          * \brief Sets the Position of the Camera
          * \param position New Position of the Camera

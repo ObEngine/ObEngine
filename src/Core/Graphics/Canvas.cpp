@@ -3,55 +3,20 @@
 
 #include <Graphics/Canvas.hpp>
 
-namespace obe::Graphics::Canvas
+namespace obe::graphics::canvas
 {
-    std::string canvasElementTypeToString(CanvasElementType type)
-    {
-        switch (type)
-        {
-        case CanvasElementType::CanvasElement:
-            return "CanvasElement";
-            break;
-        case CanvasElementType::Line:
-            return "Line";
-            break;
-        case CanvasElementType::Rectangle:
-            return "Rectangle";
-            break;
-        case CanvasElementType::Text:
-            return "Text";
-            break;
-        case CanvasElementType::Circle:
-            return "Circle";
-            break;
-        case CanvasElementType::Polygon:
-            return "Polygon";
-            break;
-        case CanvasElementType::Bezier:
-            return "Bezier";
-            break;
-        default:;
-        }
-    }
-
-    std::ostream& operator<<(std::ostream& os, CanvasElementType type)
-    {
-        os << canvasElementTypeToString(type);
-        return os;
-    }
-
     CanvasElement::CanvasElement(Canvas& parent, const std::string& id)
         : ProtectedIdentifiable(id)
         , parent(parent)
     {
     }
 
-    void CanvasElement::setLayer(const unsigned int layer)
+    void CanvasElement::set_layer(const unsigned int layer)
     {
         if (this->layer != layer)
         {
             this->layer = layer;
-            parent.requiresSort();
+            parent.requires_sort();
         }
     }
 
@@ -66,20 +31,20 @@ namespace obe::Graphics::Canvas
         const Transform::UnitVector p2px = p2.to<Transform::Units::ScenePixels>();
         if (thickness == 1)
         {
-            const sf::Vertex firstVertex(sf::Vector2f(p1px.x, p1px.y), p1color);
-            const sf::Vertex secondVertex(sf::Vector2f(p2px.x, p2px.y), p2color);
-            const sf::Vertex line[] = { firstVertex, secondVertex };
+            const sf::Vertex first_vertex(sf::Vector2f(p1px.x, p1px.y), p1_color);
+            const sf::Vertex second_vertex(sf::Vector2f(p2px.x, p2px.y), p2_color);
+            const sf::Vertex line[] = { first_vertex, second_vertex };
             target.draw(line, 2, sf::Lines);
         }
         else
         {
             sf::VertexArray lines(sf::TrianglesStrip, 4);
-            sf::Vector2f sfp1(p1px.x, p1px.y);
-            sf::Vector2f sfp2(p2px.x, p2px.y);
-            lines[0] = sf::Vertex(sfp1, p1color);
-            lines[1] = sf::Vertex(sfp2, p2color);
-            lines[2] = sf::Vertex(sfp2 + sf::Vector2f(thickness, thickness), p2color);
-            lines[3] = sf::Vertex(sfp1 + sf::Vector2f(thickness, thickness), p1color);
+            const sf::Vector2f sfp1(p1px.x, p1px.y);
+            const sf::Vector2f sfp2(p2px.x, p2px.y);
+            lines[0] = sf::Vertex(sfp1, p1_color);
+            lines[1] = sf::Vertex(sfp2, p2_color);
+            lines[2] = sf::Vertex(sfp2 + sf::Vector2f(thickness, thickness), p2_color);
+            lines[3] = sf::Vertex(sfp1 + sf::Vector2f(thickness, thickness), p1_color);
             target.draw(lines);
         }
     }
@@ -114,13 +79,13 @@ namespace obe::Graphics::Canvas
     {
         Transform::UnitVector offset(Transform::Units::ScenePixels);
         if (h_align == TextHorizontalAlign::Center)
-            offset.x -= shape.getGlobalBounds().getSize().x / 2;
+            offset.x -= shape.get_global_bounds().getSize().x / 2;
         else if (h_align == TextHorizontalAlign::Right)
-            offset.x -= shape.getGlobalBounds().getSize().x;
+            offset.x -= shape.get_global_bounds().getSize().x;
         if (v_align == TextVerticalAlign::Center)
-            offset.y -= shape.getGlobalBounds().getSize().y / 2;
+            offset.y -= shape.get_global_bounds().getSize().y / 2;
         else if (v_align == TextVerticalAlign::Bottom)
-            offset.y -= shape.getGlobalBounds().getSize().y;
+            offset.y -= shape.get_global_bounds().getSize().y;
         shape.move(offset);
         target.draw(shape);
         shape.move(-offset);
@@ -138,7 +103,7 @@ namespace obe::Graphics::Canvas
         }
     }
 
-    Graphics::Text& Text::currentText()
+    graphics::Text& Text::current_text()
     {
         return texts.back();
     }
@@ -170,46 +135,46 @@ namespace obe::Graphics::Canvas
 
     void Bezier::draw(RenderTarget target)
     {
-        std::vector<::Bezier::Point> controlPoints;
-        controlPoints.reserve(points.size());
+        std::vector<::Bezier::Point> control_points;
+        control_points.reserve(points.size());
         for (Transform::UnitVector& point : points)
         {
-            const Transform::UnitVector pixelPosition = point.to<Transform::Units::ScenePixels>();
-            controlPoints.push_back(::Bezier::Point(pixelPosition.x, pixelPosition.y));
+            const Transform::UnitVector pixel_position = point.to<Transform::Units::ScenePixels>();
+            control_points.emplace_back(pixel_position.x, pixel_position.y);
         }
-        std::vector<::Bezier::Bezier<3>> bezierCurves;
-        bezierCurves.reserve((controlPoints.size() - 1) / 3);
-        for (std::size_t i = 3; i < controlPoints.size(); i += 3)
+        std::vector<::Bezier::Bezier<3>> bezier_curves;
+        bezier_curves.reserve((control_points.size() - 1) / 3);
+        for (std::size_t i = 3; i < control_points.size(); i += 3)
         {
-            auto bezierPoints = std::vector<::Bezier::Point>(
-                controlPoints.begin() + (i - 3), controlPoints.begin() + (i + 1));
-            bezierCurves.push_back(bezierPoints);
+            auto bezier_points = std::vector<::Bezier::Point>(
+                control_points.begin() + (i - 3), control_points.begin() + (i + 1));
+            bezier_curves.emplace_back(bezier_points);
         }
-        const std::size_t maximum = bezierCurves.size() * precision;
+        const std::size_t maximum = bezier_curves.size() * precision;
         std::vector<sf::Vertex> vertices;
         vertices.reserve(maximum);
 
-        std::size_t curveIndex = 0;
-        for (::Bezier::Bezier<3>& bezier : bezierCurves)
+        std::size_t curve_index = 0;
+        for (::Bezier::Bezier<3>& bezier : bezier_curves)
         {
             for (std::size_t i = 0; i < (precision % 2 ? precision : precision + 1); i++)
             {
                 double t = static_cast<double>(i) / precision;
                 double tc = fmod(t * 4, 4);
-                Color firstColor = colors[((t >= 1) ? 3 : floor(t * 4)) + curveIndex];
-                Color secondColor = colors[((t >= 0.75) ? 3 : ceil(t * 4)) + curveIndex];
-                Color color = (firstColor * (1 - tc)) + (secondColor * tc);
+                Color first_color = colors[((t >= 1) ? 3 : floor(t * 4)) + curve_index];
+                Color second_color = colors[((t >= 0.75) ? 3 : ceil(t * 4)) + curve_index];
+                Color color = (first_color * (1 - tc)) + (second_color * tc);
                 ::Bezier::Point p = bezier.valueAt(t);
                 vertices.emplace_back(sf::Vector2f(p.x, p.y), color);
             }
-            curveIndex += 3;
+            curve_index += 3;
         }
         target.draw(vertices.data(), maximum, sf::LineStrip);
     }
 
-    void Canvas::sortElements()
+    void Canvas::sort_elements()
     {
-        std::sort(m_elements.begin(), m_elements.end(),
+        std::ranges::sort(m_elements,
             [](const auto& elem1, const auto& elem2) { return elem1->layer > elem2->layer; });
     }
 
@@ -218,7 +183,7 @@ namespace obe::Graphics::Canvas
         m_canvas.create(width, height);
     }
 
-    CanvasElement* Canvas::get(const std::string& id)
+    CanvasElement* Canvas::get(const std::string& id) const
     {
         for (auto& elem : m_elements)
         {
@@ -234,19 +199,19 @@ namespace obe::Graphics::Canvas
     {
         m_canvas.clear(sf::Color(0, 0, 0, 0));
 
-        if (m_sortRequired)
+        if (m_sort_required)
         {
-            this->sortElements();
-            m_sortRequired = false;
+            this->sort_elements();
+            m_sort_required = false;
         }
 
-        for (auto& element : m_elements)
+        for (const auto& element : m_elements)
         {
             if (element->visible)
                 element->draw(m_canvas);
         }
         m_canvas.display();
-        target.setTexture(m_canvas.getTexture());
+        target.set_texture(m_canvas.getTexture());
     }
 
     void Canvas::clear()
@@ -256,18 +221,16 @@ namespace obe::Graphics::Canvas
 
     void Canvas::remove(const std::string& id)
     {
-        m_elements.erase(std::remove_if(m_elements.begin(), m_elements.end(),
-                             [&id](auto& elem) { return elem->getId() == id; }),
-            m_elements.end());
+        std::erase_if(m_elements, [&id](auto& elem) { return elem->getId() == id; });
     }
 
-    Texture Canvas::getTexture() const
+    Texture Canvas::get_texture() const
     {
         return m_canvas.getTexture();
     }
 
-    void Canvas::requiresSort()
+    void Canvas::requires_sort()
     {
-        m_sortRequired = true;
+        m_sort_required = true;
     }
-} // namespace obe::Graphics::Canvas
+} // namespace obe::graphics::canvas

@@ -62,7 +62,7 @@ namespace obe::Transform
         PolygonPath m_points;
         float m_angle = 0;
 
-        void resetUnit(Transform::Units unit) override;
+        void reset_unit(Transform::Units unit) override;
 
     public:
         static constexpr double DefaultTolerance = 0.02;
@@ -74,7 +74,7 @@ namespace obe::Transform
          * \param pointIndex Index where to insert the new Point, Use pointIndex
          *        = -1 <DefaultArg> to insert at the end (between last and first Point)
          */
-        virtual void addPoint(const Transform::UnitVector& position, int pointIndex = -1);
+        virtual void add_point(const Transform::UnitVector& position, int pointIndex = -1);
         /**
          * \brief Finds the closest Line from the given Position
          * \param position Position used to get the closest Line
@@ -177,18 +177,18 @@ namespace obe::Transform
          * \param position UnitVector containing the new Position of the
          *        Polygon
          */
-        void setPosition(const Transform::UnitVector& position) override;
+        void set_position(const Transform::UnitVector& position) override;
         /**
          * \brief Sets the angle of the PolygonalCollider (will rotate all
          *        points around the given origin)
          * \param angle Angle to set to the PolygonalCollider
          * \param origin Origin to rotate all the points around
          */
-        virtual void setRotation(float angle, Transform::UnitVector origin);
-        virtual void setPositionFromCentroid(const Transform::UnitVector& position);
+        virtual void set_rotation(float angle, Transform::UnitVector origin);
+        virtual void set_position_from_centroid(const Transform::UnitVector& position);
         PolygonPoint& operator[](point_index_t i);
         PolygonPoint& get(point_index_t i);
         const PolygonPoint& get(point_index_t i) const;
-        [[nodiscard]] virtual Rect getBoundingBox() const;
+        [[nodiscard]] virtual Rect get_bounding_box() const;
     };
 } // namespace obe::Transform

@@ -5,24 +5,9 @@
 #include <Debug/Logger.hpp>
 #include <Utils/VectorUtils.hpp>
 
-namespace obe::Collision
+namespace obe::collision
 {
-    std::string colliderTagTypeToString(ColliderTagType tagType)
-    {
-        switch (tagType)
-        {
-        case ColliderTagType::Tag:
-            return "Tag";
-        case ColliderTagType::Accepted:
-            return "Accepted";
-        case ColliderTagType::Rejected:
-            return "Rejected";
-        default:;
-        };
-        return "";
-    }
-
-    bool pointsCompare(const Transform::UnitVector& first, const Transform::UnitVector& second)
+    bool points_comparator(const Transform::UnitVector& first, const Transform::UnitVector& second)
     {
         if (first.x < second.x)
             return true;
@@ -31,7 +16,7 @@ namespace obe::Collision
         return false;
     }
 
-    double pointsDistance(const Transform::UnitVector& first, const Transform::UnitVector& second)
+    double points_distance(const Transform::UnitVector& first, const Transform::UnitVector& second)
     {
         return std::sqrt(std::pow(second.x - first.x, 2) + std::pow(second.y - first.y, 2));
     }
@@ -42,73 +27,73 @@ namespace obe::Collision
         return (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
     }
 
-    std::vector<Transform::UnitVector> convexHull(std::vector<Transform::UnitVector> points)
+    std::vector<Transform::UnitVector> convex_hull(std::vector<Transform::UnitVector> points)
     {
-        sort(points.begin(), points.end(), pointsCompare);
+        std::ranges::sort(points, points_comparator);
         if (points.size() <= 1)
             return points;
-        std::vector<Transform::UnitVector> lowerHull;
+        std::vector<Transform::UnitVector> lower_hull;
         for (Transform::UnitVector& point : points)
         {
-            while (lowerHull.size() >= 2
-                && cross(lowerHull[lowerHull.size() - 2], lowerHull[lowerHull.size() - 1], point)
+            while (lower_hull.size() >= 2
+                && cross(lower_hull[lower_hull.size() - 2], lower_hull[lower_hull.size() - 1], point)
                     <= 0)
-                lowerHull.pop_back();
-            lowerHull.push_back(point);
+                lower_hull.pop_back();
+            lower_hull.push_back(point);
         }
-        reverse(points.begin(), points.end());
-        std::vector<Transform::UnitVector> upperHull;
+        std::ranges::reverse(points);
+        std::vector<Transform::UnitVector> upper_hull;
         for (Transform::UnitVector& point : points)
         {
-            while (upperHull.size() >= 2
-                && cross(upperHull[upperHull.size() - 2], upperHull[upperHull.size() - 1], point)
+            while (upper_hull.size() >= 2
+                && cross(upper_hull[upper_hull.size() - 2], upper_hull[upper_hull.size() - 1], point)
                     <= 0)
-                upperHull.pop_back();
-            upperHull.push_back(point);
+                upper_hull.pop_back();
+            upper_hull.push_back(point);
         }
-        std::vector<Transform::UnitVector> fullHull;
-        fullHull.reserve(lowerHull.size() + upperHull.size() - 2);
-        fullHull.insert(fullHull.end(), lowerHull.begin(), lowerHull.end() - 1);
-        fullHull.insert(fullHull.end(), upperHull.begin(), upperHull.end() - 1);
-        return fullHull;
+        std::vector<Transform::UnitVector> full_hull;
+        full_hull.reserve(lower_hull.size() + upper_hull.size() - 2);
+        full_hull.insert(full_hull.end(), lower_hull.begin(), lower_hull.end() - 1);
+        full_hull.insert(full_hull.end(), upper_hull.begin(), upper_hull.end() - 1);
+        return full_hull;
     }
 
     /**
      * \brief Returns colliders that may be potentially touched (Axis-Aligned Bounding Box filtering)
     */
-    std::vector<PolygonalCollider*> AABBfilter(const PolygonalCollider& coll,
+    std::vector<PolygonalCollider*> aabb_filter(const PolygonalCollider& coll,
         const Transform::UnitVector& offset, const std::vector<PolygonalCollider*>& colliders)
     {
-        const Transform::Rect colBBox = coll.getBoundingBox();
+        const Transform::Rect bounding_box = coll.get_bounding_box();
         Transform::Rect aabb;
-        aabb.setSize(colBBox.getSize() + Transform::UnitVector(abs(offset.x), abs(offset.y)));
+        aabb.setSize(bounding_box.getSize() + Transform::UnitVector(abs(offset.x), abs(offset.y)));
         if (offset.x >= 0 && offset.y >= 0)
         {
-            aabb.setPosition(colBBox.getPosition(Transform::Referential::TopLeft),
+            aabb.setPosition(bounding_box.getPosition(Transform::Referential::TopLeft),
                 Transform::Referential::TopLeft);
         }
         else if (offset.x >= 0 && offset.y < 0)
         {
-            aabb.setPosition(colBBox.getPosition(Transform::Referential::BottomLeft),
+            aabb.setPosition(bounding_box.getPosition(Transform::Referential::BottomLeft),
                 Transform::Referential::BottomLeft);
         }
         else if (offset.x < 0 && offset.y >= 0)
         {
-            aabb.setPosition(colBBox.getPosition(Transform::Referential::TopRight),
+            aabb.setPosition(bounding_box.getPosition(Transform::Referential::TopRight),
                 Transform::Referential::TopRight);
         }
         else // offset.x < 0 && offset.y < 0
         {
-            aabb.setPosition(colBBox.getPosition(Transform::Referential::BottomRight),
+            aabb.setPosition(bounding_box.getPosition(Transform::Referential::BottomRight),
                 Transform::Referential::BottomRight);
         }
-        std::vector<PolygonalCollider*> collidersToCheck;
+        std::vector<PolygonalCollider*> colliders_to_check;
         for (auto& collider : colliders)
         {
-            if (collider != &coll && aabb.intersects(collider->getBoundingBox()))
-                collidersToCheck.push_back(collider);
+            if (collider != &coll && aabb.intersects(collider->get_bounding_box()))
+                colliders_to_check.push_back(collider);
         }
-        return collidersToCheck;
+        return colliders_to_check;
     }
 
     PolygonalCollider::PolygonalCollider(const std::string& id)
@@ -121,15 +106,15 @@ namespace obe::Collision
         : Selectable(false)
         , Component(collider.getId())
         , Polygon(collider)
+        , m_parent_id(collider.m_parent_id)
+        , m_tags(collider.m_tags)
     {
-        m_parentId = collider.m_parentId;
-        m_tags = collider.m_tags;
         m_angle = collider.m_angle;
         m_unit = collider.m_unit;
         m_position = collider.m_position;
     }
 
-    void PolygonalCollider::operator=(const PolygonalCollider& collider)
+    PolygonalCollider& PolygonalCollider::operator=(const PolygonalCollider& collider)
     {
         m_angle = collider.m_angle;
         m_position = collider.m_position;
@@ -141,11 +126,13 @@ namespace obe::Collision
                 *this, index++, Transform::UnitVector(point->x, point->y, point->unit)));
         }
 
-        m_parentId = collider.m_parentId;
+        m_parent_id = collider.m_parent_id;
         m_tags = collider.m_tags;
         m_angle = collider.m_angle;
         m_unit = collider.m_unit;
         m_position = collider.m_position;
+
+        return *this;
     }
 
     std::string_view PolygonalCollider::type() const
@@ -153,110 +140,107 @@ namespace obe::Collision
         return ComponentType;
     }
 
-    Transform::Rect PolygonalCollider::getBoundingBox() const
+    Transform::Rect PolygonalCollider::get_bounding_box() const
     {
-        if (m_updateBoundingBox)
+        if (m_update_bounding_box)
         {
-            m_boundingBox = Transform::Polygon::getBoundingBox();
-            m_updateBoundingBox = false;
+            m_bounding_box = Transform::Polygon::get_bounding_box();
+            m_update_bounding_box = false;
         }
-        return m_boundingBox;
+        return m_bounding_box;
     }
 
-    void PolygonalCollider::addPoint(const Transform::UnitVector& position, int pointIndex)
+    void PolygonalCollider::add_point(const Transform::UnitVector& position, int point_index)
     {
-        Transform::Polygon::addPoint(position, pointIndex);
-        m_updateBoundingBox = true;
+        Transform::Polygon::add_point(position, point_index);
+        m_update_bounding_box = true;
     }
 
     void PolygonalCollider::move(const Transform::UnitVector& position)
     {
         Transform::Polygon::move(position);
-        m_boundingBox.move(position);
+        m_bounding_box.move(position);
     }
 
     void PolygonalCollider::rotate(float angle, Transform::UnitVector origin)
     {
         Transform::Polygon::rotate(angle, origin);
-        m_updateBoundingBox = true;
+        m_update_bounding_box = true;
     }
 
-    void PolygonalCollider::setPosition(const Transform::UnitVector& position)
+    void PolygonalCollider::set_position(const Transform::UnitVector& position)
     {
         const Transform::UnitVector diff = position - this->getPosition();
-        Transform::Polygon::setPosition(position);
-        m_boundingBox.move(diff);
+        Transform::Polygon::set_position(position);
+        m_bounding_box.move(diff);
     }
 
-    void PolygonalCollider::setRotation(float angle, Transform::UnitVector origin)
+    void PolygonalCollider::set_rotation(float angle, Transform::UnitVector origin)
     {
-        Transform::Polygon::setRotation(angle, origin);
-        m_updateBoundingBox = true;
+        Transform::Polygon::set_rotation(angle, origin);
+        m_update_bounding_box = true;
     }
 
-    void PolygonalCollider::setPositionFromCentroid(const Transform::UnitVector& position)
+    void PolygonalCollider::set_position_from_centroid(const Transform::UnitVector& position)
     {
-        const Transform::UnitVector oldPos = this->getPosition();
-        Transform::Polygon::setPositionFromCentroid(position);
-        m_boundingBox.move(oldPos - this->getPosition());
+        const Transform::UnitVector old_position = this->getPosition();
+        Transform::Polygon::set_position_from_centroid(position);
+        m_bounding_box.move(old_position - this->getPosition());
     }
 
-    void PolygonalCollider::resetUnit(Transform::Units unit)
+    void PolygonalCollider::reset_unit(Transform::Units unit)
     {
     }
 
-    CollisionData PolygonalCollider::getMaximumDistanceBeforeCollision(
+    CollisionData PolygonalCollider::get_distance_before_collision(
         const Transform::UnitVector& offset) const
     {
-        std::vector<std::pair<PolygonalCollider*, Transform::UnitVector>> reachableColliders;
+        std::vector<std::pair<PolygonalCollider*, Transform::UnitVector>> reachable_colliders;
 
-        CollisionData collData;
-        collData.offset = offset;
+        CollisionData collision_data;
+        collision_data.offset = offset;
 
-        std::vector<PolygonalCollider*> collidersToCheck = AABBfilter(*this, offset, Pool);
+        std::vector<PolygonalCollider*> colliders_to_check = aabb_filter(*this, offset, Pool);
 
-        for (auto& collider : collidersToCheck)
+        for (auto& collider : colliders_to_check)
         {
-            if (checkTags(*collider))
+            if (check_tags(*collider))
             {
-                const Transform::UnitVector maxDist
-                    = this->getMaximumDistanceBeforeCollision(*collider, offset, false);
-                // Debug::Log->warn("Maximum distance before collision from {}
-                // with {} is ({}, {})", this->getId(), collider->getId(),
-                // maxDist.x, maxDist.y);
-                if (maxDist != offset)
-                    reachableColliders.emplace_back(collider, maxDist);
+                const Transform::UnitVector max_distance
+                    = this->get_distance_before_collision(*collider, offset, false);
+                if (max_distance != offset)
+                    reachable_colliders.emplace_back(collider, max_distance);
             }
         }
 
-        if (!reachableColliders.empty())
+        if (!reachable_colliders.empty())
         {
             // Get lowest offset between this collider and a reachable collider
-            for (auto& reachable : reachableColliders)
+            for (auto& reachable : reachable_colliders)
             {
                 if (reachable.second.magnitude()
-                    < collData.offset.to(Transform::Units::ScenePixels).magnitude())
+                    < collision_data.offset.to(Transform::Units::ScenePixels).magnitude())
                 {
-                    collData.offset = reachable.second;
+                    collision_data.offset = reachable.second;
                 }
             }
 
             // Get touched colliders (=> in range of lowest offset)
-            for (auto& reachable : reachableColliders)
+            for (auto& reachable : reachable_colliders)
             {
-                if (reachable.second == collData.offset)
+                if (reachable.second == collision_data.offset)
                 {
-                    collData.colliders.push_back(reachable.first);
+                    collision_data.colliders.push_back(reachable.first);
                 }
             }
         }
 
-        return collData;
+        return collision_data;
     }
 
-    std::string PolygonalCollider::getParentId() const
+    std::string PolygonalCollider::get_parent_id() const
     {
-        return m_parentId;
+        return m_parent_id;
     }
 
     vili::node PolygonalCollider::schema() const
@@ -264,108 +248,108 @@ namespace obe::Collision
         return vili::object {};
     }
 
-    void PolygonalCollider::setParentId(const std::string& parent)
+    void PolygonalCollider::set_parent_id(const std::string& parent)
     {
-        m_parentId = parent;
+        m_parent_id = parent;
     }
 
-    void PolygonalCollider::addTag(ColliderTagType tagType, const std::string& tag)
+    void PolygonalCollider::add_tag(ColliderTagType tag_type, const std::string& tag)
     {
-        if (!Utils::Vector::contains(tag, m_tags.at(tagType)))
-            m_tags.at(tagType).push_back(tag);
+        if (!Utils::Vector::contains(tag, m_tags.at(tag_type)))
+            m_tags.at(tag_type).push_back(tag);
         else
-            Debug::Log->warn("<PolygonalCollider> Tag '{0}' is already in "
+            debug::Log->warn("<PolygonalCollider> Tag '{0}' is already in "
                              "PolygonalCollider '{1}'",
                 tag, m_id);
     }
 
-    void PolygonalCollider::clearTags(ColliderTagType tagType)
+    void PolygonalCollider::clear_tags(ColliderTagType tag_type)
     {
-        m_tags.at(tagType).clear();
+        m_tags.at(tag_type).clear();
     }
 
-    CollisionData PolygonalCollider::doesCollide(const Transform::UnitVector& offset) const
+    CollisionData PolygonalCollider::does_collide(const Transform::UnitVector& offset) const
     {
-        CollisionData collData;
-        collData.offset = offset;
+        CollisionData collision_data;
+        collision_data.offset = offset;
 
-        std::vector<PolygonalCollider*> collidersToCheck = AABBfilter(*this, offset, Pool);
+        const std::vector<PolygonalCollider*> colliders_to_check = aabb_filter(*this, offset, Pool);
 
-        for (auto& collider : collidersToCheck)
+        for (auto& collider : colliders_to_check)
         {
-            if (checkTags(*collider))
+            if (check_tags(*collider))
             {
-                if (this->doesCollide(*collider, offset, false))
+                if (this->does_collide(*collider, offset, false))
                 {
-                    collData.colliders.push_back(collider);
+                    collision_data.colliders.push_back(collider);
                 }
             }
         }
 
-        return collData;
+        return collision_data;
     }
 
-    void PolygonalCollider::removeTag(ColliderTagType tagType, const std::string& tag)
+    void PolygonalCollider::remove_tag(ColliderTagType tag_type, const std::string& tag)
     {
-        std::vector<std::string>& tags = m_tags.at(tagType);
-        tags.erase(std::remove(tags.begin(), tags.end(), tag), tags.end());
+        std::vector<std::string>& tags = m_tags.at(tag_type);
+        std::erase(tags, tag);
     }
 
-    bool PolygonalCollider::doesHaveTag(ColliderTagType tagType, const std::string& tag)
+    bool PolygonalCollider::contains_tag(ColliderTagType tag_type, const std::string& tag) const
     {
-        return Utils::Vector::contains(tag, m_tags.at(tagType));
+        return Utils::Vector::contains(tag, m_tags.at(tag_type));
     }
 
-    bool PolygonalCollider::doesHaveAnyTag(
-        ColliderTagType tagType, const std::vector<std::string>& tags) const
+    bool PolygonalCollider::matches_any_tag(
+        ColliderTagType tag_type, const std::vector<std::string>& tags) const
     {
         if (m_tags.empty())
             return false;
         for (const std::string& tag : tags)
         {
-            if (Utils::Vector::contains(tag, m_tags.at(tagType)))
+            if (Utils::Vector::contains(tag, m_tags.at(tag_type)))
                 return true;
         }
         return false;
     }
 
-    std::vector<std::string> PolygonalCollider::getAllTags(ColliderTagType tagType) const
+    std::vector<std::string> PolygonalCollider::get_all_tags(ColliderTagType tag_type) const
     {
-        return m_tags.at(tagType);
+        return m_tags.at(tag_type);
     }
 
-    Transform::UnitVector PolygonalCollider::getMaximumDistanceBeforeCollision(
+    Transform::UnitVector PolygonalCollider::get_distance_before_collision(
         PolygonalCollider& collider, const Transform::UnitVector& offset,
-        const bool doAABBfilter) const
+        const bool perform_aabb_filter) const
     {
-        const Transform::Units pxUnit = Transform::Units::ScenePixels;
-        const Transform::UnitVector tOffset = offset.to(pxUnit);
-        if (doAABBfilter && AABBfilter(*this, offset, { &collider }).empty())
+        constexpr Transform::Units px_unit = Transform::Units::ScenePixels;
+        const Transform::UnitVector t_offset = offset.to(px_unit);
+        if (perform_aabb_filter && aabb_filter(*this, offset, { &collider }).empty())
             return offset;
-        bool inFront = false;
-        Transform::UnitVector minDep;
-        const auto calcMinDistanceDep
+        bool in_front = false;
+        Transform::UnitVector min_dep;
+        const auto calc_min_distance_dep
             = [this](const Transform::PolygonPath& sol1, const Transform::PolygonPath& sol2,
-                  const Transform::UnitVector& tOffset)
+                  const Transform::UnitVector& t_offset)
             -> std::tuple<double, Transform::UnitVector, bool>
         {
-            double minDistance = -1;
-            bool inFront = false;
+            double min_distance = -1;
+            bool in_front = false;
 
-            const Transform::Units pxUnit = Transform::Units::ScenePixels;
-            Transform::UnitVector minDisplacement(pxUnit);
-            Transform::UnitVector point1(pxUnit);
-            Transform::UnitVector point2(pxUnit);
-            Transform::UnitVector point3(pxUnit);
-            Transform::UnitVector s1(pxUnit);
-            for (auto& currentPoint : sol1)
+            constexpr Transform::Units px_unit = Transform::Units::ScenePixels;
+            Transform::UnitVector min_displacement(px_unit);
+            Transform::UnitVector point1(px_unit);
+            Transform::UnitVector point2(px_unit);
+            Transform::UnitVector point3(px_unit);
+            Transform::UnitVector s1(px_unit);
+            for (auto& current_point : sol1)
             {
-                const Transform::UnitVector point0 = currentPoint->to(pxUnit);
+                const Transform::UnitVector point0 = current_point->to(px_unit);
                 for (int i = 0; i < sol2.size(); i++)
                 {
-                    point1 = point0 + tOffset;
-                    point2 = sol2[i]->to(pxUnit);
-                    point3 = sol2[(i == sol2.size() - 1) ? 0 : i + 1]->to(pxUnit);
+                    point1 = point0 + t_offset;
+                    point2 = sol2[i]->to(px_unit);
+                    point3 = sol2[(i == sol2.size() - 1) ? 0 : i + 1]->to(px_unit);
 
                     s1 = point1 - point0;
                     const Transform::UnitVector s2 = point3 - point2;
@@ -377,93 +361,89 @@ namespace obe::Collision
 
                     if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
                     {
-                        inFront = true;
+                        in_front = true;
                         const Transform::UnitVector ip
                             = point0 + (s1 * Transform::UnitVector(t, t, s1.unit));
 
                         const double distance = std::sqrt(
                             std::pow((point0.x - ip.x), 2) + std::pow((point0.y - ip.y), 2));
-                        if (distance < minDistance || minDistance == -1)
+                        if (distance < min_distance || min_distance == -1)
                         {
-                            minDistance = distance;
-                            const double xComp = t * s1.x;
-                            const double yComp = t * s1.y;
-                            minDisplacement.set((xComp > 0) ? std::floor(xComp) : std::ceil(xComp),
-                                (yComp > 0) ? std::floor(yComp) : std::ceil(yComp));
+                            min_distance = distance;
+                            const double x_comp = t * s1.x;
+                            const double y_comp = t * s1.y;
+                            min_displacement.set((x_comp > 0) ? std::floor(x_comp) : std::ceil(x_comp),
+                                (y_comp > 0) ? std::floor(y_comp) : std::ceil(y_comp));
                         }
                     }
                 }
             }
-            return std::make_tuple(minDistance, minDisplacement, inFront);
+            return std::make_tuple(min_distance, min_displacement, in_front);
         };
-        const Transform::PolygonPath& fPath = m_points;
-        const Transform::PolygonPath& sPath = collider.getAllPoints();
+        const Transform::PolygonPath& f_path = m_points;
+        const Transform::PolygonPath& s_path = collider.getAllPoints();
 
-        auto tdm1 = calcMinDistanceDep(fPath, sPath, tOffset);
-        auto tdm2 = calcMinDistanceDep(
-            sPath, fPath, tOffset * Transform::UnitVector(-1.0, -1.0, tOffset.unit));
+        const auto tdm1 = calc_min_distance_dep(f_path, s_path, t_offset);
+        auto tdm2 = calc_min_distance_dep(
+            s_path, f_path, t_offset * Transform::UnitVector(-1.0, -1.0, t_offset.unit));
         std::get<1>(tdm2).x = -std::get<1>(tdm2).x;
         std::get<1>(tdm2).y = -std::get<1>(tdm2).y;
         if (std::get<2>(tdm1) || std::get<2>(tdm2))
-            inFront = true;
+            in_front = true;
 
-        if (!inFront)
-            minDep = tOffset;
+        if (!in_front)
+            min_dep = t_offset;
         else if (std::get<0>(tdm1) == 0 || std::get<0>(tdm2) == 0)
-            return Transform::UnitVector(0, 0, tOffset.unit);
+            return Transform::UnitVector(0, 0, t_offset.unit);
         else if (std::get<0>(tdm1) > 0
             && (std::get<0>(tdm1) <= std::get<0>(tdm2) || std::get<0>(tdm2) == -1))
-            minDep = std::get<1>(tdm1);
+            min_dep = std::get<1>(tdm1);
         else if (std::get<0>(tdm2) > 0)
-            minDep = std::get<1>(tdm2);
+            min_dep = std::get<1>(tdm2);
         else
-            return Transform::UnitVector(0, 0, tOffset.unit);
+            return Transform::UnitVector(0, 0, t_offset.unit);
 
-        return minDep;
+        return min_dep;
     }
 
-    bool PolygonalCollider::doesCollide(PolygonalCollider& collider,
-        const Transform::UnitVector& offset, const bool doAABBfilter) const
+    bool PolygonalCollider::does_collide(PolygonalCollider& collider,
+        const Transform::UnitVector& offset, const bool perform_aabb_filter) const
     {
-        if (doAABBfilter && AABBfilter(*this, offset, { &collider }).empty())
+        if (perform_aabb_filter && aabb_filter(*this, offset, { &collider }).empty())
             return false;
-        std::vector<Transform::UnitVector> pSet1;
-        pSet1.reserve(m_points.size());
-        std::vector<Transform::UnitVector> pSet2;
-        pSet2.reserve(m_points.size());
+        std::vector<Transform::UnitVector> p_set1;
+        p_set1.reserve(m_points.size());
+        std::vector<Transform::UnitVector> p_set2;
+        p_set2.reserve(m_points.size());
 
         for (const auto& point : m_points)
-            pSet1.push_back(*point);
+            p_set1.push_back(*point);
         for (const auto& point : collider.getAllPoints())
-            pSet2.push_back(*point);
-        for (auto& applyOffset : pSet1)
-            applyOffset += offset;
-        const auto pointInPolygon = [](const std::vector<Transform::UnitVector>& poly,
-                                        Transform::UnitVector& pTest) -> bool
+            p_set2.push_back(*point);
+        for (auto& apply_offset : p_set1)
+            apply_offset += offset;
+        constexpr auto point_in_polygon = [](const std::vector<Transform::UnitVector>& poly,
+            const Transform::UnitVector& p_test) -> bool
         {
             int i, j, c = 0;
-            const int nPt = static_cast<int>(poly.size());
-            for (i = 0, j = nPt - 1; i < nPt; j = i++)
+            const int n_pt = static_cast<int>(poly.size());
+            for (i = 0, j = n_pt - 1; i < n_pt; j = i++)
             {
-                if (((poly[i].y > pTest.y) != (poly[j].y > pTest.y))
-                    && (pTest.x
-                        < (poly[j].x - poly[i].x) * (pTest.y - poly[i].y) / (poly[j].y - poly[i].y)
+                if (((poly[i].y > p_test.y) != (poly[j].y > p_test.y))
+                    && (p_test.x
+                        < (poly[j].x - poly[i].x) * (p_test.y - poly[i].y) / (poly[j].y - poly[i].y)
                             + poly[i].x))
                     c = !c;
             }
             return c;
         };
-        for (Transform::UnitVector& pTest : pSet1)
+        for (Transform::UnitVector& p_test : p_set1)
         {
-            if (pointInPolygon(pSet2, pTest))
+            if (point_in_polygon(p_set2, p_test))
                 return true;
         }
-        for (auto& pTest : pSet2)
-        {
-            if (pointInPolygon(pSet1, pTest))
-                return true;
-        }
-        return false;
+        return std::ranges::any_of(
+            p_set2, [&p_set1](const auto& p_test) { return point_in_polygon(p_set1, p_test); });
     }
 
     vili::node PolygonalCollider::dump() const
@@ -473,19 +453,19 @@ namespace obe::Collision
         result["points"] = vili::array {};
         for (auto& point : m_points)
         {
-            const Transform::UnitVector pVec = point->to(m_unit);
-            result["points"].push(vili::object { { "x", pVec.x }, { "y", pVec.y } });
+            const Transform::UnitVector point_coordinates = point->to(m_unit);
+            result["points"].push(vili::object { { "x", point_coordinates.x }, { "y", point_coordinates.y } });
         }
         return result;
     }
 
     void PolygonalCollider::load(const vili::node& data)
     {
-        auto addTagHelper = [this](ColliderTagType type, const vili::node& tag)
+        auto add_tag_helper = [this](ColliderTagType type, const vili::node& tag)
         {
             if (tag.is<vili::string>())
             {
-                this->addTag(type, tag);
+                this->add_tag(type, tag);
             }
             else if (tag.is<vili::array>())
             {
@@ -493,11 +473,11 @@ namespace obe::Collision
                 {
                     if (item.is<vili::string>())
                     {
-                        this->addTag(type, item);
+                        this->add_tag(type, item);
                     }
                     else
                     {
-                        throw Exceptions::InvalidTagFormat(m_id, colliderTagTypeToString(type),
+                        throw Exceptions::InvalidTagFormat(m_id, ColliderTagTypeMeta::toString(type),
                             vili::to_string(item.type()), EXC_INFO);
                     }
                 }
@@ -505,42 +485,41 @@ namespace obe::Collision
             else
             {
                 throw Exceptions::InvalidTagFormat(
-                    m_id, colliderTagTypeToString(type), vili::to_string(tag.type()), EXC_INFO);
+                    m_id, ColliderTagTypeMeta::toString(type), vili::to_string(tag.type()), EXC_INFO);
             }
         };
-        const std::string pointsUnit = data.at("unit");
-        const Transform::Units pBaseUnit = Transform::UnitsMeta::fromString(pointsUnit);
-        for (const vili::node& colliderPoint : data.at("points"))
+        const Transform::Units points_unit = Transform::UnitsMeta::fromString(data.at("unit"));
+        for (const vili::node& collider_point : data.at("points"))
         {
-            const Transform::UnitVector pVector2
-                = Transform::UnitVector(colliderPoint["x"], colliderPoint["y"], pBaseUnit);
-            this->addPoint(pVector2);
+            const Transform::UnitVector point_coordinates
+                = Transform::UnitVector(collider_point["x"], collider_point["y"], points_unit);
+            this->add_point(point_coordinates);
         }
-        this->setWorkingUnit(pBaseUnit);
+        this->setWorkingUnit(points_unit);
 
         if (data.contains("tag"))
         {
-            addTagHelper(ColliderTagType::Tag, data["tag"]);
+            add_tag_helper(ColliderTagType::Tag, data["tag"]);
         }
         if (data.contains("accept"))
         {
-            addTagHelper(ColliderTagType::Accepted, data["accept"]);
+            add_tag_helper(ColliderTagType::Accepted, data["accept"]);
         }
         if (data.contains("reject"))
         {
-            addTagHelper(ColliderTagType::Rejected, data["reject"]);
+            add_tag_helper(ColliderTagType::Rejected, data["reject"]);
         }
     }
 
-    bool PolygonalCollider::checkTags(const PolygonalCollider& collider) const
+    bool PolygonalCollider::check_tags(const PolygonalCollider& collider) const
     {
-        if (this->doesHaveAnyTag(
-                ColliderTagType::Rejected, collider.getAllTags(ColliderTagType::Tag)))
+        if (this->matches_any_tag(
+                ColliderTagType::Rejected, collider.get_all_tags(ColliderTagType::Tag)))
             return false;
         if (!m_tags.at(ColliderTagType::Accepted).empty()
-            && !this->doesHaveAnyTag(
-                ColliderTagType::Accepted, collider.getAllTags(ColliderTagType::Tag)))
+            && !this->matches_any_tag(
+                ColliderTagType::Accepted, collider.get_all_tags(ColliderTagType::Tag)))
             return false;
         return true;
     }
-} // namespace obe::Collision
+} // namespace obe::collision

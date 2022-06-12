@@ -2,9 +2,9 @@
 
 #include <Config/Validators.hpp>
 
-namespace obe::Config::Validators
+namespace obe::config::validators
 {
-    vili::node ProjectValidator()
+    vili::node project_validator()
     {
         // clang-format off
         vili::object urls = vili::object {
@@ -46,7 +46,7 @@ namespace obe::Config::Validators
             }
         };
 
-        vili::node mountValidator = MountValidator();
+        vili::node mountValidator = mount_validator();
         vili::object mounts = mountValidator.at("mounts").as<vili::object>();
 
         return vili::object {

@@ -2,7 +2,7 @@
 
 #include <SFML/Graphics/Font.hpp>
 
-namespace obe::Graphics
+namespace obe::graphics
 {
     class Font
     {
@@ -11,10 +11,10 @@ namespace obe::Graphics
 
     public:
         Font() = default;
-        Font(const Font& font);
+        Font(const Font& font) = default;
         Font(const sf::Font& font);
 
-        bool loadFromFile(const std::string& filename);
+        bool load_from_file(const std::string& filename);
 
         bool operator==(const Font& font) const;
         operator sf::Font&();
@@ -22,17 +22,12 @@ namespace obe::Graphics
         operator bool() const;
     };
 
-    inline Font::Font(const Font& font)
-        : m_font(font.m_font)
-    {
-    }
-
     inline Font::Font(const sf::Font& font)
         : m_font(font)
     {
     }
 
-    inline bool Font::loadFromFile(const std::string& filename)
+    inline bool Font::load_from_file(const std::string& filename)
     {
         return m_font.loadFromFile(filename);
     }

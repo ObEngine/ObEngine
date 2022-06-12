@@ -2,12 +2,12 @@
 
 #include <Utils/VectorUtils.hpp>
 
-namespace obe::Config::Validators
+namespace obe::config::validators
 {
-    vili::node ConfigValidator()
+    vili::node config_validator()
     {
         // clang-format off
-        std::vector<std::string> inputList = {
+        std::vector<std::string> input_list = {
             "Add",
             "Backslash",
             "Backspace",
@@ -61,16 +61,16 @@ namespace obe::Config::Validators
             "GP_[0-9]+_BTN_[0-9]+",
             "GP_[0-9]+_AXIS_(X|Y|Z|R|U|PovX|PovY)_(LEFT|UP|RIGHT|DOWN)"
         };
-        std::string allInputs = Utils::Vector::join(inputList, "|");
+        std::string all_inputs = Utils::Vector::join(input_list, "|");
         // clang-format on
-        std::string actionRe = fmt::format("((Idle|Hold|Pressed|Released)"
+        std::string action_re = fmt::format("((Idle|Hold|Pressed|Released)"
                                            "\\s*:\\s*({0}))(\\s*\\+\\s*"
                                            "(Idle|Hold|Pressed|Released)"
                                            "\\s*:\\s*({0}))*",
-            allInputs);
+            all_inputs);
 
         // clang-format off
-        vili::node ResolutionDimensionValidator = vili::object {
+        vili::node resolution_dimension_validator = vili::object {
             {"type", "union"},
             {
                 "types", vili::array {
@@ -86,7 +86,7 @@ namespace obe::Config::Validators
             }
         };
 
-        vili::node RenderResolutionDimensionValidator = vili::object {
+        vili::node render_resolution_dimension_validator = vili::object {
             {"type", "union"},
             {
                 "types", vili::array {
@@ -104,13 +104,13 @@ namespace obe::Config::Validators
             }
         };
 
-        vili::node RenderValidator = vili::object {
+        vili::node render_validator = vili::object {
             {"type", vili::object_typename},
             {"optional", true},
             {
                 "properties", vili::object {
-                    {"width", RenderResolutionDimensionValidator},
-                    {"height", RenderResolutionDimensionValidator},
+                    {"width", render_resolution_dimension_validator},
+                    {"height", render_resolution_dimension_validator},
                     {"stretch", vili::object {
                         {"type", vili::string_typename},
                         {"values", vili::array {
@@ -121,13 +121,13 @@ namespace obe::Config::Validators
             }
         };
 
-        vili::node WindowContext = vili::object {
+        vili::node window_context = vili::object {
             {"type", vili::object_typename},
             {
                 "properties", vili::object {
-                    {"width", ResolutionDimensionValidator},
-                    {"height", ResolutionDimensionValidator},
-                    {"render", RenderValidator},
+                    {"width", resolution_dimension_validator},
+                    {"height", resolution_dimension_validator},
+                    {"render", render_validator},
                     {
                         "fullscreen", vili::object {
                             {"type", vili::boolean_typename}
@@ -161,9 +161,9 @@ namespace obe::Config::Validators
             }
         };
 
-        vili::object InputActionValidator = vili::object {
+        vili::object input_action_validator = vili::object {
             {"type", vili::string_typename},
-            {"regex", actionRe}
+            {"regex", action_re}
         };
 
         return vili::object {
@@ -179,10 +179,10 @@ namespace obe::Config::Validators
                                     {"type", "union"},
                                     {
                                         "types", vili::array {
-                                            InputActionValidator,
+                                            input_action_validator,
                                             vili::object {
                                                 {"type", vili::array_typename},
-                                                {"items", InputActionValidator}
+                                                {"items", input_action_validator}
                                             }
                                         }
                                     }
@@ -197,8 +197,8 @@ namespace obe::Config::Validators
                     {"type", vili::object_typename},
                     {
                         "properties", vili::object {
-                            {"Game", WindowContext},
-                            {"Editor", WindowContext}
+                            {"Game", window_context},
+                            {"Editor", window_context}
                         }
                     }
                 }

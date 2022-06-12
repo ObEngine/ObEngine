@@ -4,134 +4,122 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Animation::Exceptions::Bindings
+namespace obe::animation::exceptions::Bindings
 {
     void LoadClassAnimationGroupTextureIndexOverflow(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Animation"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::Animation::Exceptions::AnimationGroupTextureIndexOverflow>
+        sol::table ExceptionsNamespace = state["obe"]["animation"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::animation::exceptions::AnimationGroupTextureIndexOverflow>
             bindAnimationGroupTextureIndexOverflow = ExceptionsNamespace.new_usertype<
-                obe::Animation::Exceptions::AnimationGroupTextureIndexOverflow>(
+                obe::animation::exceptions::AnimationGroupTextureIndexOverflow>(
                 "AnimationGroupTextureIndexOverflow", sol::call_constructor,
-                sol::constructors<obe::Animation::Exceptions::AnimationGroupTextureIndexOverflow(
+                sol::constructors<obe::animation::exceptions::AnimationGroupTextureIndexOverflow(
                     std::string_view, std::size_t, std::size_t, obe::DebugInfo)>(),
                 sol::base_classes,
                 sol::bases<
-                    obe::Exception<obe::Animation::Exceptions::AnimationGroupTextureIndexOverflow>,
+                    obe::Exception<obe::animation::exceptions::AnimationGroupTextureIndexOverflow>,
                     obe::BaseException>());
     }
     void LoadClassAnimationTextureIndexOverflow(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Animation"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::Animation::Exceptions::AnimationTextureIndexOverflow>
+        sol::table ExceptionsNamespace = state["obe"]["animation"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::animation::exceptions::AnimationTextureIndexOverflow>
             bindAnimationTextureIndexOverflow
             = ExceptionsNamespace
-                  .new_usertype<obe::Animation::Exceptions::AnimationTextureIndexOverflow>(
+                  .new_usertype<obe::animation::exceptions::AnimationTextureIndexOverflow>(
                       "AnimationTextureIndexOverflow", sol::call_constructor,
-                      sol::constructors<obe::Animation::Exceptions::AnimationTextureIndexOverflow(
+                      sol::constructors<obe::animation::exceptions::AnimationTextureIndexOverflow(
                           std::string_view, std::size_t, std::size_t, obe::DebugInfo)>(),
                       sol::base_classes,
                       sol::bases<
-                          obe::Exception<obe::Animation::Exceptions::AnimationTextureIndexOverflow>,
+                          obe::Exception<obe::animation::exceptions::AnimationTextureIndexOverflow>,
                           obe::BaseException>());
     }
     void LoadClassInvalidAnimationFile(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Animation"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::Animation::Exceptions::InvalidAnimationFile> bindInvalidAnimationFile
-            = ExceptionsNamespace.new_usertype<obe::Animation::Exceptions::InvalidAnimationFile>(
+        sol::table ExceptionsNamespace = state["obe"]["animation"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::animation::exceptions::InvalidAnimationFile> bindInvalidAnimationFile
+            = ExceptionsNamespace.new_usertype<obe::animation::exceptions::InvalidAnimationFile>(
                 "InvalidAnimationFile", sol::call_constructor,
-                sol::constructors<obe::Animation::Exceptions::InvalidAnimationFile(
+                sol::constructors<obe::animation::exceptions::InvalidAnimationFile(
                     std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<obe::Animation::Exceptions::InvalidAnimationFile>,
+                sol::bases<obe::Exception<obe::animation::exceptions::InvalidAnimationFile>,
                     obe::BaseException>());
     }
     void LoadClassNoSelectedAnimation(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Animation"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::Animation::Exceptions::NoSelectedAnimation> bindNoSelectedAnimation
-            = ExceptionsNamespace.new_usertype<obe::Animation::Exceptions::NoSelectedAnimation>(
+        sol::table ExceptionsNamespace = state["obe"]["animation"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::animation::exceptions::NoSelectedAnimation> bindNoSelectedAnimation
+            = ExceptionsNamespace.new_usertype<obe::animation::exceptions::NoSelectedAnimation>(
                 "NoSelectedAnimation", sol::call_constructor,
-                sol::constructors<obe::Animation::Exceptions::NoSelectedAnimation(
+                sol::constructors<obe::animation::exceptions::NoSelectedAnimation(
                     std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<obe::Animation::Exceptions::NoSelectedAnimation>,
+                sol::bases<obe::Exception<obe::animation::exceptions::NoSelectedAnimation>,
                     obe::BaseException>());
     }
     void LoadClassNoSelectedAnimationGroup(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Animation"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::Animation::Exceptions::NoSelectedAnimationGroup>
+        sol::table ExceptionsNamespace = state["obe"]["animation"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::animation::exceptions::NoSelectedAnimationGroup>
             bindNoSelectedAnimationGroup = ExceptionsNamespace.new_usertype<
-                obe::Animation::Exceptions::NoSelectedAnimationGroup>("NoSelectedAnimationGroup",
+                obe::animation::exceptions::NoSelectedAnimationGroup>("NoSelectedAnimationGroup",
                 sol::call_constructor,
-                sol::constructors<obe::Animation::Exceptions::NoSelectedAnimationGroup(
+                sol::constructors<obe::animation::exceptions::NoSelectedAnimationGroup(
                     std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<obe::Animation::Exceptions::NoSelectedAnimationGroup>,
+                sol::bases<obe::Exception<obe::animation::exceptions::NoSelectedAnimationGroup>,
                     obe::BaseException>());
     }
     void LoadClassUnknownAnimation(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Animation"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::Animation::Exceptions::UnknownAnimation> bindUnknownAnimation
-            = ExceptionsNamespace.new_usertype<obe::Animation::Exceptions::UnknownAnimation>(
+        sol::table ExceptionsNamespace = state["obe"]["animation"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::animation::exceptions::UnknownAnimation> bindUnknownAnimation
+            = ExceptionsNamespace.new_usertype<obe::animation::exceptions::UnknownAnimation>(
                 "UnknownAnimation", sol::call_constructor,
-                sol::constructors<obe::Animation::Exceptions::UnknownAnimation(std::string_view,
+                sol::constructors<obe::animation::exceptions::UnknownAnimation(std::string_view,
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<obe::Animation::Exceptions::UnknownAnimation>,
+                sol::bases<obe::Exception<obe::animation::exceptions::UnknownAnimation>,
                     obe::BaseException>());
     }
     void LoadClassUnknownAnimationGroup(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Animation"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::Animation::Exceptions::UnknownAnimationGroup> bindUnknownAnimationGroup
-            = ExceptionsNamespace.new_usertype<obe::Animation::Exceptions::UnknownAnimationGroup>(
+        sol::table ExceptionsNamespace = state["obe"]["animation"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::animation::exceptions::UnknownAnimationGroup> bindUnknownAnimationGroup
+            = ExceptionsNamespace.new_usertype<obe::animation::exceptions::UnknownAnimationGroup>(
                 "UnknownAnimationGroup", sol::call_constructor,
-                sol::constructors<obe::Animation::Exceptions::UnknownAnimationGroup(
+                sol::constructors<obe::animation::exceptions::UnknownAnimationGroup(
                     std::string_view, std::string_view, const std::vector<std::string>&,
                     obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<obe::Animation::Exceptions::UnknownAnimationGroup>,
+                sol::bases<obe::Exception<obe::animation::exceptions::UnknownAnimationGroup>,
                     obe::BaseException>());
     }
     void LoadClassUnknownEasingFromEnum(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Animation"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::Animation::Exceptions::UnknownEasingFromEnum> bindUnknownEasingFromEnum
-            = ExceptionsNamespace.new_usertype<obe::Animation::Exceptions::UnknownEasingFromEnum>(
+        sol::table ExceptionsNamespace = state["obe"]["animation"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::animation::exceptions::UnknownEasingFromEnum> bindUnknownEasingFromEnum
+            = ExceptionsNamespace.new_usertype<obe::animation::exceptions::UnknownEasingFromEnum>(
                 "UnknownEasingFromEnum", sol::call_constructor,
-                sol::constructors<obe::Animation::Exceptions::UnknownEasingFromEnum(
+                sol::constructors<obe::animation::exceptions::UnknownEasingFromEnum(
                     int, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<obe::Animation::Exceptions::UnknownEasingFromEnum>,
+                sol::bases<obe::Exception<obe::animation::exceptions::UnknownEasingFromEnum>,
                     obe::BaseException>());
     }
     void LoadClassUnknownEasingFromString(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Animation"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::Animation::Exceptions::UnknownEasingFromString>
+        sol::table ExceptionsNamespace = state["obe"]["animation"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::animation::exceptions::UnknownEasingFromString>
             bindUnknownEasingFromString
-            = ExceptionsNamespace.new_usertype<obe::Animation::Exceptions::UnknownEasingFromString>(
+            = ExceptionsNamespace.new_usertype<obe::animation::exceptions::UnknownEasingFromString>(
                 "UnknownEasingFromString", sol::call_constructor,
-                sol::constructors<obe::Animation::Exceptions::UnknownEasingFromString(
-                    std::string_view, obe::DebugInfo)>(),
+                sol::constructors<obe::animation::exceptions::UnknownEasingFromString(
+                    std::string_view, std::vector<std::string>, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<obe::Animation::Exceptions::UnknownEasingFromString>,
-                    obe::BaseException>());
-    }
-    void LoadClassUnknownTargetScaleMode(sol::state_view state)
-    {
-        sol::table ExceptionsNamespace = state["obe"]["Animation"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::Animation::Exceptions::UnknownTargetScaleMode> bindUnknownTargetScaleMode
-            = ExceptionsNamespace.new_usertype<obe::Animation::Exceptions::UnknownTargetScaleMode>(
-                "UnknownTargetScaleMode", sol::call_constructor,
-                sol::constructors<obe::Animation::Exceptions::UnknownTargetScaleMode(
-                    std::string_view, obe::DebugInfo)>(),
-                sol::base_classes,
-                sol::bases<obe::Exception<obe::Animation::Exceptions::UnknownTargetScaleMode>,
+                sol::bases<obe::Exception<obe::animation::exceptions::UnknownEasingFromString>,
                     obe::BaseException>());
     }
 };

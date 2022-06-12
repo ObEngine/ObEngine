@@ -4,46 +4,46 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Debug::Bindings
+namespace obe::debug::Bindings
 {
     void LoadFunctionInitLogger(sol::state_view state)
     {
-        sol::table DebugNamespace = state["obe"]["Debug"].get<sol::table>();
-        DebugNamespace.set_function("InitLogger", &obe::Debug::InitLogger);
+        sol::table DebugNamespace = state["obe"]["debug"].get<sol::table>();
+        DebugNamespace.set_function("init_logger", &obe::debug::init_logger);
     }
     void LoadFunctionTrace(sol::state_view state)
     {
-        sol::table DebugNamespace = state["obe"]["Debug"].get<sol::table>();
-        DebugNamespace.set_function("trace", &obe::Debug::trace);
+        sol::table DebugNamespace = state["obe"]["debug"].get<sol::table>();
+        DebugNamespace.set_function("trace", &obe::debug::trace);
     }
     void LoadFunctionDebug(sol::state_view state)
     {
-        sol::table DebugNamespace = state["obe"]["Debug"].get<sol::table>();
-        DebugNamespace.set_function("debug", &obe::Debug::debug);
+        sol::table DebugNamespace = state["obe"]["debug"].get<sol::table>();
+        DebugNamespace.set_function("debug", &obe::debug::debug);
     }
     void LoadFunctionInfo(sol::state_view state)
     {
-        sol::table DebugNamespace = state["obe"]["Debug"].get<sol::table>();
-        DebugNamespace.set_function("info", &obe::Debug::info);
+        sol::table DebugNamespace = state["obe"]["debug"].get<sol::table>();
+        DebugNamespace.set_function("info", &obe::debug::info);
     }
     void LoadFunctionWarn(sol::state_view state)
     {
-        sol::table DebugNamespace = state["obe"]["Debug"].get<sol::table>();
-        DebugNamespace.set_function("warn", &obe::Debug::warn);
+        sol::table DebugNamespace = state["obe"]["debug"].get<sol::table>();
+        DebugNamespace.set_function("warn", &obe::debug::warn);
     }
     void LoadFunctionError(sol::state_view state)
     {
-        sol::table DebugNamespace = state["obe"]["Debug"].get<sol::table>();
-        DebugNamespace.set_function("error", &obe::Debug::error);
+        sol::table DebugNamespace = state["obe"]["debug"].get<sol::table>();
+        DebugNamespace.set_function("error", &obe::debug::error);
     }
     void LoadFunctionCritical(sol::state_view state)
     {
-        sol::table DebugNamespace = state["obe"]["Debug"].get<sol::table>();
-        DebugNamespace.set_function("critical", &obe::Debug::critical);
+        sol::table DebugNamespace = state["obe"]["debug"].get<sol::table>();
+        DebugNamespace.set_function("critical", &obe::debug::critical);
     }
     void LoadGlobalLog(sol::state_view state)
     {
-        sol::table DebugNamespace = state["obe"]["Debug"].get<sol::table>();
-        DebugNamespace["Log"] = obe::Debug::Log;
+        sol::table DebugNamespace = state["obe"]["debug"].get<sol::table>();
+        DebugNamespace["Log"] = obe::debug::Log;
     }
 };

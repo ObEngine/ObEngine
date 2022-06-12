@@ -6,7 +6,7 @@
 #include <Input/InputButton.hpp>
 #include <Input/InputButtonState.hpp>
 
-namespace obe::Events::Keys
+namespace obe::events::Keys
 {
     /**
      * \brief Event triggered when the state of an InputButton changes
@@ -56,7 +56,7 @@ namespace obe::Input
          * \brief Updates the InputButtonMonitor (needed to modify the linked
          *        InputButtonState)
          */
-        void update(Event::EventGroupPtr events);
+        void update(event::EventGroupPtr events);
         bool checkForRefresh() const;
     };
 } // namespace obe::Input

@@ -1,9 +1,9 @@
 #include <Transform/Polygon.hpp>
 #include <Transform/UnitVector.hpp>
 
-namespace obe::Debug::Render
+namespace obe::debug::render
 {
-    void drawPolygon(const Graphics::RenderTarget target, Transform::Polygon& polygon,
-        bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel,
+    void draw_polygon(const graphics::RenderTarget target, Transform::Polygon& polygon,
+        bool draw_lines, bool draw_points, bool draw_centroid, bool draw_skeleton,
         Transform::UnitVector offset);
 }

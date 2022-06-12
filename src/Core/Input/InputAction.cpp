@@ -5,11 +5,11 @@
 
 namespace obe::Input
 {
-    InputAction::InputAction(Event::EventGroup* actionsEvents, const std::string& id)
+    InputAction::InputAction(event::EventGroup* actionsEvents, const std::string& id)
         : Identifiable(id)
     {
         e_actions = actionsEvents;
-        e_actions->add<Events::Actions::Action>(id);
+        e_actions->add<events::Actions::Action>(id);
     }
 
     void InputAction::addCondition(const InputCondition& condition)
@@ -66,7 +66,7 @@ namespace obe::Input
                     if (m_repeat.over()) // Reset repeat when combination is unchecked <REVISION>
                     {
                         m_repeat.reset();
-                        e_actions->trigger(m_id, Events::Actions::Action { *this, condition });
+                        e_actions->trigger(m_id, events::Actions::Action { *this, condition });
                     }
                 }
                 else

@@ -7,7 +7,7 @@
 #include <Event/Exceptions.hpp>
 #include <Time/TimeUtils.hpp>
 
-namespace obe::Event
+namespace obe::event
 {
     class EventGroup;
 
@@ -37,7 +37,7 @@ namespace obe::Event
     {
     private:
         std::map<std::string, ExternalEventListener> m_listeners;
-        std::vector<std::string> m_garbageCollector;
+        std::vector<std::string> m_garbage_collector;
 
     protected:
         std::string m_name;
@@ -45,58 +45,58 @@ namespace obe::Event
         bool m_triggered = false;
         bool m_enabled = true;
         EventProfiler m_profiler;
-        OnListenerChange m_onAddListener;
-        OnListenerChange m_onRemoveListener;
+        OnListenerChange m_on_add_listener;
+        OnListenerChange m_on_remove_listener;
 
         template <class EventType>
         void trigger(const EventType& event);
         template <class EventType, class ListenerType>
-        void callListener(
-            const std::string& listenerId, ListenerType&& listener, const EventType& event);
-        void onAddListener(OnListenerChange callback);
-        void onRemoveListener(OnListenerChange callback);
-        bool m_garbageLock = false;
-        void collectGarbage();
+        void call_listener(
+            const std::string& listener_id, ListenerType&& listener, const EventType& event);
+        void on_add_listener(OnListenerChange callback);
+        void on_remove_listener(OnListenerChange callback);
+        bool m_garbage_lock = false;
+        void collect_garbage();
 
         friend class EventGroup;
 
     public:
         /**
          * \brief Creates a new Event
-         * \param parentName Identifier of the parent EventGroup
+         * \param parent_name Identifier of the parent EventGroup
          * \param name Name of the Event
-         * \param startState State of the Event when created (enabled /
+         * \param initial_state State of the Event when created (enabled /
          *        disabled)
          */
         explicit EventBase(
-            const std::string& parentName, const std::string& name, bool startState = false);
+            const std::string& parent_name, const std::string& name, bool initial_state = false);
         /**
          * \brief Get the State of the Event (enabled / disabled)
          * \return true if the Event is enabled, false otherwise
          */
-        [[nodiscard]] bool getState() const;
+        [[nodiscard]] bool get_state() const;
         /**
          * \brief Get the name of the Event
          * \return A std::string containing the name of the Event
          */
-        [[nodiscard]] std::string getName() const;
+        [[nodiscard]] std::string get_name() const;
         /**
          * \brief Get the identifier of the Event
          * \return A std::string containing the name of the Event
          */
-        [[nodiscard]] std::string getIdentifier() const;
+        [[nodiscard]] std::string get_identifier() const;
         /**
          * \brief Registers a listener that will be called when the Event is triggered
          * \param id of the listener being added
          * \param listener Listener to register
          */
-        void addExternalListener(const std::string& id, const ExternalEventListener& listener);
+        void add_external_listener(const std::string& id, const ExternalEventListener& listener);
         /**
          * \brief Removes a Listener from the Event
          * \param id id of the Listener to unregister
          */
-        void removeExternalListener(const std::string& id);
-        [[nodiscard]] const EventProfiler& getProfiler() const;
+        void remove_external_listener(const std::string& id);
+        [[nodiscard]] const EventProfiler& get_profiler() const;
     };
 
     /**
@@ -107,37 +107,37 @@ namespace obe::Event
     {
     private:
         std::map<std::string, CppEventListener<EventType>> m_listeners;
-        std::vector<std::string> m_garbageCollector;
+        std::vector<std::string> m_garbage_collector;
 
     protected:
         /**
          * \brief Event callbacks
          */
         void trigger(const EventType& event);
-        void collectGarbage();
+        void collect_garbage();
 
     public:
         /**
          * \brief Creates a new Event
-         * \param parentName Identifier of the parent EventGroup
+         * \param parent_name Identifier of the parent EventGroup
          * \param name Name of the Event
-         * \param startState State of the Event when created (enabled /
+         * \param initial_state State of the Event when created (enabled /
          *        disabled)
          */
         explicit Event(
-            const std::string& parentName, const std::string& name, bool startState = true);
+            const std::string& parent_name, const std::string& name, bool initial_state = true);
 
         /**
          * \brief Registers a listener that will be called when the Event is triggered
          * \param id id of the Listener being added
          * \param listener Listener to register
          */
-        void addListener(const std::string& id, const CppEventListener<EventType>& listener);
+        void add_listener(const std::string& id, const CppEventListener<EventType>& listener);
         /**
          * \brief Removes a Listener from the Event
          * \param id id of the Listener to unregister
          */
-        void removeListener(const std::string& id);
+        void remove_listener(const std::string& id);
 
         friend class EventGroup;
     };
@@ -147,42 +147,41 @@ namespace obe::Event
     {
         for (const auto& listener : m_listeners)
         {
-            Debug::Log->trace("<Event> Calling Event Listener '{}' from Event '{}'", listener.first,
+            debug::Log->trace("<Event> Calling Event Listener '{}' from Event '{}'", listener.first,
                 m_identifier);
             if (std::holds_alternative<LuaEventListener>(listener.second))
             {
-                this->callListener(
+                this->call_listener(
                     listener.first, std::get<LuaEventListener>(listener.second), event);
             }
         }
     }
 
     template <class EventType, class ListenerType>
-    void EventBase::callListener(
-        const std::string& listenerId, ListenerType&& listener, const EventType& event)
+    void EventBase::call_listener(
+        const std::string& listener_id, ListenerType&& listener, const EventType& event)
     {
-        if (std::find(m_garbageCollector.begin(), m_garbageCollector.end(), listenerId)
-            != m_garbageCollector.end())
+        if (std::ranges::find(m_garbage_collector, listener_id) != m_garbage_collector.end())
         {
             return;
         }
-        CallbackProfiler& profiler = m_profiler[listenerId];
-        ScopeProfiler scopeProfiler(profiler);
+        CallbackProfiler& profiler = m_profiler[listener_id];
+        ScopeProfiler scope_profiler(profiler);
         try
         {
             listener(event);
         }
         catch (const BaseException& e)
         {
-            throw Exceptions::EventExecutionError(m_identifier, listenerId, EXC_INFO).nest(e);
+            throw Exceptions::EventExecutionError(m_identifier, listener_id, EXC_INFO).nest(e);
         }
     }
 
     template <class EventType>
     void Event<EventType>::trigger(const EventType& event)
     {
-        Debug::Log->trace("<Event> Executing Event '{}'", m_identifier);
-        m_garbageLock = true;
+        debug::Log->trace("<Event> Executing Event '{}'", m_identifier);
+        m_garbage_lock = true;
 
         if (m_enabled)
         {
@@ -190,61 +189,61 @@ namespace obe::Event
 
             for (const auto& listener : m_listeners)
             {
-                Debug::Log->trace("<Event> Calling Event Listener '{}' from Event '{}'",
+                debug::Log->trace("<Event> Calling Event Listener '{}' from Event '{}'",
                     listener.first, m_identifier);
 
-                this->callListener(listener.first, listener.second, event);
+                this->call_listener(listener.first, listener.second, event);
             }
             EventBase::trigger<EventType>(event);
-            this->collectGarbage();
-            EventBase::collectGarbage();
+            this->collect_garbage();
+            EventBase::collect_garbage();
             m_triggered = false;
         }
 
-        m_garbageLock = false;
+        m_garbage_lock = false;
     }
 
     template <class EventType>
-    void Event<EventType>::collectGarbage()
+    void Event<EventType>::collect_garbage()
     {
-        Debug::Log->trace("EventListeners Garbage Collection for Event {}", m_identifier);
-        for (const std::string& listenerId : m_garbageCollector)
+        debug::Log->trace("EventListeners Garbage Collection for Event {}", m_identifier);
+        for (const std::string& listener_id : m_garbage_collector)
         {
-            m_listeners.erase(listenerId);
+            m_listeners.erase(listener_id);
         }
-        m_garbageCollector.clear();
+        m_garbage_collector.clear();
     }
 
     template <class EventType>
-    Event<EventType>::Event(const std::string& parentName, const std::string& name, bool startState)
-        : EventBase(parentName, name, startState)
+    Event<EventType>::Event(const std::string& parent_name, const std::string& name, bool initial_state)
+        : EventBase(parent_name, name, initial_state)
     {
     }
 
     template <class EventType>
-    void Event<EventType>::addListener(
+    void Event<EventType>::add_listener(
         const std::string& id, const CppEventListener<EventType>& listener)
     {
-        Debug::Log->trace("<Event> Adding new listener '{}' to Event '{}'", id, m_identifier);
+        debug::Log->trace("<Event> Adding new listener '{}' to Event '{}'", id, m_identifier);
         m_listeners.emplace(id, listener);
-        if (m_onAddListener)
+        if (m_on_add_listener)
         {
-            m_onAddListener(ListenerChangeState::Added, id);
+            m_on_add_listener(ListenerChangeState::Added, id);
         }
     }
 
     template <class EventType>
-    void Event<EventType>::removeListener(const std::string& id)
+    void Event<EventType>::remove_listener(const std::string& id)
     {
-        Debug::Log->trace("<Event> Removing listener '{}' from Event '{}'", id, m_identifier);
+        debug::Log->trace("<Event> Removing listener '{}' from Event '{}'", id, m_identifier);
 
-        if (m_garbageLock)
-            m_garbageCollector.push_back(id);
+        if (m_garbage_lock)
+            m_garbage_collector.push_back(id);
         else
             m_listeners.erase(id);
-        if (m_onRemoveListener)
+        if (m_on_remove_listener)
         {
-            m_onRemoveListener(ListenerChangeState::Removed, id);
+            m_on_remove_listener(ListenerChangeState::Removed, id);
         }
     }
-} // namespace obe::Event
+} // namespace obe::event

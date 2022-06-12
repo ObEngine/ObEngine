@@ -2,7 +2,7 @@
 
 #include <string_view>
 
-namespace obe::Config::Exceptions
+namespace obe::config::Exceptions
 {
     class InvalidVersionFormat : public Exception<InvalidVersionFormat>
     {
@@ -19,11 +19,11 @@ namespace obe::Config::Exceptions
     {
     public:
         using Exception::Exception;
-        ConfigError(std::vector<std::string> configFiles, DebugInfo info)
+        ConfigError(std::vector<std::string> config_files, DebugInfo info)
             : Exception(info)
         {
             this->error("config.vili built from the following files ({}) is malformed",
-                fmt::join(configFiles, ", "));
+                fmt::join(config_files, ", "));
         }
     };
 }

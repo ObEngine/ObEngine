@@ -29,8 +29,8 @@ void main()\n\
 
 namespace obe::Tiles
 {
-    void drawCollider(Graphics::RenderTarget& surface, const Scene::Camera& camera,
-        const Collision::PolygonalCollider& collider)
+    void drawCollider(graphics::RenderTarget& surface, const Scene::Camera& camera,
+        const collision::PolygonalCollider& collider)
     {
         if (collider.getPointsAmount() >= 3)
         {
@@ -41,7 +41,7 @@ namespace obe::Tiles
 
             const float r = 6.f;
             // TODO: Refactor using C++20 designated initializers
-            const Graphics::Utils::DrawPolygonOptions drawOptions { true, false, r };
+            const graphics::utils::DrawPolygonOptions drawOptions { true, false, r };
 
             std::vector<Transform::UnitVector> lDrawPoints;
 
@@ -54,7 +54,7 @@ namespace obe::Tiles
                     point.x - offset.x, point.y - offset.y, Transform::Units::ScenePixels);
             }
 
-            Graphics::Utils::drawPolygon(surface, lDrawPoints, drawOptions);
+            graphics::utils::draw_polygon(surface, lDrawPoints, drawOptions);
         }
     }
 
@@ -85,8 +85,8 @@ namespace obe::Tiles
             {
                 m_colliders[tileIndex] = &m_scene.getScene().createCollider();
                 (*m_colliders[tileIndex]) = *collider;
-                m_colliders[tileIndex]->setParentId("tile_" + std::to_string(tileInfo.tileId));
-                const Transform::Rect boundingBox = m_colliders.at(tileIndex)->getBoundingBox();
+                m_colliders[tileIndex]->set_parent_id("tile_" + std::to_string(tileInfo.tileId));
+                const Transform::Rect boundingBox = m_colliders.at(tileIndex)->get_bounding_box();
                 Transform::UnitVector offset
                     = m_colliders.at(tileIndex)->get(0) - boundingBox.getPosition();
                 offset += boundingBox.getPosition();
@@ -94,7 +94,7 @@ namespace obe::Tiles
                 // TODO: I mean, really, fix this
                 auto cameraSizeBackup = m_scene.getScene().getCamera().getSize().y / 2;
                 m_scene.getScene().getCamera().setSize(1);
-                m_colliders.at(tileIndex)->setPosition(
+                m_colliders.at(tileIndex)->set_position(
                     Transform::UnitVector(x * tileset.getTileWidth(), y * tileset.getTileHeight(),
                         Transform::Units::ScenePixels)
                     + offset);
@@ -242,7 +242,7 @@ namespace obe::Tiles
         }
     }
 
-    void TileLayer::draw(Graphics::RenderTarget& surface, const Scene::Camera& camera)
+    void TileLayer::draw(graphics::RenderTarget& surface, const Scene::Camera& camera)
     {
         for (const auto& [firstTileId, layer] : m_cache)
         {

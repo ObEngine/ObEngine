@@ -33,7 +33,7 @@ namespace obe::Scene
          * \param position Position to affect to the
          *        SceneNode and all of its children
          */
-        void setPosition(const Transform::UnitVector& position) override;
+        void set_position(const Transform::UnitVector& position) override;
         /**
          * \brief Moves the SceneNode (Adds the given position to the current
          *        one) and all of its children

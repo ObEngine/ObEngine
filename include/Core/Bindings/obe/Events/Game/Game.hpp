@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Events::Game::Bindings
+namespace obe::events::game::Bindings
 {
     void LoadClassEnd(sol::state_view state);
     void LoadClassRender(sol::state_view state);

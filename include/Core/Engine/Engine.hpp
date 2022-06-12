@@ -18,7 +18,7 @@ namespace obe::Bindings
     void IndexCoreBindings(sol::state_view state);
 }
 
-namespace obe::Events::Game
+namespace obe::events::game
 {
     struct Start
     {
@@ -43,7 +43,7 @@ namespace obe::Events::Game
 
 }
 
-namespace obe::Engine
+namespace obe::engine
 {
     class Engine
     {
@@ -54,44 +54,44 @@ namespace obe::Engine
         std::unique_ptr<Scene::Scene> m_scene;
         std::unique_ptr<System::Cursor> m_cursor;
         std::unique_ptr<System::Window> m_window;
-        Debug::Logger::weak_type m_log;
+        debug::Logger::weak_type m_log;
 
         // Managers
-        Audio::AudioManager m_audio {};
-        Config::ConfigurationManager m_config {};
+        audio::AudioManager m_audio {};
+        config::ConfigurationManager m_config {};
         std::unique_ptr<ResourceManager> m_resources {};
         std::unique_ptr<Input::InputManager> m_input {};
         std::unique_ptr<Time::FramerateManager> m_framerate;
-        std::unique_ptr<Event::EventManager> m_events;
-        Event::EventNamespace* m_eventNamespace;
-        Event::EventNamespace* m_userEventNamespace;
+        std::unique_ptr<event::EventManager> m_events;
+        event::EventNamespace* m_event_namespace;
+        event::EventNamespace* m_user_event_namespace;
 
         // EventGroups
-        Event::EventGroupPtr e_game {};
-        Event::EventGroupPtr e_custom {};
+        event::EventGroupPtr e_game {};
+        event::EventGroupPtr e_custom {};
 
         // Initialization
-        void initConfig();
-        void initLogger() const;
-        void initScript();
-        void initEvents();
-        void initInput();
-        void initFramerate();
-        void initResources();
-        void initWindow();
-        void initCursor();
-        void initPlugins();
-        void initScene();
+        void init_config();
+        void init_logger() const;
+        void init_script();
+        void init_events();
+        void init_input();
+        void init_framerate();
+        void init_resources();
+        void init_window();
+        void init_cursor();
+        void init_plugins();
+        void init_scene();
 
         // Main loop
-        void handleWindowEvents() const;
+        void handle_window_events() const;
         void update() const;
         void render() const;
 
         // Cleaning
         void clean() const;
         void purge();
-        void deinitPlugins() const;
+        void deinit_plugins() const;
 
     public:
         Engine();
@@ -106,55 +106,55 @@ namespace obe::Engine
          * \rename{Audio}
          * \asproperty
          */
-        Audio::AudioManager& getAudioManager();
+        audio::AudioManager& get_audio_manager();
         /**
          * \rename{Configuration}
          * \asproperty
          */
-        Config::ConfigurationManager& getConfigurationManager();
+        config::ConfigurationManager& get_configuration_manager();
         /**
          * \rename{Resources}
          * \asproperty
          */
-        ResourceManager& getResourceManager();
+        ResourceManager& get_resource_manager();
         /**
          * \rename{Input}
          * \asproperty
          */
-        Input::InputManager& getInputManager() const;
+        Input::InputManager& get_input_manager() const;
         /**
          * \rename{Framerate}
          * \asproperty
          */
-        Time::FramerateManager& getFramerateManager() const;
+        Time::FramerateManager& get_framerate_manager() const;
         /**
          * \rename{Events}
          * \asproperty
          */
-        Event::EventManager& getEventManager() const;
+        event::EventManager& get_event_manager() const;
 
         /**
          * \rename{Scene}
          * \asproperty
          */
-        Scene::Scene& getScene() const;
+        Scene::Scene& get_scene() const;
         /**
          * \rename{Cursor}
          * \asproperty
          */
-        System::Cursor& getCursor() const;
+        System::Cursor& get_cursor() const;
         /**
          * \rename{Window}
          * \asproperty
          */
-        System::Window& getWindow() const;
+        System::Window& get_window() const;
         /**
          * \nobind
          */
-        Script::LuaState& getLuaState() const;
+        Script::LuaState& get_lua_state() const;
         /**
          * \nobind
          */
-        Debug::Logger getLogger() const;
+        debug::Logger get_logger() const;
     };
 }

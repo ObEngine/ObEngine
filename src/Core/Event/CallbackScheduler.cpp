@@ -1,6 +1,6 @@
 #include <Event/CallbackScheduler.hpp>
 
-namespace obe::Event
+namespace obe::event
 {
     void CallbackScheduler::execute()
     {
@@ -10,14 +10,14 @@ namespace obe::Event
         }
         else
         {
-            if (m_times > 0 && m_times == (m_currentTimes - 1))
+            if (m_times > 0 && m_times == (m_current_times - 1))
             {
                 m_state = CallbackSchedulerState::Done;
             }
             else
             {
                 m_start = Time::epoch();
-                m_currentTimes++;
+                m_current_times++;
             }
         }
         m_callback();

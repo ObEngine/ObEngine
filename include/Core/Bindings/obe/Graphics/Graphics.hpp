@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Graphics::Bindings
+namespace obe::graphics::Bindings
 {
     void LoadClassColor(sol::state_view state);
     void LoadClassFont(sol::state_view state);

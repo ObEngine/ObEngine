@@ -4,15 +4,15 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Events::Scene::Bindings
+namespace obe::events::Scene::Bindings
 {
     void LoadClassLoaded(sol::state_view state)
     {
-        sol::table SceneNamespace = state["obe"]["Events"]["Scene"].get<sol::table>();
-        sol::usertype<obe::Events::Scene::Loaded> bindLoaded
-            = SceneNamespace.new_usertype<obe::Events::Scene::Loaded>(
+        sol::table SceneNamespace = state["obe"]["events"]["Scene"].get<sol::table>();
+        sol::usertype<obe::events::Scene::Loaded> bindLoaded
+            = SceneNamespace.new_usertype<obe::events::Scene::Loaded>(
                 "Loaded", sol::call_constructor, sol::default_constructor);
-        bindLoaded["filename"] = &obe::Events::Scene::Loaded::filename;
-        bindLoaded["id"] = sol::var(&obe::Events::Scene::Loaded::id);
+        bindLoaded["filename"] = &obe::events::Scene::Loaded::filename;
+        bindLoaded["id"] = sol::var(&obe::events::Scene::Loaded::id);
     }
 };

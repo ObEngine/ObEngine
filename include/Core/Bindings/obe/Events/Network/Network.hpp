@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Events::Network::Bindings
+namespace obe::events::Network::Bindings
 {
     void LoadClassConnected(sol::state_view state);
     void LoadClassDataReceived(sol::state_view state);

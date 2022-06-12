@@ -9,11 +9,11 @@
 
 namespace obe
 {
-    namespace Engine
+    namespace engine
     {
         class ResourceManager;
     }
-    namespace Graphics
+    namespace graphics
     {
         class Texture;
     }
@@ -28,7 +28,7 @@ namespace vili
     class node;
 }
 
-namespace obe::Animation
+namespace obe::animation
 {
     /**
      * \brief The Play Mode of an Animation.
@@ -99,18 +99,18 @@ namespace obe::Animation
     private:
         const Animation& m_parent;
         std::unordered_map<std::string, std::unique_ptr<AnimationGroup>> m_groups;
-        std::size_t m_codeIndex = 0;
-        bool m_feedInstructions = true;
-        std::string m_currentGroupName;
-        std::string m_nextAnimation;
+        std::size_t m_code_index = 0;
+        bool m_feed_instructions = true;
+        AnimationGroup* m_current_group = nullptr;
+        std::string m_next_animation_name;
         bool m_over = false;
         AnimationStatus m_status = AnimationStatus::Play;
         Time::TimeUnit m_clock = 0;
         Time::TimeUnit m_sleep = 0;
 
-        void executeInstruction();
-        void updateCurrentGroup();
-        void setActiveAnimationGroup(const std::string& groupName);
+        void execute_instruction();
+        void update_current_group();
+        void set_active_animation_group(const std::string& group_name);
 
     public:
         AnimationState(const Animation& parent);
@@ -122,40 +122,40 @@ namespace obe::Animation
          *         - AnimationStatus::Play
          *         - AnimationStatus::Call
          */
-        [[nodiscard]] AnimationStatus getStatus() const noexcept;
+        [[nodiscard]] AnimationStatus get_status() const noexcept;
         /**
          * \brief Get the name of the Animation to call when the AnimationStatus
          *        of the Animation is equal to AnimationStatus::Call
          * \return A std::string containing the name of the Animation that will be called.
          */
-        [[nodiscard]] std::string getCalledAnimation() const noexcept;
+        [[nodiscard]] std::string get_called_animation() const noexcept;
         /**
          * \brief Get AnimationGroup pointer by groupName.
-         *        It will throws a
+         *        It will throw a
          *        ObEngine.Animation.Animation.AnimationGroupNotFound if the
          *        AnimationGroup is not found.
-         * \param groupName The name of the
+         * \param group_name The name of the
          *        AnimationGroup to return
          * \return A pointer to the AnimationGroup
          * \throw UnknownAnimationGroup if the group does not exists
          */
-        AnimationGroup& getAnimationGroup(const std::string& groupName);
+        AnimationGroup& get_animation_group(const std::string& group_name);
         /**
          * \brief Get the name of the current AnimationGroup
          * \return A std::string containing the name of the current
          *         AnimationGroup
          */
-        [[nodiscard]] std::string getCurrentAnimationGroup() const noexcept;
+        [[nodiscard]] std::string get_current_animation_group() const noexcept;
         /**
          * \brief Get the current Texture displayed by the Animation
          * \return A reference to the currently displayed Texture
          */
-        const Graphics::Texture& getTexture() const;
+        const graphics::Texture& get_texture() const;
         /**
          * \brief Return whether the Animation is over or not
          * \return true if the Animation is over, false otherwise
          */
-        [[nodiscard]] bool isOver() const noexcept;
+        [[nodiscard]] bool is_over() const noexcept;
         /**
          * \brief Reset the Animation (Unselect current AnimationGroup and
          *        restart AnimationCode)
@@ -166,7 +166,7 @@ namespace obe::Animation
          *        executes the AnimationCode)
          */
         void update();
-        const Animation& getAnimation() const;
+        const Animation& get_animation() const;
     };
 
     /**
@@ -176,26 +176,26 @@ namespace obe::Animation
     class Animation : public Types::Serializable
     {
     private:
-        AnimationState m_defaultState;
+        AnimationState m_default_state;
         std::string m_name;
         std::unordered_map<std::string, std::unique_ptr<AnimationGroup>> m_groups;
 
-        bool m_antiAliasing = false;
+        bool m_anti_aliasing = false;
         Time::TimeUnit m_delay = 0;
 
         std::vector<vili::node> m_code;
 
-        std::vector<Graphics::Texture> m_textures;
+        std::vector<graphics::Texture> m_textures;
 
-        AnimationPlayMode m_playMode = AnimationPlayMode::OneTime;
+        AnimationPlayMode m_play_mode = AnimationPlayMode::OneTime;
 
         int m_priority = 0;
 
-        void loadMeta(const vili::node& meta);
-        void loadImages(
-            const vili::node& images, const System::Path& path, Engine::ResourceManager* resources);
-        void loadGroups(const vili::node& groups);
-        void loadCode(const vili::node& code);
+        void load_meta(const vili::node& meta);
+        void load_images(
+            const vili::node& images, const System::Path& path, engine::ResourceManager* resources);
+        void load_groups(const vili::node& groups);
+        void load_code(const vili::node& code);
 
         friend class AnimationState;
 
@@ -203,7 +203,7 @@ namespace obe::Animation
         Animation();
         Animation(const Animation&) = delete;
         /**
-         * \todo Make Animation a serializable type instead of this "applyParameters"
+         * \todo Make Animation a serializable type instead of this "apply_parameters"
          * \brief Apply global Animation parameters (Sprite offset and priority)
          * \param parameters A vili::node that contains the
          *        following optional parameters :
@@ -215,13 +215,13 @@ namespace obe::Animation
          *                     priority can't be interrupted by an Animation with a
          *                     lower one).
          */
-        void applyParameters(vili::node& parameters);
+        void apply_parameters(vili::node& parameters);
         /**
          * \brief Get the name of all contained AnimationGroup of the Animation
          * \return An array of strings with all the names of the
          *         AnimationGroup
          */
-        [[nodiscard]] std::vector<std::string> getAllAnimationGroupName() const;
+        [[nodiscard]] std::vector<std::string> get_all_animation_groups_names() const;
         /**
          * \brief Get the default delay of the Animation.
          *        The delay will be transferred to AnimationGroup children if not
@@ -230,23 +230,23 @@ namespace obe::Animation
          *        the Animation
          * \return The default delay of the Animation in seconds.
          */
-        [[nodiscard]] Time::TimeUnit getDelay() const noexcept;
+        [[nodiscard]] Time::TimeUnit get_delay() const noexcept;
         /**
          * \brief Get AnimationGroup pointer by groupName.
          *        It will throws a
          *        ObEngine.Animation.Animation.AnimationGroupNotFound if the
          *        AnimationGroup is not found.
-         * \param groupName The name of the
+         * \param group_name The name of the
          *        AnimationGroup to return
          * \return A pointer to the AnimationGroup
          * \throw UnknownAnimationGroup if the group does not exists
          */
-        AnimationGroup& getAnimationGroup(const std::string& groupName);
+        AnimationGroup& get_animation_group(const std::string& group_name);
         /**
          * \brief Get the Animation name
          * \return A string containing the name of the Animation
          */
-        [[nodiscard]] std::string getName() const noexcept;
+        [[nodiscard]] std::string get_name() const noexcept;
 
         /**
          * \brief Get the Animation Play Mode
@@ -256,7 +256,7 @@ namespace obe::Animation
          *         - AnimationPlayMode::Loop
          *         - AnimationPlayMode::Force
          */
-        [[nodiscard]] AnimationPlayMode getPlayMode() const noexcept;
+        [[nodiscard]] AnimationPlayMode get_play_mode() const noexcept;
         /**
          * \brief Get the Animation Status
          * \return An enum value containing the AnimationStatus, it can be one
@@ -264,42 +264,42 @@ namespace obe::Animation
          *         - AnimationStatus::Play
          *         - AnimationStatus::Call
          */
-        [[nodiscard]] AnimationStatus getStatus() const noexcept;
+        [[nodiscard]] AnimationStatus get_status() const noexcept;
         /**
          * \brief Get the name of the Animation to call when the AnimationStatus
          *        of the Animation is equal to AnimationStatus::Call
          * \return A std::string containing the name of the Animation that will be called.
          */
-        [[nodiscard]] std::string getCalledAnimation() const noexcept;
+        [[nodiscard]] std::string get_next_animation() const noexcept;
         /**
          * \brief Get the name of the current AnimationGroup
          * \return A std::string containing the name of the current
          *         AnimationGroup
          */
-        [[nodiscard]] std::string getCurrentAnimationGroup() const noexcept;
+        [[nodiscard]] std::string get_current_animation_group() const noexcept;
         /**
          * \brief Return the Animation priority
          * \return An int containing the priority of the Animation.
          *         Higher value is higher priority = Can't be interrupted by
          *         lower priority.
          */
-        [[nodiscard]] int getPriority() const noexcept;
+        [[nodiscard]] int get_priority() const noexcept;
         /**
          * \brief Get the current Texture displayed by the Animation
          * \return A reference to the currently displayed Texture
          */
-        const Graphics::Texture& getTexture() const;
+        [[nodiscard]] const graphics::Texture& get_current_texture() const;
         /**
          * \brief Get the texture used in the Animation at the specified index
          * \param index Index of the texture to return.
          * \return A reference to the Texture at the given index
          */
-        const Graphics::Texture& getTextureAtIndex(int index);
+        [[nodiscard]] const graphics::Texture& get_texture_at_index(int index);
         /**
          * \brief Return whether the Animation is over or not
          * \return true if the Animation is over, false otherwise
          */
-        [[nodiscard]] bool isOver() const noexcept;
+        [[nodiscard]] bool is_over() const noexcept;
         /**
          * \brief Configure an Animation using the Animation configuration file
          *        (Vili file)
@@ -308,7 +308,7 @@ namespace obe::Animation
          * \param resources pointer to the ResourceManager
          *        that will load the textures for the Animation
          */
-        void loadAnimation(const System::Path& path, Engine::ResourceManager* resources = nullptr);
+        void load_animation(const System::Path& path, engine::ResourceManager* resources = nullptr);
         /**
          * \brief Reset the Animation (Unselect current AnimationGroup and
          *        restart AnimationCode)
@@ -321,17 +321,17 @@ namespace obe::Animation
         void update();
         /**
          * \brief Enables or disables anti-aliasing for textures of this animation
-         * \param antiAliasing should be true to enable antiAliasing, false otherwise
+         * \param anti_aliasing should be true to enable antiAliasing, false otherwise
          */
-        void setAntiAliasing(bool antiAliasing) noexcept;
+        void set_anti_aliasing(bool anti_aliasing) noexcept;
         /**
          * \brief Gets the anti-aliasing status for the Animation
          */
-        [[nodiscard]] bool getAntiAliasing() const noexcept;
-        [[nodiscard]] AnimationState makeState() const;
+        [[nodiscard]] bool get_anti_aliasing() const noexcept;
+        [[nodiscard]] AnimationState make_state() const;
 
         [[nodiscard]] vili::node schema() const override;
-        vili::node dump() const override;
+        [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
     };
-} // namespace obe::Animation
+} // namespace obe::animation

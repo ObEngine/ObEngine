@@ -3,7 +3,7 @@
 
 namespace obe::Network
 {
-    TcpServer::TcpServer(Event::EventNamespace& eventNamespace, unsigned short port,
+    TcpServer::TcpServer(event::EventNamespace& eventNamespace, unsigned short port,
         std::string triggerNamespace, std::string triggerGroup)
     {
         /*if (!triggerNamespace.empty())
@@ -31,7 +31,7 @@ namespace obe::Network
                     "Connected", "ip", m_clients.back()->getRemoteAddress().toString());
                 m_socketTriggers->trigger("Connected");
             }
-            Debug::Log->debug("<TcpServer> New client connected to server "
+            debug::Log->debug("<TcpServer> New client connected to server "
                               "listening at port {}",
                 m_listener.getLocalPort());
             m_clients.push_back(std::make_unique<sf::TcpSocket>());

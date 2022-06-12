@@ -30,7 +30,7 @@ namespace obe::Time
             m_syncUpdateRender = config["syncUpdateToRender"];
         }
         m_reqFramerateInterval = 1.0 / static_cast<double>(m_framerateTarget);
-        Debug::Log->info("Framerate parameters : {} FPS {}, V-sync {}, Update Lock {}",
+        debug::Log->info("Framerate parameters : {} FPS {}, V-sync {}, Update Lock {}",
             m_framerateTarget, (m_limitFramerate) ? "capped" : "uncapped",
             (m_vsyncEnabled) ? "enabled" : "disabled",
             (m_syncUpdateRender) ? "enabled" : "disabled");

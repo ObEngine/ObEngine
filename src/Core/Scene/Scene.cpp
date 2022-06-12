@@ -16,19 +16,19 @@ namespace obe::Scene
         }
         if (m_tiles)
         {
-            std::vector<Graphics::Renderable*> tileLayers = m_tiles->getRenderables();
+            std::vector<graphics::Renderable*> tileLayers = m_tiles->getRenderables();
             m_renderCache.insert(m_renderCache.end(), tileLayers.begin(), tileLayers.end());
         }
 
         std::sort(m_renderCache.begin(), m_renderCache.end(),
             [](const auto& renderable1, const auto& renderable2) {
-                if (renderable1->getLayer() == renderable2->getLayer())
+                if (renderable1->get_layer() == renderable2->get_layer())
                 {
-                    return renderable1->getZDepth() > renderable2->getZDepth();
+                    return renderable1->get_sublayer() > renderable2->get_sublayer();
                 }
                 else
                 {
-                    return renderable1->getLayer() > renderable2->getLayer();
+                    return renderable1->get_layer() > renderable2->get_layer();
                 }
             });
         m_sortRenderables = false;
@@ -53,20 +53,20 @@ namespace obe::Scene
         }
     }
 
-    Scene::Scene(Event::EventNamespace& eventNamespace, sol::state_view lua)
+    Scene::Scene(event::EventNamespace& eventNamespace, sol::state_view lua)
         : m_lua(lua)
-        , e_scene(eventNamespace.createGroup("Scene"))
+        , e_scene(eventNamespace.create_group("Scene"))
 
     {
-        e_scene->add<Events::Scene::Loaded>();
+        e_scene->add<events::Scene::Loaded>();
     }
 
-    void Scene::attachResourceManager(Engine::ResourceManager& resources)
+    void Scene::attachResourceManager(engine::ResourceManager& resources)
     {
         m_resources = &resources;
     }
 
-    Graphics::Sprite& Scene::createSprite(const std::string& id, bool addToSceneRoot)
+    graphics::Sprite& Scene::createSprite(const std::string& id, bool addToSceneRoot)
     {
         std::string createId = id;
         if (createId.empty())
@@ -81,12 +81,12 @@ namespace obe::Scene
         }
         if (!this->doesSpriteExists(createId))
         {
-            std::unique_ptr<Graphics::Sprite> newSprite
-                = std::make_unique<Graphics::Sprite>(createId);
+            std::unique_ptr<graphics::Sprite> newSprite
+                = std::make_unique<graphics::Sprite>(createId);
             if (m_resources)
-                newSprite->attachResourceManager(*m_resources);
+                newSprite->attach_resource_manager(*m_resources);
 
-            Graphics::Sprite* returnSprite = newSprite.get();
+            graphics::Sprite* returnSprite = newSprite.get();
             m_spriteArray.push_back(move(newSprite));
             m_spriteIds.insert(createId);
             m_components[createId] = returnSprite;
@@ -99,12 +99,12 @@ namespace obe::Scene
         }
         else
         {
-            Debug::Log->warn("<Scene> Sprite '{0}' already exists !", createId);
+            debug::Log->warn("<Scene> Sprite '{0}' already exists !", createId);
             return this->getSprite(createId);
         }
     }
 
-    Collision::PolygonalCollider& Scene::createCollider(const std::string& id, bool addToSceneRoot)
+    collision::PolygonalCollider& Scene::createCollider(const std::string& id, bool addToSceneRoot)
     {
         std::string createId = id;
         if (createId.empty())
@@ -119,9 +119,9 @@ namespace obe::Scene
         }
         if (!this->doesColliderExists(createId))
         {
-            std::unique_ptr<Collision::PolygonalCollider> newCollider
-                = std::make_unique<Collision::PolygonalCollider>(createId);
-            Collision::PolygonalCollider* colliderPtr = newCollider.get();
+            std::unique_ptr<collision::PolygonalCollider> newCollider
+                = std::make_unique<collision::PolygonalCollider>(createId);
+            collision::PolygonalCollider* colliderPtr = newCollider.get();
             m_colliderArray.push_back(std::move(newCollider));
             m_colliderIds.insert(createId);
             m_components[createId] = colliderPtr;
@@ -131,7 +131,7 @@ namespace obe::Scene
         }
         else
         {
-            Debug::Log->warn("<Scene> Collider '{0}' already exists !", createId);
+            debug::Log->warn("<Scene> Collider '{0}' already exists !", createId);
             return this->getCollider(createId);
         }
     }
@@ -148,22 +148,22 @@ namespace obe::Scene
 
     void Scene::reload()
     {
-        Debug::Log->debug("<Scene> Reloading Scene");
+        debug::Log->debug("<Scene> Reloading Scene");
         m_futureLoad = m_levelFileName;
     }
 
     void Scene::reload(const OnSceneLoadCallback& callback)
     {
-        Debug::Log->debug("<Scene> Reloading Scene");
+        debug::Log->debug("<Scene> Reloading Scene");
         m_futureLoad = m_levelFileName;
         m_onLoadCallback = callback;
     }
 
     void Scene::loadFromFile(const std::string& path)
     {
-        Debug::Log->debug("<Scene> Loading Scene from map file : '{0}'", path);
+        debug::Log->debug("<Scene> Loading Scene from map file : '{0}'", path);
         this->clear();
-        Debug::Log->debug("<Scene> Cleared Scene");
+        debug::Log->debug("<Scene> Cleared Scene");
 
         m_levelFileName = path;
         const std::string filepath = System::Path(path).find();
@@ -201,12 +201,12 @@ namespace obe::Scene
             Script::GameObject* gameObject = it->get();
             if (!gameObject->isPermanent())
             {
-                Debug::Log->debug("<Scene> Deleting GameObject {0}", gameObject->getId());
+                debug::Log->debug("<Scene> Deleting GameObject {0}", gameObject->getId());
                 gameObject->deleteObject();
             }
         }
         for (auto& gameObject : m_gameObjectArray) { }
-        Debug::Log->debug("<Scene> Cleaning GameObject Array");
+        debug::Log->debug("<Scene> Cleaning GameObject Array");
         m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(),
                                     [](const std::unique_ptr<Script::GameObject>& ptr) {
                                         return (!ptr->isPermanent());
@@ -214,27 +214,27 @@ namespace obe::Scene
             m_gameObjectArray.end());
         // Required for the next doesGameObjectExists
         this->_rebuildIds();
-        Debug::Log->debug("<Scene> Cleaning Sprite Array");
+        debug::Log->debug("<Scene> Cleaning Sprite Array");
         m_spriteArray.erase(std::remove_if(m_spriteArray.begin(), m_spriteArray.end(),
-                                [this](const std::unique_ptr<Graphics::Sprite>& ptr) {
-                                    if (!ptr->getParentId().empty()
-                                        && this->doesGameObjectExists(ptr->getParentId()))
+                                [this](const std::unique_ptr<graphics::Sprite>& ptr) {
+                                    if (!ptr->get_parent_id().empty()
+                                        && this->doesGameObjectExists(ptr->get_parent_id()))
                                         return false;
                                     return true;
                                 }),
             m_spriteArray.end());
-        Debug::Log->debug("<Scene> Cleaning Sprite Array");
+        debug::Log->debug("<Scene> Cleaning Sprite Array");
         m_colliderArray.erase(std::remove_if(m_colliderArray.begin(), m_colliderArray.end(),
-                                  [this](const std::unique_ptr<Collision::PolygonalCollider>& ptr) {
-                                      if (!ptr->getParentId().empty()
-                                          && this->doesGameObjectExists(ptr->getParentId()))
+                                  [this](const std::unique_ptr<collision::PolygonalCollider>& ptr) {
+                                      if (!ptr->get_parent_id().empty()
+                                          && this->doesGameObjectExists(ptr->get_parent_id()))
                                           return false;
                                       return true;
                                   }),
             m_colliderArray.end());
-        Debug::Log->debug("<Scene> Clearing MapScript Array");
+        debug::Log->debug("<Scene> Clearing MapScript Array");
         m_scriptArray.clear();
-        Debug::Log->debug("<Scene> Scene Cleared !");
+        debug::Log->debug("<Scene> Scene Cleared !");
         this->_rebuildIds();
         if (m_tiles)
             m_tiles->clear();
@@ -265,7 +265,7 @@ namespace obe::Scene
             result["Sprites"] = vili::object {};
         for (auto& sprite : m_spriteArray)
         {
-            if (sprite->getParentId().empty())
+            if (sprite->get_parent_id().empty())
             {
                 result["Sprites"][sprite->getId()] = sprite->dump();
             }
@@ -276,7 +276,7 @@ namespace obe::Scene
             result["Collisions"] = vili::object {};
         for (auto& collider : m_colliderArray)
         {
-            if (collider->getParentId().empty())
+            if (collider->get_parent_id().empty())
             {
                 result["Collisions"][collider->getId()] = collider->dump();
             }
@@ -347,7 +347,7 @@ namespace obe::Scene
                 m_cameraInitialReferential
                     = Transform::Referential::FromString(view.at("referential"));
             }
-            Debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using "
+            debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using "
                               "Referential {2}",
                 m_cameraInitialPosition.x, m_cameraInitialPosition.y,
                 m_cameraInitialReferential.toString());
@@ -440,7 +440,7 @@ namespace obe::Scene
 
         this->reorganizeLayers();
 
-        e_scene->trigger(Events::Scene::Loaded { m_levelFileName });
+        e_scene->trigger(events::Scene::Loaded { m_levelFileName });
     }
 
     void Scene::update()
@@ -479,7 +479,7 @@ namespace obe::Scene
                         if (ptr->deletable)
                         {
                             m_gameObjectIds.erase(ptr->getId());
-                            Debug::Log->debug("<Scene> Removing GameObject {}", ptr->getId());
+                            debug::Log->debug("<Scene> Removing GameObject {}", ptr->getId());
                             if (ptr->m_sprite)
                                 this->removeSprite(ptr->getSprite().getId());
                             if (ptr->m_collider)
@@ -494,7 +494,7 @@ namespace obe::Scene
         }
     }
 
-    void Scene::draw(Graphics::RenderTarget surface)
+    void Scene::draw(graphics::RenderTarget surface)
     {
         /*for (auto it = m_spriteArray.begin(); it != m_spriteArray.end(); ++it)
         {
@@ -514,7 +514,7 @@ namespace obe::Scene
         {
             for (const auto& renderable : m_renderCache)
             {
-                if (renderable->isVisible())
+                if (renderable->is_visible())
                 {
                     renderable->draw(surface, m_camera);
                 }
@@ -527,7 +527,7 @@ namespace obe::Scene
         {
             for (const auto& collider : m_colliderArray)
             {
-                Debug::Render::drawPolygon(
+                debug::render::draw_polygon(
                     surface, *collider.get(), true, true, false, false, m_camera.getPosition());
             }
         }
@@ -563,9 +563,9 @@ namespace obe::Scene
         m_levelName = newName;
     }
 
-    std::vector<Collision::PolygonalCollider*> Scene::getAllColliders() const
+    std::vector<collision::PolygonalCollider*> Scene::getAllColliders() const
     {
-        std::vector<Collision::PolygonalCollider*> allColliders;
+        std::vector<collision::PolygonalCollider*> allColliders;
         for (const auto& collider : m_colliderArray)
             allColliders.push_back(collider.get());
         return allColliders;
@@ -655,12 +655,12 @@ namespace obe::Scene
         {
             // const Transform::UnitVector zero(0, 0);
             // newGameObject->getSprite().setPosition(zero);
-            newGameObject->getSprite().setParentId(useId);
+            newGameObject->getSprite().set_parent_id(useId);
         }
 
         if (newGameObject->doesHaveCollider())
         {
-            newGameObject->getCollider().setParentId(useId);
+            newGameObject->getCollider().set_parent_id(useId);
         }
 
         m_gameObjectArray.push_back(move(newGameObject));
@@ -684,29 +684,29 @@ namespace obe::Scene
         return m_spriteArray.size();
     }
 
-    std::vector<Graphics::Sprite*> Scene::getAllSprites()
+    std::vector<graphics::Sprite*> Scene::getAllSprites()
     {
-        std::vector<Graphics::Sprite*> allSprites;
+        std::vector<graphics::Sprite*> allSprites;
         allSprites.reserve(m_spriteArray.size());
         for (auto& sprite : m_spriteArray)
             allSprites.push_back(sprite.get());
         return allSprites;
     }
 
-    std::vector<Graphics::Sprite*> Scene::getSpritesByLayer(const int layer)
+    std::vector<graphics::Sprite*> Scene::getSpritesByLayer(const int layer)
     {
-        std::vector<Graphics::Sprite*> returnLayer;
+        std::vector<graphics::Sprite*> returnLayer;
 
         for (const auto& sprite : m_spriteArray)
         {
-            if (sprite->getLayer() == layer)
+            if (sprite->get_layer() == layer)
                 returnLayer.push_back(sprite.get());
         }
 
         return returnLayer;
     }
 
-    Graphics::Sprite* Scene::getSpriteByPosition(
+    graphics::Sprite* Scene::getSpriteByPosition(
         const Transform::UnitVector& position, const int layer)
     {
         std::vector<Transform::Referential> rectPts
@@ -714,19 +714,19 @@ namespace obe::Scene
                   Transform::Referential::BottomRight, Transform::Referential::BottomLeft };
         const Transform::UnitVector zeroOffset(0, 0);
 
-        std::vector<Graphics::Sprite*> spritesOnLayer = this->getSpritesByLayer(layer);
+        std::vector<graphics::Sprite*> spritesOnLayer = this->getSpritesByLayer(layer);
         Transform::UnitVector camera
             = -(m_camera.getPosition().to<Transform::Units::ScenePixels>());
         for (const auto& sprite : spritesOnLayer)
         {
-            Collision::PolygonalCollider positionCollider("positionCollider");
-            positionCollider.addPoint(sprite->getPositionTransformer()(position, camera, layer));
-            Collision::PolygonalCollider sprCollider("sprCollider");
+            collision::PolygonalCollider positionCollider("positionCollider");
+            positionCollider.add_point(sprite->get_position_transformer()(position, camera, layer));
+            collision::PolygonalCollider sprCollider("sprCollider");
             for (Transform::Referential& ref : rectPts)
             {
-                sprCollider.addPoint(sprite->getPosition(ref));
+                sprCollider.add_point(sprite->getPosition(ref));
             }
-            if (sprCollider.doesCollide(positionCollider, zeroOffset, true))
+            if (sprCollider.does_collide(positionCollider, zeroOffset, true))
             {
                 return sprite;
             }
@@ -734,7 +734,7 @@ namespace obe::Scene
         return nullptr;
     }
 
-    Graphics::Sprite& Scene::getSprite(const std::string& id)
+    graphics::Sprite& Scene::getSprite(const std::string& id)
     {
         for (int i = 0; i < m_spriteArray.size(); i++)
         {
@@ -757,9 +757,9 @@ namespace obe::Scene
 
     void Scene::removeSprite(const std::string& id)
     {
-        Debug::Log->debug("<Scene> Removing Sprite {0}", id);
+        debug::Log->debug("<Scene> Removing Sprite {0}", id);
         m_spriteArray.erase(std::remove_if(m_spriteArray.begin(), m_spriteArray.end(),
-                                [&id](std::unique_ptr<Graphics::Sprite>& Sprite) {
+                                [&id](std::unique_ptr<graphics::Sprite>& Sprite) {
                                     return (Sprite->getId() == id);
                                 }),
             m_spriteArray.end());
@@ -813,7 +813,7 @@ namespace obe::Scene
         return m_components.at(id);
     }
 
-    std::pair<Collision::PolygonalCollider*, int> Scene::getColliderPointByPosition(
+    std::pair<collision::PolygonalCollider*, int> Scene::getColliderPointByPosition(
         const Transform::UnitVector& position)
     {
         const Transform::UnitVector pPos = position.to<Transform::Units::ScenePixels>();
@@ -827,10 +827,10 @@ namespace obe::Scene
                 return std::make_pair(collider.get(), point.value()->index);
             }
         }
-        return std::pair<Collision::PolygonalCollider*, int>(nullptr, 0);
+        return std::pair<collision::PolygonalCollider*, int>(nullptr, 0);
     }
 
-    Collision::PolygonalCollider* Scene::getColliderByCentroidPosition(
+    collision::PolygonalCollider* Scene::getColliderByCentroidPosition(
         const Transform::UnitVector& position)
     {
         const Transform::UnitVector pPos = position.to<Transform::Units::ScenePixels>();
@@ -844,7 +844,7 @@ namespace obe::Scene
         return nullptr;
     }
 
-    Collision::PolygonalCollider& Scene::getCollider(const std::string& id)
+    collision::PolygonalCollider& Scene::getCollider(const std::string& id)
     {
         for (const auto& collider : m_colliderArray)
         {
@@ -870,7 +870,7 @@ namespace obe::Scene
     void Scene::removeCollider(const std::string& id)
     {
         m_colliderArray.erase(std::remove_if(m_colliderArray.begin(), m_colliderArray.end(),
-                                  [&id](std::unique_ptr<Collision::PolygonalCollider>& collider) {
+                                  [&id](std::unique_ptr<collision::PolygonalCollider>& collider) {
                                       return (collider->getId() == id);
                                   }),
             m_colliderArray.end());

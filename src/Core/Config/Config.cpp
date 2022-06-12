@@ -8,7 +8,7 @@
 #include <System/Path.hpp>
 #include <Utils/FileUtils.hpp>
 
-namespace obe::Config
+namespace obe::config
 {
     ConfigurationManager::ConfigurationManager()
         : vili::node(vili::object {})
@@ -16,41 +16,41 @@ namespace obe::Config
     }
     void ConfigurationManager::load()
     {
-        System::MountList configMounts;
-        const auto& allMounts = System::MountablePath::Paths();
-        std::set<std::string> canonicalPaths;
-        for (auto mountIt = allMounts.rbegin(); mountIt != allMounts.rend(); ++mountIt)
+        System::MountList config_mounts;
+        const auto& all_mounts = System::MountablePath::Paths();
+        std::set<std::string> canonical_paths;
+        for (auto mount_it = all_mounts.rbegin(); mount_it != all_mounts.rend(); ++mount_it)
         {
-            const std::string basePath = mountIt->get()->basePath;
-            if (canonicalPaths.find(basePath) == canonicalPaths.end())
+            const std::string base_path = mount_it->get()->basePath;
+            if (canonical_paths.find(base_path) == canonical_paths.end())
             {
-                configMounts.push_back(std::make_shared<System::MountablePath>(
-                    System::MountablePathType::Path, basePath, mountIt->get()->prefix, 0, true));
-                canonicalPaths.emplace(basePath);
+                config_mounts.push_back(std::make_shared<System::MountablePath>(
+                    System::MountablePathType::Path, base_path, mount_it->get()->prefix, 0, true));
+                canonical_paths.emplace(base_path);
             }
         }
-        const auto loadResult = System::Path(configMounts).set("*://config.vili").findAll();
-        for (const auto& findResult : loadResult)
+        const auto load_result = System::Path(config_mounts).set("*://config.vili").findAll();
+        for (const auto& find_result : load_result)
         {
-            Debug::Log->info("Loading config file from '{}'", findResult.path());
+            debug::Log->info("Loading config file from '{}'", find_result.path());
             vili::node conf
-                = vili::parser::from_file(findResult.path());
-            Debug::Log->trace("Configuration '{}' content : {}", findResult.path(), conf.dump());
+                = vili::parser::from_file(find_result.path());
+            debug::Log->trace("Configuration '{}' content : {}", find_result.path(), conf.dump());
             this->merge(conf);
         }
         try
         {
-            vili::validator::validate_tree(Validators::ConfigValidator(), *this);
+            vili::validator::validate_tree(validators::config_validator(), *this);
         }
         catch (const vili::exceptions::base_exception& e)
         {
-            std::vector<std::string> configFiles;
-            configFiles.reserve(loadResult.size());
-            for (const System::FindResult& path : loadResult)
+            std::vector<std::string> config_files;
+            config_files.reserve(load_result.size());
+            for (const System::FindResult& path : load_result)
             {
-                configFiles.push_back(path.path());
+                config_files.push_back(path.path());
             }
-            throw Exceptions::ConfigError(configFiles, EXC_INFO).nest(e);
+            throw Exceptions::ConfigError(config_files, EXC_INFO).nest(e);
         }
     }
 } // namespace obe::System

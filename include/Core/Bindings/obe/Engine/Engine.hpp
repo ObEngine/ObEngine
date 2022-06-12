@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Engine::Bindings
+namespace obe::engine::Bindings
 {
     void LoadClassEngine(sol::state_view state);
     void LoadClassResourceManagedObject(sol::state_view state);

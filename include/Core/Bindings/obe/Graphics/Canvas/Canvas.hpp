@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Graphics::Canvas::Bindings
+namespace obe::graphics::canvas::Bindings
 {
     void LoadClassBezier(sol::state_view state);
     void LoadClassCanvas(sol::state_view state);
@@ -18,5 +18,4 @@ namespace obe::Graphics::Canvas::Bindings
     void LoadEnumCanvasElementType(sol::state_view state);
     void LoadEnumTextHorizontalAlign(sol::state_view state);
     void LoadEnumTextVerticalAlign(sol::state_view state);
-    void LoadFunctionCanvasElementTypeToString(sol::state_view state);
 };

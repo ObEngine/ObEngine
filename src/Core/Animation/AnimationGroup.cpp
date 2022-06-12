@@ -3,13 +3,13 @@
 #include <Debug/Logger.hpp>
 #include <Graphics/Texture.hpp>
 
-namespace obe::Animation
+namespace obe::animation
 {
-    bool AnimationGroup::checkDelay()
+    bool AnimationGroup::is_delay_elapsed()
     {
-        if (Time::epoch() - m_groupClock > m_delay)
+        if (Time::epoch() - m_group_clock > m_delay)
         {
-            m_groupClock = Time::epoch();
+            m_group_clock = Time::epoch();
             return true;
         }
         return false;
@@ -20,111 +20,110 @@ namespace obe::Animation
     }
 
     AnimationGroup::AnimationGroup(const AnimationGroup& group)
+        : m_delay(group.m_delay), m_textures(group.m_textures)
     {
-        m_groupList = group.m_groupList;
-        m_delay = group.m_delay;
     }
 
-    void AnimationGroup::setDelay(Time::TimeUnit delay) noexcept
+    void AnimationGroup::set_delay(Time::TimeUnit delay) noexcept
     {
         m_delay = delay;
     }
 
-    void AnimationGroup::setLoops(int loops) noexcept
+    void AnimationGroup::set_loops(int loops) noexcept
     {
-        m_loopAmount = loops;
+        m_loop_amount = loops;
     }
 
-    void AnimationGroup::pushTexture(const Graphics::Texture& texture)
+    void AnimationGroup::push_texture(const graphics::Texture& texture)
     {
-        m_groupList.push_back(texture);
+        m_textures.push_back(texture);
     }
 
-    void AnimationGroup::removeTextureByIndex(std::size_t index)
+    void AnimationGroup::remove_texture_by_index(std::size_t index)
     {
-        if (index < m_groupList.size())
-            m_groupList.erase(m_groupList.begin() + index);
-        throw Exceptions::AnimationGroupTextureIndexOverflow(m_name, index, m_groupList.size(),
+        if (index < m_textures.size())
+            m_textures.erase(m_textures.begin() + index);
+        throw exceptions::AnimationGroupTextureIndexOverflow(m_name, index, m_textures.size(),
             EXC_INFO); // TODO: Improve this exception
     }
 
-    const Graphics::Texture& AnimationGroup::getTexture() const
+    const graphics::Texture& AnimationGroup::get_current_texture() const
     {
-        return m_groupList[m_index];
+        return m_textures[m_index];
     }
 
     void AnimationGroup::reset() noexcept
     {
-        Debug::Log->trace("            <AnimationGroup> Resetting AnimationGroup '{}'", m_name);
+        debug::Log->trace("            <AnimationGroup> Resetting AnimationGroup '{}'", m_name);
         m_index = 0;
         m_over = false;
-        m_loopIndex = 0;
+        m_loop_index = 0;
     }
 
     void AnimationGroup::next(bool force)
     {
-        if (checkDelay() | force)
+        if (is_delay_elapsed() || force)
         {
             m_index++;
-            if (m_index > m_groupList.size() - 1)
+            if (m_index > m_textures.size() - 1)
             {
-                if (m_loopIndex < m_loopAmount - 1)
+                if (m_loop_index < m_loop_amount - 1)
                 {
                     m_index = 0;
-                    m_loopIndex++;
+                    m_loop_index++;
                 }
                 else
                 {
                     m_over = true;
                 }
             }
-            Debug::Log->trace("            <AnimationGroup> Loading next image on group "
+            debug::Log->trace("            <AnimationGroup> Loading next image on group "
                               "'{}' (image: {} / {}) "
                               "(repeat: {} / {})",
-                m_name, m_index, m_groupList.size() - 1, m_loopIndex, m_loopAmount - 1);
+                m_name, m_index, m_textures.size() - 1, m_loop_index, m_loop_amount - 1);
         }
     }
 
     void AnimationGroup::previous(bool force)
     {
-        if (checkDelay() || force)
+        if (is_delay_elapsed() || force)
         {
             if (m_index == 0)
             {
-                if (m_loopIndex != 0)
-                    m_index = m_groupList.size() - 1;
+                if (m_loop_index != 0)
+                    m_index = m_textures.size() - 1;
             }
             else
                 m_index--;
-            Debug::Log->trace("            <AnimationGroup> Loading previous image on "
+            debug::Log->trace("            <AnimationGroup> Loading previous image on "
                               "group '{}' (image: {} / {}) "
                               "(repeat: {} / {})",
-                m_name, m_index, m_groupList.size() - 1, m_loopIndex, m_loopAmount - 1);
+                m_name, m_index, m_textures.size() - 1, m_loop_index, m_loop_amount - 1);
         }
     }
 
-    bool AnimationGroup::isOver() const noexcept
+    bool AnimationGroup::is_over() const noexcept
     {
         return m_over;
     }
 
-    std::size_t AnimationGroup::getIndex() const noexcept
+    std::size_t AnimationGroup::get_current_index() const noexcept
     {
         return m_index;
     }
 
-    std::size_t AnimationGroup::getSize() const noexcept
+    std::size_t AnimationGroup::get_textures_amount() const noexcept
     {
-        return m_groupList.size();
+        return m_textures.size();
     }
 
-    std::string AnimationGroup::getName() const noexcept
+    std::string AnimationGroup::get_name() const noexcept
     {
         return m_name;
     }
 
-    Time::TimeUnit AnimationGroup::getDelay() const noexcept
+    Time::TimeUnit AnimationGroup::get_delay() const noexcept
     {
         return m_delay;
     }
-} // namespace obe::Animation
+} // namespace obe::animation

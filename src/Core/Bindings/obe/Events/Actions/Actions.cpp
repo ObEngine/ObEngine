@@ -4,19 +4,19 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Events::Actions::Bindings
+namespace obe::events::Actions::Bindings
 {
     void LoadClassAction(sol::state_view state)
     {
-        sol::table ActionsNamespace = state["obe"]["Events"]["Actions"].get<sol::table>();
-        sol::usertype<obe::Events::Actions::Action> bindAction
-            = ActionsNamespace.new_usertype<obe::Events::Actions::Action>("Action");
+        sol::table ActionsNamespace = state["obe"]["events"]["Actions"].get<sol::table>();
+        sol::usertype<obe::events::Actions::Action> bindAction
+            = ActionsNamespace.new_usertype<obe::events::Actions::Action>("Action");
         bindAction["action"]
-            = sol::property([](obe::Events::Actions::Action* self) -> obe::Input::InputAction& {
+            = sol::property([](obe::events::Actions::Action* self) -> obe::Input::InputAction& {
                   return self->action;
               });
         bindAction["condition"]
-            = sol::property([](obe::Events::Actions::Action* self) -> obe::Input::InputCondition& {
+            = sol::property([](obe::events::Actions::Action* self) -> obe::Input::InputCondition& {
                   return self->condition;
               });
     }

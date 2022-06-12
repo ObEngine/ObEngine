@@ -23,9 +23,9 @@ namespace obe::System
         throw Exceptions::InvalidMouseButtonEnumValue(enumValue, EXC_INFO);
     }
 
-    Cursor::Cursor(System::Window& window, Event::EventNamespace& eventNamespace)
+    Cursor::Cursor(System::Window& window, event::EventNamespace& eventNamespace)
         : m_window(window)
-        , e_cursor(eventNamespace.createGroup("Cursor"))
+        , e_cursor(eventNamespace.create_group("Cursor"))
     {
         m_constraint = Constraints::Default;
         m_constraintCondition = []() { return true; };
@@ -37,10 +37,10 @@ namespace obe::System
         m_buttonState[sf::Mouse::Button::Right]
             = sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
 
-        e_cursor->add<Events::Cursor::Move>();
-        e_cursor->add<Events::Cursor::Press>();
-        e_cursor->add<Events::Cursor::Release>();
-        e_cursor->add<Events::Cursor::Hold>();
+        e_cursor->add<events::Cursor::Move>();
+        e_cursor->add<events::Cursor::Press>();
+        e_cursor->add<events::Cursor::Release>();
+        e_cursor->add<events::Cursor::Hold>();
 
         m_saveOldPos = sf::Mouse::getPosition();
     }
@@ -128,7 +128,7 @@ namespace obe::System
         m_y = mousePos.y;
         if (mousePos != m_saveOldPos)
         {
-            e_cursor->trigger(Events::Cursor::Move { m_x, m_y, m_saveOldPos.x, m_saveOldPos.y });
+            e_cursor->trigger(events::Cursor::Move { m_x, m_y, m_saveOldPos.x, m_saveOldPos.y });
             m_saveOldPos = mousePos;
         }
         std::pair<int, int> constrainedPosition;
@@ -144,14 +144,14 @@ namespace obe::System
             if (sf::Mouse::isButtonPressed(state.first) && state.second)
             {
                 e_cursor->trigger(
-                    Events::Cursor::Hold { m_x, m_y, state.first == sf::Mouse::Button::Left,
+                    events::Cursor::Hold { m_x, m_y, state.first == sf::Mouse::Button::Left,
                         state.first == sf::Mouse::Button::Middle,
                         state.first == sf::Mouse::Button::Right });
             }
             if (sf::Mouse::isButtonPressed(state.first) && !state.second)
             {
                 e_cursor->trigger(
-                    Events::Cursor::Press { m_x, m_y, state.first == sf::Mouse::Button::Left,
+                    events::Cursor::Press { m_x, m_y, state.first == sf::Mouse::Button::Left,
                         state.first == sf::Mouse::Button::Middle,
                         state.first == sf::Mouse::Button::Right });
                 state.second = true;
@@ -159,7 +159,7 @@ namespace obe::System
             if (!sf::Mouse::isButtonPressed(state.first) && state.second)
             {
                 e_cursor->trigger(
-                    Events::Cursor::Release { m_x, m_y, state.first == sf::Mouse::Button::Left,
+                    events::Cursor::Release { m_x, m_y, state.first == sf::Mouse::Button::Left,
                         state.first == sf::Mouse::Button::Middle,
                         state.first == sf::Mouse::Button::Right });
                 state.second = false;

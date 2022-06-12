@@ -4,18 +4,18 @@
 
 #include <sol/sol.hpp>
 
-namespace obe::Event
+namespace obe::event
 {
     class EventGroup;
 
     /**
-     * \proxy{obe::Event::EventGroup::add}
+     * \proxy{obe::event::EventGroup::add}
      * \rename{add}
      */
-    void addLuaEvent(EventGroup* self, const std::string& name);
+    void add_lua_event(EventGroup* self, const std::string& name);
     /**
-     * \proxy{obe::Event::EventGroup::trigger}
+     * \proxy{obe::event::EventGroup::trigger}
      * \rename{trigger}
      */
-    void triggerLuaEvent(EventGroup* self, const std::string& name, sol::table data = sol::lua_nil);
+    void trigger_lua_event(EventGroup* self, const std::string& name, sol::table data = sol::lua_nil);
 }

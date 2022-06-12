@@ -17,7 +17,7 @@ namespace obe::Input
     class InputAction : public Types::Identifiable
     {
     private:
-        Event::EventGroup* e_actions;
+        event::EventGroup* e_actions;
         std::vector<InputCondition> m_conditions;
         std::vector<std::string> m_contexts;
         Time::Chronometer m_interval;
@@ -31,7 +31,7 @@ namespace obe::Input
          * \param actionsEvents Pointer to the Actions EventGroup
          * \param id Id of the InputAction
          */
-        explicit InputAction(Event::EventGroup* actionsEvents, const std::string& id);
+        explicit InputAction(event::EventGroup* actionsEvents, const std::string& id);
         /**
          * \brief Adds an InputCondition to the InputAction
          * \param condition An InputCondition to add to the InputAction
@@ -90,7 +90,7 @@ namespace obe::Input
     };
 } // namespace obe::Input
 
-namespace obe::Events::Actions
+namespace obe::events::Actions
 {
     /**
      * \brief Event containing information about an Action that has been triggered

@@ -3,19 +3,19 @@
 #include <Exception.hpp>
 #include <vector>
 
-namespace obe::Engine::Exceptions
+namespace obe::engine::exceptions
 {
     class BootScriptMissing : public Exception<BootScriptMissing>
     {
     public:
         using Exception::Exception;
-        BootScriptMissing(const std::vector<std::string>& mountedPaths, DebugInfo info)
+        BootScriptMissing(const std::vector<std::string>& mounted_paths, DebugInfo info)
             : Exception(info)
         {
             this->error("Unable to find a 'boot.lua' file which is required to start the engine");
             this->hint("ObEngine tried to fetch the 'boot.lua' file from the following "
                        "locations : ({})",
-                fmt::join(mountedPaths, ", "));
+                fmt::join(mounted_paths, ", "));
         }
     };
 
@@ -23,10 +23,10 @@ namespace obe::Engine::Exceptions
     {
     public:
         using Exception::Exception;
-        BootScriptLoadingError(std::string_view errorMessage, DebugInfo info)
+        BootScriptLoadingError(std::string_view error_message, DebugInfo info)
             : Exception(info)
         {
-            this->error("Lua error while loading 'boot.lua' script file :\n{}", errorMessage);
+            this->error("Lua error while loading 'boot.lua' script file :\n{}", error_message);
         }
     };
 
@@ -34,12 +34,10 @@ namespace obe::Engine::Exceptions
     {
     public:
         using Exception::Exception;
-        BootScriptExecutionError(
-            std::string_view functionName, std::string_view errorMessage, DebugInfo info)
+        BootScriptExecutionError(DebugInfo info)
             : Exception(info)
         {
-            this->error("Lua error while executing a function named '{}' in 'boot.lua' :\n{}",
-                functionName, errorMessage);
+            this->error("Lua error occured while running 'boot.lua'");
         }
     };
 

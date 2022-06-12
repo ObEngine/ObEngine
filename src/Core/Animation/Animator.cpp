@@ -7,14 +7,14 @@
 
 using namespace std::string_literals;
 
-namespace obe::Animation
+namespace obe::animation
 {
-    void AnimatorState::applyTexture() const
+    void AnimatorState::apply_texture() const
     {
-        const Graphics::Texture& texture = this->getTexture();
-        m_target->setTexture(texture);
+        const graphics::Texture& texture = this->get_current_texture();
+        m_target->set_texture(texture);
 
-        if (m_targetScaleMode == AnimatorTargetScaleMode::KeepRatio)
+        if (m_target_scale_mode == AnimatorTargetScaleMode::KeepRatio)
         {
             if (m_target->getSize().x >= m_target->getSize().y)
             {
@@ -29,20 +29,20 @@ namespace obe::Animation
                     m_target->getSize().y));
             }
         }
-        else if (m_targetScaleMode == AnimatorTargetScaleMode::FixedWidth)
+        else if (m_target_scale_mode == AnimatorTargetScaleMode::FixedWidth)
         {
             m_target->setSize(Transform::UnitVector(m_target->getSize().x,
                 static_cast<float>(texture.getSize().y) / static_cast<float>(texture.getSize().x)
                     * m_target->getSize().x));
         }
-        else if (m_targetScaleMode == AnimatorTargetScaleMode::FixedHeight)
+        else if (m_target_scale_mode == AnimatorTargetScaleMode::FixedHeight)
         {
             m_target->setSize(Transform::UnitVector(static_cast<float>(texture.getSize().x)
                     / static_cast<float>(texture.getSize().y) * m_target->getSize().y,
                 m_target->getSize().y));
         }
-        else if (m_targetScaleMode == AnimatorTargetScaleMode::TextureSize)
-            m_target->useTextureSize();
+        else if (m_target_scale_mode == AnimatorTargetScaleMode::TextureSize)
+            m_target->use_texture_size();
     }
 
     AnimatorState::AnimatorState(const Animator& parent)
@@ -62,214 +62,209 @@ namespace obe::Animation
 
     void AnimatorState::reset()
     {
-        m_currentAnimation = nullptr;
+        m_current_animation = nullptr;
     }
 
-    Graphics::Sprite* AnimatorState::getTarget() const
+    graphics::Sprite* AnimatorState::get_target() const
     {
         return m_target;
     }
 
-    AnimationState* AnimatorState::getCurrentAnimation() const
+    AnimationState* AnimatorState::get_current_animation() const
     {
-        return m_currentAnimation;
+        return m_current_animation;
     }
 
     Animator::Animator()
-        : m_defaultState(*this)
+        : m_default_state(*this)
     {
     }
 
     void Animator::clear() noexcept
     {
-        Debug::Log->trace("<Animator> Clearing Animator at '{0}'", m_path.toString());
+        debug::Log->trace("<Animator> Clearing Animator at '{0}'", m_path.toString());
         m_animations.clear();
-        m_defaultState.reset();
+        m_default_state.reset();
     }
 
-    Animation& Animator::getAnimation(const std::string& animationName) const
+    Animation& Animator::get_animation(const std::string& animation_name) const
     {
-        if (m_animations.find(animationName) != m_animations.end())
-            return *m_animations.at(animationName).get();
-        throw Exceptions::UnknownAnimation(
-            m_path.toString(), animationName, this->getAllAnimationName(), EXC_INFO);
+        if (m_animations.find(animation_name) != m_animations.end())
+            return *m_animations.at(animation_name).get();
+        throw exceptions::UnknownAnimation(
+            m_path.toString(), animation_name, this->get_all_animations_names(), EXC_INFO);
     }
 
-    std::vector<std::string> Animator::getAllAnimationName() const
+    std::vector<std::string> Animator::get_all_animations_names() const
     {
-        std::vector<std::string> allAnimationsNames;
-        for (const auto& animationPair : m_animations)
-            allAnimationsNames.push_back(animationPair.first);
-        return allAnimationsNames;
+        std::vector<std::string> all_animations_names;
+        for (const auto& animation_pair : m_animations)
+            all_animations_names.push_back(animation_pair.first);
+        return all_animations_names;
     }
 
-    std::string AnimatorState::getKey() const noexcept
+    std::string AnimatorState::get_current_animation_name() const noexcept
     {
-        if (m_currentAnimation)
-            return m_currentAnimation->getAnimation().getName();
+        if (m_current_animation)
+            return m_current_animation->get_animation().get_name();
         else
             return "";
     }
 
-    std::string Animator::getKey() const noexcept
+    std::string Animator::get_current_animation_name() const noexcept
     {
-        return m_defaultState.getKey();
+        return m_default_state.get_current_animation_name();
     }
 
-    void AnimatorState::setKey(const std::string& key)
+    void AnimatorState::set_animation(const std::string& key)
     {
         if (m_parent.m_animations.find(key) == m_parent.m_animations.end())
         {
-            throw Exceptions::UnknownAnimation(
-                m_parent.m_path.toString(), key, m_parent.getAllAnimationName(), EXC_INFO);
+            throw exceptions::UnknownAnimation(
+                m_parent.m_path.toString(), key, m_parent.get_all_animations_names(), EXC_INFO);
         }
-        if (key != this->getKey())
+        if (key != this->get_current_animation_name())
         {
-            bool changeAnim = false;
-            if (m_currentAnimation != nullptr)
+            bool change_animation = false;
+            if (m_current_animation != nullptr)
             {
-                if (m_currentAnimation->isOver()
-                    || m_parent.m_animations.at(key)->getPriority()
-                        >= m_currentAnimation->getAnimation().getPriority())
-                    changeAnim = true;
+                if (m_current_animation->is_over()
+                    || m_parent.m_animations.at(key)->get_priority()
+                        >= m_current_animation->get_animation().get_priority())
+                    change_animation = true;
             }
             else
-                changeAnim = true;
-            if (changeAnim)
+                change_animation = true;
+            if (change_animation)
             {
-                if (m_currentAnimation)
-                    m_currentAnimation->reset();
-                m_currentAnimation = m_states.at(key).get();
+                if (m_current_animation)
+                    m_current_animation->reset();
+                m_current_animation = m_states.at(key).get();
             }
         }
     }
 
-    void Animator::setKey(const std::string& key)
+    void Animator::set_animation(const std::string& key)
     {
-        Debug::Log->trace("<Animator> Set Animation Key '{0}' for Animator at {1} {2}", key,
+        debug::Log->trace("<Animator> Set animation Key '{0}' for Animator at {1} {2}", key,
             m_path.toString(), m_animations.size());
-        m_defaultState.setKey(key);
+        m_default_state.set_animation(key);
     }
 
-    void AnimatorState::setPaused(bool pause) noexcept
+    void AnimatorState::set_paused(bool pause) noexcept
     {
         m_paused = pause;
     }
 
-    void Animator::setPaused(bool pause) noexcept
+    void Animator::set_paused(bool pause) noexcept
     {
-        m_defaultState.setPaused(pause);
+        m_default_state.set_paused(pause);
     }
 
-    void Animator::load(System::Path path, Engine::ResourceManager* resources)
+    void Animator::load(System::Path path, engine::ResourceManager* resources)
     {
         m_path = path;
-        Debug::Log->debug("<Animator> Loading Animator at {0}", m_path.toString());
+        debug::Log->debug("<Animator> Loading Animator at {0}", m_path.toString());
         std::vector<System::FindResult> directories = m_path.list(System::PathType::Directory);
-        vili::node animatorCfgFile;
-        auto foundAnimatorCfg = m_path.add("animator.cfg.vili").find(System::PathType::File);
-        if (foundAnimatorCfg.success())
+        vili::node animator_cfg_file;
+        auto found_animator_cfg = m_path.add("animator.cfg.vili").find(System::PathType::File);
+        if (found_animator_cfg.success())
         {
-            animatorCfgFile = vili::parser::from_file(foundAnimatorCfg.path());
+            animator_cfg_file = vili::parser::from_file(found_animator_cfg.path());
         }
         for (const auto& directory : directories)
         {
-            std::unique_ptr<Animation> tempAnim = std::make_unique<Animation>();
-            if (m_defaultState.getTarget())
+            std::unique_ptr<Animation> temp_animation = std::make_unique<Animation>();
+            if (m_default_state.get_target())
             {
-                tempAnim->setAntiAliasing(m_defaultState.getTarget()->getAntiAliasing());
+                temp_animation->set_anti_aliasing(m_default_state.get_target()->get_anti_aliasing());
             }
-            tempAnim->loadAnimation(path.add(System::Path(directory.path()).last()), resources);
-            if (!animatorCfgFile.is_null())
+            temp_animation->load_animation(path.add(System::Path(directory.path()).last()), resources);
+            if (!animator_cfg_file.is_null())
             {
-                if (animatorCfgFile.contains("all"))
+                if (animator_cfg_file.contains("all"))
                 {
-                    tempAnim->applyParameters(animatorCfgFile.at("all"));
+                    temp_animation->apply_parameters(animator_cfg_file.at("all"));
                 }
-                if (animatorCfgFile.contains(directory.element()))
+                if (animator_cfg_file.contains(directory.element()))
                 {
-                    tempAnim->applyParameters(animatorCfgFile.at(directory.element()));
+                    temp_animation->apply_parameters(animator_cfg_file.at(directory.element()));
                 }
             }
 
-            m_animations[tempAnim->getName()] = move(tempAnim);
+            m_animations[temp_animation->get_name()] = move(temp_animation);
         }
-        m_defaultState.load();
+        m_default_state.load();
     }
 
     void AnimatorState::update()
     {
         if (!m_paused)
         {
-            Debug::Log->trace("<Animator> Updating Animator at {0}", m_parent.m_path.toString());
-            if (m_currentAnimation == nullptr)
-                throw Exceptions::NoSelectedAnimation(m_parent.m_path.toString(), EXC_INFO);
-            if (m_currentAnimation->getStatus() == AnimationStatus::Call)
+            debug::Log->trace("<Animator> Updating Animator at {0}", m_parent.m_path.toString());
+            if (m_current_animation == nullptr)
+                throw exceptions::NoSelectedAnimation(m_parent.m_path.toString(), EXC_INFO);
+            if (m_current_animation->get_status() == AnimationStatus::Call)
             {
-                m_currentAnimation->reset();
-                const std::string nextAnimation = m_currentAnimation->getCalledAnimation();
-                if (m_parent.m_animations.find(nextAnimation) == m_parent.m_animations.end())
-                    throw Exceptions::UnknownAnimation(m_parent.m_path.toString(), nextAnimation,
-                        m_parent.getAllAnimationName(), EXC_INFO);
-                m_currentAnimation = m_states.at(nextAnimation).get();
+                m_current_animation->reset();
+                const std::string next_animation = m_current_animation->get_called_animation();
+                if (m_parent.m_animations.find(next_animation) == m_parent.m_animations.end())
+                    throw exceptions::UnknownAnimation(m_parent.m_path.toString(), next_animation,
+                        m_parent.get_all_animations_names(), EXC_INFO);
+                m_current_animation = m_states.at(next_animation).get();
             }
-            if (m_currentAnimation->getStatus() == AnimationStatus::Play)
-                m_currentAnimation->update();
+            if (m_current_animation->get_status() == AnimationStatus::Play)
+                m_current_animation->update();
 
             if (m_target)
             {
-                this->applyTexture();
+                this->apply_texture();
             }
         }
     }
 
     void Animator::update()
     {
-        m_defaultState.update();
+        m_default_state.update();
     }
 
-    void AnimatorState::setTarget(Graphics::Sprite& sprite, AnimatorTargetScaleMode targetScaleMode)
+    void AnimatorState::set_target(graphics::Sprite& sprite, AnimatorTargetScaleMode target_scale_mode)
     {
         m_target = &sprite;
-        m_targetScaleMode = targetScaleMode;
+        m_target_scale_mode = target_scale_mode;
     }
 
-    void Animator::setTarget(Graphics::Sprite& sprite, AnimatorTargetScaleMode targetScaleMode)
+    void Animator::set_target(graphics::Sprite& sprite, AnimatorTargetScaleMode target_scale_mode)
     {
-        m_defaultState.setTarget(sprite, targetScaleMode);
+        m_default_state.set_target(sprite, target_scale_mode);
     }
 
-    System::Path Animator::getPath() const
+    System::Path Animator::get_filesystem_path() const
     {
         return m_path;
     }
 
-    AnimatorState Animator::makeState() const
+    AnimatorState Animator::make_state() const
     {
         auto state = AnimatorState(*this);
         state.load();
         return state;
     }
 
-    const Graphics::Texture& Animator::getTexture() const
+    const graphics::Texture& Animator::get_current_texture() const
     {
-        return m_defaultState.getTexture();
+        return m_default_state.get_current_texture();
     }
 
-    const Graphics::Texture& AnimatorState::getTexture() const
+    const graphics::Texture& AnimatorState::get_current_texture() const
     {
-        if (m_currentAnimation)
-            return m_currentAnimation->getTexture();
-        throw Exceptions::NoSelectedAnimation(m_parent.getPath().toString(), EXC_INFO);
+        if (m_current_animation)
+            return m_current_animation->get_texture();
+        throw exceptions::NoSelectedAnimation(m_parent.get_filesystem_path().toString(), EXC_INFO);
     }
 
-    const Animator& AnimatorState::getAnimator() const
+    const Animator& AnimatorState::get_animator() const
     {
         return m_parent;
     }
-
-    const Graphics::Texture& Animator::getTextureAtKey(const std::string& key, int index) const
-    {
-        return this->getAnimation(key).getTextureAtIndex(index);
-    }
-} // namespace obe::Animation
+} // namespace obe::animation

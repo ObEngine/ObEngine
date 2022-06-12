@@ -9,7 +9,7 @@
 
 #include <Types/Identifiable.hpp>
 
-namespace obe::Engine
+namespace obe::engine
 {
     class Engine;
 }
@@ -35,14 +35,14 @@ namespace obe::System
         bool m_valid = false;
         std::shared_ptr<dynamicLinker::dynamicLinker> m_dl;
 
-        PluginFunction<void(Engine::Engine&)> m_onInitFn;
+        PluginFunction<void(engine::Engine&)> m_onInitFn;
         PluginFunction<void(double)> m_onUpdateFn;
         PluginFunction<void()> m_onRenderFn;
         PluginFunction<void()> m_onExitFn;
 
     public:
         Plugin(const std::string& id, const std::string& path);
-        void onInit(Engine::Engine& engine) const;
+        void onInit(engine::Engine& engine) const;
         void onUpdate(double dt) const;
         void onRender() const;
         void onExit() const;

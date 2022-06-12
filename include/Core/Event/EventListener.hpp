@@ -6,7 +6,7 @@
 #include <Script/Scripting.hpp>
 #include <Script/ViliLuaBridge.hpp>
 
-namespace obe::Event
+namespace obe::event
 {
     /**
      * \nobind

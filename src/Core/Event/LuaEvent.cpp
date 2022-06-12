@@ -2,14 +2,14 @@
 #include <Event/LuaEvent.hpp>
 #include <Script/ViliLuaBridge.hpp>
 
-namespace obe::Event
+namespace obe::event
 {
-    void addLuaEvent(EventGroup* self, const std::string& name)
+    void add_lua_event(EventGroup* self, const std::string& name)
     {
         self->add<sol::table>(name);
     }
 
-    void triggerLuaEvent(EventGroup* self, const std::string& name, sol::table data)
+    void trigger_lua_event(EventGroup* self, const std::string& name, sol::table data)
     {
         self->trigger(name, data);
     }

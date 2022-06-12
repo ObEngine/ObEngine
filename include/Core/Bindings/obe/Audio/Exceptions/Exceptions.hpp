@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Audio::Exceptions::Bindings
+namespace obe::audio::exceptions::Bindings
 {
     void LoadClassAudioFileNotFound(sol::state_view state);
 };

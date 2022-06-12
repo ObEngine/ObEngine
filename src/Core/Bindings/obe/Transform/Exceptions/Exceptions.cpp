@@ -8,7 +8,7 @@ namespace obe::Transform::Exceptions::Bindings
 {
     void LoadClassInvalidUnitsEnumValue(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Transform"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Transform"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Transform::Exceptions::InvalidUnitsEnumValue> bindInvalidUnitsEnumValue
             = ExceptionsNamespace.new_usertype<obe::Transform::Exceptions::InvalidUnitsEnumValue>(
                 "InvalidUnitsEnumValue", sol::call_constructor,
@@ -20,7 +20,7 @@ namespace obe::Transform::Exceptions::Bindings
     }
     void LoadClassPolygonNotEnoughPoints(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Transform"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Transform"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Transform::Exceptions::PolygonNotEnoughPoints> bindPolygonNotEnoughPoints
             = ExceptionsNamespace.new_usertype<obe::Transform::Exceptions::PolygonNotEnoughPoints>(
                 "PolygonNotEnoughPoints", sol::call_constructor,
@@ -32,7 +32,7 @@ namespace obe::Transform::Exceptions::Bindings
     }
     void LoadClassPolygonPointIndexOverflow(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Transform"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Transform"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Transform::Exceptions::PolygonPointIndexOverflow>
             bindPolygonPointIndexOverflow = ExceptionsNamespace.new_usertype<
                 obe::Transform::Exceptions::PolygonPointIndexOverflow>("PolygonPointIndexOverflow",
@@ -45,7 +45,7 @@ namespace obe::Transform::Exceptions::Bindings
     }
     void LoadClassUnknownReferential(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Transform"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Transform"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Transform::Exceptions::UnknownReferential> bindUnknownReferential
             = ExceptionsNamespace.new_usertype<obe::Transform::Exceptions::UnknownReferential>(
                 "UnknownReferential", sol::call_constructor,
@@ -57,7 +57,7 @@ namespace obe::Transform::Exceptions::Bindings
     }
     void LoadClassUnknownUnit(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Transform"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Transform"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Transform::Exceptions::UnknownUnit> bindUnknownUnit
             = ExceptionsNamespace.new_usertype<obe::Transform::Exceptions::UnknownUnit>(
                 "UnknownUnit", sol::call_constructor,

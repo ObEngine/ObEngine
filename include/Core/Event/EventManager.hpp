@@ -8,7 +8,7 @@
 #include <Event/EventNamespace.hpp>
 #include <Time/Chronometer.hpp>
 
-namespace obe::Event
+namespace obe::event
 {
     /**
      * \brief A EventManager that handles EventNamespaces and Schedulers
@@ -33,24 +33,13 @@ namespace obe::Event
         /*
          * \brief Gets the root EventGroup
          */
-        EventNamespace& createNamespace(const std::string& eventNamespace);
-        EventNamespace& joinNamespace(const std::string& eventNamespace);
-        EventNamespaceView getNamespace(const std::string& eventNamespace);
+        EventNamespace& create_namespace(const std::string& event_namespace);
+        EventNamespace& join_namespace(const std::string& event_namespace);
+        EventNamespaceView get_namespace(const std::string& event_namespace);
 
-        std::vector<std::string> getAllNamespacesNames() const;
+        [[nodiscard]] std::vector<std::string> get_all_namespaces_names() const;
 
         CallbackScheduler& schedule();
-        vili::node dumpProfilerResults() const;
+        [[nodiscard]] vili::node dump_profiler_results() const;
     };
-
-    inline std::vector<std::string> EventManager::getAllNamespacesNames() const
-    {
-        std::vector<std::string> allNames;
-        allNames.reserve(m_namespaces.size());
-        for (const auto& eventNamespace : m_namespaces)
-        {
-            allNames.push_back(eventNamespace.first);
-        }
-        return allNames;
-    }
-} // namespace obe::Event
+} // namespace obe::event
