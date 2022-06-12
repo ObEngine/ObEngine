@@ -11,7 +11,7 @@
 
 namespace obe
 {
-    namespace Engine
+    namespace engine
     {
         class Engine;
     }
@@ -65,7 +65,7 @@ namespace obe::Input
 
         int m_wheelDelta = 0;
         void setMouseWheelDelta(int delta);
-        friend obe::Engine::Engine;
+        friend obe::engine::Engine;
 
     public:
         /**

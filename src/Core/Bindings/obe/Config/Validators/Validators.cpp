@@ -4,30 +4,30 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Config::Validators::Bindings
+namespace obe::config::validators::Bindings
 {
     void LoadFunctionAnimationValidator(sol::state_view state)
     {
-        sol::table ValidatorsNamespace = state["obe"]["Config"]["Validators"].get<sol::table>();
+        sol::table ValidatorsNamespace = state["obe"]["config"]["validators"].get<sol::table>();
         ValidatorsNamespace.set_function(
-            "AnimationValidator", &obe::Config::Validators::AnimationValidator);
+            "animation_validator", &obe::config::validators::animation_validator);
     }
     void LoadFunctionConfigValidator(sol::state_view state)
     {
-        sol::table ValidatorsNamespace = state["obe"]["Config"]["Validators"].get<sol::table>();
+        sol::table ValidatorsNamespace = state["obe"]["config"]["validators"].get<sol::table>();
         ValidatorsNamespace.set_function(
-            "ConfigValidator", &obe::Config::Validators::ConfigValidator);
+            "config_validator", &obe::config::validators::config_validator);
     }
     void LoadFunctionMountValidator(sol::state_view state)
     {
-        sol::table ValidatorsNamespace = state["obe"]["Config"]["Validators"].get<sol::table>();
+        sol::table ValidatorsNamespace = state["obe"]["config"]["validators"].get<sol::table>();
         ValidatorsNamespace.set_function(
-            "MountValidator", &obe::Config::Validators::MountValidator);
+            "mount_validator", &obe::config::validators::mount_validator);
     }
     void LoadFunctionProjectValidator(sol::state_view state)
     {
-        sol::table ValidatorsNamespace = state["obe"]["Config"]["Validators"].get<sol::table>();
+        sol::table ValidatorsNamespace = state["obe"]["config"]["validators"].get<sol::table>();
         ValidatorsNamespace.set_function(
-            "ProjectValidator", &obe::Config::Validators::ProjectValidator);
+            "project_validator", &obe::config::validators::project_validator);
     }
 };

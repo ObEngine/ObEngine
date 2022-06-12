@@ -7,7 +7,7 @@
 namespace obe::Input
 {
     bool updateOrCleanMonitor(
-        Event::EventGroupPtr events, const std::weak_ptr<InputButtonMonitor>& element)
+        event::EventGroupPtr events, const std::weak_ptr<InputButtonMonitor>& element)
     {
         if (auto monitor = element.lock())
         {
@@ -32,9 +32,9 @@ namespace obe::Input
         return false;
     }
 
-    InputManager::InputManager(Event::EventNamespace& eventNamespace)
-        : e_actions(eventNamespace.createGroup("Actions"))
-        , e_inputs(eventNamespace.createGroup("Keys"))
+    InputManager::InputManager(event::EventNamespace& eventNamespace)
+        : e_actions(eventNamespace.create_group("Actions"))
+        , e_inputs(eventNamespace.create_group("Keys"))
         , Togglable(true)
     {
         this->createInputMap();
@@ -154,7 +154,7 @@ namespace obe::Input
                     }
 
                     actionCondition.setCombination(combination);
-                    Debug::Log->debug(
+                    debug::Log->debug(
                         "<InputManager> Associated Key '{0}' for Action '{1}'", condition, action);
                     inputManager->getAction(action).addCondition(actionCondition);
                 };
@@ -188,13 +188,13 @@ namespace obe::Input
 
     InputManager& InputManager::addContext(const std::string& context)
     {
-        Debug::Log->debug("<InputManager> Adding Context '{0}'", context);
+        debug::Log->debug("<InputManager> Adding Context '{0}'", context);
         for (auto& action : m_allActions)
         {
             if (Utils::Vector::contains(context, action->getContexts())
                 && !isActionCurrentlyInUse(action->getId()))
             {
-                Debug::Log->debug(
+                debug::Log->debug(
                     "<InputManager> Add Action '{0}' in Context '{1}'", action->getId(), context);
                 m_currentActions.push_back(action.get());
                 std::vector<InputButtonMonitorPtr> monitors;
@@ -221,7 +221,7 @@ namespace obe::Input
                                            != contexts.end();
                                        if (isActionInContext)
                                        {
-                                           Debug::Log->debug("<InputManager> Remove Action '{0}' "
+                                           debug::Log->debug("<InputManager> Remove Action '{0}' "
                                                              "from Context '{1}'",
                                                action->getId(), context);
                                            action->disable();

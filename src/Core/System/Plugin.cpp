@@ -9,7 +9,7 @@ namespace obe::System
     Plugin::Plugin(const std::string& id, const std::string& path)
         : Types::Identifiable(id)
     {
-        Debug::Log->info("<System:Plugin> : Loading Plugin '{}' ...", id);
+        debug::Log->info("<System:Plugin> : Loading Plugin '{}' ...", id);
         try
         {
             m_dl = dynamicLinker::dynamicLinker::make_new(path);
@@ -17,16 +17,16 @@ namespace obe::System
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
-            Debug::Log->warn(
+            debug::Log->warn(
                 "<System:Plugin> : Unloadable Plugin : '{}' (Reason : {})", id, e.what());
             return;
         }
         m_valid = true;
         try
         {
-            m_onInitFn = getPluginFunction<void(Engine::Engine&)>(m_dl, "OnInit");
+            m_onInitFn = getPluginFunction<void(engine::Engine&)>(m_dl, "OnInit");
             (*m_onInitFn)->init();
-            Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnInit", id);
+            debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnInit", id);
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
@@ -36,7 +36,7 @@ namespace obe::System
         {
             m_onUpdateFn = getPluginFunction<void(double)>(m_dl, "OnUpdate");
             (*m_onUpdateFn)->init();
-            Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnUpdate", id);
+            debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnUpdate", id);
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
@@ -46,7 +46,7 @@ namespace obe::System
         {
             m_onRenderFn = getPluginFunction<void()>(m_dl, "OnRender");
             (*m_onRenderFn)->init();
-            Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnRender", id);
+            debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnRender", id);
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
@@ -56,17 +56,17 @@ namespace obe::System
         {
             m_onExitFn = getPluginFunction<void()>(m_dl, "OnExit");
             (*m_onExitFn)->init();
-            Debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnExit", id);
+            debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnExit", id);
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
             m_onExitFn = std::nullopt;
         }
 
-        Debug::Log->info("<System:Plugin> : Loaded : '{}'", id);
+        debug::Log->info("<System:Plugin> : Loaded : '{}'", id);
     }
 
-    void Plugin::onInit(Engine::Engine& engine) const
+    void Plugin::onInit(engine::Engine& engine) const
     {
         if (m_onInitFn)
         {

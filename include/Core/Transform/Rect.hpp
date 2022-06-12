@@ -6,7 +6,7 @@
 #include <Transform/Movable.hpp>
 #include <Transform/Referential.hpp>
 
-namespace obe::Animation
+namespace obe::animation
 {
    template <class T>
    class TweenImpl;
@@ -35,7 +35,7 @@ namespace obe::Transform
      */
     class Rect : public Movable
     {
-        friend class Animation::TweenImpl<Rect>;
+        friend class animation::TweenImpl<Rect>;
     protected:
         /**
          * \brief Size of the Rect
@@ -64,7 +64,7 @@ namespace obe::Transform
          * \param position Position to affect to the Rect (Movable
          *        override)
          */
-        void setPosition(const UnitVector& position) override;
+        void set_position(const UnitVector& position) override;
         /**
          * \brief Get the Position of the Rect (Movable Override)
          * \return The Position of the given Referential of the Rect (Movable
@@ -142,7 +142,7 @@ namespace obe::Transform
         /**
          * \brief Draws the Rect for debug purposes <REMOVE>
          */
-        void draw(Graphics::RenderTarget surface, int x, int y) const;
+        void draw(graphics::RenderTarget surface, int x, int y) const;
 
         /**
          * \asproperty

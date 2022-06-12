@@ -5,7 +5,7 @@ namespace vili
     class node;
 }
 
-namespace obe::Event
+namespace obe::event
 {
     class LuaEventListener;
 }
@@ -18,7 +18,7 @@ namespace sol
     };
 
     template <>
-    struct is_callable<obe::Event::LuaEventListener> : std::false_type
+    struct is_callable<obe::event::LuaEventListener> : std::false_type
     {
     };
 }

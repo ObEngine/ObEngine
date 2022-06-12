@@ -4,7 +4,7 @@
 
 #include <Graphics/Color.hpp>
 
-namespace obe::Graphics
+namespace obe::graphics
 {
     class RenderTarget;
 }
@@ -18,7 +18,7 @@ namespace obe::Transform
  * \brief Some useful Graphics functions.
  * \additionalinclude{Graphics/RenderTarget.hpp}
  */
-namespace obe::Graphics::Utils
+namespace obe::graphics::utils
 {
     /**
      * \brief Draws a Point
@@ -28,7 +28,7 @@ namespace obe::Graphics::Utils
      * \param radius Radius of the Point to draw
      * \param color Color of the new Point
      */
-    void drawPoint(RenderTarget surface, int x, int y, float radius, const Color& color);
+    void draw_point(RenderTarget surface, int x, int y, float radius, const Color& color);
     /**
      * \brief Draws a Line
      * \param surface RenderSurface where to render the line
@@ -40,7 +40,7 @@ namespace obe::Graphics::Utils
      *        visible size)
      * \param color Color of the line you want to draw
      */
-    void drawLine(
+    void draw_line(
         RenderTarget surface, int x1, int y1, int x2, int y2, int thickness, const Color& color);
 
     struct DrawPolygonOptions
@@ -48,10 +48,10 @@ namespace obe::Graphics::Utils
         bool lines = true;
         bool points = true;
         float radius = 6.f;
-        Color lineColor = Color::White;
-        Color pointColor = Color::White;
-        std::unordered_map<unsigned int, Color> specificLineColor;
-        std::unordered_map<unsigned int, Color> specificPointColor;
+        Color line_color = Color::White;
+        Color point_color = Color::White;
+        std::unordered_map<unsigned int, Color> specific_line_color;
+        std::unordered_map<unsigned int, Color> specific_point_color;
     };
     /**
      * \brief Draws a Polygon
@@ -70,6 +70,6 @@ namespace obe::Graphics::Utils
      *        - <point_color_x> Color : Color of a specific point of the Polygon
      *          where x is the index of the point
      */
-    void drawPolygon(RenderTarget surface, std::vector<Transform::UnitVector>& points,
+    void draw_polygon(RenderTarget surface, const std::vector<Transform::UnitVector>& points,
         const DrawPolygonOptions& options);
-} // namespace obe::Graphics::Utils
+} // namespace obe::graphics::utils

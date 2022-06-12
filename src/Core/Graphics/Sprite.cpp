@@ -6,11 +6,11 @@
 #include <System/Window.hpp>
 #include <Utils/MathUtils.hpp>
 
-namespace obe::Graphics
+namespace obe::graphics
 {
     static sf::Image NullImage;
-    static Graphics::Texture NullTexture;
-    void MakeNullTexture()
+    static graphics::Texture NullTexture;
+    void make_null_texture()
     {
         NullImage.create(100, 100, sf::Color::Transparent);
         for (unsigned int i = 0; i < NullImage.getSize().x; i++)
@@ -26,38 +26,40 @@ namespace obe::Graphics
         NullTexture.loadFromImage(NullImage);
     }
 
-    sf::Vertex toSfVertex(const Transform::UnitVector& uv)
+    sf::Vertex to_sf_vertex(const Transform::UnitVector& uv)
     {
         return sf::Vertex(sf::Vector2f(uv.x, uv.y));
     }
 
-    void Sprite::refreshVectorTexture(
-        const Transform::UnitVector& surfaceSize, const std::array<sf::Vertex, 4>& vertices)
+    void Sprite::refresh_vector_texture(
+        const Transform::UnitVector& surface_size, const std::array<sf::Vertex, 4>& vertices)
     {
-        const Transform::UnitVector pxSize = m_size.to<Transform::Units::ScenePixels>();
-        const unsigned int newWidth = static_cast<unsigned int>(pxSize.x);
-        const unsigned int newHeight = static_cast<unsigned int>(pxSize.y);
+        const Transform::UnitVector px_size = m_size.to<Transform::Units::ScenePixels>();
+        const unsigned int new_width = static_cast<unsigned int>(px_size.x);
+        const unsigned int new_height = static_cast<unsigned int>(px_size.y);
 
-        const Transform::UnitVector textureSize = m_texture.getSize();
+        const Transform::UnitVector texture_size = m_texture.getSize();
 
-        if (newWidth != static_cast<unsigned int>(textureSize.x)
-            || newHeight != static_cast<unsigned int>(textureSize.y))
+        if (new_width != static_cast<unsigned int>(texture_size.x)
+            || new_height != static_cast<unsigned int>(texture_size.y))
         {
-            m_sprite.setTextureRect(sf::IntRect(0, 0, pxSize.x, pxSize.y));
-            const auto [minVX, maxVX] = std::minmax_element(vertices.begin(), vertices.end(),
-                [](const sf::Vertex& vert1, const sf::Vertex& vert2) -> float
-                { return vert1.position.x < vert2.position.x; });
-            const auto [minVY, maxVY] = std::minmax_element(vertices.begin(), vertices.end(),
-                [](const sf::Vertex& vert1, const sf::Vertex& vert2) -> float
-                { return vert1.position.y < vert2.position.y; });
-            const float minX = minVX->position.x;
-            const float maxX = maxVX->position.x;
-            const float minY = minVY->position.y;
-            const float maxY = maxVY->position.y;
-            if (((minX >= 0 && minX <= surfaceSize.x) || (maxX >= 0 && maxX <= surfaceSize.x))
-                && ((minY >= 0 && minY <= surfaceSize.y) || (maxY >= 0 && maxY <= surfaceSize.y)))
+            m_sprite.setTextureRect(sf::IntRect(0, 0, px_size.x, px_size.y));
+            const auto [min_vx, max_vx] = std::minmax_element(vertices.begin(), vertices.end(),
+                [](const sf::Vertex& vert1, const sf::Vertex& vert2) -> float {
+                    return vert1.position.x < vert2.position.x;
+                });
+            const auto [min_vy, max_vy] = std::minmax_element(vertices.begin(), vertices.end(),
+                [](const sf::Vertex& vert1, const sf::Vertex& vert2) -> float {
+                    return vert1.position.y < vert2.position.y;
+                });
+            const float min_x = min_vx->position.x;
+            const float max_x = max_vx->position.x;
+            const float min_y = min_vy->position.y;
+            const float max_y = max_vy->position.y;
+            if (((min_x >= 0 && min_x <= surface_size.x) || (max_x >= 0 && max_x <= surface_size.x))
+                && ((min_y >= 0 && min_y <= surface_size.y) || (max_y >= 0 && max_y <= surface_size.y)))
             {
-                m_texture.setSizeHint(newWidth, newHeight);
+                m_texture.setSizeHint(new_width, new_height);
             }
         }
     }
@@ -66,59 +68,54 @@ namespace obe::Graphics
         : Selectable(false)
         , Component(id)
     {
-        this->setTexture(NullTexture);
+        this->set_texture(NullTexture);
 
-        for (Transform::Referential& ref : Transform::Referential::Referentials)
-        {
-            m_handlePoints.emplace_back(*this, ref);
-        }
-        m_handlePoints.emplace_back(*this);
-        m_positionTransformer = PositionTransformer("Camera", "Camera");
+        m_position_transformer = PositionTransformer("Camera", "Camera");
     }
 
-    void Sprite::useTextureSize()
+    void Sprite::use_texture_size()
     {
-        const Transform::UnitVector textureSize = this->getTexture().getSize();
-        const Transform::UnitVector initialSpriteSize(
-            textureSize.x, textureSize.y, Transform::Units::ScenePixels);
-        this->setSize(initialSpriteSize);
+        const Transform::UnitVector texture_size = this->get_texture().getSize();
+        const Transform::UnitVector initial_sprite_size(
+            texture_size.x, texture_size.y, Transform::Units::ScenePixels);
+        this->setSize(initial_sprite_size);
     }
 
     void Sprite::draw(RenderTarget& surface, const Scene::Camera& camera)
     {
-        const Transform::UnitVector pixelCamera
+        const Transform::UnitVector pixel_camera
             = camera.getPosition().to<Transform::Units::ScenePixels>();
         std::array<sf::Vertex, 4> vertices;
 
         /*auto size = Rect::getSize();
-        if (m_positionTransformer.getXTransformerName() == "Parallax" && m_positionTransformer.getYTransformerName() == "Parallax")
+        if (m_position_transformer.get_x_transformer_name() == "Parallax" && m_position_transformer.get_y_transformer_name() == "Parallax")
         {
             Rect::setSize(size * camera.getSize().y * (m_layer * 0.1), Transform::Referential::TopLeft);
         }*/
 
-        vertices[0] = toSfVertex(m_positionTransformer(
-            Rect::getPosition(Transform::Referential::TopLeft), pixelCamera, m_layer)
+        vertices[0] = to_sf_vertex(m_position_transformer(
+            Rect::getPosition(Transform::Referential::TopLeft), pixel_camera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
-        vertices[1] = toSfVertex(m_positionTransformer(
-            Rect::getPosition(Transform::Referential::BottomLeft), pixelCamera, m_layer)
+        vertices[1] = to_sf_vertex(m_position_transformer(
+            Rect::getPosition(Transform::Referential::BottomLeft), pixel_camera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
-        vertices[2] = toSfVertex(m_positionTransformer(
-            Rect::getPosition(Transform::Referential::TopRight), pixelCamera, m_layer)
+        vertices[2] = to_sf_vertex(m_position_transformer(
+            Rect::getPosition(Transform::Referential::TopRight), pixel_camera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
-        vertices[3] = toSfVertex(m_positionTransformer(
-            Rect::getPosition(Transform::Referential::BottomRight), pixelCamera, m_layer)
+        vertices[3] = to_sf_vertex(m_position_transformer(
+            Rect::getPosition(Transform::Referential::BottomRight), pixel_camera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
 
-        /*if (m_positionTransformer.getXTransformerName() == "Parallax"
-            && m_positionTransformer.getYTransformerName() == "Parallax")
+        /*if (m_position_transformer.get_x_transformer_name() == "Parallax"
+            && m_position_transformer.get_y_transformer_name() == "Parallax")
         {
             Rect::setSize(size, Transform::Referential::TopLeft);
         }*/
 
         if (m_texture.getAutoscaling())
         {
-            const Transform::UnitVector surfaceSize = surface.getSize();
-            refreshVectorTexture(surfaceSize, vertices);
+            const Transform::UnitVector surface_size = surface.get_size();
+            refresh_vector_texture(surface_size, vertices);
         }
 
         m_sprite.setVertices(vertices);
@@ -130,14 +127,14 @@ namespace obe::Graphics
 
         if (m_selected)
         {
-            this->drawHandle(surface, camera);
+            this->draw_handle(surface, camera);
         }
     }
 
-    void Sprite::attachResourceManager(Engine::ResourceManager& resources)
+    void Sprite::attach_resource_manager(engine::ResourceManager& resources)
     {
-        this->setAntiAliasing(resources.defaultAntiAliasing);
-        ResourceManagedObject::attachResourceManager(resources);
+        this->set_anti_aliasing(resources.default_anti_aliasing);
+        ResourceManagedObject::attach_resource_manager(resources);
     }
 
     std::string_view Sprite::type() const
@@ -145,14 +142,14 @@ namespace obe::Graphics
         return ComponentType;
     }
 
-    void Sprite::loadTexture(const std::string& path)
+    void Sprite::load_texture(const std::string& path)
     {
         if (!path.empty() and path != m_path)
         {
             m_path = path;
             if (m_resources)
             {
-                m_texture = m_resources->getTexture(System::Path(path), m_antiAliasing);
+                m_texture = m_resources->get_texture(System::Path(path), m_antiAliasing);
             }
             else
             {
@@ -167,216 +164,158 @@ namespace obe::Graphics
         }
     }
 
-    void Sprite::resetUnit(Transform::Units unit)
+    void Sprite::reset_unit(Transform::Units unit)
     {
     }
 
-    void Sprite::setTexture(const Texture& texture)
+    void Sprite::set_texture(const Texture& texture)
     {
         // m_texture = std::shared_ptr<Texture>(std::shared_ptr<Texture>(), texture);
         m_sprite.setTexture(texture);
         m_sprite.setTextureRect(sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
     }
 
-    void Sprite::setTextureRect(
+    void Sprite::set_texture_rect(
         unsigned int x, unsigned int y, unsigned int width, unsigned int height)
     {
         m_sprite.setTextureRect(sf::IntRect(x, y, width, height));
     }
 
-    const Graphics::Texture& Sprite::getTexture() const
+    const graphics::Texture& Sprite::get_texture() const
     {
         return m_texture;
     }
 
-    Graphics::Texture& Sprite::getTexture()
+    graphics::Texture& Sprite::get_texture()
     {
         return m_texture;
     }
 
-    void Sprite::setAntiAliasing(bool antiAliasing)
+    void Sprite::set_anti_aliasing(bool anti_aliasing)
     {
-        if (antiAliasing != m_antiAliasing && !m_path.empty())
+        if (anti_aliasing != m_antiAliasing && !m_path.empty())
         {
-            m_antiAliasing = antiAliasing;
-            this->loadTexture(m_path);
+            m_antiAliasing = anti_aliasing;
+            this->load_texture(m_path);
         }
         else
         {
-            m_antiAliasing = antiAliasing;
+            m_antiAliasing = anti_aliasing;
         }
     }
 
-    void Sprite::setRotation(double rotate)
+    void Sprite::set_rotation(double rotate)
     {
         Rect::setRotation(rotate, this->getPosition(Transform::Referential::Center));
     }
 
-    void Sprite::rotate(double addRotate)
+    void Sprite::rotate(double angle)
     {
-        Rect::rotate(addRotate, this->getPosition(Transform::Referential::Center));
+        Rect::rotate(angle, this->getPosition(Transform::Referential::Center));
     }
 
-    void Sprite::setScalingOrigin(int x, int y)
+    void Sprite::set_scaling_origin(int x, int y)
     {
         m_sprite.setScalingOrigin(x, y);
     }
 
-    void Sprite::drawHandle(RenderTarget& surface, const Scene::Camera& camera) const
+    void Sprite::draw_handle(RenderTarget& surface, const Scene::Camera& camera) const
     {
-        const Transform::UnitVector pixelCamera
+        const Transform::UnitVector pixel_camera
             = camera.getPosition().to<Transform::Units::ScenePixels>();
         const Transform::UnitVector position
-            = m_positionTransformer(m_position, pixelCamera, m_layer)
+            = m_position_transformer(m_position, pixel_camera, m_layer)
                   .to<Transform::Units::ScenePixels>();
         Rect::draw(surface, position.x, position.y);
     }
 
-    SpriteHandlePoint* Sprite::getHandlePoint(
-        Transform::UnitVector& cameraPosition, int posX, int posY)
-    {
-        const Transform::UnitVector pixelCamera
-            = cameraPosition.to<Transform::Units::ScenePixels>();
-        Transform::UnitVector targetPos
-            = Transform::UnitVector(posX, posY, Transform::Units::ScenePixels);
-        targetPos = m_positionTransformer(targetPos, -pixelCamera, m_layer);
-        unsigned int i = 0;
-        for (Transform::Referential& ref : Transform::Referential::Referentials)
-        {
-            const Transform::UnitVector refPoint
-                = Rect::getPosition(ref).to<Transform::Units::ScenePixels>();
-            int lowerXBound = std::min(
-                refPoint.x - SpriteHandlePoint::radius, refPoint.x + SpriteHandlePoint::radius);
-            int upperXBound = std::max(
-                refPoint.x - SpriteHandlePoint::radius, refPoint.x + SpriteHandlePoint::radius);
-            if (obe::Utils::Math::isBetween(targetPos.x, lowerXBound, upperXBound)
-                && ref != Transform::Referential::Center)
-            {
-                int lowerYBound = std::min(
-                    refPoint.y - SpriteHandlePoint::radius, refPoint.y + SpriteHandlePoint::radius);
-                int upperYBound = std::max(
-                    refPoint.y - SpriteHandlePoint::radius, refPoint.y + SpriteHandlePoint::radius);
-                if (obe::Utils::Math::isBetween(targetPos.y, lowerYBound, upperYBound))
-                    return &m_handlePoints[i];
-            }
-            i++;
-        }
-
-        const double radAngle = obe::Utils::Math::convertToRadian(-m_angle);
-        const double cosAngle = std::cos(radAngle);
-        const double sinAngle = std::sin(radAngle);
-        const Transform::UnitVector topPos
-            = this->getPosition(Transform::Referential::Top).to<Transform::Units::ScenePixels>();
-        Transform::UnitVector rotHandle = topPos;
-        Transform::UnitVector result;
-        const double dy = m_size.y / 4;
-        result.x = (-dy * sinAngle) * -1;
-        result.y = (dy * cosAngle) * -1;
-        rotHandle.add(result);
-
-        const int lowerXBound = std::min(
-            rotHandle.x - SpriteHandlePoint::radius, rotHandle.x + SpriteHandlePoint::radius);
-        const int upperXBound = std::max(
-            rotHandle.x - SpriteHandlePoint::radius, rotHandle.x + SpriteHandlePoint::radius);
-        if (obe::Utils::Math::isBetween(targetPos.x, lowerXBound, upperXBound))
-        {
-            const int lowerYBound = std::min(
-                rotHandle.y - SpriteHandlePoint::radius, rotHandle.y + SpriteHandlePoint::radius);
-            const int upperYBound = std::max(
-                rotHandle.y - SpriteHandlePoint::radius, rotHandle.y + SpriteHandlePoint::radius);
-            if (obe::Utils::Math::isBetween(targetPos.y, lowerYBound, upperYBound))
-                return &m_handlePoints.back();
-        }
-        return nullptr;
-    }
-
-    void Sprite::setTranslationOrigin(int x, int y)
+    void Sprite::set_translation_origin(int x, int y)
     {
         m_sprite.setTranslationOrigin(x, y);
     }
 
-    void Sprite::setRotationOrigin(int x, int y)
+    void Sprite::set_rotation_origin(int x, int y)
     {
         m_sprite.setRotationOrigin(x, y);
     }
 
-    void Sprite::setColor(const Color& color)
+    void Sprite::set_color(const Color& color)
     {
         m_sprite.setColor(color);
     }
 
-    Color Sprite::getColor() const
+    Color Sprite::get_color() const
     {
         return m_sprite.getColor();
     }
 
-    sfe::ComplexSprite& Sprite::getSprite()
+    sfe::ComplexSprite& Sprite::get_internal_sprite()
     {
         return m_sprite;
     }
 
-    double Sprite::getSpriteWidth() const
+    double Sprite::get_width() const
     {
         return m_sprite.getGlobalBounds().width;
     }
 
-    double Sprite::getSpriteHeight() const
+    double Sprite::get_height() const
     {
         return m_sprite.getGlobalBounds().height;
     }
 
-    bool Sprite::getAntiAliasing() const
+    bool Sprite::get_anti_aliasing() const
     {
         return m_antiAliasing;
     }
 
-    std::string Sprite::getPath() const
+    std::string Sprite::get_filesystem_path() const
     {
         return m_path;
     }
 
-    Transform::Rect Sprite::getRect()
+    Transform::Rect Sprite::get_rect()
     {
-        const Transform::UnitVector pxPosition
+        const Transform::UnitVector px_position
             = Rect::m_position.to<Transform::Units::ScenePixels>();
-        const Transform::UnitVector pxSize(m_sprite.getGlobalBounds().width,
+        const Transform::UnitVector px_size(m_sprite.getGlobalBounds().width,
             m_sprite.getGlobalBounds().height, Transform::Units::ScenePixels);
 
-        m_sprite.setPosition(pxPosition.x, pxPosition.y);
-        Transform::Rect rect = Transform::Rect(pxPosition, pxSize);
-        rect.setPosition(Transform::UnitVector(m_sprite.getGlobalBounds().left,
+        m_sprite.setPosition(px_position.x, px_position.y);
+        Transform::Rect rect = Transform::Rect(px_position, px_size);
+        rect.set_position(Transform::UnitVector(m_sprite.getGlobalBounds().left,
             m_sprite.getGlobalBounds().top, Transform::Units::ScenePixels));
         return rect;
     }
 
-    std::string Sprite::getParentId() const
+    std::string Sprite::get_parent_id() const
     {
         return m_parentId;
     }
 
-    void Sprite::setParentId(const std::string& parent)
+    void Sprite::set_parent_id(const std::string& parent)
     {
         m_parentId = parent;
     }
 
-    int Sprite::getXScaleFactor() const
+    int Sprite::get_x_scale_factor() const
     {
         return obe::Utils::Math::sign(m_sprite.getScale().x);
     }
 
-    int Sprite::getYScaleFactor() const
+    int Sprite::get_y_scale_factor() const
     {
         return obe::Utils::Math::sign(m_sprite.getScale().y);
     }
 
-    void Sprite::setPositionTransformer(const PositionTransformer& transformer)
+    void Sprite::set_position_transformer(const PositionTransformer& transformer)
     {
-        m_positionTransformer = transformer;
+        m_position_transformer = transformer;
     }
 
-    PositionTransformer Sprite::getPositionTransformer() const
+    PositionTransformer Sprite::get_position_transformer() const
     {
-        return m_positionTransformer;
+        return m_position_transformer;
     }
 
     unsigned int SpriteHandlePoint::radius = 6;
@@ -393,46 +332,46 @@ namespace obe::Graphics
         m_type = SpriteHandlePointType::RotateHandle;
     }
 
-    void SpriteHandlePoint::moveTo(
+    void SpriteHandlePoint::set_position(
         const Transform::UnitVector& position, const Transform::UnitVector& camera)
     {
-        m_dp = m_sprite.getPositionTransformer()(position, -camera, m_sprite.getLayer());
+        m_dp = m_sprite.get_position_transformer()(position, -camera, m_sprite.get_layer());
         if (m_type == SpriteHandlePointType::ScaleHandle)
         {
             const Transform::UnitVector pos
                 = m_sprite.getPosition(m_referential).to<Transform::Units::ScenePixels>();
-            const Transform::UnitVector oppositePos
+            const Transform::UnitVector opposite_pos
                 = m_sprite.getPosition(m_referential.flip()).to<Transform::Units::ScenePixels>();
 
             if (m_referential.isOnCorner())
             {
-                const Transform::UnitVector centerSpritePos
+                const Transform::UnitVector center_sprite_pos
                     = m_sprite.getPosition(Transform::Referential::Center);
-                const double spriteAngle = m_sprite.getRotation();
-                const Transform::UnitVector oppositePosInRef
-                    = oppositePos.rotate(spriteAngle, centerSpritePos);
-                const Transform::UnitVector posInRef = pos.rotate(spriteAngle, centerSpritePos);
-                const Transform::UnitVector cursorInRef = m_dp.rotate(spriteAngle, centerSpritePos);
-                const Transform::UnitVector scaleVector
-                    = (cursorInRef - oppositePosInRef) / (posInRef - oppositePosInRef);
-                const double vScale = std::max(scaleVector.x, scaleVector.y);
-                if ((cursorInRef - oppositePosInRef).x != 0
-                    && (cursorInRef - oppositePosInRef).y != 0)
-                    m_sprite.scale(Transform::UnitVector(vScale, vScale, m_sprite.getSize().unit),
+                const double sprite_angle = m_sprite.getRotation();
+                const Transform::UnitVector opposite_pos_in_ref
+                    = opposite_pos.rotate(sprite_angle, center_sprite_pos);
+                const Transform::UnitVector pos_in_ref = pos.rotate(sprite_angle, center_sprite_pos);
+                const Transform::UnitVector cursor_in_ref = m_dp.rotate(sprite_angle, center_sprite_pos);
+                const Transform::UnitVector scale_vector
+                    = (cursor_in_ref - opposite_pos_in_ref) / (pos_in_ref - opposite_pos_in_ref);
+                const double v_scale = std::max(scale_vector.x, scale_vector.y);
+                if ((cursor_in_ref - opposite_pos_in_ref).x != 0
+                    && (cursor_in_ref - opposite_pos_in_ref).y != 0)
+                    m_sprite.scale(Transform::UnitVector(v_scale, v_scale, m_sprite.getSize().unit),
                         m_referential.flip());
             }
             else
             {
-                const Transform::UnitVector e1 = oppositePos - pos;
+                const Transform::UnitVector e1 = opposite_pos - pos;
                 const Transform::UnitVector e2 = m_dp - pos;
 
-                const double valDp = e1.x * e2.x + e1.y * e2.y;
+                const double val_dp = e1.x * e2.x + e1.y * e2.y;
                 const double len = e1.x * e1.x + e1.y * e1.y;
 
                 /*m_dp.x = pos.x + (valDp * e1.x) / len;
                 m_dp.y = pos.y + (valDp * e1.y) / len;*/
                 const Transform::UnitVector npp(
-                    pos.x + (valDp * e1.x) / len, pos.y + (valDp * e1.y) / len, m_dp.unit);
+                    pos.x + (val_dp * e1.x) / len, pos.y + (val_dp * e1.y) / len, m_dp.unit);
                 m_sprite.setPointPosition(npp, m_referential);
             }
         }
@@ -444,21 +383,21 @@ namespace obe::Graphics
             const double n = (90 + ((m_sprite.getScaleFactor().y < 0) ? 180 : 0))
                 - (std::atan2(center.y - m_dp.y, center.x - m_dp.x)) * 180.0 / obe::Utils::Math::pi;
 
-            m_sprite.setRotation(std::fmod(n, 360));
+            m_sprite.set_rotation(std::fmod(n, 360));
         }
     }
 
-    Transform::Referential SpriteHandlePoint::getReferential() const
+    Transform::Referential SpriteHandlePoint::get_referential() const
     {
         return m_referential;
     }
 
-    SpriteHandlePointType SpriteHandlePoint::getType() const
+    SpriteHandlePointType SpriteHandlePoint::get_type() const
     {
         return m_type;
     }
 
-    Transform::Rect& SpriteHandlePoint::getRect() const
+    Transform::Rect& SpriteHandlePoint::get_rect() const
     {
         return m_sprite;
     }
@@ -468,19 +407,19 @@ namespace obe::Graphics
         vili::node result = vili::object {};
         result.emplace("path", m_path);
 
-        const Transform::UnitVector spritePositionRect = this->getPosition().to(m_unit);
-        const Transform::UnitVector spriteSizeRect = this->getSize().to(m_unit);
+        const Transform::UnitVector sprite_position_rect = this->getPosition().to(m_unit);
+        const Transform::UnitVector sprite_size_rect = this->getSize().to(m_unit);
         result.emplace("rect",
-            vili::object { { "x", spritePositionRect.x }, { "y", spritePositionRect.y },
-                { "width", spriteSizeRect.x }, { "height", spriteSizeRect.y },
+            vili::object { { "x", sprite_position_rect.x }, { "y", sprite_position_rect.y },
+                { "width", sprite_size_rect.x }, { "height", sprite_size_rect.y },
                 { "unit", Transform::UnitsMeta::toString(m_unit) } });
 
         result.emplace("rotation", m_angle);
         result.emplace("layer", m_layer);
-        result.emplace("zdepth", m_zdepth);
+        result.emplace("sublayer", m_sublayer);
         result.emplace("transform",
-            vili::object { { "x", m_positionTransformer.getXTransformerName() },
-                { "y", m_positionTransformer.getYTransformerName() } });
+            vili::object { { "x", m_position_transformer.get_x_transformer_name() },
+                { "y", m_position_transformer.get_y_transformer_name() } });
         if (!m_visible)
         {
             result.emplace("visible", m_visible);
@@ -497,95 +436,95 @@ namespace obe::Graphics
     {
         if (data.contains("path"))
         {
-            this->loadTexture(data.at("path"));
+            this->load_texture(data.at("path"));
         }
 
         if (data.contains("rect"))
         {
-            obe::Transform::Referential referentialPos;
-            Transform::UnitVector spritePos(0, 0);
-            Transform::UnitVector spriteSize(1, 1);
+            obe::Transform::Referential referential_pos;
+            Transform::UnitVector sprite_pos(0, 0);
+            Transform::UnitVector sprite_size(1, 1);
             const vili::node& rect = data.at("rect");
             if (rect.contains("unit"))
             {
                 this->setWorkingUnit(Transform::UnitsMeta::fromString(rect.at("unit")));
             }
-            spritePos.unit = m_unit;
-            spritePos.x = rect.at("x");
-            spritePos.y = rect.at("y");
-            spriteSize.unit = m_unit;
-            spriteSize.x = rect.at("width");
-            spriteSize.y = rect.at("height");
-            spritePos = spritePos.to<Transform::Units::SceneUnits>();
-            spriteSize = spriteSize.to<Transform::Units::SceneUnits>();
+            sprite_pos.unit = m_unit;
+            sprite_pos.x = rect.at("x");
+            sprite_pos.y = rect.at("y");
+            sprite_size.unit = m_unit;
+            sprite_size.x = rect.at("width");
+            sprite_size.y = rect.at("height");
+            sprite_pos = sprite_pos.to<Transform::Units::SceneUnits>();
+            sprite_size = sprite_size.to<Transform::Units::SceneUnits>();
             if (rect.contains("referential"))
-                referentialPos = obe::Transform::Referential::FromString(rect.at("referential"));
-            this->setPosition(spritePos, referentialPos);
-            this->setSize(spriteSize, referentialPos);
+                referential_pos = obe::Transform::Referential::FromString(rect.at("referential"));
+            this->setPosition(sprite_pos, referential_pos);
+            this->setSize(sprite_size, referential_pos);
         }
 
         if (data.contains("rotation"))
         {
-            this->setRotation(data.at("rotation"));
+            this->set_rotation(data.at("rotation"));
         }
 
         if (data.contains("layer"))
         {
-            this->setLayer(data.at("layer"));
+            this->set_layer(data.at("layer"));
         }
 
-        if (data.contains("zdepth"))
+        if (data.contains("sublayer"))
         {
-            this->setZDepth(data.at("zdepth"));
+            this->set_sublayer(data.at("sublayer"));
         }
 
         if (data.contains("antiAliasing"))
         {
-            this->setAntiAliasing(data.at("antiAliasing"));
+            this->set_anti_aliasing(data.at("antiAliasing"));
         }
 
         if (data.contains("transform"))
         {
-            std::string spriteXTransformer = "Camera";
-            std::string spriteYTransformer = "Camera";
+            std::string sprite_x_transformer = "Camera";
+            std::string sprite_y_transformer = "Camera";
             const vili::node& transform = data.at("transform");
             if (transform.contains("x"))
             {
-                spriteXTransformer = transform.at("x");
+                sprite_x_transformer = transform.at("x");
             }
             if (transform.contains("y"))
             {
-                spriteYTransformer = transform.at("y");
+                sprite_y_transformer = transform.at("y");
             }
-            const PositionTransformer positionTransformer(spriteXTransformer, spriteYTransformer);
-            this->setPositionTransformer(positionTransformer);
+            const PositionTransformer position_transformer(sprite_x_transformer, sprite_y_transformer);
+            this->set_position_transformer(position_transformer);
         }
 
         if (data.contains("color"))
         {
-            Color spriteColor;
-            spriteColor.load(data.at("color"));
-            this->setColor(spriteColor);
+            Color sprite_color;
+            sprite_color.load(data.at("color"));
+            this->set_color(sprite_color);
         }
 
         if (data.contains("visible"))
         {
-            this->setVisible(data.at("visible"));
+            this->set_visible(data.at("visible"));
         }
     }
 
-    void Sprite::setShader(Shader* shader)
+    void Sprite::set_shader(Shader* shader)
     {
         m_shader = shader;
         m_shader->setUniform("texture", sf::Shader::CurrentTexture);
     }
 
-    Shader& Sprite::getShader() const
+    Shader& Sprite::get_shader() const
     {
         return *m_shader;
     }
 
-    bool Sprite::hasShader() const
+    bool Sprite::has_shader() const
     {
         return (m_shader != nullptr);
     }
@@ -594,4 +533,72 @@ namespace obe::Graphics
     {
         return vili::object {};
     }
-} // namespace obe::Graphics
+
+    EditorSprite::EditorSprite(const std::string& id)
+        : Sprite(id)
+    {
+        for (Transform::Referential& ref : Transform::Referential::Referentials)
+        {
+            m_handlePoints.emplace_back(*this, ref);
+        }
+        m_handlePoints.emplace_back(*this);
+    }
+
+    SpriteHandlePoint* EditorSprite::get_handle_point(
+        const Transform::UnitVector& camera_position, int x, int y)
+    {
+        const Transform::UnitVector pixel_camera
+            = camera_position.to<Transform::Units::ScenePixels>();
+        Transform::UnitVector target_pos
+            = Transform::UnitVector(x, y, Transform::Units::ScenePixels);
+        target_pos = m_position_transformer(target_pos, -pixel_camera, m_layer);
+        unsigned int i = 0;
+        for (Transform::Referential& ref : Transform::Referential::Referentials)
+        {
+            const Transform::UnitVector ref_point
+                = Rect::getPosition(ref).to<Transform::Units::ScenePixels>();
+            int lower_x_bound = std::min(
+                ref_point.x - SpriteHandlePoint::radius, ref_point.x + SpriteHandlePoint::radius);
+            int upper_x_bound = std::max(
+                ref_point.x - SpriteHandlePoint::radius, ref_point.x + SpriteHandlePoint::radius);
+            if (obe::Utils::Math::isBetween(target_pos.x, lower_x_bound, upper_x_bound)
+                && ref != Transform::Referential::Center)
+            {
+                int lower_y_bound = std::min(
+                    ref_point.y - SpriteHandlePoint::radius, ref_point.y + SpriteHandlePoint::radius);
+                int upper_y_bound = std::max(
+                    ref_point.y - SpriteHandlePoint::radius, ref_point.y + SpriteHandlePoint::radius);
+                if (obe::Utils::Math::isBetween(target_pos.y, lower_y_bound, upper_y_bound))
+                    return &m_handlePoints[i];
+            }
+            i++;
+        }
+
+        const double rad_angle = obe::Utils::Math::convertToRadian(-m_angle);
+        const double cos_angle = std::cos(rad_angle);
+        const double sin_angle = std::sin(rad_angle);
+        const Transform::UnitVector top_pos
+            = this->getPosition(Transform::Referential::Top).to<Transform::Units::ScenePixels>();
+        Transform::UnitVector rot_handle = top_pos;
+        Transform::UnitVector result;
+        const double dy = m_size.y / 4;
+        result.x = (-dy * sin_angle) * -1;
+        result.y = (dy * cos_angle) * -1;
+        rot_handle.add(result);
+
+        const int lower_x_bound = std::min(
+            rot_handle.x - SpriteHandlePoint::radius, rot_handle.x + SpriteHandlePoint::radius);
+        const int upper_x_bound = std::max(
+            rot_handle.x - SpriteHandlePoint::radius, rot_handle.x + SpriteHandlePoint::radius);
+        if (obe::Utils::Math::isBetween(target_pos.x, lower_x_bound, upper_x_bound))
+        {
+            const int lower_y_bound = std::min(
+                rot_handle.y - SpriteHandlePoint::radius, rot_handle.y + SpriteHandlePoint::radius);
+            const int upper_y_bound = std::max(
+                rot_handle.y - SpriteHandlePoint::radius, rot_handle.y + SpriteHandlePoint::radius);
+            if (obe::Utils::Math::isBetween(target_pos.y, lower_y_bound, upper_y_bound))
+                return &m_handlePoints.back();
+        }
+        return nullptr;
+    }
+} // namespace obe::graphics

@@ -1,27 +1,27 @@
 #include <Graphics/Shapes.hpp>
 
-namespace obe::Graphics::Shapes
+namespace obe::graphics::shapes
 {
     Rectangle::Rectangle(const sf::RectangleShape& shape)
+        : shape(shape)
     {
-        this->shape = shape;
     }
 
     Rectangle::Rectangle(const Rectangle& rectangle)
+        : shape(rectangle.shape)
     {
-        this->shape = rectangle.shape;
     }
 
-    Transform::UnitVector Rectangle::getSize() const
+    Transform::UnitVector Rectangle::get_size() const
     {
-        const sf::Vector2f pixelSize = shape.getSize();
-        return Transform::UnitVector(pixelSize.x, pixelSize.y, Transform::Units::ScenePixels);
+        const sf::Vector2f pixel_size = shape.getSize();
+        return Transform::UnitVector(pixel_size.x, pixel_size.y, Transform::Units::ScenePixels);
     }
 
-    void Rectangle::setSize(Transform::UnitVector size)
+    void Rectangle::set_size(Transform::UnitVector size)
     {
-        const Transform::UnitVector pixelSize = size.to<Transform::Units::ScenePixels>();
-        shape.setSize(sf::Vector2f(pixelSize.x, pixelSize.y));
+        const Transform::UnitVector pixel_size = size.to<Transform::Units::ScenePixels>();
+        shape.setSize(sf::Vector2f(pixel_size.x, pixel_size.y));
     }
 
     Rectangle::operator sf::RectangleShape&()
@@ -40,13 +40,13 @@ namespace obe::Graphics::Shapes
     }
 
     Circle::Circle(const sf::CircleShape& shape)
+        : shape(shape)
     {
-        this->shape = shape;
     }
 
     Circle::Circle(const Circle& circle)
+        : shape(circle.shape)
     {
-        this->shape = circle.shape;
     }
 
     Circle::operator sf::CircleShape&()
@@ -59,12 +59,12 @@ namespace obe::Graphics::Shapes
         return shape;
     }
 
-    void Circle::setRadius(float radius)
+    void Circle::set_radius(float radius)
     {
         shape.setRadius(radius);
     }
 
-    float Circle::getRadius() const
+    float Circle::get_radius() const
     {
         return shape.getRadius();
     }
@@ -75,13 +75,13 @@ namespace obe::Graphics::Shapes
     }
 
     Polygon::Polygon(const sf::ConvexShape& shape)
+        : shape(shape)
     {
-        this->shape = shape;
     }
 
     Polygon::Polygon(const Polygon& polygon)
+        : shape(polygon.shape)
     {
-        this->shape = polygon.shape;
     }
 
     Polygon::operator sf::ConvexShape&()
@@ -94,21 +94,21 @@ namespace obe::Graphics::Shapes
         return shape;
     }
 
-    void Polygon::setPointPosition(std::size_t index, const Transform::UnitVector& position)
+    void Polygon::set_point_position(std::size_t index, const Transform::UnitVector& position)
     {
-        const Transform::UnitVector pixelPosition = position.to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector pixel_position = position.to<Transform::Units::ScenePixels>();
         if (shape.getPointCount() <= index)
         {
             shape.setPointCount(index + 1);
         }
-        shape.setPoint(index, sf::Vector2f(pixelPosition.x, pixelPosition.y));
+        shape.setPoint(index, sf::Vector2f(pixel_position.x, pixel_position.y));
     }
 
-    Transform::UnitVector Polygon::getPointPosition(std::size_t index) const
+    Transform::UnitVector Polygon::get_point_position(std::size_t index) const
     {
-        const sf::Vector2f pixelPosition = shape.getPoint(index);
+        const sf::Vector2f pixel_position = shape.getPoint(index);
         return Transform::UnitVector(
-            pixelPosition.x, pixelPosition.y, Transform::Units::ScenePixels);
+            pixel_position.x, pixel_position.y, Transform::Units::ScenePixels);
     }
 
     void Polygon::draw(sf::RenderTarget& target, sf::RenderStates states) const
@@ -117,13 +117,13 @@ namespace obe::Graphics::Shapes
     }
 
     Text::Text(const RichText& shape)
+        : shape(shape)
     {
-        this->shape = shape;
     }
 
     Text::Text(const Text& text)
+        : shape(text.shape)
     {
-        this->shape = text.shape;
     }
 
     Text::operator RichText&()
@@ -141,27 +141,27 @@ namespace obe::Graphics::Shapes
         shape.clear();
     }
 
-    void Text::append(const Graphics::Text& text)
+    void Text::append(const graphics::Text& text)
     {
         shape.append(text);
     }
 
-    const Font& Text::getFont() const
+    const Font& Text::get_font() const
     {
         return shape.getFont();
     }
 
-    void Text::setFont(const Font& font)
+    void Text::set_font(const Font& font)
     {
         shape.setFont(font);
     }
 
-    unsigned Text::getCharacterSize() const
+    unsigned Text::get_character_size() const
     {
         return shape.getCharacterSize();
     }
 
-    void Text::setCharacterSize(unsigned size)
+    void Text::set_character_size(unsigned size)
     {
         shape.setCharacterSize(size);
     }

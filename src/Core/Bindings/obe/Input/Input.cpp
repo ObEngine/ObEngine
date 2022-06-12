@@ -60,7 +60,7 @@ namespace obe::Input::Bindings
             = InputNamespace.new_usertype<obe::Input::InputAction>("InputAction",
                 sol::call_constructor,
                 sol::constructors<obe::Input::InputAction(
-                    obe::Event::EventGroup*, const std::string&)>(),
+                    obe::event::EventGroup*, const std::string&)>(),
                 sol::base_classes, sol::bases<obe::Types::Identifiable>());
         bindInputAction["addCondition"] = &obe::Input::InputAction::addCondition;
         bindInputAction["addContext"] = &obe::Input::InputAction::addContext;
@@ -94,7 +94,7 @@ namespace obe::Input::Bindings
         bindInputButton["getAxisPosition"] = &obe::Input::InputButton::getAxisPosition;
         bindInputButton["getWheelDelta"] = &obe::Input::InputButton::getWheelDelta;
         bindInputButton["getKey"] = &obe::Input::InputButton::getKey;
-        bindInputButton["getName"] = &obe::Input::InputButton::getName;
+        bindInputButton["get_name"] = &obe::Input::InputButton::getName;
         bindInputButton["getType"] = &obe::Input::InputButton::getType;
         bindInputButton["is"] = &obe::Input::InputButton::is;
         bindInputButton["isPressed"] = &obe::Input::InputButton::isPressed;
@@ -133,7 +133,7 @@ namespace obe::Input::Bindings
         sol::usertype<obe::Input::InputManager> bindInputManager
             = InputNamespace.new_usertype<obe::Input::InputManager>("InputManager",
                 sol::call_constructor,
-                sol::constructors<obe::Input::InputManager(obe::Event::EventNamespace&)>(),
+                sol::constructors<obe::Input::InputManager(obe::event::EventNamespace&)>(),
                 sol::base_classes, sol::bases<obe::Types::Togglable>());
         bindInputManager["actionExists"] = &obe::Input::InputManager::actionExists;
         bindInputManager["addContext"] = &obe::Input::InputManager::addContext;

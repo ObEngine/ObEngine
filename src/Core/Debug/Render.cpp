@@ -3,10 +3,10 @@
 #include <Graphics/DrawUtils.hpp>
 #include <Transform/Polygon.hpp>
 
-namespace obe::Debug::Render
+namespace obe::debug::render
 {
-    void drawPolygon(const Graphics::RenderTarget target, Transform::Polygon& polygon,
-        bool drawLines, bool drawPoints, bool drawMasterPoint, bool drawSkel,
+    void draw_polygon(const graphics::RenderTarget target, Transform::Polygon& polygon,
+        bool draw_lines, bool draw_points, bool draw_centroid, bool draw_skeleton,
         Transform::UnitVector offset)
     {
         if (polygon.getPointsAmount() >= 3)
@@ -15,46 +15,50 @@ namespace obe::Debug::Render
                 = polygon.getCentroid().to<Transform::Units::ScenePixels>();
 
             const float r = 6.f;
-            // TODO: Refactor using C++20 designated initializers
-            const Graphics::Utils::DrawPolygonOptions drawOptions { drawLines, drawPoints, r };
 
-            std::vector<Transform::UnitVector> drawPoints;
-            std::vector<Transform::UnitVector> pixelPoints;
-            const Transform::PolygonPath& polygonPoints = polygon.getAllPoints();
-            pixelPoints.reserve(polygonPoints.size());
-            drawPoints.reserve(polygonPoints.size());
+            const graphics::utils::DrawPolygonOptions draw_options {
+                .lines = draw_lines,
+                .points = draw_points,
+                .radius = r
+            };
 
-            std::transform(polygonPoints.begin(), polygonPoints.end(),
-                std::back_inserter(pixelPoints),
+            std::vector<Transform::UnitVector> draw_points;
+            std::vector<Transform::UnitVector> pixel_points;
+            const Transform::PolygonPath& polygon_points = polygon.getAllPoints();
+            pixel_points.reserve(polygon_points.size());
+            draw_points.reserve(polygon_points.size());
+
+            std::ranges::transform(polygon_points,
+                std::back_inserter(pixel_points),
                 [](const auto& point) { return point->to(Transform::Units::ScenePixels); });
 
-            for (const Transform::UnitVector& point : pixelPoints)
+            for (const Transform::UnitVector& point : pixel_points)
             {
-                drawPoints.emplace_back(point - offset);
+                draw_points.emplace_back(point - offset);
             }
 
-            if (drawMasterPoint)
+            if (draw_centroid)
             {
-                const sf::Color skeletonColor = sf::Color(255, 200, 0);
-                const sf::Color centroidColor = sf::Color(255, 150, 0);
-                sf::CircleShape polyPt;
-                polyPt.setPosition(
+                const sf::Color skeleton_color = sf::Color(255, 200, 0);
+                const sf::Color centroid_color = sf::Color(255, 150, 0);
+                sf::CircleShape point_shape;
+                point_shape.setPosition(
                     sf::Vector2f(centroid.x - offset.x - r, centroid.y - offset.y - r));
-                polyPt.setRadius(r);
+                point_shape.setRadius(r);
 
-                polyPt.setFillColor(centroidColor);
-                target.draw(polyPt);
-                if (drawSkel)
+                point_shape.setFillColor(centroid_color);
+                target.draw(point_shape);
+                if (draw_skeleton)
                 {
-                    for (const Transform::UnitVector& point : pixelPoints)
+                    for (const Transform::UnitVector& point : pixel_points)
                     {
 
-                        Graphics::Utils::drawLine(target, point.x - offset.x, point.y - offset.y,
-                            centroid.x - offset.x, centroid.y - offset.y, 2, skeletonColor);
+                        graphics::utils::draw_line(target, point.x - offset.x, point.y - offset.y,
+                            centroid.x - offset.x, centroid.y - offset.y, 2, skeleton_color);
                     }
                 }
             }
-            Graphics::Utils::drawPolygon(target, drawPoints, drawOptions);
+            graphics::utils::draw_polygon(target, draw_points, draw_options);
         }
     }
 }

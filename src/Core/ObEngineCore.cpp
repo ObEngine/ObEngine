@@ -11,21 +11,21 @@ namespace obe
 {
     void InitEngine(unsigned int surfaceWidth, unsigned int surfaceHeight)
     {
-        Debug::InitLogger();
+        debug::init_logger();
 
-        Debug::Log->info("Using ObEngineCore (Version : {} ({}:{}))", Config::OBENGINE_VERSION,
-            Config::OBENGINE_GIT_BRANCH, Config::OBENGINE_GIT_HASH);
+        debug::Log->info("Using ObEngineCore (Version : {} ({}:{}))", config::OBENGINE_VERSION,
+            config::OBENGINE_GIT_BRANCH, config::OBENGINE_GIT_HASH);
 
         Transform::UnitVector::Init(surfaceWidth, surfaceHeight);
-        Debug::Log->debug("<ObEngine> Initialising Position Transformers");
-        Graphics::InitPositionTransformer();
+        debug::Log->debug("<ObEngine> Initialising Position Transformers");
+        graphics::init_position_transformers();
 
-        Debug::Log->debug("<ObEngine> Mounting paths");
+        debug::Log->debug("<ObEngine> Mounting paths");
         System::MountablePath::LoadMountFile();
 
-        Debug::Log->debug("<ObEngine> Initialising NullTexture");
-        Graphics::MakeNullTexture();
+        debug::Log->debug("<ObEngine> Initialising NullTexture");
+        graphics::make_null_texture();
 
-        Debug::Log->info("<ObEngine> Initialisation over !");
+        debug::Log->info("<ObEngine> Initialisation over !");
     }
 }

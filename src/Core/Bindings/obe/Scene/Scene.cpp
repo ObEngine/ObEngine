@@ -45,9 +45,9 @@ namespace obe::Scene::Bindings
         sol::table SceneNamespace = state["obe"]["Scene"].get<sol::table>();
         sol::usertype<obe::Scene::Scene> bindScene = SceneNamespace.new_usertype<obe::Scene::Scene>(
             "Scene", sol::call_constructor,
-            sol::constructors<obe::Scene::Scene(obe::Event::EventNamespace&, sol::state_view)>(),
+            sol::constructors<obe::Scene::Scene(obe::event::EventNamespace&, sol::state_view)>(),
             sol::base_classes, sol::bases<obe::Types::Serializable>());
-        bindScene["attachResourceManager"] = &obe::Scene::Scene::attachResourceManager;
+        bindScene["attach_resource_manager"] = &obe::Scene::Scene::attachResourceManager;
         bindScene["loadFromFile"]
             = sol::overload(static_cast<void (obe::Scene::Scene::*)(const std::string&)>(
                                 &obe::Scene::Scene::setFutureLoadFromFile),
@@ -83,12 +83,12 @@ namespace obe::Scene::Bindings
         bindScene["getCamera"] = &obe::Scene::Scene::getCamera;
         bindScene["reorganizeLayers"] = &obe::Scene::Scene::reorganizeLayers;
         bindScene["createSprite"] = sol::overload(
-            [](obe::Scene::Scene* self) -> obe::Graphics::Sprite& { return self->createSprite(); },
-            [](obe::Scene::Scene* self, const std::string& id) -> obe::Graphics::Sprite& {
+            [](obe::Scene::Scene* self) -> obe::graphics::Sprite& { return self->createSprite(); },
+            [](obe::Scene::Scene* self, const std::string& id) -> obe::graphics::Sprite& {
                 return self->createSprite(id);
             },
             [](obe::Scene::Scene* self, const std::string& id, bool addToSceneRoot)
-                -> obe::Graphics::Sprite& { return self->createSprite(id, addToSceneRoot); });
+                -> obe::graphics::Sprite& { return self->createSprite(id, addToSceneRoot); });
         bindScene["getSpriteAmount"] = &obe::Scene::Scene::getSpriteAmount;
         bindScene["getAllSprites"] = &obe::Scene::Scene::getAllSprites;
         bindScene["getSpritesByLayer"] = &obe::Scene::Scene::getSpritesByLayer;
@@ -97,13 +97,13 @@ namespace obe::Scene::Bindings
         bindScene["doesSpriteExists"] = &obe::Scene::Scene::doesSpriteExists;
         bindScene["removeSprite"] = &obe::Scene::Scene::removeSprite;
         bindScene["createCollider"] = sol::overload(
-            [](obe::Scene::Scene* self) -> obe::Collision::PolygonalCollider& {
+            [](obe::Scene::Scene* self) -> obe::collision::PolygonalCollider& {
                 return self->createCollider();
             },
             [](obe::Scene::Scene* self, const std::string& id)
-                -> obe::Collision::PolygonalCollider& { return self->createCollider(id); },
+                -> obe::collision::PolygonalCollider& { return self->createCollider(id); },
             [](obe::Scene::Scene* self, const std::string& id,
-                bool addToSceneRoot) -> obe::Collision::PolygonalCollider& {
+                bool addToSceneRoot) -> obe::collision::PolygonalCollider& {
                 return self->createCollider(id, addToSceneRoot);
             });
         bindScene["getColliderAmount"] = &obe::Scene::Scene::getColliderAmount;
@@ -139,7 +139,7 @@ namespace obe::Scene::Bindings
                 sol::bases<obe::Transform::Movable, obe::Types::Selectable>());
         bindSceneNode["addChild"] = &obe::Scene::SceneNode::addChild;
         bindSceneNode["removeChild"] = &obe::Scene::SceneNode::removeChild;
-        bindSceneNode["setPosition"] = &obe::Scene::SceneNode::setPosition;
+        bindSceneNode["setPosition"] = &obe::Scene::SceneNode::set_position;
         bindSceneNode["move"] = &obe::Scene::SceneNode::move;
         bindSceneNode["setPositionWithoutChildren"]
             = &obe::Scene::SceneNode::setPositionWithoutChildren;

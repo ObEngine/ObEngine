@@ -12,25 +12,25 @@ int lua_exception_handler(lua_State* L, sol::optional<const std::exception&> may
     if (maybe_exception)
     {
         const std::exception& ex = *maybe_exception;
-        obe::Debug::Log->error("<LuaError>[Exception] : {}", ex.what());
+        obe::debug::Log->error("<LuaError>[Exception] : {}", ex.what());
     }
     else
     {
-        obe::Debug::Log->error("<LuaError>[Error] : {}", description);
+        obe::debug::Log->error("<LuaError>[Error] : {}", description);
     }
     return sol::stack::push(L, description);
 }
 
-namespace obe::Engine
+namespace obe::engine
 {
-    void Engine::initConfig()
+    void Engine::init_config()
     {
         m_config.load();
     }
 
-    void Engine::initInput()
+    void Engine::init_input()
     {
-        m_input = std::make_unique<Input::InputManager>(*m_eventNamespace);
+        m_input = std::make_unique<Input::InputManager>(*m_event_namespace);
         if (m_config.contains("Input"))
         {
             m_input->configure(m_config.at("Input"));
@@ -38,13 +38,13 @@ namespace obe::Engine
         m_input->addContext("game");
     }
 
-    void Engine::initFramerate()
+    void Engine::init_framerate()
     {
         m_framerate = std::make_unique<Time::FramerateManager>(*m_window);
         m_framerate->configure(m_config.at("Framerate"));
     }
 
-    void Engine::initScript()
+    void Engine::init_script()
     {
         m_lua = std::make_unique<Script::LuaState>();
         m_lua->open_libraries(sol::lib::base, sol::lib::string, sol::lib::table, sol::lib::package,
@@ -60,7 +60,7 @@ namespace obe::Engine
             (*m_lua)["Helpers"][helper_name] = helper;
         }
 
-        this->initPlugins();
+        this->init_plugins();
 
         Bindings::IndexCoreBindings(*m_lua);
 
@@ -76,65 +76,65 @@ namespace obe::Engine
         (*m_lua)["Engine"] = this;
     }
 
-    void Engine::initEvents()
+    void Engine::init_events()
     {
-        m_events = std::make_unique<Event::EventManager>();
-        m_eventNamespace = &m_events->createNamespace("Event");
-        m_userEventNamespace = &m_events->createNamespace("UserEvent");
-        m_userEventNamespace->setJoinable(true);
+        m_events = std::make_unique<event::EventManager>();
+        m_event_namespace = &m_events->create_namespace("Event");
+        m_user_event_namespace = &m_events->create_namespace("UserEvent");
+        m_user_event_namespace->set_joinable(true);
 
-        e_game = m_eventNamespace->createGroup("Game");
-        e_game->add<Events::Game::Start>();
-        e_game->add<Events::Game::End>();
-        e_game->add<Events::Game::Update>();
-        e_game->add<Events::Game::Render>();
+        e_game = m_event_namespace->create_group("Game");
+        e_game->add<events::game::Start>();
+        e_game->add<events::game::End>();
+        e_game->add<events::game::Update>();
+        e_game->add<events::game::Render>();
 
-        e_custom = m_userEventNamespace->createGroup("Custom");
-        e_custom->setJoinable(true);
+        e_custom = m_user_event_namespace->create_group("Custom");
+        e_custom->set_joinable(true);
 
-        e_game->trigger(Events::Game::Start {});
+        e_game->trigger(events::game::Start {});
     }
 
-    void Engine::initResources()
+    void Engine::init_resources()
     {
         m_resources = std::make_unique<ResourceManager>();
         if (m_config.contains("GameConfig"))
         {
-            const vili::node& gameConfig = m_config.at("GameConfig");
-            if (gameConfig.contains("antiAliasing"))
+            const vili::node& game_config = m_config.at("GameConfig");
+            if (game_config.contains("antiAliasing"))
             {
-                m_resources->defaultAntiAliasing = gameConfig.at("antiAliasing");
-                Debug::Log->debug("<ResourceManager> AntiAliasing Default is {}",
-                    m_resources->defaultAntiAliasing);
+                m_resources->default_anti_aliasing = game_config.at("antiAliasing");
+                debug::Log->debug("<ResourceManager> AntiAliasing Default is {}",
+                    m_resources->default_anti_aliasing);
             }
         }
     }
 
-    void Engine::initWindow()
+    void Engine::init_window()
     {
-        vili::node windowConfig = m_config.at("Window").at("Game");
-        Debug::Log->debug("<Engine> Window configuration : {}", windowConfig.dump());
-        m_window = std::make_unique<System::Window>(windowConfig);
+        vili::node window_config = m_config.at("Window").at("Game");
+        debug::Log->debug("<Engine> Window configuration : {}", window_config.dump());
+        m_window = std::make_unique<System::Window>(window_config);
     }
 
-    void Engine::initCursor()
+    void Engine::init_cursor()
     {
-        m_cursor = std::make_unique<System::Cursor>(*m_window, *m_eventNamespace);
+        m_cursor = std::make_unique<System::Cursor>(*m_window, *m_event_namespace);
     }
 
-    void Engine::initPlugins()
+    void Engine::init_plugins()
     {
-        Debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}",
+        debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}",
             System::MountablePath::FromPrefix("cwd").basePath);
-        System::Path cPluginPath
+        System::Path plugin_path_base
             = System::Path(System::MountablePath::FromPrefix("cwd").basePath).add("Plugins");
-        if (Utils::File::directoryExists(cPluginPath.toString()))
+        if (Utils::File::directoryExists(plugin_path_base.toString()))
         {
-            for (const std::string& filename : Utils::File::getFileList(cPluginPath.toString()))
+            for (const std::string& filename : Utils::File::getFileList(plugin_path_base.toString()))
             {
-                const std::string pluginPath = cPluginPath.add(filename).toString();
-                const std::string pluginName = Utils::String::split(filename, ".")[0];
-                auto plugin = std::make_unique<System::Plugin>(pluginName, pluginPath);
+                const std::string plugin_path = plugin_path_base.add(filename).toString();
+                const std::string plugin_name = Utils::String::split(filename, ".")[0];
+                auto plugin = std::make_unique<System::Plugin>(plugin_name, plugin_path);
                 if (plugin->isValid())
                 {
                     m_plugins.emplace_back(std::move(plugin));
@@ -147,13 +147,13 @@ namespace obe::Engine
         }
     }
 
-    void Engine::initScene()
+    void Engine::init_scene()
     {
-        m_scene = std::make_unique<Scene::Scene>(*m_eventNamespace, *m_lua);
+        m_scene = std::make_unique<Scene::Scene>(*m_event_namespace, *m_lua);
         m_scene->attachResourceManager(*m_resources);
     }
 
-    void Engine::initLogger() const
+    void Engine::init_logger() const
     {
         if (m_config.contains("Debug"))
         {
@@ -163,12 +163,12 @@ namespace obe::Engine
                 vili::node logging = debug.at("Logging");
                 if (logging.contains("level"))
                 {
-                    std::string logLevelConfigEntry = logging.at("level");
-                    const Debug::LogLevel logLevel
-                        = Debug::LogLevelMeta::fromString(logLevelConfigEntry);
-                    const auto level = static_cast<spdlog::level::level_enum>(logLevel);
-                    Debug::Log->set_level(level);
-                    Debug::Log->info("Log Level {}", logLevel);
+                    std::string log_level_config_entry = logging.at("level");
+                    const debug::LogLevel log_level
+                        = debug::LogLevelMeta::fromString(log_level_config_entry);
+                    const auto level = static_cast<spdlog::level::level_enum>(log_level);
+                    debug::Log->set_level(level);
+                    debug::Log->info("Log Level {}", log_level);
                 }
             }
         }
@@ -178,7 +178,7 @@ namespace obe::Engine
     {
         if (e_game)
         {
-            e_game->trigger(Events::Game::End {});
+            e_game->trigger(events::game::End {});
         }
         if (m_scene)
         {
@@ -194,39 +194,39 @@ namespace obe::Engine
 
     void Engine::purge()
     {
-        Debug::Log->debug("Cleaning Window");
+        debug::Log->debug("Cleaning Window");
         m_window.reset();
-        Debug::Log->debug("Cleaning Cursor");
+        debug::Log->debug("Cleaning Cursor");
         m_cursor.reset();
-        Debug::Log->debug("Cleaning Framerate");
+        debug::Log->debug("Cleaning Framerate");
         m_framerate.reset();
-        Debug::Log->debug("Cleaning Scene");
+        debug::Log->debug("Cleaning Scene");
         m_scene.reset();
-        Debug::Log->debug("Running Lua State Garbage Collection");
+        debug::Log->debug("Running Lua State Garbage Collection");
         if (m_lua)
         {
             m_lua->collect_garbage();
             m_lua->collect_garbage();
         }
-        Debug::Log->debug("Cleaning ResourceManager");
+        debug::Log->debug("Cleaning ResourceManager");
         m_resources.reset();
-        Debug::Log->debug("Cleaning Game Events");
+        debug::Log->debug("Cleaning Game Events");
         e_game.reset();
         e_custom.reset();
-        Debug::Log->debug("Cleaning InputManager");
+        debug::Log->debug("Cleaning InputManager");
         m_input.reset();
-        Debug::Log->debug("Cleaning Events");
+        debug::Log->debug("Cleaning Events");
         if (m_events)
         {
             m_events->clear();
             m_events->update();
         }
         m_events.reset();
-        Debug::Log->debug("Cleaning Lua State");
+        debug::Log->debug("Cleaning Lua State");
         m_lua.reset();
     }
 
-    void Engine::deinitPlugins() const
+    void Engine::deinit_plugins() const
     {
         for (const auto& plugin : m_plugins)
         {
@@ -234,7 +234,7 @@ namespace obe::Engine
         }
     }
 
-    void Engine::handleWindowEvents() const
+    void Engine::handle_window_events() const
     {
         sf::Event event;
         m_input->getInput("MouseWheelUp").setMouseWheelDelta(0);
@@ -310,65 +310,66 @@ namespace obe::Engine
     }
 
     Engine::Engine()
-        : m_log(Debug::Log)
+        : m_log(debug::Log)
     {
     }
 
     Engine::~Engine()
     {
-        this->deinitPlugins();
+        this->deinit_plugins();
         try
         {
             this->clean();
         }
         catch (BaseException& e)
         {
-            Debug::Log->error("Failed to properly clean the engine :\n{}", e.what());
+            debug::Log->error("Failed to properly clean the engine :\n{}", e.what());
         }
         this->purge();
-        Debug::Log->debug("Engine has been correctly cleaned");
+        debug::Log->debug("Engine has been correctly cleaned");
     }
 
     void Engine::init()
     {
-        this->initConfig();
-        this->initLogger();
-        this->initScript();
-        this->initEvents();
-        this->initInput();
-        this->initWindow();
-        this->initCursor();
-        this->initFramerate();
-        // this->initPlugins();
-        this->initResources();
-        this->initScene();
+        this->init_config();
+        this->init_logger();
+        this->init_script();
+        this->init_events();
+        this->init_input();
+        this->init_window();
+        this->init_cursor();
+        this->init_framerate();
+        // this->init_plugins();
+        this->init_resources();
+        this->init_scene();
         m_initialized = true;
     }
 
     void Engine::run() const
     {
         if (!m_initialized)
-            throw Exceptions::UnitializedEngine(EXC_INFO);
+            throw exceptions::UnitializedEngine(EXC_INFO);
 
-        const std::string bootScript = "*://boot.lua"_fs;
-        if (bootScript.empty())
-            throw Exceptions::BootScriptMissing(System::MountablePath::StringPaths(), EXC_INFO);
-        const sol::protected_function_result loadResult = m_lua->safe_script_file(bootScript);
+        const std::string boot_script = "*://boot.lua"_fs;
+        if (boot_script.empty())
+            throw exceptions::BootScriptMissing(System::MountablePath::StringPaths(), EXC_INFO);
+        const sol::protected_function_result load_result = m_lua->safe_script_file(boot_script);
 
-        if (!loadResult.valid())
+        if (!load_result.valid())
         {
-            const auto errObj = loadResult.get<sol::error>();
-            throw Exceptions::BootScriptLoadingError(errObj.what(), EXC_INFO);
+            const auto err_obj = load_result.get<sol::error>();
+            throw exceptions::BootScriptLoadingError(err_obj.what(), EXC_INFO);
         }
         m_window->create();
-        const sol::protected_function bootFunction
+        const sol::protected_function boot_function
             = (*m_lua)["Game"]["Start"].get<sol::protected_function>();
-
-        const sol::protected_function_result bootResult = bootFunction.call();
-        if (!bootResult.valid())
+        try
         {
-            const auto errObj = bootResult.get<sol::error>();
-            throw Exceptions::BootScriptExecutionError("Game.Start", errObj.what(), EXC_INFO);
+            Script::safeLuaCall(boot_function);
+        }
+        catch (const BaseException& exc)
+        {
+            throw exceptions::BootScriptExecutionError(EXC_INFO).nest(exc);
         }
 
         m_framerate->start();
@@ -381,13 +382,13 @@ namespace obe::Engine
             if (m_framerate->doUpdate())
             {
                 dts.push_back(m_framerate->getGameSpeed());
-                e_game->trigger(Events::Game::Update { m_framerate->getGameSpeed() });
+                e_game->trigger(events::game::Update { m_framerate->getGameSpeed() });
                 this->update();
             }
 
             if (m_framerate->doRender())
             {
-                e_game->trigger(Events::Game::Render {});
+                e_game->trigger(events::game::Render {});
                 this->render();
                 m_framerate->reset();
             }
@@ -397,74 +398,74 @@ namespace obe::Engine
                 // m_lua->collect_garbage();
             }
         }
-        Time::TimeUnit totalTime = Time::epoch() - start;
-        double dtSum = 0;
+        Time::TimeUnit total_time = Time::epoch() - start;
+        double dt_sum = 0;
         for (auto dt : dts)
         {
-            dtSum += dt.as<double>();
+            dt_sum += dt.as<double>();
         }
-        Debug::Log->info("Execution completed with {} ticks in {} seconds (dt sum: {})", dts.size(),
-            totalTime, dtSum);
-        vili::node profiler = m_events->dumpProfilerResults();
+        debug::Log->info("Execution completed with {} ticks in {} seconds (dt sum: {})", dts.size(),
+            total_time, dt_sum);
+        vili::node profiler = m_events->dump_profiler_results();
         profiler.emplace("dts", dts);
-        std::ofstream profilerOutput;
-        profilerOutput.open("profiler.vili");
+        std::ofstream profiler_output;
+        profiler_output.open("profiler.vili");
         std::string dump = profiler.dump();
-        profilerOutput.write(dump.data(), dump.size());
-        profilerOutput.close();
+        profiler_output.write(dump.data(), dump.size());
+        profiler_output.close();
     }
 
-    Audio::AudioManager& Engine::getAudioManager()
+    audio::AudioManager& Engine::get_audio_manager()
     {
         return m_audio;
     }
 
-    Config::ConfigurationManager& Engine::getConfigurationManager()
+    config::ConfigurationManager& Engine::get_configuration_manager()
     {
         return m_config;
     }
 
-    ResourceManager& Engine::getResourceManager()
+    ResourceManager& Engine::get_resource_manager()
     {
         return *m_resources;
     }
 
-    Input::InputManager& Engine::getInputManager() const
+    Input::InputManager& Engine::get_input_manager() const
     {
         return *m_input;
     }
 
-    Time::FramerateManager& Engine::getFramerateManager() const
+    Time::FramerateManager& Engine::get_framerate_manager() const
     {
         return *m_framerate;
     }
 
-    Event::EventManager& Engine::getEventManager() const
+    event::EventManager& Engine::get_event_manager() const
     {
         return *m_events;
     }
 
-    Scene::Scene& Engine::getScene() const
+    Scene::Scene& Engine::get_scene() const
     {
         return *m_scene;
     }
 
-    System::Cursor& Engine::getCursor() const
+    System::Cursor& Engine::get_cursor() const
     {
         return *m_cursor;
     }
 
-    System::Window& Engine::getWindow() const
+    System::Window& Engine::get_window() const
     {
         return *m_window;
     }
 
-    Script::LuaState& Engine::getLuaState() const
+    Script::LuaState& Engine::get_lua_state() const
     {
         return *m_lua;
     }
 
-    Debug::Logger Engine::getLogger() const
+    debug::Logger Engine::get_logger() const
     {
         return m_log.lock();
     }
@@ -472,7 +473,7 @@ namespace obe::Engine
     void Engine::update() const
     {
         // Events
-        this->handleWindowEvents();
+        this->handle_window_events();
 
         for (const auto& plugin : m_plugins)
         {

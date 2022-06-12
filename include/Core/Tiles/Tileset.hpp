@@ -25,7 +25,7 @@ namespace obe::Tiles
         uint32_t m_imageWidth;
         uint32_t m_imageHeight;
         std::string m_imagePath;
-        Graphics::Texture m_image;
+        graphics::Texture m_image;
 
     public:
         Tileset(const std::string& id, uint32_t firstTileId, uint32_t count,
@@ -41,7 +41,7 @@ namespace obe::Tiles
         uint32_t getImageWidth() const;
         uint32_t getImageHeight() const;
         std::string getImagePath() const;
-        Graphics::Texture getTexture() const;
+        graphics::Texture getTexture() const;
     };
 
     class TilesetCollection

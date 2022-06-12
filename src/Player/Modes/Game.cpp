@@ -4,7 +4,7 @@ namespace obe::Modes
 {
     void startGame()
     {
-        Engine::Engine engine;
+        engine::Engine engine;
         engine.init();
         engine.run();
     }

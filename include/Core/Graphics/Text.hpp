@@ -19,7 +19,7 @@ namespace sf
     typedef Rect<float> FloatRect;
 }
 
-namespace obe::Graphics
+namespace obe::graphics
 {
     class Text
     {

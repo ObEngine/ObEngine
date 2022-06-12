@@ -3,79 +3,79 @@
 #include <Collision/TrajectoryNode.hpp>
 #include <Utils/MathUtils.hpp>
 
-namespace obe::Collision
+namespace obe::collision
 {
-    TrajectoryNode::TrajectoryNode(Scene::SceneNode& sceneNode)
-        : m_sceneNode(sceneNode)
+    TrajectoryNode::TrajectoryNode(Scene::SceneNode& scene_node)
+        : m_scene_node(scene_node)
     {
     }
 
-    void TrajectoryNode::setProbe(PolygonalCollider* probe)
+    void TrajectoryNode::set_probe(PolygonalCollider* probe)
     {
         m_probe = probe;
     }
 
-    Trajectory& TrajectoryNode::addTrajectory(const std::string& id, Transform::Units unit)
+    Trajectory& TrajectoryNode::add_trajectory(const std::string& id, Transform::Units unit)
     {
         m_trajectories[id] = std::make_unique<Trajectory>(unit);
-        return *m_trajectories[id].get();
+        return *m_trajectories[id];
     }
 
-    Trajectory& TrajectoryNode::getTrajectory(const std::string& id)
+    Trajectory& TrajectoryNode::get_trajectory(const std::string& id) const
     {
-        return *m_trajectories[id].get();
+        return *m_trajectories.at(id);
     }
 
-    void TrajectoryNode::removeTrajectory(const std::string& id)
+    void TrajectoryNode::remove_trajectory(const std::string& id)
     {
         m_trajectories.erase(id);
     }
 
-    void TrajectoryNode::update(const double dt)
+    void TrajectoryNode::update(const double dt) const
     {
-        auto getOffset = [&dt](Trajectory& trajectory)
+        auto get_offset = [&dt](const Trajectory& trajectory)
         {
-            const double speed = trajectory.getSpeed() + trajectory.getAcceleration() * dt;
-            const double radAngle = (Utils::Math::pi / 180.0) * -trajectory.getAngle();
-            const double addX = std::cos(radAngle) * (speed * dt);
-            const double addY = std::sin(radAngle) * (speed * dt);
-            return Transform::UnitVector(addX, addY, trajectory.getUnit());
+            const double speed = trajectory.get_speed() + trajectory.get_acceleration() * dt;
+            const double rad_angle = (Utils::Math::pi / 180.0) * -trajectory.get_angle();
+            const double x_offset = std::cos(rad_angle) * (speed * dt);
+            const double y_offset = std::sin(rad_angle) * (speed * dt);
+            return Transform::UnitVector(x_offset, y_offset, trajectory.get_unit());
         };
         for (auto& trajectory : m_trajectories)
         {
-            Trajectory* currentTrajectory = trajectory.second.get();
-            if (currentTrajectory->isEnabled())
+            Trajectory* current_trajectory = trajectory.second.get();
+            if (current_trajectory->isEnabled())
             {
-                auto baseOffset = getOffset(*currentTrajectory);
+                auto base_offset = get_offset(*current_trajectory);
 
-                for (TrajectoryCheckFunction& check : trajectory.second->getChecks())
+                for (TrajectoryCheckFunction& check : trajectory.second->get_checks())
                 {
-                    check(*currentTrajectory, baseOffset, m_probe);
+                    check(*current_trajectory, base_offset, m_probe);
                 }
-                if (!currentTrajectory->getStatic())
+                if (!current_trajectory->is_static())
                 {
-                    currentTrajectory->setSpeed(
-                        currentTrajectory->m_speed + currentTrajectory->m_acceleration * dt);
-                    baseOffset = getOffset(*currentTrajectory);
-                    obe::Collision::CollisionData collData;
-                    collData.offset = baseOffset;
+                    current_trajectory->set_speed(
+                        current_trajectory->m_speed + current_trajectory->m_acceleration * dt);
+                    base_offset = get_offset(*current_trajectory);
+                    obe::collision::CollisionData collision_data;
+                    collision_data.offset = base_offset;
                     if (m_probe != nullptr)
                     {
-                        collData = m_probe->getMaximumDistanceBeforeCollision(collData.offset);
+                        collision_data = m_probe->get_distance_before_collision(collision_data.offset);
                     }
-                    m_sceneNode.move(collData.offset);
-                    auto onCollideCallback = trajectory.second->getOnCollideCallback();
-                    if (collData.offset != baseOffset && onCollideCallback)
+                    m_scene_node.move(collision_data.offset);
+                    auto on_collide_callback = trajectory.second->get_on_collide_callback();
+                    if (collision_data.offset != base_offset && on_collide_callback)
                     {
-                        onCollideCallback(*trajectory.second.get(), baseOffset, collData);
+                        on_collide_callback(*trajectory.second, base_offset, collision_data);
                     }
                 }
             }
         }
     }
 
-    Scene::SceneNode& TrajectoryNode::getSceneNode() const
+    Scene::SceneNode& TrajectoryNode::get_scene_node() const
     {
-        return m_sceneNode;
+        return m_scene_node;
     }
-} // namespace obe::Collision
+} // namespace obe::collision

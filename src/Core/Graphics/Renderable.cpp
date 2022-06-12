@@ -1,33 +1,33 @@
 #include <Graphics/Renderable.hpp>
 
-namespace obe::Graphics
+namespace obe::graphics
 {
-    int32_t Renderable::getLayer() const
+    int32_t Renderable::get_layer() const
     {
         return m_layer;
     }
 
-    int32_t Renderable::getZDepth() const
+    int32_t Renderable::get_sublayer() const
     {
-        return m_zdepth;
+        return m_sublayer;
     }
 
-    bool Renderable::isVisible() const
+    bool Renderable::is_visible() const
     {
         return m_visible;
     }
 
-    void Renderable::setLayer(int32_t layer)
+    void Renderable::set_layer(int32_t layer)
     {
         m_layer = layer;
     }
 
-    void Renderable::setZDepth(int32_t zdepth)
+    void Renderable::set_sublayer(int32_t sublayer)
     {
-        m_zdepth = zdepth;
+        m_sublayer = sublayer;
     }
 
-    void Renderable::setVisible(bool visible)
+    void Renderable::set_visible(bool visible)
     {
         m_visible = visible;
     }

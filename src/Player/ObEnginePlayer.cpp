@@ -24,13 +24,13 @@ int main(int argc, char** argv)
     }
     catch (const std::exception& e)
     {
-        Debug::Log->error(e.what());
-        Debug::Log->error("Error occurred while initializing ObEngine");
+        debug::Log->error(e.what());
+        debug::Log->error("Error occurred while initializing ObEngine");
         return 1;
     }
 #endif
 
-    Debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
+    debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
         Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
 
 #if defined _DEBUG
@@ -42,8 +42,8 @@ int main(int argc, char** argv)
     }
     catch (const std::exception& e)
     {
-        Debug::Log->error("The following error occurred while running ObEngine");
-        Debug::Log->error(e.what());
+        debug::Log->error("The following error occurred while running ObEngine");
+        debug::Log->error(e.what());
         return 1;
     }
 #endif

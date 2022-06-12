@@ -2,10 +2,10 @@
 
 #include <vili/node.hpp>
 
-namespace obe::Config::Validators
+namespace obe::config::validators
 {
-    vili::node AnimationValidator();
-    vili::node ConfigValidator();
-    vili::node MountValidator();
-    vili::node ProjectValidator();
+    vili::node animation_validator();
+    vili::node config_validator();
+    vili::node mount_validator();
+    vili::node project_validator();
 }

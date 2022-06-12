@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Graphics::Shapes::Bindings
+namespace obe::graphics::shapes::Bindings
 {
     void LoadClassCircle(sol::state_view state);
     void LoadClassPolygon(sol::state_view state);

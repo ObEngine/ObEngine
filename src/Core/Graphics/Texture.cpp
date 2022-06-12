@@ -5,7 +5,7 @@
 #include <Transform/Rect.hpp>
 #include <Utils/Visitor.hpp>
 
-namespace obe::Graphics
+namespace obe::graphics
 {
     namespace
     {
@@ -112,7 +112,7 @@ namespace obe::Graphics
             [](sf::Texture& texture) -> sf::Texture& { return texture; },
             [](std::shared_ptr<sf::Texture>& texture) -> sf::Texture& { return *texture; },
             [](const sf::Texture*) -> sf::Texture& {
-                throw Exceptions::ReadOnlyTexture("create", EXC_INFO);
+                throw exceptions::ReadOnlyTexture("create", EXC_INFO);
             },
             [](SvgTexture& texture) -> sf::Texture& { return texture.getTexture(); }
         };
@@ -315,4 +315,4 @@ namespace obe::Graphics
         m_texture = texture;
         return *this;
     }
-} //namespace obe::Graphics
+} //namespace obe::graphics

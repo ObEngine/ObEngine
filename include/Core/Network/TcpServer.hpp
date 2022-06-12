@@ -13,12 +13,12 @@ namespace obe::Network
         std::vector<std::unique_ptr<sf::TcpSocket>> m_clients;
         sf::TcpListener m_listener;
         sf::Socket::Status m_status = sf::Socket::Status::Disconnected;
-        Event::EventGroupPtr e_server;
+        event::EventGroupPtr e_server;
         size_t m_maxBufferSize = 4096;
         std::vector<char> m_data;
 
     public:
-        TcpServer(Event::EventNamespace& eventNamespace, unsigned short port,
+        TcpServer(event::EventNamespace& eventNamespace, unsigned short port,
             std::string triggerNamespace = "", std::string triggerGroup = "");
         void update();
         void setBufferSize(unsigned int maxBufferSize);

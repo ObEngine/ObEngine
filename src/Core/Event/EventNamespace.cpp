@@ -1,30 +1,30 @@
 #include <Event/EventNamespace.hpp>
 
-namespace obe::Event
+namespace obe::event
 {
-    EventNamespaceView::EventNamespaceView(const EventNamespace& eventNamespace)
-        : m_namespace(eventNamespace)
+    EventNamespaceView::EventNamespaceView(const EventNamespace& event_namespace)
+        : m_namespace(event_namespace)
     {
     }
 
-    EventGroupPtr EventNamespaceView::joinGroup(const std::string& group) const
+    EventGroupPtr EventNamespaceView::join_group(const std::string& group) const
     {
-        return m_namespace.joinGroup(group);
+        return m_namespace.join_group(group);
     }
 
-    EventGroupView EventNamespaceView::getGroup(const std::string& group) const
+    EventGroupView EventNamespaceView::get_group(const std::string& group) const
     {
-        return m_namespace.getGroup(group);
+        return m_namespace.get_group(group);
     }
 
-    std::vector<std::string> EventNamespaceView::getAllGroupsNames() const
+    std::vector<std::string> EventNamespaceView::get_all_groups_names() const
     {
-        return m_namespace.getAllGroupsNames();
+        return m_namespace.get_all_groups_names();
     }
 
-    bool EventNamespaceView::doesGroupExists(const std::string& group) const
+    bool EventNamespaceView::does_group_exists(const std::string& group) const
     {
-        return m_namespace.doesGroupExists(group);
+        return m_namespace.does_group_exists(group);
     }
 
     EventNamespace::EventNamespace(const std::string& name)
@@ -39,92 +39,92 @@ namespace obe::Event
         EventGroup* m_group;
 
     public:
-        EventGroupPtrDeleter(EventNamespace* eventNamespace);
+        EventGroupPtrDeleter(EventNamespace* event_namespace);
         void operator()(EventGroup* ptr) const;
     };
 
     void EventGroupPtrDeleter::operator()(EventGroup* ptr) const
     {
-        m_eventNamespace->removeGroup(ptr);
+        m_eventNamespace->remove_group(ptr);
     }
 
-    EventGroupPtrDeleter::EventGroupPtrDeleter(EventNamespace* eventNamespace)
-        : m_eventNamespace(eventNamespace)
+    EventGroupPtrDeleter::EventGroupPtrDeleter(EventNamespace* event_namespace)
+        : m_eventNamespace(event_namespace)
     {
     }
 
-    EventGroupPtr EventNamespace::createGroup(const std::string& group)
+    EventGroupPtr EventNamespace::create_group(const std::string& group)
     {
-        Debug::Log->debug(
+        debug::Log->debug(
             "<EventNamespace> Creating EventGroup '{}' in Namespace '{}'", group, m_name);
-        if (!m_groups.count(group))
+        if (!m_groups.contains(group))
         {
-            EventGroupPtr newGroup(new EventGroup(m_name, group), EventGroupPtrDeleter(this));
-            m_groups.emplace(group, newGroup);
-            return newGroup;
+            EventGroupPtr new_group(new EventGroup(m_name, group), EventGroupPtrDeleter(this));
+            m_groups.emplace(group, new_group);
+            return new_group;
         }
         throw Exceptions::EventGroupAlreadyExists(m_name, group, EXC_INFO);
     }
 
-    EventGroupPtr EventNamespace::joinGroup(const std::string& group) const
+    EventGroupPtr EventNamespace::join_group(const std::string& group) const
     {
-        Debug::Log->debug(
+        debug::Log->debug(
             "<EventNamespace> Joining EventGroup '{}' in Namespace '{}'", group, m_name);
-        if (const auto groupPtr = m_groups.find(group); groupPtr != m_groups.end())
+        if (const auto group_ptr = m_groups.find(group); group_ptr != m_groups.end())
         {
-            if (groupPtr->second.lock()->isJoinable())
+            if (group_ptr->second.lock()->is_joinable())
             {
-                return EventGroupPtr(groupPtr->second.lock());
+                return EventGroupPtr(group_ptr->second.lock());
             }
             throw Exceptions::EventGroupNotJoinable(m_name, group, EXC_INFO);
         }
 
-        throw Exceptions::UnknownEventGroup(m_name, group, this->getAllGroupsNames(), EXC_INFO);
+        throw Exceptions::UnknownEventGroup(m_name, group, this->get_all_groups_names(), EXC_INFO);
     }
 
-    EventGroupView EventNamespace::getGroup(const std::string& group) const
+    EventGroupView EventNamespace::get_group(const std::string& group) const
     {
-        if (const auto groupPtr = m_groups.find(group); groupPtr != m_groups.end())
+        if (const auto group_ptr = m_groups.find(group); group_ptr != m_groups.end())
         {
-            return groupPtr->second.lock()->getView();
+            return group_ptr->second.lock()->get_view();
         }
-        throw Exceptions::UnknownEventGroup(m_name, group, this->getAllGroupsNames(), EXC_INFO);
+        throw Exceptions::UnknownEventGroup(m_name, group, this->get_all_groups_names(), EXC_INFO);
     }
 
-    std::vector<std::string> EventNamespace::getAllGroupsNames() const
+    std::vector<std::string> EventNamespace::get_all_groups_names() const
     {
-        std::vector<std::string> allNames;
-        allNames.reserve(m_groups.size());
+        std::vector<std::string> all_names;
+        all_names.reserve(m_groups.size());
         for (const auto& group : m_groups)
         {
-            allNames.push_back(group.first);
+            all_names.push_back(group.first);
         }
-        return allNames;
+        return all_names;
     }
 
-    void EventNamespace::removeGroup(EventGroup* group)
+    void EventNamespace::remove_group(EventGroup* group)
     {
-        Debug::Log->debug("<EventNamespace> Removing EventGroup '{}' from Namespace '{}'",
-            group->getName(), m_name);
-        m_groups.erase(group->getName());
+        debug::Log->debug("<EventNamespace> Removing EventGroup '{}' from Namespace '{}'",
+            group->get_name(), m_name);
+        m_groups.erase(group->get_name());
     }
 
-    bool EventNamespace::doesGroupExists(const std::string& group) const
+    bool EventNamespace::does_group_exists(const std::string& group) const
     {
-        return m_groups.count(group);
+        return m_groups.contains(group);
     }
 
-    EventNamespaceView EventNamespace::getView() const
+    EventNamespaceView EventNamespace::get_view() const
     {
         return EventNamespaceView(*this);
     }
 
-    void EventNamespace::setJoinable(bool joinable)
+    void EventNamespace::set_joinable(bool joinable)
     {
         m_joinable = joinable;
     }
 
-    bool EventNamespace::isJoinable() const
+    bool EventNamespace::is_joinable() const
     {
         return m_joinable;
     }

@@ -1,8 +1,8 @@
 #include <vili/node.hpp>
 
-namespace obe::Config::Validators
+namespace obe::config::validators
 {
-    vili::node MountValidator()
+    vili::node mount_validator()
     {
         // clang-format off
         vili::object mount = vili::object {

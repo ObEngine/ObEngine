@@ -12,10 +12,10 @@
 #include <spdlog/sinks/ansicolor_sink.h>
 #endif
 
-namespace obe::Debug
+namespace obe::debug
 {
     Logger Log;
-    void InitLogger()
+    void init_logger()
     {
         Utils::File::deleteFile("debug.log");
         auto dist_sink = std::make_shared<spdlog::sinks::dist_sink_st>();
@@ -60,4 +60,4 @@ namespace obe::Debug
     {
         Log->critical(content);
     }
-} // namespace obe::Debug
+} // namespace obe::debug

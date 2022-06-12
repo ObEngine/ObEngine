@@ -1,17 +1,17 @@
 #include <Event/EventManager.hpp>
 
-namespace obe::Event
+namespace obe::event
 {
     EventManager::EventManager()
     {
-        Debug::Log->debug("<EventManager> Initializing EventManager");
+        debug::Log->debug("<EventManager> Initializing EventManager");
         m_chrono.start();
     }
 
     void EventManager::update()
     {
-        Debug::Log->trace("<EventManager> Updating EventManager");
-        for (auto& scheduler : m_schedulers)
+        debug::Log->trace("<EventManager> Updating EventManager");
+        for (const auto& scheduler : m_schedulers)
         {
             if (scheduler->m_state == CallbackSchedulerState::Ready)
             {
@@ -24,14 +24,14 @@ namespace obe::Event
             }
         }
         m_schedulers.erase(
-            std::remove_if(m_schedulers.begin(), m_schedulers.end(),
-                [](auto& scheduler) { return scheduler->m_state == CallbackSchedulerState::Done; }),
+            std::ranges::remove_if(m_schedulers,
+                [](auto& scheduler) { return scheduler->m_state == CallbackSchedulerState::Done; }).begin(),
             m_schedulers.end());
     }
 
     void EventManager::clear()
     {
-        Debug::Log->debug("<EventManager> Clearing EventManager");
+        debug::Log->debug("<EventManager> Clearing EventManager");
         m_chrono.stop();
         m_namespaces.clear(); // TODO: Clean EventNamespaces
         m_chrono.reset();
@@ -39,43 +39,54 @@ namespace obe::Event
         m_schedulers.clear();
     }
 
-    EventNamespace& EventManager::createNamespace(const std::string& eventNamespace)
+    EventNamespace& EventManager::create_namespace(const std::string& event_namespace)
     {
-        Debug::Log->debug("<EventNamespace> Creating EventNamespace '{}'", eventNamespace);
-        if (!m_namespaces.count(eventNamespace))
+        debug::Log->debug("<EventNamespace> Creating EventNamespace '{}'", event_namespace);
+        if (!m_namespaces.contains(event_namespace))
         {
-            const auto insertionResult = m_namespaces.emplace(
-                eventNamespace, std::make_unique<EventNamespace>(eventNamespace));
-            return *insertionResult.first->second;
+            const auto insertion_result = m_namespaces.emplace(
+                event_namespace, std::make_unique<EventNamespace>(event_namespace));
+            return *insertion_result.first->second;
         }
-        throw Exceptions::EventNamespaceAlreadyExists(eventNamespace, EXC_INFO);
+        throw Exceptions::EventNamespaceAlreadyExists(event_namespace, EXC_INFO);
     }
 
-    EventNamespace& EventManager::joinNamespace(const std::string& eventNamespace)
+    EventNamespace& EventManager::join_namespace(const std::string& event_namespace)
     {
-        Debug::Log->debug("<EventNamespace> Joining EventNamespace '{}'", eventNamespace);
-        if (const auto namespacePtr = m_namespaces.find(eventNamespace);
-            namespacePtr != m_namespaces.end())
+        debug::Log->debug("<EventNamespace> Joining EventNamespace '{}'", event_namespace);
+        if (const auto namespace_ptr = m_namespaces.find(event_namespace);
+            namespace_ptr != m_namespaces.end())
         {
-            if (namespacePtr->second->isJoinable())
+            if (namespace_ptr->second->is_joinable())
             {
-                return *namespacePtr->second;
+                return *namespace_ptr->second;
             }
-            throw Exceptions::EventNamespaceNotJoinable(eventNamespace, EXC_INFO);
+            throw Exceptions::EventNamespaceNotJoinable(event_namespace, EXC_INFO);
         }
 
-        throw Exceptions::UnknownEventNamespace(eventNamespace, this->getAllNamespacesNames(), EXC_INFO);
+        throw Exceptions::UnknownEventNamespace(event_namespace, this->get_all_namespaces_names(), EXC_INFO);
     }
 
-    EventNamespaceView EventManager::getNamespace(const std::string& eventNamespace)
+    EventNamespaceView EventManager::get_namespace(const std::string& event_namespace)
     {
-        if (const auto namespacePtr = m_namespaces.find(eventNamespace);
-            namespacePtr != m_namespaces.end())
+        if (const auto namespace_ptr = m_namespaces.find(event_namespace);
+            namespace_ptr != m_namespaces.end())
         {
-            return namespacePtr->second->getView();
+            return namespace_ptr->second->get_view();
         }
         throw Exceptions::UnknownEventNamespace(
-            eventNamespace, this->getAllNamespacesNames(), EXC_INFO);
+            event_namespace, this->get_all_namespaces_names(), EXC_INFO);
+    }
+
+    std::vector<std::string> EventManager::get_all_namespaces_names() const
+    {
+        std::vector<std::string> all_names;
+        all_names.reserve(m_namespaces.size());
+        for (const auto& event_namespace : m_namespaces)
+        {
+            all_names.push_back(event_namespace.first);
+        }
+        return all_names;
     }
 
     CallbackScheduler& EventManager::schedule()
@@ -84,21 +95,21 @@ namespace obe::Event
         return *m_schedulers.back();
     }
 
-    vili::node EventManager::dumpProfilerResults() const
+    vili::node EventManager::dump_profiler_results() const
     {
         vili::node result = vili::object {};
-        for (const auto& namespaceItr : m_namespaces)
+        for (const auto& namespace_itr : m_namespaces)
         {
-            Debug::Log->debug("Profiling EventNamespace '{}'", namespaceItr.first);
-            result.emplace(namespaceItr.first, vili::object {});
-            for (auto groupName : namespaceItr.second->getAllGroupsNames())
+            debug::Log->debug("Profiling EventNamespace '{}'", namespace_itr.first);
+            result.emplace(namespace_itr.first, vili::object {});
+            for (const auto& group_name : namespace_itr.second->get_all_groups_names())
             {
-                Debug::Log->debug("Namespace group {}", groupName);
-                result.at(namespaceItr.first)
+                debug::Log->debug("Namespace group {}", group_name);
+                result.at(namespace_itr.first)
                     .emplace(
-                        groupName, namespaceItr.second->getGroup(groupName).getProfilerResults());
+                        group_name, namespace_itr.second->get_group(group_name).get_profiler_results());
             }
         }
         return result;
     }
-} // namespace obe::Event
+} // namespace obe::event

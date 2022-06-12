@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Debug::Bindings
+namespace obe::debug::Bindings
 {
     void LoadFunctionInitLogger(sol::state_view state);
     void LoadFunctionTrace(sol::state_view state);

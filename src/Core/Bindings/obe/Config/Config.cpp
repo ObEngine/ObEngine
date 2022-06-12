@@ -5,28 +5,28 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Config::Bindings
+namespace obe::config::Bindings
 {
     void LoadClassConfigurationManager(sol::state_view state)
     {
-        sol::table ConfigNamespace = state["obe"]["Config"].get<sol::table>();
-        sol::usertype<obe::Config::ConfigurationManager> bindConfigurationManager
-            = ConfigNamespace.new_usertype<obe::Config::ConfigurationManager>(
+        sol::table ConfigNamespace = state["obe"]["config"].get<sol::table>();
+        sol::usertype<obe::config::ConfigurationManager> bindConfigurationManager
+            = ConfigNamespace.new_usertype<obe::config::ConfigurationManager>(
                 "ConfigurationManager", sol::call_constructor,
-                sol::constructors<obe::Config::ConfigurationManager()>(), sol::base_classes,
+                sol::constructors<obe::config::ConfigurationManager()>(), sol::base_classes,
                 sol::bases<vili::node>());
-        bindConfigurationManager["load"] = &obe::Config::ConfigurationManager::load;
+        bindConfigurationManager["load"] = &obe::config::ConfigurationManager::load;
     }
     void LoadClassVersion(sol::state_view state)
     {
-        sol::table ConfigNamespace = state["obe"]["Config"].get<sol::table>();
-        sol::usertype<obe::Config::Version> bindVersion
-            = ConfigNamespace.new_usertype<obe::Config::Version>("Version", sol::call_constructor,
-                sol::constructors<obe::Config::Version(int, int, int),
-                    obe::Config::Version(const std::string&)>());
-        bindVersion["string"] = &obe::Config::Version::string;
-        bindVersion["major"] = &obe::Config::Version::major;
-        bindVersion["minor"] = &obe::Config::Version::minor;
-        bindVersion["patch"] = &obe::Config::Version::patch;
+        sol::table ConfigNamespace = state["obe"]["config"].get<sol::table>();
+        sol::usertype<obe::config::Version> bindVersion
+            = ConfigNamespace.new_usertype<obe::config::Version>("Version", sol::call_constructor,
+                sol::constructors<obe::config::Version(int, int, int),
+                    obe::config::Version(const std::string&)>());
+        bindVersion["string"] = &obe::config::Version::string;
+        bindVersion["major"] = &obe::config::Version::major;
+        bindVersion["minor"] = &obe::config::Version::minor;
+        bindVersion["patch"] = &obe::config::Version::patch;
     }
 };

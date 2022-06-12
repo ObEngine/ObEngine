@@ -17,13 +17,13 @@ namespace obe::Tiles
 {
     class TileScene;
 
-    class TileLayer : public Graphics::Renderable
+    class TileLayer : public graphics::Renderable
     {
     private:
         std::unordered_map<uint32_t, sf::Vertex*> m_positions;
         std::unordered_map<uint32_t, sf::VertexArray> m_cache;
         const TileScene& m_scene;
-        std::unordered_map<uint32_t, Collision::PolygonalCollider*> m_colliders;
+        std::unordered_map<uint32_t, collision::PolygonalCollider*> m_colliders;
 
         std::string m_id;
         uint32_t m_x;
@@ -48,7 +48,7 @@ namespace obe::Tiles
         /**
          * \brief Draws all elements of the TileLayer on the screen
          */
-        void draw(Graphics::RenderTarget& surface, const Scene::Camera& camera) override;
+        void draw(graphics::RenderTarget& surface, const Scene::Camera& camera) override;
 
         void setTile(uint32_t x, uint32_t y, uint32_t tileId);
         uint32_t getTile(uint32_t x, uint32_t y);

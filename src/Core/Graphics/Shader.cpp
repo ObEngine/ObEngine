@@ -1,16 +1,16 @@
 #include <Graphics/Shader.hpp>
 #include <System/Path.hpp>
 
-namespace obe::Graphics
+namespace obe::graphics
 {
     Shader::Shader()
+        : m_path("")
     {
-        m_path = "";
     }
 
     Shader::Shader(const std::string& path)
     {
-        this->loadShader(path);
+        this->load_from_file(path);
     }
 
     vili::node Shader::schema() const
@@ -18,7 +18,7 @@ namespace obe::Graphics
         return vili::object {};
     }
 
-    void Shader::loadShader(const std::string& path)
+    void Shader::load_from_file(const std::string& path)
     {
         this->loadFromFile(System::Path(path).find(), sf::Shader::Type::Fragment);
         m_path = path;
@@ -31,4 +31,4 @@ namespace obe::Graphics
     void Shader::load(const vili::node& data)
     {
     }
-} // namespace obe::Graphics
+} // namespace obe::graphics

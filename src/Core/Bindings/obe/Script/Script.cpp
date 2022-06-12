@@ -38,7 +38,7 @@ namespace obe::Script::Bindings
                 return self->loadGameObject(scene, obj);
             },
             [](obe::Script::GameObject* self, obe::Scene::Scene& scene, vili::node& obj,
-                obe::Engine::ResourceManager* resources) -> void {
+                obe::engine::ResourceManager* resources) -> void {
                 return self->loadGameObject(scene, obj, resources);
             });
         bindGameObject["update"] = &obe::Script::GameObject::update;

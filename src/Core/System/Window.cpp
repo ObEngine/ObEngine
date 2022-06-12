@@ -287,7 +287,7 @@ namespace obe::System
         m_window.setIcon(32, 32, m_icon.getPixelsPtr());
     }
 
-    Graphics::RenderTarget Window::getTarget()
+    graphics::RenderTarget Window::getTarget()
     {
         return m_window;
     }
@@ -297,12 +297,12 @@ namespace obe::System
         return m_window;
     }
 
-    Graphics::Color Window::getClearColor() const
+    graphics::Color Window::getClearColor() const
     {
         return m_background;
     }
 
-    void Window::setClearColor(Graphics::Color color)
+    void Window::setClearColor(graphics::Color color)
     {
         m_background = std::move(color);
     }

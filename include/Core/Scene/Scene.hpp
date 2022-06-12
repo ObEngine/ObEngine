@@ -22,7 +22,7 @@ namespace obe
     }
 }
 
-namespace obe::Events::Scene
+namespace obe::events::Scene
 {
     struct Loaded
     {
@@ -56,11 +56,11 @@ namespace obe::Scene
         Transform::Referential m_cameraInitialReferential;
         bool m_updateState = true;
 
-        Engine::ResourceManager* m_resources = nullptr;
-        std::vector<std::unique_ptr<Graphics::Sprite>> m_spriteArray;
+        engine::ResourceManager* m_resources = nullptr;
+        std::vector<std::unique_ptr<graphics::Sprite>> m_spriteArray;
         std::unordered_set<std::string> m_spriteIds;
 
-        std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderArray;
+        std::vector<std::unique_ptr<collision::PolygonalCollider>> m_colliderArray;
         std::unordered_set<std::string> m_colliderIds;
 
         std::vector<std::unique_ptr<Script::GameObject>> m_gameObjectArray;
@@ -74,13 +74,13 @@ namespace obe::Scene
         std::string m_levelFileName;
         SceneRenderOptions m_renderOptions;
         OnSceneLoadCallback m_onLoadCallback;
-        Event::EventGroupPtr e_scene;
+        event::EventGroupPtr e_scene;
         sol::state_view m_lua;
 
         std::unordered_map<std::string, Component::ComponentBase*> m_components;
 
         bool m_sortRenderables = true;
-        std::vector<Graphics::Renderable*> m_renderCache;
+        std::vector<graphics::Renderable*> m_renderCache;
         void _reorganizeLayers();
         void _rebuildIds();
 
@@ -88,9 +88,9 @@ namespace obe::Scene
         /**
          * \brief Creates a new Scene
          */
-        Scene(Event::EventNamespace& events, sol::state_view lua);
+        Scene(event::EventNamespace& events, sol::state_view lua);
 
-        void attachResourceManager(Engine::ResourceManager& resources);
+        void attachResourceManager(engine::ResourceManager& resources);
         /**
          * \nobind
          * \brief Loads the Scene from a .map.vili file
@@ -132,7 +132,7 @@ namespace obe::Scene
         /**
          * \brief Draws all elements of the Scene on the screen
          */
-        void draw(Graphics::RenderTarget surface);
+        void draw(graphics::RenderTarget surface);
         /**
          * \brief Get the name of the level
          * \return A std::string containing the name of the level
@@ -195,7 +195,7 @@ namespace obe::Scene
 
         // Sprites
         /**
-         * \brief Reorganize all the Sprite (by Layer and z-depth)
+         * \brief Reorganize all the Sprite (by layer and sublayer)
          */
         void reorganizeLayers();
         /**
@@ -205,7 +205,7 @@ namespace obe::Scene
          *        true
          * \return A pointer to the newly created Sprite
          */
-        Graphics::Sprite& createSprite(const std::string& id = "", bool addToSceneRoot = true);
+        graphics::Sprite& createSprite(const std::string& id = "", bool addToSceneRoot = true);
         /**
          * \brief Get how many Sprites are present in the Scene
          * \return The amount of Sprites in the Scene
@@ -215,14 +215,14 @@ namespace obe::Scene
          * \brief Get all the Sprites present in the Scene
          * \return A std::vector of Sprites pointer
          */
-        std::vector<Graphics::Sprite*> getAllSprites();
+        std::vector<graphics::Sprite*> getAllSprites();
         /**
          * \brief Get all the Sprites present in the Scene in the given
          *        layer
          * \param layer Layer to get all the Sprites from \return A
          *        std::vector of Sprites pointer
          */
-        std::vector<Graphics::Sprite*> getSpritesByLayer(int layer);
+        std::vector<graphics::Sprite*> getSpritesByLayer(int layer);
         /**
          * \brief Get the first found Sprite with the BoundingRect
          *        including the given position
@@ -230,13 +230,13 @@ namespace obe::Scene
          * \param layer Layer where to check
          * \return The pointer to a Sprite if found, nullptr otherwise
          */
-        Graphics::Sprite* getSpriteByPosition(const Transform::UnitVector& position, int layer);
+        graphics::Sprite* getSpriteByPosition(const Transform::UnitVector& position, int layer);
         /**
          * \brief Get a Sprite by Id (Raises an exception if not found)
          * \param id Id of the Sprite to get
          * \return A pointer to the Sprite
          */
-        Graphics::Sprite& getSprite(const std::string& id);
+        graphics::Sprite& getSprite(const std::string& id);
         /**
          * \brief Check if a Sprite exists in the Scene
          * \param id Id of the Sprite to check the existence
@@ -256,7 +256,7 @@ namespace obe::Scene
          * \param addToSceneRoot Add the Collider to the root Scene Node if true
          * \return A pointer to the newly created Collider
          */
-        Collision::PolygonalCollider& createCollider(
+        collision::PolygonalCollider& createCollider(
             const std::string& id = "", bool addToSceneRoot = true);
         /**
          * \brief Get how many Colliders are present in the Scene
@@ -268,7 +268,7 @@ namespace obe::Scene
          * \return A std::vector containing all the pointers of the Colliders
          *         present in the Scene
          */
-        [[nodiscard]] std::vector<Collision::PolygonalCollider*> getAllColliders() const;
+        [[nodiscard]] std::vector<collision::PolygonalCollider*> getAllColliders() const;
         /**
          * \brief Get the first Collider found with a point on the given
          *        position
@@ -276,14 +276,14 @@ namespace obe::Scene
          * \return A std::pair containing the pointer to the Collider with a
          *         point at the given position and the index of the point
          */
-        std::pair<Collision::PolygonalCollider*, int> getColliderPointByPosition(
+        std::pair<collision::PolygonalCollider*, int> getColliderPointByPosition(
             const Transform::UnitVector& position);
         /**
          * \brief Get the Collider using the centroid Position
          * \param position Position to check
          * \return A Pointer to the Collider if found, nullptr otherwise
          */
-        Collision::PolygonalCollider* getColliderByCentroidPosition(
+        collision::PolygonalCollider* getColliderByCentroidPosition(
             const Transform::UnitVector& position);
         /**
          * \brief Get the Collider with the given Id (Raises an exception if not
@@ -291,7 +291,7 @@ namespace obe::Scene
          * \param id Id of the Collider to retrieve
          * \return A pointer to the Collider
          */
-        Collision::PolygonalCollider& getCollider(const std::string& id);
+        collision::PolygonalCollider& getCollider(const std::string& id);
         /**
          * \brief Check the existence of the Collider with given Id in the Scene
          * \param id Id of the Collider to check the existence

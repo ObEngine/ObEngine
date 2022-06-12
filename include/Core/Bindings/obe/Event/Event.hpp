@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Event::Bindings
+namespace obe::event::Bindings
 {
     void LoadClassCallbackProfiler(sol::state_view state);
     void LoadClassCallbackScheduler(sol::state_view state);

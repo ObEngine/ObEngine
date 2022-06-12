@@ -10,7 +10,7 @@ namespace SoLoud
     using Handle = unsigned int; // Forward declare equivalent type "handle" without name collision
 }
 
-namespace obe::Audio
+namespace obe::audio
 {
     class AudioManager;
 
@@ -37,34 +37,34 @@ namespace obe::Audio
         SoLoud::Soloud& m_manager;
         std::shared_ptr<SoLoud::AudioSource> m_source;
         SoLoud::Handle m_handle;
-        float m_baseSamplerate;
+        float m_base_samplerate;
         float m_pitch = 1.f;
         bool m_looping = false;
         float m_volume = 1.f;
-        void applyChanges();
+        void apply_changes();
 
     public:
         Sound(SoLoud::Soloud& manager, std::shared_ptr<SoLoud::AudioSource> source);
-        [[nodiscard]] double getDuration() const;
+        [[nodiscard]] double get_duration() const;
         void play();
         void pause() const;
         void stop() const;
 
-        void setPitch(float pitch);
-        [[nodiscard]] float getPitch() const;
+        void set_pitch(float pitch);
+        [[nodiscard]] float get_pitch() const;
 
-        void setSpeed(float speed) const;
-        [[nodiscard]] float getSpeed() const;
+        void set_speed(float speed) const;
+        [[nodiscard]] float get_speed() const;
 
-        [[nodiscard]] SoundStatus getStatus() const;
+        [[nodiscard]] SoundStatus get_status() const;
 
-        [[nodiscard]] double getOffset() const;
-        void setOffset(double offset) const;
+        [[nodiscard]] double get_offset() const;
+        void set_offset(double offset) const;
 
-        [[nodiscard]] float getVolume() const;
-        void setVolume(float volume);
+        [[nodiscard]] float get_volume() const;
+        void set_volume(float volume);
 
-        void setLooping(bool looping);
-        [[nodiscard]] bool getLooping() const;
+        void set_looping(bool looping);
+        [[nodiscard]] bool get_looping() const;
     };
 }

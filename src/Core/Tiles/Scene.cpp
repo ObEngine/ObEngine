@@ -7,7 +7,7 @@ namespace obe::Tiles
 {
     void TileScene::build()
     {
-        Debug::Log->info(
+        debug::Log->info(
             "Build TileScene @{} with Animations @{}", fmt::ptr(this), fmt::ptr(&m_animatedTiles));
         for (auto& layer : m_layers)
         {
@@ -76,16 +76,16 @@ namespace obe::Tiles
                     const std::string collisionId
                         = std::to_string(collision.at("id").as<vili::integer>()
                             + tileset.at("firstTileId").as<vili::integer>());
-                    std::unique_ptr<Collision::PolygonalCollider> model
-                        = std::make_unique<Collision::PolygonalCollider>(collisionId);
+                    std::unique_ptr<collision::PolygonalCollider> model
+                        = std::make_unique<collision::PolygonalCollider>(collisionId);
                     model->load(collision);
                     /*int i = 0;
                     for (const vili::node& point : collision.at("points"))
                     {
-                        model->addPoint(Transform::UnitVector(
+                        model->add_point(Transform::UnitVector(
                             point.at("x"), point.at("y"), Transform::Units::ScenePixels));
                         Transform::PolygonPoint pointDbg = model->get(i);
-                        Debug::Log->info("  - BUILD[{}] P{} = ({}, {})", collisionId, i,
+                        debug::Log->info("  - BUILD[{}] P{} = ({}, {})", collisionId, i,
                             pointDbg.x, pointDbg.y);
                         i++;
                     }*/
@@ -191,9 +191,9 @@ namespace obe::Tiles
         return m_tilesets;
     }
 
-    std::vector<Graphics::Renderable*> TileScene::getRenderables() const
+    std::vector<graphics::Renderable*> TileScene::getRenderables() const
     {
-        std::vector<Graphics::Renderable*> result;
+        std::vector<graphics::Renderable*> result;
         for (const auto& layer : m_layers)
         {
             result.push_back(layer.get());
@@ -201,9 +201,9 @@ namespace obe::Tiles
         return result;
     }
 
-    std::vector<Collision::PolygonalCollider*> TileScene::getColliderModels() const
+    std::vector<collision::PolygonalCollider*> TileScene::getColliderModels() const
     {
-        std::vector<Collision::PolygonalCollider*> result;
+        std::vector<collision::PolygonalCollider*> result;
         for (const auto& collider : m_colliderModels)
         {
             result.push_back(collider.get());

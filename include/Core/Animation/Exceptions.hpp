@@ -2,18 +2,18 @@
 
 #include <Exception.hpp>
 
-namespace obe::Animation::Exceptions
+namespace obe::animation::exceptions
 {
     class UnknownAnimationGroup : public Exception<UnknownAnimationGroup>
     {
     public:
         using Exception::Exception;
-        UnknownAnimationGroup(std::string_view animation, std::string_view groupName,
+        UnknownAnimationGroup(std::string_view animation, std::string_view group_name,
             const std::vector<std::string>& groups, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Unable to retrieve AnimationGroup '{}' from Animation '{}'", animation, groupName);
+            this->error("Unable to retrieve AnimationGroup '{}' from animation '{}'", animation,
+                group_name);
             this->hint("Existing groups are ({})", fmt::join(groups, ", "));
         }
     };
@@ -26,7 +26,7 @@ namespace obe::Animation::Exceptions
             std::string_view animation, std::size_t index, std::size_t maximum, DebugInfo info)
             : Exception(info)
         {
-            this->error("Tried to access Texture of Animation '{}' at index {} when it "
+            this->error("Tried to access Texture of animation '{}' at index {} when it "
                         "only contains {} textures",
                 animation, index, maximum);
         }
@@ -37,12 +37,12 @@ namespace obe::Animation::Exceptions
     public:
         using Exception::Exception;
         AnimationGroupTextureIndexOverflow(
-            std::string_view animationGroup, std::size_t index, std::size_t maximum, DebugInfo info)
+            std::string_view group_name, std::size_t index, std::size_t maximum, DebugInfo info)
             : Exception(info)
         {
             this->error("Tried to access Texture of AnimationGroup '{}' at index {} when it "
                         "only contains {} textures",
-                animationGroup, index, maximum);
+                group_name, index, maximum);
         }
     };
 
@@ -53,7 +53,7 @@ namespace obe::Animation::Exceptions
         NoSelectedAnimationGroup(std::string_view animation, DebugInfo info)
             : Exception(info)
         {
-            this->error("The Animation '{}' does not have any AnimationGroup selected", animation);
+            this->error("The animation '{}' does not have any AnimationGroup selected", animation);
         }
     };
 
@@ -61,12 +61,12 @@ namespace obe::Animation::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownAnimation(std::string_view animatorPath, std::string_view animation,
+        UnknownAnimation(std::string_view animator_path, std::string_view animation,
             const std::vector<std::string>& animations, DebugInfo info)
             : Exception(info)
         {
             this->error(
-                "Animator '{}' doesn't have any Animation named '{}'", animatorPath, animation);
+                "Animator '{}' doesn't have any animation named '{}'", animator_path, animation);
             this->hint("Try one of the following animations ({})", fmt::join(animations, ", "));
         }
     };
@@ -78,7 +78,7 @@ namespace obe::Animation::Exceptions
         NoSelectedAnimation(std::string_view animator, DebugInfo info)
             : Exception(info)
         {
-            this->error("The Animator '{}' does not have any Animation selected", animator);
+            this->error("The Animator '{}' does not have any animation selected", animator);
         }
     };
 
@@ -86,11 +86,11 @@ namespace obe::Animation::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownEasingFromEnum(int enumValue, DebugInfo info)
+        UnknownEasingFromEnum(int enum_value, DebugInfo info)
             : Exception(info)
         {
             this->error(
-                "Enum with value {} could not be converted to an easing function", enumValue);
+                "Enum with value {} could not be converted to an easing function", enum_value);
         }
     };
 
@@ -98,23 +98,19 @@ namespace obe::Animation::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownEasingFromString(std::string_view easingName, DebugInfo info)
+        UnknownEasingFromString(std::string_view easing_name,
+            const std::vector<std::string>& all_easings, DebugInfo info)
             : Exception(info)
         {
             this->error("Impossible to retrieve an Easing function with the following "
                         "name : '{}'",
-                easingName);
-        }
-    };
-
-    class UnknownTargetScaleMode : public Exception<UnknownTargetScaleMode>
-    {
-    public:
-        using Exception::Exception;
-        UnknownTargetScaleMode(std::string_view targetScaleMode, DebugInfo info)
-            : Exception(info)
-        {
-            this->error("TargetScaleMode '{}' does not exists", targetScaleMode);
+                easing_name);
+            std::vector<std::string> suggestions
+                = Utils::String::sortByDistance(easing_name.data(), all_easings, 5);
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
+            suggestions.emplace_back("...");
+            this->hint("Try one of the Easings with name ({})", fmt::join(suggestions, ", "));
         }
     };
 
@@ -125,7 +121,18 @@ namespace obe::Animation::Exceptions
         InvalidAnimationFile(std::string_view path, DebugInfo info)
             : Exception(info)
         {
-            this->error("Error occured while loading Animation file '{}'", path);
+            this->error("Error occured while loading animation file '{}'", path);
+        }
+    };
+
+    class InvalidEasingFunction : public Exception<InvalidEasingFunction>
+    {
+    public:
+        using Exception::Exception;
+        InvalidEasingFunction(DebugInfo info)
+            : Exception(info)
+        {
+            this->error("Invalid easing function");
         }
     };
 }

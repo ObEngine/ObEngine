@@ -4,7 +4,7 @@
 
 #include <Time/TimeUtils.hpp>
 
-namespace obe::Event
+namespace obe::event
 {
     using Callback = std::function<void()>;
     class EventManager;
@@ -24,7 +24,7 @@ namespace obe::Event
         Time::TimeUnit m_every = 0;
         Time::TimeUnit m_start = 0;
         unsigned int m_times = 0;
-        unsigned int m_currentTimes = 0;
+        unsigned int m_current_times = 0;
         bool m_wait = false;
         bool m_repeat = false;
         CallbackSchedulerState m_state = CallbackSchedulerState::Standby;

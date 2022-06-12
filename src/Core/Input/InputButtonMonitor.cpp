@@ -6,12 +6,12 @@ namespace obe::Input
     InputButtonMonitor::InputButtonMonitor(InputButton& button)
         : m_button(button)
     {
-        Debug::Log->debug("Started monitoring InputButton '{}'", m_button.getName());
+        debug::Log->debug("Started monitoring InputButton '{}'", m_button.getName());
     }
 
     InputButtonMonitor::~InputButtonMonitor()
     {
-        Debug::Log->debug("Stopped monitoring InputButton '{}'", m_button.getName());
+        debug::Log->debug("Stopped monitoring InputButton '{}'", m_button.getName());
     }
 
     InputButton& InputButtonMonitor::getButton() const
@@ -24,9 +24,9 @@ namespace obe::Input
         return m_buttonState;
     }
 
-    void InputButtonMonitor::update(Event::EventGroupPtr events)
+    void InputButtonMonitor::update(event::EventGroupPtr events)
     {
-        Debug::Log->trace("Updating InputMonitor of {}", m_button.getName());
+        debug::Log->trace("Updating InputMonitor of {}", m_button.getName());
         const bool keyPressed = m_button.isPressed();
         const InputButtonState oldState = m_buttonState;
         m_shouldRefresh = false;
@@ -54,7 +54,7 @@ namespace obe::Input
         {
             m_shouldRefresh = true;
             events->trigger(
-                m_button.getName(), Events::Keys::StateChanged { m_buttonState, oldState });
+                m_button.getName(), events::Keys::StateChanged { m_buttonState, oldState });
         }
     }
 

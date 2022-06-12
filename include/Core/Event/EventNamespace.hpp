@@ -2,7 +2,7 @@
 
 #include <Event/EventGroup.hpp>
 
-namespace obe::Event
+namespace obe::event
 {
     class EventNamespace;
 
@@ -12,22 +12,22 @@ namespace obe::Event
         const EventNamespace& m_namespace;
 
     public:
-        EventNamespaceView(const EventNamespace& eventNamespace);
-        EventGroupPtr joinGroup(const std::string& group) const;
-        EventGroupView getGroup(const std::string& group) const;
+        EventNamespaceView(const EventNamespace& event_namespace);
+        [[nodiscard]] EventGroupPtr join_group(const std::string& group) const;
+        [[nodiscard]] EventGroupView get_group(const std::string& group) const;
         /**
          * \brief Get all the names of the EventGroup in the given Namespace
          * \return A std::vector of std::string containing the names of
          *         all contained EventGroup
          */
-        [[nodiscard]] std::vector<std::string> getAllGroupsNames() const;
+        [[nodiscard]] std::vector<std::string> get_all_groups_names() const;
         /**
          * \brief Check if an EventGroup exists in the EventNamespace
          * \param group Name of the EventGroup
          *        to search
          * \return true if the EventGroup exists, false otherwise
          */
-        bool doesGroupExists(const std::string& group) const;
+        [[nodiscard]] bool does_group_exists(const std::string& group) const;
     };
 
     class EventNamespace
@@ -45,44 +45,44 @@ namespace obe::Event
          * \param group Name of the new EventGroup
          * \return Managed pointer to the newly created EventGroup
          */
-        EventGroupPtr createGroup(const std::string& group);
+        EventGroupPtr create_group(const std::string& group);
         /**
          * \brief Join an existing EventGroup (Throws an error if the
          *        EventGroup does not exists or isn't joinable)
          * \param group Name of the EventGroup to join
          * \return Pointer to the newly joined EventGroup
          */
-        EventGroupPtr joinGroup(const std::string& group) const;
-        EventGroupView getGroup(const std::string& group) const;
+        [[nodiscard]] EventGroupPtr join_group(const std::string& group) const;
+        [[nodiscard]] EventGroupView get_group(const std::string& group) const;
         /**
          * \brief Get all the names of the EventGroup in the given Namespace
          * \return A std::vector of std::string containing the names of
          *         all contained EventGroup
          */
-        [[nodiscard]] std::vector<std::string> getAllGroupsNames() const;
+        [[nodiscard]] std::vector<std::string> get_all_groups_names() const;
         /**
          * \brief Removes an existing EventGroup
          * \param group Pointer to the EventGroup to delete
          */
-        void removeGroup(EventGroup* group);
+        void remove_group(EventGroup* group);
         /**
          * \brief Check if an EventGroup exists in the EventNamespace
          * \param group Name of the EventGroup
          *        to search
          * \return true if the EventGroup exists, false otherwise
          */
-        bool doesGroupExists(const std::string& group) const;
-        [[nodiscard]] EventNamespaceView getView() const;
+        [[nodiscard]] bool does_group_exists(const std::string& group) const;
+        [[nodiscard]] EventNamespaceView get_view() const;
         /**
          * \brief Sets if the EventNamespace is joinable or not
          * \param joinable true if the EventNamespace should be joinable, false
          *        otherwise
          */
-        void setJoinable(bool joinable);
+        void set_joinable(bool joinable);
         /**
          * \brief Get if the EventNamespace is joinable or not
          * \return true if the EventNamespace is joinable, false otherwise
          */
-        [[nodiscard]] bool isJoinable() const;
+        [[nodiscard]] bool is_joinable() const;
     };
 }

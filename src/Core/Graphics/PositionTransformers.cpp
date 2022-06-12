@@ -1,11 +1,11 @@
 #include <Graphics/PositionTransformers.hpp>
 
-namespace obe::Graphics
+namespace obe::graphics
 {
     std::map<std::string, CoordinateTransformer> Transformers;
 
     CoordinateTransformer Parallax = [](double pos, double cam, int layer) -> double
-    { return (pos * layer - cam) / double(layer); };
+    { return (pos * layer - cam) / static_cast<double>(layer); };
     CoordinateTransformer Camera
         = [](double pos, double cam, int layer) -> double { return pos - cam; };
     CoordinateTransformer Position
@@ -13,52 +13,52 @@ namespace obe::Graphics
 
     PositionTransformer::PositionTransformer()
     {
-        m_xTransformer = Transformers[m_xTransformerName];
-        m_yTransformer = Transformers[m_yTransformerName];
+        m_x_transformer = Transformers[m_x_transformer_name];
+        m_y_transformer = Transformers[m_y_transformer_name];
     }
 
     PositionTransformer::PositionTransformer(
-        const std::string& xTransformer, const std::string& yTransformer)
+        const std::string& x_transformer, const std::string& y_transformer)
+        : m_x_transformer_name(x_transformer)
+        , m_y_transformer_name(y_transformer)
     {
-        m_xTransformerName = xTransformer;
-        m_yTransformerName = yTransformer;
-        m_xTransformer = Transformers[m_xTransformerName];
-        m_yTransformer = Transformers[m_yTransformerName];
+        m_x_transformer = Transformers[m_x_transformer_name];
+        m_y_transformer = Transformers[m_y_transformer_name];
     }
 
     Transform::UnitVector PositionTransformer::operator()(
         const Transform::UnitVector& position, const Transform::UnitVector& camera, int layer) const
     {
-        Transform::UnitVector transformedPosition(position.unit);
-        transformedPosition.x = m_xTransformer(position.x, camera.to(position.unit).x, layer);
-        transformedPosition.y = m_yTransformer(position.y, camera.to(position.unit).y, layer);
-        return transformedPosition;
+        Transform::UnitVector transformed_position(position.unit);
+        transformed_position.x = m_x_transformer(position.x, camera.to(position.unit).x, layer);
+        transformed_position.y = m_y_transformer(position.y, camera.to(position.unit).y, layer);
+        return transformed_position;
     }
 
-    CoordinateTransformer& PositionTransformer::getXTransformer()
+    CoordinateTransformer& PositionTransformer::get_x_transformer()
     {
-        return m_xTransformer;
+        return m_x_transformer;
     }
 
-    CoordinateTransformer& PositionTransformer::getYTransformer()
+    CoordinateTransformer& PositionTransformer::get_y_transformer()
     {
-        return m_yTransformer;
+        return m_y_transformer;
     }
 
-    std::string PositionTransformer::getXTransformerName() const
+    std::string PositionTransformer::get_x_transformer_name() const
     {
-        return m_xTransformerName;
+        return m_x_transformer_name;
     }
 
-    std::string PositionTransformer::getYTransformerName() const
+    std::string PositionTransformer::get_y_transformer_name() const
     {
-        return m_yTransformerName;
+        return m_y_transformer_name;
     }
 
-    void InitPositionTransformer()
+    void init_position_transformers()
     {
         Transformers["Parallax"] = Parallax;
         Transformers["Camera"] = Camera;
         Transformers["Position"] = Position;
     }
-} // namespace obe::Graphics
+} // namespace obe::graphics

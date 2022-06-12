@@ -14,7 +14,7 @@ namespace obe::Scene
     class Scene;
 }
 
-namespace obe::Collision
+namespace obe::collision
 {
     /**
      * \brief Enum used when manipulating tags in the Collider
@@ -28,6 +28,7 @@ namespace obe::Collision
         // Tags the Collider should reject
         Rejected
     };
+    using ColliderTagTypeMeta = Types::SmartEnum<ColliderTagType>;
 
     class PolygonalCollider;
     /**
@@ -55,7 +56,7 @@ namespace obe::Collision
                               public Component::Component<PolygonalCollider>
     {
     private:
-        std::string m_parentId = "";
+        std::string m_parent_id = "";
 
         std::unordered_map<ColliderTagType, std::vector<std::string>> m_tags {
             { ColliderTagType::Tag, {} },
@@ -66,14 +67,14 @@ namespace obe::Collision
         /*
         * \brief Cached bounding box, used for AABB filtering
         */
-        mutable Transform::Rect m_boundingBox;
+        mutable Transform::Rect m_bounding_box;
         /*
-        * \brief If true, the bounding box is recalculated at next getBoundingBox() call
+        * \brief If true, the bounding box is recalculated at next get_bounding_box() call
         */
-        mutable bool m_updateBoundingBox = true;
+        mutable bool m_update_bounding_box = true;
 
-        void resetUnit(Transform::Units unit) override;
-        [[nodiscard]] bool checkTags(const PolygonalCollider& collider) const;
+        void reset_unit(Transform::Units unit) override;
+        [[nodiscard]] bool check_tags(const PolygonalCollider& collider) const;
 
     public:
         /**
@@ -87,63 +88,64 @@ namespace obe::Collision
          */
         explicit PolygonalCollider(const std::string& id);
         explicit PolygonalCollider(const PolygonalCollider& collider);
-        void operator=(const PolygonalCollider& collider);
+        PolygonalCollider& operator=(const PolygonalCollider& collider);
         // Tags
         /**
          * \brief Adds a Tag to the Collider
-         * \param tagType List where you want to add the Tag (Tag / Accepted /
+         * \param tag_type List where you want to add the Tag (Tag / Accepted /
          *        Rejected)
          * \param tag Name of the Tag you want to add
          */
-        void addTag(ColliderTagType tagType, const std::string& tag);
+        void add_tag(ColliderTagType tag_type, const std::string& tag);
 
         /**
          * \brief Clears Tags of the Collider
-         * \param tagType List you want to clear (Tag / Accepted /Rejected)
+         * \param tag_type List you want to clear (Tag / Accepted /Rejected)
          */
-        void clearTags(ColliderTagType tagType);
+        void clear_tags(ColliderTagType tag_type);
         /**
          * \brief Checks if the collider is intersecting other colliders
          * \param offset The offset to apply to the source collider
          * \return CollisionData containing intersected colliders (offset doesn't change)
          */
-        [[nodiscard]] CollisionData doesCollide(const Transform::UnitVector& offset) const;
+        [[nodiscard]] CollisionData does_collide(const Transform::UnitVector& offset) const;
         /**
          * \brief Checks if two polygons are intersecting
          * \param collider The other collider to test
          * \param offset The offset to apply to the source collider
+         * \param perform_aabb_filter whether or not, the collider should perform a quick AABB filter before checking for full collision
          * \return true if the two polygons intersects, false otherwise
          */
-        bool doesCollide(PolygonalCollider& collider, const Transform::UnitVector& offset,
-            const bool doAABBfilter = true) const;
+        bool does_collide(PolygonalCollider& collider, const Transform::UnitVector& offset,
+            const bool perform_aabb_filter = true) const;
         /**
          * \brief Check if the Collider contains one of the Tag in parameter
-         * \param tagType List from where you want to check the Tags existence
+         * \param tag_type List from where you want to check the Tags existence
          *        (Tag / Accepted / Rejected)
          * \param tags List of Tags you want to
          *        check the existence
          * \return true if at least one Tag has been found,
          *         false otherwise
          */
-        [[nodiscard]] bool doesHaveAnyTag(
-            ColliderTagType tagType, const std::vector<std::string>& tags) const;
+        [[nodiscard]] bool matches_any_tag(
+            ColliderTagType tag_type, const std::vector<std::string>& tags) const;
         /**
          * \brief Checks if the Collider contains a Tag
-         * \param tagType List from where you want to check the Tag existence
+         * \param tag_type List from where you want to check the Tag existence
          *        (Tag / Accepted / Rejected)
          * \param tag Name of the Tag you want to
          *        check the existence
          * \return true if the Tag is found, false otherwise
          */
-        bool doesHaveTag(ColliderTagType tagType, const std::string& tag);
+        bool contains_tag(ColliderTagType tag_type, const std::string& tag) const;
         /**
          * \brief Gets all the Tags from one of the Lists
-         * \param tagType List where you want to get all the Tags from (Tag /
+         * \param tag_type List where you want to get all the Tags from (Tag /
          *        Accepted / Rejected)
          * \return A std::vector containing all the Tags of
          *         the chosen List
          */
-        [[nodiscard]] std::vector<std::string> getAllTags(ColliderTagType tagType) const;
+        [[nodiscard]] std::vector<std::string> get_all_tags(ColliderTagType tag_type) const;
         /**
          * \brief Gets the Maximum distance before Collision in all the
          *        Colliders of the Scene
@@ -152,7 +154,7 @@ namespace obe::Collision
          * \return CollisionData struct containing the other colliders that had been
          *         met and the maximum distance the collider can travel before colliding
          */
-        [[nodiscard]] CollisionData getMaximumDistanceBeforeCollision(
+        [[nodiscard]] CollisionData get_distance_before_collision(
             const Transform::UnitVector& offset) const;
         /**
          * \brief Gets the Maximum distance before Collision with a specific
@@ -161,14 +163,14 @@ namespace obe::Collision
          * \param offset Distance the Collider should move to (if nothing collides)
          * \return The maximum distance the Collider can travel before colliding
          */
-        Transform::UnitVector getMaximumDistanceBeforeCollision(PolygonalCollider& collider,
-            const Transform::UnitVector& offset, const bool doAABBfilter = true) const;
+        Transform::UnitVector get_distance_before_collision(PolygonalCollider& collider,
+            const Transform::UnitVector& offset, const bool perform_aabb_filter = true) const;
         /**
          * \brief Get the Id of the parent of the Collider (When used in a
          *        GameObject) \return A std::string containing the Id of the parent of
          *        the Collider
          */
-        [[nodiscard]] std::string getParentId() const;
+        [[nodiscard]] std::string get_parent_id() const;
         [[nodiscard]] vili::node schema() const override;
         /**
          * \brief Dumps the content of the PolygonalCollider
@@ -182,27 +184,27 @@ namespace obe::Collision
         void load(const vili::node& data) override;
         /**
          * \brief Removes a Tag of the Collider
-         * \param tagType List you want to remove a Collider from (Tag /
+         * \param tag_type List you want to remove a Collider from (Tag /
          *        Accepted / Rejected) \param tag Name of the Tag you want to remove
          */
-        void removeTag(ColliderTagType tagType, const std::string& tag);
+        void remove_tag(ColliderTagType tag_type, const std::string& tag);
         /**
          * \brief Set the Id of the parent of the Collider (When used in a
          *        GameObject)
          * \param parent A std::string containing the Id of the
          *        parent of the Collider
          */
-        void setParentId(const std::string& parent);
+        void set_parent_id(const std::string& parent);
         [[nodiscard]] std::string_view type() const override;
         /*
         * \brief Returns the cached bounding box. Recalculates it if necessary.
         */
-        [[nodiscard]] Transform::Rect getBoundingBox() const override;
-        void addPoint(const Transform::UnitVector& position, int pointIndex = -1) override;
+        [[nodiscard]] Transform::Rect get_bounding_box() const override;
+        void add_point(const Transform::UnitVector& position, int point_index = -1) override;
         void move(const Transform::UnitVector& position) override;
         void rotate(float angle, Transform::UnitVector origin) override;
-        void setPosition(const Transform::UnitVector& position) override;
-        void setRotation(float angle, Transform::UnitVector origin) override;
-        void setPositionFromCentroid(const Transform::UnitVector& position) override;
+        void set_position(const Transform::UnitVector& position) override;
+        void set_rotation(float angle, Transform::UnitVector origin) override;
+        void set_position_from_centroid(const Transform::UnitVector& position) override;
     };
-} // namespace obe::Collision
+} // namespace obe::collision

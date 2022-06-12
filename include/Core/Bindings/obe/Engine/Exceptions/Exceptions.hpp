@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Engine::Exceptions::Bindings
+namespace obe::engine::exceptions::Bindings
 {
     void LoadClassBootScriptExecutionError(sol::state_view state);
     void LoadClassBootScriptLoadingError(sol::state_view state);

@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Event::Exceptions::Bindings
+namespace obe::event::Exceptions::Bindings
 {
     void LoadClassCallbackCreationError(sol::state_view state);
     void LoadClassEventAlreadyExists(sol::state_view state);

@@ -4,7 +4,7 @@
 
 #include <vili/parser.hpp>
 
-namespace obe::Animation::Schemas
+namespace obe::animation::schemas
 {
     constexpr std::string_view AnimationSchemaStr = R"SCHEMA(
 Meta:
@@ -45,7 +45,7 @@ Groups:
             clock:
                 type: "number"
                 optional: true
-Animation:
+animation:
     type: "object"
     properties:
         code:

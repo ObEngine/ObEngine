@@ -5,38 +5,38 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Graphics::Utils::Bindings
+namespace obe::graphics::utils::Bindings
 {
     void LoadClassDrawPolygonOptions(sol::state_view state)
     {
-        sol::table UtilsNamespace = state["obe"]["Graphics"]["Utils"].get<sol::table>();
-        sol::usertype<obe::Graphics::Utils::DrawPolygonOptions> bindDrawPolygonOptions
-            = UtilsNamespace.new_usertype<obe::Graphics::Utils::DrawPolygonOptions>(
+        sol::table UtilsNamespace = state["obe"]["graphics"]["utils"].get<sol::table>();
+        sol::usertype<obe::graphics::utils::DrawPolygonOptions> bindDrawPolygonOptions
+            = UtilsNamespace.new_usertype<obe::graphics::utils::DrawPolygonOptions>(
                 "DrawPolygonOptions", sol::call_constructor, sol::default_constructor);
-        bindDrawPolygonOptions["lines"] = &obe::Graphics::Utils::DrawPolygonOptions::lines;
-        bindDrawPolygonOptions["points"] = &obe::Graphics::Utils::DrawPolygonOptions::points;
-        bindDrawPolygonOptions["radius"] = &obe::Graphics::Utils::DrawPolygonOptions::radius;
-        bindDrawPolygonOptions["lineColor"] = &obe::Graphics::Utils::DrawPolygonOptions::lineColor;
-        bindDrawPolygonOptions["pointColor"]
-            = &obe::Graphics::Utils::DrawPolygonOptions::pointColor;
-        bindDrawPolygonOptions["specificLineColor"]
-            = &obe::Graphics::Utils::DrawPolygonOptions::specificLineColor;
-        bindDrawPolygonOptions["specificPointColor"]
-            = &obe::Graphics::Utils::DrawPolygonOptions::specificPointColor;
+        bindDrawPolygonOptions["lines"] = &obe::graphics::utils::DrawPolygonOptions::lines;
+        bindDrawPolygonOptions["points"] = &obe::graphics::utils::DrawPolygonOptions::points;
+        bindDrawPolygonOptions["radius"] = &obe::graphics::utils::DrawPolygonOptions::radius;
+        bindDrawPolygonOptions["line_color"] = &obe::graphics::utils::DrawPolygonOptions::line_color;
+        bindDrawPolygonOptions["point_color"]
+            = &obe::graphics::utils::DrawPolygonOptions::point_color;
+        bindDrawPolygonOptions["specific_line_color"]
+            = &obe::graphics::utils::DrawPolygonOptions::specific_line_color;
+        bindDrawPolygonOptions["specific_point_color"]
+            = &obe::graphics::utils::DrawPolygonOptions::specific_point_color;
     }
     void LoadFunctionDrawPoint(sol::state_view state)
     {
-        sol::table UtilsNamespace = state["obe"]["Graphics"]["Utils"].get<sol::table>();
-        UtilsNamespace.set_function("drawPoint", &obe::Graphics::Utils::drawPoint);
+        sol::table UtilsNamespace = state["obe"]["graphics"]["utils"].get<sol::table>();
+        UtilsNamespace.set_function("draw_point", &obe::graphics::utils::draw_point);
     }
     void LoadFunctionDrawLine(sol::state_view state)
     {
-        sol::table UtilsNamespace = state["obe"]["Graphics"]["Utils"].get<sol::table>();
-        UtilsNamespace.set_function("drawLine", &obe::Graphics::Utils::drawLine);
+        sol::table UtilsNamespace = state["obe"]["graphics"]["utils"].get<sol::table>();
+        UtilsNamespace.set_function("draw_line", &obe::graphics::utils::draw_line);
     }
     void LoadFunctionDrawPolygon(sol::state_view state)
     {
-        sol::table UtilsNamespace = state["obe"]["Graphics"]["Utils"].get<sol::table>();
-        UtilsNamespace.set_function("drawPolygon", &obe::Graphics::Utils::drawPolygon);
+        sol::table UtilsNamespace = state["obe"]["graphics"]["utils"].get<sol::table>();
+        UtilsNamespace.set_function("draw_polygon", &obe::graphics::utils::draw_polygon);
     }
 };

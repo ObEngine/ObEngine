@@ -3,9 +3,9 @@
 
 #include <Animation/Animation.hpp>
 
-namespace obe::Config::Validators
+namespace obe::config::validators
 {
-    vili::node AnimationValidator()
+    vili::node animation_validator()
     {
         // clang-format off
         return vili::object {
@@ -118,9 +118,9 @@ namespace obe::Config::Validators
                                                             {"type", vili::string_typename},
                                                             {
                                                                 "values", vili::array {
-                                                                    magic_enum::enum_name(Animation::AnimationCommand::PlayGroup),
-                                                                    magic_enum::enum_name(Animation::AnimationCommand::SetAnimation),
-                                                                    magic_enum::enum_name(Animation::AnimationCommand::Wait)
+                                                                    magic_enum::enum_name(animation::AnimationCommand::PlayGroup),
+                                                                    magic_enum::enum_name(animation::AnimationCommand::SetAnimation),
+                                                                    magic_enum::enum_name(animation::AnimationCommand::Wait)
                                                                 }
                                                             }
                                                         },

@@ -4,30 +4,30 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Config::Exceptions::Bindings
+namespace obe::config::Exceptions::Bindings
 {
     void LoadClassConfigError(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Config"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::Config::Exceptions::ConfigError> bindConfigError
-            = ExceptionsNamespace.new_usertype<obe::Config::Exceptions::ConfigError>("ConfigError",
+        sol::table ExceptionsNamespace = state["obe"]["config"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::config::Exceptions::ConfigError> bindConfigError
+            = ExceptionsNamespace.new_usertype<obe::config::Exceptions::ConfigError>("ConfigError",
                 sol::call_constructor,
-                sol::constructors<obe::Config::Exceptions::ConfigError(
+                sol::constructors<obe::config::Exceptions::ConfigError(
                     std::vector<std::string>, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<obe::Config::Exceptions::ConfigError>,
+                sol::bases<obe::Exception<obe::config::Exceptions::ConfigError>,
                     obe::BaseException>());
     }
     void LoadClassInvalidVersionFormat(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Config"]["Exceptions"].get<sol::table>();
-        sol::usertype<obe::Config::Exceptions::InvalidVersionFormat> bindInvalidVersionFormat
-            = ExceptionsNamespace.new_usertype<obe::Config::Exceptions::InvalidVersionFormat>(
+        sol::table ExceptionsNamespace = state["obe"]["config"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::config::Exceptions::InvalidVersionFormat> bindInvalidVersionFormat
+            = ExceptionsNamespace.new_usertype<obe::config::Exceptions::InvalidVersionFormat>(
                 "InvalidVersionFormat", sol::call_constructor,
-                sol::constructors<obe::Config::Exceptions::InvalidVersionFormat(
+                sol::constructors<obe::config::Exceptions::InvalidVersionFormat(
                     std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
-                sol::bases<obe::Exception<obe::Config::Exceptions::InvalidVersionFormat>,
+                sol::bases<obe::Exception<obe::config::Exceptions::InvalidVersionFormat>,
                     obe::BaseException>());
     }
 };

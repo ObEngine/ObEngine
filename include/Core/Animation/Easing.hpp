@@ -3,7 +3,9 @@
 #include <functional>
 #include <string>
 
-namespace obe::Animation::Easing
+#include <Types/SmartEnum.hpp>
+
+namespace obe::animation::easing
 {
     enum class EasingType
     {
@@ -40,37 +42,39 @@ namespace obe::Animation::Easing
         InOutBounce
     };
 
-    double Linear(double t);
-    double InSine(double t);
-    double OutSine(double t);
-    double InOutSine(double t);
-    double InQuad(double t);
-    double OutQuad(double t);
-    double InOutQuad(double t);
-    double InCubic(double t);
-    double OutCubic(double t);
-    double InOutCubic(double t);
-    double InQuart(double t);
-    double OutQuart(double t);
-    double InOutQuart(double t);
-    double InQuint(double t);
-    double OutQuint(double t);
-    double InOutQuint(double t);
-    double InExpo(double t);
-    double OutExpo(double t);
-    double InOutExpo(double t);
-    double InCirc(double t);
-    double OutCirc(double t);
-    double InOutCirc(double t);
-    double InBack(double t);
-    double OutBack(double t);
-    double InOutBack(double t);
-    double InElastic(double t);
-    double OutElastic(double t);
-    double InOutElastic(double t);
-    double InBounce(double t);
-    double OutBounce(double t);
-    double InOutBounce(double t);
+    using EasingTypeMeta = Types::SmartEnum<EasingType>;
+
+    double linear(double t);
+    double in_sine(double t);
+    double out_sine(double t);
+    double in_out_sine(double t);
+    double in_quad(double t);
+    double out_quad(double t);
+    double in_out_quad(double t);
+    double in_cubic(double t);
+    double out_cubic(double t);
+    double in_out_cubic(double t);
+    double in_quart(double t);
+    double out_quart(double t);
+    double in_out_quart(double t);
+    double in_quint(double t);
+    double out_quint(double t);
+    double in_out_quint(double t);
+    double in_expo(double t);
+    double out_expo(double t);
+    double in_out_expo(double t);
+    double in_circ(double t);
+    double out_circ(double t);
+    double in_out_circ(double t);
+    double in_back(double t);
+    double out_back(double t);
+    double in_out_back(double t);
+    double in_elastic(double t);
+    double out_elastic(double t);
+    double in_out_elastic(double t);
+    double in_bounce(double t);
+    double out_bounce(double t);
+    double in_out_bounce(double t);
 
     using EasingFunction = std::function<double(double)>;
 

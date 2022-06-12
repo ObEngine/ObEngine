@@ -5,7 +5,7 @@
 
 #include <Types/Serializable.hpp>
 
-namespace obe::Graphics
+namespace obe::graphics
 {
     /**
      * \brief Shader class to use GLSL
@@ -21,7 +21,7 @@ namespace obe::Graphics
         [[nodiscard]] vili::node schema() const override;
         /**
          * \brief Dumps the content of the Shader to a Vili Node
-         * \param target Vili Node where to serialize the Shader
+         * \return vili::node containing the serialized Shader
          */
         [[nodiscard]] vili::node dump() const override;
         /**
@@ -29,6 +29,6 @@ namespace obe::Graphics
          * \param data Vili Node containing the data of the Shader
          */
         void load(const vili::node& data) override;
-        void loadShader(const std::string& path);
+        void load_from_file(const std::string& path);
     };
-} // namespace obe::Graphics
+} // namespace obe::graphics

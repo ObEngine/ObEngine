@@ -73,9 +73,9 @@ namespace obe::Script
     {
     private:
         bool m_permanent = false;
-        std::unique_ptr<Animation::Animator> m_animator;
-        Graphics::Sprite* m_sprite = nullptr;
-        Collision::PolygonalCollider* m_collider = nullptr;
+        std::unique_ptr<animation::Animator> m_animator;
+        graphics::Sprite* m_sprite = nullptr;
+        collision::PolygonalCollider* m_collider = nullptr;
         Scene::SceneNode m_objectNode;
         sol::state_view m_lua;
         sol::environment m_outer_environment;
@@ -151,7 +151,7 @@ namespace obe::Script
          *        ObEngine.Script.GameObject.NoAnimator if no Animator Component)
          * \return A pointer to the Animator Component of the GameObject
          */
-        Animation::Animator& getAnimator() const;
+        animation::Animator& getAnimator() const;
         /**
          * \rename{Collider}
          * \asproperty
@@ -159,7 +159,7 @@ namespace obe::Script
          *        ObEngine.Script.GameObject.NoCollider if no Collider Component)
          * \return A pointer to the Collider Component of the GameObject
          */
-        Collision::PolygonalCollider& getCollider() const;
+        collision::PolygonalCollider& getCollider() const;
         /**
          * \rename{Sprite}
          * \asproperty
@@ -167,7 +167,7 @@ namespace obe::Script
          *        ObEngine.Script.GameObject.NoSprite if no Sprite Component)
          * \return A pointer to the Sprite Component of the GameObject
          */
-        Graphics::Sprite& getSprite() const;
+        graphics::Sprite& getSprite() const;
         /**
          * \rename{SceneNode}
          * \asproperty
@@ -204,7 +204,7 @@ namespace obe::Script
          * \param resources pointer to the ResourceManager
          */
         void loadGameObject(
-            Scene::Scene& scene, vili::node& obj, Engine::ResourceManager* resources = nullptr);
+            Scene::Scene& scene, vili::node& obj, engine::ResourceManager* resources = nullptr);
         /**
          * \brief Updates the GameObject
          */
@@ -258,7 +258,7 @@ namespace obe::Script
     template <typename U>
     void GameObject::sendInitArg(const std::string& argName, U value)
     {
-        Debug::Log->debug(
+        debug::Log->debug(
             "<GameObject> Sending Local.Init argument {0} to GameObject {1}", argName, m_id);
         m_outer_environment["__INIT_ARG_TABLE"][argName] = value;
     }

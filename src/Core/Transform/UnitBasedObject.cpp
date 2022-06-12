@@ -5,7 +5,7 @@ namespace obe::Transform
     void UnitBasedObject::setWorkingUnit(Units unit)
     {
         m_unit = unit;
-        resetUnit(unit);
+        reset_unit(unit);
     }
 
     Units UnitBasedObject::getWorkingUnit() const

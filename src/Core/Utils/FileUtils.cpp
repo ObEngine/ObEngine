@@ -31,7 +31,7 @@ namespace obe::Utils::File
 {
     std::vector<std::string> getDirectoryList(const std::string& path)
     {
-        Debug::Log->trace("<FileUtils> Get Directory List at {0}", path);
+        debug::Log->trace("<FileUtils> Get Directory List at {0}", path);
         std::vector<std::string> folderList;
 #ifdef _USE_FILESYSTEM_FALLBACK
         tinydir_dir dir;
@@ -63,7 +63,7 @@ namespace obe::Utils::File
 
     std::vector<std::string> getFileList(const std::string& path)
     {
-        Debug::Log->trace("<FileUtils> Get File List at {0}", path);
+        debug::Log->trace("<FileUtils> Get File List at {0}", path);
 
         std::vector<std::string> fileList;
 #ifdef _USE_FILESYSTEM_FALLBACK
@@ -96,7 +96,7 @@ namespace obe::Utils::File
 
     bool fileExists(const std::string& path)
     {
-        Debug::Log->trace("<FileUtils> Test File existence at {0}", path);
+        debug::Log->trace("<FileUtils> Test File existence at {0}", path);
 
 #ifdef _USE_FILESYSTEM_FALLBACK
         struct stat buffer;
@@ -109,7 +109,7 @@ namespace obe::Utils::File
 
     bool directoryExists(const std::string& path)
     {
-        Debug::Log->trace("<FileUtils> Get Directory existence at {0}", path);
+        debug::Log->trace("<FileUtils> Get Directory existence at {0}", path);
 
 #ifdef _USE_FILESYSTEM_FALLBACK
         if (FsAccess(path.c_str(), 0) == 0)
@@ -126,7 +126,7 @@ namespace obe::Utils::File
 
     bool createDirectory(const std::string& path)
     {
-        Debug::Log->trace("<FileUtils> Create Directory at {0}", path);
+        debug::Log->trace("<FileUtils> Create Directory at {0}", path);
 
 #ifdef _USE_FILESYSTEM_FALLBACK
 #ifdef _WIN32
@@ -142,14 +142,14 @@ namespace obe::Utils::File
 
     void createFile(const std::string& path)
     {
-        Debug::Log->trace("<FileUtils> Create File at {0}", path);
+        debug::Log->trace("<FileUtils> Create File at {0}", path);
         std::ofstream dst(path, std::ios::binary);
         dst.close();
     }
 
     void copy(const std::string& source, const std::string& target)
     {
-        Debug::Log->trace("<FileUtils> Copy file from {0} to {1}", source, target);
+        debug::Log->trace("<FileUtils> Copy file from {0} to {1}", source, target);
 
         // std::filesystem::copy(source, target); (Doesn't work for now)
         const std::ifstream src(source, std::ios::binary);
@@ -160,17 +160,17 @@ namespace obe::Utils::File
 
     bool deleteFile(const std::string& path)
     {
-        if (Debug::Log != nullptr)
-            Debug::Log->trace("<FileUtils> Delete File at {0}", path);
+        if (debug::Log != nullptr)
+            debug::Log->trace("<FileUtils> Delete File at {0}", path);
         return std::remove(path.c_str()) == 0;
     }
 
     bool deleteDirectory(const std::string& path)
     {
-        Debug::Log->trace("<FileUtils> Delete Directory at {0}", path);
+        debug::Log->trace("<FileUtils> Delete Directory at {0}", path);
 
 #ifdef _USE_FILESYSTEM_FALLBACK
-        Debug::Log->error("<FileUtils> Unimplemented deleteDirectory for "
+        debug::Log->error("<FileUtils> Unimplemented deleteDirectory for "
                           "filesystem fallback");
 #else
         if (directoryExists(path))

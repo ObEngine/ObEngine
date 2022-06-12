@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Animation/Easing.hpp>
+#include <Animation/Exceptions.hpp>
 #include <Collision/Trajectory.hpp>
 #include <Graphics/Color.hpp>
 #include <Time/TimeUtils.hpp>
@@ -8,7 +9,7 @@
 #include <Transform/Rect.hpp>
 
 
-namespace obe::Animation
+namespace obe::animation
 {
     template <class T>
     class TweenImpl
@@ -20,12 +21,12 @@ namespace obe::Animation
         }
     };
     template <>
-    class TweenImpl<Graphics::Color>
+    class TweenImpl<graphics::Color>
     {
     public:
-        static Graphics::Color step(double progression, const Graphics::Color& from, const Graphics::Color& to)
+        static graphics::Color step(double progression, const graphics::Color& from, const graphics::Color& to)
         {
-            Graphics::Color step = from;
+            graphics::Color step = from;
             step.r = (progression * (to.r - from.r)) + from.r;
             step.g = (progression * (to.g - from.g)) + from.g;
             step.b = (progression * (to.b - from.b)) + from.b;
@@ -61,13 +62,13 @@ namespace obe::Animation
         }
     };
     template <>
-    class TweenImpl<Collision::Trajectory>
+    class TweenImpl<collision::Trajectory>
     {
     public:
-        static Collision::Trajectory step(
-            double progression, const Collision::Trajectory& from, const Collision::Trajectory& to)
+        static collision::Trajectory step(
+            double progression, const collision::Trajectory& from, const collision::Trajectory& to)
         {
-            Collision::Trajectory step = from;
+            collision::Trajectory step = from;
             step.m_acceleration
                 = (progression * (to.m_acceleration - from.m_acceleration)) + from.m_acceleration;
             step.m_angle = (progression * (to.m_angle - from.m_angle)) + from.m_angle;
@@ -114,10 +115,10 @@ namespace obe::Animation
 
     /**
      * \thints
-     * \thint{ColorTweening     , TweenableClass=obe::Graphics::Color}
+     * \thint{ColorTweening     , TweenableClass=obe::graphics::Color}
      * \thint{UnitVectorTweening, TweenableClass=obe::Transform::UnitVector}
      * \thint{RectTweening      , TweenableClass=obe::Transform::Rect}
-     * \thint{TrajectoryTweening, TweenableClass=obe::Collision::Trajectory}
+     * \thint{TrajectoryTweening, TweenableClass=obe::collision::Trajectory}
      * \thint{IntTweening       , TweenableClass=int}
      * \thint{DoubleTweening    , TweenableClass=double}
      * \endthints
@@ -127,7 +128,7 @@ namespace obe::Animation
     class ValueTweening
     {
     private:
-        Easing::EasingFunction m_easing = Easing::Linear;
+        easing::EasingFunction m_easing = easing::linear;
         TweenableClass m_from;
         TweenableClass m_to;
         double m_duration;
@@ -135,25 +136,33 @@ namespace obe::Animation
         bool m_started = false;
 
     public:
-        explicit ValueTweening(Time::TimeUnit duration, const Easing::EasingFunction& easing = Easing::Linear)
-            : m_easing(easing)
+        explicit ValueTweening(Time::TimeUnit duration, easing::EasingFunction easing = easing::linear)
+            : m_easing(std::move(easing))
             , m_duration(duration)
             
         {
             static_assert(template_specialization_exists<TweenImpl<TweenableClass>>());
+            if (!m_easing)
+            {
+                throw exceptions::InvalidEasingFunction(EXC_INFO);
+            }
         }
 
         /**
          * \mergetemplatespecialisations{Tween}
          */
         ValueTweening(TweenableClass from, TweenableClass to, Time::TimeUnit duration,
-            const Easing::EasingFunction& easing = Easing::Linear)
-            : m_easing(easing)
+            easing::EasingFunction easing = easing::linear)
+            : m_easing(std::move(easing))
             , m_from(from)
             , m_to(to)
             , m_duration(duration)
         {
             static_assert(template_specialization_exists<TweenImpl<TweenableClass>>());
+            if (!m_easing)
+            {
+                throw exceptions::InvalidEasingFunction(EXC_INFO);
+            }
         }
 
         ValueTweening& from(TweenableClass from)
@@ -168,7 +177,7 @@ namespace obe::Animation
             return *this;
         }
 
-        ValueTweening& ease(const Easing::EasingFunction& easing)
+        ValueTweening& ease(const easing::EasingFunction& easing)
         {
             m_easing = easing;
             return *this;

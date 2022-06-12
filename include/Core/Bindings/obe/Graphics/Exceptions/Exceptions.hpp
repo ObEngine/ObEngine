@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Graphics::Exceptions::Bindings
+namespace obe::graphics::exceptions::Bindings
 {
     void LoadClassCanvasElementAlreadyExists(sol::state_view state);
     void LoadClassImageFileNotFound(sol::state_view state);

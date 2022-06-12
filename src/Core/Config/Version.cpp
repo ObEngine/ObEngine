@@ -1,7 +1,7 @@
 #include <Config/Exceptions.hpp>
 #include <Config/Version.hpp>
 
-namespace obe::Config
+namespace obe::config
 {
     Version::Version(const std::string& str)
     {
@@ -33,4 +33,4 @@ namespace obe::Config
     {
         return std::to_string(major) + "." + std::to_string(minor) + "." + std::to_string(patch);
     }
-} // namespace obe::Config
+} // namespace obe::config

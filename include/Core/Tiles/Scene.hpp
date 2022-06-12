@@ -36,7 +36,7 @@ namespace obe::Tiles
 
         std::vector<std::unique_ptr<TileLayer>> m_layers;
         std::vector<std::unique_ptr<AnimatedTile>> m_animatedTiles;
-        std::vector<std::unique_ptr<Collision::PolygonalCollider>> m_colliderModels;
+        std::vector<std::unique_ptr<collision::PolygonalCollider>> m_colliderModels;
         std::vector<vili::node> m_gameObjectsModels;
         TilesetCollection m_tilesets;
 
@@ -57,8 +57,8 @@ namespace obe::Tiles
         [[nodiscard]] TileLayer& getLayer(const std::string& id) const;
         [[nodiscard]] AnimatedTiles getAnimatedTiles() const;
         [[nodiscard]] const TilesetCollection& getTilesets() const;
-        [[nodiscard]] std::vector<Graphics::Renderable*> getRenderables() const;
-        [[nodiscard]] std::vector<Collision::PolygonalCollider*> getColliderModels() const;
+        [[nodiscard]] std::vector<graphics::Renderable*> getRenderables() const;
+        [[nodiscard]] std::vector<collision::PolygonalCollider*> getColliderModels() const;
         [[nodiscard]] const std::vector<vili::node>& getGameObjectsModels() const;
 
         [[nodiscard]] uint32_t getWidth() const;

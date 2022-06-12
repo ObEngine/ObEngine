@@ -60,7 +60,7 @@ namespace obe::Transform
         m_size = size;
     }
 
-    void Rect::draw(Graphics::RenderTarget surface, int x, int y) const
+    void Rect::draw(graphics::RenderTarget surface, int x, int y) const
     {
         float radius = 6.f;
 
@@ -93,23 +93,23 @@ namespace obe::Transform
         result.x = (-dy * sinAngle) * -1;
         result.y = (dy * cosAngle) * -1;
         vec += result;
-        Graphics::Utils::drawPoint(surface, static_cast<int>(vec.x - radius),
+        graphics::utils::draw_point(surface, static_cast<int>(vec.x - radius),
             static_cast<int>(vec.y - radius), radius, sf::Color::White);
-        Graphics::Utils::drawLine(surface, static_cast<int>(vec.x), static_cast<int>(vec.y),
+        graphics::utils::draw_line(surface, static_cast<int>(vec.x), static_cast<int>(vec.y),
             static_cast<int>(topPos.x), static_cast<int>(topPos.y), 2, sf::Color::White);
 
-        std::unordered_map<unsigned int, Graphics::Color> pointsColor
-            = { { 0, Graphics::Color::Red }, { 1, Graphics::Color(255, 128, 0) },
-                  { 2, Graphics::Color::Yellow }, { 3, Graphics::Color(128, 255, 0) },
-                  { 4, Graphics::Color::Green }, { 5, Graphics::Color(0, 255, 128) },
-                  { 6, Graphics::Color::Magenta }, { 7, Graphics::Color(0, 128, 255) },
-                  { 8, Graphics::Color::Blue } };
+        std::unordered_map<unsigned int, graphics::Color> pointsColor
+            = { { 0, graphics::Color::Red }, { 1, graphics::Color(255, 128, 0) },
+                  { 2, graphics::Color::Yellow }, { 3, graphics::Color(128, 255, 0) },
+                  { 4, graphics::Color::Green }, { 5, graphics::Color(0, 255, 128) },
+                  { 6, graphics::Color::Magenta }, { 7, graphics::Color(0, 128, 255) },
+                  { 8, graphics::Color::Blue } };
 
         // TODO: Refactor using C++20 designated initializers
-        Graphics::Utils::DrawPolygonOptions options { true, true, radius, Graphics::Color::White,
-            Graphics::Color::White, {}, pointsColor };
+        graphics::utils::DrawPolygonOptions options { true, true, radius, graphics::Color::White,
+            graphics::Color::White, {}, pointsColor };
 
-        Graphics::Utils::drawPolygon(surface, drawPoints, options);
+        graphics::utils::draw_polygon(surface, drawPoints, options);
     }
 
     double Rect::x() const
@@ -167,7 +167,7 @@ namespace obe::Transform
         if ((intersectionLeft < intersectionRight) && (intersectionTop < intersectionBottom))
         {
             Rect intersection;
-            intersection.setPosition(
+            intersection.set_position(
                 UnitVector(intersectionLeft, intersectionTop, m_position.unit));
             intersection.setSize(UnitVector(intersectionRight - intersectionLeft,
                 intersectionBottom - intersectionTop, m_size.unit));
@@ -263,7 +263,7 @@ namespace obe::Transform
         this->setPosition(savePosition, ref);
     }
 
-    void Rect::setPosition(const UnitVector& position)
+    void Rect::set_position(const UnitVector& position)
     {
         this->setPosition(position, Referential::TopLeft);
     }

@@ -2,7 +2,7 @@
 
 #include <vili/node.hpp>
 
-namespace obe::Config
+namespace obe::config
 {
     class ConfigurationManager : public vili::node
     {

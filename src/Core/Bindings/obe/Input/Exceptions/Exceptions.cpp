@@ -8,7 +8,7 @@ namespace obe::Input::Exceptions::Bindings
 {
     void LoadClassInputButtonAlreadyInCombination(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Input"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Input"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Input::Exceptions::InputButtonAlreadyInCombination>
             bindInputButtonAlreadyInCombination = ExceptionsNamespace.new_usertype<
                 obe::Input::Exceptions::InputButtonAlreadyInCombination>(
@@ -21,7 +21,7 @@ namespace obe::Input::Exceptions::Bindings
     }
     void LoadClassInputButtonInvalidOperation(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Input"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Input"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Input::Exceptions::InputButtonInvalidOperation>
             bindInputButtonInvalidOperation
             = ExceptionsNamespace.new_usertype<obe::Input::Exceptions::InputButtonInvalidOperation>(
@@ -34,7 +34,7 @@ namespace obe::Input::Exceptions::Bindings
     }
     void LoadClassInvalidGamepadButton(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Input"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Input"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Input::Exceptions::InvalidGamepadButton> bindInvalidGamepadButton
             = ExceptionsNamespace.new_usertype<obe::Input::Exceptions::InvalidGamepadButton>(
                 "InvalidGamepadButton", sol::call_constructor,
@@ -46,7 +46,7 @@ namespace obe::Input::Exceptions::Bindings
     }
     void LoadClassInvalidInputButtonState(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Input"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Input"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Input::Exceptions::InvalidInputButtonState> bindInvalidInputButtonState
             = ExceptionsNamespace.new_usertype<obe::Input::Exceptions::InvalidInputButtonState>(
                 "InvalidInputButtonState", sol::call_constructor,
@@ -58,7 +58,7 @@ namespace obe::Input::Exceptions::Bindings
     }
     void LoadClassInvalidInputCombinationCode(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Input"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Input"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Input::Exceptions::InvalidInputCombinationCode>
             bindInvalidInputCombinationCode
             = ExceptionsNamespace.new_usertype<obe::Input::Exceptions::InvalidInputCombinationCode>(
@@ -71,7 +71,7 @@ namespace obe::Input::Exceptions::Bindings
     }
     void LoadClassInvalidInputTypeEnumValue(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Input"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Input"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Input::Exceptions::InvalidInputTypeEnumValue>
             bindInvalidInputTypeEnumValue
             = ExceptionsNamespace.new_usertype<obe::Input::Exceptions::InvalidInputTypeEnumValue>(
@@ -84,7 +84,7 @@ namespace obe::Input::Exceptions::Bindings
     }
     void LoadClassUnknownInputAction(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Input"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Input"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Input::Exceptions::UnknownInputAction> bindUnknownInputAction
             = ExceptionsNamespace.new_usertype<obe::Input::Exceptions::UnknownInputAction>(
                 "UnknownInputAction", sol::call_constructor,
@@ -96,7 +96,7 @@ namespace obe::Input::Exceptions::Bindings
     }
     void LoadClassUnknownInputButton(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Input"]["Exceptions"].get<sol::table>();
+        sol::table ExceptionsNamespace = state["obe"]["Input"]["exceptions"].get<sol::table>();
         sol::usertype<obe::Input::Exceptions::UnknownInputButton> bindUnknownInputButton
             = ExceptionsNamespace.new_usertype<obe::Input::Exceptions::UnknownInputButton>(
                 "UnknownInputButton", sol::call_constructor,

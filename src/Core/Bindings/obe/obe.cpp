@@ -39,6 +39,6 @@ namespace obe::Bindings
     void LoadGlobalObengineProduction(sol::state_view state)
     {
         sol::table obeNamespace = state["obe"].get<sol::table>();
-        obeNamespace["OBENGINE_PRODUCTION"] = obe::Config::OBENGINE_PRODUCTION;
+        obeNamespace["OBENGINE_PRODUCTION"] = obe::config::OBENGINE_PRODUCTION;
     }
 };

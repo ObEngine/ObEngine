@@ -21,7 +21,7 @@ namespace obe
  * \additionalinclude{System/Path.hpp}
  * \additionalinclude{soloud/soloud.h}
  */
-namespace obe::Audio
+namespace obe::audio
 {
     class Sound;
 
@@ -68,9 +68,9 @@ namespace obe::Audio
         /**
          * \brief Loads a sound file at a given path
          * \param path Path to the sound file
-         * \param loadPolicy The way you want to load the sound file
+         * \param load_policy The way you want to load the sound file
          * \return A Sound object loaded with the sound file
          */
-        Sound load(const System::Path& path, LoadPolicy loadPolicy = LoadPolicy::Normal);
+        Sound load(const System::Path& path, LoadPolicy load_policy = LoadPolicy::Normal);
     };
 }

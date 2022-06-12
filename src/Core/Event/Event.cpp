@@ -1,10 +1,11 @@
 #include <Event/Event.hpp>
+#include <utility>
 
-namespace obe::Event
+namespace obe::event
 {
     ScopeProfiler::ScopeProfiler(CallbackProfiler& results)
-        : m_results(results)
-        , m_start(Time::epoch())
+        : m_start(Time::epoch())
+        , m_results(results)
     {
     }
 
@@ -24,77 +25,78 @@ namespace obe::Event
         }
     }
 
-    void EventBase::onAddListener(OnListenerChange callback)
+    void EventBase::on_add_listener(OnListenerChange callback)
     {
-        m_onAddListener = callback;
+        m_on_add_listener = std::move(callback);
     }
 
-    void EventBase::onRemoveListener(OnListenerChange callback)
+    void EventBase::on_remove_listener(OnListenerChange callback)
     {
-        m_onRemoveListener = std::move(callback);
+        m_on_remove_listener = std::move(callback);
     }
 
-    void EventBase::collectGarbage()
+    void EventBase::collect_garbage()
     {
-        Debug::Log->trace(
+        debug::Log->trace(
             "EventListeners Garbage Collection for Event {} [External]", m_identifier);
-        for (const std::string& listenerId : m_garbageCollector)
+        for (const std::string& listener_id : m_garbage_collector)
         {
-            Debug::Log->trace("  - Garbage Collecting listener {}", listenerId);
-            m_listeners.erase(listenerId);
+            debug::Log->trace("  - Garbage Collecting listener {}", listener_id);
+            m_listeners.erase(listener_id);
         }
-        m_garbageCollector.clear();
+        m_garbage_collector.clear();
     }
 
-    EventBase::EventBase(const std::string& parentName, const std::string& name, bool startState)
+    EventBase::EventBase(const std::string& parent_name, const std::string& name, bool initial_state)
+        : m_name(name)
+        , m_enabled(initial_state)
     {
-        m_name = name;
-        m_identifier = fmt::format("{}.{}", parentName, m_name);
-        m_enabled = startState;
-        Debug::Log->trace("<Event> Creating Event '{}' @{}", m_identifier, fmt::ptr(this));
+        m_identifier = fmt::format("{}.{}", parent_name, m_name);
+
+        debug::Log->trace("<Event> Creating Event '{}' @{}", m_identifier, fmt::ptr(this));
     }
 
-    bool EventBase::getState() const
+    bool EventBase::get_state() const
     {
         return m_enabled;
     }
 
-    std::string EventBase::getName() const
+    std::string EventBase::get_name() const
     {
         return m_name;
     }
 
-    std::string EventBase::getIdentifier() const
+    std::string EventBase::get_identifier() const
     {
         return m_identifier;
     }
 
-    void EventBase::addExternalListener(
+    void EventBase::add_external_listener(
         const std::string& id, const ExternalEventListener& listener)
     {
-        Debug::Log->trace("<Event> Adding new listener '{}' to Event '{}'", id, m_identifier);
+        debug::Log->trace("<Event> Adding new listener '{}' to Event '{}'", id, m_identifier);
         m_listeners.emplace(id, listener);
-        if (m_onAddListener)
+        if (m_on_add_listener)
         {
-            m_onAddListener(ListenerChangeState::Added, id);
+            m_on_add_listener(ListenerChangeState::Added, id);
         }
     }
 
-    void EventBase::removeExternalListener(const std::string& id)
+    void EventBase::remove_external_listener(const std::string& id)
     {
-        Debug::Log->trace("<Event> Removing listener '{}' from Event '{}'", id, m_identifier);
-        if (m_garbageLock)
-            m_garbageCollector.push_back(id);
+        debug::Log->trace("<Event> Removing listener '{}' from Event '{}'", id, m_identifier);
+        if (m_garbage_lock)
+            m_garbage_collector.push_back(id);
         else
             m_listeners.erase(id);
-        if (m_onRemoveListener)
+        if (m_on_remove_listener)
         {
-            m_onRemoveListener(ListenerChangeState::Removed, id);
+            m_on_remove_listener(ListenerChangeState::Removed, id);
         }
     }
 
-    const EventProfiler& EventBase::getProfiler() const
+    const EventProfiler& EventBase::get_profiler() const
     {
         return m_profiler;
     }
-} // namespace obe::Event
+} // namespace obe::event

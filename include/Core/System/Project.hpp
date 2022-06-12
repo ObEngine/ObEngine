@@ -69,7 +69,7 @@ namespace obe::System::Project
     {
     private:
         std::string m_id;
-        Config::Version m_obengineVersion;
+        config::Version m_obengineVersion;
 
         std::vector<std::string> m_include;
         std::vector<std::string> m_exclude;

@@ -1,97 +1,97 @@
 #include <Collision/Trajectory.hpp>
 
-namespace obe::Collision
+namespace obe::collision
 {
     Trajectory::Trajectory(const Transform::Units unit)
         : Togglable(true)
+        , m_unit(unit)
     {
-        m_unit = unit;
     }
 
-    Trajectory& Trajectory::setAngle(const double angle)
+    Trajectory& Trajectory::set_angle(const double angle)
     {
         m_angle = angle;
         return *this;
     }
 
-    Trajectory& Trajectory::setSpeed(const double speed)
+    Trajectory& Trajectory::set_speed(const double speed)
     {
         m_speed = speed;
         return *this;
     }
 
-    Trajectory& Trajectory::setAcceleration(const double acceleration)
+    Trajectory& Trajectory::set_acceleration(const double acceleration)
     {
         m_acceleration = acceleration;
         return *this;
     }
 
-    Trajectory& Trajectory::addAngle(const double angle)
+    Trajectory& Trajectory::add_angle(const double angle)
     {
         m_angle += angle;
         return *this;
     }
 
-    Trajectory& Trajectory::addSpeed(const double speed)
+    Trajectory& Trajectory::add_speed(const double speed)
     {
         m_speed += speed;
         return *this;
     }
 
-    Trajectory& Trajectory::addAcceleration(const double acceleration)
+    Trajectory& Trajectory::add_acceleration(const double acceleration)
     {
         m_acceleration = acceleration;
         return *this;
     }
 
-    Trajectory& Trajectory::setStatic(const bool tStatic)
+    Trajectory& Trajectory::set_static(const bool static_)
     {
-        m_static = tStatic;
+        m_static = static_;
         return *this;
     }
 
-    double Trajectory::getAngle() const
+    double Trajectory::get_angle() const
     {
         return m_angle;
     }
 
-    double Trajectory::getSpeed() const
+    double Trajectory::get_speed() const
     {
         return m_speed;
     }
 
-    double Trajectory::getAcceleration() const
+    double Trajectory::get_acceleration() const
     {
         return m_acceleration;
     }
 
-    bool Trajectory::getStatic() const
+    bool Trajectory::is_static() const
     {
         return m_static;
     }
 
-    Transform::Units Trajectory::getUnit() const
+    Transform::Units Trajectory::get_unit() const
     {
         return m_unit;
     }
 
-    void Trajectory::addCheck(const TrajectoryCheckFunction& check)
+    void Trajectory::add_check(const TrajectoryCheckFunction& check)
     {
         m_checks.push_back(check);
     }
 
-    std::vector<TrajectoryCheckFunction>& Trajectory::getChecks()
+    std::vector<TrajectoryCheckFunction>& Trajectory::get_checks()
     {
         return m_checks;
     }
 
-    void Trajectory::onCollide(const OnCollideCallback& callback)
+    void Trajectory::on_collide(const OnCollideCallback& callback)
     {
-        m_onCollideCallback = callback;
+        m_on_collide_callback = callback;
     }
 
-    OnCollideCallback& Trajectory::getOnCollideCallback()
+    OnCollideCallback& Trajectory::get_on_collide_callback()
     {
-        return m_onCollideCallback;
+        return m_on_collide_callback;
     }
-} // namespace obe::Collision
+} // namespace obe::collision

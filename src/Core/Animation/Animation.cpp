@@ -9,7 +9,7 @@
 #include <Engine/ResourceManager.hpp>
 #include <System/Path.hpp>
 
-namespace obe::Animation
+namespace obe::animation
 {
     AnimationState::AnimationState(const Animation& parent)
         : m_parent(parent)
@@ -18,319 +18,323 @@ namespace obe::Animation
 
     void AnimationState::load()
     {
-        for (const auto& [groupName, group] : m_parent.m_groups)
+        for (const auto& [group_name, group] : m_parent.m_groups)
         {
-            m_groups.emplace(groupName, std::make_unique<AnimationGroup>(*group.get()));
+            m_groups.emplace(group_name, std::make_unique<AnimationGroup>(*group.get()));
         }
     }
 
-    std::string AnimationState::getCalledAnimation() const noexcept
+    std::string AnimationState::get_called_animation() const noexcept
     {
-        return m_nextAnimation;
+        return m_next_animation_name;
     }
 
-    std::string Animation::getCalledAnimation() const noexcept
+    std::string Animation::get_next_animation() const noexcept
     {
-        return m_defaultState.getCalledAnimation();
+        return m_default_state.get_called_animation();
     }
 
-    std::string Animation::getName() const noexcept
+    std::string Animation::get_name() const noexcept
     {
         return m_name;
     }
 
-    Time::TimeUnit Animation::getDelay() const noexcept
+    Time::TimeUnit Animation::get_delay() const noexcept
     {
         return m_delay;
     }
 
-    AnimationGroup& AnimationState::getAnimationGroup(const std::string& groupName)
+    AnimationGroup& AnimationState::get_animation_group(const std::string& group_name)
     {
-        if (const auto group = m_groups.find(groupName); group != m_groups.end())
+        if (const auto group = m_groups.find(group_name); group != m_groups.end())
             return *group->second;
-        throw Exceptions::UnknownAnimationGroup(
-            m_parent.getName(), groupName, m_parent.getAllAnimationGroupName(), EXC_INFO);
+        throw exceptions::UnknownAnimationGroup(
+            m_parent.get_name(), group_name, m_parent.get_all_animation_groups_names(), EXC_INFO);
     }
 
-    AnimationGroup& Animation::getAnimationGroup(const std::string& groupName)
+    AnimationGroup& Animation::get_animation_group(const std::string& group_name)
     {
-        return m_defaultState.getAnimationGroup(groupName);
+        return m_default_state.get_animation_group(group_name);
     }
 
-    std::string AnimationState::getCurrentAnimationGroup() const noexcept
+    std::string AnimationState::get_current_animation_group() const noexcept
     {
-        return m_currentGroupName;
+        return m_current_group->get_name();
     }
 
-    std::string Animation::getCurrentAnimationGroup() const noexcept
+    std::string Animation::get_current_animation_group() const noexcept
     {
-        return m_defaultState.getCurrentAnimationGroup();
+        return m_default_state.get_current_animation_group();
     }
 
-    std::vector<std::string> Animation::getAllAnimationGroupName() const
+    std::vector<std::string> Animation::get_all_animation_groups_names() const
     {
-        std::vector<std::string> animationGroupKeys;
-        animationGroupKeys.reserve(m_groups.size());
-        std::transform(m_groups.cbegin(), m_groups.cend(), animationGroupKeys.begin(),
+        std::vector<std::string> group_keys;
+        group_keys.reserve(m_groups.size());
+        std::transform(m_groups.cbegin(), m_groups.cend(), group_keys.begin(),
             [](const auto& pair) { return pair.first; });
-        return animationGroupKeys;
+        return group_keys;
     }
 
-    AnimationPlayMode Animation::getPlayMode() const noexcept
+    AnimationPlayMode Animation::get_play_mode() const noexcept
     {
-        return m_playMode;
+        return m_play_mode;
     }
 
-    AnimationStatus AnimationState::getStatus() const noexcept
+    AnimationStatus AnimationState::get_status() const noexcept
     {
         return m_status;
     }
 
-    AnimationStatus Animation::getStatus() const noexcept
+    AnimationStatus Animation::get_status() const noexcept
     {
-        return m_defaultState.getStatus();
+        return m_default_state.get_status();
     }
 
-    bool AnimationState::isOver() const noexcept
+    bool AnimationState::is_over() const noexcept
     {
         return m_over;
     }
 
-    bool Animation::isOver() const noexcept
+    bool Animation::is_over() const noexcept
     {
-        return m_defaultState.isOver();
+        return m_default_state.is_over();
     }
 
-    void Animation::loadAnimation(const System::Path& path, Engine::ResourceManager* resources)
+    void Animation::load_animation(const System::Path& path, engine::ResourceManager* resources)
     {
-        Debug::Log->debug("<Animation> Loading Animation at {}", path.toString());
-        const std::string animationConfigFile = path.add(path.last() + ".ani.vili").find();
-        vili::node animationConfig = vili::parser::from_file(
-            animationConfigFile);
+        debug::Log->debug("<animation> Loading animation at {}", path.toString());
+        const std::string animation_config_file = path.add(path.last() + ".ani.vili").find();
+        vili::node animation_config = vili::parser::from_file(
+            animation_config_file);
 
         try
         {
             vili::validator::validate_tree(
-                Config::Validators::AnimationValidator(), animationConfig);
+                config::validators::animation_validator(), animation_config);
 
             // Meta
-            this->loadMeta(animationConfig.at("Meta"));
-            Debug::Log->trace("  <Animation> Loading Meta block");
+            this->load_meta(animation_config.at("Meta"));
+            debug::Log->trace("  <animation> Loading Meta block");
 
             // Images
-            this->loadImages(animationConfig.at("Images"), path, resources);
-            Debug::Log->trace("  <Animation> Loading Images block");
+            this->load_images(animation_config.at("Images"), path, resources);
+            debug::Log->trace("  <animation> Loading Images block");
 
             // Groups
-            Debug::Log->trace("  <Animation> Loading Groups block");
-            this->loadGroups(animationConfig.at("Groups"));
+            debug::Log->trace("  <animation> Loading Groups block");
+            this->load_groups(animation_config.at("Groups"));
 
-            // Animation Code
-            Debug::Log->trace("  <Animation> Loading Animation block");
-            this->loadCode(animationConfig.at("Animation"));
+            // animation Code
+            debug::Log->trace("  <animation> Loading animation block");
+            this->load_code(animation_config.at("animation"));
 
-            m_defaultState.load();
+            m_default_state.load();
         }
         catch (const BaseException& e)
         {
-            throw Exceptions::InvalidAnimationFile(animationConfigFile, EXC_INFO).nest(e);
+            throw exceptions::InvalidAnimationFile(animation_config_file, EXC_INFO).nest(e);
         }
     }
 
-    void AnimationState::executeInstruction()
+    void AnimationState::execute_instruction()
     {
-        const vili::node& currentCommand = m_parent.m_code[m_codeIndex];
-        Debug::Log->trace("<Animation> Executing instruction {} / {} : {}", m_codeIndex,
-            m_parent.m_code.size() - 1, currentCommand.dump());
+        const vili::node& current_command = m_parent.m_code[m_code_index];
+        debug::Log->trace("<animation> Executing instruction {} / {} : {}", m_code_index,
+            m_parent.m_code.size() - 1, current_command.dump());
         const AnimationCommand command
-            = AnimationCommandMeta::fromString(currentCommand.at("command").as_string());
+            = AnimationCommandMeta::fromString(current_command.at("command").as_string());
         if (command == AnimationCommand::Wait)
         {
-            m_feedInstructions = true;
-            m_sleep = currentCommand.at("time");
+            m_feed_instructions = true;
+            m_sleep = current_command.at("time");
         }
         else if (command == AnimationCommand::PlayGroup)
         {
-            if (!m_currentGroupName.empty())
-                m_groups[m_currentGroupName]->reset();
-            m_feedInstructions = false;
-            m_currentGroupName = currentCommand.at("group");
-            m_groups[m_currentGroupName]->setLoops(currentCommand.at("repeat"));
+            if (m_current_group != nullptr)
+                m_current_group->reset();
+            m_feed_instructions = false;
+            m_current_group = &get_animation_group(current_command.at("group"));
+            m_current_group->set_loops(current_command.at("repeat"));
         }
         else if (command == AnimationCommand::SetAnimation)
         {
-            m_feedInstructions = false;
+            m_feed_instructions = false;
             m_status = AnimationStatus::Call;
-            m_nextAnimation = currentCommand.at("animation");
+            m_next_animation_name = current_command.at("animation");
         }
-        m_codeIndex++;
-        if (m_feedInstructions && m_codeIndex > m_parent.m_code.size() - 1
-            && m_parent.m_playMode != AnimationPlayMode::OneTime)
+        m_code_index++;
+        if (m_feed_instructions && m_code_index > m_parent.m_code.size() - 1
+            && m_parent.m_play_mode != AnimationPlayMode::OneTime)
         {
             this->reset();
         }
     }
 
-    void AnimationState::updateCurrentGroup()
+    void AnimationState::update_current_group()
     {
-        Debug::Log->trace("    <Animation> Updating AnimationGroup '{}'", m_currentGroupName);
-        m_groups[m_currentGroupName]->next();
-        if (m_groups[m_currentGroupName]->isOver())
+        if (m_current_group == nullptr)
         {
-            Debug::Log->trace(
-                "        <Animation> AnimationGroup '{}' is over", m_currentGroupName);
-            if (m_codeIndex < m_parent.m_code.size())
+            return;
+        }
+        debug::Log->trace("    <animation> Updating AnimationGroup '{}'", m_current_group->get_name());
+        m_current_group->next();
+        if (m_current_group->is_over())
+        {
+            debug::Log->trace(
+                "        <animation> AnimationGroup '{}' is over", m_current_group->get_name());
+            if (m_code_index < m_parent.m_code.size())
             {
-                Debug::Log->trace("    <Animation> Restarting code execution");
-                m_feedInstructions = true;
-                m_groups[m_currentGroupName]->reset();
+                debug::Log->trace("    <animation> Restarting code execution");
+                m_feed_instructions = true;
+                m_current_group->reset();
             }
             else
             {
-                Debug::Log->trace("    <Animation> Animation '{}' has no more code to execute");
-                if (m_parent.m_playMode == AnimationPlayMode::OneTime)
+                debug::Log->trace("    <animation> animation '{}' has no more code to execute");
+                if (m_parent.m_play_mode == AnimationPlayMode::OneTime)
                 {
-                    Debug::Log->trace("    <Animation> Animation '{}' will stay on "
+                    debug::Log->trace("    <animation> animation '{}' will stay on "
                                       "the last texture");
-                    m_groups[m_currentGroupName]->previous(true);
+                    m_current_group->previous(true);
                     m_over = true;
                 }
                 else
                 {
-                    Debug::Log->trace("    <Animation> Animation '{}' will reset code execution");
-                    m_feedInstructions = true;
-                    m_groups[m_currentGroupName]->reset();
-                    m_codeIndex = 0;
+                    debug::Log->trace("    <animation> animation '{}' will reset code execution");
+                    m_feed_instructions = true;
+                    m_current_group->reset();
+                    m_code_index = 0;
                 }
             }
         }
     }
 
-    void AnimationState::setActiveAnimationGroup(const std::string& groupName)
+    void AnimationState::set_active_animation_group(const std::string& group_name)
     {
-        if (m_groups.contains(groupName))
+        if (m_groups.contains(group_name))
         {
-            m_currentGroupName = groupName;
+            m_current_group = &get_animation_group(group_name);
         }
-        throw Exceptions::UnknownAnimationGroup(
-            m_parent.m_name, groupName, m_parent.getAllAnimationGroupName(), EXC_INFO);
+        throw exceptions::UnknownAnimationGroup(
+            m_parent.m_name, group_name, m_parent.get_all_animation_groups_names(), EXC_INFO);
     }
 
-    void Animation::loadMeta(const vili::node& meta)
+    void Animation::load_meta(const vili::node& meta)
     {
         m_name = meta.at("name");
 
-        Debug::Log->trace("    <Animation> Animation name = '{}'", m_name);
+        debug::Log->trace("    <animation> animation name = '{}'", m_name);
         if (meta.contains("clock"))
         {
             m_delay = meta.at("clock");
-            Debug::Log->trace("    <Animation> Animation clock = {}", m_delay);
+            debug::Log->trace("    <animation> animation clock = {}", m_delay);
         }
         if (meta.contains("mode"))
         {
-            m_playMode = AnimationPlayModeMeta::fromString(meta.at("mode"));
-            Debug::Log->trace("    <Animation> Animation play-mode = '{}'", m_playMode);
+            m_play_mode = AnimationPlayModeMeta::fromString(meta.at("mode"));
+            debug::Log->trace("    <animation> animation play-mode = '{}'", m_play_mode);
         }
     }
 
-    void Animation::loadImages(
-        const vili::node& images, const System::Path& path, Engine::ResourceManager* resources)
+    void Animation::load_images(
+        const vili::node& images, const System::Path& path, engine::ResourceManager* resources)
     {
-        const vili::node& imageList = images.at("images");
+        const vili::node& image_list = images.at("images");
         std::string model;
         if (images.contains("model"))
         {
             model = images.at("model");
-            Debug::Log->trace(
-                "    <Animation> Using following template to load images : {}", model);
+            debug::Log->trace(
+                "    <animation> Using following template to load images : {}", model);
         }
-        for (auto& image : imageList)
+        for (auto& image : image_list)
         {
-            std::string textureName;
+            std::string texture_name;
             if (image.is<vili::integer>() && !model.empty())
             {
-                textureName = Utils::String::replace(
+                texture_name = Utils::String::replace(
                     model, "%s", std::to_string(image.as<vili::integer>()));
-                Debug::Log->trace("    <Animation> Loading image '{}' (name determined "
+                debug::Log->trace("    <animation> Loading image '{}' (name determined "
                                   "with template[int])",
-                    textureName);
+                    texture_name);
             }
             else if (image.is<vili::string>() && !model.empty())
             {
-                textureName = Utils::String::replace(model, "%s", image);
-                Debug::Log->trace("    <Animation> Loading image '{}' (name determined "
+                texture_name = Utils::String::replace(model, "%s", image);
+                debug::Log->trace("    <animation> Loading image '{}' (name determined "
                                   "with template[str])",
-                    textureName);
+                    texture_name);
             }
             else if (image.is<vili::string>())
             {
-                textureName = image;
-                Debug::Log->trace("    <Animation> Loading image '{}'", textureName);
+                texture_name = image;
+                debug::Log->trace("    <animation> Loading image '{}'", texture_name);
             }
 
-            std::string pathToTexture = path.add(textureName).toString();
-            Debug::Log->trace("    <Animation> Found Texture Path at '{}'", pathToTexture);
+            std::string path_to_texture = path.add(texture_name).toString();
+            debug::Log->trace("    <animation> Found Texture Path at '{}'", path_to_texture);
             if (resources)
             {
-                Debug::Log->trace(
-                    "    <Animation> Loading Texture {0} (using ResourceManager)", textureName);
+                debug::Log->trace(
+                    "    <animation> Loading Texture {0} (using ResourceManager)", texture_name);
                 m_textures.emplace_back(
-                    resources->getTexture(path.add(textureName), m_antiAliasing));
+                    resources->get_texture(path.add(texture_name), m_anti_aliasing));
             }
             else
             {
-                Debug::Log->trace("    <Animation> Loading Texture {0}", textureName);
-                Graphics::Texture newTexture;
-                newTexture.loadFromFile(path.add(textureName).find(System::PathType::File));
+                debug::Log->trace("    <animation> Loading Texture {0}", texture_name);
+                graphics::Texture new_texture;
+                new_texture.loadFromFile(path.add(texture_name).find(System::PathType::File));
                 // TODO: Add a way to configure anti-aliasing for textures without ResourceManager
-                m_textures.push_back(std::move(newTexture));
+                m_textures.push_back(std::move(new_texture));
             }
         }
     }
 
-    void Animation::loadGroups(const vili::node& groups)
+    void Animation::load_groups(const vili::node& groups)
     {
-        for (auto [groupName, group] : groups.items())
+        for (auto [group_name, group] : groups.items())
         {
-            Debug::Log->trace("    <Animation> Loading AnimationGroup '{}'", groupName);
-            m_groups.emplace(groupName, std::make_unique<AnimationGroup>(groupName));
-            for (vili::node& currentTexture : group.at("content"))
+            debug::Log->trace("    <animation> Loading AnimationGroup '{}'", group_name);
+            m_groups.emplace(group_name, std::make_unique<AnimationGroup>(group_name));
+            for (vili::node& current_texture : group.at("content"))
             {
-                Debug::Log->trace("      <Animation> Pushing Texture {} into group",
-                    currentTexture.as<vili::integer>());
-                m_groups[groupName]->pushTexture(m_textures[currentTexture.as<vili::integer>()]);
+                debug::Log->trace("      <animation> Pushing Texture {} into group",
+                    current_texture.as<vili::integer>());
+                m_groups[group_name]->push_texture(m_textures[current_texture.as<vili::integer>()]);
             }
 
             if (group.contains("clock"))
             {
                 vili::number delay = group.at("clock");
-                Debug::Log->trace("      <Animation> Setting group delay to {}", delay);
-                m_groups[groupName]->setDelay(delay);
+                debug::Log->trace("      <animation> Setting group delay to {}", delay);
+                m_groups[group_name]->set_delay(delay);
             }
             else
             {
-                Debug::Log->trace(
-                    "      <Animation> No delay specified, using parent delay : {}", m_delay);
-                m_groups[groupName]->setDelay(m_delay);
+                debug::Log->trace(
+                    "      <animation> No delay specified, using parent delay : {}", m_delay);
+                m_groups[group_name]->set_delay(m_delay);
             }
         }
     }
 
-    void Animation::loadCode(const vili::node& code)
+    void Animation::load_code(const vili::node& code)
     {
         for (const vili::node& command : code.at("code"))
         {
-            Debug::Log->trace("    <Animation> Parsing Animation command '{}'", command);
+            debug::Log->trace("    <animation> Parsing animation command '{}'", command);
             m_code.push_back(command);
         }
     }
 
     Animation::Animation()
-        : m_defaultState(*this)
+        : m_default_state(*this)
     {
     }
 
-    void Animation::applyParameters(vili::node& parameters)
+    void Animation::apply_parameters(vili::node& parameters)
     {
         // TODO: Re-implement texture offset in a better way
         if (parameters.contains("priority"))
@@ -342,41 +346,38 @@ namespace obe::Animation
         if (!m_over)
         {
             const Time::TimeUnit delay = (m_sleep) ? m_sleep : m_parent.m_delay;
-            Debug::Log->trace("<Animation> Delay is {} seconds", delay);
+            debug::Log->trace("<animation> Delay is {} seconds", delay);
             if (Time::epoch() - m_clock > delay)
             {
                 m_clock = Time::epoch();
                 m_sleep = 0;
-                Debug::Log->trace("<Animation> Updating Animation '{0}'", m_parent.m_name);
+                debug::Log->trace("<animation> Updating animation '{0}'", m_parent.m_name);
 
-                if (m_feedInstructions)
+                if (m_feed_instructions)
                 {
-                    this->executeInstruction();
+                    this->execute_instruction();
                 }
-                if (!m_currentGroupName.empty())
-                {
-                    this->updateCurrentGroup();
-                }
+                this->update_current_group();
             }
         }
     }
 
-    const Animation& AnimationState::getAnimation() const
+    const Animation& AnimationState::get_animation() const
     {
         return m_parent;
     }
 
-    void Animation::setAntiAliasing(bool antiAliasing) noexcept
+    void Animation::set_anti_aliasing(bool anti_aliasing) noexcept
     {
-        m_antiAliasing = antiAliasing;
+        m_anti_aliasing = anti_aliasing;
     }
 
-    bool Animation::getAntiAliasing() const noexcept
+    bool Animation::get_anti_aliasing() const noexcept
     {
-        return m_antiAliasing;
+        return m_anti_aliasing;
     }
 
-    AnimationState Animation::makeState() const
+    AnimationState Animation::make_state() const
     {
         return AnimationState(*this);
     }
@@ -401,46 +402,46 @@ namespace obe::Animation
 
     void AnimationState::reset() noexcept
     {
-        Debug::Log->trace("<Animation> Resetting Animation '{}'", m_parent.m_name);
+        debug::Log->trace("<animation> Resetting animation '{}'", m_parent.m_name);
         for (auto it = m_groups.cbegin(); it != m_groups.cend(); ++it)
             it->second->reset();
         m_status = AnimationStatus::Play;
-        m_codeIndex = 0;
-        m_feedInstructions = true;
+        m_code_index = 0;
+        m_feed_instructions = true;
         m_over = false;
     }
 
     void Animation::reset() noexcept
     {
-        m_defaultState.reset();
+        m_default_state.reset();
     }
 
     void Animation::update()
     {
-        m_defaultState.update();
+        m_default_state.update();
     }
 
-    const Graphics::Texture& Animation::getTextureAtIndex(int index)
+    const graphics::Texture& Animation::get_texture_at_index(int index)
     {
         if (index < m_textures.size())
             return m_textures[index];
-        throw Exceptions::AnimationTextureIndexOverflow(m_name, index, m_textures.size(), EXC_INFO);
+        throw exceptions::AnimationTextureIndexOverflow(m_name, index, m_textures.size(), EXC_INFO);
     }
 
-    const Graphics::Texture& AnimationState::getTexture() const
+    const graphics::Texture& AnimationState::get_texture() const
     {
-        if (!m_currentGroupName.empty())
-            return m_groups.at(m_currentGroupName)->getTexture();
-        throw Exceptions::NoSelectedAnimationGroup(m_parent.m_name, EXC_INFO);
+        if (m_current_group != nullptr)
+            return m_current_group->get_current_texture();
+        throw exceptions::NoSelectedAnimationGroup(m_parent.m_name, EXC_INFO);
     }
 
-    const Graphics::Texture& Animation::getTexture() const
+    const graphics::Texture& Animation::get_current_texture() const
     {
-        return m_defaultState.getTexture();
+        return m_default_state.get_texture();
     }
 
-    int Animation::getPriority() const noexcept
+    int Animation::get_priority() const noexcept
     {
         return m_priority;
     }
-} // namespace obe::Animation
+} // namespace obe::animation

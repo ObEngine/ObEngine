@@ -87,7 +87,7 @@ namespace obe::System::Bindings
         sol::usertype<obe::System::Cursor> bindCursor
             = SystemNamespace.new_usertype<obe::System::Cursor>("Cursor", sol::call_constructor,
                 sol::constructors<obe::System::Cursor(
-                    obe::System::Window&, obe::Event::EventNamespace&)>());
+                    obe::System::Window&, obe::event::EventNamespace&)>());
         bindCursor["getConstrainedX"] = &obe::System::Cursor::getConstrainedX;
         bindCursor["getConstrainedY"] = &obe::System::Cursor::getConstrainedY;
         bindCursor["getX"] = &obe::System::Cursor::getX;
@@ -213,7 +213,7 @@ namespace obe::System::Bindings
             },
             [](obe::System::Path* self, obe::System::PathType pathType)
                 -> std::vector<obe::System::FindResult> { return self->findAll(pathType); });
-        bindPath["toString"] = &obe::System::Path::toString;
+        bindPath["to_string"] = &obe::System::Path::toString;
         state.script_file("obe://Lib/Internal/Require.lua"_fs);
         state.script_file("obe://Lib/Internal/Filesystem.lua"_fs);
     }

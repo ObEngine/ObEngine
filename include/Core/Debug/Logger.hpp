@@ -5,7 +5,7 @@
 
 #include <Types/SmartEnum.hpp>
 
-namespace obe::Debug
+namespace obe::debug
 {
     using Logger = std::shared_ptr<spdlog::logger>;
     extern Logger Log;
@@ -26,7 +26,7 @@ namespace obe::Debug
     /**
      * \brief Initialize the Logger
      */
-    void InitLogger();
+    void init_logger();
 
     void trace(const std::string& content);
     void debug(const std::string& content);
@@ -34,4 +34,4 @@ namespace obe::Debug
     void warn(const std::string& content);
     void error(const std::string& content);
     void critical(const std::string& content);
-} // namespace obe::Debug
+} // namespace obe::debug

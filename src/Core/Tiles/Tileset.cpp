@@ -74,7 +74,7 @@ namespace obe::Tiles
         return m_imagePath;
     }
 
-    Graphics::Texture Tileset::getTexture() const
+    graphics::Texture Tileset::getTexture() const
     {
         return m_image;
     }

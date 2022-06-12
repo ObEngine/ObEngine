@@ -209,7 +209,7 @@ namespace obe::Input
     void InputManager::initializeGamepad(unsigned int gamepadIndex)
     {
         auto gamepadInfo = sf::Joystick::getIdentification(gamepadIndex);
-        Debug::Log->debug("[InputManager] Initializing Gamepad {} : {}", gamepadIndex,
+        debug::Log->debug("[InputManager] Initializing Gamepad {} : {}", gamepadIndex,
             gamepadInfo.name.toAnsiString());
         bool useEveryAxis = true;
         unsigned int buttonCount = sf::Joystick::ButtonCount;
@@ -318,12 +318,12 @@ namespace obe::Input
 
             if (!e_inputs->contains(button->getName()))
             {
-                e_inputs->add<Events::Keys::StateChanged>(button->getName());
-                e_inputs->onAddListener(button->getName(),
-                    [button, this](Event::ListenerChangeState, const std::string&)
+                e_inputs->add<events::Keys::StateChanged>(button->getName());
+                e_inputs->on_add_listener(button->getName(),
+                    [button, this](event::ListenerChangeState, const std::string&)
                     { m_key_monitors.push_back(this->monitor(*button)); });
-                e_inputs->onRemoveListener(button->getName(),
-                    [button, this](Event::ListenerChangeState, const std::string&)
+                e_inputs->on_remove_listener(button->getName(),
+                    [button, this](event::ListenerChangeState, const std::string&)
                     {
                         const auto position
                             = std::find_if(m_key_monitors.begin(), m_key_monitors.end(),

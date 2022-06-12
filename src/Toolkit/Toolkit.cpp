@@ -21,46 +21,46 @@ int lua_exception_handler2(lua_State* L, sol::optional<const std::exception&> ma
     if (maybe_exception)
     {
         const std::exception& ex = *maybe_exception;
-        obe::Debug::Log->error("<LuaError>[Exception] : {}", ex.what());
+        obe::debug::Log->error("<LuaError>[Exception] : {}", ex.what());
     }
     else
     {
-        obe::Debug::Log->error("<LuaError>[Error] : {}", description);
+        obe::debug::Log->error("<LuaError>[Error] : {}", description);
     }
     return sol::stack::push(L, description);
 }
 
-styler::Foreground convertColor(obe::Graphics::Color color)
+styler::Foreground convertColor(obe::graphics::Color color)
 {
-    if (color.toName() == "white")
+    if (color.to_name() == "white")
     {
         return styler::Foreground::White;
     }
-    else if (color.toName() == "red")
+    else if (color.to_name() == "red")
     {
         return styler::Foreground::Red;
     }
-    else if (color.toName() == "green")
+    else if (color.to_name() == "green")
     {
         return styler::Foreground::Green;
     }
-    else if (color.toName() == "blue")
+    else if (color.to_name() == "blue")
     {
         return styler::Foreground::Blue;
     }
-    else if (color.toName() == "yellow")
+    else if (color.to_name() == "yellow")
     {
         return styler::Foreground::Yellow;
     }
-    else if (color.toName() == "magenta")
+    else if (color.to_name() == "magenta")
     {
         return styler::Foreground::Magenta;
     }
-    else if (color.toName() == "cyan")
+    else if (color.to_name() == "cyan")
     {
         return styler::Foreground::Cyan;
     }
-    else if (color.toName() == "black")
+    else if (color.to_name() == "black")
     {
         return styler::Foreground::Black;
     }
@@ -74,8 +74,8 @@ void run(std::string command)
 {
     using namespace obe;
 
-    Debug::InitLogger();
-    Debug::Log->set_level(spdlog::level::warn);
+    debug::init_logger();
+    debug::Log->set_level(spdlog::level::warn);
     System::MountablePath::LoadMountFile(false, true);
 
     sol::state lua;
@@ -93,12 +93,12 @@ void run(std::string command)
     lua.set_exception_handler(&lua_exception_handler2);
 
     lua["_term_display"]
-        = [](std::vector<std::string> texts, std::vector<obe::Graphics::Color> colors)
+        = [](std::vector<std::string> texts, std::vector<obe::graphics::Color> colors)
     {
         for (size_t i = 0; i < texts.size(); i++)
         {
             const std::string_view text = texts[i];
-            const Graphics::Color color = colors[i];
+            const graphics::Color color = colors[i];
             std::cout << convertColor(color) << text;
         }
         std::cout << std::endl;
@@ -142,10 +142,10 @@ int main(int argc, char** argv)
     }
     catch (const std::exception& e)
     {
-        if (Debug::Log)
+        if (debug::Log)
         {
-            Debug::Log->error("The following error occurred while running obey");
-            Debug::Log->error(e.what());
+            debug::Log->error("The following error occurred while running obey");
+            debug::Log->error(e.what());
         }
         else
         {

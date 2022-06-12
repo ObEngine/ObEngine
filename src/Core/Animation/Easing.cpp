@@ -4,75 +4,75 @@
 #include <Animation/Exceptions.hpp>
 #include <Utils/MathUtils.hpp>
 
-namespace obe::Animation::Easing
+namespace obe::animation::easing
 {
     using Utils::Math::pi;
 
-    double Linear(double t)
+    double linear(double t)
     {
         return t;
     }
 
-    double InSine(double t)
+    double in_sine(double t)
     {
         return sin(1.5707963 * t);
     }
 
-    double OutSine(double t)
+    double out_sine(double t)
     {
         return 1 + sin(1.5707963 * (--t));
     }
 
-    double InOutSine(double t)
+    double in_out_sine(double t)
     {
         return 0.5 * (1 + sin(3.1415926 * (t - 0.5)));
     }
 
-    double InQuad(double t)
+    double in_quad(double t)
     {
         return t * t;
     }
 
-    double OutQuad(double t)
+    double out_quad(double t)
     {
         return t * (2 - t);
     }
 
-    double InOutQuad(double t)
+    double in_out_quad(double t)
     {
         return t < 0.5 ? 2 * t * t : t * (4 - 2 * t) - 1;
     }
 
-    double InCubic(double t)
+    double in_cubic(double t)
     {
         return t * t * t;
     }
 
-    double OutCubic(double t)
+    double out_cubic(double t)
     {
         --t;
         return 1 + t * t * t;
     }
 
-    double InOutCubic(double t)
+    double in_out_cubic(double t)
     {
         return t < 0.5 ? 4 * t * t * t : 1 - pow(-2 * t + 2, 3) / 2;
     }
 
-    double InQuart(double t)
+    double in_quart(double t)
     {
         t *= t;
         return t * t;
     }
 
-    double OutQuart(double t)
+    double out_quart(double t)
     {
         --t;
         t = t * t;
         return 1 - t * t;
     }
 
-    double InOutQuart(double t)
+    double in_out_quart(double t)
     {
         if (t < 0.5)
         {
@@ -87,20 +87,20 @@ namespace obe::Animation::Easing
         }
     }
 
-    double InQuint(double t)
+    double in_quint(double t)
     {
         double t2 = t * t;
         return t * t2 * t2;
     }
 
-    double OutQuint(double t)
+    double out_quint(double t)
     {
         --t;
         double t2 = t * t;
         return 1 + t * t2 * t2;
     }
 
-    double InOutQuint(double t)
+    double in_out_quint(double t)
     {
         double t2;
         if (t < 0.5)
@@ -116,17 +116,17 @@ namespace obe::Animation::Easing
         }
     }
 
-    double InExpo(double t)
+    double in_expo(double t)
     {
         return (pow(2, 8 * t) - 1) / 255;
     }
 
-    double OutExpo(double t)
+    double out_expo(double t)
     {
         return 1 - pow(2, -8 * t);
     }
 
-    double InOutExpo(double t)
+    double in_out_expo(double t)
     {
         if (t < 0.5)
         {
@@ -138,17 +138,17 @@ namespace obe::Animation::Easing
         }
     }
 
-    double InCirc(double t)
+    double in_circ(double t)
     {
         return 1 - sqrt(1 - t);
     }
 
-    double OutCirc(double t)
+    double out_circ(double t)
     {
         return sqrt(t);
     }
 
-    double InOutCirc(double t)
+    double in_out_circ(double t)
     {
         if (t < 0.5)
         {
@@ -160,18 +160,18 @@ namespace obe::Animation::Easing
         }
     }
 
-    double InBack(double t)
+    double in_back(double t)
     {
         return t * t * (2.70158 * t - 1.70158);
     }
 
-    double OutBack(double t)
+    double out_back(double t)
     {
         --t;
         return 1 + t * t * (2.70158 * t + 1.70158);
     }
 
-    double InOutBack(double t)
+    double in_out_back(double t)
     {
         if (t < 0.5)
         {
@@ -184,19 +184,19 @@ namespace obe::Animation::Easing
         }
     }
 
-    double InElastic(double t)
+    double in_elastic(double t)
     {
         double t2 = t * t;
         return t2 * t2 * sin(t * pi * 4.5);
     }
 
-    double OutElastic(double t)
+    double out_elastic(double t)
     {
         double t2 = (t - 1) * (t - 1);
         return 1 - t2 * t2 * cos(t * pi * 4.5);
     }
 
-    double InOutElastic(double t)
+    double in_out_elastic(double t)
     {
         double t2;
         if (t < 0.45)
@@ -215,17 +215,17 @@ namespace obe::Animation::Easing
         }
     }
 
-    double InBounce(double t)
+    double in_bounce(double t)
     {
         return pow(2, 6 * (t - 1)) * abs(sin(t * pi * 3.5));
     }
 
-    double OutBounce(double t)
+    double out_bounce(double t)
     {
         return 1 - pow(2, -6 * t) * abs(cos(t * pi * 3.5));
     }
 
-    double InOutBounce(double t)
+    double in_out_bounce(double t)
     {
         if (t < 0.5)
         {
@@ -237,94 +237,96 @@ namespace obe::Animation::Easing
         }
     }
 
+    static std::unordered_map<EasingType, EasingFunction> EASING_ENUM_TO_FUNCTIONS = {
+        { EasingType::Linear, linear },
+        { EasingType::InSine, in_sine },
+        { EasingType::OutSine, out_sine },
+        { EasingType::InOutSine, in_out_sine },
+        { EasingType::InQuad, in_quad },
+        { EasingType::OutQuad, out_quad },
+        { EasingType::InOutQuad, in_out_quad },
+        { EasingType::InCubic, in_cubic },
+        { EasingType::OutCubic, out_cubic },
+        { EasingType::InOutCubic, in_out_cubic },
+        { EasingType::InQuart, in_quart },
+        { EasingType::OutQuart, out_quart },
+        { EasingType::InOutQuart, in_out_quart },
+        { EasingType::InQuint, in_quint },
+        { EasingType::OutQuint, out_quint },
+        { EasingType::InOutQuint, in_out_quint },
+        { EasingType::InExpo, in_expo },
+        { EasingType::OutExpo, out_expo },
+        { EasingType::InOutExpo, in_out_expo },
+        { EasingType::InCirc, in_circ },
+        { EasingType::OutCirc, out_circ },
+        { EasingType::InOutCirc, in_out_circ },
+        { EasingType::InBack, in_back },
+        { EasingType::OutBack, out_back },
+        { EasingType::InOutBack, in_out_back },
+        { EasingType::InElastic, in_elastic },
+        { EasingType::OutElastic, out_elastic },
+        { EasingType::InOutElastic, in_out_elastic },
+        { EasingType::InBounce, in_bounce },
+        { EasingType::OutBounce, out_bounce },
+        { EasingType::InOutBounce, in_out_bounce },
+    };
+
     EasingFunction get(EasingType easing)
     {
-        static std::unordered_map<EasingType, EasingFunction> easingFunctions;
-        if (easingFunctions.empty())
-        {
-            easingFunctions.insert(std::make_pair(EasingType::Linear, Linear));
-            easingFunctions.insert(std::make_pair(EasingType::InSine, InSine));
-            easingFunctions.insert(std::make_pair(EasingType::OutSine, OutSine));
-            easingFunctions.insert(std::make_pair(EasingType::InOutSine, InOutSine));
-            easingFunctions.insert(std::make_pair(EasingType::InQuad, InQuad));
-            easingFunctions.insert(std::make_pair(EasingType::OutQuad, OutQuad));
-            easingFunctions.insert(std::make_pair(EasingType::InOutQuad, InOutQuad));
-            easingFunctions.insert(std::make_pair(EasingType::InCubic, InCubic));
-            easingFunctions.insert(std::make_pair(EasingType::OutCubic, OutCubic));
-            easingFunctions.insert(std::make_pair(EasingType::InOutCubic, InOutCubic));
-            easingFunctions.insert(std::make_pair(EasingType::InQuart, InQuart));
-            easingFunctions.insert(std::make_pair(EasingType::OutQuart, OutQuart));
-            easingFunctions.insert(std::make_pair(EasingType::InOutQuart, InOutQuart));
-            easingFunctions.insert(std::make_pair(EasingType::InQuint, InQuint));
-            easingFunctions.insert(std::make_pair(EasingType::OutQuint, OutQuint));
-            easingFunctions.insert(std::make_pair(EasingType::InOutQuint, InOutQuint));
-            easingFunctions.insert(std::make_pair(EasingType::InExpo, InExpo));
-            easingFunctions.insert(std::make_pair(EasingType::OutExpo, OutExpo));
-            easingFunctions.insert(std::make_pair(EasingType::InOutExpo, InOutExpo));
-            easingFunctions.insert(std::make_pair(EasingType::InCirc, InCirc));
-            easingFunctions.insert(std::make_pair(EasingType::OutCirc, OutCirc));
-            easingFunctions.insert(std::make_pair(EasingType::InOutCirc, InOutCirc));
-            easingFunctions.insert(std::make_pair(EasingType::InBack, InBack));
-            easingFunctions.insert(std::make_pair(EasingType::OutBack, OutBack));
-            easingFunctions.insert(std::make_pair(EasingType::InOutBack, InOutBack));
-            easingFunctions.insert(std::make_pair(EasingType::InElastic, InElastic));
-            easingFunctions.insert(std::make_pair(EasingType::OutElastic, OutElastic));
-            easingFunctions.insert(std::make_pair(EasingType::InOutElastic, InOutElastic));
-            easingFunctions.insert(std::make_pair(EasingType::InBounce, InBounce));
-            easingFunctions.insert(std::make_pair(EasingType::OutBounce, OutBounce));
-            easingFunctions.insert(std::make_pair(EasingType::InOutBounce, InOutBounce));
-        }
-
-        if (const auto function = easingFunctions.find(easing); function != easingFunctions.end())
+        if (const auto function = EASING_ENUM_TO_FUNCTIONS.find(easing); function != EASING_ENUM_TO_FUNCTIONS.end())
         {
             return function->second;
         }
         const int enumValue = static_cast<std::underlying_type_t<EasingType>>(easing);
-        throw Exceptions::UnknownEasingFromEnum(enumValue, EXC_INFO);
+        throw exceptions::UnknownEasingFromEnum(enumValue, EXC_INFO);
     }
+
+    static std::unordered_map<std::string, EasingFunction> EASING_STRING_TO_FUNCTIONS = {
+        { "linear", linear },
+        { "in_sine", in_sine },
+        { "out_sine", out_sine },
+        { "in_out_sine", in_out_sine },
+        { "in_quad", in_quad },
+        { "out_quad", out_quad },
+        { "in_out_quad", in_out_quad },
+        { "in_cubic", in_cubic },
+        { "out_cubic", out_cubic },
+        { "in_out_cubic", in_out_cubic },
+        { "in_quart", in_quart },
+        { "out_quart", out_quart },
+        { "in_out_quart", in_out_quart },
+        { "in_quint", in_quint },
+        { "out_quint", out_quint },
+        { "in_out_quint", in_out_quint },
+        { "in_expo", in_expo },
+        { "out_expo", out_expo },
+        { "in_out_expo", in_out_expo },
+        { "in_circ", in_circ },
+        { "out_circ", out_circ },
+        { "in_out_circ", in_out_circ },
+        { "in_back", in_back },
+        { "out_back", out_back },
+        { "in_out_back", in_out_back },
+        { "in_elastic", in_elastic },
+        { "out_elastic", out_elastic },
+        { "in_out_elastic", in_out_elastic },
+        { "in_bounce", in_bounce },
+        { "out_bounce", out_bounce },
+        { "in_out_bounce", in_out_bounce },
+    };
 
     EasingFunction get(const std::string& easing)
     {
-        static std::unordered_map<std::string, EasingFunction> easingFunctions;
-        if (easingFunctions.empty())
-        {
-            easingFunctions.insert(std::make_pair("Linear", Linear));
-            easingFunctions.insert(std::make_pair("InSine", InSine));
-            easingFunctions.insert(std::make_pair("OutSine", OutSine));
-            easingFunctions.insert(std::make_pair("InOutSine", InOutSine));
-            easingFunctions.insert(std::make_pair("InQuad", InQuad));
-            easingFunctions.insert(std::make_pair("OutQuad", OutQuad));
-            easingFunctions.insert(std::make_pair("InOutQuad", InOutQuad));
-            easingFunctions.insert(std::make_pair("InCubic", InCubic));
-            easingFunctions.insert(std::make_pair("OutCubic", OutCubic));
-            easingFunctions.insert(std::make_pair("InOutCubic", InOutCubic));
-            easingFunctions.insert(std::make_pair("InQuart", InQuart));
-            easingFunctions.insert(std::make_pair("OutQuart", OutQuart));
-            easingFunctions.insert(std::make_pair("InOutQuart", InOutQuart));
-            easingFunctions.insert(std::make_pair("InQuint", InQuint));
-            easingFunctions.insert(std::make_pair("OutQuint", OutQuint));
-            easingFunctions.insert(std::make_pair("InOutQuint", InOutQuint));
-            easingFunctions.insert(std::make_pair("InExpo", InExpo));
-            easingFunctions.insert(std::make_pair("OutExpo", OutExpo));
-            easingFunctions.insert(std::make_pair("InOutExpo", InOutExpo));
-            easingFunctions.insert(std::make_pair("InCirc", InCirc));
-            easingFunctions.insert(std::make_pair("OutCirc", OutCirc));
-            easingFunctions.insert(std::make_pair("InOutCirc", InOutCirc));
-            easingFunctions.insert(std::make_pair("InBack", InBack));
-            easingFunctions.insert(std::make_pair("OutBack", OutBack));
-            easingFunctions.insert(std::make_pair("InOutBack", InOutBack));
-            easingFunctions.insert(std::make_pair("InElastic", InElastic));
-            easingFunctions.insert(std::make_pair("OutElastic", OutElastic));
-            easingFunctions.insert(std::make_pair("InOutElastic", InOutElastic));
-            easingFunctions.insert(std::make_pair("InBounce", InBounce));
-            easingFunctions.insert(std::make_pair("OutBounce", OutBounce));
-            easingFunctions.insert(std::make_pair("InOutBounce", InOutBounce));
-        }
-
-        if (const auto function = easingFunctions.find(easing); function != easingFunctions.end())
+        if (const auto function = EASING_STRING_TO_FUNCTIONS.find(easing); function != EASING_STRING_TO_FUNCTIONS.end())
         {
             return function->second;
         }
-        throw Exceptions::UnknownEasingFromString(easing, EXC_INFO);
+        std::vector<std::string> easings_names;
+        easings_names.reserve(EASING_STRING_TO_FUNCTIONS.size());
+        for (const auto& [easing_name, _] : EASING_STRING_TO_FUNCTIONS)
+        {
+            easings_names.push_back(easing_name);
+        }
+        throw exceptions::UnknownEasingFromString(easing, easings_names, EXC_INFO);
     }
 }

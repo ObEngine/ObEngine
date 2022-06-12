@@ -21,7 +21,7 @@ namespace obe::Time
         int m_updatesBuffer = 0;
         bool m_canUpdateFPS = false;
         sf::Text m_text;
-        Graphics::Font m_font;
+        graphics::Font m_font;
 
     public:
         /**
@@ -36,7 +36,7 @@ namespace obe::Time
          * \brief Load a new font to use when drawing the stats
          * \param font Font to use to draw the amount of fps / ups
          */
-        void loadFont(Graphics::Font& font);
+        void loadFont(graphics::Font& font);
         /**
          * \brief Draws the calculated stats on the screen
          */

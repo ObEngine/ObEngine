@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Animation::Easing::Bindings
+namespace obe::animation::easing::Bindings
 {
     void LoadEnumEasingType(sol::state_view state);
     void LoadFunctionLinear(sol::state_view state);

@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Animation::Exceptions::Bindings
+namespace obe::animation::exceptions::Bindings
 {
     void LoadClassAnimationGroupTextureIndexOverflow(sol::state_view state);
     void LoadClassAnimationTextureIndexOverflow(sol::state_view state);

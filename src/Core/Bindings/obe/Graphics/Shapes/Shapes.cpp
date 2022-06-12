@@ -4,158 +4,158 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Graphics::Shapes::Bindings
+namespace obe::graphics::shapes::Bindings
 {
     void LoadClassCircle(sol::state_view state)
     {
-        sol::table ShapesNamespace = state["obe"]["Graphics"]["Shapes"].get<sol::table>();
-        sol::usertype<obe::Graphics::Shapes::Circle> bindCircle
-            = ShapesNamespace.new_usertype<obe::Graphics::Shapes::Circle>("Circle",
+        sol::table ShapesNamespace = state["obe"]["graphics"]["shapes"].get<sol::table>();
+        sol::usertype<obe::graphics::shapes::Circle> bindCircle
+            = ShapesNamespace.new_usertype<obe::graphics::shapes::Circle>("Circle",
                 sol::call_constructor,
-                sol::constructors<obe::Graphics::Shapes::Circle(),
-                    obe::Graphics::Shapes::Circle(const sf::CircleShape&),
-                    obe::Graphics::Shapes::Circle(const obe::Graphics::Shapes::Circle&)>(),
+                sol::constructors<obe::graphics::shapes::Circle(),
+                    obe::graphics::shapes::Circle(const sf::CircleShape&),
+                    obe::graphics::shapes::Circle(const obe::graphics::shapes::Circle&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Shapes::Shape<obe::Graphics::Shapes::Circle>>());
-        bindCircle["setTexture"] = &obe::Graphics::Shapes::Circle::setTexture;
-        bindCircle["setTextureRect"] = &obe::Graphics::Shapes::Circle::setTextureRect;
-        bindCircle["setPosition"] = &obe::Graphics::Shapes::Circle::setPosition;
-        bindCircle["setFillColor"] = &obe::Graphics::Shapes::Circle::setFillColor;
-        bindCircle["setOutlineColor"] = &obe::Graphics::Shapes::Circle::setOutlineColor;
-        bindCircle["setOutlineThickness"] = &obe::Graphics::Shapes::Circle::setOutlineThickness;
-        bindCircle["getFillColor"] = &obe::Graphics::Shapes::Circle::getFillColor;
-        bindCircle["getOutlineColor"] = &obe::Graphics::Shapes::Circle::getOutlineColor;
-        bindCircle["getOutlineThickness"] = &obe::Graphics::Shapes::Circle::getOutlineThickness;
-        bindCircle["getPointCount"] = &obe::Graphics::Shapes::Circle::getPointCount;
-        bindCircle["getPoint"] = &obe::Graphics::Shapes::Circle::getPoint;
-        bindCircle["getLocalBounds"] = &obe::Graphics::Shapes::Circle::getLocalBounds;
-        bindCircle["getGlobalBounds"] = &obe::Graphics::Shapes::Circle::getGlobalBounds;
-        bindCircle["setRotation"] = &obe::Graphics::Shapes::Circle::setRotation;
-        bindCircle["setScale"] = &obe::Graphics::Shapes::Circle::setScale;
-        bindCircle["setOrigin"] = &obe::Graphics::Shapes::Circle::setOrigin;
-        bindCircle["getPosition"] = &obe::Graphics::Shapes::Circle::getPosition;
-        bindCircle["getRotation"] = &obe::Graphics::Shapes::Circle::getRotation;
-        bindCircle["getScale"] = &obe::Graphics::Shapes::Circle::getScale;
-        bindCircle["getOrigin"] = &obe::Graphics::Shapes::Circle::getOrigin;
-        bindCircle["move"] = &obe::Graphics::Shapes::Circle::move;
-        bindCircle["rotate"] = &obe::Graphics::Shapes::Circle::rotate;
-        bindCircle["scale"] = &obe::Graphics::Shapes::Circle::scale;
-        bindCircle["draw"] = &obe::Graphics::Shapes::Circle::draw;
-        bindCircle["setRadius"] = &obe::Graphics::Shapes::Circle::setRadius;
-        bindCircle["getRadius"] = &obe::Graphics::Shapes::Circle::getRadius;
-        bindCircle["shape"] = &obe::Graphics::Shapes::Circle::shape;
+                sol::bases<obe::graphics::shapes::Shape<obe::graphics::shapes::Circle>>());
+        bindCircle["set_texture"] = &obe::graphics::shapes::Circle::set_texture;
+        bindCircle["set_texture_rect"] = &obe::graphics::shapes::Circle::set_texture_rect;
+        bindCircle["set_position"] = &obe::graphics::shapes::Circle::set_position;
+        bindCircle["set_fill_color"] = &obe::graphics::shapes::Circle::set_fill_color;
+        bindCircle["set_outline_color"] = &obe::graphics::shapes::Circle::set_outline_color;
+        bindCircle["set_outline_thickness"] = &obe::graphics::shapes::Circle::set_outline_thickness;
+        bindCircle["get_fill_color"] = &obe::graphics::shapes::Circle::get_fill_color;
+        bindCircle["get_outline_color"] = &obe::graphics::shapes::Circle::get_outline_color;
+        bindCircle["get_outline_thickness"] = &obe::graphics::shapes::Circle::get_outline_thickness;
+        bindCircle["get_point_count"] = &obe::graphics::shapes::Circle::get_point_count;
+        bindCircle["get_point"] = &obe::graphics::shapes::Circle::get_point;
+        bindCircle["get_local_bounds"] = &obe::graphics::shapes::Circle::get_local_bounds;
+        bindCircle["get_global_bounds"] = &obe::graphics::shapes::Circle::get_global_bounds;
+        bindCircle["set_rotation"] = &obe::graphics::shapes::Circle::set_rotation;
+        bindCircle["set_scale"] = &obe::graphics::shapes::Circle::set_scale;
+        bindCircle["set_origin"] = &obe::graphics::shapes::Circle::set_origin;
+        bindCircle["get_position"] = &obe::graphics::shapes::Circle::get_position;
+        bindCircle["get_rotation"] = &obe::graphics::shapes::Circle::get_rotation;
+        bindCircle["get_scale"] = &obe::graphics::shapes::Circle::get_scale;
+        bindCircle["get_origin"] = &obe::graphics::shapes::Circle::get_origin;
+        bindCircle["move"] = &obe::graphics::shapes::Circle::move;
+        bindCircle["rotate"] = &obe::graphics::shapes::Circle::rotate;
+        bindCircle["scale"] = &obe::graphics::shapes::Circle::scale;
+        bindCircle["draw"] = &obe::graphics::shapes::Circle::draw;
+        bindCircle["set_radius"] = &obe::graphics::shapes::Circle::set_radius;
+        bindCircle["get_radius"] = &obe::graphics::shapes::Circle::get_radius;
+        bindCircle["shape"] = &obe::graphics::shapes::Circle::shape;
     }
     void LoadClassPolygon(sol::state_view state)
     {
-        sol::table ShapesNamespace = state["obe"]["Graphics"]["Shapes"].get<sol::table>();
-        sol::usertype<obe::Graphics::Shapes::Polygon> bindPolygon
-            = ShapesNamespace.new_usertype<obe::Graphics::Shapes::Polygon>("Polygon",
+        sol::table ShapesNamespace = state["obe"]["graphics"]["shapes"].get<sol::table>();
+        sol::usertype<obe::graphics::shapes::Polygon> bindPolygon
+            = ShapesNamespace.new_usertype<obe::graphics::shapes::Polygon>("Polygon",
                 sol::call_constructor,
-                sol::constructors<obe::Graphics::Shapes::Polygon(),
-                    obe::Graphics::Shapes::Polygon(const sf::ConvexShape&),
-                    obe::Graphics::Shapes::Polygon(const obe::Graphics::Shapes::Polygon&)>(),
+                sol::constructors<obe::graphics::shapes::Polygon(),
+                    obe::graphics::shapes::Polygon(const sf::ConvexShape&),
+                    obe::graphics::shapes::Polygon(const obe::graphics::shapes::Polygon&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Shapes::Shape<obe::Graphics::Shapes::Polygon>>());
-        bindPolygon["setTexture"] = &obe::Graphics::Shapes::Polygon::setTexture;
-        bindPolygon["setTextureRect"] = &obe::Graphics::Shapes::Polygon::setTextureRect;
-        bindPolygon["setPosition"] = &obe::Graphics::Shapes::Polygon::setPosition;
-        bindPolygon["setFillColor"] = &obe::Graphics::Shapes::Polygon::setFillColor;
-        bindPolygon["setOutlineColor"] = &obe::Graphics::Shapes::Polygon::setOutlineColor;
-        bindPolygon["setOutlineThickness"] = &obe::Graphics::Shapes::Polygon::setOutlineThickness;
-        bindPolygon["getFillColor"] = &obe::Graphics::Shapes::Polygon::getFillColor;
-        bindPolygon["getOutlineColor"] = &obe::Graphics::Shapes::Polygon::getOutlineColor;
-        bindPolygon["getOutlineThickness"] = &obe::Graphics::Shapes::Polygon::getOutlineThickness;
-        bindPolygon["getPointCount"] = &obe::Graphics::Shapes::Polygon::getPointCount;
-        bindPolygon["getPoint"] = &obe::Graphics::Shapes::Polygon::getPoint;
-        bindPolygon["getLocalBounds"] = &obe::Graphics::Shapes::Polygon::getLocalBounds;
-        bindPolygon["getGlobalBounds"] = &obe::Graphics::Shapes::Polygon::getGlobalBounds;
-        bindPolygon["setRotation"] = &obe::Graphics::Shapes::Polygon::setRotation;
-        bindPolygon["setScale"] = &obe::Graphics::Shapes::Polygon::setScale;
-        bindPolygon["setOrigin"] = &obe::Graphics::Shapes::Polygon::setOrigin;
-        bindPolygon["getPosition"] = &obe::Graphics::Shapes::Polygon::getPosition;
-        bindPolygon["getRotation"] = &obe::Graphics::Shapes::Polygon::getRotation;
-        bindPolygon["getScale"] = &obe::Graphics::Shapes::Polygon::getScale;
-        bindPolygon["getOrigin"] = &obe::Graphics::Shapes::Polygon::getOrigin;
-        bindPolygon["move"] = &obe::Graphics::Shapes::Polygon::move;
-        bindPolygon["rotate"] = &obe::Graphics::Shapes::Polygon::rotate;
-        bindPolygon["scale"] = &obe::Graphics::Shapes::Polygon::scale;
-        bindPolygon["draw"] = &obe::Graphics::Shapes::Polygon::draw;
-        bindPolygon["setPointPosition"] = &obe::Graphics::Shapes::Polygon::setPointPosition;
-        bindPolygon["getPointPosition"] = &obe::Graphics::Shapes::Polygon::getPointPosition;
-        bindPolygon["shape"] = &obe::Graphics::Shapes::Polygon::shape;
+                sol::bases<obe::graphics::shapes::Shape<obe::graphics::shapes::Polygon>>());
+        bindPolygon["set_texture"] = &obe::graphics::shapes::Polygon::set_texture;
+        bindPolygon["set_texture_rect"] = &obe::graphics::shapes::Polygon::set_texture_rect;
+        bindPolygon["set_position"] = &obe::graphics::shapes::Polygon::set_position;
+        bindPolygon["set_fill_color"] = &obe::graphics::shapes::Polygon::set_fill_color;
+        bindPolygon["set_outline_color"] = &obe::graphics::shapes::Polygon::set_outline_color;
+        bindPolygon["set_outline_thickness"] = &obe::graphics::shapes::Polygon::set_outline_thickness;
+        bindPolygon["get_fill_color"] = &obe::graphics::shapes::Polygon::get_fill_color;
+        bindPolygon["get_outline_color"] = &obe::graphics::shapes::Polygon::get_outline_color;
+        bindPolygon["get_outline_thickness"] = &obe::graphics::shapes::Polygon::get_outline_thickness;
+        bindPolygon["get_point_count"] = &obe::graphics::shapes::Polygon::get_point_count;
+        bindPolygon["get_point"] = &obe::graphics::shapes::Polygon::get_point;
+        bindPolygon["get_local_bounds"] = &obe::graphics::shapes::Polygon::get_local_bounds;
+        bindPolygon["get_global_bounds"] = &obe::graphics::shapes::Polygon::get_global_bounds;
+        bindPolygon["set_rotation"] = &obe::graphics::shapes::Polygon::set_rotation;
+        bindPolygon["set_scale"] = &obe::graphics::shapes::Polygon::set_scale;
+        bindPolygon["set_origin"] = &obe::graphics::shapes::Polygon::set_origin;
+        bindPolygon["get_position"] = &obe::graphics::shapes::Polygon::get_position;
+        bindPolygon["get_rotation"] = &obe::graphics::shapes::Polygon::get_rotation;
+        bindPolygon["get_scale"] = &obe::graphics::shapes::Polygon::get_scale;
+        bindPolygon["get_origin"] = &obe::graphics::shapes::Polygon::get_origin;
+        bindPolygon["move"] = &obe::graphics::shapes::Polygon::move;
+        bindPolygon["rotate"] = &obe::graphics::shapes::Polygon::rotate;
+        bindPolygon["scale"] = &obe::graphics::shapes::Polygon::scale;
+        bindPolygon["draw"] = &obe::graphics::shapes::Polygon::draw;
+        bindPolygon["set_point_position"] = &obe::graphics::shapes::Polygon::set_point_position;
+        bindPolygon["get_point_position"] = &obe::graphics::shapes::Polygon::get_point_position;
+        bindPolygon["shape"] = &obe::graphics::shapes::Polygon::shape;
     }
     void LoadClassRectangle(sol::state_view state)
     {
-        sol::table ShapesNamespace = state["obe"]["Graphics"]["Shapes"].get<sol::table>();
-        sol::usertype<obe::Graphics::Shapes::Rectangle> bindRectangle
-            = ShapesNamespace.new_usertype<obe::Graphics::Shapes::Rectangle>("Rectangle",
+        sol::table ShapesNamespace = state["obe"]["graphics"]["shapes"].get<sol::table>();
+        sol::usertype<obe::graphics::shapes::Rectangle> bindRectangle
+            = ShapesNamespace.new_usertype<obe::graphics::shapes::Rectangle>("Rectangle",
                 sol::call_constructor,
-                sol::constructors<obe::Graphics::Shapes::Rectangle(),
-                    obe::Graphics::Shapes::Rectangle(const sf::RectangleShape&),
-                    obe::Graphics::Shapes::Rectangle(const obe::Graphics::Shapes::Rectangle&)>(),
+                sol::constructors<obe::graphics::shapes::Rectangle(),
+                    obe::graphics::shapes::Rectangle(const sf::RectangleShape&),
+                    obe::graphics::shapes::Rectangle(const obe::graphics::shapes::Rectangle&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Shapes::Shape<obe::Graphics::Shapes::Rectangle>>());
-        bindRectangle["setTexture"] = &obe::Graphics::Shapes::Rectangle::setTexture;
-        bindRectangle["setTextureRect"] = &obe::Graphics::Shapes::Rectangle::setTextureRect;
-        bindRectangle["setPosition"] = &obe::Graphics::Shapes::Rectangle::setPosition;
-        bindRectangle["setFillColor"] = &obe::Graphics::Shapes::Rectangle::setFillColor;
-        bindRectangle["setOutlineColor"] = &obe::Graphics::Shapes::Rectangle::setOutlineColor;
-        bindRectangle["setOutlineThickness"]
-            = &obe::Graphics::Shapes::Rectangle::setOutlineThickness;
-        bindRectangle["getFillColor"] = &obe::Graphics::Shapes::Rectangle::getFillColor;
-        bindRectangle["getOutlineColor"] = &obe::Graphics::Shapes::Rectangle::getOutlineColor;
-        bindRectangle["getOutlineThickness"]
-            = &obe::Graphics::Shapes::Rectangle::getOutlineThickness;
-        bindRectangle["getPointCount"] = &obe::Graphics::Shapes::Rectangle::getPointCount;
-        bindRectangle["getPoint"] = &obe::Graphics::Shapes::Rectangle::getPoint;
-        bindRectangle["getLocalBounds"] = &obe::Graphics::Shapes::Rectangle::getLocalBounds;
-        bindRectangle["getGlobalBounds"] = &obe::Graphics::Shapes::Rectangle::getGlobalBounds;
-        bindRectangle["setRotation"] = &obe::Graphics::Shapes::Rectangle::setRotation;
-        bindRectangle["setScale"] = &obe::Graphics::Shapes::Rectangle::setScale;
-        bindRectangle["setOrigin"] = &obe::Graphics::Shapes::Rectangle::setOrigin;
-        bindRectangle["getPosition"] = &obe::Graphics::Shapes::Rectangle::getPosition;
-        bindRectangle["getRotation"] = &obe::Graphics::Shapes::Rectangle::getRotation;
-        bindRectangle["getScale"] = &obe::Graphics::Shapes::Rectangle::getScale;
-        bindRectangle["getOrigin"] = &obe::Graphics::Shapes::Rectangle::getOrigin;
-        bindRectangle["move"] = &obe::Graphics::Shapes::Rectangle::move;
-        bindRectangle["rotate"] = &obe::Graphics::Shapes::Rectangle::rotate;
-        bindRectangle["scale"] = &obe::Graphics::Shapes::Rectangle::scale;
-        bindRectangle["draw"] = &obe::Graphics::Shapes::Rectangle::draw;
-        bindRectangle["getSize"] = &obe::Graphics::Shapes::Rectangle::getSize;
-        bindRectangle["setSize"] = &obe::Graphics::Shapes::Rectangle::setSize;
-        bindRectangle["shape"] = &obe::Graphics::Shapes::Rectangle::shape;
+                sol::bases<obe::graphics::shapes::Shape<obe::graphics::shapes::Rectangle>>());
+        bindRectangle["set_texture"] = &obe::graphics::shapes::Rectangle::set_texture;
+        bindRectangle["set_texture_rect"] = &obe::graphics::shapes::Rectangle::set_texture_rect;
+        bindRectangle["set_position"] = &obe::graphics::shapes::Rectangle::set_position;
+        bindRectangle["set_fill_color"] = &obe::graphics::shapes::Rectangle::set_fill_color;
+        bindRectangle["set_outline_color"] = &obe::graphics::shapes::Rectangle::set_outline_color;
+        bindRectangle["set_outline_thickness"]
+            = &obe::graphics::shapes::Rectangle::set_outline_thickness;
+        bindRectangle["get_fill_color"] = &obe::graphics::shapes::Rectangle::get_fill_color;
+        bindRectangle["get_outline_color"] = &obe::graphics::shapes::Rectangle::get_outline_color;
+        bindRectangle["get_outline_thickness"]
+            = &obe::graphics::shapes::Rectangle::get_outline_thickness;
+        bindRectangle["get_point_count"] = &obe::graphics::shapes::Rectangle::get_point_count;
+        bindRectangle["get_point"] = &obe::graphics::shapes::Rectangle::get_point;
+        bindRectangle["get_local_bounds"] = &obe::graphics::shapes::Rectangle::get_local_bounds;
+        bindRectangle["get_global_bounds"] = &obe::graphics::shapes::Rectangle::get_global_bounds;
+        bindRectangle["set_rotation"] = &obe::graphics::shapes::Rectangle::set_rotation;
+        bindRectangle["set_scale"] = &obe::graphics::shapes::Rectangle::set_scale;
+        bindRectangle["set_origin"] = &obe::graphics::shapes::Rectangle::set_origin;
+        bindRectangle["get_position"] = &obe::graphics::shapes::Rectangle::get_position;
+        bindRectangle["get_rotation"] = &obe::graphics::shapes::Rectangle::get_rotation;
+        bindRectangle["get_scale"] = &obe::graphics::shapes::Rectangle::get_scale;
+        bindRectangle["get_origin"] = &obe::graphics::shapes::Rectangle::get_origin;
+        bindRectangle["move"] = &obe::graphics::shapes::Rectangle::move;
+        bindRectangle["rotate"] = &obe::graphics::shapes::Rectangle::rotate;
+        bindRectangle["scale"] = &obe::graphics::shapes::Rectangle::scale;
+        bindRectangle["draw"] = &obe::graphics::shapes::Rectangle::draw;
+        bindRectangle["get_size"] = &obe::graphics::shapes::Rectangle::get_size;
+        bindRectangle["set_size"] = &obe::graphics::shapes::Rectangle::set_size;
+        bindRectangle["shape"] = &obe::graphics::shapes::Rectangle::shape;
     }
     void LoadClassText(sol::state_view state)
     {
-        sol::table ShapesNamespace = state["obe"]["Graphics"]["Shapes"].get<sol::table>();
-        sol::usertype<obe::Graphics::Shapes::Text> bindText
-            = ShapesNamespace.new_usertype<obe::Graphics::Shapes::Text>("Text",
+        sol::table ShapesNamespace = state["obe"]["graphics"]["shapes"].get<sol::table>();
+        sol::usertype<obe::graphics::shapes::Text> bindText
+            = ShapesNamespace.new_usertype<obe::graphics::shapes::Text>("Text",
                 sol::call_constructor,
-                sol::constructors<obe::Graphics::Shapes::Text(),
-                    obe::Graphics::Shapes::Text(const obe::Graphics::RichText&),
-                    obe::Graphics::Shapes::Text(const obe::Graphics::Shapes::Text&)>(),
+                sol::constructors<obe::graphics::shapes::Text(),
+                    obe::graphics::shapes::Text(const obe::graphics::RichText&),
+                    obe::graphics::shapes::Text(const obe::graphics::shapes::Text&)>(),
                 sol::base_classes,
-                sol::bases<obe::Graphics::Shapes::BaseShape<obe::Graphics::Shapes::Text>>());
-        bindText["setPosition"] = &obe::Graphics::Shapes::Text::setPosition;
-        bindText["getLocalBounds"] = &obe::Graphics::Shapes::Text::getLocalBounds;
-        bindText["getGlobalBounds"] = &obe::Graphics::Shapes::Text::getGlobalBounds;
-        bindText["setRotation"] = &obe::Graphics::Shapes::Text::setRotation;
-        bindText["setScale"] = &obe::Graphics::Shapes::Text::setScale;
-        bindText["setOrigin"] = &obe::Graphics::Shapes::Text::setOrigin;
-        bindText["getPosition"] = &obe::Graphics::Shapes::Text::getPosition;
-        bindText["getRotation"] = &obe::Graphics::Shapes::Text::getRotation;
-        bindText["getScale"] = &obe::Graphics::Shapes::Text::getScale;
-        bindText["getOrigin"] = &obe::Graphics::Shapes::Text::getOrigin;
-        bindText["move"] = &obe::Graphics::Shapes::Text::move;
-        bindText["rotate"] = &obe::Graphics::Shapes::Text::rotate;
-        bindText["scale"] = &obe::Graphics::Shapes::Text::scale;
-        bindText["draw"] = &obe::Graphics::Shapes::Text::draw;
-        bindText["clear"] = &obe::Graphics::Shapes::Text::clear;
-        bindText["append"] = &obe::Graphics::Shapes::Text::append;
-        bindText["getFont"] = &obe::Graphics::Shapes::Text::getFont;
-        bindText["setFont"] = &obe::Graphics::Shapes::Text::setFont;
-        bindText["getCharacterSize"] = &obe::Graphics::Shapes::Text::getCharacterSize;
-        bindText["setCharacterSize"] = &obe::Graphics::Shapes::Text::setCharacterSize;
-        bindText["shape"] = &obe::Graphics::Shapes::Text::shape;
+                sol::bases<obe::graphics::shapes::BaseShape<obe::graphics::shapes::Text>>());
+        bindText["set_position"] = &obe::graphics::shapes::Text::set_position;
+        bindText["get_local_bounds"] = &obe::graphics::shapes::Text::get_local_bounds;
+        bindText["get_global_bounds"] = &obe::graphics::shapes::Text::get_global_bounds;
+        bindText["set_rotation"] = &obe::graphics::shapes::Text::set_rotation;
+        bindText["set_scale"] = &obe::graphics::shapes::Text::set_scale;
+        bindText["set_origin"] = &obe::graphics::shapes::Text::set_origin;
+        bindText["get_position"] = &obe::graphics::shapes::Text::get_position;
+        bindText["get_rotation"] = &obe::graphics::shapes::Text::get_rotation;
+        bindText["get_scale"] = &obe::graphics::shapes::Text::get_scale;
+        bindText["get_origin"] = &obe::graphics::shapes::Text::get_origin;
+        bindText["move"] = &obe::graphics::shapes::Text::move;
+        bindText["rotate"] = &obe::graphics::shapes::Text::rotate;
+        bindText["scale"] = &obe::graphics::shapes::Text::scale;
+        bindText["draw"] = &obe::graphics::shapes::Text::draw;
+        bindText["clear"] = &obe::graphics::shapes::Text::clear;
+        bindText["append"] = &obe::graphics::shapes::Text::append;
+        bindText["get_font"] = &obe::graphics::shapes::Text::get_font;
+        bindText["set_font"] = &obe::graphics::shapes::Text::set_font;
+        bindText["get_character_size"] = &obe::graphics::shapes::Text::get_character_size;
+        bindText["set_character_size"] = &obe::graphics::shapes::Text::set_character_size;
+        bindText["shape"] = &obe::graphics::shapes::Text::shape;
     }
 };

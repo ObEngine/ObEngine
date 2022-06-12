@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Audio::Bindings
+namespace obe::audio::Bindings
 {
     void LoadClassAudioManager(sol::state_view state);
     void LoadClassSound(sol::state_view state);
