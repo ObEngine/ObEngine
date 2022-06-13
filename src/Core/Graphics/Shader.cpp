@@ -20,7 +20,7 @@ namespace obe::graphics
 
     void Shader::load_from_file(const std::string& path)
     {
-        this->loadFromFile(System::Path(path).find(), sf::Shader::Type::Fragment);
+        this->loadFromFile(system::Path(path).find(), sf::Shader::Type::Fragment);
         m_path = path;
     }
     vili::node Shader::dump() const

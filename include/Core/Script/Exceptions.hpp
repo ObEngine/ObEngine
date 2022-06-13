@@ -5,21 +5,21 @@
 
 #include <Exception.hpp>
 
-namespace obe::Script::Exceptions
+namespace obe::script::exceptions
 {
     class NoSuchComponent : public Exception<NoSuchComponent>
     {
     public:
         using Exception::Exception;
-        NoSuchComponent(std::string_view componentType, std::string_view objectType,
-            std::string_view objectId, DebugInfo info)
+        NoSuchComponent(std::string_view component_type, std::string_view object_type,
+            std::string_view object_id, DebugInfo info)
             : Exception(info)
         {
-            this->error("GameObject '{}' (type: '{}') has no {} component", objectId, objectType,
-                componentType);
+            this->error("GameObject '{}' (type: '{}') has no {} component", object_id, object_type,
+                component_type);
             this->hint("Try to check in the {}.obj.vili if you correctly created the "
                        "{} section",
-                objectType, componentType);
+                object_type, component_type);
         }
     };
 
@@ -27,14 +27,14 @@ namespace obe::Script::Exceptions
     {
     public:
         using Exception::Exception;
-        ObjectDefinitionNotFound(std::string_view objectType, DebugInfo info)
+        ObjectDefinitionNotFound(std::string_view object_type, DebugInfo info)
             : Exception(info)
         {
             this->error(
-                "Can't find a GameObject Definition File for GameObjects of type '{}'", objectType);
+                "Can't find a GameObject Definition File for GameObjects of type '{}'", object_type);
             this->hint("Try to check if there is a file named "
                        "GameObject/{0}/{0}.obj.vili",
-                objectType);
+                object_type);
         }
     };
 
@@ -42,13 +42,13 @@ namespace obe::Script::Exceptions
     {
     public:
         using Exception::Exception;
-        ScriptFileNotFound(std::string_view objectType, std::string_view objectId,
-            std::string_view scriptPath, DebugInfo info)
+        ScriptFileNotFound(std::string_view object_type, std::string_view object_id,
+            std::string_view script_path, DebugInfo info)
             : Exception(info)
         {
             this->error("GameObject '{}' of type '{}' tried to load script file at path "
                         "'{}' but could not find it",
-                objectId, objectType, scriptPath);
+                object_id, object_type, script_path);
         }
     };
 
@@ -56,13 +56,13 @@ namespace obe::Script::Exceptions
     {
     public:
         using Exception::Exception;
-        WrongSourceAttributeType(std::string_view objectType, std::string_view attributeName,
-            std::string_view expectedType, std::string_view realType, DebugInfo info)
+        WrongSourceAttributeType(std::string_view object_type, std::string_view attribute_name,
+            std::string_view expected_type, std::string_view real_type, DebugInfo info)
             : Exception(info)
         {
             this->error("GameObject '{}' tried to use attribute '{}' as a '{}' where it "
                         "should be a '{}'",
-                objectType, attributeName, realType, expectedType);
+                object_type, attribute_name, real_type, expected_type);
         }
     };
 
@@ -81,13 +81,13 @@ namespace obe::Script::Exceptions
     {
     public:
         using Exception::Exception;
-        GameObjectScriptError(std::string_view objectType, std::string_view objectId,
+        GameObjectScriptError(std::string_view object_type, std::string_view object_id,
             std::string_view callback, DebugInfo info)
             : Exception(info)
         {
             this->error("Lua Error encountered while executing callback '{}' of "
                         "GameObject '{}' of type '{}'",
-                callback, objectId, objectType);
+                callback, object_id, object_type);
         }
     };
 

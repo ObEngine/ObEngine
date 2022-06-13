@@ -15,7 +15,7 @@ namespace obe::event
         {
             if (scheduler->m_state == CallbackSchedulerState::Ready)
             {
-                const Time::TimeUnit elapsed = Time::epoch() - scheduler->m_start;
+                const time::TimeUnit elapsed = time::epoch() - scheduler->m_start;
                 if ((scheduler->m_wait && elapsed >= scheduler->m_after)
                     || (scheduler->m_repeat && elapsed >= scheduler->m_every))
                 {

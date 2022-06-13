@@ -66,25 +66,25 @@ namespace obe::collision
     {
         const Transform::Rect bounding_box = coll.get_bounding_box();
         Transform::Rect aabb;
-        aabb.setSize(bounding_box.getSize() + Transform::UnitVector(abs(offset.x), abs(offset.y)));
+        aabb.setSize(bounding_box.get_size() + Transform::UnitVector(abs(offset.x), abs(offset.y)));
         if (offset.x >= 0 && offset.y >= 0)
         {
-            aabb.setPosition(bounding_box.getPosition(Transform::Referential::TopLeft),
+            aabb.set_position(bounding_box.get_position(Transform::Referential::TopLeft),
                 Transform::Referential::TopLeft);
         }
         else if (offset.x >= 0 && offset.y < 0)
         {
-            aabb.setPosition(bounding_box.getPosition(Transform::Referential::BottomLeft),
+            aabb.set_position(bounding_box.get_position(Transform::Referential::BottomLeft),
                 Transform::Referential::BottomLeft);
         }
         else if (offset.x < 0 && offset.y >= 0)
         {
-            aabb.setPosition(bounding_box.getPosition(Transform::Referential::TopRight),
+            aabb.set_position(bounding_box.get_position(Transform::Referential::TopRight),
                 Transform::Referential::TopRight);
         }
         else // offset.x < 0 && offset.y < 0
         {
-            aabb.setPosition(bounding_box.getPosition(Transform::Referential::BottomRight),
+            aabb.set_position(bounding_box.get_position(Transform::Referential::BottomRight),
                 Transform::Referential::BottomRight);
         }
         std::vector<PolygonalCollider*> colliders_to_check;

@@ -5,56 +5,56 @@
 #include <System/Path.hpp>
 #include <System/Window.hpp>
 
-namespace obe::System
+namespace obe::system
 {
-    void Window::applyView()
+    void Window::apply_view()
     {
-        const float fWidth = static_cast<float>(m_width);
-        const float fHeight = static_cast<float>(m_height);
-        const float fRenderWidth = static_cast<float>(m_renderWidth);
-        const float fRenderHeight = static_cast<float>(m_renderHeight);
-        if (m_width != m_renderWidth || m_height != m_renderHeight)
+        const float f_width = static_cast<float>(m_width);
+        const float f_height = static_cast<float>(m_height);
+        const float f_render_width = static_cast<float>(m_render_width);
+        const float f_render_height = static_cast<float>(m_render_height);
+        if (m_width != m_render_width || m_height != m_render_height)
         {
             if (m_stretch == StretchMode::None) { }
             else if (m_stretch == StretchMode::Center)
             {
-                m_view.setSize(fRenderWidth, fRenderHeight);
+                m_view.setSize(f_render_width, f_render_height);
 
-                const float xOffset = ((fWidth - fRenderWidth) / 2) / fWidth;
-                const float yOffset = ((fHeight - fRenderHeight) / 2) / fHeight;
-                const float viewportWidth = fRenderWidth / fWidth;
-                const float viewportHeight = fRenderHeight / fHeight;
-                m_view.setViewport(sf::FloatRect(xOffset, yOffset, viewportWidth, viewportHeight));
-                m_view.setCenter(m_renderWidth / 2, m_renderHeight / 2);
+                const float x_offset = ((f_width - f_render_width) / 2) / f_width;
+                const float y_offset = ((f_height - f_render_height) / 2) / f_height;
+                const float viewport_width = f_render_width / f_width;
+                const float viewport_height = f_render_height / f_height;
+                m_view.setViewport(sf::FloatRect(x_offset, y_offset, viewport_width, viewport_height));
+                m_view.setCenter(m_render_width / 2, m_render_height / 2);
                 m_window.setView(m_view);
             }
             else if (m_stretch == StretchMode::Stretch)
             {
-                m_view.setSize(fRenderWidth, fRenderHeight);
+                m_view.setSize(f_render_width, f_render_height);
                 m_view.setViewport(sf::FloatRect(0, 0, 1, 1));
-                m_view.setCenter(fRenderWidth / 2.f, fRenderHeight / 2.f);
+                m_view.setCenter(f_render_width / 2.f, f_render_height / 2.f);
                 m_window.setView(m_view);
             }
             else if (m_stretch == StretchMode::Fit)
             {
-                float expectedWidth = (fHeight / fRenderHeight) * fRenderWidth;
-                float expectedHeight;
-                if (expectedWidth > fWidth)
+                float expected_width = (f_height / f_render_height) * f_render_width;
+                float expected_height;
+                if (expected_width > f_width)
                 {
-                    expectedWidth = 1;
-                    expectedHeight = ((fRenderHeight / fRenderWidth) * fWidth) / fHeight;
+                    expected_width = 1;
+                    expected_height = ((f_render_height / f_render_width) * f_width) / f_height;
                 }
                 else
                 {
-                    expectedWidth = ((fRenderWidth / fRenderHeight) * fHeight) / fWidth;
-                    expectedHeight = 1;
+                    expected_width = ((f_render_width / f_render_height) * f_height) / f_width;
+                    expected_height = 1;
                 }
-                const float xOffset = (1 - expectedWidth) / 2;
-                const float yOffset = (1 - expectedHeight) / 2;
+                const float x_offset = (1 - expected_width) / 2;
+                const float y_offset = (1 - expected_height) / 2;
 
-                m_view.setSize(fRenderWidth, fRenderHeight);
-                m_view.setViewport(sf::FloatRect(xOffset, yOffset, expectedWidth, expectedHeight));
-                m_view.setCenter(fRenderWidth / 2.f, fRenderHeight / 2.f);
+                m_view.setSize(f_render_width, f_render_height);
+                m_view.setViewport(sf::FloatRect(x_offset, y_offset, expected_width, expected_height));
+                m_view.setCenter(f_render_width / 2.f, f_render_height / 2.f);
                 m_window.setView(m_view);
             }
         }
@@ -62,46 +62,46 @@ namespace obe::System
 
     Window::Window(vili::node configuration)
     {
-        const auto screenSize = sf::VideoMode::getDesktopMode();
+        const auto screen_size = sf::VideoMode::getDesktopMode();
 
-        unsigned int windowWidth = 0;
-        unsigned int windowHeight = 0;
-        unsigned int renderWidth = 0;
-        unsigned int renderHeight = 0;
+        unsigned int window_width = 0;
+        unsigned int window_height = 0;
+        unsigned int render_width = 0;
+        unsigned int render_height = 0;
 
         if (configuration.contains("width"))
         {
             if (configuration.at("width").is<vili::integer>())
-                windowWidth = configuration.at("width");
+                window_width = configuration.at("width");
             else if (configuration.at("width").is<vili::string>())
             {
                 switch (WindowSizeMeta::fromString(configuration.at("width")))
                 {
                 case WindowSize::Screen:
-                    windowWidth = screenSize.width;
+                    window_width = screen_size.width;
                     break;
                 }
             }
         }
         else
-            windowWidth = screenSize.width;
+            window_width = screen_size.width;
 
         if (configuration.contains("height"))
         {
             if (configuration.at("height").is<vili::integer>())
-                windowHeight = configuration.at("height");
+                window_height = configuration.at("height");
             else if (configuration.at("height").is<vili::string>())
             {
                 switch (WindowSizeMeta::fromString(configuration.at("height")))
                 {
                 case WindowSize::Screen:
-                    windowHeight = screenSize.height;
+                    window_height = screen_size.height;
                     break;
                 }
             }
         }
         else
-            windowHeight = screenSize.height;
+            window_height = screen_size.height;
 
         if (configuration.contains("render"))
         {
@@ -110,42 +110,42 @@ namespace obe::System
             if (render.contains("width"))
             {
                 if (render.at("width").is<vili::integer>())
-                    renderWidth = render.at("width");
+                    render_width = render.at("width");
                 else if (render.at("width").is<vili::string>())
                 {
                     switch (RenderSizeMeta::fromString(render.at("width")))
                     {
                     case RenderSize::Window:
-                        renderWidth = windowWidth;
+                        render_width = window_width;
                         break;
                     case RenderSize::Screen:
-                        renderWidth = screenSize.width;
+                        render_width = screen_size.width;
                         break;
                     }
                 }
             }
             else
-                renderWidth = windowWidth;
+                render_width = window_width;
 
             if (render.contains("height"))
             {
                 if (render.at("height").is<vili::integer>())
-                    renderHeight = render.at("height");
+                    render_height = render.at("height");
                 else if (render.at("height").is<vili::string>())
                 {
                     switch (RenderSizeMeta::fromString(render.at("height")))
                     {
                     case RenderSize::Window:
-                        renderHeight = windowHeight;
+                        render_height = window_height;
                         break;
                     case RenderSize::Screen:
-                        renderHeight = screenSize.height;
+                        render_height = screen_size.height;
                         break;
                     }
                 }
             }
             else
-                renderHeight = windowHeight;
+                render_height = window_height;
 
             if (render.contains("stretch"))
             {
@@ -154,12 +154,12 @@ namespace obe::System
         }
         else
         {
-            renderWidth = windowWidth;
-            renderHeight = windowHeight;
+            render_width = window_width;
+            render_height = window_height;
         }
 
-        this->setWindowSize(windowWidth, windowHeight);
-        this->setRenderSize(renderWidth, renderHeight);
+        this->set_window_size(window_width, window_height);
+        this->set_render_size(render_width, render_height);
 
         bool fullscreen = true;
         bool closeable = true;
@@ -195,11 +195,11 @@ namespace obe::System
 
     void Window::create()
     {
-        Transform::UnitVector::Init(m_renderWidth, m_renderHeight);
+        Transform::UnitVector::Init(m_render_width, m_render_height);
         m_window.create(sf::VideoMode(m_width, m_height), m_title, m_style);
         m_window.setKeyRepeatEnabled(false);
 
-        this->applyView();
+        this->apply_view();
     }
 
     void Window::clear()
@@ -222,117 +222,117 @@ namespace obe::System
         m_window.draw(drawable, states);
     }
 
-    void Window::draw(const sf::Vertex* vertices, std::size_t vertexCount, sf::PrimitiveType type,
+    void Window::draw(const sf::Vertex* vertices, std::size_t vertex_count, sf::PrimitiveType type,
         const sf::RenderStates& states)
     {
-        m_window.draw(vertices, vertexCount, type, states);
+        m_window.draw(vertices, vertex_count, type, states);
     }
 
-    Transform::UnitVector Window::getRenderSize() const
+    Transform::UnitVector Window::get_render_size() const
     {
-        return Transform::UnitVector(m_renderWidth, m_renderHeight, Transform::Units::ScenePixels);
+        return Transform::UnitVector(m_render_width, m_render_height, Transform::Units::ScenePixels);
     }
 
-    Transform::UnitVector Window::getWindowSize() const
+    Transform::UnitVector Window::get_window_size() const
     {
-        const sf::Vector2u windowSize = m_window.getSize();
-        return Transform::UnitVector(windowSize.x, windowSize.y, Transform::Units::ScenePixels);
+        const sf::Vector2u window_size = m_window.getSize();
+        return Transform::UnitVector(window_size.x, window_size.y, Transform::Units::ScenePixels);
     }
 
-    Transform::UnitVector Window::getScreenSize() const
+    Transform::UnitVector Window::get_screen_size()
     {
-        const auto screenSize = sf::VideoMode::getDesktopMode();
+        const auto screen_size = sf::VideoMode::getDesktopMode();
         return Transform::UnitVector(
-            screenSize.width, screenSize.height, Transform::Units::ScenePixels);
+            screen_size.width, screen_size.height, Transform::Units::ScenePixels);
     }
 
-    Transform::UnitVector Window::getSize() const
+    Transform::UnitVector Window::get_size() const
     {
-        return this->getRenderSize();
+        return this->get_render_size();
     }
 
-    bool Window::isOpen() const
+    bool Window::is_open() const
     {
         return m_window.isOpen();
     }
 
-    bool Window::pollEvent(sf::Event& event)
+    bool Window::poll_event(sf::Event& event)
     {
         return m_window.pollEvent(event);
     }
 
-    void Window::setTitle(const std::string& title)
+    void Window::set_title(const std::string& title)
     {
         m_title = title;
         m_window.setTitle(title);
     }
 
-    void Window::setVerticalSyncEnabled(bool enabled)
+    void Window::set_vertical_sync_enabled(bool enabled)
     {
         m_window.setVerticalSyncEnabled(enabled);
     }
 
-    void Window::setView(const sf::View& view)
+    void Window::set_view(const sf::View& view)
     {
         m_window.setView(view);
     }
 
-    void Window::setIcon(const std::string& path)
+    void Window::set_icon(const std::string& path)
     {
-        const std::string& realPath = System::Path(path).find();
-        sf::Texture iconTexture;
-        iconTexture.loadFromFile(realPath);
-        m_icon = iconTexture.copyToImage();
+        const std::string& real_path = system::Path(path).find();
+        sf::Texture icon_texture;
+        icon_texture.loadFromFile(real_path);
+        m_icon = icon_texture.copyToImage();
 
         m_window.setIcon(32, 32, m_icon.getPixelsPtr());
     }
 
-    graphics::RenderTarget Window::getTarget()
+    graphics::RenderTarget Window::get_target()
     {
         return m_window;
     }
 
-    sf::RenderWindow& Window::getWindow()
+    sf::RenderWindow& Window::get_window()
     {
         return m_window;
     }
 
-    graphics::Color Window::getClearColor() const
+    graphics::Color Window::get_clear_color() const
     {
         return m_background;
     }
 
-    void Window::setClearColor(graphics::Color color)
+    void Window::set_clear_color(graphics::Color color)
     {
         m_background = std::move(color);
     }
 
-    void Window::setMouseCursorVisible(bool visible)
+    void Window::set_mouse_cursor_visible(bool visible)
     {
         m_window.setMouseCursorVisible(visible);
     }
 
-    void Window::setSize(const unsigned int width, const unsigned int height)
+    void Window::set_size(const unsigned int width, const unsigned int height)
     {
-        this->setWindowSize(width, height);
-        this->setRenderSize(width, height);
+        this->set_window_size(width, height);
+        this->set_render_size(width, height);
     }
 
-    void Window::setWindowSize(unsigned width, unsigned height)
+    void Window::set_window_size(unsigned width, unsigned height)
     {
         m_window.setSize(sf::Vector2u(width, height));
-        this->setView(sf::View(sf::FloatRect(0, 0, width, height)));
+        this->set_view(sf::View(sf::FloatRect(0, 0, width, height)));
         m_width = width;
         m_height = height;
-        this->applyView();
+        this->apply_view();
     }
 
-    void Window::setRenderSize(unsigned width, unsigned height)
+    void Window::set_render_size(unsigned width, unsigned height)
     {
         Transform::UnitVector::Screen.w = width;
         Transform::UnitVector::Screen.h = height;
-        m_renderWidth = width;
-        m_renderHeight = height;
-        this->applyView();
+        m_render_width = width;
+        m_render_height = height;
+        this->apply_view();
     }
-} // namespace obe::System
+} // namespace obe::system

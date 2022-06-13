@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Scene::Exceptions::Bindings
+namespace obe::scene::Exceptions::Bindings
 {
     void LoadClassChildNotInSceneNode(sol::state_view state);
     void LoadClassGameObjectAlreadyExists(sol::state_view state);

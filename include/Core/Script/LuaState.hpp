@@ -4,11 +4,11 @@
 
 #include <Types/Serializable.hpp>
 
-namespace obe::Script
+namespace obe::script
 {
     class LuaState : public sol::state
     {
     public:
-        void loadConfig(const vili::node& config);
+        void load_config(const vili::node& config);
     };
 }

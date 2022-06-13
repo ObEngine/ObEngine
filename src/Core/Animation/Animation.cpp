@@ -39,7 +39,7 @@ namespace obe::animation
         return m_name;
     }
 
-    Time::TimeUnit Animation::get_delay() const noexcept
+    time::TimeUnit Animation::get_delay() const noexcept
     {
         return m_delay;
     }
@@ -101,9 +101,9 @@ namespace obe::animation
         return m_default_state.is_over();
     }
 
-    void Animation::load_animation(const System::Path& path, engine::ResourceManager* resources)
+    void Animation::load_animation(const system::Path& path, engine::ResourceManager* resources)
     {
-        debug::Log->debug("<animation> Loading animation at {}", path.toString());
+        debug::Log->debug("<animation> Loading animation at {}", path.to_string());
         const std::string animation_config_file = path.add(path.last() + ".ani.vili").find();
         vili::node animation_config = vili::parser::from_file(
             animation_config_file);
@@ -238,7 +238,7 @@ namespace obe::animation
     }
 
     void Animation::load_images(
-        const vili::node& images, const System::Path& path, engine::ResourceManager* resources)
+        const vili::node& images, const system::Path& path, engine::ResourceManager* resources)
     {
         const vili::node& image_list = images.at("images");
         std::string model;
@@ -272,7 +272,7 @@ namespace obe::animation
                 debug::Log->trace("    <animation> Loading image '{}'", texture_name);
             }
 
-            std::string path_to_texture = path.add(texture_name).toString();
+            std::string path_to_texture = path.add(texture_name).to_string();
             debug::Log->trace("    <animation> Found Texture Path at '{}'", path_to_texture);
             if (resources)
             {
@@ -285,7 +285,7 @@ namespace obe::animation
             {
                 debug::Log->trace("    <animation> Loading Texture {0}", texture_name);
                 graphics::Texture new_texture;
-                new_texture.loadFromFile(path.add(texture_name).find(System::PathType::File));
+                new_texture.load_from_file(path.add(texture_name).find(system::PathType::File));
                 // TODO: Add a way to configure anti-aliasing for textures without ResourceManager
                 m_textures.push_back(std::move(new_texture));
             }
@@ -345,11 +345,11 @@ namespace obe::animation
     {
         if (!m_over)
         {
-            const Time::TimeUnit delay = (m_sleep) ? m_sleep : m_parent.m_delay;
+            const time::TimeUnit delay = (m_sleep) ? m_sleep : m_parent.m_delay;
             debug::Log->trace("<animation> Delay is {} seconds", delay);
-            if (Time::epoch() - m_clock > delay)
+            if (time::epoch() - m_clock > delay)
             {
-                m_clock = Time::epoch();
+                m_clock = time::epoch();
                 m_sleep = 0;
                 debug::Log->trace("<animation> Updating animation '{0}'", m_parent.m_name);
 
@@ -372,7 +372,7 @@ namespace obe::animation
         m_anti_aliasing = anti_aliasing;
     }
 
-    bool Animation::get_anti_aliasing() const noexcept
+    bool Animation::is_anti_aliased() const noexcept
     {
         return m_anti_aliasing;
     }

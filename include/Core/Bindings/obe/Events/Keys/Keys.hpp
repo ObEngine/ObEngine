@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::events::Keys::Bindings
+namespace obe::events::keys::Bindings
 {
     void LoadClassStateChanged(sol::state_view state);
 };

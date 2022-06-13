@@ -12,46 +12,46 @@ namespace obe::graphics
         this->string = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(string);
     }
 
-    void RichText::Line::setCharacterSize(unsigned int size) const
+    void RichText::Line::set_character_size(unsigned int size) const
     {
         for (sf::Text& text : m_texts)
             text.setCharacterSize(size);
 
-        updateGeometry();
+        update_geometry();
     }
 
-    void RichText::Line::setFont(const sf::Font& font) const
+    void RichText::Line::set_font(const sf::Font& font) const
     {
         for (sf::Text& text : m_texts)
             text.setFont(font);
 
-        updateGeometry();
+        update_geometry();
     }
 
-    const std::vector<sf::Text>& RichText::Line::getTexts() const
+    const std::vector<sf::Text>& RichText::Line::get_texts() const
     {
         return m_texts;
     }
 
-    void RichText::Line::appendText(sf::Text text)
+    void RichText::Line::append_text(sf::Text text) const
     {
         // Set text offset
-        updateTextAndGeometry(text);
+        update_text_and_geometry(text);
 
         // Push back
         m_texts.push_back(std::move(text));
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    sf::FloatRect RichText::Line::getLocalBounds() const
+    sf::FloatRect RichText::Line::get_local_bounds() const
     {
         return m_bounds;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    sf::FloatRect RichText::Line::getGlobalBounds() const
+    sf::FloatRect RichText::Line::get_global_bounds() const
     {
-        return getTransform().transformRect(getLocalBounds());
+        return getTransform().transformRect(get_local_bounds());
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -64,23 +64,23 @@ namespace obe::graphics
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    void RichText::Line::updateGeometry() const
+    void RichText::Line::update_geometry() const
     {
         m_bounds = sf::FloatRect();
 
         for (sf::Text& text : m_texts)
-            updateTextAndGeometry(text);
+            update_text_and_geometry(text);
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    void RichText::Line::updateTextAndGeometry(sf::Text& text) const
+    void RichText::Line::update_text_and_geometry(sf::Text& text) const
     {
         // Set text offset
         text.setPosition(m_bounds.width, 0.f);
 
         // Update bounds
-        const int lineSpacing = text.getFont()->getLineSpacing(text.getCharacterSize());
-        m_bounds.height = std::max(m_bounds.height, static_cast<float>(lineSpacing));
+        const int line_spacing = text.getFont()->getLineSpacing(text.getCharacterSize());
+        m_bounds.height = std::max(m_bounds.height, static_cast<float>(line_spacing));
         m_bounds.width += text.getGlobalBounds().width;
     }
 
@@ -104,7 +104,7 @@ namespace obe::graphics
         // For each character in the string
         std::vector<sf::String> result;
         sf::String buffer;
-        for (sf::Uint32 character : string)
+        for (const sf::Uint32 character : string)
         {
             // If we've hit the delimiter character
             if (character == delimiter)
@@ -127,24 +127,24 @@ namespace obe::graphics
         return result;
     }
 
-    void RichText::setCharacterSize(unsigned int size)
+    void RichText::set_character_size(unsigned int size)
     {
         // Maybe skip
-        if (m_characterSize == size)
+        if (m_character_size == size)
             return;
 
         // Update character size
-        m_characterSize = size;
+        m_character_size = size;
 
         // Set texts character size
         for (Line& line : m_lines)
-            line.setCharacterSize(size);
+            line.set_character_size(size);
 
-        updateGeometry();
+        update_geometry();
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    void RichText::setFont(const Font& font)
+    void RichText::set_font(const Font& font)
     {
         // Maybe skip
         if (m_font == font)
@@ -155,9 +155,9 @@ namespace obe::graphics
 
         // Set texts font
         for (Line& line : m_lines)
-            line.setFont(font);
+            line.set_font(font);
 
-        updateGeometry();
+        update_geometry();
     }
 
     ////////////////////////////////////////////////////////////////////////////////
@@ -177,11 +177,11 @@ namespace obe::graphics
             return *this;
 
         // Explode into substrings
-        std::vector<sf::String> subStrings = explode(text.string, '\n');
+        std::vector<sf::String> sub_strings = explode(text.string, '\n');
 
         // Append first substring using the last line
-        auto it = subStrings.begin();
-        if (it != subStrings.end())
+        auto it = sub_strings.begin();
+        if (it != sub_strings.end())
         {
             // If there isn't any line, just create it
             if (m_lines.empty())
@@ -189,26 +189,26 @@ namespace obe::graphics
 
             // Remove last line's height
             Line& line = m_lines.back();
-            m_bounds.height -= line.getGlobalBounds().height;
+            m_bounds.height -= line.get_global_bounds().height;
 
             // Append text
-            line.appendText(createText(*it, text.color, text.outline, text.thickness, text.style));
+            line.append_text(create_text(*it, text.color, text.outline, text.thickness, text.style));
 
             // Update bounds
-            m_bounds.height += line.getGlobalBounds().height;
-            m_bounds.width = std::max(m_bounds.width, line.getGlobalBounds().width);
+            m_bounds.height += line.get_global_bounds().height;
+            m_bounds.width = std::max(m_bounds.width, line.get_global_bounds().width);
         }
 
         // Append the rest of substrings as new lines
-        while (++it != subStrings.end())
+        while (++it != sub_strings.end())
         {
             Line line;
             line.setPosition(0.f, m_bounds.height);
-            line.appendText(createText(*it, text.color, text.outline, text.thickness, text.style));
+            line.append_text(create_text(*it, text.color, text.outline, text.thickness, text.style));
 
             // Update bounds
-            m_bounds.height += line.getGlobalBounds().height;
-            m_bounds.width = std::max(m_bounds.width, line.getGlobalBounds().width);
+            m_bounds.height += line.get_global_bounds().height;
+            m_bounds.width = std::max(m_bounds.width, line.get_global_bounds().width);
 
             m_lines.push_back(std::move(line));
         }
@@ -218,19 +218,19 @@ namespace obe::graphics
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    const std::vector<RichText::Line>& RichText::getLines() const
+    const std::vector<RichText::Line>& RichText::get_lines() const
     {
         return m_lines;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    unsigned int RichText::getCharacterSize() const
+    unsigned int RichText::get_character_size() const
     {
-        return m_characterSize;
+        return m_character_size;
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    const Font& RichText::getFont() const
+    const Font& RichText::get_font() const
     {
         return m_font;
     }
@@ -257,7 +257,7 @@ namespace obe::graphics
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    sf::Text RichText::createText(const sf::String& string, const Color& color,
+    sf::Text RichText::create_text(const sf::String& string, const Color& color,
         const Color& outline, unsigned int thickness, sf::Text::Style style) const
     {
         sf::Text text;
@@ -266,7 +266,7 @@ namespace obe::graphics
         text.setOutlineColor(outline);
         text.setOutlineThickness(thickness);
         text.setStyle(style);
-        text.setCharacterSize(m_characterSize);
+        text.setCharacterSize(m_character_size);
         if (m_font)
             text.setFont(m_font);
 
@@ -274,7 +274,7 @@ namespace obe::graphics
     }
 
     ////////////////////////////////////////////////////////////////////////////////
-    void RichText::updateGeometry() const
+    void RichText::update_geometry() const
     {
         m_bounds = sf::FloatRect();
 
@@ -282,8 +282,8 @@ namespace obe::graphics
         {
             line.setPosition(0.f, m_bounds.height);
 
-            m_bounds.height += line.getGlobalBounds().height;
-            m_bounds.width = std::max(m_bounds.width, line.getGlobalBounds().width);
+            m_bounds.height += line.get_global_bounds().height;
+            m_bounds.width = std::max(m_bounds.width, line.get_global_bounds().width);
         }
     }
 }

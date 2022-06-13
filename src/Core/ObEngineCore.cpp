@@ -21,7 +21,7 @@ namespace obe
         graphics::init_position_transformers();
 
         debug::Log->debug("<ObEngine> Mounting paths");
-        System::MountablePath::LoadMountFile();
+        system::MountablePath::load_mount_file();
 
         debug::Log->debug("<ObEngine> Initialising NullTexture");
         graphics::make_null_texture();

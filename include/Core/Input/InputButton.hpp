@@ -8,6 +8,7 @@
 #include <SFML/Window/Mouse.hpp>
 
 #include <Input/InputType.hpp>
+#include <Types/SmartEnum.hpp>
 
 namespace obe
 {
@@ -17,7 +18,7 @@ namespace obe
     }
 }
 
-namespace obe::Input
+namespace obe::input
 {
     enum class MouseWheelScrollDirection
     {
@@ -43,10 +44,7 @@ namespace obe::Input
         More
     };
 
-    /**
-     * \nobind
-     */
-    std::ostream& operator<<(std::ostream& os, const AxisThresholdDirection& m);
+    using AxisThresholdDirectionMeta = Types::SmartEnum<AxisThresholdDirection>;
 
     /**
      * \brief Class that does represent an Input button
@@ -57,14 +55,14 @@ namespace obe::Input
         std::variant<sf::Keyboard::Key, sf::Mouse::Button, unsigned int, sf::Joystick::Axis,
             MouseWheelScrollDirection>
             m_button;
-        std::pair<AxisThresholdDirection, float> m_detectAxis;
-        unsigned int m_gamepadIndex = 0;
+        std::pair<AxisThresholdDirection, float> m_detect_axis;
+        unsigned int m_gamepad_index = 0;
         std::string m_name;
-        std::string m_returnChar;
+        std::string m_return_char = "";
         InputType m_type;
 
-        int m_wheelDelta = 0;
-        void setMouseWheelDelta(int delta);
+        int m_wheel_delta = 0;
+        void set_mouse_wheel_delta(int delta);
         friend obe::engine::Engine;
 
     public:
@@ -72,11 +70,11 @@ namespace obe::Input
          * \brief Creates a new InputButton representing a Keyboard key
          * \param key SFML Keyboard Key
          * \param name Name of the Key
-         * \param returnChar The character printed when the key is pressed
+         * \param return_char The character printed when the key is pressed
          * \param type Type of the Key (Arrows, Alpha, Numeric, NumericNP,
          *        Functions, Others)
          */
-        InputButton(sf::Keyboard::Key key, const std::string& name, const std::string& returnChar,
+        InputButton(sf::Keyboard::Key key, const std::string& name, const std::string& return_char,
             InputType type);
         /**
          * \brief Creates a new InputButton representing a Mouse Button
@@ -86,20 +84,20 @@ namespace obe::Input
         InputButton(sf::Mouse::Button key, const std::string& name);
         /**
          * \brief Creates a new InputButton representing a Gamepad Button
-         * \param gamepadIndex Index of the gamepad
-         * \param buttonIndex Index of the button of the gamepad
+         * \param gamepad_index Index of the gamepad
+         * \param button_index Index of the button of the gamepad
          * \param name Name of the gamepad Button
          */
-        InputButton(unsigned int gamepadIndex, unsigned int buttonIndex, const std::string& name);
+        InputButton(unsigned int gamepad_index, unsigned int button_index, const std::string& name);
         /**
          * \brief Creates a new InputButton representing a gamepad Axis
-         * \param gamepadIndex Index of the gamepad
-         * \param gamepadAxis Enum value of the Gamepad Axis
+         * \param gamepad_index Index of the gamepad
+         * \param gamepad_axis Enum value of the Gamepad Axis
          * \param detect Pair containing the check type (More / Less) and the
          *        threshold before axis activation detection
          * \param name Name of the gamepad Axis
          */
-        InputButton(unsigned int gamepadIndex, sf::Joystick::Axis gamepadAxis,
+        InputButton(unsigned int gamepad_index, sf::Joystick::Axis gamepad_axis,
             std::pair<AxisThresholdDirection, float> detect, const std::string& name);
 
         InputButton(MouseWheelScrollDirection direction, const std::string& name);
@@ -112,42 +110,42 @@ namespace obe::Input
          *        error otherwise)
          * \return Return value of GetAxisPosition
          */
-        [[nodiscard]] float getAxisPosition() const;
+        [[nodiscard]] float get_axis_position() const;
 
-        [[nodiscard]] int getWheelDelta() const;
+        [[nodiscard]] int get_wheel_delta() const;
         /**
          * \brief Get the SFML Keyboard Key
          * \return SFML Keyboard Key
          */
-        [[nodiscard]] sf::Keyboard::Key getKey() const;
+        [[nodiscard]] sf::Keyboard::Key get_key() const;
         /**
          * \brief Get the name of the Key
          * \return A std::string containing the name of the Key
          */
-        [[nodiscard]] std::string getName() const;
+        [[nodiscard]] std::string get_name() const;
         /**
          * \brief Get the type of the Key (Arrows, Alpha, Numeric, NumericNP,
          * Functions, Others) \return An enum value from KeyType which is the
          * type of the key
          */
-        [[nodiscard]] InputType getType() const;
+        [[nodiscard]] InputType get_type() const;
         /**
-         * \brief Equivalent to InputButton::getType() == inputType
-         * \param inputType Type to test the equivalence
-         * \return true if InputButton is of type inputType, false otherwise
+         * \brief Equivalent to InputButton::get_type() == input_type
+         * \param input_type Type to test the equivalence
+         * \return true if InputButton is of type input_type, false otherwise
          */
-        [[nodiscard]] bool is(InputType inputType) const;
+        [[nodiscard]] bool is(InputType input_type) const;
         // State
         /**
          * \brief Get if the key is pressed
          * \return true if the key is pressed, false otherwise
          */
-        [[nodiscard]] bool isPressed() const;
+        [[nodiscard]] bool is_pressed() const;
         // Write
         /**
          * \brief Get if the key prints a writable character
          * \return true if the key prints a writable character, false otherwise
          */
-        [[nodiscard]] bool isWritable() const;
+        [[nodiscard]] bool is_writable() const;
     };
-} // namespace obe::Input
+} // namespace obe::input

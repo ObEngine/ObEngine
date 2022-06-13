@@ -1,12 +1,11 @@
 #pragma once
 
-#include <SFML/Graphics/Font.hpp>
 #include <SFML/Graphics/Text.hpp>
 
 #include <Graphics/Font.hpp>
 #include <Time/TimeUtils.hpp>
 
-namespace obe::Time
+namespace obe::time
 {
     /**
      * \brief Class to display the amount of Frame and Update per Seconds
@@ -14,12 +13,12 @@ namespace obe::Time
     class FramerateCounter
     {
     private:
-        TimeUnit m_lastTick = epoch();
-        int m_framerateCounter = 0;
-        int m_updatesCounter = 0;
-        int m_framerateBuffer = 0;
-        int m_updatesBuffer = 0;
-        bool m_canUpdateFPS = false;
+        TimeUnit m_last_tick = epoch();
+        int m_framerate_counter = 0;
+        int m_updates_counter = 0;
+        int m_framerate_buffer = 0;
+        int m_updates_buffer = 0;
+        bool m_can_update_fps = false;
         sf::Text m_text;
         graphics::Font m_font;
 
@@ -27,19 +26,19 @@ namespace obe::Time
         /**
          * \brief Called when screen is refreshed.
          */
-        void tick();
+        void render_tick();
         /**
          * \brief Called when game is updated
          */
-        void uTick();
+        void update_tick();
         /**
          * \brief Load a new font to use when drawing the stats
          * \param font Font to use to draw the amount of fps / ups
          */
-        void loadFont(graphics::Font& font);
+        void load_font(graphics::Font& font);
         /**
          * \brief Draws the calculated stats on the screen
          */
         void draw();
     };
-} // namespace obe::Time
+} // namespace obe::time

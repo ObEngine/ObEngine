@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Network::Bindings
+namespace obe::network::Bindings
 {
     void LoadClassLuaPacket(sol::state_view state);
     void LoadClassNetworkHandler(sol::state_view state);

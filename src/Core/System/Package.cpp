@@ -7,62 +7,62 @@
 #include <Utils/FileUtils.hpp>
 #include <Utils/VectorUtils.hpp>
 
-namespace obe::System::Package
+namespace obe::system::package
 {
-    std::string GetPackageLocation(const std::string& packageName)
+    std::string get_package_location(const std::string& package_name)
     {
-        if (PackageExists(packageName))
+        if (package_exists(package_name))
         {
             return vili::parser::from_file("obe://Packages/packages.vili"_fs)
-                .at(packageName)
+                .at(package_name)
                 .at("path");
         }
-        throw Exceptions::UnknownPackage(packageName, ListPackages(), EXC_INFO);
+        throw Exceptions::UnknownPackage(package_name, list_packages(), EXC_INFO);
     }
 
-    bool PackageExists(const std::string& packageName)
+    bool package_exists(const std::string& package_name)
     {
-        return vili::parser::from_file("obe://Packages/packages.vili"_fs).contains(packageName);
+        return vili::parser::from_file("obe://Packages/packages.vili"_fs).contains(package_name);
     }
 
-    std::vector<std::string> ListPackages()
+    std::vector<std::string> list_packages()
     {
         vili::node packages = vili::parser::from_file("obe://Packages/packages.vili"_fs);
-        std::vector<std::string> packageNames;
+        std::vector<std::string> package_names;
         for (const auto& [packageName, _] : packages.items())
         {
-            packageNames.push_back(packageName);
+            package_names.push_back(packageName);
         }
-        return packageNames;
+        return package_names;
     }
 
-    bool Install(const std::string& packageName)
+    bool install(const std::string& package_name)
     {
-        debug::Log->info("<Package> Installing Package '{0}'", packageName);
-        if (!Utils::Vector::contains(packageName + ".opaque", Utils::File::getFileList("Package")))
+        debug::Log->info("<Package> Installing Package '{0}'", package_name);
+        if (!Utils::Vector::contains(package_name + ".opaque", Utils::File::getFileList("Package")))
         {
             throw Exceptions::PackageFileNotFound(
-                fmt::format("Package/{}.opaque", packageName), EXC_INFO);
+                fmt::format("Package/{}.opaque", package_name), EXC_INFO);
         }
 
-        if (!PackageExists(packageName))
+        if (!package_exists(package_name))
         {
             throw std::runtime_error(
                 "Invalid feature: Package installation has been disabled for >v0.4");
         }
-        throw Exceptions::PackageAlreadyInstalled(packageName, EXC_INFO);
+        throw Exceptions::PackageAlreadyInstalled(package_name, EXC_INFO);
     }
 
-    bool Load(
-        const std::string& packageName, const std::string& prefix, const unsigned int priority)
+    bool load(
+        const std::string& package_name, const std::string& prefix, const unsigned int priority)
     {
-        debug::Log->info("<Package> Loading Package '{0}' with priority", packageName, priority);
-        if (PackageExists(packageName))
+        debug::Log->info("<Package> Loading Package '{0}' with priority", package_name, priority);
+        if (package_exists(package_name))
         {
-            MountablePath::Mount(MountablePath(
-                MountablePathType::Package, GetPackageLocation(packageName), prefix, priority));
+            MountablePath::mount(MountablePath(
+                MountablePathType::Package, get_package_location(package_name), prefix, priority));
             return true;
         }
-        throw Exceptions::UnknownPackage(packageName, ListPackages(), EXC_INFO);
+        throw Exceptions::UnknownPackage(package_name, list_packages(), EXC_INFO);
     }
-} // namespace obe::System::Package
+} // namespace obe::system::package

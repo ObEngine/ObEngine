@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::System::Priorities::Bindings
+namespace obe::system::priorities::Bindings
 {
     void LoadGlobalHigh(sol::state_view state);
     void LoadGlobalProjectmount(sol::state_view state);

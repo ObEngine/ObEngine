@@ -3,19 +3,19 @@
 #include <Tiles/Exceptions.hpp>
 #include <Tiles/Scene.hpp>
 
-namespace obe::Tiles
+namespace obe::tiles
 {
     void TileScene::build()
     {
         debug::Log->info(
-            "Build TileScene @{} with Animations @{}", fmt::ptr(this), fmt::ptr(&m_animatedTiles));
-        for (auto& layer : m_layers)
+            "Build TileScene @{} with Animations @{}", fmt::ptr(this), fmt::ptr(&m_animated_tiles));
+        for (const auto& layer : m_layers)
         {
             layer->build();
         }
     }
 
-    TileScene::TileScene(Scene::Scene& scene)
+    TileScene::TileScene(scene::Scene& scene)
         : m_scene(scene)
     {
     }
@@ -34,50 +34,50 @@ namespace obe::Tiles
     {
         m_width = data["width"];
         m_height = data["height"];
-        m_tileWidth = data["tileWidth"];
-        m_tileHeight = data["tileHeight"];
+        m_tile_width = data["tileWidth"];
+        m_tile_height = data["tileHeight"];
         if (data.contains("smooth"))
         {
             m_smooth = data["smooth"];
         }
 
         const vili::node& tilesets = data["sources"];
-        for (const auto& [tilesetId, tileset] : tilesets.items())
+        for (const auto& [tileset_id, tileset] : tilesets.items())
         {
-            m_tilesets.addTileset(tileset["firstTileId"], tilesetId, tileset["image"]["path"],
+            m_tilesets.add_tileset(tileset["firstTileId"], tileset_id, tileset["image"]["path"],
                 tileset["columns"], tileset["tile"]["width"], tileset["tile"]["height"],
                 tileset["tilecount"]);
 
-            const Tileset& currentTileset = m_tilesets.tilesetFromId(tilesetId);
+            const Tileset& current_tileset = m_tilesets.tileset_from_id(tileset_id);
             if (tileset.contains("animations"))
             {
                 for (const vili::node& animation : tileset.at("animations"))
                 {
-                    std::vector<Time::TimeUnit> sleeps;
-                    std::vector<uint32_t> tileIds;
+                    std::vector<time::TimeUnit> sleeps;
+                    std::vector<uint32_t> tile_ids;
                     for (const vili::node& frame : animation.at("frames"))
                     {
-                        const uint32_t sleepMilliseconds = frame.at("clock");
+                        const uint32_t sleep_milliseconds = frame.at("clock");
                         sleeps.push_back(
-                            static_cast<double>(sleepMilliseconds) * Time::milliseconds);
-                        uint32_t fullTileId
+                            static_cast<double>(sleep_milliseconds) * time::milliseconds);
+                        uint32_t full_tile_id
                             = static_cast<uint32_t>(frame.at("tileid").as<vili::integer>()
                                 + tileset.at("firstTileId").as<vili::integer>());
-                        tileIds.push_back(fullTileId);
+                        tile_ids.push_back(full_tile_id);
                     }
-                    m_animatedTiles.push_back(
-                        std::make_unique<AnimatedTile>(currentTileset, tileIds, sleeps));
+                    m_animated_tiles.push_back(
+                        std::make_unique<AnimatedTile>(current_tileset, tile_ids, sleeps));
                 }
             }
             if (tileset.contains("collisions"))
             {
                 for (const vili::node& collision : tileset.at("collisions"))
                 {
-                    const std::string collisionId
+                    const std::string collision_id
                         = std::to_string(collision.at("id").as<vili::integer>()
                             + tileset.at("firstTileId").as<vili::integer>());
                     std::unique_ptr<collision::PolygonalCollider> model
-                        = std::make_unique<collision::PolygonalCollider>(collisionId);
+                        = std::make_unique<collision::PolygonalCollider>(collision_id);
                     model->load(collision);
                     /*int i = 0;
                     for (const vili::node& point : collision.at("points"))
@@ -89,22 +89,22 @@ namespace obe::Tiles
                             pointDbg.x, pointDbg.y);
                         i++;
                     }*/
-                    m_colliderModels.push_back(std::move(model));
+                    m_collider_models.push_back(std::move(model));
                 }
             }
             if (tileset.contains("objects"))
             {
-                for (const vili::node& gameObject : tileset.at("objects"))
+                for (const vili::node& game_object : tileset.at("objects"))
                 {
-                    m_gameObjectsModels.push_back(gameObject);
+                    m_game_objects_models.push_back(game_object);
                 }
             }
         }
 
-        AnimatedTiles animations = this->getAnimatedTiles();
+        AnimatedTiles animations = this->get_animated_tiles();
 
         const vili::node& layers = data["layers"];
-        for (const auto& [layerId, layer] : layers.items())
+        for (const auto& [layer_id, layer] : layers.items())
         {
             std::vector<uint32_t> tiles;
             tiles.reserve(layer["tiles"].size());
@@ -112,21 +112,21 @@ namespace obe::Tiles
             {
                 tiles.push_back(tile);
             }
-            m_layers.push_back(std::make_unique<TileLayer>(*this, layerId, layer["layer"],
+            m_layers.push_back(std::make_unique<TileLayer>(*this, layer_id, layer["layer"],
                 layer["x"], layer["y"], layer["width"], layer["height"], tiles));
         }
 
         this->build();
 
-        for (auto& animation : m_animatedTiles)
+        for (const auto& animation : m_animated_tiles)
         {
             animation->start();
         }
     }
 
-    void TileScene::update()
+    void TileScene::update() const
     {
-        for (auto& animation : m_animatedTiles)
+        for (const auto& animation : m_animated_tiles)
         {
             animation->update();
         }
@@ -136,62 +136,62 @@ namespace obe::Tiles
     {
         m_tilesets.clear();
         m_layers.clear();
-        m_animatedTiles.clear();
-        m_colliderModels.clear();
+        m_animated_tiles.clear();
+        m_collider_models.clear();
         m_width = 0;
         m_height = 0;
-        m_tileWidth = 0;
-        m_tileHeight = 0;
+        m_tile_width = 0;
+        m_tile_height = 0;
     }
 
-    std::vector<TileLayer*> TileScene::getAllLayers() const
+    std::vector<TileLayer*> TileScene::get_all_layers() const
     {
         std::vector<TileLayer*> layers;
-        std::transform(m_layers.begin(), m_layers.end(), std::back_inserter(layers),
+        std::ranges::transform(m_layers, std::back_inserter(layers),
             [](const auto& layer) { return layer.get(); });
         return layers;
     }
 
-    std::vector<std::string> TileScene::getLayersIds() const
+    std::vector<std::string> TileScene::get_layers_ids() const
     {
-        std::vector<std::string> layersNames;
-        layersNames.reserve(m_layers.size());
+        std::vector<std::string> layers_names;
+        layers_names.reserve(m_layers.size());
         for (const auto& layer : m_layers)
         {
-            layersNames.push_back(layer->getId());
+            layers_names.push_back(layer->get_id());
         }
-        return layersNames;
+        return layers_names;
     }
 
-    TileLayer& TileScene::getLayer(const std::string& id) const
+    TileLayer& TileScene::get_layer(const std::string& id) const
     {
         for (const auto& layer : m_layers)
         {
-            if (layer->getId() == id)
+            if (layer->get_id() == id)
             {
                 return *layer;
             }
         }
 
-        throw Exceptions::UnknownTileLayer(id, this->getLayersIds(), EXC_INFO);
+        throw exceptions::UnknownTileLayer(id, this->get_layers_ids(), EXC_INFO);
     }
 
-    AnimatedTiles TileScene::getAnimatedTiles() const
+    AnimatedTiles TileScene::get_animated_tiles() const
     {
         AnimatedTiles animations;
-        for (const auto& animation : m_animatedTiles)
+        for (const auto& animation : m_animated_tiles)
         {
             animations.push_back(animation.get());
         }
         return animations;
     }
 
-    const TilesetCollection& TileScene::getTilesets() const
+    const TilesetCollection& TileScene::get_tilesets() const
     {
         return m_tilesets;
     }
 
-    std::vector<graphics::Renderable*> TileScene::getRenderables() const
+    std::vector<graphics::Renderable*> TileScene::get_renderables() const
     {
         std::vector<graphics::Renderable*> result;
         for (const auto& layer : m_layers)
@@ -201,47 +201,47 @@ namespace obe::Tiles
         return result;
     }
 
-    std::vector<collision::PolygonalCollider*> TileScene::getColliderModels() const
+    std::vector<collision::PolygonalCollider*> TileScene::get_collider_models() const
     {
         std::vector<collision::PolygonalCollider*> result;
-        for (const auto& collider : m_colliderModels)
+        for (const auto& collider : m_collider_models)
         {
             result.push_back(collider.get());
         }
         return result;
     }
 
-    const std::vector<vili::node>& TileScene::getGameObjectsModels() const
+    const std::vector<vili::node>& TileScene::get_game_objects_models() const
     {
-        return m_gameObjectsModels;
+        return m_game_objects_models;
     }
 
-    uint32_t TileScene::getWidth() const
+    uint32_t TileScene::get_width() const
     {
         return m_width;
     }
 
-    uint32_t TileScene::getHeight() const
+    uint32_t TileScene::get_height() const
     {
         return m_height;
     }
 
-    uint32_t TileScene::getTileWidth() const
+    uint32_t TileScene::get_tile_width() const
     {
-        return m_tileWidth;
+        return m_tile_width;
     }
 
-    uint32_t TileScene::getTileHeight() const
+    uint32_t TileScene::get_tile_height() const
     {
-        return m_tileHeight;
+        return m_tile_height;
     }
 
-    bool TileScene::isSmooth() const
+    bool TileScene::is_anti_aliased() const
     {
         return m_smooth;
     }
 
-    Scene::Scene& TileScene::getScene() const
+    scene::Scene& TileScene::get_scene() const
     {
         return m_scene;
     }

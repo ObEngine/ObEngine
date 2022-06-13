@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Input::Exceptions::Bindings
+namespace obe::input::Exceptions::Bindings
 {
     void LoadClassInputButtonAlreadyInCombination(sol::state_view state);
     void LoadClassInputButtonInvalidOperation(sol::state_view state);

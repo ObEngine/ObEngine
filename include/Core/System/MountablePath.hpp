@@ -4,9 +4,9 @@
 #include <string_view>
 #include <vector>
 
-namespace obe::System
+namespace obe::system
 {
-    namespace Prefixes
+    namespace prefixes
     {
         constexpr std::string_view obe = "obe";
         constexpr std::string_view cwd = "cwd";
@@ -23,7 +23,7 @@ namespace obe::System
      *
      * High-priority user defined(>5) > High-priority(5) > ProjectMount(4) > Project(3) > Mount(2) > Defaults(1) > Low-priority(0) > Low-priority user defined(<0)
      */
-    namespace Priorities
+    namespace priorities
     {
         constexpr int high = 5;
         constexpr int projectmount = 4;
@@ -76,7 +76,7 @@ namespace obe::System
     /**
      * \brief Class used to encapsulate mounted Paths
      *
-     * \loadpriority{12} (before obe::System::Path)
+     * \loadpriority{12} (before obe::system::Path)
      */
     class MountablePath
     {
@@ -86,21 +86,23 @@ namespace obe::System
     public:
         /**
          * \brief Constructor of MountablePath
-         * \param pathType Type of the mounted path
-         * \param basePath Path to the mounted path
+         * \param path_type Type of the mounted path
+         * \param base_path Path to the mounted path
+         * \param prefix
          * \param priority Priority of the mounted path
-         * \param deferResolution whether or not to resolve basePath on construction
+         * \param implicit is taken into account when no prefix is provided
+         * \param defer_resolution whether or not to resolve base_path on construction
          */
-        MountablePath(MountablePathType pathType, std::string_view basePath,
-            std::string_view prefix, unsigned int priority = 0, bool implicit = false, bool deferResolution = false);
+        MountablePath(MountablePathType path_type, std::string_view base_path,
+            std::string_view prefix, unsigned int priority = 0, bool implicit = false, bool defer_resolution = false);
         /**
          * \brief Type of the mounted path
          */
-        MountablePathType pathType;
+        MountablePathType path_type;
         /**
          * \brief Path of the mounted path
          */
-        std::string basePath;
+        std::string base_path;
         /**
          * \brief Prefix of the mounted path
          */
@@ -118,7 +120,7 @@ namespace obe::System
         /**
          * \brief Allows to defer basePath resolution to a later time
          */
-        bool deferredResolution = false;
+        bool deferred_resolution = false;
 
         bool operator==(const MountablePath& other) const;
 
@@ -126,42 +128,42 @@ namespace obe::System
         /**
          * \brief Function called to Mount all Paths using 'mount.vili' file
          */
-        static void LoadMountFile(bool fromCWD = true, bool fromExe = true);
+        static void load_mount_file(bool from_cwd = true, bool from_exe = true);
         /**
          * \brief Add a Path to Mounted Paths
          * \param path Path to mount
-         * \param samePrefixPolicy action to take whenever two or more MountablePath with the same prefix are found
+         * \param same_prefix_policy action to take whenever two or more MountablePath with the same prefix are found
          */
-        static void Mount(
-            MountablePath path, SamePrefixPolicy samePrefixPolicy = SamePrefixPolicy::KeepBoth);
+        static void mount(
+            MountablePath path, SamePrefixPolicy same_prefix_policy = SamePrefixPolicy::KeepBoth);
         /**
          * \brief Remove a Path from Mounted Paths
          * \param path Path to unmount
          */
-        static void Unmount(MountablePath path);
+        static void unmount(MountablePath path);
         /**
          * \brief Remove all Paths from Mounted Paths
          */
-        static void UnmountAll();
+        static void unmount_all();
         /**
          * \brief All the Mounted Paths
          */
-        static const MountList& Paths();
+        static const MountList& paths();
         /**
          * \brief All the Mounted Paths as strings
          */
-        static std::vector<std::string> StringPaths();
+        static std::vector<std::string> string_paths();
         /**
          * \brief Sort the mounted paths based on their priorities
          */
-        static void Sort();
+        static void sort();
         /**
          * \brief Retrieve a MountablePath based on the prefix
          */
-        static const MountablePath& FromPrefix(const std::string& prefix);
+        static const MountablePath& from_prefix(const std::string& prefix);
 
-        static const std::vector<std::string> GetAllPrefixes();
+        static std::vector<std::string> get_all_prefixes();
 
-        void resolveBasePath();
+        void resolve_base_path();
     };
-} // namespace obe::System
+} // namespace obe::system

@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Script::ViliLuaBridge::Bindings
+namespace obe::script::vili_lua_bridge::Bindings
 {
     void LoadFunctionViliToLua(sol::state_view state);
     void LoadFunctionLuaToVili(sol::state_view state);

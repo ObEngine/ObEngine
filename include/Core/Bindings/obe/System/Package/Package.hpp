@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::System::Package::Bindings
+namespace obe::system::package::Bindings
 {
     void LoadFunctionGetPackageLocation(sol::state_view state);
     void LoadFunctionPackageExists(sol::state_view state);

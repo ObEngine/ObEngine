@@ -1,6 +1,6 @@
 #pragma once
 
-namespace obe::Time
+namespace obe::time
 {
     /**
      * \brief A time unit to store time as seconds
@@ -21,4 +21,4 @@ namespace obe::Time
      *         Epoch
      */
     TimeUnit epoch();
-} // namespace obe::Time
+} // namespace obe::time

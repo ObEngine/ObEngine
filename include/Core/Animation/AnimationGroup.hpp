@@ -14,11 +14,11 @@ namespace obe::animation
         /**
          * \brief Stores the last epoch to wait until the AnimationGroup delay
          */
-        Time::TimeUnit m_group_clock = 0;
+        time::TimeUnit m_group_clock = 0;
         /**
          * \brief The delay between each frame of the AnimationGroup
          */
-        Time::TimeUnit m_delay = 0;
+        time::TimeUnit m_delay = 0;
         /**
          * \brief The current frame index of the AnimationGroup
          */
@@ -58,7 +58,7 @@ namespace obe::animation
          * \brief Get the delay between each frame of the AnimationGroup
          * \return The delay between each frame in milliseconds
          */
-        [[nodiscard]] Time::TimeUnit get_delay() const noexcept;
+        [[nodiscard]] time::TimeUnit get_delay() const noexcept;
         /**
          * \brief Get the current index of AnimationGroup
          * \return The index of the texture in the AnimationGroup currently
@@ -127,7 +127,7 @@ namespace obe::animation
          * \brief Set the delay between each frame of the AnimationGroup
          * \param delay Delay in milliseconds
          */
-        void set_delay(Time::TimeUnit delay) noexcept;
+        void set_delay(time::TimeUnit delay) noexcept;
         /**
          * \brief Set how many times the AnimationGroup should be replayed
          *        before end

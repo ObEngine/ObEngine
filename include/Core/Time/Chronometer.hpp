@@ -1,10 +1,8 @@
 #pragma once
 
-#include <chrono>
-
 #include <Time/TimeUtils.hpp>
 
-namespace obe::Time
+namespace obe::time
 {
     /**
      * \brief A Chronometer class to measure time
@@ -12,7 +10,7 @@ namespace obe::Time
     class Chronometer
     {
     private:
-        TimeUnit m_start;
+        TimeUnit m_start = 0;
         TimeUnit m_limit = 0;
         bool m_started = false;
 
@@ -34,17 +32,17 @@ namespace obe::Time
          * \return The amount of milliseconds elapsed since the Chronometer
          * started
          */
-        TimeUnit getTime() const;
+        [[nodiscard]] TimeUnit get_elapsed_time() const;
         /**
          * \brief Defines a limit to the Chronometer
          * \param limit The amount of milliseconds before the limit is exceeded
          */
-        void setLimit(TimeUnit limit);
-        TimeUnit getLimit() const;
+        void set_limit(TimeUnit limit);
+        [[nodiscard]] TimeUnit get_limit() const;
         /**
          * \brief Check if the defined limit has been exceeded
          * \return true if the limit has been exceeded, false otherwise.
          */
-        bool over() const;
+        [[nodiscard]] bool is_over() const;
     };
-} // namespace obe::Time
+} // namespace obe::time

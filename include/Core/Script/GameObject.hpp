@@ -13,7 +13,7 @@
 
 #include <vili/node.hpp>
 
-namespace obe::Scene
+namespace obe::scene
 {
     class Scene;
 }
@@ -21,7 +21,7 @@ namespace obe::Scene
 /**
  * \additionalinclude{Scene/Scene.hpp}
  */
-namespace obe::Script
+namespace obe::script
 {
     class GameObject;
 
@@ -31,8 +31,8 @@ namespace obe::Script
     class GameObjectDatabase
     {
     private:
-        static vili::node allRequires;
-        static vili::node allDefinitions;
+        static vili::node AllRequires;
+        static vili::node AllDefinitions;
 
     public:
         /**
@@ -40,13 +40,13 @@ namespace obe::Script
          * \param type Type of the GameObject to get the Requirements
          * \return A pointer to the Requires ComplexNode of the GameObject
          */
-        static vili::node GetRequirementsForGameObject(const std::string& type);
+        static vili::node get_requirements_for_game_object(const std::string& type);
         /**
          * \brief Gets the ObjectDefinition ComplexNode of the GameObject
          * \param type Type of the GameObject to get the GameObject Definition File
          * \return A pointer to the ObjectDefinition ComplexNode
          */
-        static vili::node GetDefinitionForGameObject(const std::string& type);
+        static vili::node get_definition_for_game_object(const std::string& type);
         /**
          * \brief Applies the Requirements to a GameObject using a Requires
          *        ComplexNode
@@ -57,7 +57,7 @@ namespace obe::Script
         /**
          * \brief Clears the GameObjectDatabase (cache reload)
          */
-        static void Clear();
+        static void clear();
     };
 
     enum class EnvironmentTarget
@@ -76,7 +76,7 @@ namespace obe::Script
         std::unique_ptr<animation::Animator> m_animator;
         graphics::Sprite* m_sprite = nullptr;
         collision::PolygonalCollider* m_collider = nullptr;
-        Scene::SceneNode m_objectNode;
+        scene::SceneNode m_objectNode;
         sol::state_view m_lua;
         sol::environment m_outer_environment;
         sol::table m_inner_storage;
@@ -84,14 +84,14 @@ namespace obe::Script
 
         std::string m_type;
 
-        bool m_hasScriptEngine = false;
+        bool m_has_script_engine = false;
         bool m_active = false;
         bool m_initialized = false;
-        bool m_canUpdate = true;
+        bool m_can_update = true;
 
-        System::ContextualPathFactory GameObjectPath;
+        system::ContextualPathFactory m_filesystem_context;
 
-        friend class Scene::Scene;
+        friend class scene::Scene;
 
     public:
         /**
@@ -103,47 +103,47 @@ namespace obe::Script
         /**
          * \brief Destructor of the GameObject
          */
-        ~GameObject();
+        ~GameObject() override;
         /**
          * \brief Get the Type of the GameObject
          * \return A std::string containing the type of the GameObject
          */
-        [[nodiscard]] std::string getType() const;
+        [[nodiscard]] std::string get_type() const;
         /**
          * \brief Checks if the GameObject has an Animator Component
          * \return true if the GameObject contains an Animator Component, false
          *         otherwise
          */
-        [[nodiscard]] bool doesHaveAnimator() const;
+        [[nodiscard]] bool does_have_animator() const;
         /**
          * \brief Checks if the GameObject has a Collider Component
          * \return true if the GameObject contains the Collider Component, false
          *         otherwise
          */
-        [[nodiscard]] bool doesHaveCollider() const;
+        [[nodiscard]] bool does_have_collider() const;
         /**
          * \brief Checks if the GameObject has a Sprite Component
          * \return true if the GameObject contains the Sprite Component,
          *         false otherwise
          */
-        [[nodiscard]] bool doesHaveSprite() const;
+        [[nodiscard]] bool does_have_sprite() const;
         /**
          * \brief Checks if the GameObject has a Script Component
          * \return true if the GameObject contains the Script Component, false
          *         otherwise
          */
-        [[nodiscard]] bool doesHaveScriptEngine() const;
+        [[nodiscard]] bool does_have_script_engine() const;
         /**
          * \brief Is the GameObject updated
          * \return true if the GameObject is updated, false otherwise
          */
-        [[nodiscard]] bool getUpdateState() const;
+        [[nodiscard]] bool get_update_state() const;
         /**
          * \brief Sets if the GameObject should be otherwise or not
          * \param state Should be equal to true if the GameObject must updates,
          *        false otherwise
          */
-        void setUpdateState(bool state);
+        void set_update_state(bool state);
         /**
          * \rename{Animator}
          * \asproperty
@@ -151,7 +151,7 @@ namespace obe::Script
          *        ObEngine.Script.GameObject.NoAnimator if no Animator Component)
          * \return A pointer to the Animator Component of the GameObject
          */
-        animation::Animator& getAnimator() const;
+        [[nodiscard]] animation::Animator& get_animator() const;
         /**
          * \rename{Collider}
          * \asproperty
@@ -159,7 +159,7 @@ namespace obe::Script
          *        ObEngine.Script.GameObject.NoCollider if no Collider Component)
          * \return A pointer to the Collider Component of the GameObject
          */
-        collision::PolygonalCollider& getCollider() const;
+        [[nodiscard]] collision::PolygonalCollider& get_collider() const;
         /**
          * \rename{Sprite}
          * \asproperty
@@ -167,7 +167,7 @@ namespace obe::Script
          *        ObEngine.Script.GameObject.NoSprite if no Sprite Component)
          * \return A pointer to the Sprite Component of the GameObject
          */
-        graphics::Sprite& getSprite() const;
+        [[nodiscard]] graphics::Sprite& get_sprite() const;
         /**
          * \rename{SceneNode}
          * \asproperty
@@ -175,36 +175,36 @@ namespace obe::Script
          *        manipulate the position of all Scene Components) \return A reference
          * to the GameObject's Scene Node
          */
-        Scene::SceneNode& getSceneNode();
+        [[nodiscard]] scene::SceneNode& get_scene_node();
         /**
          * \brief Execute a Lua String in the Lua State of the GameObject
          * \param query String to execute
          */
         void exec(const std::string& query);
-        void initFromVili(const vili::node& data);
+        void init_from_vili(const vili::node& data);
         /**
          * \brief Send a parameter to the Local.Init trigger
          * \tparam U Template Type of the Parameter
-         * \param argName Name of the Parameter to push
+         * \param arg_name Name of the Parameter to push
          * \param value Value of the Parameter
          */
         template <typename U>
-        void sendInitArg(const std::string& argName, U value);
+        void send_init_arg(const std::string& arg_name, U value);
         /**
-         * \rename{sendInitArg}
+         * \rename{send_init_arg}
          * \brief Send a parameter to the Local.Init trigger from a Lua VM
-         * \param argName Name of the Parameter to push
+         * \param arg_name Name of the Parameter to push
          * \param value Value of the Parameter
          */
-        void sendInitArgFromLua(const std::string& argName, sol::object value);
+        void send_init_arg_from_lua(const std::string& arg_name, sol::object value);
         /**
          * \brief Loads the GameObject through the GameObject Definition File
          * \param scene Scene reference to create components
          * \param obj Vili Node containing the GameObject components
          * \param resources pointer to the ResourceManager
          */
-        void loadGameObject(
-            Scene::Scene& scene, vili::node& obj, engine::ResourceManager* resources = nullptr);
+        void load_game_object(
+            scene::Scene& scene, vili::node& obj, engine::ResourceManager* resources = nullptr);
         /**
          * \brief Updates the GameObject
          */
@@ -213,7 +213,7 @@ namespace obe::Script
          * \bind delete
          * \brief Deletes the GameObject
          */
-        void deleteObject();
+        void delete_object();
         /**
          * \brief Delete State of the GameObject (false = not deleted)
          */
@@ -228,7 +228,7 @@ namespace obe::Script
          *        GameObject (Local.Init proxy)
          * \return A reference to the Lua function used to build the GameObject
          */
-        [[nodiscard]] sol::function getConstructor() const;
+        [[nodiscard]] sol::function get_constructor() const;
         /**
          * \brief Triggers the GameObject's Local.Init
          */
@@ -238,28 +238,28 @@ namespace obe::Script
          * \param permanent Should be true if the GameObject should be
          *        permanent, false otherwise
          */
-        void setPermanent(bool permanent);
+        void set_permanent(bool permanent);
         /**
          * \brief Gets if the GameObject is permanent (Will stay after loading
          *        another map)
          * \return true if the GameObject is permanent, false otherwise
          */
-        [[nodiscard]] bool isPermanent() const;
+        [[nodiscard]] bool is_permanent() const;
 
-        sol::environment getOuterEnvironment() const;
-        void setState(bool state);
+        [[nodiscard]] sol::environment get_outer_environment() const;
+        void set_state(bool state);
 
         [[nodiscard]] vili::node schema() const override;
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
-        void loadSource(const std::string& path, EnvironmentTarget env);
+        void load_source(const std::string& path, EnvironmentTarget env);
     };
 
     template <typename U>
-    void GameObject::sendInitArg(const std::string& argName, U value)
+    void GameObject::send_init_arg(const std::string& arg_name, U value)
     {
         debug::Log->debug(
-            "<GameObject> Sending Local.Init argument {0} to GameObject {1}", argName, m_id);
-        m_outer_environment["__INIT_ARG_TABLE"][argName] = value;
+            "<GameObject> Sending Local.Init argument {0} to GameObject {1}", arg_name, m_id);
+        m_outer_environment["__INIT_ARG_TABLE"][arg_name] = value;
     }
-} // namespace obe::Script
+} // namespace obe::script

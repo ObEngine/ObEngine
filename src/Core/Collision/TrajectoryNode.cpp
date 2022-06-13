@@ -5,7 +5,7 @@
 
 namespace obe::collision
 {
-    TrajectoryNode::TrajectoryNode(Scene::SceneNode& scene_node)
+    TrajectoryNode::TrajectoryNode(scene::SceneNode& scene_node)
         : m_scene_node(scene_node)
     {
     }
@@ -74,7 +74,7 @@ namespace obe::collision
         }
     }
 
-    Scene::SceneNode& TrajectoryNode::get_scene_node() const
+    scene::SceneNode& TrajectoryNode::get_scene_node() const
     {
         return m_scene_node;
     }

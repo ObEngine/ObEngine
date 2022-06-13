@@ -6,14 +6,9 @@
 #include <SFML/Graphics/VertexArray.hpp>
 
 #include <Collision/PolygonalCollider.hpp>
-#include <Graphics/RenderTarget.hpp>
 #include <Graphics/Renderable.hpp>
-#include <Scene/Camera.hpp>
-#include <Tiles/Animation.hpp>
-#include <Tiles/Tile.hpp>
-#include <Tiles/Tileset.hpp>
 
-namespace obe::Tiles
+namespace obe::tiles
 {
     class TileScene;
 
@@ -33,24 +28,24 @@ namespace obe::Tiles
         double m_opacity = 1.0;
         std::vector<uint32_t> m_data;
 
-        void buildTile(uint32_t x, uint32_t y, uint32_t tileId);
-        void clearTile(uint32_t x, uint32_t y);
-        void updateQuad(sf::Vertex* quad, uint32_t tileId) const;
-        void clearQuad(sf::Vertex* quad) const;
+        void build_tile(uint32_t x, uint32_t y, uint32_t tile_id);
+        void clear_tile(uint32_t x, uint32_t y);
+        void update_quad(sf::Vertex* quad, uint32_t tile_id) const;
+        static void clear_quad(sf::Vertex* quad);
 
     public:
         TileLayer(const TileScene& scene, const std::string& id, int32_t layer, uint32_t x,
             uint32_t y, uint32_t width, uint32_t height, std::vector<uint32_t> data);
 
-        [[nodiscard]] std::string getId() const;
+        [[nodiscard]] std::string get_id() const;
 
         void build();
         /**
          * \brief Draws all elements of the TileLayer on the screen
          */
-        void draw(graphics::RenderTarget& surface, const Scene::Camera& camera) override;
+        void draw(graphics::RenderTarget& surface, const scene::Camera& camera) override;
 
-        void setTile(uint32_t x, uint32_t y, uint32_t tileId);
-        uint32_t getTile(uint32_t x, uint32_t y);
+        void set_tile(uint32_t x, uint32_t y, uint32_t tile_id);
+        uint32_t get_tile(uint32_t x, uint32_t y) const;
     };
 }

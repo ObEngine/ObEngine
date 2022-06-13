@@ -13,7 +13,7 @@
 #include <Tiles/Tileset.hpp>
 #include <Types/Serializable.hpp>
 
-namespace obe::Scene
+namespace obe::scene
 {
     class Scene;
 }
@@ -21,52 +21,52 @@ namespace obe::Scene
 /**
  * \additionalinclude{Scene/Scene.hpp}
  */
-namespace obe::Tiles
+namespace obe::tiles
 {
     class TileScene : public Types::Serializable
     {
     private:
-        Scene::Scene& m_scene;
+        scene::Scene& m_scene;
 
         uint32_t m_width;
         uint32_t m_height;
-        uint32_t m_tileWidth;
-        uint32_t m_tileHeight;
+        uint32_t m_tile_width;
+        uint32_t m_tile_height;
         bool m_smooth = false;
 
         std::vector<std::unique_ptr<TileLayer>> m_layers;
-        std::vector<std::unique_ptr<AnimatedTile>> m_animatedTiles;
-        std::vector<std::unique_ptr<collision::PolygonalCollider>> m_colliderModels;
-        std::vector<vili::node> m_gameObjectsModels;
+        std::vector<std::unique_ptr<AnimatedTile>> m_animated_tiles;
+        std::vector<std::unique_ptr<collision::PolygonalCollider>> m_collider_models;
+        std::vector<vili::node> m_game_objects_models;
         TilesetCollection m_tilesets;
 
         void build();
 
     public:
-        explicit TileScene(Scene::Scene& scene);
+        explicit TileScene(scene::Scene& scene);
         TileScene(const TileScene&) = delete;
         [[nodiscard]] vili::node schema() const override;
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
 
-        void update();
+        void update() const;
         void clear();
 
-        [[nodiscard]] std::vector<TileLayer*> getAllLayers() const;
-        [[nodiscard]] std::vector<std::string> getLayersIds() const;
-        [[nodiscard]] TileLayer& getLayer(const std::string& id) const;
-        [[nodiscard]] AnimatedTiles getAnimatedTiles() const;
-        [[nodiscard]] const TilesetCollection& getTilesets() const;
-        [[nodiscard]] std::vector<graphics::Renderable*> getRenderables() const;
-        [[nodiscard]] std::vector<collision::PolygonalCollider*> getColliderModels() const;
-        [[nodiscard]] const std::vector<vili::node>& getGameObjectsModels() const;
+        [[nodiscard]] std::vector<TileLayer*> get_all_layers() const;
+        [[nodiscard]] std::vector<std::string> get_layers_ids() const;
+        [[nodiscard]] TileLayer& get_layer(const std::string& id) const;
+        [[nodiscard]] AnimatedTiles get_animated_tiles() const;
+        [[nodiscard]] const TilesetCollection& get_tilesets() const;
+        [[nodiscard]] std::vector<graphics::Renderable*> get_renderables() const;
+        [[nodiscard]] std::vector<collision::PolygonalCollider*> get_collider_models() const;
+        [[nodiscard]] const std::vector<vili::node>& get_game_objects_models() const;
 
-        [[nodiscard]] uint32_t getWidth() const;
-        [[nodiscard]] uint32_t getHeight() const;
-        [[nodiscard]] uint32_t getTileWidth() const;
-        [[nodiscard]] uint32_t getTileHeight() const;
-        [[nodiscard]] bool isSmooth() const;
+        [[nodiscard]] uint32_t get_width() const;
+        [[nodiscard]] uint32_t get_height() const;
+        [[nodiscard]] uint32_t get_tile_width() const;
+        [[nodiscard]] uint32_t get_tile_height() const;
+        [[nodiscard]] bool is_anti_aliased() const;
 
-        [[nodiscard]] Scene::Scene& getScene() const;
+        [[nodiscard]] scene::Scene& get_scene() const;
     };
 }

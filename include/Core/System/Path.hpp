@@ -2,11 +2,12 @@
 
 #include <System/Exceptions.hpp>
 #include <System/MountablePath.hpp>
+#include <Types/SmartEnum.hpp>
 
-namespace obe::System
+namespace obe::system
 {
-    std::pair<std::string, std::string> splitPathAndPrefix(
-        const std::string& path, bool warnOnMissingPrefix = true);
+    std::pair<std::string, std::string> split_path_and_prefix(
+        const std::string& path, bool warn_on_missing_prefix = true);
 
     enum class PathType
     {
@@ -15,12 +16,12 @@ namespace obe::System
         File
     };
 
-    std::string_view pathTypeToString(PathType pathType);
+    using PathTypeMeta = Types::SmartEnum<PathType>;
 
     /**
      * \brief represents the result of the `find`, `findAll` and `list` operations of Path
      *
-     * \loadpriority{11} (before obe::System::Path)
+     * \loadpriority{11} (before obe::system::Path)
      */
     class FindResult
     {
@@ -32,14 +33,14 @@ namespace obe::System
         std::string m_element;
         MountList m_mounts;
 
-        void checkValidity() const;
+        void check_validity() const;
 
     public:
-        FindResult(PathType pathType, const std::string& pathNotFound, const std::string& query,
+        FindResult(PathType path_type, const std::string& path_not_found, const std::string& query,
             const MountList& mounts);
-        FindResult(PathType pathType, std::shared_ptr<MountablePath> mount, const std::string& path,
+        FindResult(PathType path_type, std::shared_ptr<MountablePath> mount, const std::string& path,
             const std::string& query, const std::string& element = "");
-        [[nodiscard]] std::string hypotheticalPath() const;
+        [[nodiscard]] std::string hypothetical_path() const;
         [[nodiscard]] const std::string& path() const;
         [[nodiscard]] const MountablePath& mount() const;
         [[nodiscard]] const std::string& query() const;
@@ -68,7 +69,7 @@ namespace obe::System
         MountList m_customMounts;
 
         static std::unordered_map<std::string, FindResult> PathCache;
-        const MountList* copyMountSource(const Path& path);
+        const MountList* copy_mount_source(const Path& path) const;
 
     public:
         /**
@@ -120,19 +121,19 @@ namespace obe::System
          * \param index Index of the BasePath to use
          * \return The full path based on the current path and the BasePath at index
          */
-        Path getPath(std::size_t index) const;
+        [[nodiscard]] Path get_path(std::size_t index) const;
         /**
          * \brief Finds the most prioritized file corresponding to the Path
          * \return The full path to the most prioritized file
          */
-        [[nodiscard]] std::vector<FindResult> list(PathType pathType = PathType::All) const;
-        [[nodiscard]] FindResult find(PathType pathType = PathType::All) const;
-        [[nodiscard]] std::vector<FindResult> findAll(PathType pathType = PathType::All) const;
+        [[nodiscard]] std::vector<FindResult> list(PathType path_type = PathType::All) const;
+        [[nodiscard]] FindResult find(PathType path_type = PathType::All) const;
+        [[nodiscard]] std::vector<FindResult> find_all(PathType path_type = PathType::All) const;
         /**
          * \brief Get the current path in string form
          * \return The Path in std::string form
          */
-        [[nodiscard]] std::string toString() const;
+        [[nodiscard]] std::string to_string() const;
         operator std::string() const;
         Path& operator=(const Path& path);
     };
@@ -141,16 +142,16 @@ namespace obe::System
     {
     private:
         Path m_base;
-        MountList makeMountList(const std::string& base);
-        MountList makeMountList(const std::string& base, const MountList& customMounts);
+        MountList make_mount_list(const std::string& base) const;
+        MountList make_mount_list(const std::string& base, const MountList& custom_mounts) const;
 
     public:
         ContextualPathFactory(const std::string& base);
-        ContextualPathFactory(const std::string& base, const MountList& customMounts);
+        ContextualPathFactory(const std::string& base, const MountList& custom_mounts);
 
         Path operator()(const std::string& path) const;
     };
-} // namespace obe::System
+} // namespace obe::system
 
-obe::System::Path operator"" _path(const char* str, std::size_t len);
+obe::system::Path operator"" _path(const char* str, std::size_t len);
 std::string operator"" _fs(const char* str, std::size_t len);

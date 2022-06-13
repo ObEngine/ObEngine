@@ -30,23 +30,23 @@ namespace obe::engine
 
     void Engine::init_input()
     {
-        m_input = std::make_unique<Input::InputManager>(*m_event_namespace);
+        m_input = std::make_unique<input::InputManager>(*m_event_namespace);
         if (m_config.contains("Input"))
         {
             m_input->configure(m_config.at("Input"));
         }
-        m_input->addContext("game");
+        m_input->add_context("game");
     }
 
     void Engine::init_framerate()
     {
-        m_framerate = std::make_unique<Time::FramerateManager>(*m_window);
+        m_framerate = std::make_unique<time::FramerateManager>(*m_window);
         m_framerate->configure(m_config.at("Framerate"));
     }
 
     void Engine::init_script()
     {
-        m_lua = std::make_unique<Script::LuaState>();
+        m_lua = std::make_unique<script::LuaState>();
         m_lua->open_libraries(sol::lib::base, sol::lib::string, sol::lib::table, sol::lib::package,
             sol::lib::os, sol::lib::coroutine, sol::lib::math, sol::lib::count, sol::lib::debug,
             sol::lib::io, sol::lib::bit32);
@@ -55,7 +55,7 @@ namespace obe::engine
         (*m_lua)["Global"] = sol::new_table();
 
         (*m_lua)["Helpers"] = sol::new_table();
-        for (const auto& [helper_name, helper] : Script::Helpers::make_all_helpers(*m_lua))
+        for (const auto& [helper_name, helper] : script::Helpers::make_all_helpers(*m_lua))
         {
             (*m_lua)["Helpers"][helper_name] = helper;
         }
@@ -64,7 +64,7 @@ namespace obe::engine
 
         Bindings::IndexCoreBindings(*m_lua);
 
-        m_lua->loadConfig(m_config.at("Script").at("Lua"));
+        m_lua->load_config(m_config.at("Script").at("Lua"));
 
         m_lua->safe_script_file("obe://Lib/Internal/Helpers.lua"_fs);
         m_lua->safe_script_file("obe://Lib/Internal/Events.lua"_fs);
@@ -114,28 +114,28 @@ namespace obe::engine
     {
         vili::node window_config = m_config.at("Window").at("Game");
         debug::Log->debug("<Engine> Window configuration : {}", window_config.dump());
-        m_window = std::make_unique<System::Window>(window_config);
+        m_window = std::make_unique<system::Window>(window_config);
     }
 
     void Engine::init_cursor()
     {
-        m_cursor = std::make_unique<System::Cursor>(*m_window, *m_event_namespace);
+        m_cursor = std::make_unique<system::Cursor>(*m_window, *m_event_namespace);
     }
 
     void Engine::init_plugins()
     {
         debug::Log->info("<Bindings> Checking Plugins on Mounted Path : {0}",
-            System::MountablePath::FromPrefix("cwd").basePath);
-        System::Path plugin_path_base
-            = System::Path(System::MountablePath::FromPrefix("cwd").basePath).add("Plugins");
-        if (Utils::File::directoryExists(plugin_path_base.toString()))
+            system::MountablePath::from_prefix("cwd").base_path);
+        system::Path plugin_path_base
+            = system::Path(system::MountablePath::from_prefix("cwd").base_path).add("Plugins");
+        if (Utils::File::directoryExists(plugin_path_base.to_string()))
         {
-            for (const std::string& filename : Utils::File::getFileList(plugin_path_base.toString()))
+            for (const std::string& filename : Utils::File::getFileList(plugin_path_base.to_string()))
             {
-                const std::string plugin_path = plugin_path_base.add(filename).toString();
+                const std::string plugin_path = plugin_path_base.add(filename).to_string();
                 const std::string plugin_name = Utils::String::split(filename, ".")[0];
-                auto plugin = std::make_unique<System::Plugin>(plugin_name, plugin_path);
-                if (plugin->isValid())
+                auto plugin = std::make_unique<system::Plugin>(plugin_name, plugin_path);
+                if (plugin->is_valid())
                 {
                     m_plugins.emplace_back(std::move(plugin));
                 }
@@ -143,14 +143,14 @@ namespace obe::engine
         }
         for (const auto& plugin : m_plugins)
         {
-            plugin->onInit(*this);
+            plugin->on_init(*this);
         }
     }
 
     void Engine::init_scene()
     {
-        m_scene = std::make_unique<Scene::Scene>(*m_event_namespace, *m_lua);
-        m_scene->attachResourceManager(*m_resources);
+        m_scene = std::make_unique<scene::Scene>(*m_event_namespace, *m_lua);
+        m_scene->attach_resource_manager(*m_resources);
     }
 
     void Engine::init_logger() const
@@ -185,7 +185,7 @@ namespace obe::engine
             m_scene->clear();
             m_scene->update();
         }
-        Script::GameObjectDatabase::Clear();
+        script::GameObjectDatabase::clear();
         if (m_window)
             m_window->close();
 
@@ -226,22 +226,22 @@ namespace obe::engine
         m_lua.reset();
     }
 
-    void Engine::deinit_plugins() const
+    void Engine::deinit_plugins()
     {
         for (const auto& plugin : m_plugins)
         {
-            plugin->onExit();
+            plugin->on_exit(*this);
         }
     }
 
     void Engine::handle_window_events() const
     {
         sf::Event event;
-        m_input->getInput("MouseWheelUp").setMouseWheelDelta(0);
-        m_input->getInput("MouseWheelDown").setMouseWheelDelta(0);
-        m_input->getInput("MouseWheelLeft").setMouseWheelDelta(0);
-        m_input->getInput("MouseWheelRight").setMouseWheelDelta(0);
-        while (m_window->pollEvent(event))
+        m_input->get_input("MouseWheelUp").set_mouse_wheel_delta(0);
+        m_input->get_input("MouseWheelDown").set_mouse_wheel_delta(0);
+        m_input->get_input("MouseWheelLeft").set_mouse_wheel_delta(0);
+        m_input->get_input("MouseWheelRight").set_mouse_wheel_delta(0);
+        while (m_window->poll_event(event))
         {
             if (event.type == sf::Event::MouseWheelScrolled)
             {
@@ -249,26 +249,26 @@ namespace obe::engine
                 {
                     if (event.mouseWheelScroll.delta < 0)
                     {
-                        m_input->getInput("MouseWheelUp")
-                            .setMouseWheelDelta(event.mouseWheelScroll.delta);
+                        m_input->get_input("MouseWheelUp")
+                            .set_mouse_wheel_delta(event.mouseWheelScroll.delta);
                     }
                     else if (event.mouseWheelScroll.delta > 0)
                     {
-                        m_input->getInput("MouseWheelDown")
-                            .setMouseWheelDelta(event.mouseWheelScroll.delta);
+                        m_input->get_input("MouseWheelDown")
+                            .set_mouse_wheel_delta(event.mouseWheelScroll.delta);
                     }
                 }
                 else if (event.mouseWheelScroll.wheel == sf::Mouse::HorizontalWheel)
                 {
                     if (event.mouseWheelScroll.delta < 0)
                     {
-                        m_input->getInput("MouseWheelLeft")
-                            .setMouseWheelDelta(event.mouseWheelScroll.delta);
+                        m_input->get_input("MouseWheelLeft")
+                            .set_mouse_wheel_delta(event.mouseWheelScroll.delta);
                     }
                     else if (event.mouseWheelScroll.delta > 0)
                     {
-                        m_input->getInput("MouseWheelRight")
-                            .setMouseWheelDelta(event.mouseWheelScroll.delta);
+                        m_input->get_input("MouseWheelRight")
+                            .set_mouse_wheel_delta(event.mouseWheelScroll.delta);
                     }
                 }
             }
@@ -278,12 +278,12 @@ namespace obe::engine
                 m_window->close();
                 break;
             case sf::Event::Resized:
-                m_window->setWindowSize(event.size.width, event.size.height);
+                m_window->set_window_size(event.size.width, event.size.height);
                 break;
             case sf::Event::JoystickConnected:
                 [[fallthrough]];
             case sf::Event::JoystickDisconnected:
-                m_input->initializeGamepads();
+                m_input->initialize_gamepads();
             case sf::Event::MouseWheelScrolled:
                 [[fallthrough]];
             case sf::Event::MouseButtonPressed:
@@ -299,7 +299,7 @@ namespace obe::engine
             case sf::Event::KeyReleased:
                 [[fallthrough]];
             case sf::Event::KeyPressed:
-                m_input->requireRefresh();
+                m_input->require_refresh();
                 if (event.key.code == sf::Keyboard::Escape)
                     m_window->close();
                 break;
@@ -352,7 +352,7 @@ namespace obe::engine
 
         const std::string boot_script = "*://boot.lua"_fs;
         if (boot_script.empty())
-            throw exceptions::BootScriptMissing(System::MountablePath::StringPaths(), EXC_INFO);
+            throw exceptions::BootScriptMissing(system::MountablePath::string_paths(), EXC_INFO);
         const sol::protected_function_result load_result = m_lua->safe_script_file(boot_script);
 
         if (!load_result.valid())
@@ -365,7 +365,7 @@ namespace obe::engine
             = (*m_lua)["Game"]["Start"].get<sol::protected_function>();
         try
         {
-            Script::safeLuaCall(boot_function);
+            script::safeLuaCall(boot_function);
         }
         catch (const BaseException& exc)
         {
@@ -374,19 +374,19 @@ namespace obe::engine
 
         m_framerate->start();
         vili::array dts;
-        Time::TimeUnit start = Time::epoch();
-        while (m_window->isOpen())
+        time::TimeUnit start = time::epoch();
+        while (m_window->is_open())
         {
             m_framerate->update();
 
-            if (m_framerate->doUpdate())
+            if (m_framerate->should_update())
             {
-                dts.push_back(m_framerate->getGameSpeed());
-                e_game->trigger(events::game::Update { m_framerate->getGameSpeed() });
+                dts.push_back(m_framerate->get_game_speed());
+                e_game->trigger(events::game::Update { m_framerate->get_game_speed() });
                 this->update();
             }
 
-            if (m_framerate->doRender())
+            if (m_framerate->should_render())
             {
                 e_game->trigger(events::game::Render {});
                 this->render();
@@ -398,7 +398,7 @@ namespace obe::engine
                 // m_lua->collect_garbage();
             }
         }
-        Time::TimeUnit total_time = Time::epoch() - start;
+        time::TimeUnit total_time = time::epoch() - start;
         double dt_sum = 0;
         for (auto dt : dts)
         {
@@ -430,12 +430,12 @@ namespace obe::engine
         return *m_resources;
     }
 
-    Input::InputManager& Engine::get_input_manager() const
+    input::InputManager& Engine::get_input_manager() const
     {
         return *m_input;
     }
 
-    Time::FramerateManager& Engine::get_framerate_manager() const
+    time::FramerateManager& Engine::get_framerate_manager() const
     {
         return *m_framerate;
     }
@@ -445,22 +445,22 @@ namespace obe::engine
         return *m_events;
     }
 
-    Scene::Scene& Engine::get_scene() const
+    scene::Scene& Engine::get_scene() const
     {
         return *m_scene;
     }
 
-    System::Cursor& Engine::get_cursor() const
+    system::Cursor& Engine::get_cursor() const
     {
         return *m_cursor;
     }
 
-    System::Window& Engine::get_window() const
+    system::Window& Engine::get_window() const
     {
         return *m_window;
     }
 
-    Script::LuaState& Engine::get_lua_state() const
+    script::LuaState& Engine::get_lua_state() const
     {
         return *m_lua;
     }
@@ -475,11 +475,6 @@ namespace obe::engine
         // Events
         this->handle_window_events();
 
-        for (const auto& plugin : m_plugins)
-        {
-            plugin->onUpdate(m_framerate->getGameSpeed());
-        }
-
         m_scene->update();
         m_events->update();
         m_input->update();
@@ -488,14 +483,10 @@ namespace obe::engine
 
     void Engine::render() const
     {
-        if (m_framerate->doRender())
+        if (m_framerate->should_render())
         {
             m_window->clear();
-            for (const auto& plugin : m_plugins)
-            {
-                plugin->onRender();
-            }
-            m_scene->draw(m_window->getTarget());
+            m_scene->draw(m_window->get_target());
             m_window->display();
         }
     }

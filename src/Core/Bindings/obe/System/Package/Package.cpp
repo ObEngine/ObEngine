@@ -4,36 +4,36 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::System::Package::Bindings
+namespace obe::system::package::Bindings
 {
     void LoadFunctionGetPackageLocation(sol::state_view state)
     {
-        sol::table PackageNamespace = state["obe"]["System"]["Package"].get<sol::table>();
+        sol::table PackageNamespace = state["obe"]["system"]["package"].get<sol::table>();
         PackageNamespace.set_function(
-            "GetPackageLocation", &obe::System::Package::GetPackageLocation);
+            "get_package_location", &obe::system::package::get_package_location);
     }
     void LoadFunctionPackageExists(sol::state_view state)
     {
-        sol::table PackageNamespace = state["obe"]["System"]["Package"].get<sol::table>();
-        PackageNamespace.set_function("PackageExists", &obe::System::Package::PackageExists);
+        sol::table PackageNamespace = state["obe"]["system"]["package"].get<sol::table>();
+        PackageNamespace.set_function("package_exists", &obe::system::package::package_exists);
     }
     void LoadFunctionListPackages(sol::state_view state)
     {
-        sol::table PackageNamespace = state["obe"]["System"]["Package"].get<sol::table>();
-        PackageNamespace.set_function("ListPackages", &obe::System::Package::ListPackages);
+        sol::table PackageNamespace = state["obe"]["system"]["package"].get<sol::table>();
+        PackageNamespace.set_function("list_packages", &obe::system::package::list_packages);
     }
     void LoadFunctionInstall(sol::state_view state)
     {
-        sol::table PackageNamespace = state["obe"]["System"]["Package"].get<sol::table>();
-        PackageNamespace.set_function("Install", &obe::System::Package::Install);
+        sol::table PackageNamespace = state["obe"]["system"]["package"].get<sol::table>();
+        PackageNamespace.set_function("install", &obe::system::package::install);
     }
     void LoadFunctionLoad(sol::state_view state)
     {
-        sol::table PackageNamespace = state["obe"]["System"]["Package"].get<sol::table>();
-        PackageNamespace.set_function("Load",
+        sol::table PackageNamespace = state["obe"]["system"]["package"].get<sol::table>();
+        PackageNamespace.set_function("load",
             sol::overload([](const std::string& packageName, const std::string& prefix)
-                              -> bool { return obe::System::Package::Load(packageName, prefix); },
+                              -> bool { return obe::system::package::load(packageName, prefix); },
                 [](const std::string& packageName, const std::string& prefix, unsigned int priority)
-                    -> bool { return obe::System::Package::Load(packageName, prefix, priority); }));
+                    -> bool { return obe::system::package::load(packageName, prefix, priority); }));
     }
 };

@@ -2,18 +2,18 @@
 
 #include <cstdint>
 
-namespace obe::Tiles
+namespace obe::tiles
 {
     struct TileInfo
     {
-        bool flippedHorizontally = false;
-        bool flippedVertically = false;
-        bool flippedDiagonally = false;
-        uint32_t tileId = 0;
+        bool flip_horizontal = false;
+        bool flip_vertical = false;
+        bool flip_diagonal = false;
+        uint32_t tile_id = 0;
     };
 
-    TileInfo getTileInfo(uint32_t tileId);
-    uint32_t stripTileFlags(uint32_t tileId);
+    TileInfo get_tile_info(uint32_t tile_id);
+    uint32_t strip_tile_flags(uint32_t tile_id);
 
     struct TextureQuadsIndex
     {
@@ -25,5 +25,5 @@ namespace obe::Tiles
         void transform(const TileInfo& info);
     };
 
-    void applyTextureQuadsTransforms(const TileInfo& info, TextureQuadsIndex& quads);
+    void apply_texture_quads_transforms(const TileInfo& info, TextureQuadsIndex& quads);
 }

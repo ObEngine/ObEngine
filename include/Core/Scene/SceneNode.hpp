@@ -5,7 +5,7 @@
 #include <Transform/Movable.hpp>
 #include <Types/Selectable.hpp>
 
-namespace obe::Scene
+namespace obe::scene
 {
     /**
      * \brief A SceneNode holds objects inherited from Movable class and "links"
@@ -21,12 +21,12 @@ namespace obe::Scene
          * \brief Adds a child to the SceneNode
          * \param child Pointer to the new SceneNode child
          */
-        void addChild(Transform::Movable& child);
+        void add_child(Transform::Movable& child);
         /**
          * \brief Removes a child from the SceneNode
          * \param child Reference to the SceneNode child to remove
          */
-        void removeChild(Transform::Movable& child);
+        void remove_child(Transform::Movable& child);
         /**
          * \brief Set the position of the SceneNode and all of its children
          *        using an UnitVector
@@ -44,11 +44,11 @@ namespace obe::Scene
          * \brief Set the position of the SceneNode using an UnitVector
          * \param position Position to affect to the SceneNode
          */
-        void setPositionWithoutChildren(const Transform::UnitVector& position);
+        void set_position_without_children(const Transform::UnitVector& position);
         /**
          * \brief Moves the SceneNode (Adds the given position to the current one)
          * \param position Position to add to the current Position
          */
-        void moveWithoutChildren(const Transform::UnitVector& position);
+        void move_without_children(const Transform::UnitVector& position);
     };
-} // namespace obe::Scene
+} // namespace obe::scene

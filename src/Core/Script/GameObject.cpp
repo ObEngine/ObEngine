@@ -7,83 +7,83 @@
 #include <Script/ViliLuaBridge.hpp>
 #include <System/Project.hpp>
 
-namespace obe::Script
+namespace obe::script
 {
     static std::unordered_map<std::string, sol::bytecode> ScriptCache;
 
     sol::table GameObject::access() const
     {
-        if (m_hasScriptEngine)
+        if (m_has_script_engine)
             return m_inner_storage;
-        throw Exceptions::NoSuchComponent("Script", m_type, m_id, EXC_INFO);
+        throw exceptions::NoSuchComponent("Script", m_type, m_id, EXC_INFO);
     }
 
-    sol::function GameObject::getConstructor() const
+    sol::function GameObject::get_constructor() const
     {
-        if (m_hasScriptEngine)
+        if (m_has_script_engine)
             return m_outer_environment["ObjectInitFromLua"].get<sol::function>();
-        throw Exceptions::NoSuchComponent("Script", m_type, m_id, EXC_INFO);
+        throw exceptions::NoSuchComponent("Script", m_type, m_id, EXC_INFO);
     }
 
-    vili::node GameObjectDatabase::allDefinitions = vili::object {};
-    vili::node GameObjectDatabase::allRequires = vili::object {};
-    vili::node GameObjectDatabase::GetRequirementsForGameObject(const std::string& type)
+    vili::node GameObjectDatabase::AllDefinitions = vili::object {};
+    vili::node GameObjectDatabase::AllRequires = vili::object {};
+    vili::node GameObjectDatabase::get_requirements_for_game_object(const std::string& type)
     {
-        if (!allRequires.contains(type))
+        if (!AllRequires.contains(type))
         {
-            vili::node getGameObjectFile = vili::parser::from_file(
-                System::Path("Data/GameObjects/").add(type).add(type + ".obj.vili").find());
-            if (getGameObjectFile.contains("Requires"))
+            vili::node get_game_object_file = vili::parser::from_file(
+                system::Path("Data/GameObjects/").add(type).add(type + ".obj.vili").find());
+            if (get_game_object_file.contains("Requires"))
             {
-                vili::node& requiresData = getGameObjectFile.at("Requires");
-                allRequires[type] = requiresData;
-                return requiresData;
+                vili::node& requires_data = get_game_object_file.at("Requires");
+                AllRequires[type] = requires_data;
+                return requires_data;
             }
             return vili::node {};
         }
-        return allRequires.at(type);
+        return AllRequires.at(type);
     }
 
-    vili::node GameObjectDatabase::GetDefinitionForGameObject(const std::string& type)
+    vili::node GameObjectDatabase::get_definition_for_game_object(const std::string& type)
     {
-        if (!allDefinitions.contains(type))
+        if (!AllDefinitions.contains(type))
         {
-            const std::string objectDefinitionPath
-                = System::Path(System::Project::Prefixes::objects, type)
+            const std::string object_definition_path
+                = system::Path(system::project::Prefixes::objects, type)
                       .add(type + ".obj.vili")
                       .find();
-            if (objectDefinitionPath.empty())
-                throw Exceptions::ObjectDefinitionNotFound(type, EXC_INFO);
+            if (object_definition_path.empty())
+                throw exceptions::ObjectDefinitionNotFound(type, EXC_INFO);
 
-            vili::node definitionData = vili::parser::from_file(
-                objectDefinitionPath);
+            vili::node definition_data = vili::parser::from_file(
+                object_definition_path);
 
-            allDefinitions[type] = definitionData;
-            return definitionData;
+            AllDefinitions[type] = definition_data;
+            return definition_data;
         }
-        return allDefinitions.at(type);
+        return AllDefinitions.at(type);
     }
 
     void GameObjectDatabase::ApplyRequirements(
         sol::environment environment, const vili::node& requirements)
     {
-        environment["__INIT_ARG_TABLE"] = ViliLuaBridge::viliToLua(requirements);
+        environment["__INIT_ARG_TABLE"] = vili_lua_bridge::vili_to_lua(requirements);
     }
 
-    void GameObjectDatabase::Clear()
+    void GameObjectDatabase::clear()
     {
-        allDefinitions.clear();
-        allRequires.clear();
+        AllDefinitions.clear();
+        AllRequires.clear();
     }
 
     // GameObject
     GameObject::GameObject(sol::state_view lua, const std::string& type, const std::string& id)
         : Identifiable(id)
         , m_lua(std::move(lua))
-        , GameObjectPath(System::Path(System::Project::Prefixes::objects, type)
-                             .find(System::PathType::Directory))
+        , m_type(type)
+        , m_filesystem_context(system::Path(system::project::Prefixes::objects, type)
+                             .find(system::PathType::Directory))
     {
-        m_type = type;
     }
 
     void GameObject::initialize()
@@ -92,7 +92,7 @@ namespace obe::Script
         {
             debug::Log->debug("<GameObject> Initializing GameObject '{0}' ({1})", m_id, m_type);
             m_initialized = true;
-            if (m_hasScriptEngine)
+            if (m_has_script_engine)
             {
                 m_outer_environment["__OBJECT_INIT"] = true;
                 try
@@ -101,7 +101,7 @@ namespace obe::Script
                 }
                 catch (const BaseException& e)
                 {
-                    throw Exceptions::GameObjectScriptError(m_type, m_id, "ObjectInit", EXC_INFO)
+                    throw exceptions::GameObjectScriptError(m_type, m_id, "ObjectInit", EXC_INFO)
                         .nest(e);
                 }
             }
@@ -118,23 +118,23 @@ namespace obe::Script
     GameObject::~GameObject()
     {
         debug::Log->debug("<GameObject> Deleting GameObject '{0}' ({1})", m_id, m_type);
-        if (m_hasScriptEngine)
+        if (m_has_script_engine)
         {
             m_outer_environment = sol::lua_nil;
             m_inner_environment = sol::lua_nil;
         }
     }
 
-    void GameObject::sendInitArgFromLua(const std::string& argName, sol::object value)
+    void GameObject::send_init_arg_from_lua(const std::string& arg_name, sol::object value)
     {
         debug::Log->debug("<GameObject> Sending Local.Init argument {0} to "
                           "GameObject {1} ({2}) (From Lua)",
-            argName, m_id, m_type);
-        m_outer_environment["__INIT_ARG_TABLE"][argName] = value;
+            arg_name, m_id, m_type);
+        m_outer_environment["__INIT_ARG_TABLE"][arg_name] = value;
     }
 
-    void GameObject::loadGameObject(
-        Scene::Scene& scene, vili::node& obj, engine::ResourceManager* resources)
+    void GameObject::load_game_object(
+        scene::Scene& scene, vili::node& obj, engine::ResourceManager* resources)
     {
         debug::Log->debug("<GameObject> Loading GameObject '{0}' ({1})", m_id, m_type);
 
@@ -146,7 +146,7 @@ namespace obe::Script
         if (obj.contains("Script"))
         {
             vili::node& script = obj.at("Script");
-            m_hasScriptEngine = true;
+            m_has_script_engine = true;
             m_outer_environment = sol::environment(m_lua, sol::create, m_lua.globals());
             m_inner_storage = m_lua.create_table();
             m_inner_environment = sol::environment(
@@ -164,97 +164,97 @@ namespace obe::Script
             m_outer_environment["__OBJECT_ID"] = m_id;
             m_outer_environment["__OBJECT_INIT"] = false;
 
-            loadSource("obe://Lib/Internal/ObjectInit.lua", EnvironmentTarget::Outer);
+            load_source("obe://Lib/Internal/ObjectInit.lua", EnvironmentTarget::Outer);
 
             if (script.contains("source"))
             {
-                const vili::node& sourceNode = script.at("source");
-                if (sourceNode.is<vili::string>())
+                const vili::node& source_node = script.at("source");
+                if (source_node.is<vili::string>())
                 {
-                    loadSource(sourceNode, EnvironmentTarget::Inner);
+                    load_source(source_node, EnvironmentTarget::Inner);
                 }
                 else
                 {
-                    throw Exceptions::WrongSourceAttributeType(m_type, "source",
-                        vili::string_typename, vili::to_string(sourceNode.type()), EXC_INFO);
+                    throw exceptions::WrongSourceAttributeType(m_type, "source",
+                        vili::string_typename, vili::to_string(source_node.type()), EXC_INFO);
                 }
             }
             else if (script.contains("sources"))
             {
-                vili::node& sourceNode = script.at("sources");
-                if (sourceNode.is<vili::array>())
+                vili::node& source_node = script.at("sources");
+                if (source_node.is<vili::array>())
                 {
-                    for (const vili::node& source : sourceNode)
+                    for (const vili::node& source : source_node)
                     {
-                        loadSource(source, EnvironmentTarget::Inner);
+                        load_source(source, EnvironmentTarget::Inner);
                     }
                 }
                 else
                 {
-                    throw Exceptions::WrongSourceAttributeType(m_type, "sources",
-                        vili::array_typename, vili::to_string(sourceNode.type()), EXC_INFO);
+                    throw exceptions::WrongSourceAttributeType(m_type, "sources",
+                        vili::array_typename, vili::to_string(source_node.type()), EXC_INFO);
                 }
             }
         }
-        if (m_hasScriptEngine)
+        if (m_has_script_engine)
         {
             m_outer_environment["Components"]["SceneNode"] = &m_objectNode;
         }
         // Sprite
         if (obj.contains("Sprite"))
         {
-            m_sprite = &scene.createSprite(m_id, false);
-            m_objectNode.addChild(*m_sprite);
+            m_sprite = &scene.create_sprite(m_id, false);
+            m_objectNode.add_child(*m_sprite);
             m_sprite->load(obj.at("Sprite"));
             m_sprite->set_parent_id(m_id);
-            if (m_hasScriptEngine)
+            if (m_has_script_engine)
                 m_outer_environment["Components"]["Sprite"] = m_sprite;
-            scene.reorganizeLayers();
+            scene.reorganize_layers();
         }
         if (obj.contains("Animator"))
         {
             m_animator = std::make_unique<animation::Animator>();
             vili::node& animator = obj.at("Animator");
-            std::string animatorPath;
+            std::string animator_path;
             if (animator.contains("path"))
             {
-                animatorPath = animator.at("path");
+                animator_path = animator.at("path");
             }
 
-            animation::AnimatorTargetScaleMode scaleMode = animation::AnimatorTargetScaleMode::Fit;
+            animation::AnimatorTargetScaleMode scale_mode = animation::AnimatorTargetScaleMode::Fit;
             if (animator.contains("scaling"))
             {
-                scaleMode = animation::AnimatorTargetScaleModeMeta::fromString(animator.at("scaling"));
+                scale_mode = animation::AnimatorTargetScaleModeMeta::fromString(animator.at("scaling"));
             }
             if (m_sprite)
-                m_animator->set_target(*m_sprite, scaleMode);
-            if (!animatorPath.empty())
+                m_animator->set_target(*m_sprite, scale_mode);
+            if (!animator_path.empty())
             {
-                m_animator->load(GameObjectPath(animatorPath), resources);
+                m_animator->load(m_filesystem_context(animator_path), resources);
             }
             if (animator.contains("default"))
             {
                 m_animator->set_animation(animator.at("default"));
             }
-            if (m_hasScriptEngine)
+            if (m_has_script_engine)
                 m_outer_environment["Components"]["Animation"] = m_animator.get();
         }
         // Collider
         if (obj.contains("Collider"))
         {
-            m_collider = &scene.createCollider(m_id, false);
-            m_objectNode.addChild(*m_collider);
+            m_collider = &scene.create_collider(m_id, false);
+            m_objectNode.add_child(*m_collider);
             m_collider->load(obj.at("Collider"));
             m_collider->set_parent_id(m_id);
 
-            if (m_hasScriptEngine)
+            if (m_has_script_engine)
                 m_outer_environment["Components"]["Collider"] = m_collider;
         }
     }
 
     void GameObject::update()
     {
-        if (m_canUpdate)
+        if (m_can_update)
         {
             if (m_active)
             {
@@ -275,65 +275,65 @@ namespace obe::Script
         }
     }
 
-    std::string GameObject::getType() const
+    std::string GameObject::get_type() const
     {
         return m_type;
     }
 
-    bool GameObject::doesHaveAnimator() const
+    bool GameObject::does_have_animator() const
     {
         return static_cast<bool>(m_animator);
     }
 
-    bool GameObject::doesHaveCollider() const
+    bool GameObject::does_have_collider() const
     {
         return static_cast<bool>(m_collider);
     }
 
-    bool GameObject::doesHaveSprite() const
+    bool GameObject::does_have_sprite() const
     {
         return static_cast<bool>(m_sprite);
     }
 
-    bool GameObject::doesHaveScriptEngine() const
+    bool GameObject::does_have_script_engine() const
     {
-        return m_hasScriptEngine;
+        return m_has_script_engine;
     }
 
-    bool GameObject::getUpdateState() const
+    bool GameObject::get_update_state() const
     {
-        return m_canUpdate;
+        return m_can_update;
     }
 
-    void GameObject::setUpdateState(bool state)
+    void GameObject::set_update_state(bool state)
     {
-        m_canUpdate = state;
+        m_can_update = state;
     }
 
-    graphics::Sprite& GameObject::getSprite() const
+    graphics::Sprite& GameObject::get_sprite() const
     {
         if (m_sprite)
             return *m_sprite;
-        throw Exceptions::NoSuchComponent("Sprite", m_type, m_id, EXC_INFO);
+        throw exceptions::NoSuchComponent("Sprite", m_type, m_id, EXC_INFO);
     }
 
-    Scene::SceneNode& GameObject::getSceneNode()
+    scene::SceneNode& GameObject::get_scene_node()
     {
         return m_objectNode;
     }
 
-    collision::PolygonalCollider& GameObject::getCollider() const
+    collision::PolygonalCollider& GameObject::get_collider() const
     {
         if (m_collider)
             return *m_collider;
-        throw Exceptions::NoSuchComponent("Collider", m_type, m_id, EXC_INFO);
+        throw exceptions::NoSuchComponent("Collider", m_type, m_id, EXC_INFO);
     }
 
-    animation::Animator& GameObject::getAnimator() const
+    animation::Animator& GameObject::get_animator() const
     {
         if (m_animator)
-            return *m_animator.get();
-        throw Exceptions::NoSuchComponent("Animator", m_type, m_id, EXC_INFO);
+            return *m_animator;
+        throw exceptions::NoSuchComponent("Animator", m_type, m_id, EXC_INFO);
     }
 
     void GameObject::exec(const std::string& query)
@@ -341,21 +341,21 @@ namespace obe::Script
         m_lua.safe_script(query, m_outer_environment);
     }
 
-    void GameObject::initFromVili(const vili::node& data)
+    void GameObject::init_from_vili(const vili::node& data)
     {
         debug::Log->debug("<GameObject> Sending Local.Init table to "
                           "GameObject {1} ({2}) (From Vili)",
             m_id, m_type);
-        m_outer_environment["__INIT_ARG_TABLE"] = ViliLuaBridge::viliToLua(data);
+        m_outer_environment["__INIT_ARG_TABLE"] = vili_lua_bridge::vili_to_lua(data);
     }
 
-    void GameObject::deleteObject()
+    void GameObject::delete_object()
     {
         if (!this->deletable)
         {
-            debug::Log->debug("GameObject::deleteObject called for '{0}' ({1})", m_id, m_type);
+            debug::Log->debug("GameObject::delete_object called for '{0}' ({1})", m_id, m_type);
 
-            if (m_hasScriptEngine)
+            if (m_has_script_engine)
             {
                 try
                 {
@@ -363,14 +363,14 @@ namespace obe::Script
                 }
                 catch (const BaseException& e)
                 {
-                    throw Exceptions::GameObjectScriptError(m_type, m_id, "ObjectDelete", EXC_INFO)
+                    throw exceptions::GameObjectScriptError(m_type, m_id, "ObjectDelete", EXC_INFO)
                         .nest(e);
                 }
             }
 
             this->deletable = true;
             m_active = false;
-            if (m_hasScriptEngine)
+            if (m_has_script_engine)
             {
                 for (const auto& [k, _] : m_outer_environment)
                 {
@@ -384,22 +384,22 @@ namespace obe::Script
         }
     }
 
-    void GameObject::setPermanent(bool permanent)
+    void GameObject::set_permanent(bool permanent)
     {
         m_permanent = permanent;
     }
 
-    bool GameObject::isPermanent() const
+    bool GameObject::is_permanent() const
     {
         return m_permanent;
     }
 
-    sol::environment GameObject::getOuterEnvironment() const
+    sol::environment GameObject::get_outer_environment() const
     {
         return m_inner_environment;
     }
 
-    void GameObject::setState(bool state)
+    void GameObject::set_state(bool state)
     {
         m_active = state;
     }
@@ -412,13 +412,13 @@ namespace obe::Script
     vili::node GameObject::dump() const
     {
         vili::node result = vili::object {};
-        result["type"] = this->getType();
+        result["type"] = this->get_type();
 
-        if (auto dumpFunction = this->access()["Dump"]; dumpFunction.valid())
+        if (auto dump_function = this->access()["Dump"]; dump_function.valid())
         {
-            const sol::table saveTableRef = dumpFunction().get<sol::table>();
-            vili::node saveRequirements = Script::ViliLuaBridge::luaTableToViliObject(saveTableRef);
-            result["Requires"] = saveRequirements;
+            const sol::table save_table_ref = dump_function().get<sol::table>();
+            vili::node save_requirements = script::vili_lua_bridge::lua_table_to_vili_object(save_table_ref);
+            result["Requires"] = save_requirements;
         }
 
         return result;
@@ -429,31 +429,31 @@ namespace obe::Script
         // TODO: Do something
     }
 
-    void GameObject::loadSource(const std::string& path, EnvironmentTarget env)
+    void GameObject::load_source(const std::string& path, EnvironmentTarget env)
     {
         const sol::environment& environment
             = (env == EnvironmentTarget::Outer) ? m_outer_environment : m_inner_environment;
-        const std::string fullPath = GameObjectPath(path).find();
-        if (fullPath.empty())
+        const std::string full_path = m_filesystem_context(path).find();
+        if (full_path.empty())
         {
-            throw Exceptions::ScriptFileNotFound(m_type, m_id, path, EXC_INFO);
+            throw exceptions::ScriptFileNotFound(m_type, m_id, path, EXC_INFO);
         }
-        if (!ScriptCache.contains(fullPath))
+        if (!ScriptCache.contains(full_path))
         {
-            const sol::load_result target = m_lua.load_file(fullPath);
+            const sol::load_result target = m_lua.load_file(full_path);
             if (!target.valid())
             {
-                throw Exceptions::InvalidScript(
-                    fullPath, target.get<sol::error>().what(), EXC_INFO);
+                throw exceptions::InvalidScript(
+                    full_path, target.get<sol::error>().what(), EXC_INFO);
             }
             const sol::protected_function bytecode = target.get<sol::protected_function>();
-            ScriptCache.emplace(fullPath, bytecode.dump());
+            ScriptCache.emplace(full_path, bytecode.dump());
         }
-        const std::string_view source = ScriptCache.at(fullPath).as_string_view();
-        if (const sol::protected_function_result loadResult = m_lua.safe_script(source, environment); !loadResult.valid())
+        const std::string_view source = ScriptCache.at(full_path).as_string_view();
+        if (const sol::protected_function_result load_result = m_lua.safe_script(source, environment); !load_result.valid())
         {
-            throw Exceptions::InvalidScript(
-                fullPath, loadResult.get<sol::error>().what(), EXC_INFO);
+            throw exceptions::InvalidScript(
+                full_path, load_result.get<sol::error>().what(), EXC_INFO);
         }
     }
-} // namespace obe::Script
+} // namespace obe::script

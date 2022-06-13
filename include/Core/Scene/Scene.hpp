@@ -6,6 +6,7 @@
 #include <vili/node.hpp>
 
 #include <Collision/PolygonalCollider.hpp>
+#include <Engine/ResourceManager.hpp>
 #include <Event/EventGroup.hpp>
 #include <Event/EventNamespace.hpp>
 #include <Graphics/Sprite.hpp>
@@ -16,13 +17,13 @@
 
 namespace obe
 {
-    namespace System
+    namespace system
     {
         class Window;
     }
 }
 
-namespace obe::events::Scene
+namespace obe::events::scene
 {
     struct Loaded
     {
@@ -31,7 +32,7 @@ namespace obe::events::Scene
     };
 }
 
-namespace obe::Scene
+namespace obe::scene
 {
     using OnSceneLoadCallback = sol::protected_function;
 
@@ -39,80 +40,77 @@ namespace obe::Scene
     {
         bool sprites = true;
         bool collisions = false;
-        bool sceneNodes = false;
+        bool scene_nodes = false;
     };
 
     /**
      * \brief The Scene class is a container of all the game elements
      */
-    class Scene : public Types::Serializable
+    class Scene : public Types::Serializable, public engine::ResourceManagedObject
     {
     private:
-        std::string m_levelName;
-        std::string m_baseFolder;
-        std::string m_futureLoad;
+        std::string m_level_name;
+        std::string m_base_folder;
+        std::string m_deferred_scene_load;
         Camera m_camera;
-        Transform::UnitVector m_cameraInitialPosition;
-        Transform::Referential m_cameraInitialReferential;
-        bool m_updateState = true;
+        Transform::UnitVector m_camera_initial_position;
+        Transform::Referential m_camera_initial_referential;
+        bool m_update_state = true;
 
-        engine::ResourceManager* m_resources = nullptr;
-        std::vector<std::unique_ptr<graphics::Sprite>> m_spriteArray;
-        std::unordered_set<std::string> m_spriteIds;
+        std::vector<std::unique_ptr<graphics::Sprite>> m_sprite_array;
+        std::unordered_set<std::string> m_sprite_ids;
 
-        std::vector<std::unique_ptr<collision::PolygonalCollider>> m_colliderArray;
-        std::unordered_set<std::string> m_colliderIds;
+        std::vector<std::unique_ptr<collision::PolygonalCollider>> m_collider_array;
+        std::unordered_set<std::string> m_collider_ids;
 
-        std::vector<std::unique_ptr<Script::GameObject>> m_gameObjectArray;
-        std::unordered_set<std::string> m_gameObjectIds;
+        std::vector<std::unique_ptr<script::GameObject>> m_game_object_array;
+        std::unordered_set<std::string> m_game_object_ids;
 
-        std::vector<std::string> m_scriptArray;
-        std::unique_ptr<Tiles::TileScene> m_tiles;
+        std::vector<std::string> m_script_array;
+        std::unique_ptr<tiles::TileScene> m_tiles;
 
-        SceneNode m_sceneRoot;
+        SceneNode m_scene_root;
 
-        std::string m_levelFileName;
-        SceneRenderOptions m_renderOptions;
-        OnSceneLoadCallback m_onLoadCallback;
+        std::string m_level_file_name;
+        SceneRenderOptions m_render_options;
+        OnSceneLoadCallback m_on_load_callback;
         event::EventGroupPtr e_scene;
         sol::state_view m_lua;
 
         std::unordered_map<std::string, Component::ComponentBase*> m_components;
 
-        bool m_sortRenderables = true;
-        std::vector<graphics::Renderable*> m_renderCache;
-        void _reorganizeLayers();
-        void _rebuildIds();
+        bool m_sort_renderables = true;
+        std::vector<graphics::Renderable*> m_render_cache;
+        void _reorganize_layers();
+        void _rebuild_ids();
 
     public:
         /**
          * \brief Creates a new Scene
          */
         Scene(event::EventNamespace& events, sol::state_view lua);
-
-        void attachResourceManager(engine::ResourceManager& resources);
         /**
          * \nobind
          * \brief Loads the Scene from a .map.vili file
          * \param path Path to the Scene file
          */
-        void loadFromFile(const std::string& path);
+        void load_from_file(const std::string& path);
         /**
-         * \rename{loadFromFile}
+         * \rename{load_from_file}
          * \brief Same that loadFromFile excepts the map will load at the next
          *        update
          * \param path Path to the Scene file
          */
-        void setFutureLoadFromFile(const std::string& path);
+        void set_future_load_from_file(const std::string& path);
         /**
-         * \rename{loadFromFile}
+         * \rename{load_from_file}
          * \brief Same that loadFromFile excepts the map will load at the next
          * update
          * \param path Path to the Scene file
          * \param callback Lua Function called when new map has
          *        been loaded
          */
-        void setFutureLoadFromFile(const std::string& path, const OnSceneLoadCallback& callback);
+        void set_future_load_from_file(const std::string& path, const OnSceneLoadCallback& callback);
         /**
          * \brief Removes all elements in the Scene
          */
@@ -137,92 +135,92 @@ namespace obe::Scene
          * \brief Get the name of the level
          * \return A std::string containing the name of the level
          */
-        [[nodiscard]] std::string getLevelName() const;
+        [[nodiscard]] std::string get_level_name() const;
         /**
          * \brief Sets the name of the level
-         * \param newName A std::string containing the new name of the level
+         * \param new_name A std::string containing the new name of the level
          */
-        void setLevelName(const std::string& newName);
+        void set_level_name(const std::string& new_name);
         /**
          * \brief Enables or disables the Scene update
          * \param state true if the Scene should update, false otherwise
          */
-        void setUpdateState(bool state);
+        void set_update_state(bool state);
 
         // GameObjects
         /**
          * \brief Creates a new GameObject
-         * \param obj Type of the GameObject
+         * \param object_type Type of the GameObject
          * \param id Id of the new GameObject (If empty the id will be randomly
          *        generated)
          * \return A pointer to the newly created GameObject
          */
-        Script::GameObject& createGameObject(const std::string& obj, const std::string& id = "");
+        script::GameObject& create_game_object(const std::string& object_type, const std::string& id = "");
         /**
          * \brief Get how many GameObjects are present in the Scene
          * \return The amount of GameObjects in the Scene
          */
-        [[nodiscard]] std::size_t getGameObjectAmount() const;
+        [[nodiscard]] std::size_t get_game_object_amount() const;
         /**
          * \brief Get all the GameObjects present in the Scene
          * \return
          */
-        std::vector<Script::GameObject*> getAllGameObjects(const std::string& objectType = "");
+        std::vector<script::GameObject*> get_all_game_objects(const std::string& object_type = "") const;
         /**
          * \brief Get a GameObject by Id (Raises an exception if not found)
          * \param id Id of the GameObject to retrieve
          * \return A pointer to the GameObject
          */
-        Script::GameObject& getGameObject(const std::string& id);
+        script::GameObject& get_game_object(const std::string& id) const;
         /**
          * \brief Check if a GameObject exists in the Scene
          * \param id Id of the GameObject to check the existence
          * \return true if the GameObject exists in the Scene, false otherwise
          */
-        bool doesGameObjectExists(const std::string& id);
+        bool does_game_object_exists(const std::string& id) const;
         /**
          * \brief Removes a GameObject from the Scene
          * \param id Id of the GameObject to remove from the Scene
          */
-        void removeGameObject(const std::string& id);
+        void remove_game_object(const std::string& id);
 
         // Camera
         /**
          * \brief Gets the Scene Camera
          * \return A pointer to the Scene Camera
          */
-        Camera& getCamera();
+        Camera& get_camera();
 
         // Sprites
         /**
          * \brief Reorganize all the Sprite (by layer and sublayer)
          */
-        void reorganizeLayers();
+        void reorganize_layers();
         /**
          * \brief Creates a new Sprite
          * \param id Id of the new Sprite
-         * \param addToSceneRoot Add the Sprite to the root Scene Node if
+         * \param add_to_scene_root Add the Sprite to the root Scene Node if
          *        true
          * \return A pointer to the newly created Sprite
          */
-        graphics::Sprite& createSprite(const std::string& id = "", bool addToSceneRoot = true);
+        graphics::Sprite& create_sprite(const std::string& id = "", bool add_to_scene_root = true);
         /**
          * \brief Get how many Sprites are present in the Scene
          * \return The amount of Sprites in the Scene
          */
-        [[nodiscard]] std::size_t getSpriteAmount() const;
+        [[nodiscard]] std::size_t get_sprite_amount() const;
         /**
          * \brief Get all the Sprites present in the Scene
          * \return A std::vector of Sprites pointer
          */
-        std::vector<graphics::Sprite*> getAllSprites();
+        std::vector<graphics::Sprite*> get_all_sprites() const;
         /**
          * \brief Get all the Sprites present in the Scene in the given
          *        layer
          * \param layer Layer to get all the Sprites from \return A
          *        std::vector of Sprites pointer
          */
-        std::vector<graphics::Sprite*> getSpritesByLayer(int layer);
+        std::vector<graphics::Sprite*> get_sprites_by_layer(int layer) const;
         /**
          * \brief Get the first found Sprite with the BoundingRect
          *        including the given position
@@ -230,45 +228,45 @@ namespace obe::Scene
          * \param layer Layer where to check
          * \return The pointer to a Sprite if found, nullptr otherwise
          */
-        graphics::Sprite* getSpriteByPosition(const Transform::UnitVector& position, int layer);
+        graphics::Sprite* get_sprite_by_position(const Transform::UnitVector& position, int layer) const;
         /**
          * \brief Get a Sprite by Id (Raises an exception if not found)
          * \param id Id of the Sprite to get
          * \return A pointer to the Sprite
          */
-        graphics::Sprite& getSprite(const std::string& id);
+        graphics::Sprite& get_sprite(const std::string& id) const;
         /**
          * \brief Check if a Sprite exists in the Scene
          * \param id Id of the Sprite to check the existence
          * \return true if the Sprite exists in the Scene, false otherwise
          */
-        bool doesSpriteExists(const std::string& id);
+        bool does_sprite_exists(const std::string& id) const;
         /**
          * \brief Removes the Sprite with the given Id
          * \param id Id of the Sprite to remove
          */
-        void removeSprite(const std::string& id);
+        void remove_sprite(const std::string& id);
 
         // Colliders
         /**
          * \brief Creates a new Collider
          * \param id Id of the new Collider
-         * \param addToSceneRoot Add the Collider to the root Scene Node if true
+         * \param add_to_scene_root Add the Collider to the root Scene Node if true
          * \return A pointer to the newly created Collider
          */
-        collision::PolygonalCollider& createCollider(
-            const std::string& id = "", bool addToSceneRoot = true);
+        collision::PolygonalCollider& create_collider(
+            const std::string& id = "", bool add_to_scene_root = true);
         /**
          * \brief Get how many Colliders are present in the Scene
          * \return The amount of Colliders present in the Scene
          */
-        [[nodiscard]] std::size_t getColliderAmount() const;
+        [[nodiscard]] std::size_t get_collider_amount() const;
         /**
          * \brief Get all the pointers of the Colliders in the Scene
          * \return A std::vector containing all the pointers of the Colliders
          *         present in the Scene
          */
-        [[nodiscard]] std::vector<collision::PolygonalCollider*> getAllColliders() const;
+        [[nodiscard]] std::vector<collision::PolygonalCollider*> get_all_colliders() const;
         /**
          * \brief Get the first Collider found with a point on the given
          *        position
@@ -276,34 +274,34 @@ namespace obe::Scene
          * \return A std::pair containing the pointer to the Collider with a
          *         point at the given position and the index of the point
          */
-        std::pair<collision::PolygonalCollider*, int> getColliderPointByPosition(
-            const Transform::UnitVector& position);
+        std::pair<collision::PolygonalCollider*, int> get_collider_point_by_position(
+            const Transform::UnitVector& position) const;
         /**
          * \brief Get the Collider using the centroid Position
          * \param position Position to check
          * \return A Pointer to the Collider if found, nullptr otherwise
          */
-        collision::PolygonalCollider* getColliderByCentroidPosition(
-            const Transform::UnitVector& position);
+        collision::PolygonalCollider* get_collider_by_centroid_position(
+            const Transform::UnitVector& position) const;
         /**
          * \brief Get the Collider with the given Id (Raises an exception if not
          *        found)
          * \param id Id of the Collider to retrieve
          * \return A pointer to the Collider
          */
-        collision::PolygonalCollider& getCollider(const std::string& id);
+        collision::PolygonalCollider& get_collider(const std::string& id) const;
         /**
          * \brief Check the existence of the Collider with given Id in the Scene
          * \param id Id of the Collider to check the existence
          * \return true if the Collider was found, false otherwise
          */
-        bool doesColliderExists(const std::string& id);
+        bool does_collider_exists(const std::string& id) const;
         /**
          * \brief Removes the Collider with the given Id from the Scene
          * \param id Id of the Collider to remove
          */
-        void removeCollider(const std::string& id);
-        SceneNode& getSceneRootNode();
+        void remove_collider(const std::string& id);
+        SceneNode& get_scene_root_node();
 
         // Other
         /**
@@ -311,7 +309,7 @@ namespace obe::Scene
          * \return A std::string containing the folder where was loaded the map
          *         file
          */
-        [[nodiscard]] std::string getFilePath() const;
+        [[nodiscard]] std::string get_filesystem_path() const;
         /**
          * \brief Reloads the Scene from the level file
          */
@@ -326,30 +324,30 @@ namespace obe::Scene
          * \return A std::string containing the name of the last loaded map file
          *         with loadFromFile method
          */
-        [[nodiscard]] std::string getLevelFile() const;
-        [[nodiscard]] SceneNode* getSceneNodeByPosition(
+        [[nodiscard]] std::string get_level_file() const;
+        [[nodiscard]] SceneNode* get_scene_node_by_position(
             const Transform::UnitVector& position) const;
-        bool hasTiles() const;
-        const Tiles::TileScene& getTiles() const;
-        SceneRenderOptions getRenderOptions() const;
-        void setRenderOptions(SceneRenderOptions options);
+        bool has_tiles() const;
+        const tiles::TileScene& get_tiles() const;
+        SceneRenderOptions get_render_options() const;
+        void set_render_options(SceneRenderOptions options);
 
         // Components
-        Component::ComponentBase* getComponent(const std::string& id) const;
+        Component::ComponentBase* get_component(const std::string& id) const;
     };
 
     /**
-     * \proxy{obe::Scene::Scene::getGameObject}
+     * \proxy{obe::scene::scene::get_game_object}
      */
-    sol::table sceneGetGameObjectProxy(Scene* self, const std::string& id);
+    sol::table scene_get_game_object_proxy(const Scene* self, const std::string& id);
     /**
-     * \proxy{obe::Scene::Scene::createGameObject}
+     * \proxy{obe::scene::scene::create_game_object}
      */
-    sol::function sceneCreateGameObjectProxy(
-        Scene* self, const std::string& obj, const std::string& id = "");
+    sol::function scene_create_game_object_proxy(
+        Scene* self, const std::string& object_type, const std::string& id = "");
     /**
-    * \proxy{obe::Scene::Scene::getAllGameObjects}
+    * \proxy{obe::scene::scene::get_all_game_objects}
     */
-    sol::nested<std::vector<sol::table>> sceneGetAllGameObjectsProxy(
-        Scene* self, const std::string& objectType = "");
-} // namespace obe::Scene
+    sol::nested<std::vector<sol::table>> scene_get_all_game_objects_proxy(
+        const Scene* self, const std::string& object_type = "");
+} // namespace obe::scene

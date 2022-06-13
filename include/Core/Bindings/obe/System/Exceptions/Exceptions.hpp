@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::System::Exceptions::Bindings
+namespace obe::system::Exceptions::Bindings
 {
     void LoadClassInvalidDeferredMountablePath(sol::state_view state);
     void LoadClassInvalidMountFile(sol::state_view state);
@@ -20,5 +20,4 @@ namespace obe::System::Exceptions::Bindings
     void LoadClassUnknownPackage(sol::state_view state);
     void LoadClassUnknownPathPrefix(sol::state_view state);
     void LoadClassUnknownProject(sol::state_view state);
-    void LoadClassUnknownStretchMode(sol::state_view state);
 };

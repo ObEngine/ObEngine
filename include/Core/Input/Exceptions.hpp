@@ -5,19 +5,19 @@
 #include <Exception.hpp>
 #include <vector>
 
-namespace obe::Input::Exceptions
+namespace obe::input::Exceptions
 {
     class InputButtonInvalidOperation : public Exception<InputButtonInvalidOperation>
     {
     public:
         using Exception::Exception;
         InputButtonInvalidOperation(
-            std::string_view inputButtonType, std::string_view operationType, DebugInfo info)
+            std::string_view input_button_type, std::string_view operation_type, DebugInfo info)
             : Exception(info)
         {
             this->error("Tried to do a '{}' operation on an InputButton of type '{}' "
                         "which is incompatible",
-                operationType, inputButtonType);
+                operation_type, input_button_type);
         }
     };
 
@@ -37,15 +37,15 @@ namespace obe::Input::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownInputAction(std::string_view actionName,
-            const std::vector<std::string>& existingActions, DebugInfo info)
+        UnknownInputAction(std::string_view action_name,
+            const std::vector<std::string>& existing_actions, DebugInfo info)
             : Exception(info)
         {
-            this->error("InputAction named '{}' does not exists", actionName);
+            this->error("InputAction named '{}' does not exists", action_name);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(actionName.data(), existingActions, 5);
-            std::transform(
-                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
+                = Utils::String::sortByDistance(action_name.data(), existing_actions, 5);
+            std::ranges::transform(suggestions
+                , suggestions.begin(), Utils::String::quote);
             this->hint(
                 "Try one of the following InputAction : ({}...)", fmt::join(suggestions, ", "));
         }
@@ -55,15 +55,15 @@ namespace obe::Input::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownInputButton(std::string_view buttonName,
-            const std::vector<std::string>& existingButtons, DebugInfo info)
+        UnknownInputButton(std::string_view button_name,
+            const std::vector<std::string>& existing_buttons, DebugInfo info)
             : Exception(info)
         {
-            this->error("InputButton named '{}' does not exists", buttonName);
+            this->error("InputButton named '{}' does not exists", button_name);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(buttonName.data(), existingButtons, 5);
-            std::transform(
-                suggestions.begin(), suggestions.end(), suggestions.begin(), &Utils::String::quote);
+                = Utils::String::sortByDistance(button_name.data(), existing_buttons, 5);
+            std::ranges::transform(suggestions
+                , suggestions.begin(), &Utils::String::quote);
             this->hint(
                 "Try one of the following InputButton : ({}...)", fmt::join(suggestions, ", "));
         }
@@ -74,11 +74,11 @@ namespace obe::Input::Exceptions
     public:
         using Exception::Exception;
         InvalidInputCombinationCode(
-            std::string_view action, std::string_view combinationCode, DebugInfo info)
+            std::string_view action, std::string_view combination_code, DebugInfo info)
             : Exception(info)
         {
             this->error("The following InputCombinationCode '{}' for InputAction '{}' is invalid",
-                combinationCode, action);
+                combination_code, action);
         }
     };
 
@@ -101,10 +101,10 @@ namespace obe::Input::Exceptions
     {
     public:
         using Exception::Exception;
-        InvalidInputTypeEnumValue(int enumValue, DebugInfo info)
+        InvalidInputTypeEnumValue(int enum_value, DebugInfo info)
             : Exception(info)
         {
-            this->error("Enum InputType can't have invalid value ({})", enumValue);
+            this->error("Enum InputType can't have invalid value ({})", enum_value);
         }
     };
 
@@ -112,13 +112,13 @@ namespace obe::Input::Exceptions
     {
     public:
         using Exception::Exception;
-        InvalidGamepadButton(std::string_view gamepadButtonId, DebugInfo info)
+        InvalidGamepadButton(std::string_view gamepad_button_id, DebugInfo info)
             : Exception(info)
         {
-            this->error("Gamepad input '{}' is not a valid identifier", gamepadButtonId);
+            this->error("Gamepad input '{}' is not a valid identifier", gamepad_button_id);
             this->hint("Gamepad input should look like this : 'GP_<GAMEPAD_ID>_BTN_<BUTTON_ID>' or "
                        "'GP_X_AXIS_<AXIS_NAME>_<AXIS_DIRECTION>",
-                gamepadButtonId);
+                gamepad_button_id);
         }
     };
 }

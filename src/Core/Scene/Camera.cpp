@@ -1,6 +1,6 @@
 #include <Scene/Camera.hpp>
 
-namespace obe::Scene
+namespace obe::scene
 {
     Camera::Camera()
     {
@@ -15,10 +15,10 @@ namespace obe::Scene
         m_camera->h = m_size.y;
     }
 
-    void Camera::setPosition(
+    void Camera::set_position(
         const Transform::UnitVector& position, const Transform::Referential& ref)
     {
-        Rect::setPosition(position, ref);
+        Rect::set_position(position, ref);
         this->apply();
     }
 
@@ -28,18 +28,18 @@ namespace obe::Scene
         this->apply();
     }
 
-    void Camera::setSize(const double pSize, const Transform::Referential& ref)
+    void Camera::set_size(const double size, const Transform::Referential& ref)
     {
-        Rect::setSize(Transform::UnitVector(pSize * 2
+        Rect::setSize(Transform::UnitVector(size * 2
                               * (Transform::UnitVector::Screen.w / Transform::UnitVector::Screen.h),
-                          pSize * 2, m_size.unit),
+                          size * 2, m_size.unit),
             ref);
         this->apply();
     }
 
-    void Camera::scale(const double pScale, const Transform::Referential& ref)
+    void Camera::scale(const double scale_, const Transform::Referential& ref)
     {
-        this->setSize((m_size.y / 2) * pScale, ref);
+        this->set_size((m_size.y / 2) * scale_, ref);
         this->apply();
     }
 
@@ -53,13 +53,13 @@ namespace obe::Scene
         if (!m_locked) m_angle += angle;
     }*/
 
-    Transform::UnitVector Camera::getPosition(const Transform::Referential& ref) const
+    Transform::UnitVector Camera::get_position(const Transform::Referential& ref) const
     {
-        return Rect::getPosition(ref);
+        return Rect::get_position(ref);
     }
 
-    Transform::UnitVector Camera::getSize() const
+    Transform::UnitVector Camera::get_size() const
     {
         return m_size;
     }
-} // namespace obe::Scene
+} // namespace obe::scene

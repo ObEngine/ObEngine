@@ -65,6 +65,6 @@ namespace obe::audio
         void set_volume(float volume);
 
         void set_looping(bool looping);
-        [[nodiscard]] bool get_looping() const;
+        [[nodiscard]] bool is_looping() const;
     };
 }

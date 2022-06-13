@@ -7,78 +7,78 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Script::Bindings
+namespace obe::script::Bindings
 {
     void LoadClassGameObject(sol::state_view state)
     {
-        sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
-        sol::usertype<obe::Script::GameObject> bindGameObject
-            = ScriptNamespace.new_usertype<obe::Script::GameObject>("GameObject",
+        sol::table ScriptNamespace = state["obe"]["script"].get<sol::table>();
+        sol::usertype<obe::script::GameObject> bindGameObject
+            = ScriptNamespace.new_usertype<obe::script::GameObject>("GameObject",
                 sol::call_constructor,
-                sol::constructors<obe::Script::GameObject(
+                sol::constructors<obe::script::GameObject(
                     sol::state_view, const std::string&, const std::string&)>(),
                 sol::base_classes,
                 sol::bases<obe::Types::Identifiable, obe::Types::Serializable>());
-        bindGameObject["getType"] = &obe::Script::GameObject::getType;
-        bindGameObject["doesHaveAnimator"] = &obe::Script::GameObject::doesHaveAnimator;
-        bindGameObject["doesHaveCollider"] = &obe::Script::GameObject::doesHaveCollider;
-        bindGameObject["doesHaveSprite"] = &obe::Script::GameObject::doesHaveSprite;
-        bindGameObject["doesHaveScriptEngine"] = &obe::Script::GameObject::doesHaveScriptEngine;
-        bindGameObject["getUpdateState"] = &obe::Script::GameObject::getUpdateState;
-        bindGameObject["setUpdateState"] = &obe::Script::GameObject::setUpdateState;
-        bindGameObject["Animator"] = sol::property(&obe::Script::GameObject::getAnimator);
-        bindGameObject["Collider"] = sol::property(&obe::Script::GameObject::getCollider);
-        bindGameObject["Sprite"] = sol::property(&obe::Script::GameObject::getSprite);
-        bindGameObject["SceneNode"] = sol::property(&obe::Script::GameObject::getSceneNode);
-        bindGameObject["exec"] = &obe::Script::GameObject::exec;
-        bindGameObject["initFromVili"] = &obe::Script::GameObject::initFromVili;
-        bindGameObject["sendInitArg"] = &obe::Script::GameObject::sendInitArgFromLua;
-        bindGameObject["loadGameObject"] = sol::overload(
-            [](obe::Script::GameObject* self, obe::Scene::Scene& scene, vili::node& obj) -> void {
-                return self->loadGameObject(scene, obj);
+        bindGameObject["get_type"] = &obe::script::GameObject::get_type;
+        bindGameObject["does_have_animator"] = &obe::script::GameObject::does_have_animator;
+        bindGameObject["does_have_collider"] = &obe::script::GameObject::does_have_collider;
+        bindGameObject["does_have_sprite"] = &obe::script::GameObject::does_have_sprite;
+        bindGameObject["does_have_script_engine"] = &obe::script::GameObject::does_have_script_engine;
+        bindGameObject["get_update_state"] = &obe::script::GameObject::get_update_state;
+        bindGameObject["set_update_state"] = &obe::script::GameObject::set_update_state;
+        bindGameObject["Animator"] = sol::property(&obe::script::GameObject::get_animator);
+        bindGameObject["Collider"] = sol::property(&obe::script::GameObject::get_collider);
+        bindGameObject["Sprite"] = sol::property(&obe::script::GameObject::get_sprite);
+        bindGameObject["SceneNode"] = sol::property(&obe::script::GameObject::get_scene_node);
+        bindGameObject["exec"] = &obe::script::GameObject::exec;
+        bindGameObject["init_from_vili"] = &obe::script::GameObject::init_from_vili;
+        bindGameObject["sendInitArg"] = &obe::script::GameObject::send_init_arg_from_lua;
+        bindGameObject["load_game_object"] = sol::overload(
+            [](obe::script::GameObject* self, obe::scene::Scene& scene, vili::node& obj) -> void {
+                return self->load_game_object(scene, obj);
             },
-            [](obe::Script::GameObject* self, obe::Scene::Scene& scene, vili::node& obj,
+            [](obe::script::GameObject* self, obe::scene::Scene& scene, vili::node& obj,
                 obe::engine::ResourceManager* resources) -> void {
-                return self->loadGameObject(scene, obj, resources);
+                return self->load_game_object(scene, obj, resources);
             });
-        bindGameObject["update"] = &obe::Script::GameObject::update;
-        bindGameObject["deleteObject"] = &obe::Script::GameObject::deleteObject;
-        bindGameObject["access"] = &obe::Script::GameObject::access;
-        bindGameObject["getConstructor"] = &obe::Script::GameObject::getConstructor;
-        bindGameObject["initialize"] = &obe::Script::GameObject::initialize;
-        bindGameObject["setPermanent"] = &obe::Script::GameObject::setPermanent;
-        bindGameObject["isPermanent"] = &obe::Script::GameObject::isPermanent;
-        bindGameObject["getOuterEnvironment"] = &obe::Script::GameObject::getOuterEnvironment;
-        bindGameObject["setState"] = &obe::Script::GameObject::setState;
-        bindGameObject["dump"] = &obe::Script::GameObject::dump;
-        bindGameObject["load"] = &obe::Script::GameObject::load;
-        bindGameObject["loadSource"] = &obe::Script::GameObject::loadSource;
-        bindGameObject["deletable"] = &obe::Script::GameObject::deletable;
+        bindGameObject["update"] = &obe::script::GameObject::update;
+        bindGameObject["delete_object"] = &obe::script::GameObject::delete_object;
+        bindGameObject["access"] = &obe::script::GameObject::access;
+        bindGameObject["get_constructor"] = &obe::script::GameObject::get_constructor;
+        bindGameObject["initialize"] = &obe::script::GameObject::initialize;
+        bindGameObject["set_permanent"] = &obe::script::GameObject::set_permanent;
+        bindGameObject["is_permanent"] = &obe::script::GameObject::is_permanent;
+        bindGameObject["get_outer_environment"] = &obe::script::GameObject::get_outer_environment;
+        bindGameObject["set_state"] = &obe::script::GameObject::set_state;
+        bindGameObject["dump"] = &obe::script::GameObject::dump;
+        bindGameObject["load"] = &obe::script::GameObject::load;
+        bindGameObject["load_source"] = &obe::script::GameObject::load_source;
+        bindGameObject["deletable"] = &obe::script::GameObject::deletable;
     }
     void LoadClassGameObjectDatabase(sol::state_view state)
     {
-        sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
-        sol::usertype<obe::Script::GameObjectDatabase> bindGameObjectDatabase
-            = ScriptNamespace.new_usertype<obe::Script::GameObjectDatabase>(
+        sol::table ScriptNamespace = state["obe"]["script"].get<sol::table>();
+        sol::usertype<obe::script::GameObjectDatabase> bindGameObjectDatabase
+            = ScriptNamespace.new_usertype<obe::script::GameObjectDatabase>(
                 "GameObjectDatabase", sol::call_constructor, sol::default_constructor);
-        bindGameObjectDatabase["GetRequirementsForGameObject"]
-            = &obe::Script::GameObjectDatabase::GetRequirementsForGameObject;
-        bindGameObjectDatabase["GetDefinitionForGameObject"]
-            = &obe::Script::GameObjectDatabase::GetDefinitionForGameObject;
+        bindGameObjectDatabase["get_requirements_for_game_object"]
+            = &obe::script::GameObjectDatabase::get_requirements_for_game_object;
+        bindGameObjectDatabase["get_definition_for_game_object"]
+            = &obe::script::GameObjectDatabase::get_definition_for_game_object;
         bindGameObjectDatabase["ApplyRequirements"]
-            = &obe::Script::GameObjectDatabase::ApplyRequirements;
-        bindGameObjectDatabase["Clear"] = &obe::Script::GameObjectDatabase::Clear;
+            = &obe::script::GameObjectDatabase::ApplyRequirements;
+        bindGameObjectDatabase["clear"] = &obe::script::GameObjectDatabase::clear;
     }
     void LoadClassLuaState(sol::state_view state)
     {
-        sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
-        sol::usertype<obe::Script::LuaState> bindLuaState
-            = ScriptNamespace.new_usertype<obe::Script::LuaState>(
+        sol::table ScriptNamespace = state["obe"]["script"].get<sol::table>();
+        sol::usertype<obe::script::LuaState> bindLuaState
+            = ScriptNamespace.new_usertype<obe::script::LuaState>(
                 "LuaState", sol::call_constructor, sol::default_constructor);
-        bindLuaState["loadConfig"] = &obe::Script::LuaState::loadConfig;
+        bindLuaState["load_config"] = &obe::script::LuaState::load_config;
     }
     void LoadFunctionSafeLuaCall(sol::state_view state)
     {
-        sol::table ScriptNamespace = state["obe"]["Script"].get<sol::table>();
+        sol::table ScriptNamespace = state["obe"]["script"].get<sol::table>();
     }
 };

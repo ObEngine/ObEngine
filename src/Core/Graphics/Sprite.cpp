@@ -23,7 +23,7 @@ namespace obe::graphics
                     NullImage.setPixel(i, j, sf::Color::Red);
             }
         }
-        NullTexture.loadFromImage(NullImage);
+        NullTexture.load_from_image(NullImage);
     }
 
     sf::Vertex to_sf_vertex(const Transform::UnitVector& uv)
@@ -38,7 +38,7 @@ namespace obe::graphics
         const unsigned int new_width = static_cast<unsigned int>(px_size.x);
         const unsigned int new_height = static_cast<unsigned int>(px_size.y);
 
-        const Transform::UnitVector texture_size = m_texture.getSize();
+        const Transform::UnitVector texture_size = m_texture.get_size();
 
         if (new_width != static_cast<unsigned int>(texture_size.x)
             || new_height != static_cast<unsigned int>(texture_size.y))
@@ -59,7 +59,7 @@ namespace obe::graphics
             if (((min_x >= 0 && min_x <= surface_size.x) || (max_x >= 0 && max_x <= surface_size.x))
                 && ((min_y >= 0 && min_y <= surface_size.y) || (max_y >= 0 && max_y <= surface_size.y)))
             {
-                m_texture.setSizeHint(new_width, new_height);
+                m_texture.set_size_hint(new_width, new_height);
             }
         }
     }
@@ -75,16 +75,16 @@ namespace obe::graphics
 
     void Sprite::use_texture_size()
     {
-        const Transform::UnitVector texture_size = this->get_texture().getSize();
+        const Transform::UnitVector texture_size = this->get_texture().get_size();
         const Transform::UnitVector initial_sprite_size(
             texture_size.x, texture_size.y, Transform::Units::ScenePixels);
         this->setSize(initial_sprite_size);
     }
 
-    void Sprite::draw(RenderTarget& surface, const Scene::Camera& camera)
+    void Sprite::draw(RenderTarget& surface, const scene::Camera& camera)
     {
         const Transform::UnitVector pixel_camera
-            = camera.getPosition().to<Transform::Units::ScenePixels>();
+            = camera.get_position().to<Transform::Units::ScenePixels>();
         std::array<sf::Vertex, 4> vertices;
 
         /*auto size = Rect::getSize();
@@ -94,16 +94,16 @@ namespace obe::graphics
         }*/
 
         vertices[0] = to_sf_vertex(m_position_transformer(
-            Rect::getPosition(Transform::Referential::TopLeft), pixel_camera, m_layer)
+            Rect::get_position(Transform::Referential::TopLeft), pixel_camera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
         vertices[1] = to_sf_vertex(m_position_transformer(
-            Rect::getPosition(Transform::Referential::BottomLeft), pixel_camera, m_layer)
+            Rect::get_position(Transform::Referential::BottomLeft), pixel_camera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
         vertices[2] = to_sf_vertex(m_position_transformer(
-            Rect::getPosition(Transform::Referential::TopRight), pixel_camera, m_layer)
+            Rect::get_position(Transform::Referential::TopRight), pixel_camera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
         vertices[3] = to_sf_vertex(m_position_transformer(
-            Rect::getPosition(Transform::Referential::BottomRight), pixel_camera, m_layer)
+            Rect::get_position(Transform::Referential::BottomRight), pixel_camera, m_layer)
                                      .to<Transform::Units::ScenePixels>());
 
         /*if (m_position_transformer.get_x_transformer_name() == "Parallax"
@@ -112,7 +112,7 @@ namespace obe::graphics
             Rect::setSize(size, Transform::Referential::TopLeft);
         }*/
 
-        if (m_texture.getAutoscaling())
+        if (m_texture.is_autoscaled())
         {
             const Transform::UnitVector surface_size = surface.get_size();
             refresh_vector_texture(surface_size, vertices);
@@ -149,18 +149,18 @@ namespace obe::graphics
             m_path = path;
             if (m_resources)
             {
-                m_texture = m_resources->get_texture(System::Path(path), m_antiAliasing);
+                m_texture = m_resources->get_texture(system::Path(path), m_antiAliasing);
             }
             else
             {
                 m_texture.reset();
-                m_texture.loadFromFile(System::Path(path).find());
-                m_texture.setAntiAliasing(m_antiAliasing);
+                m_texture.load_from_file(system::Path(path).find());
+                m_texture.set_anti_aliasing(m_antiAliasing);
             }
 
             m_sprite.setTexture(m_texture);
             m_sprite.setTextureRect(
-                sf::IntRect(0, 0, m_texture.getSize().x, m_texture.getSize().y));
+                sf::IntRect(0, 0, m_texture.get_size().x, m_texture.get_size().y));
         }
     }
 
@@ -172,7 +172,7 @@ namespace obe::graphics
     {
         // m_texture = std::shared_ptr<Texture>(std::shared_ptr<Texture>(), texture);
         m_sprite.setTexture(texture);
-        m_sprite.setTextureRect(sf::IntRect(0, 0, texture.getSize().x, texture.getSize().y));
+        m_sprite.setTextureRect(sf::IntRect(0, 0, texture.get_size().x, texture.get_size().y));
     }
 
     void Sprite::set_texture_rect(
@@ -206,12 +206,12 @@ namespace obe::graphics
 
     void Sprite::set_rotation(double rotate)
     {
-        Rect::setRotation(rotate, this->getPosition(Transform::Referential::Center));
+        Rect::setRotation(rotate, this->get_position(Transform::Referential::Center));
     }
 
     void Sprite::rotate(double angle)
     {
-        Rect::rotate(angle, this->getPosition(Transform::Referential::Center));
+        Rect::rotate(angle, this->get_position(Transform::Referential::Center));
     }
 
     void Sprite::set_scaling_origin(int x, int y)
@@ -219,10 +219,10 @@ namespace obe::graphics
         m_sprite.setScalingOrigin(x, y);
     }
 
-    void Sprite::draw_handle(RenderTarget& surface, const Scene::Camera& camera) const
+    void Sprite::draw_handle(RenderTarget& surface, const scene::Camera& camera) const
     {
         const Transform::UnitVector pixel_camera
-            = camera.getPosition().to<Transform::Units::ScenePixels>();
+            = camera.get_position().to<Transform::Units::ScenePixels>();
         const Transform::UnitVector position
             = m_position_transformer(m_position, pixel_camera, m_layer)
                   .to<Transform::Units::ScenePixels>();
@@ -264,7 +264,7 @@ namespace obe::graphics
         return m_sprite.getGlobalBounds().height;
     }
 
-    bool Sprite::get_anti_aliasing() const
+    bool Sprite::is_anti_aliased() const
     {
         return m_antiAliasing;
     }
@@ -339,14 +339,14 @@ namespace obe::graphics
         if (m_type == SpriteHandlePointType::ScaleHandle)
         {
             const Transform::UnitVector pos
-                = m_sprite.getPosition(m_referential).to<Transform::Units::ScenePixels>();
+                = m_sprite.get_position(m_referential).to<Transform::Units::ScenePixels>();
             const Transform::UnitVector opposite_pos
-                = m_sprite.getPosition(m_referential.flip()).to<Transform::Units::ScenePixels>();
+                = m_sprite.get_position(m_referential.flip()).to<Transform::Units::ScenePixels>();
 
             if (m_referential.isOnCorner())
             {
                 const Transform::UnitVector center_sprite_pos
-                    = m_sprite.getPosition(Transform::Referential::Center);
+                    = m_sprite.get_position(Transform::Referential::Center);
                 const double sprite_angle = m_sprite.getRotation();
                 const Transform::UnitVector opposite_pos_in_ref
                     = opposite_pos.rotate(sprite_angle, center_sprite_pos);
@@ -357,7 +357,7 @@ namespace obe::graphics
                 const double v_scale = std::max(scale_vector.x, scale_vector.y);
                 if ((cursor_in_ref - opposite_pos_in_ref).x != 0
                     && (cursor_in_ref - opposite_pos_in_ref).y != 0)
-                    m_sprite.scale(Transform::UnitVector(v_scale, v_scale, m_sprite.getSize().unit),
+                    m_sprite.scale(Transform::UnitVector(v_scale, v_scale, m_sprite.get_size().unit),
                         m_referential.flip());
             }
             else
@@ -378,7 +378,7 @@ namespace obe::graphics
         else
         {
             const Transform::UnitVector center
-                = m_sprite.getPosition(Transform::Referential::Center)
+                = m_sprite.get_position(Transform::Referential::Center)
                       .to<Transform::Units::ScenePixels>();
             const double n = (90 + ((m_sprite.getScaleFactor().y < 0) ? 180 : 0))
                 - (std::atan2(center.y - m_dp.y, center.x - m_dp.x)) * 180.0 / obe::Utils::Math::pi;
@@ -408,7 +408,7 @@ namespace obe::graphics
         result.emplace("path", m_path);
 
         const Transform::UnitVector sprite_position_rect = this->getPosition().to(m_unit);
-        const Transform::UnitVector sprite_size_rect = this->getSize().to(m_unit);
+        const Transform::UnitVector sprite_size_rect = this->get_size().to(m_unit);
         result.emplace("rect",
             vili::object { { "x", sprite_position_rect.x }, { "y", sprite_position_rect.y },
                 { "width", sprite_size_rect.x }, { "height", sprite_size_rect.y },
@@ -459,7 +459,7 @@ namespace obe::graphics
             sprite_size = sprite_size.to<Transform::Units::SceneUnits>();
             if (rect.contains("referential"))
                 referential_pos = obe::Transform::Referential::FromString(rect.at("referential"));
-            this->setPosition(sprite_pos, referential_pos);
+            this->set_position(sprite_pos, referential_pos);
             this->setSize(sprite_size, referential_pos);
         }
 
@@ -556,7 +556,7 @@ namespace obe::graphics
         for (Transform::Referential& ref : Transform::Referential::Referentials)
         {
             const Transform::UnitVector ref_point
-                = Rect::getPosition(ref).to<Transform::Units::ScenePixels>();
+                = Rect::get_position(ref).to<Transform::Units::ScenePixels>();
             int lower_x_bound = std::min(
                 ref_point.x - SpriteHandlePoint::radius, ref_point.x + SpriteHandlePoint::radius);
             int upper_x_bound = std::max(
@@ -578,7 +578,7 @@ namespace obe::graphics
         const double cos_angle = std::cos(rad_angle);
         const double sin_angle = std::sin(rad_angle);
         const Transform::UnitVector top_pos
-            = this->getPosition(Transform::Referential::Top).to<Transform::Units::ScenePixels>();
+            = this->get_position(Transform::Referential::Top).to<Transform::Units::ScenePixels>();
         Transform::UnitVector rot_handle = top_pos;
         Transform::UnitVector result;
         const double dy = m_size.y / 4;

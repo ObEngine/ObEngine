@@ -32,10 +32,10 @@ namespace obe::audio::Bindings
             = AudioNamespace.new_usertype<obe::audio::AudioManager>("AudioManager",
                 sol::call_constructor, sol::constructors<obe::audio::AudioManager()>());
         bindAudioManager["load"] = sol::overload(
-            [](obe::audio::AudioManager* self, const obe::System::Path& path) -> obe::audio::Sound {
+            [](obe::audio::AudioManager* self, const obe::system::Path& path) -> obe::audio::Sound {
                 return self->load(path);
             },
-            [](obe::audio::AudioManager* self, const obe::System::Path& path,
+            [](obe::audio::AudioManager* self, const obe::system::Path& path,
                 obe::audio::LoadPolicy loadPolicy) -> obe::audio::Sound {
                 return self->load(path, loadPolicy);
             });
@@ -61,6 +61,6 @@ namespace obe::audio::Bindings
         bindSound["get_volume"] = &obe::audio::Sound::get_volume;
         bindSound["set_volume"] = &obe::audio::Sound::set_volume;
         bindSound["set_looping"] = &obe::audio::Sound::set_looping;
-        bindSound["get_looping"] = &obe::audio::Sound::get_looping;
+        bindSound["is_looping"] = &obe::audio::Sound::is_looping;
     }
 };

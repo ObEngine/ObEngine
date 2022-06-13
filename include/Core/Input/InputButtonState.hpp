@@ -2,7 +2,7 @@
 
 #include <Types/SmartEnum.hpp>
 
-namespace obe::Input
+namespace obe::input
 {
     /**
      * \brief Possible states of InputButton
@@ -29,4 +29,4 @@ namespace obe::Input
     };
 
     using InputButtonStateMeta = Types::SmartEnum<InputButtonState>;
-} // namespace obe::Input
+} // namespace obe::input

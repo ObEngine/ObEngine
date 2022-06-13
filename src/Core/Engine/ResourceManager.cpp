@@ -5,22 +5,22 @@
 namespace obe::engine
 {
     const graphics::Texture& ResourceManager::get_texture(
-        const System::Path& path, bool anti_aliasing)
+        const system::Path& path, bool anti_aliasing)
     {
-        const std::string path_as_string = path.toString();
+        const std::string path_as_string = path.to_string();
         if (!m_textures.contains(path_as_string)
             || (!m_textures[path_as_string].first && !anti_aliasing)
             || (!m_textures[path_as_string].second && anti_aliasing))
         {
-            graphics::Texture temp_texture = graphics::Texture::MakeSharedTexture();
-            const System::FindResult search_result = path.find();
+            graphics::Texture temp_texture = graphics::Texture::make_shared_texture();
+            const system::FindResult search_result = path.find();
             const std::string& texture_path = search_result.path();
             debug::Log->debug(
                 "[ResourceManager] Loading <Texture> {} from {}", path_as_string, texture_path);
 
-            if (temp_texture.loadFromFile(texture_path))
+            if (temp_texture.load_from_file(texture_path))
             {
-                temp_texture.setAntiAliasing(anti_aliasing);
+                temp_texture.set_anti_aliasing(anti_aliasing);
                 if (!anti_aliasing)
                 {
                     m_textures[path_as_string].first
@@ -50,7 +50,7 @@ namespace obe::engine
         }
     }
 
-    const graphics::Texture& ResourceManager::get_texture(const System::Path& path)
+    const graphics::Texture& ResourceManager::get_texture(const system::Path& path)
     {
         return get_texture(path, default_anti_aliasing);
     }
@@ -79,7 +79,7 @@ namespace obe::engine
     {
         if (!m_fonts.contains(path))
         {
-            const System::FindResult search_result = System::Path(path).find(System::PathType::File);
+            const system::FindResult search_result = system::Path(path).find(system::PathType::File);
             std::shared_ptr<graphics::Font> new_font = std::make_shared<graphics::Font>();
             new_font->load_from_file(search_result);
 
@@ -91,7 +91,7 @@ namespace obe::engine
             }
             else
                 throw exceptions::FontNotFound(
-                    path, System::MountablePath::StringPaths(), EXC_INFO);
+                    path, system::MountablePath::string_paths(), EXC_INFO);
         }
         return m_fonts[path];
     }

@@ -76,7 +76,7 @@ void run(std::string command)
 
     debug::init_logger();
     debug::Log->set_level(spdlog::level::warn);
-    System::MountablePath::LoadMountFile(false, true);
+    system::MountablePath::load_mount_file(false, true);
 
     sol::state lua;
     lua.open_libraries(sol::lib::base, sol::lib::string, sol::lib::table, sol::lib::package,
@@ -117,11 +117,11 @@ void run(std::string command)
         }
         return true;
     };
-    Script::safeLuaCall(lua["evaluate"].get<sol::protected_function>(), command);
+    script::safeLuaCall(lua["evaluate"].get<sol::protected_function>(), command);
 
     if (!isInteractive())
     {
-        Script::safeLuaCall(lua["prompt"].get<sol::protected_function>());
+        script::safeLuaCall(lua["prompt"].get<sol::protected_function>());
     }
 }
 

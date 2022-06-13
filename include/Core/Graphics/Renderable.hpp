@@ -4,7 +4,7 @@
 
 #include <Graphics/RenderTarget.hpp>
 
-namespace obe::Scene
+namespace obe::scene
 {
     class Camera;
 }
@@ -61,6 +61,6 @@ namespace obe::graphics
         void show();
         void hide();
 
-        virtual void draw(RenderTarget& surface, const Scene::Camera& camera) = 0;
+        virtual void draw(RenderTarget& surface, const scene::Camera& camera) = 0;
     };
 }

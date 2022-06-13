@@ -6,7 +6,7 @@
 #include <Tiles/Tileset.hpp>
 #include <Time/TimeUtils.hpp>
 
-namespace obe::Tiles
+namespace obe::tiles
 {
     class TileLayer;
 
@@ -16,19 +16,19 @@ namespace obe::Tiles
         const Tileset& m_tileset;
         std::vector<std::pair<sf::Vertex*, TileInfo>> m_quads;
         size_t m_index = 0;
-        Time::TimeUnit m_clock;
-        std::vector<Time::TimeUnit> m_sleeps;
-        std::vector<uint32_t> m_tileIds;
+        time::TimeUnit m_clock;
+        std::vector<time::TimeUnit> m_sleeps;
+        std::vector<uint32_t> m_tile_ids;
         bool m_started = false;
 
     public:
-        AnimatedTile(const Tileset& tileset, std::vector<uint32_t> tileIds,
-            std::vector<Time::TimeUnit> sleeps);
-        void attachQuad(sf::Vertex* quad, TileInfo tileInfo = TileInfo {});
-        void dettachQuad(sf::Vertex* quad);
+        AnimatedTile(const Tileset& tileset, std::vector<uint32_t> tile_ids,
+            std::vector<time::TimeUnit> sleeps);
+        void attach_quad(sf::Vertex* quad, TileInfo tile_info = TileInfo {});
+        void detach_quad(sf::Vertex* quad);
         void start();
         void stop();
-        [[nodiscard]] uint32_t getId() const;
+        [[nodiscard]] uint32_t get_id() const;
         void update();
     };
 

@@ -7,9 +7,9 @@ namespace obe::animation
 {
     bool AnimationGroup::is_delay_elapsed()
     {
-        if (Time::epoch() - m_group_clock > m_delay)
+        if (time::epoch() - m_group_clock > m_delay)
         {
-            m_group_clock = Time::epoch();
+            m_group_clock = time::epoch();
             return true;
         }
         return false;
@@ -24,7 +24,7 @@ namespace obe::animation
     {
     }
 
-    void AnimationGroup::set_delay(Time::TimeUnit delay) noexcept
+    void AnimationGroup::set_delay(time::TimeUnit delay) noexcept
     {
         m_delay = delay;
     }
@@ -122,7 +122,7 @@ namespace obe::animation
         return m_name;
     }
 
-    Time::TimeUnit AnimationGroup::get_delay() const noexcept
+    time::TimeUnit AnimationGroup::get_delay() const noexcept
     {
         return m_delay;
     }

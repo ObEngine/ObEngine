@@ -4,60 +4,60 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Script::ViliLuaBridge::Bindings
+namespace obe::script::vili_lua_bridge::Bindings
 {
     void LoadFunctionViliToLua(sol::state_view state)
     {
         sol::table ViliLuaBridgeNamespace
-            = state["obe"]["Script"]["ViliLuaBridge"].get<sol::table>();
-        ViliLuaBridgeNamespace.set_function("viliToLua", &obe::Script::ViliLuaBridge::viliToLua);
+            = state["obe"]["script"]["vili_lua_bridge"].get<sol::table>();
+        ViliLuaBridgeNamespace.set_function("vili_to_lua", &obe::script::vili_lua_bridge::vili_to_lua);
     }
     void LoadFunctionLuaToVili(sol::state_view state)
     {
         sol::table ViliLuaBridgeNamespace
-            = state["obe"]["Script"]["ViliLuaBridge"].get<sol::table>();
-        ViliLuaBridgeNamespace.set_function("luaToVili", &obe::Script::ViliLuaBridge::luaToVili);
+            = state["obe"]["script"]["vili_lua_bridge"].get<sol::table>();
+        ViliLuaBridgeNamespace.set_function("lua_to_vili", &obe::script::vili_lua_bridge::lua_to_vili);
     }
     void LoadFunctionViliObjectToLuaTable(sol::state_view state)
     {
         sol::table ViliLuaBridgeNamespace
-            = state["obe"]["Script"]["ViliLuaBridge"].get<sol::table>();
+            = state["obe"]["script"]["vili_lua_bridge"].get<sol::table>();
         ViliLuaBridgeNamespace.set_function(
-            "viliObjectToLuaTable", &obe::Script::ViliLuaBridge::viliObjectToLuaTable);
+            "vili_object_to_lua_table", &obe::script::vili_lua_bridge::vili_object_to_lua_table);
     }
     void LoadFunctionViliPrimitiveToLuaValue(sol::state_view state)
     {
         sol::table ViliLuaBridgeNamespace
-            = state["obe"]["Script"]["ViliLuaBridge"].get<sol::table>();
+            = state["obe"]["script"]["vili_lua_bridge"].get<sol::table>();
         ViliLuaBridgeNamespace.set_function(
-            "viliPrimitiveToLuaValue", &obe::Script::ViliLuaBridge::viliPrimitiveToLuaValue);
+            "vili_primitive_to_lua_value", &obe::script::vili_lua_bridge::vili_primitive_to_lua_value);
     }
     void LoadFunctionViliArrayToLuaTable(sol::state_view state)
     {
         sol::table ViliLuaBridgeNamespace
-            = state["obe"]["Script"]["ViliLuaBridge"].get<sol::table>();
+            = state["obe"]["script"]["vili_lua_bridge"].get<sol::table>();
         ViliLuaBridgeNamespace.set_function(
-            "viliArrayToLuaTable", &obe::Script::ViliLuaBridge::viliArrayToLuaTable);
+            "vili_array_to_lua_table", &obe::script::vili_lua_bridge::vili_array_to_lua_table);
     }
     void LoadFunctionLuaTableToViliObject(sol::state_view state)
     {
         sol::table ViliLuaBridgeNamespace
-            = state["obe"]["Script"]["ViliLuaBridge"].get<sol::table>();
+            = state["obe"]["script"]["vili_lua_bridge"].get<sol::table>();
         ViliLuaBridgeNamespace.set_function(
-            "luaTableToViliObject", &obe::Script::ViliLuaBridge::luaTableToViliObject);
+            "lua_table_to_vili_object", &obe::script::vili_lua_bridge::lua_table_to_vili_object);
     }
     void LoadFunctionLuaValueToViliPrimitive(sol::state_view state)
     {
         sol::table ViliLuaBridgeNamespace
-            = state["obe"]["Script"]["ViliLuaBridge"].get<sol::table>();
+            = state["obe"]["script"]["vili_lua_bridge"].get<sol::table>();
         ViliLuaBridgeNamespace.set_function(
-            "luaValueToViliPrimitive", &obe::Script::ViliLuaBridge::luaValueToViliPrimitive);
+            "lua_value_to_vili_primitive", &obe::script::vili_lua_bridge::lua_value_to_vili_primitive);
     }
     void LoadFunctionLuaTableToViliArray(sol::state_view state)
     {
         sol::table ViliLuaBridgeNamespace
-            = state["obe"]["Script"]["ViliLuaBridge"].get<sol::table>();
+            = state["obe"]["script"]["vili_lua_bridge"].get<sol::table>();
         ViliLuaBridgeNamespace.set_function(
-            "luaTableToViliArray", &obe::Script::ViliLuaBridge::luaTableToViliArray);
+            "lua_table_to_vili_array", &obe::script::vili_lua_bridge::lua_table_to_vili_array);
     }
 };

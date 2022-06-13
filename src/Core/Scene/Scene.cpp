@@ -5,22 +5,22 @@
 #include <Scene/Scene.hpp>
 #include <Utils/MathUtils.hpp>
 
-namespace obe::Scene
+namespace obe::scene
 {
-    void Scene::_reorganizeLayers()
+    void Scene::_reorganize_layers()
     {
-        m_renderCache.clear();
-        for (const auto& sprite : m_spriteArray)
+        m_render_cache.clear();
+        for (const auto& sprite : m_sprite_array)
         {
-            m_renderCache.push_back(sprite.get());
+            m_render_cache.push_back(sprite.get());
         }
         if (m_tiles)
         {
-            std::vector<graphics::Renderable*> tileLayers = m_tiles->getRenderables();
-            m_renderCache.insert(m_renderCache.end(), tileLayers.begin(), tileLayers.end());
+            std::vector<graphics::Renderable*> tile_layers = m_tiles->get_renderables();
+            m_render_cache.insert(m_render_cache.end(), tile_layers.begin(), tile_layers.end());
         }
 
-        std::sort(m_renderCache.begin(), m_renderCache.end(),
+        std::ranges::sort(m_render_cache,
             [](const auto& renderable1, const auto& renderable2) {
                 if (renderable1->get_layer() == renderable2->get_layer())
                 {
@@ -31,163 +31,158 @@ namespace obe::Scene
                     return renderable1->get_layer() > renderable2->get_layer();
                 }
             });
-        m_sortRenderables = false;
+        m_sort_renderables = false;
     }
 
-    void Scene::_rebuildIds()
+    void Scene::_rebuild_ids()
     {
-        m_spriteIds.clear();
-        m_colliderIds.clear();
-        m_gameObjectIds.clear();
-        for (auto& item : m_spriteArray)
+        m_sprite_ids.clear();
+        m_collider_ids.clear();
+        m_game_object_ids.clear();
+        for (const auto& item : m_sprite_array)
         {
-            m_spriteIds.emplace(item->getId());
+            m_sprite_ids.emplace(item->getId());
         }
-        for (auto& item : m_colliderArray)
+        for (const auto& item : m_collider_array)
         {
-            m_colliderIds.emplace(item->getId());
+            m_collider_ids.emplace(item->getId());
         }
-        for (auto& item : m_gameObjectArray)
+        for (const auto& item : m_game_object_array)
         {
-            m_gameObjectIds.emplace(item->getId());
+            m_game_object_ids.emplace(item->getId());
         }
     }
 
-    Scene::Scene(event::EventNamespace& eventNamespace, sol::state_view lua)
+    Scene::Scene(event::EventNamespace& event_namespace, sol::state_view lua)
         : m_lua(lua)
-        , e_scene(eventNamespace.create_group("Scene"))
+        , e_scene(event_namespace.create_group("Scene"))
 
     {
-        e_scene->add<events::Scene::Loaded>();
+        e_scene->add<events::scene::Loaded>();
     }
 
-    void Scene::attachResourceManager(engine::ResourceManager& resources)
+    graphics::Sprite& Scene::create_sprite(const std::string& id, bool add_to_scene_root)
     {
-        m_resources = &resources;
-    }
-
-    graphics::Sprite& Scene::createSprite(const std::string& id, bool addToSceneRoot)
-    {
-        std::string createId = id;
-        if (createId.empty())
+        std::string create_id = id;
+        if (create_id.empty())
         {
             int i = 0;
-            std::string testId = "sprite" + std::to_string(this->getSpriteAmount() + i);
-            while (this->doesSpriteExists(testId))
+            std::string test_id = "sprite" + std::to_string(this->get_sprite_amount() + i);
+            while (this->does_sprite_exists(test_id))
             {
-                testId = "sprite" + std::to_string(this->getSpriteAmount() + i++);
+                test_id = "sprite" + std::to_string(this->get_sprite_amount() + i++);
             }
-            createId = testId;
+            create_id = test_id;
         }
-        if (!this->doesSpriteExists(createId))
+        if (!this->does_sprite_exists(create_id))
         {
-            std::unique_ptr<graphics::Sprite> newSprite
-                = std::make_unique<graphics::Sprite>(createId);
+            std::unique_ptr<graphics::Sprite> new_sprite
+                = std::make_unique<graphics::Sprite>(create_id);
             if (m_resources)
-                newSprite->attach_resource_manager(*m_resources);
+                new_sprite->attach_resource_manager(*m_resources);
 
-            graphics::Sprite* returnSprite = newSprite.get();
-            m_spriteArray.push_back(move(newSprite));
-            m_spriteIds.insert(createId);
-            m_components[createId] = returnSprite;
+            graphics::Sprite* return_sprite = new_sprite.get();
+            m_sprite_array.push_back(move(new_sprite));
+            m_sprite_ids.insert(create_id);
+            m_components[create_id] = return_sprite;
 
-            if (addToSceneRoot)
-                m_sceneRoot.addChild(*returnSprite);
+            if (add_to_scene_root)
+                m_scene_root.add_child(*return_sprite);
 
-            this->reorganizeLayers();
-            return *returnSprite;
+            this->reorganize_layers();
+            return *return_sprite;
         }
         else
         {
-            debug::Log->warn("<Scene> Sprite '{0}' already exists !", createId);
-            return this->getSprite(createId);
+            debug::Log->warn("<Scene> Sprite '{0}' already exists !", create_id);
+            return this->get_sprite(create_id);
         }
     }
 
-    collision::PolygonalCollider& Scene::createCollider(const std::string& id, bool addToSceneRoot)
+    collision::PolygonalCollider& Scene::create_collider(const std::string& id, bool add_to_scene_root)
     {
-        std::string createId = id;
-        if (createId.empty())
+        std::string create_id = id;
+        if (create_id.empty())
         {
             int i = 0;
-            std::string testId = "collider" + std::to_string(this->getColliderAmount() + i);
-            while (this->doesColliderExists(testId))
+            std::string test_id = "collider" + std::to_string(this->get_collider_amount() + i);
+            while (this->does_collider_exists(test_id))
             {
-                testId = "collider" + std::to_string(this->getColliderAmount() + i++);
+                test_id = "collider" + std::to_string(this->get_collider_amount() + i++);
             }
-            createId = testId;
+            create_id = test_id;
         }
-        if (!this->doesColliderExists(createId))
+        if (!this->does_collider_exists(create_id))
         {
-            std::unique_ptr<collision::PolygonalCollider> newCollider
-                = std::make_unique<collision::PolygonalCollider>(createId);
-            collision::PolygonalCollider* colliderPtr = newCollider.get();
-            m_colliderArray.push_back(std::move(newCollider));
-            m_colliderIds.insert(createId);
-            m_components[createId] = colliderPtr;
-            if (addToSceneRoot)
-                m_sceneRoot.addChild(*m_colliderArray.back());
-            return *colliderPtr;
+            std::unique_ptr<collision::PolygonalCollider> new_collider
+                = std::make_unique<collision::PolygonalCollider>(create_id);
+            collision::PolygonalCollider* collider = new_collider.get();
+            m_collider_array.push_back(std::move(new_collider));
+            m_collider_ids.insert(create_id);
+            m_components[create_id] = collider;
+            if (add_to_scene_root)
+                m_scene_root.add_child(*m_collider_array.back());
+            return *collider;
         }
         else
         {
-            debug::Log->warn("<Scene> Collider '{0}' already exists !", createId);
-            return this->getCollider(createId);
+            debug::Log->warn("<Scene> Collider '{0}' already exists !", create_id);
+            return this->get_collider(create_id);
         }
     }
 
-    std::size_t Scene::getColliderAmount() const
+    std::size_t Scene::get_collider_amount() const
     {
-        return m_colliderArray.size();
+        return m_collider_array.size();
     }
 
-    std::string Scene::getFilePath() const
+    std::string Scene::get_filesystem_path() const
     {
-        return m_baseFolder;
+        return m_base_folder;
     }
 
     void Scene::reload()
     {
         debug::Log->debug("<Scene> Reloading Scene");
-        m_futureLoad = m_levelFileName;
+        m_deferred_scene_load = m_level_file_name;
     }
 
     void Scene::reload(const OnSceneLoadCallback& callback)
     {
         debug::Log->debug("<Scene> Reloading Scene");
-        m_futureLoad = m_levelFileName;
-        m_onLoadCallback = callback;
+        m_deferred_scene_load = m_level_file_name;
+        m_on_load_callback = callback;
     }
 
-    void Scene::loadFromFile(const std::string& path)
+    void Scene::load_from_file(const std::string& path)
     {
         debug::Log->debug("<Scene> Loading Scene from map file : '{0}'", path);
         this->clear();
         debug::Log->debug("<Scene> Cleared Scene");
 
-        m_levelFileName = path;
-        const std::string filepath = System::Path(path).find();
-        vili::node sceneFile;
+        m_level_file_name = path;
+        const std::string filepath = system::Path(path).find();
+        vili::node scene_file;
         try
         {
-            sceneFile = vili::parser::from_file(filepath);
+            scene_file = vili::parser::from_file(filepath);
         }
         catch (const std::exception& e)
         {
             throw Exceptions::InvalidSceneFile(filepath, EXC_INFO).nest(e);
         }
-        this->load(sceneFile);
+        this->load(scene_file);
     }
 
-    void Scene::setFutureLoadFromFile(const std::string& path)
+    void Scene::set_future_load_from_file(const std::string& path)
     {
-        m_futureLoad = path;
+        m_deferred_scene_load = path;
     }
 
-    void Scene::setFutureLoadFromFile(const std::string& path, const OnSceneLoadCallback& callback)
+    void Scene::set_future_load_from_file(const std::string& path, const OnSceneLoadCallback& callback)
     {
-        m_futureLoad = path;
-        m_onLoadCallback = callback;
+        m_deferred_scene_load = path;
+        m_on_load_callback = callback;
     }
 
     void Scene::clear()
@@ -196,46 +191,42 @@ namespace obe::Scene
         {
             m_resources->clean();
         }
-        for (auto it = m_gameObjectArray.rbegin(); it != m_gameObjectArray.rend(); ++it)
+        for (auto it = m_game_object_array.rbegin(); it != m_game_object_array.rend(); ++it)
         {
-            Script::GameObject* gameObject = it->get();
-            if (!gameObject->isPermanent())
+            script::GameObject* game_object = it->get();
+            if (!game_object->is_permanent())
             {
-                debug::Log->debug("<Scene> Deleting GameObject {0}", gameObject->getId());
-                gameObject->deleteObject();
+                debug::Log->debug("<Scene> Deleting GameObject {0}", game_object->getId());
+                game_object->delete_object();
             }
         }
-        for (auto& gameObject : m_gameObjectArray) { }
         debug::Log->debug("<Scene> Cleaning GameObject Array");
-        m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(),
-                                    [](const std::unique_ptr<Script::GameObject>& ptr) {
-                                        return (!ptr->isPermanent());
-                                    }),
-            m_gameObjectArray.end());
-        // Required for the next doesGameObjectExists
-        this->_rebuildIds();
+        std::erase_if(m_game_object_array,
+            [](const std::unique_ptr<script::GameObject>& ptr) {
+                return (!ptr->is_permanent());
+            });
+        // Required for the next does_game_object_exists
+        this->_rebuild_ids();
         debug::Log->debug("<Scene> Cleaning Sprite Array");
-        m_spriteArray.erase(std::remove_if(m_spriteArray.begin(), m_spriteArray.end(),
-                                [this](const std::unique_ptr<graphics::Sprite>& ptr) {
-                                    if (!ptr->get_parent_id().empty()
-                                        && this->doesGameObjectExists(ptr->get_parent_id()))
-                                        return false;
-                                    return true;
-                                }),
-            m_spriteArray.end());
+        std::erase_if(m_sprite_array,
+            [this](const std::unique_ptr<graphics::Sprite>& ptr) {
+                if (!ptr->get_parent_id().empty()
+                    && this->does_game_object_exists(ptr->get_parent_id()))
+                    return false;
+                return true;
+            });
         debug::Log->debug("<Scene> Cleaning Sprite Array");
-        m_colliderArray.erase(std::remove_if(m_colliderArray.begin(), m_colliderArray.end(),
-                                  [this](const std::unique_ptr<collision::PolygonalCollider>& ptr) {
-                                      if (!ptr->get_parent_id().empty()
-                                          && this->doesGameObjectExists(ptr->get_parent_id()))
-                                          return false;
-                                      return true;
-                                  }),
-            m_colliderArray.end());
+        std::erase_if(m_collider_array,
+            [this](const std::unique_ptr<collision::PolygonalCollider>& ptr) {
+                if (!ptr->get_parent_id().empty()
+                    && this->does_game_object_exists(ptr->get_parent_id()))
+                    return false;
+                return true;
+            });
         debug::Log->debug("<Scene> Clearing MapScript Array");
-        m_scriptArray.clear();
+        m_script_array.clear();
         debug::Log->debug("<Scene> Scene Cleared !");
-        this->_rebuildIds();
+        this->_rebuild_ids();
         if (m_tiles)
             m_tiles->clear();
     }
@@ -250,20 +241,20 @@ namespace obe::Scene
         vili::node result = vili::object {};
 
         // Meta
-        result["Meta"] = vili::object { { "name", m_levelName } };
+        result["Meta"] = vili::object { { "name", m_level_name } };
 
         // View
         result["View"] = vili::object {};
-        result["View"]["size"] = m_camera.getSize().y / 2;
+        result["View"]["size"] = m_camera.get_size().y / 2;
         result["View"]["position"]
-            = vili::object { { "x", m_cameraInitialPosition.x }, { "y", m_cameraInitialPosition.y },
-                  { "unit", Transform::UnitsMeta::toString(m_cameraInitialPosition.unit) } };
-        result["View"]["referential"] = m_cameraInitialReferential.toString("{}");
+            = vili::object { { "x", m_camera_initial_position.x }, { "y", m_camera_initial_position.y },
+                  { "unit", Transform::UnitsMeta::toString(m_camera_initial_position.unit) } };
+        result["View"]["referential"] = m_camera_initial_referential.toString("{}");
 
         // Sprites
-        if (!m_spriteArray.empty())
+        if (!m_sprite_array.empty())
             result["Sprites"] = vili::object {};
-        for (auto& sprite : m_spriteArray)
+        for (auto& sprite : m_sprite_array)
         {
             if (sprite->get_parent_id().empty())
             {
@@ -272,9 +263,9 @@ namespace obe::Scene
         }
 
         // Collisions
-        if (!m_colliderArray.empty())
+        if (!m_collider_array.empty())
             result["Collisions"] = vili::object {};
-        for (auto& collider : m_colliderArray)
+        for (auto& collider : m_collider_array)
         {
             if (collider->get_parent_id().empty())
             {
@@ -283,25 +274,25 @@ namespace obe::Scene
         }
 
         // GameObjects
-        if (!m_gameObjectArray.empty())
+        if (!m_game_object_array.empty())
             result["GameObjects"] = vili::object {};
-        for (auto& gameObject : m_gameObjectArray)
+        for (auto& game_object : m_game_object_array)
         {
-            result["GameObjects"][gameObject->getId()] = gameObject->dump();
+            result["GameObjects"][game_object->getId()] = game_object->dump();
         }
 
         // Scripts
-        if (!m_scriptArray.empty())
+        if (!m_script_array.empty())
         {
             result["Script"] = vili::object {};
-            if (m_scriptArray.size() == 1)
+            if (m_script_array.size() == 1)
             {
-                result.at("Script")["source"] = m_scriptArray[0];
+                result.at("Script")["source"] = m_script_array[0];
             }
             else
             {
                 result.at("Script")["sources"]
-                    = vili::array(m_scriptArray.begin(), m_scriptArray.end());
+                    = vili::array(m_script_array.begin(), m_script_array.end());
             }
         }
         return result;
@@ -312,15 +303,15 @@ namespace obe::Scene
         if (data.contains("Meta"))
         {
             const vili::node& meta = data.at("Meta");
-            m_levelName = meta.at("name");
+            m_level_name = meta.at("name");
         }
         else
-            throw Exceptions::MissingSceneFileBlock(m_levelFileName, "Meta", EXC_INFO);
+            throw Exceptions::MissingSceneFileBlock(m_level_file_name, "Meta", EXC_INFO);
 
         if (data.contains("View"))
         {
             const vili::node& view = data.at("View");
-            m_camera.setSize(view.at("size"));
+            m_camera.set_size(view.at("size"));
             double x = 0.f;
             double y = 0.f;
             Transform::Units unit = Transform::Units::SceneUnits;
@@ -340,67 +331,67 @@ namespace obe::Scene
                     unit = Transform::UnitsMeta::fromString(position.at("unit"));
                 }
             }
-            m_cameraInitialPosition = Transform::UnitVector(x, y, unit);
-            m_cameraInitialReferential = Transform::Referential::TopLeft;
+            m_camera_initial_position = Transform::UnitVector(x, y, unit);
+            m_camera_initial_referential = Transform::Referential::TopLeft;
             if (view.contains("referential"))
             {
-                m_cameraInitialReferential
+                m_camera_initial_referential
                     = Transform::Referential::FromString(view.at("referential"));
             }
             debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using "
                               "Referential {2}",
-                m_cameraInitialPosition.x, m_cameraInitialPosition.y,
-                m_cameraInitialReferential.toString());
-            m_camera.setPosition(m_cameraInitialPosition, m_cameraInitialReferential);
+                m_camera_initial_position.x, m_camera_initial_position.y,
+                m_camera_initial_referential.toString());
+            m_camera.set_position(m_camera_initial_position, m_camera_initial_referential);
         }
         else
-            throw Exceptions::MissingSceneFileBlock(m_levelFileName, "View", EXC_INFO);
+            throw Exceptions::MissingSceneFileBlock(m_level_file_name, "View", EXC_INFO);
 
         if (data.contains("Sprites"))
         {
             const vili::node& sprites = data.at("Sprites");
-            m_spriteArray.reserve(sprites.size());
-            m_spriteIds.reserve(sprites.size());
+            m_sprite_array.reserve(sprites.size());
+            m_sprite_ids.reserve(sprites.size());
             for (auto [spriteId, sprite] : data.at("Sprites").items())
             {
-                this->createSprite(spriteId).load(sprite);
+                this->create_sprite(spriteId).load(sprite);
             }
         }
 
         if (data.contains("Collisions"))
         {
             const vili::node& collisions = data.at("Collisions");
-            m_colliderArray.reserve(collisions.size());
-            m_colliderIds.reserve(collisions.size());
+            m_collider_array.reserve(collisions.size());
+            m_collider_ids.reserve(collisions.size());
             for (auto [collisionId, collision] : data.at("Collisions").items())
             {
-                this->createCollider(collisionId).load(collision);
+                this->create_collider(collisionId).load(collision);
             }
         }
 
         if (data.contains("GameObjects"))
         {
-            const vili::node& gameObjects = data.at("GameObjects");
-            m_gameObjectArray.reserve(gameObjects.size());
-            m_gameObjectIds.reserve(gameObjects.size());
-            for (auto [gameObjectId, gameObject] : gameObjects.items())
+            const vili::node& game_objects = data.at("GameObjects");
+            m_game_object_array.reserve(game_objects.size());
+            m_game_object_ids.reserve(game_objects.size());
+            for (auto [game_object_id, game_object] : game_objects.items())
             {
-                if (!this->doesGameObjectExists(gameObjectId))
+                if (!this->does_game_object_exists(game_object_id))
                 {
-                    const std::string gameObjectType = gameObject.at("type");
-                    Script::GameObject& newObject
-                        = this->createGameObject(gameObjectType, gameObjectId);
-                    if (gameObject.contains("Requires") && newObject.doesHaveScriptEngine())
+                    const std::string game_object_type = game_object.at("type");
+                    script::GameObject& new_object
+                        = this->create_game_object(game_object_type, game_object_id);
+                    if (game_object.contains("Requires") && new_object.does_have_script_engine())
                     {
-                        const vili::node& objectRequirements = gameObject.at("Requires");
-                        Script::GameObjectDatabase::ApplyRequirements(
-                            newObject.getOuterEnvironment(), objectRequirements);
+                        const vili::node& object_requirements = game_object.at("Requires");
+                        script::GameObjectDatabase::ApplyRequirements(
+                            new_object.get_outer_environment(), object_requirements);
                     }
                 }
-                else if (!this->getGameObject(gameObjectId).isPermanent())
+                else if (!this->get_game_object(game_object_id).is_permanent())
                 {
-                    throw Exceptions::GameObjectAlreadyExists(m_levelFileName,
-                        this->getGameObject(gameObjectId).getType(), gameObjectId, EXC_INFO);
+                    throw Exceptions::GameObjectAlreadyExists(m_level_file_name,
+                        this->get_game_object(game_object_id).get_type(), game_object_id, EXC_INFO);
                 }
             }
         }
@@ -410,85 +401,84 @@ namespace obe::Scene
             const vili::node& script = data.at("Script");
             if (script.contains("source"))
             {
-                std::string source = System::Path(script.at("source")).find();
+                std::string source = system::Path(script.at("source")).find();
                 const sol::protected_function_result result
                     = m_lua.safe_script_file(source, &sol::script_pass_on_error);
+                // TODO: wrap into helper
                 if (!result.valid())
                 {
-                    const auto errObj = result.get<sol::error>();
-                    const std::string errMsg = errObj.what();
-                    throw Exceptions::SceneScriptLoadingError(m_levelFileName, source,
-                        Utils::String::replace(errMsg, "\n", "\n        "), EXC_INFO);
+                    const auto err_obj = result.get<sol::error>();
+                    const std::string err_msg = err_obj.what();
+                    throw Exceptions::SceneScriptLoadingError(m_level_file_name, source,
+                        Utils::String::replace(err_msg, "\n", "\n        "), EXC_INFO);
                 }
-                m_scriptArray.push_back(script.at("source"));
+                m_script_array.push_back(script.at("source"));
             }
             else if (script.contains("sources"))
             {
-                for (const vili::node& scriptName : script.at("sources"))
+                for (const vili::node& script_name : script.at("sources"))
                 {
-                    m_lua.safe_script_file(System::Path(scriptName).find());
-                    m_scriptArray.push_back(scriptName);
+                    m_lua.safe_script_file(system::Path(script_name).find());
+                    m_script_array.push_back(script_name);
                 }
             }
         }
 
         if (data.contains("Tiles"))
         {
-            m_tiles = std::make_unique<Tiles::TileScene>(*this);
+            m_tiles = std::make_unique<tiles::TileScene>(*this);
             m_tiles->load(data.at("Tiles"));
         }
 
-        this->reorganizeLayers();
+        this->reorganize_layers();
 
-        e_scene->trigger(events::Scene::Loaded { m_levelFileName });
+        e_scene->trigger(events::scene::Loaded { m_level_file_name });
     }
 
     void Scene::update()
     {
-        if (!m_futureLoad.empty())
+        if (!m_deferred_scene_load.empty())
         {
-            const std::string futureLoadBuffer = std::move(m_futureLoad);
-            const std::string currentScene = m_levelFileName;
-            this->loadFromFile(futureLoadBuffer);
-            if (m_onLoadCallback)
+            const std::string future_load_buffer = std::move(m_deferred_scene_load);
+            const std::string current_scene = m_level_file_name;
+            this->load_from_file(future_load_buffer);
+            if (m_on_load_callback)
             {
-                sol::protected_function_result result = m_onLoadCallback(futureLoadBuffer);
+                const sol::protected_function_result result = m_on_load_callback(future_load_buffer);
                 if (!result.valid())
                 {
                     const auto error = result.get<sol::error>();
-                    const std::string errMsg = "\n        \""
+                    const std::string err_msg = "\n        \""
                         + Utils::String::replace(error.what(), "\n", "\n        ") + "\"";
-                    // TODO: Remplace with nest
+                    // TODO: Replace with nest
                     throw Exceptions::SceneOnLoadCallbackError(
-                        currentScene, futureLoadBuffer, errMsg, EXC_INFO);
+                        current_scene, future_load_buffer, err_msg, EXC_INFO);
                 }
             }
         }
-        if (m_updateState)
+        if (m_update_state)
         {
-            const size_t arraySize = m_gameObjectArray.size();
-            for (size_t i = 0; i < arraySize; i++)
+            const size_t array_size = m_game_object_array.size();
+            for (size_t i = 0; i < array_size; i++)
             {
-                Script::GameObject& gameObject = *m_gameObjectArray[i];
-                if (!gameObject.deletable)
-                    gameObject.update();
+                script::GameObject& game_object = *m_game_object_array[i];
+                if (!game_object.deletable)
+                    game_object.update();
             }
-            m_gameObjectArray.erase(
-                std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(),
-                    [this](const std::unique_ptr<Script::GameObject>& ptr) {
-                        if (ptr->deletable)
-                        {
-                            m_gameObjectIds.erase(ptr->getId());
-                            debug::Log->debug("<Scene> Removing GameObject {}", ptr->getId());
-                            if (ptr->m_sprite)
-                                this->removeSprite(ptr->getSprite().getId());
-                            if (ptr->m_collider)
-                                this->removeCollider(ptr->getCollider().getId());
-                            return true;
-                        }
-                        return false;
-                    }),
-                m_gameObjectArray.end());
+            std::erase_if(m_game_object_array,
+                [this](const std::unique_ptr<script::GameObject>& ptr) {
+                    if (ptr->deletable)
+                    {
+                        m_game_object_ids.erase(ptr->getId());
+                        debug::Log->debug("<Scene> Removing GameObject {}", ptr->getId());
+                        if (ptr->m_sprite)
+                            this->remove_sprite(ptr->get_sprite().getId());
+                        if (ptr->m_collider)
+                            this->remove_collider(ptr->get_collider().getId());
+                        return true;
+                    }
+                    return false;
+                });
             if (m_tiles)
                 m_tiles->update();
         }
@@ -496,23 +486,10 @@ namespace obe::Scene
 
     void Scene::draw(graphics::RenderTarget surface)
     {
-        /*for (auto it = m_spriteArray.begin(); it != m_spriteArray.end(); ++it)
+        this->_reorganize_layers();
+        if (m_render_options.sprites)
         {
-            if (it->get()->m_layerChanged)
-            {
-                for (auto it2 = it; it2 != m_spriteArray.end(); ++it2)
-                {
-                    it2->get()->m_layerChanged = false;
-                }
-                this->reorganizeLayers();
-                break;
-            }
-        }*/
-
-        this->_reorganizeLayers();
-        if (m_renderOptions.sprites)
-        {
-            for (const auto& renderable : m_renderCache)
+            for (const auto& renderable : m_render_cache)
             {
                 if (renderable->is_visible())
                 {
@@ -523,210 +500,207 @@ namespace obe::Scene
 
         // m_tiles->draw(surface, m_camera);
 
-        if (m_renderOptions.collisions)
+        if (m_render_options.collisions)
         {
-            for (const auto& collider : m_colliderArray)
+            for (const auto& collider : m_collider_array)
             {
                 debug::render::draw_polygon(
-                    surface, *collider.get(), true, true, false, false, m_camera.getPosition());
+                    surface, *collider, true, true, false, false, m_camera.get_position());
             }
         }
 
-        if (m_renderOptions.sceneNodes)
+        if (m_render_options.scene_nodes)
         {
-            for (auto& gameObject : m_gameObjectArray)
+            for (const auto& game_object : m_game_object_array)
             {
-                sf::CircleShape sceneNodeCircle;
-                SceneNode& sceneNode = gameObject->getSceneNode();
-                const Transform::UnitVector sceneNodePosition
-                    = sceneNode.getPosition().to<Transform::Units::ViewPixels>();
-                sceneNodeCircle.setPosition(sceneNodePosition.x - 3, sceneNodePosition.y - 3);
-                if (sceneNode.isSelected())
-                    sceneNodeCircle.setFillColor(sf::Color::Green);
+                sf::CircleShape scene_node_shape;
+                SceneNode& scene_node = game_object->get_scene_node();
+                const Transform::UnitVector scene_node_position
+                    = scene_node.getPosition().to<Transform::Units::ViewPixels>();
+                scene_node_shape.setPosition(scene_node_position.x - 3, scene_node_position.y - 3);
+                if (scene_node.isSelected())
+                    scene_node_shape.setFillColor(sf::Color::Green);
                 else
-                    sceneNodeCircle.setFillColor(sf::Color::Red);
-                sceneNodeCircle.setOutlineColor(sf::Color::Black);
-                sceneNodeCircle.setOutlineThickness(2);
-                sceneNodeCircle.setRadius(6);
-                surface.draw(sceneNodeCircle);
+                    scene_node_shape.setFillColor(sf::Color::Red);
+                scene_node_shape.setOutlineColor(sf::Color::Black);
+                scene_node_shape.setOutlineThickness(2);
+                scene_node_shape.setRadius(6);
+                surface.draw(scene_node_shape);
             }
         }
     }
 
-    std::string Scene::getLevelName() const
+    std::string Scene::get_level_name() const
     {
-        return m_levelName;
+        return m_level_name;
     }
 
-    void Scene::setLevelName(const std::string& newName)
+    void Scene::set_level_name(const std::string& new_name)
     {
-        m_levelName = newName;
+        m_level_name = new_name;
     }
 
-    std::vector<collision::PolygonalCollider*> Scene::getAllColliders() const
+    std::vector<collision::PolygonalCollider*> Scene::get_all_colliders() const
     {
-        std::vector<collision::PolygonalCollider*> allColliders;
-        for (const auto& collider : m_colliderArray)
-            allColliders.push_back(collider.get());
-        return allColliders;
+        std::vector<collision::PolygonalCollider*> all_colliders;
+        for (const auto& collider : m_collider_array)
+            all_colliders.push_back(collider.get());
+        return all_colliders;
     }
 
-    Camera& Scene::getCamera()
+    Camera& Scene::get_camera()
     {
         return m_camera;
     }
 
-    void Scene::setUpdateState(bool state)
+    void Scene::set_update_state(bool state)
     {
-        m_updateState = state;
-        for (auto& gameObject : m_gameObjectArray)
+        m_update_state = state;
+        for (const auto& game_object : m_game_object_array)
         {
-            gameObject->setState(state);
+            game_object->set_state(state);
         }
     }
 
-    Script::GameObject& Scene::getGameObject(const std::string& id)
+    script::GameObject& Scene::get_game_object(const std::string& id) const
     {
-        for (auto& gameObject : m_gameObjectArray)
+        for (auto& game_object : m_game_object_array)
         {
-            if (gameObject->getId() == id && !gameObject->deletable)
-                return *gameObject;
+            if (game_object->getId() == id && !game_object->deletable)
+                return *game_object;
         }
-        std::vector<std::string> objectIds;
-        objectIds.reserve(m_gameObjectArray.size());
-        for (const auto& object : m_gameObjectArray)
+        std::vector<std::string> object_ids;
+        object_ids.reserve(m_game_object_array.size());
+        for (const auto& object : m_game_object_array)
         {
-            objectIds.push_back(object->getId());
+            object_ids.push_back(object->getId());
         }
-        throw Exceptions::UnknownGameObject(m_levelFileName, id, objectIds, EXC_INFO);
+        throw Exceptions::UnknownGameObject(m_level_file_name, id, object_ids, EXC_INFO);
     }
 
-    bool Scene::doesGameObjectExists(const std::string& id)
+    bool Scene::does_game_object_exists(const std::string& id) const
     {
-        return m_gameObjectIds.find(id) != m_gameObjectIds.end();
+        return m_game_object_ids.contains(id);
     }
 
-    void Scene::removeGameObject(const std::string& id)
+    void Scene::remove_game_object(const std::string& id)
     {
-        m_gameObjectArray.erase(std::remove_if(m_gameObjectArray.begin(), m_gameObjectArray.end(),
-                                    [&id](const std::unique_ptr<Script::GameObject>& ptr) {
-                                        return (ptr->getId() == id);
-                                    }),
-            m_gameObjectArray.end());
-        m_gameObjectIds.erase(id);
+        std::erase_if(m_game_object_array,
+            [&id](const std::unique_ptr<script::GameObject>& ptr) {
+                return (ptr->getId() == id);
+            });
+        m_game_object_ids.erase(id);
     }
 
-    std::vector<Script::GameObject*> Scene::getAllGameObjects(const std::string& objectType)
+    std::vector<script::GameObject*> Scene::get_all_game_objects(const std::string& object_type) const
     {
-        std::vector<Script::GameObject*> returnVec;
-        for (auto& gameObject : m_gameObjectArray)
+        std::vector<script::GameObject*> return_vec;
+        for (auto& game_object : m_game_object_array)
         {
-            if (!gameObject->deletable
-                && (objectType.empty() || objectType == gameObject->getType()))
-                returnVec.push_back(gameObject.get());
+            if (!game_object->deletable
+                && (object_type.empty() || object_type == game_object->get_type()))
+                return_vec.push_back(game_object.get());
         }
-        return returnVec;
+        return return_vec;
     }
 
-    Script::GameObject& Scene::createGameObject(const std::string& obj, const std::string& id)
+    script::GameObject& Scene::create_game_object(const std::string& object_type, const std::string& id)
     {
-        std::string useId = id;
-        if (useId.empty())
+        std::string use_id = id;
+        if (use_id.empty())
         {
-            while (useId.empty() || this->doesGameObjectExists(useId))
+            while (use_id.empty() || this->does_game_object_exists(use_id))
             {
-                useId = obj + "_"
+                use_id = object_type + "_"
                     + Utils::String::getRandomKey(
                         Utils::String::Alphabet + Utils::String::Numbers, 8);
             }
         }
-        else if (this->doesGameObjectExists(useId))
+        else if (this->does_game_object_exists(use_id))
         {
             throw Exceptions::GameObjectAlreadyExists(
-                m_levelFileName, this->getGameObject(useId).getType(), useId, EXC_INFO);
+                m_level_file_name, this->get_game_object(use_id).get_type(), use_id, EXC_INFO);
         }
 
-        std::unique_ptr<Script::GameObject> newGameObject
-            = std::make_unique<Script::GameObject>(m_lua, obj, useId);
-        vili::node gameObjectData = Script::GameObjectDatabase::GetDefinitionForGameObject(obj);
-        newGameObject->loadGameObject(*this, gameObjectData, m_resources);
+        std::unique_ptr<script::GameObject> new_game_object
+            = std::make_unique<script::GameObject>(m_lua, object_type, use_id);
+        vili::node game_object_data = script::GameObjectDatabase::get_definition_for_game_object(object_type);
+        new_game_object->load_game_object(*this, game_object_data, m_resources);
 
-        if (newGameObject->doesHaveSprite())
+        if (new_game_object->does_have_sprite())
         {
-            // const Transform::UnitVector zero(0, 0);
-            // newGameObject->getSprite().setPosition(zero);
-            newGameObject->getSprite().set_parent_id(useId);
+            new_game_object->get_sprite().set_parent_id(use_id);
         }
 
-        if (newGameObject->doesHaveCollider())
+        if (new_game_object->does_have_collider())
         {
-            newGameObject->getCollider().set_parent_id(useId);
+            new_game_object->get_collider().set_parent_id(use_id);
         }
 
-        m_gameObjectArray.push_back(move(newGameObject));
-        m_gameObjectIds.insert(useId);
+        m_game_object_array.push_back(move(new_game_object));
+        m_game_object_ids.insert(use_id);
 
-        return *m_gameObjectArray.back();
+        return *m_game_object_array.back();
     }
 
-    std::size_t Scene::getGameObjectAmount() const
+    std::size_t Scene::get_game_object_amount() const
     {
-        return m_gameObjectArray.size();
+        return m_game_object_array.size();
     }
 
-    void Scene::reorganizeLayers()
+    void Scene::reorganize_layers()
     {
-        m_sortRenderables = true;
+        m_sort_renderables = true;
     }
 
-    std::size_t Scene::getSpriteAmount() const
+    std::size_t Scene::get_sprite_amount() const
     {
-        return m_spriteArray.size();
+        return m_sprite_array.size();
     }
 
-    std::vector<graphics::Sprite*> Scene::getAllSprites()
+    std::vector<graphics::Sprite*> Scene::get_all_sprites() const
     {
-        std::vector<graphics::Sprite*> allSprites;
-        allSprites.reserve(m_spriteArray.size());
-        for (auto& sprite : m_spriteArray)
-            allSprites.push_back(sprite.get());
-        return allSprites;
+        std::vector<graphics::Sprite*> all_sprites;
+        all_sprites.reserve(m_sprite_array.size());
+        for (auto& sprite : m_sprite_array)
+            all_sprites.push_back(sprite.get());
+        return all_sprites;
     }
 
-    std::vector<graphics::Sprite*> Scene::getSpritesByLayer(const int layer)
+    std::vector<graphics::Sprite*> Scene::get_sprites_by_layer(const int layer) const
     {
-        std::vector<graphics::Sprite*> returnLayer;
+        std::vector<graphics::Sprite*> return_layer;
 
-        for (const auto& sprite : m_spriteArray)
+        for (const auto& sprite : m_sprite_array)
         {
             if (sprite->get_layer() == layer)
-                returnLayer.push_back(sprite.get());
+                return_layer.push_back(sprite.get());
         }
 
-        return returnLayer;
+        return return_layer;
     }
 
-    graphics::Sprite* Scene::getSpriteByPosition(
-        const Transform::UnitVector& position, const int layer)
+    graphics::Sprite* Scene::get_sprite_by_position(
+        const Transform::UnitVector& position, const int layer) const
     {
-        std::vector<Transform::Referential> rectPts
+        std::vector<Transform::Referential> rect_pts
             = { Transform::Referential::TopLeft, Transform::Referential::TopRight,
                   Transform::Referential::BottomRight, Transform::Referential::BottomLeft };
-        const Transform::UnitVector zeroOffset(0, 0);
+        const Transform::UnitVector zero_offset(0, 0);
 
-        std::vector<graphics::Sprite*> spritesOnLayer = this->getSpritesByLayer(layer);
-        Transform::UnitVector camera
-            = -(m_camera.getPosition().to<Transform::Units::ScenePixels>());
-        for (const auto& sprite : spritesOnLayer)
+        const std::vector<graphics::Sprite*> sprites_on_layer = this->get_sprites_by_layer(layer);
+        const Transform::UnitVector camera
+            = -(m_camera.get_position().to<Transform::Units::ScenePixels>());
+        for (const auto& sprite : sprites_on_layer)
         {
-            collision::PolygonalCollider positionCollider("positionCollider");
-            positionCollider.add_point(sprite->get_position_transformer()(position, camera, layer));
-            collision::PolygonalCollider sprCollider("sprCollider");
-            for (Transform::Referential& ref : rectPts)
+            collision::PolygonalCollider position_collider("positionCollider");
+            position_collider.add_point(sprite->get_position_transformer()(position, camera, layer));
+            collision::PolygonalCollider sprite_collider("sprCollider");
+            for (Transform::Referential& ref : rect_pts)
             {
-                sprCollider.add_point(sprite->getPosition(ref));
+                sprite_collider.add_point(sprite->get_position(ref));
             }
-            if (sprCollider.does_collide(positionCollider, zeroOffset, true))
+            if (sprite_collider.does_collide(position_collider, zero_offset, true))
             {
                 return sprite;
             }
@@ -734,95 +708,94 @@ namespace obe::Scene
         return nullptr;
     }
 
-    graphics::Sprite& Scene::getSprite(const std::string& id)
+    graphics::Sprite& Scene::get_sprite(const std::string& id) const
     {
-        for (int i = 0; i < m_spriteArray.size(); i++)
+        for (const auto& sprite : m_sprite_array)
         {
-            if (m_spriteArray[i]->getId() == id)
-                return *m_spriteArray[i];
+            if (sprite->getId() == id)
+                return *sprite;
         }
-        std::vector<std::string> spritesIds;
-        spritesIds.reserve(m_spriteArray.size());
-        for (const auto& sprite : m_spriteArray)
+        std::vector<std::string> sprites_ids;
+        sprites_ids.reserve(m_sprite_array.size());
+        for (const auto& sprite : m_sprite_array)
         {
-            spritesIds.push_back(sprite->getId());
+            sprites_ids.push_back(sprite->getId());
         }
-        throw Exceptions::UnknownSprite(m_levelFileName, id, spritesIds, EXC_INFO);
+        throw Exceptions::UnknownSprite(m_level_file_name, id, sprites_ids, EXC_INFO);
     }
 
-    bool Scene::doesSpriteExists(const std::string& id)
+    bool Scene::does_sprite_exists(const std::string& id) const
     {
-        return m_spriteIds.find(id) != m_spriteIds.end();
+        return m_sprite_ids.contains(id);
     }
 
-    void Scene::removeSprite(const std::string& id)
+    void Scene::remove_sprite(const std::string& id)
     {
         debug::Log->debug("<Scene> Removing Sprite {0}", id);
-        m_spriteArray.erase(std::remove_if(m_spriteArray.begin(), m_spriteArray.end(),
-                                [&id](std::unique_ptr<graphics::Sprite>& Sprite) {
-                                    return (Sprite->getId() == id);
-                                }),
-            m_spriteArray.end());
-        m_spriteIds.erase(id);
+        std::erase_if(m_sprite_array,
+            [&id](const std::unique_ptr<graphics::Sprite>& sprite) {
+                return (sprite->getId() == id);
+            });
+        m_sprite_ids.erase(id);
     }
 
-    SceneNode* Scene::getSceneNodeByPosition(const Transform::UnitVector& position) const
+    SceneNode* Scene::get_scene_node_by_position(const Transform::UnitVector& position) const
     {
-        for (auto& gameObject : m_gameObjectArray)
+        for (auto& game_object : m_game_object_array)
         {
-            const Transform::UnitVector sceneNodePosition
-                = gameObject->getSceneNode().getPosition();
-            const Transform::UnitVector pVec = position.to<Transform::Units::SceneUnits>();
-            const Transform::UnitVector pTolerance
+            const Transform::UnitVector scene_node_position
+                = game_object->get_scene_node().getPosition();
+            const Transform::UnitVector p_vec = position.to<Transform::Units::SceneUnits>();
+            const Transform::UnitVector p_tolerance
                 = Transform::UnitVector(6, 6, Transform::Units::ScenePixels)
                       .to<Transform::Units::SceneUnits>();
 
             if (Utils::Math::isBetween(
-                    pVec.x, sceneNodePosition.x - pTolerance.x, sceneNodePosition.x + pTolerance.x))
+                    p_vec.x, scene_node_position.x - p_tolerance.x, scene_node_position.x + p_tolerance.x))
             {
-                if (Utils::Math::isBetween(pVec.y, sceneNodePosition.y - pTolerance.x,
-                        sceneNodePosition.y + pTolerance.y))
-                    return &gameObject->getSceneNode();
+                if (Utils::Math::isBetween(p_vec.y, scene_node_position.y - p_tolerance.x,
+                        scene_node_position.y + p_tolerance.y))
+                    return &game_object->get_scene_node();
             }
         }
         return nullptr;
     }
 
-    bool Scene::hasTiles() const
+    bool Scene::has_tiles() const
     {
         return static_cast<bool>(m_tiles);
     }
 
-    const Tiles::TileScene& Scene::getTiles() const
+    const tiles::TileScene& Scene::get_tiles() const
     {
         return *m_tiles;
     }
 
-    SceneRenderOptions Scene::getRenderOptions() const
+    SceneRenderOptions Scene::get_render_options() const
     {
-        return m_renderOptions;
+        return m_render_options;
     }
 
-    void Scene::setRenderOptions(SceneRenderOptions options)
+    void Scene::set_render_options(SceneRenderOptions options)
     {
-        m_renderOptions = options;
+        m_render_options = options;
     }
 
-    Component::ComponentBase* Scene::getComponent(const std::string& id) const
+    Component::ComponentBase* Scene::get_component(const std::string& id) const
     {
         return m_components.at(id);
     }
 
-    std::pair<collision::PolygonalCollider*, int> Scene::getColliderPointByPosition(
-        const Transform::UnitVector& position)
+    std::pair<collision::PolygonalCollider*, int> Scene::get_collider_point_by_position(
+        const Transform::UnitVector& position) const
     {
-        const Transform::UnitVector pPos = position.to<Transform::Units::ScenePixels>();
-        const Transform::UnitVector pTolerance
+        const Transform::UnitVector p_pos = position.to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector p_tolerance
             = Transform::UnitVector(6, 6, Transform::Units::ScenePixels);
-        for (const auto& collider : m_colliderArray)
+        for (const auto& collider : m_collider_array)
         {
             // TODO: Fix here
-            if (auto point = collider->getPointAroundPosition(pPos, pTolerance); point.has_value())
+            if (auto point = collider->getPointAroundPosition(p_pos, p_tolerance); point.has_value())
             {
                 return std::make_pair(collider.get(), point.value()->index);
             }
@@ -830,84 +803,83 @@ namespace obe::Scene
         return std::pair<collision::PolygonalCollider*, int>(nullptr, 0);
     }
 
-    collision::PolygonalCollider* Scene::getColliderByCentroidPosition(
-        const Transform::UnitVector& position)
+    collision::PolygonalCollider* Scene::get_collider_by_centroid_position(
+        const Transform::UnitVector& position) const
     {
-        const Transform::UnitVector pPos = position.to<Transform::Units::ScenePixels>();
-        const Transform::UnitVector pTolerance
+        const Transform::UnitVector p_pos = position.to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector p_tolerance
             = Transform::UnitVector(6, 6, Transform::Units::ScenePixels);
-        for (const auto& collider : m_colliderArray)
+        for (const auto& collider : m_collider_array)
         {
-            if (collider->isCentroidAroundPosition(pPos, pTolerance))
+            if (collider->isCentroidAroundPosition(p_pos, p_tolerance))
                 return collider.get();
         }
         return nullptr;
     }
 
-    collision::PolygonalCollider& Scene::getCollider(const std::string& id)
+    collision::PolygonalCollider& Scene::get_collider(const std::string& id) const
     {
-        for (const auto& collider : m_colliderArray)
+        for (const auto& collider : m_collider_array)
         {
             if (id == collider->getId())
             {
                 return *collider;
             }
         }
-        std::vector<std::string> collidersIds;
-        collidersIds.reserve(m_colliderArray.size());
-        for (const auto& collider : m_colliderArray)
+        std::vector<std::string> colliders_ids;
+        colliders_ids.reserve(m_collider_array.size());
+        for (const auto& collider : m_collider_array)
         {
-            collidersIds.push_back(collider->getId());
+            colliders_ids.push_back(collider->getId());
         }
-        throw Exceptions::UnknownCollider(m_levelFileName, id, collidersIds, EXC_INFO);
+        throw Exceptions::UnknownCollider(m_level_file_name, id, colliders_ids, EXC_INFO);
     }
 
-    bool Scene::doesColliderExists(const std::string& id)
+    bool Scene::does_collider_exists(const std::string& id) const
     {
-        return m_colliderIds.find(id) != m_colliderIds.end();
+        return m_collider_ids.contains(id);
     }
 
-    void Scene::removeCollider(const std::string& id)
+    void Scene::remove_collider(const std::string& id)
     {
-        m_colliderArray.erase(std::remove_if(m_colliderArray.begin(), m_colliderArray.end(),
-                                  [&id](std::unique_ptr<collision::PolygonalCollider>& collider) {
-                                      return (collider->getId() == id);
-                                  }),
-            m_colliderArray.end());
-        m_colliderIds.erase(id);
+        std::erase_if(m_collider_array,
+            [&id](const std::unique_ptr<collision::PolygonalCollider>& collider) {
+                return (collider->getId() == id);
+            });
+        m_collider_ids.erase(id);
     }
 
-    SceneNode& Scene::getSceneRootNode()
+    SceneNode& Scene::get_scene_root_node()
     {
-        return m_sceneRoot;
+        return m_scene_root;
     }
 
-    std::string Scene::getLevelFile() const
+    std::string Scene::get_level_file() const
     {
-        return m_levelFileName;
+        return m_level_file_name;
     }
 
     // Proxy functions
-    sol::table sceneGetGameObjectProxy(Scene* self, const std::string& id)
+    sol::table scene_get_game_object_proxy(const Scene* self, const std::string& id)
     {
-        return self->getGameObject(id).access();
+        return self->get_game_object(id).access();
     }
 
-    sol::function sceneCreateGameObjectProxy(
-        Scene* self, const std::string& obj, const std::string& id)
+    sol::function scene_create_game_object_proxy(
+        Scene* self, const std::string& object_type, const std::string& id)
     {
-        return self->createGameObject(obj, id).getConstructor();
+        return self->create_game_object(object_type, id).get_constructor();
     }
 
-    sol::nested<std::vector<sol::table>> sceneGetAllGameObjectsProxy(
-        Scene* self, const std::string& objectType)
+    sol::nested<std::vector<sol::table>> scene_get_all_game_objects_proxy(
+        const Scene* self, const std::string& object_type)
     {
-        std::vector<sol::table> gameObjects;
+        std::vector<sol::table> game_objects;
 
-        for (const auto& gameObject : self->getAllGameObjects(objectType))
+        for (const auto& game_object : self->get_all_game_objects(object_type))
         {
-            gameObjects.push_back(gameObject->access());
+            game_objects.push_back(game_object->access());
         }
-        return gameObjects;
+        return game_objects;
     }
-} // namespace obe::Scene
+} // namespace obe::scene

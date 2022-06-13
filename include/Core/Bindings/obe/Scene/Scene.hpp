@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Scene::Bindings
+namespace obe::scene::Bindings
 {
     void LoadClassCamera(sol::state_view state);
     void LoadClassScene(sol::state_view state);

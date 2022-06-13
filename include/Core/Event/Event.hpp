@@ -15,15 +15,15 @@ namespace obe::event
     {
     public:
         std::uint64_t hits = 0;
-        Time::TimeUnit time = 0;
-        Time::TimeUnit min = 0;
-        Time::TimeUnit max = 0;
+        time::TimeUnit time = 0;
+        time::TimeUnit min = 0;
+        time::TimeUnit max = 0;
     };
 
     class ScopeProfiler
     {
     private:
-        const Time::TimeUnit m_start;
+        const time::TimeUnit m_start;
         CallbackProfiler& m_results;
 
     public:

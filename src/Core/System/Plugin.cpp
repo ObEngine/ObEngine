@@ -4,7 +4,7 @@
 #include <Engine/Engine.hpp>
 #include <System/Plugin.hpp>
 
-namespace obe::System
+namespace obe::system
 {
     Plugin::Plugin(const std::string& id, const std::string& path)
         : Types::Identifiable(id)
@@ -24,102 +24,56 @@ namespace obe::System
         m_valid = true;
         try
         {
-            m_onInitFn = getPluginFunction<void(engine::Engine&)>(m_dl, "OnInit");
-            (*m_onInitFn)->init();
+            m_on_init_fn = get_plugin_function<void(engine::Engine&)>(m_dl, "OnInit");
+            (*m_on_init_fn)->init();
             debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnInit", id);
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
-            m_onInitFn = std::nullopt;
+            m_on_init_fn = std::nullopt;
         }
         try
         {
-            m_onUpdateFn = getPluginFunction<void(double)>(m_dl, "OnUpdate");
-            (*m_onUpdateFn)->init();
-            debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnUpdate", id);
-        }
-        catch (const dynamicLinker::dynamicLinkerException& e)
-        {
-            m_onUpdateFn = std::nullopt;
-        }
-        try
-        {
-            m_onRenderFn = getPluginFunction<void()>(m_dl, "OnRender");
-            (*m_onRenderFn)->init();
-            debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnRender", id);
-        }
-        catch (const dynamicLinker::dynamicLinkerException& e)
-        {
-            m_onRenderFn = std::nullopt;
-        }
-        try
-        {
-            m_onExitFn = getPluginFunction<void()>(m_dl, "OnExit");
-            (*m_onExitFn)->init();
+            m_on_exit_fn = get_plugin_function<void(engine::Engine&)>(m_dl, "OnExit");
+            (*m_on_exit_fn)->init();
             debug::Log->debug("<System:Plugins> : (Plugin '{}') > Found function OnExit", id);
         }
         catch (const dynamicLinker::dynamicLinkerException& e)
         {
-            m_onExitFn = std::nullopt;
+            m_on_exit_fn = std::nullopt;
         }
 
         debug::Log->info("<System:Plugin> : Loaded : '{}'", id);
     }
 
-    void Plugin::onInit(engine::Engine& engine) const
+    void Plugin::on_init(engine::Engine& engine) const
     {
-        if (m_onInitFn)
+        if (m_on_init_fn)
         {
-            (**m_onInitFn)(engine);
+            (**m_on_init_fn)(engine);
         }
     }
 
-    void Plugin::onUpdate(double dt) const
+    void Plugin::on_exit(engine::Engine& engine) const
     {
-        if (m_onUpdateFn)
+        if (m_on_exit_fn)
         {
-            (**m_onUpdateFn)(dt);
+            (**m_on_exit_fn)(engine);
         }
     }
 
-    void Plugin::onRender() const
+    bool Plugin::has_on_init() const
     {
-        if (m_onRenderFn)
-        {
-            (**m_onRenderFn)();
-        }
+        return m_on_init_fn.has_value();
     }
 
-    void Plugin::onExit() const
+    bool Plugin::has_on_exit() const
     {
-        if (m_onExitFn)
-        {
-            (**m_onExitFn)();
-        }
+        return m_on_exit_fn.has_value();
     }
 
-    bool Plugin::hasOnInit() const
-    {
-        return m_onInitFn.has_value();
-    }
-
-    bool Plugin::hasOnUpdate() const
-    {
-        return m_onUpdateFn.has_value();
-    }
-
-    bool Plugin::hasOnRender() const
-    {
-        return m_onRenderFn.has_value();
-    }
-
-    bool Plugin::hasOnExit() const
-    {
-        return m_onExitFn.has_value();
-    }
-
-    bool Plugin::isValid() const
+    bool Plugin::is_valid() const
     {
         return m_valid;
     }
-} // namespace obe::System
+} // namespace obe::system

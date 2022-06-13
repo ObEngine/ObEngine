@@ -6,7 +6,7 @@
 #include <Input/InputButton.hpp>
 #include <Input/InputButtonState.hpp>
 
-namespace obe::events::Keys
+namespace obe::events::keys
 {
     /**
      * \brief Event triggered when the state of an InputButton changes
@@ -14,12 +14,12 @@ namespace obe::events::Keys
      */
     struct StateChanged
     {
-        const Input::InputButtonState state;
-        const Input::InputButtonState previousState;
+        const input::InputButtonState state;
+        const input::InputButtonState previous_state;
     };
 }
 
-namespace obe::Input
+namespace obe::input
 {
     class InputButtonMonitor;
     using InputButtonMonitorPtr = std::shared_ptr<InputButtonMonitor>;
@@ -31,8 +31,8 @@ namespace obe::Input
     {
     private:
         InputButton& m_button;
-        InputButtonState m_buttonState = InputButtonState::Idle;
-        bool m_shouldRefresh = false;
+        InputButtonState m_button_state = InputButtonState::Idle;
+        bool m_should_refresh = false;
 
     public:
         /**
@@ -45,18 +45,18 @@ namespace obe::Input
          * \brief Gets a pointer to the monitored InputButton
          * \return A pointer to the monitored InputButton
          */
-        [[nodiscard]] InputButton& getButton() const;
+        [[nodiscard]] InputButton& get_button() const;
         /**
          * \brief Gets the state of the InputButton (InputButtonState)
          * \return The enum of value from InputButtonState corresponding to the
          *         state of the monitored InputButton
          */
-        [[nodiscard]] InputButtonState getState() const;
+        [[nodiscard]] InputButtonState get_state() const;
         /**
          * \brief Updates the InputButtonMonitor (needed to modify the linked
          *        InputButtonState)
          */
         void update(event::EventGroupPtr events);
-        bool checkForRefresh() const;
+        bool check_for_refresh() const;
     };
-} // namespace obe::Input
+} // namespace obe::input

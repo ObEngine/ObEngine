@@ -16,7 +16,7 @@ namespace obe::event
             }
             else
             {
-                m_start = Time::epoch();
+                m_start = time::epoch();
                 m_current_times++;
             }
         }
@@ -47,7 +47,7 @@ namespace obe::event
     {
         m_callback = callback;
         m_state = CallbackSchedulerState::Ready;
-        m_start = Time::epoch();
+        m_start = time::epoch();
     }
 
     void CallbackScheduler::stop()

@@ -181,8 +181,8 @@ namespace obe::Transform
 
     bool Rect::contains(const Rect& rect) const
     {
-        return contains(rect.getPosition(Referential::TopLeft))
-            && contains(rect.getPosition(Referential::BottomRight));
+        return contains(rect.get_position(Referential::TopLeft))
+            && contains(rect.get_position(Referential::BottomRight));
     }
 
     bool Rect::contains(const UnitVector& position) const
@@ -199,12 +199,12 @@ namespace obe::Transform
 
     void Rect::setPointPosition(const UnitVector& position, const Referential& ref)
     {
-        const UnitVector oppositePointPosition = this->getPosition(ref.flip());
+        const UnitVector oppositePointPosition = this->get_position(ref.flip());
         const double radAngle = Utils::Math::convertToRadian(-m_angle);
         const UnitVector movedPoint
             = rotatePointAroundCenter(position, oppositePointPosition, -radAngle);
 
-        this->setPosition(position, ref);
+        this->set_position(position, ref);
 
         if (ref.isOnCorner())
         {
@@ -242,14 +242,14 @@ namespace obe::Transform
         }
     }
 
-    UnitVector Rect::getPosition(const Referential& ref) const
+    UnitVector Rect::get_position(const Referential& ref) const
     {
         UnitVector getPosVec = m_position;
         this->transformRef(getPosVec, ref, ReferentialConversionType::From);
         return getPosVec;
     }
 
-    void Rect::setPosition(const UnitVector& position, const Referential& ref)
+    void Rect::set_position(const UnitVector& position, const Referential& ref)
     {
         UnitVector pVec = position.to<Units::SceneUnits>();
         this->transformRef(pVec, ref, ReferentialConversionType::To);
@@ -258,19 +258,19 @@ namespace obe::Transform
 
     void Rect::setSize(const UnitVector& size, const Referential& ref)
     {
-        const UnitVector savePosition = this->getPosition(ref);
+        const UnitVector savePosition = this->get_position(ref);
         m_size.set(size);
-        this->setPosition(savePosition, ref);
+        this->set_position(savePosition, ref);
     }
 
     void Rect::set_position(const UnitVector& position)
     {
-        this->setPosition(position, Referential::TopLeft);
+        this->set_position(position, Referential::TopLeft);
     }
 
     UnitVector Rect::getPosition() const
     {
-        return this->getPosition(Referential::TopLeft);
+        return this->get_position(Referential::TopLeft);
     }
 
     void Rect::move(const UnitVector& position)
@@ -280,12 +280,12 @@ namespace obe::Transform
 
     void Rect::scale(const UnitVector& size, const Referential& ref)
     {
-        const UnitVector savePosition = this->getPosition(ref);
+        const UnitVector savePosition = this->get_position(ref);
         m_size *= size;
-        this->setPosition(savePosition, ref);
+        this->set_position(savePosition, ref);
     }
 
-    UnitVector Rect::getSize() const
+    UnitVector Rect::get_size() const
     {
         return m_size;
     }

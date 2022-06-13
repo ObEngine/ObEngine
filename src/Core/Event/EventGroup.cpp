@@ -145,7 +145,7 @@ namespace obe::event
             const std::string full_name = m_name + "." + event_name;
             debug::Log->debug("Dumping {}", full_name);
             result[full_name] = vili::object {};
-            Time::TimeUnit total_time = 0;
+            time::TimeUnit total_time = 0;
             long long int total_hits = 0;
             result.at(full_name).emplace("callbacks", vili::object {});
             vili::node& callbacks = result.at(full_name).at("callbacks");

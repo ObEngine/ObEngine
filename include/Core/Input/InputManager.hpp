@@ -8,7 +8,7 @@
 #include <Input/InputAction.hpp>
 #include <Types/Togglable.hpp>
 
-namespace obe::Input
+namespace obe::input
 {
     /**
      * \brief Class used to manage KeyClass and KeyboardAction
@@ -22,43 +22,43 @@ namespace obe::Input
         std::vector<std::shared_ptr<InputButtonMonitor>> m_key_monitors;
         event::EventGroupPtr e_actions;
         event::EventGroupPtr e_inputs;
-        std::vector<std::shared_ptr<InputAction>> m_allActions {};
-        std::vector<InputAction*> m_currentActions {};
-        bool isActionCurrentlyInUse(const std::string& actionId);
-        void createInputMap();
-        void createEvents();
-        [[nodiscard]] std::vector<std::string> getAllInputButtonNames() const;
+        std::vector<std::shared_ptr<InputAction>> m_all_actions {};
+        std::vector<InputAction*> m_current_actions {};
+        bool is_action_currently_in_use(const std::string& action_id);
+        void create_input_map();
+        void create_events();
+        [[nodiscard]] std::vector<std::string> get_all_input_button_names() const;
 
     public:
         /**
          * \brief Creates a new KeyboardManager
          */
-        InputManager(event::EventNamespace& eventNamespace);
+        InputManager(event::EventNamespace& event_namespace);
         /**
          * \brief Get if a KeyboardAction exists
-         * \param actionId Id of the KeyboardAction to check the existence
+         * \param action_id Id of the KeyboardAction to check the existence
          * \return true if the KeyboardAction is found in the KeyboardManager,
          *         false otherwise
          */
-        bool actionExists(const std::string& actionId);
+        bool action_exists(const std::string& action_id) const;
         /**
          * \brief Adds a new context the KeyboardManager will use
          * \param context Name of the context to add
          * \return A reference to the KeyboardManager (to chain calls)
          */
-        InputManager& addContext(const std::string& context);
+        InputManager& add_context(const std::string& context);
         /**
          * \brief Get the KeyboardAction identified by actionId if it exists
-         * \param actionId Id of the KeyboardAction to retrieve
+         * \param action_id Id of the KeyboardAction to retrieve
          * \return A reference to the KeyboardAction if found
          */
-        InputAction& getAction(const std::string& actionId);
+        InputAction& get_action(const std::string& action_id) const;
         /**
          * \brief Gets all the contexts currently used by the InputManager
          * \return A std::vector of std::string containing all the contexts used
          *         by the InputManager
          */
-        std::vector<std::string> getContexts();
+        std::vector<std::string> get_contexts() const;
         /**
          * \brief Clears all Actions
          */
@@ -66,7 +66,7 @@ namespace obe::Input
         /**
          * \brief Clear all contexts the KeyboardManager is using
          */
-        void clearContexts();
+        void clear_contexts();
         /**
          * \brief Configure KeyboardAction from a vili configuration file
          * \param config Reference to the vili ComplexAttribute used to
@@ -78,12 +78,12 @@ namespace obe::Input
          * \param context Name of the context to remove
          * \return A reference to the InputManager (to chain calls)
          */
-        InputManager& removeContext(const std::string& context);
+        InputManager& remove_context(const std::string& context);
         /**
          * \brief Cleans all the contexts and adds a new one
          * \param context Name of the only context to use
          */
-        void setContext(const std::string& context);
+        void set_context(const std::string& context);
         /**
          * \brief Updates the KeyboardManager
          */
@@ -93,34 +93,34 @@ namespace obe::Input
          * \param key Name of the InputButton you want to get
          * \return A reference to the InputButton with the given name
          */
-        InputButton& getInput(const std::string& key);
+        InputButton& get_input(const std::string& key);
         /**
          * \brief Get a list of all InputButtons
          * \return A list of pointers to all InputButtons
          */
-        std::vector<InputButton*> getInputs();
+        std::vector<InputButton*> get_inputs();
         /**
          * \brief Get a list of all InputButtons with a given type
          * \param filter Type the InputButtons you want to get
          * \return A list of pointers to all InputButtons with given type
          */
-        std::vector<InputButton*> getInputs(InputType filter);
+        std::vector<InputButton*> get_inputs(InputType filter);
         /**
          * \brief Get a list of all InputButtons which are pressed
          * \return A list of pointers to all InputButtons which are pressed
          */
-        std::vector<InputButton*> getPressedInputs();
+        std::vector<InputButton*> get_pressed_inputs() const;
 
         InputButtonMonitorPtr monitor(const std::string& name);
         InputButtonMonitorPtr monitor(InputButton& input);
-        void requireRefresh();
+        void require_refresh();
         /**
          * TODO: Fix this nobind
          * \nobind
          */
-        InputCombination makeCombination(const std::string& code);
+        InputCombination make_combination(const std::string& code);
 
-        void initializeGamepads();
-        void initializeGamepad(unsigned int gamepadIndex);
+        void initialize_gamepads();
+        void initialize_gamepad(unsigned int gamepad_index);
     };
-} // namespace obe::Input
+} // namespace obe::input

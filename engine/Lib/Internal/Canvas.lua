@@ -659,7 +659,7 @@ obe.canvas.Bases.Shape = {
             end
         end,
         texture = function(self, texture)
-            local texture_path = obe.System.Path(texture);
+            local texture_path = obe.system.Path(texture);
             self.shape:set_texture(Engine.Resources:get_texture(texture_path));
         end
     }

@@ -1,65 +1,65 @@
 #include <Debug/Logger.hpp>
 #include <Input/InputButtonMonitor.hpp>
 
-namespace obe::Input
+namespace obe::input
 {
     InputButtonMonitor::InputButtonMonitor(InputButton& button)
         : m_button(button)
     {
-        debug::Log->debug("Started monitoring InputButton '{}'", m_button.getName());
+        debug::Log->debug("Started monitoring InputButton '{}'", m_button.get_name());
     }
 
     InputButtonMonitor::~InputButtonMonitor()
     {
-        debug::Log->debug("Stopped monitoring InputButton '{}'", m_button.getName());
+        debug::Log->debug("Stopped monitoring InputButton '{}'", m_button.get_name());
     }
 
-    InputButton& InputButtonMonitor::getButton() const
+    InputButton& InputButtonMonitor::get_button() const
     {
         return m_button;
     }
 
-    InputButtonState InputButtonMonitor::getState() const
+    InputButtonState InputButtonMonitor::get_state() const
     {
-        return m_buttonState;
+        return m_button_state;
     }
 
     void InputButtonMonitor::update(event::EventGroupPtr events)
     {
-        debug::Log->trace("Updating InputMonitor of {}", m_button.getName());
-        const bool keyPressed = m_button.isPressed();
-        const InputButtonState oldState = m_buttonState;
-        m_shouldRefresh = false;
-        if (keyPressed
-            && (m_buttonState == InputButtonState::Idle
-                || m_buttonState == InputButtonState::Released))
+        debug::Log->trace("Updating InputMonitor of {}", m_button.get_name());
+        const bool key_pressed = m_button.is_pressed();
+        const InputButtonState old_state = m_button_state;
+        m_should_refresh = false;
+        if (key_pressed
+            && (m_button_state == InputButtonState::Idle
+                || m_button_state == InputButtonState::Released))
         {
-            m_buttonState = InputButtonState::Pressed;
+            m_button_state = InputButtonState::Pressed;
         }
-        else if (keyPressed && m_buttonState == InputButtonState::Pressed)
+        else if (key_pressed && m_button_state == InputButtonState::Pressed)
         {
-            m_buttonState = InputButtonState::Hold;
+            m_button_state = InputButtonState::Hold;
         }
-        else if (!keyPressed
-            && (m_buttonState == InputButtonState::Pressed
-                || m_buttonState == InputButtonState::Hold))
+        else if (!key_pressed
+            && (m_button_state == InputButtonState::Pressed
+                || m_button_state == InputButtonState::Hold))
         {
-            m_buttonState = InputButtonState::Released;
+            m_button_state = InputButtonState::Released;
         }
-        else if (!keyPressed && m_buttonState == InputButtonState::Released)
+        else if (!key_pressed && m_button_state == InputButtonState::Released)
         {
-            m_buttonState = InputButtonState::Idle;
+            m_button_state = InputButtonState::Idle;
         }
-        if (oldState != m_buttonState)
+        if (old_state != m_button_state)
         {
-            m_shouldRefresh = true;
+            m_should_refresh = true;
             events->trigger(
-                m_button.getName(), events::Keys::StateChanged { m_buttonState, oldState });
+                m_button.get_name(), events::keys::StateChanged { m_button_state, old_state });
         }
     }
 
-    bool InputButtonMonitor::checkForRefresh() const
+    bool InputButtonMonitor::check_for_refresh() const
     {
-        return m_shouldRefresh;
+        return m_should_refresh;
     }
-} // namespace obe::Input
+} // namespace obe::input
