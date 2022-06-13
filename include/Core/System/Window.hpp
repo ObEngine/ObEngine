@@ -12,7 +12,7 @@
 #include <Graphics/RenderTarget.hpp>
 #include <Transform/UnitVector.hpp>
 
-namespace obe::System
+namespace obe::system
 {
     enum class WindowContext
     {
@@ -50,8 +50,8 @@ namespace obe::System
     private:
         unsigned int m_width = 1920;
         unsigned int m_height = 1080;
-        unsigned int m_renderWidth = m_width;
-        unsigned int m_renderHeight = m_height;
+        unsigned int m_render_width = m_width;
+        unsigned int m_render_height = m_height;
         StretchMode m_stretch = StretchMode::Fit;
         int m_style;
         std::string m_title;
@@ -60,7 +60,7 @@ namespace obe::System
         sf::Image m_icon;
         graphics::Color m_background = graphics::Color(0, 0, 0);
 
-        void applyView();
+        void apply_view();
 
     public:
         explicit Window(vili::node configuration);
@@ -76,27 +76,27 @@ namespace obe::System
         /**
          * \nobind
          */
-        void draw(const sf::Vertex* vertices, std::size_t vertexCount, sf::PrimitiveType type,
+        void draw(const sf::Vertex* vertices, std::size_t vertex_count, sf::PrimitiveType type,
             const sf::RenderStates& states = sf::RenderStates::Default);
-        [[nodiscard]] Transform::UnitVector getRenderSize() const;
-        [[nodiscard]] Transform::UnitVector getWindowSize() const;
-        [[nodiscard]] Transform::UnitVector getScreenSize() const;
-        [[nodiscard]] Transform::UnitVector getSize() const;
-        [[nodiscard]] bool isOpen() const;
-        bool pollEvent(sf::Event& event);
-        void setSize(unsigned int width, unsigned int height);
-        void setWindowSize(unsigned int width, unsigned int height);
-        void setRenderSize(unsigned int width, unsigned int height);
-        void setTitle(const std::string& title);
-        void setVerticalSyncEnabled(bool enabled);
-        void setView(const sf::View& view);
-        void setIcon(const std::string& path);
+        [[nodiscard]] Transform::UnitVector get_render_size() const;
+        [[nodiscard]] Transform::UnitVector get_window_size() const;
+        [[nodiscard]] static Transform::UnitVector get_screen_size();
+        [[nodiscard]] Transform::UnitVector get_size() const;
+        [[nodiscard]] bool is_open() const;
+        bool poll_event(sf::Event& event);
+        void set_size(unsigned int width, unsigned int height);
+        void set_window_size(unsigned int width, unsigned int height);
+        void set_render_size(unsigned int width, unsigned int height);
+        void set_title(const std::string& title);
+        void set_vertical_sync_enabled(bool enabled);
+        void set_view(const sf::View& view);
+        void set_icon(const std::string& path);
 
-        graphics::RenderTarget getTarget();
-        sf::RenderWindow& getWindow();
+        graphics::RenderTarget get_target();
+        sf::RenderWindow& get_window();
 
-        [[nodiscard]] graphics::Color getClearColor() const;
-        void setClearColor(graphics::Color color);
-        void setMouseCursorVisible(bool visible);
+        [[nodiscard]] graphics::Color get_clear_color() const;
+        void set_clear_color(graphics::Color color);
+        void set_mouse_cursor_visible(bool visible);
     };
-} // namespace obe::System
+} // namespace obe::system

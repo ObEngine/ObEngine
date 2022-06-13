@@ -311,11 +311,11 @@ namespace obe::graphics::Bindings
                     obe::graphics::RichText(const obe::graphics::Font&)>());
         bindRichText["clear"] = &obe::graphics::RichText::clear;
         bindRichText["append"] = &obe::graphics::RichText::append;
-        bindRichText["getFont"] = &obe::graphics::RichText::getFont;
-        bindRichText["setFont"] = &obe::graphics::RichText::setFont;
-        bindRichText["getLines"] = &obe::graphics::RichText::getLines;
-        bindRichText["getCharacterSize"] = &obe::graphics::RichText::getCharacterSize;
-        bindRichText["setCharacterSize"] = &obe::graphics::RichText::setCharacterSize;
+        bindRichText["get_font"] = &obe::graphics::RichText::get_font;
+        bindRichText["set_font"] = &obe::graphics::RichText::set_font;
+        bindRichText["get_lines"] = &obe::graphics::RichText::get_lines;
+        bindRichText["get_character_size"] = &obe::graphics::RichText::get_character_size;
+        bindRichText["set_character_size"] = &obe::graphics::RichText::set_character_size;
         bindRichText["getLocalBounds"] = &obe::graphics::RichText::getLocalBounds;
         bindRichText["getGlobalBounds"] = &obe::graphics::RichText::getGlobalBounds;
     }
@@ -359,7 +359,7 @@ namespace obe::graphics::Bindings
                 &obe::graphics::Sprite::get_texture));
         bindSprite["get_x_scale_factor"] = &obe::graphics::Sprite::get_x_scale_factor;
         bindSprite["get_y_scale_factor"] = &obe::graphics::Sprite::get_y_scale_factor;
-        bindSprite["get_anti_aliasing"] = &obe::graphics::Sprite::get_anti_aliasing;
+        bindSprite["is_anti_aliased"] = &obe::graphics::Sprite::is_anti_aliased;
         bindSprite["has_shader"] = &obe::graphics::Sprite::has_shader;
         bindSprite["load"] = &obe::graphics::Sprite::load;
         bindSprite["load_texture"] = &obe::graphics::Sprite::load_texture;
@@ -402,15 +402,15 @@ namespace obe::graphics::Bindings
                 sol::call_constructor,
                 sol::constructors<obe::graphics::SvgTexture(const std::string&),
                     obe::graphics::SvgTexture(const obe::graphics::SvgTexture&)>());
-        bindSvgTexture["getAutoscaling"] = &obe::graphics::SvgTexture::getAutoscaling;
-        bindSvgTexture["setAutoscaling"] = &obe::graphics::SvgTexture::setAutoscaling;
-        bindSvgTexture["setSizeHint"] = &obe::graphics::SvgTexture::setSizeHint;
+        bindSvgTexture["is_autoscaled"] = &obe::graphics::SvgTexture::is_autoscaled;
+        bindSvgTexture["set_autoscaling"] = &obe::graphics::SvgTexture::set_autoscaling;
+        bindSvgTexture["set_size_hint"] = &obe::graphics::SvgTexture::set_size_hint;
         bindSvgTexture["success"] = &obe::graphics::SvgTexture::success;
-        bindSvgTexture["getTexture"]
+        bindSvgTexture["get_texture"]
             = sol::overload(static_cast<const sf::Texture& (obe::graphics::SvgTexture::*)() const>(
-                                &obe::graphics::SvgTexture::getTexture),
+                                &obe::graphics::SvgTexture::get_texture),
                 static_cast<sf::Texture& (obe::graphics::SvgTexture::*)()>(
-                    &obe::graphics::SvgTexture::getTexture));
+                    &obe::graphics::SvgTexture::get_texture));
     }
     void LoadClassText(sol::state_view state)
     {
@@ -436,25 +436,25 @@ namespace obe::graphics::Bindings
                     obe::graphics::Texture(const sf::Texture&),
                     obe::graphics::Texture(const obe::graphics::Texture&)>());
         bindTexture["create"] = &obe::graphics::Texture::create;
-        bindTexture["loadFromFile"]
+        bindTexture["load_from_file"]
             = sol::overload(static_cast<bool (obe::graphics::Texture::*)(const std::string&)>(
-                                &obe::graphics::Texture::loadFromFile),
+                                &obe::graphics::Texture::load_from_file),
                 static_cast<bool (obe::graphics::Texture::*)(const std::string&,
-                    const obe::Transform::Rect&)>(&obe::graphics::Texture::loadFromFile));
-        bindTexture["loadFromImage"] = &obe::graphics::Texture::loadFromImage;
-        bindTexture["getSize"] = &obe::graphics::Texture::getSize;
-        bindTexture["setSizeHint"] = &obe::graphics::Texture::setSizeHint;
-        bindTexture["getAutoscaling"] = &obe::graphics::Texture::getAutoscaling;
-        bindTexture["setAutoscaling"] = &obe::graphics::Texture::setAutoscaling;
-        bindTexture["setAntiAliasing"] = &obe::graphics::Texture::setAntiAliasing;
-        bindTexture["isAntiAliased"] = &obe::graphics::Texture::isAntiAliased;
-        bindTexture["setRepeated"] = &obe::graphics::Texture::setRepeated;
-        bindTexture["isRepeated"] = &obe::graphics::Texture::isRepeated;
+                    const obe::Transform::Rect&)>(&obe::graphics::Texture::load_from_file));
+        bindTexture["load_from_image"] = &obe::graphics::Texture::load_from_image;
+        bindTexture["get_size"] = &obe::graphics::Texture::get_size;
+        bindTexture["set_size_hint"] = &obe::graphics::Texture::set_size_hint;
+        bindTexture["is_autoscaled"] = &obe::graphics::Texture::is_autoscaled;
+        bindTexture["set_autoscaling"] = &obe::graphics::Texture::set_autoscaling;
+        bindTexture["set_anti_aliasing"] = &obe::graphics::Texture::set_anti_aliasing;
+        bindTexture["is_anti_aliased"] = &obe::graphics::Texture::is_anti_aliased;
+        bindTexture["set_repeated"] = &obe::graphics::Texture::set_repeated;
+        bindTexture["is_repeated"] = &obe::graphics::Texture::is_repeated;
         bindTexture["reset"] = &obe::graphics::Texture::reset;
         bindTexture["useCount"] = &obe::graphics::Texture::useCount;
         bindTexture["isVector"] = &obe::graphics::Texture::isVector;
         bindTexture["isBitmap"] = &obe::graphics::Texture::isBitmap;
-        bindTexture["MakeSharedTexture"] = &obe::graphics::Texture::MakeSharedTexture;
+        bindTexture["make_shared_texture"] = &obe::graphics::Texture::make_shared_texture;
     }
     void LoadClassHsv(sol::state_view state)
     {

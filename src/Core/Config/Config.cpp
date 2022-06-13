@@ -16,20 +16,20 @@ namespace obe::config
     }
     void ConfigurationManager::load()
     {
-        System::MountList config_mounts;
-        const auto& all_mounts = System::MountablePath::Paths();
+        system::MountList config_mounts;
+        const auto& all_mounts = system::MountablePath::paths();
         std::set<std::string> canonical_paths;
         for (auto mount_it = all_mounts.rbegin(); mount_it != all_mounts.rend(); ++mount_it)
         {
-            const std::string base_path = mount_it->get()->basePath;
+            const std::string base_path = mount_it->get()->base_path;
             if (canonical_paths.find(base_path) == canonical_paths.end())
             {
-                config_mounts.push_back(std::make_shared<System::MountablePath>(
-                    System::MountablePathType::Path, base_path, mount_it->get()->prefix, 0, true));
+                config_mounts.push_back(std::make_shared<system::MountablePath>(
+                    system::MountablePathType::Path, base_path, mount_it->get()->prefix, 0, true));
                 canonical_paths.emplace(base_path);
             }
         }
-        const auto load_result = System::Path(config_mounts).set("*://config.vili").findAll();
+        const auto load_result = system::Path(config_mounts).set("*://config.vili").find_all();
         for (const auto& find_result : load_result)
         {
             debug::Log->info("Loading config file from '{}'", find_result.path());
@@ -46,11 +46,11 @@ namespace obe::config
         {
             std::vector<std::string> config_files;
             config_files.reserve(load_result.size());
-            for (const System::FindResult& path : load_result)
+            for (const system::FindResult& path : load_result)
             {
                 config_files.push_back(path.path());
             }
             throw Exceptions::ConfigError(config_files, EXC_INFO).nest(e);
         }
     }
-} // namespace obe::System
+} // namespace obe::system

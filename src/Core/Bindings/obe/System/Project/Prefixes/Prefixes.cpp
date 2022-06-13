@@ -4,18 +4,18 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::System::Project::Prefixes::Bindings
+namespace obe::system::project::Prefixes::Bindings
 {
     void LoadGlobalObjects(sol::state_view state)
     {
         sol::table PrefixesNamespace
-            = state["obe"]["System"]["Project"]["Prefixes"].get<sol::table>();
-        PrefixesNamespace["objects"] = obe::System::Project::Prefixes::objects;
+            = state["obe"]["system"]["project"]["prefixes"].get<sol::table>();
+        PrefixesNamespace["objects"] = obe::system::project::Prefixes::objects;
     }
     void LoadGlobalScenes(sol::state_view state)
     {
         sol::table PrefixesNamespace
-            = state["obe"]["System"]["Project"]["Prefixes"].get<sol::table>();
-        PrefixesNamespace["scenes"] = obe::System::Project::Prefixes::scenes;
+            = state["obe"]["system"]["project"]["prefixes"].get<sol::table>();
+        PrefixesNamespace["scenes"] = obe::system::project::Prefixes::scenes;
     }
 };

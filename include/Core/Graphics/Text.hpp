@@ -43,19 +43,20 @@ namespace obe::graphics
         class Line : public Transformable, public Drawable
         {
         public:
-            void setCharacterSize(unsigned int size) const;
-            void setFont(const sf::Font& font) const;
-            const std::vector<sf::Text>& getTexts() const;
-            void appendText(sf::Text text);
-            sf::FloatRect getLocalBounds() const;
-            sf::FloatRect getGlobalBounds() const;
+            void set_character_size(unsigned int size) const;
+            void set_font(const sf::Font& font) const;
+            const std::vector<sf::Text>& get_texts() const;
+            void append_text(sf::Text text) const;
+            // todo: return proper obe Rect
+            sf::FloatRect get_local_bounds() const;
+            sf::FloatRect get_global_bounds() const;
 
         protected:
             void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
         private:
-            void updateGeometry() const;
-            void updateTextAndGeometry(sf::Text& text) const;
+            void update_geometry() const;
+            void update_text_and_geometry(sf::Text& text) const;
             mutable std::vector<sf::Text> m_texts;
             mutable sf::FloatRect m_bounds;
         };
@@ -68,13 +69,13 @@ namespace obe::graphics
 
         RichText& append(const Text& text);
 
-        const Font& getFont() const;
-        void setFont(const Font& font);
+        const Font& get_font() const;
+        void set_font(const Font& font);
 
-        const std::vector<Line>& getLines() const;
+        const std::vector<Line>& get_lines() const;
 
-        unsigned int getCharacterSize() const;
-        void setCharacterSize(unsigned int size);
+        unsigned int get_character_size() const;
+        void set_character_size(unsigned int size);
 
         sf::FloatRect getLocalBounds() const;
         sf::FloatRect getGlobalBounds() const;
@@ -83,12 +84,12 @@ namespace obe::graphics
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 
     private:
-        sf::Text createText(const sf::String& string, const Color& color, const Color& outline,
+        sf::Text create_text(const sf::String& string, const Color& color, const Color& outline,
             unsigned int thickness, sf::Text::Style style) const;
-        void updateGeometry() const;
+        void update_geometry() const;
         mutable std::vector<Line> m_lines;
         Font m_font;
-        unsigned int m_characterSize;
+        unsigned int m_character_size;
         mutable sf::FloatRect m_bounds;
     };
 }

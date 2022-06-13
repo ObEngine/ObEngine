@@ -57,7 +57,7 @@ namespace obe::graphics
          * \param surface RenderSurface where to render the handle
          * \param camera contains the offset for drawing the handle
          */
-        void draw_handle(RenderTarget& surface, const Scene::Camera& camera) const;
+        void draw_handle(RenderTarget& surface, const scene::Camera& camera) const;
         /**
          * \brief Get the blend color of the Sprite
          * \return A Color containing the blend color of the Sprite
@@ -126,7 +126,7 @@ namespace obe::graphics
          *         otherwise
          */
         [[nodiscard]] int get_y_scale_factor() const;
-        [[nodiscard]] bool get_anti_aliasing() const;
+        [[nodiscard]] bool is_anti_aliased() const;
         [[nodiscard]] bool has_shader() const;
         [[nodiscard]] vili::node schema() const override;
         /**
@@ -205,7 +205,7 @@ namespace obe::graphics
          */
         void use_texture_size();
 
-        void draw(RenderTarget& surface, const Scene::Camera& camera) override;
+        void draw(RenderTarget& surface, const scene::Camera& camera) override;
         void attach_resource_manager(engine::ResourceManager& resources) override;
         [[nodiscard]] std::string_view type() const override;
     };

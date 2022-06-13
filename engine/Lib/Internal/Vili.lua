@@ -15,15 +15,15 @@ function vili.object(t)
 end
 
 function vili.from_lua(t)
-    return obe.Script.ViliLuaBridge.luaToVili(t);
+    return obe.script.vili_lua_bridge.lua_to_vili(t);
 end
 
 function vili.to_lua(t)
-    return obe.Script.ViliLuaBridge.viliToLua(t);
+    return obe.script.vili_lua_bridge.vili_to_lua(t);
 end
 
 local function realpath(path)
-    local systemPath = obe.System.Path(path);
+    local systemPath = obe.system.Path(path);
     local findResult = systemPath:find();
     return findResult:path();
 end

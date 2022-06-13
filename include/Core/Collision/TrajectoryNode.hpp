@@ -16,14 +16,14 @@ namespace obe::collision
     {
     private:
         PolygonalCollider* m_probe = nullptr;
-        Scene::SceneNode& m_scene_node;
+        scene::SceneNode& m_scene_node;
         std::unordered_map<std::string, std::unique_ptr<Trajectory>> m_trajectories {};
 
     public:
-        explicit TrajectoryNode(Scene::SceneNode& scene_node);
+        explicit TrajectoryNode(scene::SceneNode& scene_node);
         Trajectory& add_trajectory(
             const std::string& id, Transform::Units unit = Transform::Units::SceneUnits);
-        [[nodiscard]] Scene::SceneNode& get_scene_node() const;
+        [[nodiscard]] scene::SceneNode& get_scene_node() const;
         [[nodiscard]] Trajectory& get_trajectory(const std::string& id) const;
         void remove_trajectory(const std::string& id);
         void set_probe(PolygonalCollider* probe);

@@ -5,17 +5,17 @@
 #include <Exception.hpp>
 #include <vector>
 
-namespace obe::System::Exceptions
+namespace obe::system::Exceptions
 {
     class ResourceNotFound : public Exception<ResourceNotFound>
     {
     public:
         using Exception::Exception;
-        ResourceNotFound(std::string_view path, std::string_view pathType,
+        ResourceNotFound(std::string_view path, std::string_view path_type,
             std::vector<std::string> mounts, DebugInfo info)
             : Exception(info)
         {
-            this->error("{} at path '{}' not found", pathType, path);
+            this->error("{} at path '{}' not found", path_type, path);
             this->hint("The following paths were used to search for the resource : ({})",
                 fmt::join(mounts, ", "));
         }
@@ -25,10 +25,10 @@ namespace obe::System::Exceptions
     {
     public:
         using Exception::Exception;
-        InvalidMouseButtonEnumValue(int enumValue, DebugInfo info)
+        InvalidMouseButtonEnumValue(int enum_value, DebugInfo info)
             : Exception(info)
         {
-            this->error("MouseButton enum should not have the following value : {}", enumValue);
+            this->error("MouseButton enum should not have the following value : {}", enum_value);
         }
     };
 
@@ -36,11 +36,11 @@ namespace obe::System::Exceptions
     {
     public:
         using Exception::Exception;
-        MountFileMissing(std::string_view currentPath, DebugInfo info)
+        MountFileMissing(std::string_view current_path, DebugInfo info)
             : Exception(info)
         {
             this->error(
-                "Could not find mount.vili file in the execution directory : '{}'", currentPath);
+                "Could not find mount.vili file in the execution directory : '{}'", current_path);
         }
     };
 
@@ -48,11 +48,11 @@ namespace obe::System::Exceptions
     {
     public:
         using Exception::Exception;
-        InvalidMountFile(std::string_view mountFilePath, DebugInfo info)
+        InvalidMountFile(std::string_view mount_file_path, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "An error occured while parsing 'mount.vili' file located at '{}'", mountFilePath);
+            this->error("An error occured while parsing 'mount.vili' file located at '{}'",
+                mount_file_path);
         }
     };
 
@@ -75,14 +75,13 @@ namespace obe::System::Exceptions
     public:
         using Exception::Exception;
         UnknownPackage(
-            std::string_view package, const std::vector<std::string>& allPackages, DebugInfo info)
+            std::string_view package, const std::vector<std::string>& all_packages, DebugInfo info)
             : Exception(info)
         {
             this->error("Impossible to get Package '{}', please check it is correctly installed");
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(package.data(), allPackages, 5);
-            std::transform(
-                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
+                = Utils::String::sortByDistance(package.data(), all_packages, 5);
+            std::ranges::transform(suggestions, suggestions.begin(), Utils::String::quote);
             this->hint("Maybe you meant to get one of these packages : ({})",
                 fmt::join(suggestions, ", "));
         }
@@ -115,31 +114,17 @@ namespace obe::System::Exceptions
     public:
         using Exception::Exception;
         UnknownProject(
-            std::string_view project, const std::vector<std::string>& allProjects, DebugInfo info)
+            std::string_view project, const std::vector<std::string>& all_projects, DebugInfo info)
             : Exception(info)
         {
             this->error("Impossible to find Project '{}', please check it is correctly "
                         "indexed",
                 project);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(project.data(), allProjects, 5);
-            std::transform(
-                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
+                = Utils::String::sortByDistance(project.data(), all_projects, 5);
+            std::ranges::transform(suggestions, suggestions.begin(), Utils::String::quote);
             this->hint("Maybe you meant to get one of these projects : ({})",
                 fmt::join(suggestions, ", "));
-        }
-    };
-
-    class UnknownStretchMode : public Exception<UnknownStretchMode>
-    {
-    public:
-        using Exception::Exception;
-        UnknownStretchMode(std::string_view stretchMode, DebugInfo info)
-            : Exception(info)
-        {
-            this->error("Stretch mode '{}' does not exist", stretchMode);
-            this->hint("Maybe you meant to get one of these modes : (None, Center, Fit, "
-                       "Stretch, KeepWidth, KeepHeight)");
         }
     };
 
@@ -148,14 +133,13 @@ namespace obe::System::Exceptions
     public:
         using Exception::Exception;
         UnknownPathPrefix(
-            std::string_view prefix, const std::vector<std::string> allPrefixes, DebugInfo info)
+            std::string_view prefix, const std::vector<std::string>& all_prefixes, DebugInfo info)
             : Exception(info)
         {
             this->error("Path prefix '{}' does not exist", prefix);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(prefix.data(), allPrefixes, 5);
-            std::transform(
-                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
+                = Utils::String::sortByDistance(prefix.data(), all_prefixes, 5);
+            std::ranges::transform(suggestions, suggestions.begin(), Utils::String::quote);
             this->hint("Maybe you meant to use one of these prefixes : ({})",
                 fmt::join(suggestions, ", "));
         }
@@ -179,7 +163,7 @@ namespace obe::System::Exceptions
         PathError(std::string_view prefix, std::string_view path, DebugInfo info)
             : Exception(info)
         {
-            this->error("An error occured while loading path '{}://{}'", prefix, path);
+            this->error("An error occurred while loading path '{}://{}'", prefix, path);
         }
     };
 
@@ -187,11 +171,11 @@ namespace obe::System::Exceptions
     {
     public:
         using Exception::Exception;
-        InvalidProjectFile(std::string_view projectFilePath, DebugInfo info)
+        InvalidProjectFile(std::string_view project_file_path, DebugInfo info)
             : Exception(info)
         {
-            this->error("An error occured while parsing 'project.vili' file located at '{}'",
-                projectFilePath);
+            this->error("An error occurred while parsing 'project.vili' file located at '{}'",
+                project_file_path);
         }
     };
 
@@ -202,7 +186,8 @@ namespace obe::System::Exceptions
         InvalidDeferredMountablePath(std::string_view prefix, DebugInfo info)
             : Exception(info)
         {
-            this->error("MountablePath with prefix '{}' can not be mounted as the basePath has not been resolved yet",
+            this->error("MountablePath with prefix '{}' can not be mounted as the basePath has not "
+                        "been resolved yet",
                 prefix);
         }
     };

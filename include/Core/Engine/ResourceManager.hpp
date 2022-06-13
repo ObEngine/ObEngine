@@ -9,7 +9,7 @@
 
 namespace obe
 {
-    namespace System
+    namespace system
     {
         class Path;
     }
@@ -44,8 +44,8 @@ namespace obe::engine
          * \param anti_aliasing Uses Anti-Aliasing for the texture when first loading it
          * \return A pointer to the texture stored in the cache
          */
-        const graphics::Texture& get_texture(const System::Path& path, bool anti_aliasing);
-        const graphics::Texture& get_texture(const System::Path& path);
+        const graphics::Texture& get_texture(const system::Path& path, bool anti_aliasing);
+        const graphics::Texture& get_texture(const system::Path& path);
 
         void clean();
     };

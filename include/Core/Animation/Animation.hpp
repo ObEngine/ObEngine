@@ -17,7 +17,7 @@ namespace obe
     {
         class Texture;
     }
-    namespace System
+    namespace system
     {
         class Path;
     }
@@ -105,8 +105,8 @@ namespace obe::animation
         std::string m_next_animation_name;
         bool m_over = false;
         AnimationStatus m_status = AnimationStatus::Play;
-        Time::TimeUnit m_clock = 0;
-        Time::TimeUnit m_sleep = 0;
+        time::TimeUnit m_clock = 0;
+        time::TimeUnit m_sleep = 0;
 
         void execute_instruction();
         void update_current_group();
@@ -181,7 +181,7 @@ namespace obe::animation
         std::unordered_map<std::string, std::unique_ptr<AnimationGroup>> m_groups;
 
         bool m_anti_aliasing = false;
-        Time::TimeUnit m_delay = 0;
+        time::TimeUnit m_delay = 0;
 
         std::vector<vili::node> m_code;
 
@@ -193,7 +193,7 @@ namespace obe::animation
 
         void load_meta(const vili::node& meta);
         void load_images(
-            const vili::node& images, const System::Path& path, engine::ResourceManager* resources);
+            const vili::node& images, const system::Path& path, engine::ResourceManager* resources);
         void load_groups(const vili::node& groups);
         void load_code(const vili::node& code);
 
@@ -230,7 +230,7 @@ namespace obe::animation
          *        the Animation
          * \return The default delay of the Animation in seconds.
          */
-        [[nodiscard]] Time::TimeUnit get_delay() const noexcept;
+        [[nodiscard]] time::TimeUnit get_delay() const noexcept;
         /**
          * \brief Get AnimationGroup pointer by groupName.
          *        It will throws a
@@ -308,7 +308,7 @@ namespace obe::animation
          * \param resources pointer to the ResourceManager
          *        that will load the textures for the Animation
          */
-        void load_animation(const System::Path& path, engine::ResourceManager* resources = nullptr);
+        void load_animation(const system::Path& path, engine::ResourceManager* resources = nullptr);
         /**
          * \brief Reset the Animation (Unselect current AnimationGroup and
          *        restart AnimationCode)
@@ -327,7 +327,7 @@ namespace obe::animation
         /**
          * \brief Gets the anti-aliasing status for the Animation
          */
-        [[nodiscard]] bool get_anti_aliasing() const noexcept;
+        [[nodiscard]] bool is_anti_aliased() const noexcept;
         [[nodiscard]] AnimationState make_state() const;
 
         [[nodiscard]] vili::node schema() const override;

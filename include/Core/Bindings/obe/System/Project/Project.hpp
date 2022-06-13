@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::System::Project::Bindings
+namespace obe::system::project::Bindings
 {
     void LoadClassProject(sol::state_view state);
     void LoadClassProjectURLs(sol::state_view state);

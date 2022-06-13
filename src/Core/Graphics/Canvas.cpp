@@ -79,13 +79,13 @@ namespace obe::graphics::canvas
     {
         Transform::UnitVector offset(Transform::Units::ScenePixels);
         if (h_align == TextHorizontalAlign::Center)
-            offset.x -= shape.get_global_bounds().getSize().x / 2;
+            offset.x -= shape.get_global_bounds().get_size().x / 2;
         else if (h_align == TextHorizontalAlign::Right)
-            offset.x -= shape.get_global_bounds().getSize().x;
+            offset.x -= shape.get_global_bounds().get_size().x;
         if (v_align == TextVerticalAlign::Center)
-            offset.y -= shape.get_global_bounds().getSize().y / 2;
+            offset.y -= shape.get_global_bounds().get_size().y / 2;
         else if (v_align == TextVerticalAlign::Bottom)
-            offset.y -= shape.get_global_bounds().getSize().y;
+            offset.y -= shape.get_global_bounds().get_size().y;
         shape.move(offset);
         target.draw(shape);
         shape.move(-offset);

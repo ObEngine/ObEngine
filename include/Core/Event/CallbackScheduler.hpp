@@ -20,9 +20,9 @@ namespace obe::event
     {
     private:
         Callback m_callback;
-        Time::TimeUnit m_after = 0;
-        Time::TimeUnit m_every = 0;
-        Time::TimeUnit m_start = 0;
+        time::TimeUnit m_after = 0;
+        time::TimeUnit m_every = 0;
+        time::TimeUnit m_start = 0;
         unsigned int m_times = 0;
         unsigned int m_current_times = 0;
         bool m_wait = false;

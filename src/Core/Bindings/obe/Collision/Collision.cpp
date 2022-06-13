@@ -121,7 +121,7 @@ namespace obe::collision::Bindings
         sol::usertype<obe::collision::TrajectoryNode> bindTrajectoryNode
             = CollisionNamespace.new_usertype<obe::collision::TrajectoryNode>("TrajectoryNode",
                 sol::call_constructor,
-                sol::constructors<obe::collision::TrajectoryNode(obe::Scene::SceneNode&)>());
+                sol::constructors<obe::collision::TrajectoryNode(obe::scene::SceneNode&)>());
         bindTrajectoryNode["add_trajectory"]
             = sol::overload([](obe::collision::TrajectoryNode* self, const std::string& id)
                                 -> obe::collision::Trajectory& { return self->add_trajectory(id); },

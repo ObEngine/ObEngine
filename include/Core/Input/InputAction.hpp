@@ -8,7 +8,7 @@
 #include <Time/Chronometer.hpp>
 #include <Types/Identifiable.hpp>
 
-namespace obe::Input
+namespace obe::input
 {
 
     /**
@@ -20,28 +20,28 @@ namespace obe::Input
         event::EventGroup* e_actions;
         std::vector<InputCondition> m_conditions;
         std::vector<std::string> m_contexts;
-        Time::Chronometer m_interval;
-        Time::Chronometer m_repeat;
+        time::Chronometer m_interval;
+        time::Chronometer m_repeat;
         bool m_state = true;
         bool m_enabled = false;
 
     public:
         /**
          * \brief Creates a new InputAction
-         * \param actionsEvents Pointer to the Actions EventGroup
+         * \param actions_events Pointer to the Actions EventGroup
          * \param id Id of the InputAction
          */
-        explicit InputAction(event::EventGroup* actionsEvents, const std::string& id);
+        explicit InputAction(event::EventGroup* actions_events, const std::string& id);
         /**
          * \brief Adds an InputCondition to the InputAction
          * \param condition An InputCondition to add to the InputAction
          */
-        void addCondition(const InputCondition& condition);
+        void add_condition(const InputCondition& condition);
         /**
          * \brief Adds a context to the InputAction
          * \param context New context for the InputAction
          */
-        void addContext(const std::string& context);
+        void add_context(const std::string& context);
         /**
          * \brief Check if the InputAction is enabled
          * \return true if the InputAction is enabled, false otherwise
@@ -50,47 +50,47 @@ namespace obe::Input
         /**
          * \brief Clears all the InputCondition of the InputAction
          */
-        void clearConditions();
+        void clear_conditions();
         /**
          * \brief Get all the contexts the InputAction is in
          * \return A std::vector of std::string containing all the contexts
          */
-        [[nodiscard]] std::vector<std::string> getContexts() const;
+        [[nodiscard]] std::vector<std::string> get_contexts() const;
         /**
          * \brief Gets the delay required between two InputAction triggerings
          * \return The delay required between two InputAction triggerings (in
          * ms)
          */
-        [[nodiscard]] Time::TimeUnit getInterval() const;
+        [[nodiscard]] time::TimeUnit get_interval() const;
         /**
          * \brief Gets the delay between two 'Hold' callbacks activations
          * \return The delay required between two 'Hold' callbacks activations
          */
-        [[nodiscard]] Time::TimeUnit getRepeat() const;
+        [[nodiscard]] time::TimeUnit get_repeat() const;
         /**
          * \brief Sets the delay required between two InputAction triggerings
          * \param delay Delay required between two InputAction triggerings
          *        (in ms)
          */
-        void setInterval(Time::TimeUnit delay);
+        void set_interval(time::TimeUnit delay);
         /**
          * \brief Sets the delay between two 'Hold' callbacks activations
          * \param delay Delay required between two 'Hold' callbacks activations
          */
-        void setRepeat(Time::TimeUnit delay);
+        void set_repeat(time::TimeUnit delay);
         /**
          * \brief Updates the InputAction
          */
         void update();
-        [[nodiscard]] std::vector<InputButton*> getInvolvedButtons() const;
+        [[nodiscard]] std::vector<InputButton*> get_involved_buttons() const;
 
         void enable(const std::vector<InputButtonMonitorPtr>& monitors);
         void disable();
-        bool isEnabled() const;
+        bool is_enabled() const;
     };
-} // namespace obe::Input
+} // namespace obe::input
 
-namespace obe::events::Actions
+namespace obe::events::actions
 {
     /**
      * \brief Event containing information about an Action that has been triggered
@@ -98,7 +98,7 @@ namespace obe::events::Actions
      */
     struct Action
     {
-        Input::InputAction& action;
-        Input::InputCondition& condition;
+        input::InputAction& action;
+        input::InputCondition& condition;
     };
 };

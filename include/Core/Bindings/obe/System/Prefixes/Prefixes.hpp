@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::System::Prefixes::Bindings
+namespace obe::system::prefixes::Bindings
 {
     void LoadGlobalObe(sol::state_view state);
     void LoadGlobalCwd(sol::state_view state);

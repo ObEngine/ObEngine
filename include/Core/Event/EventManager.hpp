@@ -18,7 +18,7 @@ namespace obe::event
     private:
         std::unordered_map<std::string, std::unique_ptr<EventNamespace>> m_namespaces;
         std::vector<std::unique_ptr<CallbackScheduler>> m_schedulers;
-        Time::Chronometer m_chrono;
+        time::Chronometer m_chrono;
 
     public:
         explicit EventManager();

@@ -1,22 +1,21 @@
 #include <Debug/Logger.hpp>
 #include <Network/TcpServer.hpp>
 
-namespace obe::Network
+namespace obe::network
 {
-    TcpServer::TcpServer(event::EventNamespace& eventNamespace, unsigned short port,
-        std::string triggerNamespace, std::string triggerGroup)
+    TcpServer::TcpServer(event::EventNamespace& event_namespace, unsigned short port)
     {
-        /*if (!triggerNamespace.empty())
+        /*if (!event_namespace.empty())
         {
             m_socketTriggers
-                = triggers.createTriggerGroup(triggerNamespace, triggerGroup);
+                = triggers.createTriggerGroup(event_namespace, event_group);
             m_socketTriggers->add("DataReceived").add("Connected").add("Disconnected");
         }
         m_listener.setBlocking(false);
         m_listener.listen(port);
 
         m_clients.push_back(std::make_unique<sf::TcpSocket>());
-        m_data.resize(m_maxBufferSize);*/
+        m_data.resize(m_max_buffer_size);*/
     }
 
     void TcpServer::update()
@@ -39,7 +38,7 @@ namespace obe::Network
         for (auto& client : m_clients)
         {
             std::size_t receivedDataSize = 0;
-            m_status = client->receive(m_data.data(), m_maxBufferSize, receivedDataSize);
+            m_status = client->receive(m_data.data(), m_max_buffer_size, receivedDataSize);
             if (m_status == sf::Socket::Done)
             {
                 if (m_socketTriggers)
@@ -62,10 +61,10 @@ namespace obe::Network
         }*/
     }
 
-    void TcpServer::setBufferSize(unsigned int maxBufferSize)
+    void TcpServer::setBufferSize(unsigned int max_buffer_size)
     {
-        m_maxBufferSize = maxBufferSize;
-        m_data.resize(m_maxBufferSize);
+        m_max_buffer_size = max_buffer_size;
+        m_data.resize(m_max_buffer_size);
     }
 
     /*std::vector<sf::TcpSocket&> TcpServer::getClients()
@@ -77,4 +76,4 @@ namespace obe::Network
         }
         return clientReferences;
     }*/
-} // namespace obe::Network
+} // namespace obe::network

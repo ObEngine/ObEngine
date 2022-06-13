@@ -3,12 +3,12 @@
 #include <SFML/Network/TcpSocket.hpp>
 #include <string>
 
-namespace obe::Network
+namespace obe::network
 {
     class LuaPacket
     {
     private:
-        std::string m_serializedObject;
+        std::string m_serialized_object;
 
     public:
     };
@@ -17,4 +17,4 @@ namespace obe::Network
     {
     public:
     };
-} // namespace obe::Network
+} // namespace obe::network

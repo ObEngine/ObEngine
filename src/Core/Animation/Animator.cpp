@@ -16,30 +16,30 @@ namespace obe::animation
 
         if (m_target_scale_mode == AnimatorTargetScaleMode::KeepRatio)
         {
-            if (m_target->getSize().x >= m_target->getSize().y)
+            if (m_target->get_size().x >= m_target->get_size().y)
             {
-                m_target->setSize(Transform::UnitVector(m_target->getSize().x,
-                    static_cast<float>(texture.getSize().y)
-                        / static_cast<float>(texture.getSize().x) * m_target->getSize().x));
+                m_target->setSize(Transform::UnitVector(m_target->get_size().x,
+                    static_cast<float>(texture.get_size().y)
+                        / static_cast<float>(texture.get_size().x) * m_target->get_size().x));
             }
             else
             {
-                m_target->setSize(Transform::UnitVector(static_cast<float>(texture.getSize().x)
-                        / static_cast<float>(texture.getSize().y) * m_target->getSize().y,
-                    m_target->getSize().y));
+                m_target->setSize(Transform::UnitVector(static_cast<float>(texture.get_size().x)
+                        / static_cast<float>(texture.get_size().y) * m_target->get_size().y,
+                    m_target->get_size().y));
             }
         }
         else if (m_target_scale_mode == AnimatorTargetScaleMode::FixedWidth)
         {
-            m_target->setSize(Transform::UnitVector(m_target->getSize().x,
-                static_cast<float>(texture.getSize().y) / static_cast<float>(texture.getSize().x)
-                    * m_target->getSize().x));
+            m_target->setSize(Transform::UnitVector(m_target->get_size().x,
+                static_cast<float>(texture.get_size().y) / static_cast<float>(texture.get_size().x)
+                    * m_target->get_size().x));
         }
         else if (m_target_scale_mode == AnimatorTargetScaleMode::FixedHeight)
         {
-            m_target->setSize(Transform::UnitVector(static_cast<float>(texture.getSize().x)
-                    / static_cast<float>(texture.getSize().y) * m_target->getSize().y,
-                m_target->getSize().y));
+            m_target->setSize(Transform::UnitVector(static_cast<float>(texture.get_size().x)
+                    / static_cast<float>(texture.get_size().y) * m_target->get_size().y,
+                m_target->get_size().y));
         }
         else if (m_target_scale_mode == AnimatorTargetScaleMode::TextureSize)
             m_target->use_texture_size();
@@ -82,7 +82,7 @@ namespace obe::animation
 
     void Animator::clear() noexcept
     {
-        debug::Log->trace("<Animator> Clearing Animator at '{0}'", m_path.toString());
+        debug::Log->trace("<Animator> Clearing Animator at '{0}'", m_path.to_string());
         m_animations.clear();
         m_default_state.reset();
     }
@@ -92,7 +92,7 @@ namespace obe::animation
         if (m_animations.find(animation_name) != m_animations.end())
             return *m_animations.at(animation_name).get();
         throw exceptions::UnknownAnimation(
-            m_path.toString(), animation_name, this->get_all_animations_names(), EXC_INFO);
+            m_path.to_string(), animation_name, this->get_all_animations_names(), EXC_INFO);
     }
 
     std::vector<std::string> Animator::get_all_animations_names() const
@@ -121,7 +121,7 @@ namespace obe::animation
         if (m_parent.m_animations.find(key) == m_parent.m_animations.end())
         {
             throw exceptions::UnknownAnimation(
-                m_parent.m_path.toString(), key, m_parent.get_all_animations_names(), EXC_INFO);
+                m_parent.m_path.to_string(), key, m_parent.get_all_animations_names(), EXC_INFO);
         }
         if (key != this->get_current_animation_name())
         {
@@ -147,7 +147,7 @@ namespace obe::animation
     void Animator::set_animation(const std::string& key)
     {
         debug::Log->trace("<Animator> Set animation Key '{0}' for Animator at {1} {2}", key,
-            m_path.toString(), m_animations.size());
+            m_path.to_string(), m_animations.size());
         m_default_state.set_animation(key);
     }
 
@@ -161,13 +161,13 @@ namespace obe::animation
         m_default_state.set_paused(pause);
     }
 
-    void Animator::load(System::Path path, engine::ResourceManager* resources)
+    void Animator::load(system::Path path, engine::ResourceManager* resources)
     {
         m_path = path;
-        debug::Log->debug("<Animator> Loading Animator at {0}", m_path.toString());
-        std::vector<System::FindResult> directories = m_path.list(System::PathType::Directory);
+        debug::Log->debug("<Animator> Loading Animator at {0}", m_path.to_string());
+        std::vector<system::FindResult> directories = m_path.list(system::PathType::Directory);
         vili::node animator_cfg_file;
-        auto found_animator_cfg = m_path.add("animator.cfg.vili").find(System::PathType::File);
+        auto found_animator_cfg = m_path.add("animator.cfg.vili").find(system::PathType::File);
         if (found_animator_cfg.success())
         {
             animator_cfg_file = vili::parser::from_file(found_animator_cfg.path());
@@ -177,9 +177,9 @@ namespace obe::animation
             std::unique_ptr<Animation> temp_animation = std::make_unique<Animation>();
             if (m_default_state.get_target())
             {
-                temp_animation->set_anti_aliasing(m_default_state.get_target()->get_anti_aliasing());
+                temp_animation->set_anti_aliasing(m_default_state.get_target()->is_anti_aliased());
             }
-            temp_animation->load_animation(path.add(System::Path(directory.path()).last()), resources);
+            temp_animation->load_animation(path.add(system::Path(directory.path()).last()), resources);
             if (!animator_cfg_file.is_null())
             {
                 if (animator_cfg_file.contains("all"))
@@ -201,15 +201,15 @@ namespace obe::animation
     {
         if (!m_paused)
         {
-            debug::Log->trace("<Animator> Updating Animator at {0}", m_parent.m_path.toString());
+            debug::Log->trace("<Animator> Updating Animator at {0}", m_parent.m_path.to_string());
             if (m_current_animation == nullptr)
-                throw exceptions::NoSelectedAnimation(m_parent.m_path.toString(), EXC_INFO);
+                throw exceptions::NoSelectedAnimation(m_parent.m_path.to_string(), EXC_INFO);
             if (m_current_animation->get_status() == AnimationStatus::Call)
             {
                 m_current_animation->reset();
                 const std::string next_animation = m_current_animation->get_called_animation();
                 if (m_parent.m_animations.find(next_animation) == m_parent.m_animations.end())
-                    throw exceptions::UnknownAnimation(m_parent.m_path.toString(), next_animation,
+                    throw exceptions::UnknownAnimation(m_parent.m_path.to_string(), next_animation,
                         m_parent.get_all_animations_names(), EXC_INFO);
                 m_current_animation = m_states.at(next_animation).get();
             }
@@ -239,7 +239,7 @@ namespace obe::animation
         m_default_state.set_target(sprite, target_scale_mode);
     }
 
-    System::Path Animator::get_filesystem_path() const
+    system::Path Animator::get_filesystem_path() const
     {
         return m_path;
     }
@@ -260,7 +260,7 @@ namespace obe::animation
     {
         if (m_current_animation)
             return m_current_animation->get_texture();
-        throw exceptions::NoSelectedAnimation(m_parent.get_filesystem_path().toString(), EXC_INFO);
+        throw exceptions::NoSelectedAnimation(m_parent.get_filesystem_path().to_string(), EXC_INFO);
     }
 
     const Animator& AnimatorState::get_animator() const

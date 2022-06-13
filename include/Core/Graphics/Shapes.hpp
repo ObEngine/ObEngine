@@ -170,7 +170,7 @@ namespace obe::graphics::shapes
     {
         const Transform::UnitVector pixel_position
             = rect.getPosition().to<Transform::Units::ScenePixels>();
-        const Transform::UnitVector pixel_size = rect.getSize().to<Transform::Units::ScenePixels>();
+        const Transform::UnitVector pixel_size = rect.get_size().to<Transform::Units::ScenePixels>();
         const sf::IntRect pixel_rect(pixel_position.x, pixel_position.y, pixel_size.x, pixel_size.y);
         static_cast<T&>(*this).shape.setTextureRect(pixel_rect);
     }

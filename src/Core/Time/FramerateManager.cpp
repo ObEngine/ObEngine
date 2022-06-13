@@ -3,116 +3,116 @@
 #include <Debug/Logger.hpp>
 #include <Time/FramerateManager.hpp>
 
-namespace obe::Time
+namespace obe::time
 {
-    FramerateManager::FramerateManager(System::Window& window)
+    FramerateManager::FramerateManager(system::Window& window)
         : m_window(window)
+        , m_clock(epoch())
+        , m_current_frame(0)
+        , m_frame_progression(0)
+        , m_need_to_render(false)
     {
-        m_clock = epoch();
-        m_currentFrame = 0;
-        m_frameProgression = 0;
-        m_needToRender = false;
     }
 
     void FramerateManager::configure(vili::node& config)
     {
         if (config.contains("framerateTarget"))
         {
-            m_limitFramerate = true;
-            m_framerateTarget = config["framerateTarget"];
+            m_framerate_target = config["framerateTarget"];
         }
         if (config.contains("vsync"))
         {
-            m_vsyncEnabled = config["vsync"];
+            m_vsync_enabled = config["vsync"];
         }
         if (config.contains("syncUpdateToRender"))
         {
-            m_syncUpdateRender = config["syncUpdateToRender"];
+            m_sync_update_render = config["syncUpdateToRender"];
         }
-        m_reqFramerateInterval = 1.0 / static_cast<double>(m_framerateTarget);
         debug::Log->info("Framerate parameters : {} FPS {}, V-sync {}, Update Lock {}",
-            m_framerateTarget, (m_limitFramerate) ? "capped" : "uncapped",
-            (m_vsyncEnabled) ? "enabled" : "disabled",
-            (m_syncUpdateRender) ? "enabled" : "disabled");
+            m_framerate_target.value_or(0),
+            (m_framerate_target.has_value()) ? "capped" : "uncapped",
+            (m_vsync_enabled) ? "enabled" : "disabled",
+            (m_sync_update_render) ? "enabled" : "disabled");
 
-        m_window.setVerticalSyncEnabled(m_vsyncEnabled);
+        m_window.set_vertical_sync_enabled(m_vsync_enabled);
     }
 
     void FramerateManager::update()
     {
-        const Time::TimeUnit sinceLastUpdate = epoch() - m_clock;
-        if (!m_limitFramerate || sinceLastUpdate > m_reqFramerateInterval)
+        const time::TimeUnit since_last_update = epoch() - m_clock;
+        const time::TimeUnit expected_frame_time
+            = 1.0 / static_cast<double>(m_framerate_target.value());
+        if (!m_framerate_target || since_last_update > expected_frame_time)
         {
-            m_needToRender = true;
-            m_deltaTime = epoch() - m_clock;
+            m_need_to_render = true;
+            m_delta_time = epoch() - m_clock;
             m_clock = epoch();
         }
-        else if (!m_syncUpdateRender)
+        else if (!m_sync_update_render)
         {
-            std::this_thread::sleep_for(
-                std::chrono::duration<double>(m_reqFramerateInterval / 20.f));
+            std::this_thread::sleep_for(std::chrono::duration<double>(expected_frame_time / 20.f));
         }
     }
 
-    TimeUnit FramerateManager::getDeltaTime() const
+    TimeUnit FramerateManager::get_delta_time() const
     {
-        return m_deltaTime;
+        return m_delta_time;
     }
 
-    double FramerateManager::getGameSpeed() const
+    double FramerateManager::get_game_speed() const
     {
-        return m_deltaTime * m_speedCoefficient;
+        return m_delta_time * m_speed_coefficient;
     }
 
-    double FramerateManager::getSpeedCoefficient() const
+    double FramerateManager::get_speed_coefficient() const
     {
-        return m_speedCoefficient;
+        return m_speed_coefficient;
     }
 
-    bool FramerateManager::isFramerateLimited() const
+    bool FramerateManager::is_framerate_limited() const
     {
-        return m_limitFramerate;
+        return m_framerate_target.has_value();
     }
 
-    unsigned int FramerateManager::getFramerateTarget() const
+    unsigned int FramerateManager::get_framerate_target() const
     {
-        return m_framerateTarget;
+        return m_framerate_target.value_or(0);
     }
 
-    bool FramerateManager::isVSyncEnabled() const
+    bool FramerateManager::is_vsync_enabled() const
     {
-        return m_vsyncEnabled;
+        return m_vsync_enabled;
     }
 
-    void FramerateManager::setSpeedCoefficient(const double speed)
+    void FramerateManager::set_speed_coefficient(const double speed)
     {
-        m_speedCoefficient = speed;
+        m_speed_coefficient = speed;
     }
 
-    void FramerateManager::limitFramerate(const bool state)
+    void FramerateManager::set_framerate_target(const unsigned int limit)
     {
-        m_limitFramerate = state;
+        if (limit == 0)
+        {
+            m_framerate_target = std::nullopt;
+            return;
+        }
+        m_framerate_target = limit;
     }
 
-    void FramerateManager::setFramerateTarget(const unsigned int limit)
+    void FramerateManager::set_vsync_enabled(const bool vsync)
     {
-        m_framerateTarget = limit;
+        m_vsync_enabled = vsync;
+        m_window.set_vertical_sync_enabled(vsync);
     }
 
-    void FramerateManager::setVSyncEnabled(const bool vsync)
+    bool FramerateManager::should_render() const
     {
-        m_vsyncEnabled = vsync;
-        m_window.setVerticalSyncEnabled(vsync);
+        return (!m_framerate_target || m_need_to_render);
     }
 
-    bool FramerateManager::doRender() const
+    bool FramerateManager::should_update() const
     {
-        return (!m_limitFramerate || m_needToRender);
-    }
-
-    bool FramerateManager::doUpdate() const
-    {
-        return (!m_syncUpdateRender || !m_limitFramerate || m_needToRender);
+        return (!m_sync_update_render || !m_framerate_target || m_need_to_render);
     }
 
     void FramerateManager::start()
@@ -122,6 +122,6 @@ namespace obe::Time
 
     void FramerateManager::reset()
     {
-        m_needToRender = false;
+        m_need_to_render = false;
     }
-} // namespace obe::Time
+} // namespace obe::time

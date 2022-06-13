@@ -1,20 +1,20 @@
 #include <Input/InputCondition.hpp>
 
-namespace obe::Input
+namespace obe::input
 {
 
-    InputCombination InputCondition::getCombination() const
+    InputCombination InputCondition::get_combination() const
     {
         return m_combination;
     }
 
-    InputButtonState InputCondition::getButtonState(InputButton* button) const
+    InputButtonState InputCondition::get_button_state(InputButton* button) const
     {
         for (const InputButtonMonitorPtr& monitor : m_monitors)
         {
-            if (&monitor->getButton() == button)
+            if (&monitor->get_button() == button)
             {
-                return monitor->getState();
+                return monitor->get_state();
             }
         }
     }
@@ -23,13 +23,13 @@ namespace obe::Input
     {
     }
 
-    void InputCondition::addCombinationElement(const InputCombinationElement combinationElement)
+    void InputCondition::add_combination_element(const InputCombinationElement combination_element)
     {
-        m_combination.push_back(combinationElement);
+        m_combination.push_back(combination_element);
         m_enabled = true;
     }
 
-    void InputCondition::setCombination(const InputCombination& combination)
+    void InputCondition::set_combination(const InputCombination& combination)
     {
         m_combination = combination;
         m_enabled = true;
@@ -42,7 +42,7 @@ namespace obe::Input
         {
             for (const InputCombinationElement& combination : m_combination)
             {
-                if (&monitor->getButton() == combination.first)
+                if (&monitor->get_button() == combination.first)
                 {
                     m_monitors.push_back(monitor);
                 }
@@ -56,7 +56,7 @@ namespace obe::Input
         m_monitors.clear();
     }
 
-    bool InputCondition::isEnabled() const
+    bool InputCondition::is_enabled() const
     {
         return m_enabled;
     }
@@ -65,16 +65,16 @@ namespace obe::Input
     {
         if (!m_enabled)
             return false;
-        bool conditionOk = true;
+        bool condition_ok = true;
         for (const InputCombinationElement& element : m_combination)
         {
-            if (!(element.second & getButtonState(element.first)))
+            if (!(element.second & get_button_state(element.first)))
             {
-                conditionOk = false;
+                condition_ok = false;
                 break;
             }
         }
-        return conditionOk;
+        return condition_ok;
     }
 
     void InputCondition::clear()
@@ -82,4 +82,4 @@ namespace obe::Input
         m_combination.clear();
         m_enabled = false;
     }
-} // namespace obe::Input
+} // namespace obe::input

@@ -33,7 +33,7 @@ local function make_prefix_searcher(prefix)
 
         module_name = module_name .. '.lua';
 
-        local find_result = obe.System.Path(module_name):find();
+        local find_result = obe.system.Path(module_name):find();
         if find_result:success() then
             local loadfile_env = setmetatable(
                 {require = make_base_require(module_prefix or prefix)}, {__index = _G}

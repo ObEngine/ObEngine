@@ -4,14 +4,14 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::events::Keys::Bindings
+namespace obe::events::keys::Bindings
 {
     void LoadClassStateChanged(sol::state_view state)
     {
-        sol::table KeysNamespace = state["obe"]["events"]["Keys"].get<sol::table>();
-        sol::usertype<obe::events::Keys::StateChanged> bindStateChanged
-            = KeysNamespace.new_usertype<obe::events::Keys::StateChanged>("StateChanged");
-        bindStateChanged["state"] = &obe::events::Keys::StateChanged::state;
-        bindStateChanged["previousState"] = &obe::events::Keys::StateChanged::previousState;
+        sol::table KeysNamespace = state["obe"]["events"]["keys"].get<sol::table>();
+        sol::usertype<obe::events::keys::StateChanged> bindStateChanged
+            = KeysNamespace.new_usertype<obe::events::keys::StateChanged>("StateChanged");
+        bindStateChanged["state"] = &obe::events::keys::StateChanged::state;
+        bindStateChanged["previous_state"] = &obe::events::keys::StateChanged::previous_state;
     }
 };

@@ -3,54 +3,54 @@
 #include <Input/InputAction.hpp>
 #include <Utils/VectorUtils.hpp>
 
-namespace obe::Input
+namespace obe::input
 {
-    InputAction::InputAction(event::EventGroup* actionsEvents, const std::string& id)
+    InputAction::InputAction(event::EventGroup* actions_events, const std::string& id)
         : Identifiable(id)
     {
-        e_actions = actionsEvents;
-        e_actions->add<events::Actions::Action>(id);
+        e_actions = actions_events;
+        e_actions->add<events::actions::Action>(id);
     }
 
-    void InputAction::addCondition(const InputCondition& condition)
+    void InputAction::add_condition(const InputCondition& condition)
     {
         m_conditions.push_back(condition);
     }
 
-    void InputAction::clearConditions()
+    void InputAction::clear_conditions()
     {
         m_conditions.clear();
     }
 
-    std::vector<std::string> InputAction::getContexts() const
+    std::vector<std::string> InputAction::get_contexts() const
     {
         return m_contexts;
     }
 
-    void InputAction::addContext(const std::string& context)
+    void InputAction::add_context(const std::string& context)
     {
         if (!Utils::Vector::contains(context, m_contexts))
             m_contexts.push_back(context);
     }
 
-    void InputAction::setInterval(Time::TimeUnit delay)
+    void InputAction::set_interval(time::TimeUnit delay)
     {
-        m_interval.setLimit(delay);
+        m_interval.set_limit(delay);
     }
 
-    Time::TimeUnit InputAction::getInterval() const
+    time::TimeUnit InputAction::get_interval() const
     {
-        return m_interval.getLimit();
+        return m_interval.get_limit();
     }
 
-    void InputAction::setRepeat(Time::TimeUnit delay)
+    void InputAction::set_repeat(time::TimeUnit delay)
     {
-        m_repeat.setLimit(delay);
+        m_repeat.set_limit(delay);
     }
 
-    Time::TimeUnit InputAction::getRepeat() const
+    time::TimeUnit InputAction::get_repeat() const
     {
-        return m_repeat.getLimit();
+        return m_repeat.get_limit();
     }
 
     void InputAction::update()
@@ -63,16 +63,16 @@ namespace obe::Input
             {
                 if (m_state)
                 {
-                    if (m_repeat.over()) // Reset repeat when combination is unchecked <REVISION>
+                    if (m_repeat.is_over()) // Reset repeat when combination is unchecked <REVISION>
                     {
                         m_repeat.reset();
-                        e_actions->trigger(m_id, events::Actions::Action { *this, condition });
+                        e_actions->trigger(m_id, events::actions::Action { *this, condition });
                     }
                 }
                 else
                 {
                     if (m_interval
-                            .over()) // What is this for, when does m_state goes back to false ? <REVISION>
+                            .is_over()) // What is this for, when does m_state goes back to false ? <REVISION>
                     {
                         m_interval.reset();
                         m_state = true;
@@ -86,12 +86,12 @@ namespace obe::Input
         }
     }
 
-    std::vector<InputButton*> InputAction::getInvolvedButtons() const
+    std::vector<InputButton*> InputAction::get_involved_buttons() const
     {
         std::vector<InputButton*> involvedButtons;
         for (const InputCondition& condition : m_conditions)
         {
-            for (const InputCombinationElement& combinationElement : condition.getCombination())
+            for (const InputCombinationElement& combinationElement : condition.get_combination())
             {
                 involvedButtons.push_back(combinationElement.first);
             }
@@ -117,7 +117,7 @@ namespace obe::Input
         }
     }
 
-    bool InputAction::isEnabled() const
+    bool InputAction::is_enabled() const
     {
         return m_enabled;
     }
@@ -132,7 +132,7 @@ namespace obe::Input
             {
                 if (m_state)
                 {
-                    if (m_repeat.over())
+                    if (m_repeat.is_over())
                     {
                         return true;
                     }
@@ -141,4 +141,4 @@ namespace obe::Input
         }
         return false;
     }
-} // namespace obe::Input
+} // namespace obe::input

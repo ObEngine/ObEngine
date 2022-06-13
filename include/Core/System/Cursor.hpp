@@ -12,15 +12,15 @@
 #include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
 
-namespace obe::events::Cursor
+namespace obe::events::cursor
 {
     struct Move
     {
         static constexpr std::string_view id = "Move";
         int x;
         int y;
-        int previousX;
-        int previousY;
+        int previous_x;
+        int previous_y;
     };
 
     struct Press
@@ -54,7 +54,7 @@ namespace obe::events::Cursor
     };
 }
 
-namespace obe::System
+namespace obe::system
 {
     enum class CursorType // taken from sf::Cursor::Type
     {
@@ -85,23 +85,23 @@ namespace obe::System
         /**
          * \brief Set cursor appearance and hotspot from an image file
          * \param filename Image file to use for the cursor
-         * \param hotspotX X coordinate on image (in pixels) of the cursor hotspot
-         * \param hotspotY Y coordinate on image (in pixels) of the cursor hotspot
+         * \param hotspot_x X coordinate on image (in pixels) of the cursor hotspot
+         * \param hotspot_y Y coordinate on image (in pixels) of the cursor hotspot
          * \return true if loading succeeded, false otherwise
          */
-        bool loadFromFile(
-            const std::string& filename, unsigned int hotspotX, unsigned int hotspotY);
+        bool load_from_file(
+            const std::string& filename, unsigned int hotspot_x, unsigned int hotspot_y);
         /**
          * \brief Loads a native system cursor
          * \param type Native system cursor type
          * \return true if loading succeeded, false otherwise
          */
-        bool loadFromSystem(CursorType type);
+        bool load_from_system(CursorType type);
         /**
          * \nobind
          * \brief Returns cursor shared pointer
          */
-        [[nodiscard]] std::shared_ptr<sf::Cursor> getPtr() const;
+        [[nodiscard]] std::shared_ptr<sf::Cursor> get_ptr() const;
     };
 
     /**
@@ -110,18 +110,18 @@ namespace obe::System
     class Cursor
     {
     private:
-        sf::Vector2i m_saveOldPos;
+        sf::Vector2i m_old_position;
         int m_x = 0;
         int m_y = 0;
-        int m_constrainedX = 0;
-        int m_constrainedY = 0;
+        int m_constrained_x = 0;
+        int m_constrained_y = 0;
         bool m_visible = true;
-        System::Window& m_window;
+        system::Window& m_window;
         event::EventGroupPtr e_cursor;
         std::function<std::pair<int, int>(Cursor*)> m_constraint;
-        std::function<bool()> m_constraintCondition;
-        std::map<sf::Mouse::Button, bool> m_buttonState;
-        std::shared_ptr<sf::Cursor> m_customCursor;
+        std::function<bool()> m_constraint_condition;
+        std::map<sf::Mouse::Button, bool> m_button_state;
+        std::shared_ptr<sf::Cursor> m_custom_cursor;
 
     public:
         using PositionConstraint = std::function<std::pair<int, int>(Cursor* cursor)>;
@@ -129,43 +129,43 @@ namespace obe::System
         /**
          * \brief Creates a Cursor
          */
-        explicit Cursor(System::Window& window, event::EventNamespace& eventNamespace);
+        explicit Cursor(system::Window& window, event::EventNamespace& event_namespace);
         /**
          * \brief Gets the x Coordinate of the Cursor Position (Constrained)
          * \return An int containing the x Coordinate of the Cursor Position
          */
-        [[nodiscard]] int getConstrainedX() const;
+        [[nodiscard]] int get_constrained_x() const;
         /**
          * \brief Gets the y Coordinate of the Cursor Position (Constrained)
          * \return An int containing the y Coordinate of the Cursor Position
          */
-        [[nodiscard]] int getConstrainedY() const;
+        [[nodiscard]] int get_constrained_y() const;
         /**
          * \brief Gets the x Coordinate of the raw (System) position of the
          *        Cursor (Unconstrained)
          * \return An int containing the x Coordinate of
          *         the Cursor Position
          */
-        [[nodiscard]] int getX() const;
+        [[nodiscard]] int get_x() const;
         /**
          * \brief Gets the y Coordinate of the raw (System) position of the
          *        Cursor (Unconstrained)
          * \return An int containing the y Coordinate of
          *         the Cursor Position
          */
-        [[nodiscard]] int getY() const;
+        [[nodiscard]] int get_y() const;
         /**
          * \brief Sets the x Coordinate of the Cursor Position
          * \param x An int containing the x Coordinate of the new Cursor
          *        Position
          */
-        void setX(int x);
+        void set_x(int x);
         /**
          * \brief Sets the y Coordinate of the Cursor Position
          * \param y An int containing the y Coordinate of the new Cursor
          *        Position
          */
-        void setY(int y);
+        void set_y(int y);
         /**
          * \brief Sets the Position of the Cursor
          * \param x An int containing the x Coordinate of the new Cursor
@@ -173,15 +173,15 @@ namespace obe::System
          * \param y An int containing the y Coordinate of the new
          *        Cursor Position
          */
-        void setPosition(int x, int y);
+        void set_position(int x, int y);
 
         void show();
         void hide();
-        void setVisible(bool visible);
-        [[nodiscard]] bool isVisible() const;
+        void set_visible(bool visible);
+        [[nodiscard]] bool is_visible() const;
 
-        [[nodiscard]] Transform::UnitVector getPosition() const;
-        [[nodiscard]] Transform::UnitVector getScenePosition() const;
+        [[nodiscard]] Transform::UnitVector get_position() const;
+        [[nodiscard]] Transform::UnitVector get_scene_position() const;
         /**
          * \brief Updates the Cursor
          */
@@ -193,24 +193,24 @@ namespace obe::System
          *        parameter
          * \param condition condition for the constraint to apply
          */
-        void setConstraint(
+        void set_constraint(
             const PositionConstraint& constraint, ConstraintCondition condition = []() { return true; });
-        bool isPressed(sf::Mouse::Button button) const;
+        bool is_pressed(sf::Mouse::Button button) const;
         /**
          * \brief Change the cursor
-         * \param newCursor CursorModel defining the cursor to display
+         * \param new_cursor CursorModel defining the cursor to display
          */
-        void setCursor(const System::CursorModel& newCursor);
+        void set_cursor(const system::CursorModel& new_cursor);
     };
 
     /**
      * \brief Some Cursor default constraints
      */
-    namespace Constraints
+    namespace constraints
     {
         /**
          * \brief Unconstrained position
          */
         extern std::function<std::pair<int, int>(Cursor*)> Default;
-    } // namespace Constraints
-} // namespace obe::System
+    } // namespace constraints
+} // namespace obe::system

@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::System::Bindings
+namespace obe::system::Bindings
 {
     void LoadClassContextualPathFactory(sol::state_view state);
     void LoadClassCursor(sol::state_view state);
@@ -21,5 +21,4 @@ namespace obe::System::Bindings
     void LoadEnumWindowContext(sol::state_view state);
     void LoadEnumStretchMode(sol::state_view state);
     void LoadFunctionSplitPathAndPrefix(sol::state_view state);
-    void LoadFunctionPathTypeToString(sol::state_view state);
 };

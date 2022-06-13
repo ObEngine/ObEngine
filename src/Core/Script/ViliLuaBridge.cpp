@@ -2,25 +2,25 @@
 
 #include <Script/ViliLuaBridge.hpp>
 
-namespace obe::Script::ViliLuaBridge
+namespace obe::script::vili_lua_bridge
 {
-    sol::lua_value viliToLua(const vili::node& convert)
+    sol::lua_value vili_to_lua(const vili::node& convert)
     {
         if (convert.is<vili::array>())
         {
-            return viliArrayToLuaTable(convert);
+            return vili_array_to_lua_table(convert);
         }
         else if (convert.is<vili::object>())
         {
-            return viliObjectToLuaTable(convert);
+            return vili_object_to_lua_table(convert);
         }
         else if (convert.is_primitive())
         {
-            return viliPrimitiveToLuaValue(convert);
+            return vili_primitive_to_lua_value(convert);
         }
     }
 
-    vili::node luaToVili(sol::object convert)
+    vili::node lua_to_vili(const sol::object& convert)
     {
         if (convert.is<sol::table>())
         {
@@ -29,39 +29,39 @@ namespace obe::Script::ViliLuaBridge
             {
                 if (!k.is<vili::integer>() || k.as<vili::integer>() != expect++)
                 {
-                    return luaTableToViliObject(convert);
+                    return lua_table_to_vili_object(convert);
                 }
             }
-            return luaTableToViliArray(convert);
+            return lua_table_to_vili_array(convert);
         }
         else
         {
-            return luaValueToViliPrimitive(convert);
+            return lua_value_to_vili_primitive(convert);
         }
     }
 
-    sol::lua_value viliObjectToLuaTable(const vili::node& convert)
+    sol::lua_value vili_object_to_lua_table(const vili::node& convert)
     {
         std::unordered_map<std::string, sol::lua_value> result;
         for (auto [key, value] : convert.items())
         {
             if (value.is_primitive())
             {
-                result.emplace(key, viliPrimitiveToLuaValue(value));
+                result.emplace(key, vili_primitive_to_lua_value(value));
             }
             else if (value.is<vili::object>())
             {
-                result.emplace(key, viliObjectToLuaTable(value));
+                result.emplace(key, vili_object_to_lua_table(value));
             }
             else if (value.is<vili::array>())
             {
-                result.emplace(key, viliArrayToLuaTable(value));
+                result.emplace(key, vili_array_to_lua_table(value));
             }
         }
         return sol::as_table(result);
     }
 
-    sol::lua_value viliPrimitiveToLuaValue(const vili::node& convert)
+    sol::lua_value vili_primitive_to_lua_value(const vili::node& convert)
     {
         if (convert.is<vili::integer>())
             return convert.as<vili::integer>();
@@ -73,34 +73,34 @@ namespace obe::Script::ViliLuaBridge
             return convert.as<vili::number>();
     }
 
-    sol::lua_value viliArrayToLuaTable(const vili::node& convert)
+    sol::lua_value vili_array_to_lua_table(const vili::node& convert)
     {
         std::vector<sol::lua_value> result;
         std::size_t index = 0;
         for (const vili::node& value : convert)
         {
             if (value.is_primitive())
-                result.push_back(viliPrimitiveToLuaValue(value));
+                result.push_back(vili_primitive_to_lua_value(value));
             else if (value.is<vili::array>())
-                result.push_back(viliArrayToLuaTable(value));
+                result.push_back(vili_array_to_lua_table(value));
             else if (value.is<vili::object>())
-                result.push_back(viliObjectToLuaTable(value));
+                result.push_back(vili_object_to_lua_table(value));
         }
         return sol::as_table(result);
     }
 
-    vili::node luaTableToViliObject(sol::table convert)
+    vili::node lua_table_to_vili_object(const sol::table& convert)
     {
         vili::node result = vili::object {};
 
         for (auto& [key, value] : convert)
         {
-            result.insert(key.as<std::string>(), luaToVili(value));
+            result.insert(key.as<std::string>(), lua_to_vili(value));
         }
         return result;
     }
 
-    vili::node luaValueToViliPrimitive(sol::lua_value convert)
+    vili::node lua_value_to_vili_primitive(const sol::lua_value& convert)
     {
         vili::node result;
         if (convert.is<vili::integer>())
@@ -122,13 +122,13 @@ namespace obe::Script::ViliLuaBridge
         return result;
     }
 
-    vili::node luaTableToViliArray(sol::table convert)
+    vili::node lua_table_to_vili_array(const sol::table& convert)
     {
         vili::node result = vili::array {};
         for (auto& [_, value] : convert)
         {
-            result.push(luaToVili(value));
+            result.push(lua_to_vili(value));
         }
         return result;
     }
-} // namespace obe::Script::DataBridge
+} // namespace obe::script::DataBridge

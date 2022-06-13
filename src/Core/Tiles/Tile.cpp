@@ -2,60 +2,60 @@
 
 #include <Tiles/Tile.hpp>
 
-namespace obe::Tiles
+namespace obe::tiles
 {
-    const unsigned FLIPPED_HORIZONTALLY_FLAG = 0x80000000;
-    const unsigned FLIPPED_VERTICALLY_FLAG = 0x40000000;
-    const unsigned FLIPPED_DIAGONALLY_FLAG = 0x20000000;
+    constexpr unsigned FLIP_HORIZONTAL_FLAG = 0x80000000;
+    constexpr unsigned FLIP_VERTICAL_FLAG = 0x40000000;
+    constexpr unsigned FLIP_DIAGONAL_FLAG = 0x20000000;
 
-    TileInfo getTileInfo(uint32_t tileId)
+    TileInfo get_tile_info(uint32_t tile_id)
     {
         TileInfo info;
-        info.flippedHorizontally = (tileId & FLIPPED_HORIZONTALLY_FLAG);
-        info.flippedVertically = (tileId & FLIPPED_VERTICALLY_FLAG);
-        info.flippedDiagonally = (tileId & FLIPPED_DIAGONALLY_FLAG);
+        info.flip_horizontal = (tile_id & FLIP_HORIZONTAL_FLAG);
+        info.flip_vertical = (tile_id & FLIP_VERTICAL_FLAG);
+        info.flip_diagonal = (tile_id & FLIP_DIAGONAL_FLAG);
 
-        info.tileId = stripTileFlags(tileId);
+        info.tile_id = strip_tile_flags(tile_id);
 
         return info;
     }
 
-    uint32_t stripTileFlags(uint32_t tileId)
+    uint32_t strip_tile_flags(uint32_t tile_id)
     {
-        return tileId
-            & ~(FLIPPED_HORIZONTALLY_FLAG | FLIPPED_VERTICALLY_FLAG | FLIPPED_DIAGONALLY_FLAG);
+        return tile_id
+            & ~(FLIP_HORIZONTAL_FLAG | FLIP_VERTICAL_FLAG | FLIP_DIAGONAL_FLAG);
     }
 
     void TextureQuadsIndex::transform(const TileInfo& info)
     {
-        if (info.flippedDiagonally)
+        if (info.flip_diagonal)
         {
             std::swap(q0, q2);
         }
-        if (info.flippedHorizontally)
+        if (info.flip_horizontal)
         {
             std::swap(q0, q1);
             std::swap(q2, q3);
         }
-        if (info.flippedVertically)
+        if (info.flip_vertical)
         {
             std::swap(q0, q3);
             std::swap(q1, q2);
         }
     }
 
-    void applyTextureQuadsTransforms(const TileInfo& info, TextureQuadsIndex& quads)
+    void apply_texture_quads_transforms(const TileInfo& info, TextureQuadsIndex& quads)
     {
-        if (info.flippedDiagonally)
+        if (info.flip_diagonal)
         {
             std::swap(quads.q0, quads.q2);
         }
-        if (info.flippedHorizontally)
+        if (info.flip_horizontal)
         {
             std::swap(quads.q0, quads.q1);
             std::swap(quads.q2, quads.q3);
         }
-        if (info.flippedVertically)
+        if (info.flip_vertical)
         {
             std::swap(quads.q0, quads.q3);
             std::swap(quads.q1, quads.q2);

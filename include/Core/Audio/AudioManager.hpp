@@ -11,7 +11,7 @@ namespace SoLoud
 
 namespace obe
 {
-    namespace System
+    namespace system
     {
         class Path;
     }
@@ -71,6 +71,6 @@ namespace obe::audio
          * \param load_policy The way you want to load the sound file
          * \return A Sound object loaded with the sound file
          */
-        Sound load(const System::Path& path, LoadPolicy load_policy = LoadPolicy::Normal);
+        Sound load(const system::Path& path, LoadPolicy load_policy = LoadPolicy::Normal);
     };
 }

@@ -148,22 +148,22 @@ namespace obe::graphics::shapes
 
     const Font& Text::get_font() const
     {
-        return shape.getFont();
+        return shape.get_font();
     }
 
     void Text::set_font(const Font& font)
     {
-        shape.setFont(font);
+        shape.set_font(font);
     }
 
     unsigned Text::get_character_size() const
     {
-        return shape.getCharacterSize();
+        return shape.get_character_size();
     }
 
     void Text::set_character_size(unsigned size)
     {
-        shape.setCharacterSize(size);
+        shape.set_character_size(size);
     }
 
     void Text::draw(sf::RenderTarget& target, sf::RenderStates states) const

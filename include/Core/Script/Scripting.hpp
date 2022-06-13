@@ -4,7 +4,7 @@
 
 #include <Script/Exceptions.hpp>
 
-namespace obe::Script
+namespace obe::script
 {
     inline std::string sol_call_status_to_string(sol::call_status status)
     {
@@ -40,11 +40,11 @@ namespace obe::Script
                 try
                 {
                     const auto errObj = result.get<sol::error>();
-                    throw Exceptions::LuaExecutionError(errObj, EXC_INFO);
+                    throw exceptions::LuaExecutionError(errObj, EXC_INFO);
                 }
                 catch (const sol::error& err)
                 {
-                    throw Exceptions::LuaNestedExceptionError(err, EXC_INFO);
+                    throw exceptions::LuaNestedExceptionError(err, EXC_INFO);
                 }
             }
             else
@@ -52,7 +52,7 @@ namespace obe::Script
                 const sol::call_status status = result.status();
                 const std::string status_str = sol_call_status_to_string(status);
                 const std::string error_str = fmt::format("No error, status : '{}'", status_str);
-                throw Exceptions::LuaExecutionError(std::runtime_error(error_str), EXC_INFO);
+                throw exceptions::LuaExecutionError(std::runtime_error(error_str), EXC_INFO);
             }
         }
     }

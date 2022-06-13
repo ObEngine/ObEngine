@@ -1,6 +1,6 @@
 #include <Time/Chronometer.hpp>
 
-namespace obe::Time
+namespace obe::time
 {
     void Chronometer::start()
     {
@@ -18,25 +18,25 @@ namespace obe::Time
         m_start = epoch();
     }
 
-    TimeUnit Chronometer::getTime() const
+    TimeUnit Chronometer::get_elapsed_time() const
     {
         if (m_started)
             return epoch() - m_start;
         return 0;
     }
 
-    void Chronometer::setLimit(const TimeUnit limit)
+    void Chronometer::set_limit(const TimeUnit limit)
     {
         m_limit = limit;
     }
 
-    TimeUnit Chronometer::getLimit() const
+    TimeUnit Chronometer::get_limit() const
     {
         return m_limit;
     }
 
-    bool Chronometer::over() const
+    bool Chronometer::is_over() const
     {
-        return ((!m_started) xor (this->getTime() > m_limit));
+        return ((!m_started) xor (this->get_elapsed_time() > m_limit));
     }
-} // namespace obe::Time
+} // namespace obe::time

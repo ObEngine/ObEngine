@@ -4,11 +4,11 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::System::Constraints::Bindings
+namespace obe::system::constraints::Bindings
 {
     void LoadGlobalDefault(sol::state_view state)
     {
-        sol::table ConstraintsNamespace = state["obe"]["System"]["Constraints"].get<sol::table>();
-        ConstraintsNamespace["Default"] = obe::System::Constraints::Default;
+        sol::table ConstraintsNamespace = state["obe"]["system"]["constraints"].get<sol::table>();
+        ConstraintsNamespace["Default"] = obe::system::constraints::Default;
     }
 };

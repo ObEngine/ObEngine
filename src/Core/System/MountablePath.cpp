@@ -12,106 +12,106 @@
 #include <System/Project.hpp>
 #include <Utils/FileUtils.hpp>
 
-namespace obe::System
+namespace obe::system
 {
     MountList MountablePath::MountedPaths;
 
-    MountablePath::MountablePath(MountablePathType pathType, std::string_view basePath,
-        std::string_view prefix, unsigned int priority, bool implicit, bool deferResolution)
-        : pathType(pathType)
-        , basePath(basePath)
+    MountablePath::MountablePath(MountablePathType path_type, std::string_view base_path,
+        std::string_view prefix, unsigned int priority, bool implicit, bool defer_resolution)
+        : path_type(path_type)
+        , base_path(base_path)
         , prefix(prefix)
         , priority(priority)
         , implicit(implicit)
-        , deferredResolution(deferResolution)
+        , deferred_resolution(defer_resolution)
     {
-        if (!deferredResolution)
+        if (!deferred_resolution)
         {
-            this->resolveBasePath();
+            this->resolve_base_path();
         }
     }
 
     bool MountablePath::operator==(const MountablePath& other) const
     {
-        return (this->basePath == other.basePath && this->priority == other.priority
-            && this->pathType == other.pathType && this->prefix == other.prefix);
+        return (this->base_path == other.base_path && this->priority == other.priority
+            && this->path_type == other.path_type && this->prefix == other.prefix);
     }
 
-    void MountablePath::LoadMountFile(bool fromCWD, bool fromExe)
+    void MountablePath::load_mount_file(bool from_cwd, bool from_exe)
     {
-        MountablePath::UnmountAll();
+        MountablePath::unmount_all();
 
-        if (!fromCWD && !fromExe)
+        if (!from_cwd && !from_exe)
         {
             throw Exceptions::MissingDefaultMountPoint(EXC_INFO);
         }
 
-        MountablePath rootPath(MountablePathType::Path, "", Prefixes::root, Priorities::defaults);
-        MountablePath workingDirectoryPath(
-            MountablePathType::Path, ".", Prefixes::cwd, Priorities::defaults);
-        MountablePath implicitCWDPath(MountablePathType::Path, ".", "", Priorities::defaults, true);
-        MountablePath implicitRootPath(MountablePathType::Path, "", "", Priorities::defaults, true); 
-        MountablePath executablePath(MountablePathType::Path, Utils::File::getExecutableDirectory(),
-            Prefixes::exe, Priorities::defaults);
+        MountablePath root_path(MountablePathType::Path, "", prefixes::root, priorities::defaults);
+        MountablePath working_directory_path(
+            MountablePathType::Path, ".", prefixes::cwd, priorities::defaults);
+        MountablePath implicit_cwd_path(MountablePathType::Path, ".", "", priorities::defaults, true);
+        MountablePath implicit_root_path(MountablePathType::Path, "", "", priorities::defaults, true); 
+        MountablePath executable_path(MountablePathType::Path, Utils::File::getExecutableDirectory(),
+            prefixes::exe, priorities::defaults);
 
-        const std::string engineConfigPath
+        const std::string engine_config_path
             = Utils::File::join({ sago::getConfigHome(), "ObEngine" });
-        if (!Utils::File::directoryExists(engineConfigPath))
+        if (!Utils::File::directoryExists(engine_config_path))
         {
-            Utils::File::createDirectory(engineConfigPath);
+            Utils::File::createDirectory(engine_config_path);
         }
-        const std::string engineConfigProjectSubdirectory
-            = Utils::File::join({ engineConfigPath, "Projects" });
-        if (!Utils::File::directoryExists(engineConfigProjectSubdirectory))
+        const std::string engine_config_project_subdirectory
+            = Utils::File::join({ engine_config_path, "Projects" });
+        if (!Utils::File::directoryExists(engine_config_project_subdirectory))
         {
-            Utils::File::createDirectory(engineConfigProjectSubdirectory);
+            Utils::File::createDirectory(engine_config_project_subdirectory);
         }
 
-        MountablePath configPath(
-            MountablePathType::Path, engineConfigPath, Prefixes::cfg, Priorities::defaults);
-        MountablePath::Mount(rootPath);
-        MountablePath::Mount(workingDirectoryPath);
-        MountablePath::Mount(implicitCWDPath);
-        MountablePath::Mount(implicitRootPath);
-        MountablePath::Mount(executablePath);
-        MountablePath::Mount(configPath);
+        MountablePath config_path(
+            MountablePathType::Path, engine_config_path, prefixes::cfg, priorities::defaults);
+        MountablePath::mount(root_path);
+        MountablePath::mount(working_directory_path);
+        MountablePath::mount(implicit_cwd_path);
+        MountablePath::mount(implicit_root_path);
+        MountablePath::mount(executable_path);
+        MountablePath::mount(config_path);
 
-        MountablePath basePath(MountablePathType::Path, "", Prefixes::mount, Priorities::defaults);
-        if (fromCWD)
+        MountablePath base_path(MountablePathType::Path, "", prefixes::mount, priorities::defaults);
+        if (from_cwd)
         {
-            basePath.basePath = workingDirectoryPath.basePath;
+            base_path.base_path = working_directory_path.base_path;
         }
         else
         {
-            basePath.basePath = executablePath.basePath;
+            base_path.base_path = executable_path.base_path;
         }
-        MountablePath::Mount(basePath);
+        MountablePath::mount(base_path);
 
-        MountablePath enginePath(
-            MountablePathType::Path, executablePath.basePath, Prefixes::obe, Priorities::defaults);
-        MountablePath::Mount(enginePath);
+        MountablePath engine_path(
+            MountablePathType::Path, executable_path.base_path, prefixes::obe, priorities::defaults);
+        MountablePath::mount(engine_path);
 
-        FindResult mountFilePath
-            = Path(Prefixes::mount, "mount.vili").find(obe::System::PathType::File);
-        if (!mountFilePath)
+        FindResult mount_file_path
+            = Path(prefixes::mount, "mount.vili").find(obe::system::PathType::File);
+        if (!mount_file_path)
         {
-            auto stringPaths = MountablePath::StringPaths();
-            std::transform(
-                stringPaths.begin(), stringPaths.end(), stringPaths.begin(), Utils::String::quote);
+            auto string_paths = MountablePath::string_paths();
+            std::ranges::transform(string_paths
+                , string_paths.begin(), Utils::String::quote);
 
             debug::Log->info("No 'mount.vili' file found in the following directories ({})",
-                fmt::join(stringPaths.begin(), stringPaths.end(), ", "));
+                fmt::join(string_paths.begin(), string_paths.end(), ", "));
             return;
         }
 
-        debug::Log->debug("Found 'mount.vili' file in '{}' (prefix: '{}')", mountFilePath.path(),
-            mountFilePath.mount().prefix);
+        debug::Log->debug("Found 'mount.vili' file in '{}' (prefix: '{}')", mount_file_path.path(),
+            mount_file_path.mount().prefix);
 
-        vili::node mountedPaths;
+        vili::node mounted_paths;
         try
         {
-            mountedPaths
-                = vili::parser::from_file(mountFilePath);
+            mounted_paths
+                = vili::parser::from_file(mount_file_path);
         }
         catch (const vili::exceptions::file_not_found& e)
         {
@@ -121,164 +121,161 @@ namespace obe::System
         catch (const std::exception& e)
         {
             debug::Log->critical("<MountablePath> Unable to load 'mount.vili' : \n{}", e.what());
-            throw Exceptions::InvalidMountFile(mountFilePath.path(), EXC_INFO).nest(e);
+            throw Exceptions::InvalidMountFile(mount_file_path.path(), EXC_INFO).nest(e);
         }
-        vili::validator::validate_tree(config::validators::mount_validator(), mountedPaths);
-        if (mountedPaths.contains("mounts"))
+        vili::validator::validate_tree(config::validators::mount_validator(), mounted_paths);
+        if (mounted_paths.contains("mounts"))
         {
-            for (auto [mountName, mount] : mountedPaths.at("mounts").items())
+            for (auto [mount_name, mount] : mounted_paths.at("mounts").items())
             {
                 if (mount.is_string())
                 {
-                    MountablePath::Mount(MountablePath(
-                        MountablePathType::Path, mount, mountName, Priorities::mount));
+                    MountablePath::mount(MountablePath(
+                        MountablePathType::Path, mount, mount_name, priorities::mount));
                     debug::Log->info("<MountablePath> Mounted Path : '{0}' at '{1}://' "
                                      "with priority {2}",
-                        mount, mountName, 0);
+                        mount, mount_name, 0);
                 }
                 else if (mount.is_object())
                 {
-                    std::string currentType = "Path";
+                    std::string current_type = "Path";
                     if (mount.contains("type"))
                     {
-                        currentType = mount.at("type");
+                        current_type = mount.at("type");
                     }
-                    const std::string currentPath = mount.at("path");
-                    std::string prefix = mountName;
+                    const std::string current_path = mount.at("path");
+                    std::string prefix = mount_name;
                     if (mount.contains("prefix"))
                     {
                         prefix = mount.at("prefix");
                     }
-                    int currentPriority = Priorities::mount;
+                    int current_priority = priorities::mount;
                     if (mount.contains("priority"))
                     {
-                        currentPriority = mount.at("priority");
+                        current_priority = mount.at("priority");
                     }
                     bool implicit = false;
                     if (mount.contains("implicit"))
                     {
                         implicit = mount.at("implicit");
                     }
-                    if (currentType == "Path")
+                    if (current_type == "Path")
                     {
-                        MountablePath::Mount(MountablePath(MountablePathType::Path, currentPath,
-                            prefix, currentPriority, implicit));
+                        MountablePath::mount(MountablePath(MountablePathType::Path, current_path,
+                            prefix, current_priority, implicit));
                         debug::Log->info("<MountablePath> Mounted Path : '{0}' at '{1}://' "
                                          "with priority {2}",
-                            currentPath, prefix, currentPriority);
+                            current_path, prefix, current_priority);
                     }
-                    else if (currentType == "Package")
+                    else if (current_type == "Package")
                     {
-                        Package::Load(currentPath, prefix, currentPriority);
+                        package::load(current_path, prefix, current_priority);
                         debug::Log->info("<MountablePath> Mounted Package : '{0}' at '{1}://' "
                                          "with priority {2}",
-                            currentPath, prefix, currentPriority);
+                            current_path, prefix, current_priority);
                     }
-                    else if (currentType == "Project")
+                    else if (current_type == "Project")
                     {
-                        Project::Load(currentPath, prefix, currentPriority);
+                        project::load(current_path, prefix, current_priority);
                         debug::Log->info("<MountablePath> Mounted Project : '{0}' at '{1}://' "
                                          "with priority {2}",
-                            currentPath, prefix, currentPriority);
+                            current_path, prefix, current_priority);
                     }
                 }
             }
         }
-        if (mountedPaths.contains("project"))
+        if (mounted_paths.contains("project"))
         {
-            Project::Load(mountedPaths.at("project"), Prefixes::game.data(), Priorities::project);
+            project::load(mounted_paths.at("project"), prefixes::game.data(), priorities::project);
         }
         debug::Log->info("<MountablePath> List of mounted paths : ");
-        for (const auto& currentPath : MountablePath::MountedPaths)
+        for (const auto& current_path : MountablePath::MountedPaths)
         {
             debug::Log->info("<MountablePath> MountedPath : '{}' with prefix '{}'",
-                currentPath->basePath, currentPath->prefix);
+                current_path->base_path, current_path->prefix);
         }
 
         // If obe prefix has been redefined, extlibs will change accordingly
-        std::string obePath = MountablePath::FromPrefix(Prefixes::obe.data()).basePath;
-        MountablePath extlibsPath(MountablePathType::Path, obePath + "/Lib/Extlibs",
-            Prefixes::extlibs, Priorities::defaults, false);
-        MountablePath::Mount(extlibsPath);
+        std::string obe_path = MountablePath::from_prefix(prefixes::obe.data()).base_path;
+        MountablePath extlibs_path(MountablePathType::Path, obe_path + "/Lib/Extlibs",
+            prefixes::extlibs, priorities::defaults, false);
+        MountablePath::mount(extlibs_path);
     }
 
-    void MountablePath::Mount(const MountablePath path, SamePrefixPolicy samePrefixPolicy)
+    void MountablePath::mount(const MountablePath path, SamePrefixPolicy same_prefix_policy)
     {
-        if (path.deferredResolution)
+        if (path.deferred_resolution)
         {
             throw Exceptions::InvalidDeferredMountablePath(path.prefix, EXC_INFO);
         }
-        auto pathCmp = [&path](const auto& mountedPath) { return path == *mountedPath; };
-        bool pathAlreadyExists
-            = std::find_if(MountedPaths.begin(), MountedPaths.end(), pathCmp) != MountedPaths.end();
-        if (pathAlreadyExists)
+        auto path_cmp = [&path](const auto& mounted_path) { return path == *mounted_path; };
+        const bool path_already_exists
+            = std::ranges::find_if(MountedPaths, path_cmp) != MountedPaths.end();
+        if (path_already_exists)
         {
             debug::Log->warn("[MountablePath] Can't Mount the same path twice: "
                              "MountablePath(prefix={}, path={}, priority={}, implicit={})",
-                path.prefix, path.basePath, path.priority, path.implicit);
+                path.prefix, path.base_path, path.priority, path.implicit);
             return;
         }
-        if (samePrefixPolicy == SamePrefixPolicy::Replace)
+        if (same_prefix_policy == SamePrefixPolicy::Replace)
         {
-            MountedPaths.erase(std::remove_if(MountedPaths.begin(), MountedPaths.end(),
-                                   [path](const auto& mountablePath)
-                                   { return mountablePath->prefix == path.prefix; }),
-                MountedPaths.end());
+            std::erase_if(MountedPaths,
+                [path](const auto& mountable_path)
+                { return mountable_path->prefix == path.prefix; });
             MountedPaths.push_back(std::make_shared<MountablePath>(path));
         }
-        if (samePrefixPolicy != SamePrefixPolicy::Skip)
+        if (same_prefix_policy != SamePrefixPolicy::Skip)
         {
             MountedPaths.push_back(std::make_shared<MountablePath>(path));
         }
         else
         {
-            const auto existingPrefixIt = std::find_if(MountedPaths.begin(), MountedPaths.end(),
-                [path](const auto& mountablePath) { return mountablePath->prefix == path.prefix; });
-            if (existingPrefixIt == MountedPaths.end())
+            const auto existing_prefix_it = std::ranges::find_if(MountedPaths,
+                [path](const auto& mountable_path) { return mountable_path->prefix == path.prefix; });
+            if (existing_prefix_it == MountedPaths.end())
             {
                 MountedPaths.push_back(std::make_shared<MountablePath>(path));
             }
         }
-        Sort();
+        sort();
     }
 
-    void MountablePath::Unmount(const MountablePath path)
+    void MountablePath::unmount(const MountablePath path)
     {
-        MountedPaths.erase(
-            std::remove_if(MountedPaths.begin(), MountedPaths.end(),
-                [path](const auto& mountablePath) { return *mountablePath == path; }),
-            MountedPaths.end());
+        std::erase_if(MountedPaths,
+            [path](const auto& mountable_path) { return *mountable_path == path; });
     }
 
-    void MountablePath::UnmountAll()
+    void MountablePath::unmount_all()
     {
         MountedPaths.clear();
     }
 
-    const MountList& MountablePath::Paths()
+    const MountList& MountablePath::paths()
     {
         return MountedPaths;
     }
 
-    std::vector<std::string> MountablePath::StringPaths()
+    std::vector<std::string> MountablePath::string_paths()
     {
-        std::vector<std::string> mountedPaths;
-        mountedPaths.reserve(MountedPaths.size());
-        for (auto& mountedPath : MountedPaths)
+        std::vector<std::string> mounted_paths;
+        mounted_paths.reserve(MountedPaths.size());
+        for (const auto& mounted_path : MountedPaths)
         {
-            mountedPaths.push_back(mountedPath->basePath);
+            mounted_paths.push_back(mounted_path->base_path);
         }
-        return mountedPaths;
+        return mounted_paths;
     }
 
-    void MountablePath::Sort()
+    void MountablePath::sort()
     {
-        std::sort(MountedPaths.begin(), MountedPaths.end(),
+        std::ranges::sort(MountedPaths,
             [](const auto& first, const auto& second)
             { return first->priority > second->priority; });
     }
 
-    const MountablePath& MountablePath::FromPrefix(const std::string& prefix)
+    const MountablePath& MountablePath::from_prefix(const std::string& prefix)
     {
         for (const auto& mount : MountedPaths)
         {
@@ -287,27 +284,27 @@ namespace obe::System
                 return *mount;
             }
         }
-        throw Exceptions::UnknownPathPrefix(prefix, GetAllPrefixes(), EXC_INFO);
+        throw Exceptions::UnknownPathPrefix(prefix, get_all_prefixes(), EXC_INFO);
     }
 
-    const std::vector<std::string> MountablePath::GetAllPrefixes()
+    std::vector<std::string> MountablePath::get_all_prefixes()
     {
         MountList mounts = MountedPaths;
-        std::vector<std::string> allPrefixes;
-        allPrefixes.reserve(mounts.size());
-        std::transform(mounts.begin(), mounts.end(), std::back_inserter(allPrefixes),
+        std::vector<std::string> all_prefixes;
+        all_prefixes.reserve(mounts.size());
+        std::ranges::transform(mounts, std::back_inserter(all_prefixes),
             [](const auto& mount) { return mount->prefix; });
-        return allPrefixes;
+        return all_prefixes;
     }
 
-    void MountablePath::resolveBasePath()
+    void MountablePath::resolve_base_path()
     {
-        auto [_, prefixInPath] = splitPathAndPrefix(basePath, false);
-        if (!prefixInPath.empty())
+        auto [_, prefix_in_path] = split_path_and_prefix(base_path, false);
+        if (!prefix_in_path.empty())
         {
-            basePath = System::Path(basePath).find(PathType::Directory).path();
+            base_path = system::Path(base_path).find(PathType::Directory).path();
         }
-        basePath = Utils::File::canonicalPath(basePath);
-        deferredResolution = false;
+        base_path = Utils::File::canonicalPath(base_path);
+        deferred_resolution = false;
     }
-} // namespace obe::System
+} // namespace obe::system

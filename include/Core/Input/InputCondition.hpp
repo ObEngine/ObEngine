@@ -8,7 +8,7 @@
 #include <Types/FlagSet.hpp>
 #include <Types/Togglable.hpp>
 
-namespace obe::Input
+namespace obe::input
 {
     using InputCombinationElement = std::pair<InputButton*, Types::FlagSet<InputButtonState>>;
     using InputCombination = std::vector<InputCombinationElement>;
@@ -25,16 +25,16 @@ namespace obe::Input
         bool m_enabled = false;
 
     protected:
-        InputButtonState getButtonState(InputButton* button) const;
+        InputButtonState get_button_state(InputButton* button) const;
 
     public:
         InputCondition();
         /**
          * \brief Adds a new InputCombinationElement to the InputCondition
-         * \param combinationElement The InputCombinationElement to add to the
+         * \param combination_element The InputCombinationElement to add to the
          *        InputCondition
          */
-        void addCombinationElement(InputCombinationElement combinationElement);
+        void add_combination_element(InputCombinationElement combination_element);
         /**
          * \brief Checks if the condition is fulfilled
          * \return true if the InputCondition is fulfilled, false otherwise
@@ -49,7 +49,7 @@ namespace obe::Input
          * \brief Gets the InputCombination used by the InputCondition
          * \return The InputCombination used by the InputCondition
          */
-        [[nodiscard]] InputCombination getCombination() const;
+        [[nodiscard]] InputCombination get_combination() const;
         /**
          * TODO: Fix this nobind
          * \nobind
@@ -57,10 +57,10 @@ namespace obe::Input
          *        InputCondition
          * \param combination The new InputCombination
          */
-        void setCombination(const InputCombination& combination);
+        void set_combination(const InputCombination& combination);
 
         void enable(const std::vector<InputButtonMonitorPtr>& monitors);
         void disable();
-        bool isEnabled() const;
+        bool is_enabled() const;
     };
-} // namespace obe::Input
+} // namespace obe::input

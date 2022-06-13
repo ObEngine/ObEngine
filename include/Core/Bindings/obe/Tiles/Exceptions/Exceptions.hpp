@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Tiles::Exceptions::Bindings
+namespace obe::tiles::exceptions::Bindings
 {
     void LoadClassTilePositionOutsideLayer(sol::state_view state);
     void LoadClassUnknownTileId(sol::state_view state);

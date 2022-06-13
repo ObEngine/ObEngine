@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Input::Bindings
+namespace obe::input::Bindings
 {
     void LoadClassInputAction(sol::state_view state);
     void LoadClassInputButton(sol::state_view state);
@@ -15,5 +15,4 @@ namespace obe::Input::Bindings
     void LoadEnumAxisThresholdDirection(sol::state_view state);
     void LoadEnumInputButtonState(sol::state_view state);
     void LoadEnumInputType(sol::state_view state);
-    void LoadFunctionInputTypeToString(sol::state_view state);
 };

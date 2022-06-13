@@ -1,6 +1,6 @@
 #include <Script/LuaHelpers.hpp>
 
-namespace obe::Script::Helpers
+namespace obe::script::Helpers
 {
     std::unordered_map<std::string, sol::protected_function> make_all_helpers(const sol::state_view lua)
     {

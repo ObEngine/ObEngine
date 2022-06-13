@@ -2,18 +2,18 @@
 
 #include <Exception.hpp>
 
-namespace obe::Scene::Exceptions
+namespace obe::scene::Exceptions
 {
     class ChildNotInSceneNode : public Exception<ChildNotInSceneNode>
     {
     public:
         using Exception::Exception;
-        ChildNotInSceneNode(void* sceneNode, void* child, DebugInfo info)
+        ChildNotInSceneNode(void* scene_node, void* child, DebugInfo info)
             : Exception(info)
         {
             this->error("Impossible to remove Movable {} from SceneNode {} as it is not "
                         "one of its children",
-                fmt::ptr(sceneNode), fmt::ptr(child));
+                fmt::ptr(scene_node), fmt::ptr(child));
         }
     };
 
@@ -22,12 +22,12 @@ namespace obe::Scene::Exceptions
     public:
         using Exception::Exception;
         MissingSceneFileBlock(
-            std::string_view sceneFile, std::string_view blockName, DebugInfo info)
+            std::string_view scene_file, std::string_view block_name, DebugInfo info)
             : Exception(info)
         {
             this->error(
-                "Scene from file '{}' does not have any required <{}> block", sceneFile, blockName);
-            this->hint("Add a '{}' block to the Scene file", blockName);
+                "Scene from file '{}' does not have any required <{}> block", scene_file, block_name);
+            this->hint("Add a '{}' block to the Scene file", block_name);
         }
     };
 
@@ -35,17 +35,17 @@ namespace obe::Scene::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownGameObject(std::string_view sceneFile, std::string_view objectId,
-            const std::vector<std::string>& allObjectIds, DebugInfo info)
+        UnknownGameObject(std::string_view scene_file, std::string_view object_id,
+            const std::vector<std::string>& all_object_ids, DebugInfo info)
             : Exception(info)
         {
             this->error(
-                "GameObject with id '{}' does not exists inside Scene '{}'", objectId, sceneFile);
+                "GameObject with id '{}' does not exists inside Scene '{}'", object_id, scene_file);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(objectId.data(), allObjectIds, 5);
-            std::transform(
-                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
-            suggestions.push_back("...");
+                = Utils::String::sortByDistance(object_id.data(), all_object_ids, 5);
+            std::ranges::transform(suggestions
+                , suggestions.begin(), Utils::String::quote);
+            suggestions.emplace_back("...");
             this->hint("Try one of the GameObjects with id ({})", fmt::join(suggestions, ", "));
         }
     };
@@ -54,12 +54,12 @@ namespace obe::Scene::Exceptions
     {
     public:
         using Exception::Exception;
-        GameObjectAlreadyExists(std::string_view sceneFile, std::string_view objectType,
-            std::string_view objectId, DebugInfo info)
+        GameObjectAlreadyExists(std::string_view scene_file, std::string_view object_type,
+            std::string_view object_id, DebugInfo info)
             : Exception(info)
         {
             this->error("Scene '{}' already contains a GameObject of type '{}' with id '{}'",
-                sceneFile, objectType, objectId);
+                scene_file, object_type, object_id);
             this->hint("Try choosing a different id to avoid name conflict");
         }
     };
@@ -68,17 +68,17 @@ namespace obe::Scene::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownSprite(std::string_view sceneFile, std::string_view spriteId,
-            const std::vector<std::string>& allSpritesIds, DebugInfo info)
+        UnknownSprite(std::string_view scene_file, std::string_view sprite_id,
+            const std::vector<std::string>& all_sprites_ids, DebugInfo info)
             : Exception(info)
         {
             this->error(
-                "Sprite with id '{}' does not exists inside Scene '{}'", spriteId, sceneFile);
+                "Sprite with id '{}' does not exists inside Scene '{}'", sprite_id, scene_file);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(spriteId.data(), allSpritesIds, 5);
-            std::transform(
-                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
-            suggestions.push_back("...");
+                = Utils::String::sortByDistance(sprite_id.data(), all_sprites_ids, 5);
+            std::ranges::transform(suggestions
+                , suggestions.begin(), Utils::String::quote);
+            suggestions.emplace_back("...");
             this->hint("Try one of the Sprites with id ({})", fmt::join(suggestions, ", "));
         }
     };
@@ -87,17 +87,17 @@ namespace obe::Scene::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownCollider(std::string_view sceneFile, std::string_view colliderId,
-            const std::vector<std::string>& allCollidersIds, DebugInfo info)
+        UnknownCollider(std::string_view scene_file, std::string_view collider_id,
+            const std::vector<std::string>& all_colliders_ids, DebugInfo info)
             : Exception(info)
         {
             this->error(
-                "Collider with id '{}' does not exists inside Scene '{}'", colliderId, sceneFile);
+                "Collider with id '{}' does not exists inside Scene '{}'", collider_id, scene_file);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(colliderId.data(), allCollidersIds, 5);
-            std::transform(
-                suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
-            suggestions.push_back("...");
+                = Utils::String::sortByDistance(collider_id.data(), all_colliders_ids, 5);
+            std::ranges::transform(suggestions
+                , suggestions.begin(), Utils::String::quote);
+            suggestions.emplace_back("...");
             this->hint("Try one of the Colliders with id ({})", fmt::join(suggestions, ", "));
         }
     };
@@ -106,13 +106,13 @@ namespace obe::Scene::Exceptions
     {
     public:
         using Exception::Exception;
-        SceneScriptLoadingError(std::string_view sceneFile, std::string_view scriptPath,
-            std::string_view errorMessage, DebugInfo info)
+        SceneScriptLoadingError(std::string_view scene_file, std::string_view script_path,
+            std::string_view error_message, DebugInfo info)
             : Exception(info)
         {
             this->error("Failed to load Scene '{}' script file '{}' as it "
                         "encountered following error : '{}'",
-                sceneFile, scriptPath, errorMessage);
+                scene_file, script_path, error_message);
         }
     };
 
@@ -120,13 +120,13 @@ namespace obe::Scene::Exceptions
     {
     public:
         using Exception::Exception;
-        SceneOnLoadCallbackError(std::string_view sceneFile, std::string_view nextSceneFile,
-            std::string_view errorMessage, DebugInfo info)
+        SceneOnLoadCallbackError(std::string_view scene_file, std::string_view next_scene_file,
+            std::string_view error_message, DebugInfo info)
             : Exception(info)
         {
             this->error("Encountered error while running OnLoadCallback to load Scene "
                         "'{}' from Scene '{}' : '{}'",
-                nextSceneFile, sceneFile, errorMessage);
+                next_scene_file, scene_file, error_message);
         }
     };
 
@@ -134,10 +134,10 @@ namespace obe::Scene::Exceptions
     {
     public:
         using Exception::Exception;
-        InvalidSceneFile(std::string_view sceneFile, DebugInfo info)
+        InvalidSceneFile(std::string_view scene_file, DebugInfo info)
             : Exception(info)
         {
-            this->error("Encountered error while loading Scene from file '{}'", sceneFile);
+            this->error("Encountered error while loading Scene from file '{}'", scene_file);
         }
     };
 }

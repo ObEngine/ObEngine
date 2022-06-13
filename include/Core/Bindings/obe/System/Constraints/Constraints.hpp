@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::System::Constraints::Bindings
+namespace obe::system::constraints::Bindings
 {
     void LoadGlobalDefault(sol::state_view state);
 };

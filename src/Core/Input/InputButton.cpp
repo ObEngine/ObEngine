@@ -3,63 +3,40 @@
 #include <Input/Exceptions.hpp>
 #include <Input/InputButton.hpp>
 
-namespace obe::Input
+namespace obe::input
 {
-    std::ostream& operator<<(std::ostream& os, const AxisThresholdDirection& m)
+    void InputButton::set_mouse_wheel_delta(int delta)
     {
-        (m == AxisThresholdDirection::Less) ? os << "Less" : os << "More";
-        return os;
-    }
-
-    void InputButton::setMouseWheelDelta(int delta)
-    {
-        m_wheelDelta = delta;
+        m_wheel_delta = delta;
     }
 
     InputButton::InputButton(sf::Keyboard::Key key, const std::string& name,
-        const std::string& returnChar, InputType type)
+        const std::string& return_char, InputType type)
+        : m_button(key), m_name(name), m_return_char(return_char), m_type(type)
     {
-        m_button = key;
-        m_name = name;
-        m_returnChar = returnChar;
-        m_type = type;
     }
 
     InputButton::InputButton(sf::Mouse::Button key, const std::string& name)
+        : m_button(key), m_name(name), m_type(InputType::Mouse)
     {
-        m_button = key;
-        m_name = name;
-        m_returnChar = "";
-        m_type = InputType::Mouse;
     }
 
     InputButton::InputButton(
-        const unsigned int gamepadIndex, unsigned int buttonIndex, const std::string& name)
+        const unsigned int gamepad_index, unsigned int button_index, const std::string& name)
+        : m_button(button_index), m_gamepad_index(gamepad_index), m_name(name),
+          m_type(InputType::GamepadButton)
     {
-        m_gamepadIndex = gamepadIndex;
-        m_button = buttonIndex;
-        m_returnChar = "";
-        m_type = InputType::GamepadButton;
-        m_name = name;
     }
 
-    InputButton::InputButton(const unsigned int gamepadIndex, sf::Joystick::Axis gamepadAxis,
+    InputButton::InputButton(const unsigned int gamepad_index, sf::Joystick::Axis gamepad_axis,
         std::pair<AxisThresholdDirection, float> detect, const std::string& name)
+        : m_button(gamepad_axis), m_detect_axis(detect), m_gamepad_index(gamepad_index), m_name(name), m_type(InputType::GamepadAxis)
     {
-        m_gamepadIndex = gamepadIndex;
-        m_type = InputType::GamepadAxis;
-        m_button = gamepadAxis;
-        m_returnChar = "";
-        m_name = name;
-        m_detectAxis = detect;
     }
 
     InputButton::InputButton(MouseWheelScrollDirection direction, const std::string& name)
+        : m_button(direction), m_name(name), m_type(InputType::ScrollWheel)
     {
-        m_type = InputType::ScrollWheel;
-        m_button = direction;
-        m_returnChar = "";
-        m_name = name;
     }
 
     InputButton::InputButton(const InputButton& other)
@@ -71,75 +48,75 @@ namespace obe::Input
     {
         m_type = other.m_type;
         m_button = other.m_button;
-        m_returnChar = other.m_returnChar;
+        m_return_char = other.m_return_char;
         m_name = other.m_name;
-        m_detectAxis = other.m_detectAxis;
-        m_gamepadIndex = other.m_gamepadIndex;
-        m_wheelDelta = other.m_wheelDelta;
+        m_detect_axis = other.m_detect_axis;
+        m_gamepad_index = other.m_gamepad_index;
+        m_wheel_delta = other.m_wheel_delta;
     }
 
-    sf::Keyboard::Key InputButton::getKey() const
+    sf::Keyboard::Key InputButton::get_key() const
     {
         if (std::holds_alternative<sf::Keyboard::Key>(m_button))
             return std::get<sf::Keyboard::Key>(m_button);
         throw Exceptions::InputButtonInvalidOperation(
-            inputTypeToString(m_type), "GetKey", EXC_INFO);
+            InputTypeMeta::toString(m_type), "GetKey", EXC_INFO);
     }
 
-    std::string InputButton::getName() const
+    std::string InputButton::get_name() const
     {
         return m_name;
     }
 
-    InputType InputButton::getType() const
+    InputType InputButton::get_type() const
     {
         return m_type;
     }
 
-    bool InputButton::is(InputType inputType) const
+    bool InputButton::is(InputType input_type) const
     {
-        return inputType == m_type;
+        return input_type == m_type;
     }
 
-    bool InputButton::isWritable() const
+    bool InputButton::is_writable() const
     {
-        return (!m_returnChar.empty());
+        return (!m_return_char.empty());
     }
 
-    bool InputButton::isPressed() const
+    bool InputButton::is_pressed() const
     {
         if (m_type == InputType::Mouse)
             return sf::Mouse::isButtonPressed(std::get<sf::Mouse::Button>(m_button));
         if (m_type == InputType::GamepadButton)
-            return sf::Joystick::isButtonPressed(m_gamepadIndex, std::get<unsigned int>(m_button));
+            return sf::Joystick::isButtonPressed(m_gamepad_index, std::get<unsigned int>(m_button));
         if (m_type == InputType::GamepadAxis)
         {
-            const float axisValue = sf::Joystick::getAxisPosition(
-                m_gamepadIndex, std::get<sf::Joystick::Axis>(m_button));
-            return (m_detectAxis.first == AxisThresholdDirection::Less)
-                ? axisValue < m_detectAxis.second
-                : axisValue > m_detectAxis.second;
+            const float axis_value = sf::Joystick::getAxisPosition(
+                m_gamepad_index, std::get<sf::Joystick::Axis>(m_button));
+            return (m_detect_axis.first == AxisThresholdDirection::Less)
+                ? axis_value < m_detect_axis.second
+                : axis_value > m_detect_axis.second;
         }
         if (m_type == InputType::ScrollWheel)
         {
-            return m_wheelDelta != 0;
+            return m_wheel_delta != 0;
         }
 
         return sf::Keyboard::isKeyPressed(std::get<sf::Keyboard::Key>(m_button));
     }
 
-    float InputButton::getAxisPosition() const
+    float InputButton::get_axis_position() const
     {
         if (m_type == InputType::GamepadAxis)
             return sf::Joystick::getAxisPosition(
-                m_gamepadIndex, std::get<sf::Joystick::Axis>(m_button));
+                m_gamepad_index, std::get<sf::Joystick::Axis>(m_button));
         else
             throw Exceptions::InputButtonInvalidOperation(
-                inputTypeToString(m_type), "GetAxisPosition", EXC_INFO);
+                InputTypeMeta::toString(m_type), "GetAxisPosition", EXC_INFO);
     }
 
-    int InputButton::getWheelDelta() const
+    int InputButton::get_wheel_delta() const
     {
-        return m_wheelDelta;
+        return m_wheel_delta;
     }
-} // namespace obe::Input
+} // namespace obe::input

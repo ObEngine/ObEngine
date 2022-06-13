@@ -22,14 +22,14 @@ namespace obe::audio
         m_engine->deinit();
     }
 
-    Sound AudioManager::load(const System::Path& path, LoadPolicy load_policy)
+    Sound AudioManager::load(const system::Path& path, LoadPolicy load_policy)
     {
-        const std::string file_path = path.find(System::PathType::File);
+        const std::string file_path = path.find(system::PathType::File);
         debug::Log->debug("<AudioManager> Loading audio at '{}'", file_path);
         if (file_path.empty())
         {
             throw exceptions::AudioFileNotFound(
-                path.toString(), System::MountablePath::StringPaths(), EXC_INFO);
+                path.to_string(), system::MountablePath::string_paths(), EXC_INFO);
         }
 
         if (load_policy == LoadPolicy::Cache && !m_cache.contains(file_path))

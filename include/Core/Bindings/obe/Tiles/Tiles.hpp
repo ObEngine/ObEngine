@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Tiles::Bindings
+namespace obe::tiles::Bindings
 {
     void LoadClassAnimatedTile(sol::state_view state);
     void LoadClassTileLayer(sol::state_view state);

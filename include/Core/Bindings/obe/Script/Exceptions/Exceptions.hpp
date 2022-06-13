@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Script::Exceptions::Bindings
+namespace obe::script::exceptions::Bindings
 {
     void LoadClassGameObjectScriptError(sol::state_view state);
     void LoadClassInvalidScript(sol::state_view state);

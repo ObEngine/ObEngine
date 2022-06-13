@@ -11,7 +11,7 @@
 /**
  * \brief Various functions to work with Projects
  */
-namespace obe::System::Project
+namespace obe::system::project
 {
     namespace Prefixes
     {
@@ -19,29 +19,29 @@ namespace obe::System::Project
         constexpr std::string_view scenes = "scenes";
     }
     /**
-     * \brief Get the Location of the Project identified by projectName
-     * \param projectName Name of the Project you want to get the path.
+     * \brief Get the Location of the Project identified by project_name
+     * \param project_name Name of the Project you want to get the path.
      * \return A std::string containing the path of the retrieved Project.
      */
-    std::string GetProjectLocation(const std::string& projectName);
+    std::string get_project_location(const std::string& project_name);
     /**
      * \brief Get if the Project exists or not.
-     * \param projectName Name of the Project you want to check the
+     * \param project_name Name of the Project you want to check the
      *        existence.
      * \return true if the Project exists, false otherwise.
      */
-    bool ProjectExists(const std::string& projectName);
+    bool project_exists(const std::string& project_name);
     /**
      * \brief Load a new Project in the mounted paths
-     * \param projectName Name of the Project to load.
+     * \param project_name Name of the Project to load.
      * \param prefix Prefix that can be used to reference Project root path
      * \param priority Priority of the path that will be mounted.
      * \return true if the Project has been successfully loaded, false
      *         otherwise.
      */
-    bool Load(const std::string& projectName, const std::string& prefix,
-        unsigned int priority = Priorities::project);
-    std::vector<std::string> ListProjects();
+    bool load(const std::string& project_name, const std::string& prefix,
+        unsigned int priority = priorities::project);
+    std::vector<std::string> list_projects();
 
     class ProjectURLs : Types::Serializable
     {
@@ -69,7 +69,7 @@ namespace obe::System::Project
     {
     private:
         std::string m_id;
-        config::Version m_obengineVersion;
+        config::Version m_obengine_version;
 
         std::vector<std::string> m_include;
         std::vector<std::string> m_exclude;
@@ -89,7 +89,7 @@ namespace obe::System::Project
         MountList m_mounts;
 
     protected:
-        void mountDefaults();
+        void mount_defaults();
 
     public:
         Project();
@@ -104,12 +104,12 @@ namespace obe::System::Project
          */
         void load(const vili::node& data) override;
 
-        void loadFromFile(const std::string& path);
+        void load_from_file(const std::string& path);
 
         void mount();
-        void unmount();
+        void unmount() const;
 
-        [[nodiscard]] std::string getId() const;
-        [[nodiscard]] bool isStandalone() const;
+        [[nodiscard]] std::string get_id() const;
+        [[nodiscard]] bool is_standalone() const;
     };
-} // namespace obe::System::Project
+} // namespace obe::system::project

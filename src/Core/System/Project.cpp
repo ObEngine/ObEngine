@@ -9,77 +9,77 @@
 #include <System/Project.hpp>
 #include <Utils/FileUtils.hpp>
 
-namespace obe::System::Project
+namespace obe::system::project
 {
-    std::string GetProjectLocation(const std::string& projectName)
+    std::string get_project_location(const std::string& project_name)
     {
-        if (ProjectExists(projectName))
+        if (project_exists(project_name))
         {
-            const std::string projectsFileLocation = "obe://projects.vili"_fs;
-            return vili::parser::from_file(projectsFileLocation).at(projectName).at("path");
+            const std::string projects_file_location = "obe://projects.vili"_fs;
+            return vili::parser::from_file(projects_file_location).at(project_name).at("path");
         }
-        throw Exceptions::UnknownProject(projectName, ListProjects(), EXC_INFO);
+        throw Exceptions::UnknownProject(project_name, list_projects(), EXC_INFO);
     }
 
-    bool ProjectExists(const std::string& projectName)
+    bool project_exists(const std::string& project_name)
     {
-        const std::string projectsFileLocation = "obe://projects.vili"_fs;
-        return vili::parser::from_file(projectsFileLocation).contains(projectName);
+        const std::string projects_file_location = "obe://projects.vili"_fs;
+        return vili::parser::from_file(projects_file_location).contains(project_name);
     }
 
-    bool Load(
-        const std::string& projectName, const std::string& prefix, const unsigned int priority)
+    bool load(
+        const std::string& project_name, const std::string& prefix, const unsigned int priority)
     {
         debug::Log->info(
-            "<Project> Loading Project '{0}' with priority {1}", projectName, priority);
-        if (ProjectExists(projectName))
+            "<Project> Loading Project '{0}' with priority {1}", project_name, priority);
+        if (project_exists(project_name))
         {
-            const std::string projectLocation = GetProjectLocation(projectName);
-            MountablePath::Mount(
-                MountablePath(MountablePathType::Project, projectLocation, prefix, priority, true));
+            const std::string project_location = get_project_location(project_name);
+            MountablePath::mount(
+                MountablePath(MountablePathType::Project, project_location, prefix, priority, true));
 
             Project project;
-            project.loadFromFile(Path(projectLocation).add("project.vili"));
+            project.load_from_file(Path(project_location).add("project.vili"));
             project.mount();
 
-            std::string projectCfgPath;
-            if (project.isStandalone())
+            std::string project_cfg_path;
+            if (project.is_standalone())
             {
-                std::string cfgPath = sago::getConfigHome();
-                projectCfgPath = Utils::File::join({ cfgPath, project.getId() });
+                std::string cfg_path = sago::getConfigHome();
+                project_cfg_path = Utils::File::join({ cfg_path, project.get_id() });
             }
             else
             {
-                std::string cfgPath
-                    = MountablePath::FromPrefix(obe::System::Prefixes::cfg.data()).basePath;
-                projectCfgPath = Utils::File::join({ cfgPath, "Projects", project.getId() });
+                std::string cfg_path
+                    = MountablePath::from_prefix(obe::system::prefixes::cfg.data()).base_path;
+                project_cfg_path = Utils::File::join({ cfg_path, "Projects", project.get_id() });
             }
-            if (!Utils::File::directoryExists(projectCfgPath))
+            if (!Utils::File::directoryExists(project_cfg_path))
             {
                 debug::Log->debug("<Project> Could not find Project configuration directory, "
                                   "creating a new one...");
-                Utils::File::createDirectory(projectCfgPath);
+                Utils::File::createDirectory(project_cfg_path);
                 debug::Log->debug(
-                    "<Project> Project configuration directory created at '{}'", projectCfgPath);
+                    "<Project> Project configuration directory created at '{}'", project_cfg_path);
             }
-            MountablePath projectCfg(
-                MountablePathType::Path, projectCfgPath, "projectcfg", Priorities::projectmount);
-            MountablePath::Mount(projectCfg);
+            const MountablePath project_cfg(
+                MountablePathType::Path, project_cfg_path, "projectcfg", priorities::projectmount);
+            MountablePath::mount(project_cfg);
             return true;
         }
-        throw Exceptions::UnknownProject(projectName, ListProjects(), EXC_INFO);
+        throw Exceptions::UnknownProject(project_name, list_projects(), EXC_INFO);
     }
 
-    std::vector<std::string> ListProjects()
+    std::vector<std::string> list_projects()
     {
-        const std::string projectsFileLocation = "obe://projects.vili"_fs;
-        vili::node projects = vili::parser::from_file(projectsFileLocation);
-        std::vector<std::string> projectsNames;
+        const std::string projects_file_location = "obe://projects.vili"_fs;
+        vili::node projects = vili::parser::from_file(projects_file_location);
+        std::vector<std::string> projects_names;
         for (const auto& [projectName, _] : projects.items())
         {
-            projectsNames.push_back(projectName);
+            projects_names.push_back(projectName);
         }
-        return projectsNames;
+        return projects_names;
     }
 
     vili::node ProjectURLs::schema() const
@@ -119,11 +119,11 @@ namespace obe::System::Project
 
     vili::node Project::dump() const
     {
-        vili::node mountDump = vili::object {};
+        vili::node mount_dump = vili::object {};
         for (const auto& mount : m_mounts)
         {
             // TODO: handle priorities...
-            mountDump.emplace(mount->prefix, mount->basePath);
+            mount_dump.emplace(mount->prefix, mount->base_path);
         }
 
         // clang-format off
@@ -132,7 +132,7 @@ namespace obe::System::Project
             { "name", m_name },
             { "authors", vili::array(m_authors.begin(), m_authors.end()) },
             { "description", m_description },
-            { "obengine_version", m_obengineVersion.string() },
+            { "obengine_version", m_obengine_version.string() },
             { "keywords", vili::array(m_keywords.begin(), m_keywords.end()) },
             { "categories", vili::array(m_categories.begin(), m_categories.end()) },
             { "license", m_license },
@@ -140,7 +140,7 @@ namespace obe::System::Project
             { "exclude", vili::array(m_exclude.begin(), m_exclude.end()) },
             { "source", m_source },
             { "urls", m_urls.dump() },
-            { "mounts", mountDump }
+            { "mounts", mount_dump }
         };
         // clang-format on
     }
@@ -156,7 +156,7 @@ namespace obe::System::Project
             m_name = data.at("name");
             m_source = data.at("source");
             m_version = data.at("version");
-            m_obengineVersion = data.at("obengine_version").as_string();
+            m_obengine_version = data.at("obengine_version").as_string();
 
             if (data.contains("standalone"))
             {
@@ -207,20 +207,20 @@ namespace obe::System::Project
             }
             if (data.contains("mounts"))
             {
-                for (const auto& [mountName, mount] : data.at("mounts").items())
+                for (const auto& [mount_name, mount] : data.at("mounts").items())
                 {
-                    int priority = Priorities::projectmount;
+                    int priority = priorities::projectmount;
                     bool implicit = false;
-                    std::string mountPath;
-                    std::string prefix = mountName;
+                    std::string mount_path;
+                    std::string prefix = mount_name;
 
                     if (mount.is_string())
                     {
-                        mountPath = mount;
+                        mount_path = mount;
                     }
                     else if (mount.is_object())
                     {
-                        mountPath = mount.at("path");
+                        mount_path = mount.at("path");
                         if (mount.contains("priority"))
                         {
                             priority = mount.at("priority");
@@ -235,7 +235,7 @@ namespace obe::System::Project
                         }
                     }
                     m_mounts.push_back(std::make_shared<MountablePath>(
-                        MountablePathType::Path, mountPath, prefix, priority, implicit, true));
+                        MountablePathType::Path, mount_path, prefix, priority, implicit, true));
                 }
             }
             if (data.contains("urls"))
@@ -249,17 +249,17 @@ namespace obe::System::Project
         }
     }
 
-    void Project::mountDefaults()
+    void Project::mount_defaults()
     {
-        const std::string projectRoot
-            = System::Path(System::Prefixes::game, ".").find(PathType::Directory).path();
+        const std::string project_root
+            = system::Path(system::prefixes::game, ".").find(PathType::Directory).path();
 
         try
         {
-            const MountablePath objectsPath(MountablePathType::Path,
-                Utils::File::join({ projectRoot, "GameObjects" }), Prefixes::objects,
-                Priorities::projectmount);
-            MountablePath::Mount(objectsPath, SamePrefixPolicy::Skip);
+            const MountablePath objects_path(MountablePathType::Path,
+                Utils::File::join({ project_root, "GameObjects" }), Prefixes::objects,
+                priorities::projectmount);
+            MountablePath::mount(objects_path, SamePrefixPolicy::Skip);
         }
         catch (const std::exception& exc)
         {
@@ -267,10 +267,10 @@ namespace obe::System::Project
         }
         try
         {
-            const MountablePath scenesPath(MountablePathType::Path,
-                Utils::File::join({ projectRoot, "Scenes" }), Prefixes::scenes,
-                Priorities::projectmount);
-            MountablePath::Mount(scenesPath, SamePrefixPolicy::Skip);
+            const MountablePath scenes_path(MountablePathType::Path,
+                Utils::File::join({ project_root, "Scenes" }), Prefixes::scenes,
+                priorities::projectmount);
+            MountablePath::mount(scenes_path, SamePrefixPolicy::Skip);
         }
         catch (const std::exception& exc)
         {
@@ -279,7 +279,7 @@ namespace obe::System::Project
     }
 
     Project::Project()
-        : m_obengineVersion(0, 1, 0)
+        : m_obengine_version(0, 1, 0)
     {
     }
 
@@ -288,9 +288,9 @@ namespace obe::System::Project
         return vili::object {};
     }
 
-    void Project::loadFromFile(const std::string& path)
+    void Project::load_from_file(const std::string& path)
     {
-        vili::node project = vili::parser::from_file(path);
+        const vili::node project = vili::parser::from_file(path);
         try
         {
             this->load(project);
@@ -300,7 +300,7 @@ namespace obe::System::Project
             const std::vector<std::runtime_error>& traceback = e.traceback();
             if (!traceback.empty())
             {
-                const std::runtime_error underlying_exception = traceback.back();
+                const std::runtime_error& underlying_exception = traceback.back();
                 throw Exceptions::InvalidProjectFile(path, EXC_INFO).nest(underlying_exception);
             }
             throw Exceptions::InvalidProjectFile(path, EXC_INFO);
@@ -311,25 +311,25 @@ namespace obe::System::Project
     {
         for (const auto& mount : m_mounts)
         {
-            mount->resolveBasePath();
-            MountablePath::Mount(*mount);
+            mount->resolve_base_path();
+            MountablePath::mount(*mount);
         }
-        this->mountDefaults();
+        this->mount_defaults();
     }
 
-    void Project::unmount()
+    void Project::unmount() const
     {
         for (const auto& mount : m_mounts)
         {
-            MountablePath::Unmount(*mount);
+            MountablePath::unmount(*mount);
         }
     }
-    std::string Project::getId() const
+    std::string Project::get_id() const
     {
         return m_id;
     }
-    bool Project::isStandalone() const
+    bool Project::is_standalone() const
     {
         return m_standalone;
     }
-} // namespace obe::System::Project
+} // namespace obe::system::project

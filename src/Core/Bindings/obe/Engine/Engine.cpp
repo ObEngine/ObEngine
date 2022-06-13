@@ -45,10 +45,10 @@ namespace obe::engine::Bindings
         bindResourceManager["get_font"] = &obe::engine::ResourceManager::get_font;
         bindResourceManager["get_texture"]
             = sol::overload(static_cast<const obe::graphics::Texture& (
-                                obe::engine::ResourceManager::*)(const obe::System::Path&, bool)>(
+                                obe::engine::ResourceManager::*)(const obe::system::Path&, bool)>(
                                 &obe::engine::ResourceManager::get_texture),
                 static_cast<const obe::graphics::Texture& (
-                    obe::engine::ResourceManager::*)(const obe::System::Path&)>(
+                    obe::engine::ResourceManager::*)(const obe::system::Path&)>(
                     &obe::engine::ResourceManager::get_texture));
         bindResourceManager["clean"] = &obe::engine::ResourceManager::clean;
         bindResourceManager["default_anti_aliasing"]

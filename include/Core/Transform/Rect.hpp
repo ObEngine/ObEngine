@@ -76,7 +76,7 @@ namespace obe::Transform
          * \param position Position to affect to the Rect
          * \param ref Referential used to set the Position
          */
-        virtual void setPosition(const UnitVector& position, const Referential& ref);
+        virtual void set_position(const UnitVector& position, const Referential& ref);
         /**
          * \brief Moves the Rectangle (Adds the given position to the current
          *        one)
@@ -89,7 +89,7 @@ namespace obe::Transform
          *        Position
          * \return The Position of the given Referential of the Rect
          */
-        [[nodiscard]] virtual UnitVector getPosition(const Referential& ref) const;
+        [[nodiscard]] virtual UnitVector get_position(const Referential& ref) const;
 
         /**
          * \brief Set the Position of a specific Referential of the Rect (The
@@ -126,7 +126,7 @@ namespace obe::Transform
          * \return An UnitVector containing the size of the Rect (Default Unit
          *         is SceneUnits)
          */
-        [[nodiscard]] virtual UnitVector getSize() const;
+        [[nodiscard]] virtual UnitVector get_size() const;
         /**
          * \brief Get the Scale Factor of the Rect
          * \return An UnitVector containing the Scale Factors of the Rect.

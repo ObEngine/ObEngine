@@ -1,5 +1,7 @@
 #pragma once
 
+#include <optional>
+
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Clock.hpp>
 #include <System/Window.hpp>
@@ -7,7 +9,7 @@
 
 #include <vili/node.hpp>
 
-namespace obe::Time
+namespace obe::time
 {
     /**
      * \brief Class that handles Framerate, DeltaTime and stuff related to time
@@ -15,24 +17,22 @@ namespace obe::Time
     class FramerateManager
     {
     private:
-        System::Window& m_window;
-        Time::TimeUnit m_clock;
-        double m_deltaTime = 0.0;
-        double m_speedCoefficient = 1.0;
-        bool m_limitFramerate = false;
-        unsigned int m_framerateTarget;
-        bool m_vsyncEnabled = true;
-        double m_reqFramerateInterval;
-        int m_currentFrame = 0;
-        int m_frameProgression = 0;
-        bool m_needToRender = false;
-        bool m_syncUpdateRender = true;
+        system::Window& m_window;
+        time::TimeUnit m_clock;
+        double m_delta_time = 0.0;
+        double m_speed_coefficient = 1.0;
+        std::optional<unsigned int> m_framerate_target;
+        bool m_vsync_enabled = true;
+        int m_current_frame = 0;
+        int m_frame_progression = 0;
+        bool m_need_to_render = false;
+        bool m_sync_update_render = true;
 
     public:
         /**
          * \brief Creates a new FramerateManager
          */
-        FramerateManager(System::Window& window);
+        FramerateManager(system::Window& window);
         /**
          * \brief Configures the FramerateManager
          * \param config Configuration of the FramerateManager
@@ -46,61 +46,55 @@ namespace obe::Time
          * \brief Get if the engine should render everything
          * \return true if the engine should render everything, false otherwise
          */
-        [[nodiscard]] bool doRender() const;
-        [[nodiscard]] bool doUpdate() const;
+        [[nodiscard]] bool should_render() const;
+        [[nodiscard]] bool should_update() const;
         void start();
         void reset();
         /**
          * \brief Get the DeltaTime
          * \return A double containing the DeltaTime
          */
-        [[nodiscard]] TimeUnit getDeltaTime() const;
+        [[nodiscard]] TimeUnit get_delta_time() const;
         /**
          * \brief Get the GameSpeed (DeltaTime * SpeedCoefficient)
          * \return A double containing the GameSpeed
          */
-        [[nodiscard]] double getGameSpeed() const;
+        [[nodiscard]] double get_game_speed() const;
         /**
          * \brief Get the SpeedCoefficient
          * \return A double containing the SpeedCoefficient
          */
-        [[nodiscard]] double getSpeedCoefficient() const;
+        [[nodiscard]] double get_speed_coefficient() const;
         /**
          * \brief Check if Framerate is limited or not
          * \return true if the Framerate is limited, false otherwise
          */
-        [[nodiscard]] bool isFramerateLimited() const;
+        [[nodiscard]] bool is_framerate_limited() const;
         /**
          * \brief Get the frame per second cap
          * \return An unsigned int containing the frame per second (fps) cap
          */
-        [[nodiscard]] unsigned int getFramerateTarget() const;
+        [[nodiscard]] unsigned int get_framerate_target() const;
         /**
-         * \brief Check if vSync is enabled or not
-         * \return true if vSync is enabled, false otherwise
+         * \brief Check if vsync is enabled or not
+         * \return true if vsync is enabled, false otherwise
          */
-        [[nodiscard]] bool isVSyncEnabled() const;
+        [[nodiscard]] bool is_vsync_enabled() const;
         /**
          * \brief Set the SpeedCoefficient
          * \param speed The new SpeedCoefficient
          */
-        void setSpeedCoefficient(double speed);
-        /**
-         * \brief Set if the Framerate should be limited or not
-         * \param state should be true if the framerate has to be limited, false
-         *        otherwise
-         */
-        void limitFramerate(bool state);
+        void set_speed_coefficient(double speed);
         /**
          * \brief Set the max framerate
-         * \param limit An unsigned int containing the max framerate
+         * \param limit An unsigned int containing the max framerate, 0 for no limit
          */
-        void setFramerateTarget(unsigned int limit);
+        void set_framerate_target(unsigned int limit);
         /**
          * \brief Set if VerticalSync should be enabled or not
          * \param vsync A boolean containing if the v-sync should be enabled
          *        (true = enabled)
          */
-        void setVSyncEnabled(bool vsync);
+        void set_vsync_enabled(bool vsync);
     };
-} // namespace obe::Time
+} // namespace obe::time

@@ -136,7 +136,7 @@ namespace obe::animation
         bool m_started = false;
 
     public:
-        explicit ValueTweening(Time::TimeUnit duration, easing::EasingFunction easing = easing::linear)
+        explicit ValueTweening(time::TimeUnit duration, easing::EasingFunction easing = easing::linear)
             : m_easing(std::move(easing))
             , m_duration(duration)
             
@@ -151,7 +151,7 @@ namespace obe::animation
         /**
          * \mergetemplatespecialisations{Tween}
          */
-        ValueTweening(TweenableClass from, TweenableClass to, Time::TimeUnit duration,
+        ValueTweening(TweenableClass from, TweenableClass to, time::TimeUnit duration,
             easing::EasingFunction easing = easing::linear)
             : m_easing(std::move(easing))
             , m_from(from)

@@ -5,7 +5,7 @@
 #include <Event/EventGroup.hpp>
 #include <Event/EventNamespace.hpp>
 
-namespace obe::events::Network
+namespace obe::events::network
 {
     struct Connected
     {
@@ -25,7 +25,7 @@ namespace obe::events::Network
     };
 }
 
-namespace obe::Network
+namespace obe::network
 {
     /**
      * \brief Handle the Network input / output (Will be remade)
@@ -42,7 +42,7 @@ namespace obe::Network
         std::string m_ip;
 
     public:
-        NetworkHandler(event::EventNamespace& eventNamespace);
-        void handleTriggers();
+        NetworkHandler(event::EventNamespace& event_namespace);
+        void handle_events();
     };
-} // namespace obe::Network
+} // namespace obe::network

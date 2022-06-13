@@ -9,7 +9,7 @@
 #include <Types/Selectable.hpp>
 #include <Types/Serializable.hpp>
 
-namespace obe::Scene
+namespace obe::scene
 {
     class Scene;
 }

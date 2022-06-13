@@ -19,8 +19,8 @@ local function contains(t, item)
 end
 
 local function get_project_list()
-    local project_definition_filepath = obe.System.Path("obe://projects.vili"):find(
-        obe.System.PathType.File
+    local project_definition_filepath = obe.system.Path("obe://projects.vili"):find(
+        obe.system.PathType.File
     );
     local parser = vili.parser.from_file(project_definition_filepath:path(), vili.parser.state());
     local projects = vili.to_lua(parser);
@@ -59,8 +59,8 @@ local function write_to_file(path, content)
 end
 
 local function _mount_(project_name)
-    local project_definition_filepath = obe.System.Path("obe://projects.vili"):find(
-        obe.System.PathType.File
+    local project_definition_filepath = obe.system.Path("obe://projects.vili"):find(
+        obe.system.PathType.File
     );
     local parser = vili.parser.from_file(project_definition_filepath:path(), vili.parser.state());
     local projects = vili.to_lua(parser);
@@ -84,7 +84,7 @@ local function _mount_(project_name)
                 {text = "' has  been successfully mounted !", color = Style.Success}
             }, 2
         );
-        obe.System.MountablePath.LoadMountFile();
+        obe.system.MountablePath.LoadMountFile();
     else
         Color.print(
             {
@@ -97,8 +97,8 @@ local function _mount_(project_name)
 end
 
 local function _create_(project_name)
-    local project_definition_filepath = obe.System.Path("obe://projects.vili"):find(
-        obe.System.PathType.File
+    local project_definition_filepath = obe.system.Path("obe://projects.vili"):find(
+        obe.system.PathType.File
     );
     local parser = vili.parser.from_file(project_definition_filepath:path(), vili.parser.state());
     local projects = vili.to_lua(parser);
@@ -188,8 +188,8 @@ end
 local function _index_(project_name)
     local non_indexed_projects = get_non_indexed_projects();
     if contains(non_indexed_projects, project_name) then
-        local project_definition_filepath = obe.System.Path("obe://projects.vili"):find(
-            obe.System.PathType.File
+        local project_definition_filepath = obe.system.Path("obe://projects.vili"):find(
+            obe.system.PathType.File
         );
         local parser = vili.parser
                            .from_file(project_definition_filepath:path(), vili.parser.state());

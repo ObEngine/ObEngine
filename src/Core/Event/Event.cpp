@@ -4,14 +4,14 @@
 namespace obe::event
 {
     ScopeProfiler::ScopeProfiler(CallbackProfiler& results)
-        : m_start(Time::epoch())
+        : m_start(time::epoch())
         , m_results(results)
     {
     }
 
     ScopeProfiler::~ScopeProfiler()
     {
-        const Time::TimeUnit duration = Time::epoch() - m_start;
+        const time::TimeUnit duration = time::epoch() - m_start;
 
         m_results.time += duration;
         ++m_results.hits;

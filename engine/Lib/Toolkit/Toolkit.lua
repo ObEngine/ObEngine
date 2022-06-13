@@ -12,7 +12,7 @@ TOOLKIT_CONTEXTS = {};
 
 -- Load all Toolkit functions located in Lib/Toolkit/Functions
 local function loadToolkitFunctions()
-    local toolkitFunctionsDirectory = obe.System.Path("obe://Lib/Toolkit/Functions"):find(obe.System.PathType.Directory);
+    local toolkitFunctionsDirectory = obe.system.Path("obe://Lib/Toolkit/Functions"):find(obe.system.PathType.Directory);
     local fileList = fs.getFileList(toolkitFunctionsDirectory:path());
     local allFunctions = {};
     for _, content in pairs(fileList) do

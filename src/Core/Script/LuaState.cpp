@@ -1,19 +1,19 @@
 #include <Script/LuaState.hpp>
 #include <System/Path.hpp>
 
-namespace obe::Script
+namespace obe::script
 {
-    void LuaState::loadConfig(const vili::node& config)
+    void LuaState::load_config(const vili::node& config)
     {
         if (config.contains("patchIO") && config.at("patchIO").as_boolean())
         {
             this->safe_script_file("obe://Lib/Internal/Filesystem.lua"_fs);
         }
-        std::string garbageCollectorMode = "generational";
+        std::string garbage_collector_mode = "generational";
         if (config.contains("garbageCollector"))
         {
-            garbageCollectorMode = config.at("garbageCollector").as_string();
+            garbage_collector_mode = config.at("garbageCollector").as_string();
         }
-        this->safe_script("collectgarbage(\"" + garbageCollectorMode + "\");");
+        this->safe_script("collectgarbage(\"" + garbage_collector_mode + "\");");
     }
 }

@@ -2,10 +2,8 @@
 
 #include <memory>
 #include <optional>
-#include <unordered_map>
 
 #include <dynamicLinker/dynamicLinker.hpp>
-#include <sol/sol.hpp>
 
 #include <Types/Identifiable.hpp>
 
@@ -17,7 +15,7 @@ namespace obe::engine
 /**
  * \additionalinclude{Engine/Engine.hpp}
  */
-namespace obe::System
+namespace obe::system
 {
     template <class T>
     using PluginFunction
@@ -26,8 +24,8 @@ namespace obe::System
      * \nobind
      */
     template <class T>
-    PluginFunction<T> getPluginFunction(
-        std::shared_ptr<dynamicLinker::dynamicLinker> dl, const std::string& fnName);
+    PluginFunction<T> get_plugin_function(
+        std::shared_ptr<dynamicLinker::dynamicLinker> dl, const std::string& function_name);
 
     class Plugin : public Types::Identifiable
     {
@@ -35,29 +33,23 @@ namespace obe::System
         bool m_valid = false;
         std::shared_ptr<dynamicLinker::dynamicLinker> m_dl;
 
-        PluginFunction<void(engine::Engine&)> m_onInitFn;
-        PluginFunction<void(double)> m_onUpdateFn;
-        PluginFunction<void()> m_onRenderFn;
-        PluginFunction<void()> m_onExitFn;
+        PluginFunction<void(engine::Engine&)> m_on_init_fn;
+        PluginFunction<void(engine::Engine&)> m_on_exit_fn;
 
     public:
         Plugin(const std::string& id, const std::string& path);
-        void onInit(engine::Engine& engine) const;
-        void onUpdate(double dt) const;
-        void onRender() const;
-        void onExit() const;
-        [[nodiscard]] bool hasOnInit() const;
-        [[nodiscard]] bool hasOnUpdate() const;
-        [[nodiscard]] bool hasOnRender() const;
-        [[nodiscard]] bool hasOnExit() const;
-        [[nodiscard]] bool isValid() const;
+        void on_init(engine::Engine& engine) const;
+        void on_exit(engine::Engine& engine) const;
+        [[nodiscard]] bool has_on_init() const;
+        [[nodiscard]] bool has_on_exit() const;
+        [[nodiscard]] bool is_valid() const;
     };
 
     template <class T>
-    PluginFunction<T> getPluginFunction(
-        std::shared_ptr<dynamicLinker::dynamicLinker> dl, const std::string& fnName)
+    PluginFunction<T> get_plugin_function(
+        std::shared_ptr<dynamicLinker::dynamicLinker> dl, const std::string& function_name)
     {
         return std::move(std::make_unique<dynamicLinker::dynamicLinker::dlSymbol<T>>(
-            dl->getFunction<T>(fnName)));
+            dl->getFunction<T>(function_name)));
     }
-} // namespace obe::System
+} // namespace obe::system

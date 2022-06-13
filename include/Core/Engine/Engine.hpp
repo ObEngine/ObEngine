@@ -49,19 +49,19 @@ namespace obe::engine
     {
     protected:
         bool m_initialized = false;
-        std::vector<std::unique_ptr<System::Plugin>> m_plugins;
-        std::unique_ptr<Script::LuaState> m_lua;
-        std::unique_ptr<Scene::Scene> m_scene;
-        std::unique_ptr<System::Cursor> m_cursor;
-        std::unique_ptr<System::Window> m_window;
+        std::vector<std::unique_ptr<system::Plugin>> m_plugins;
+        std::unique_ptr<script::LuaState> m_lua;
+        std::unique_ptr<scene::Scene> m_scene;
+        std::unique_ptr<system::Cursor> m_cursor;
+        std::unique_ptr<system::Window> m_window;
         debug::Logger::weak_type m_log;
 
         // Managers
         audio::AudioManager m_audio {};
         config::ConfigurationManager m_config {};
         std::unique_ptr<ResourceManager> m_resources {};
-        std::unique_ptr<Input::InputManager> m_input {};
-        std::unique_ptr<Time::FramerateManager> m_framerate;
+        std::unique_ptr<input::InputManager> m_input {};
+        std::unique_ptr<time::FramerateManager> m_framerate;
         std::unique_ptr<event::EventManager> m_events;
         event::EventNamespace* m_event_namespace;
         event::EventNamespace* m_user_event_namespace;
@@ -91,7 +91,7 @@ namespace obe::engine
         // Cleaning
         void clean() const;
         void purge();
-        void deinit_plugins() const;
+        void deinit_plugins();
 
     public:
         Engine();
@@ -121,12 +121,12 @@ namespace obe::engine
          * \rename{Input}
          * \asproperty
          */
-        Input::InputManager& get_input_manager() const;
+        input::InputManager& get_input_manager() const;
         /**
          * \rename{Framerate}
          * \asproperty
          */
-        Time::FramerateManager& get_framerate_manager() const;
+        time::FramerateManager& get_framerate_manager() const;
         /**
          * \rename{Events}
          * \asproperty
@@ -137,21 +137,21 @@ namespace obe::engine
          * \rename{Scene}
          * \asproperty
          */
-        Scene::Scene& get_scene() const;
+        scene::Scene& get_scene() const;
         /**
          * \rename{Cursor}
          * \asproperty
          */
-        System::Cursor& get_cursor() const;
+        system::Cursor& get_cursor() const;
         /**
          * \rename{Window}
          * \asproperty
          */
-        System::Window& get_window() const;
+        system::Window& get_window() const;
         /**
          * \nobind
          */
-        Script::LuaState& get_lua_state() const;
+        script::LuaState& get_lua_state() const;
         /**
          * \nobind
          */

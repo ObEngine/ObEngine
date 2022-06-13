@@ -96,7 +96,7 @@ namespace obe::animation
     private:
         AnimatorState m_default_state;
         std::unordered_map<std::string, std::unique_ptr<Animation>> m_animations;
-        System::Path m_path;
+        system::Path m_path;
 
         friend class AnimatorState;
 
@@ -138,7 +138,7 @@ namespace obe::animation
          *        It will also load all the Animation contained in the Animator.
          *        If an Animator configuration file is found it will load it.
          */
-        void load(System::Path path, engine::ResourceManager* resources = nullptr);
+        void load(system::Path path, engine::ResourceManager* resources = nullptr);
         /**
          * \brief Set the Animation to play by name
          * \param key A std::string containing the name of the Animation to
@@ -161,7 +161,7 @@ namespace obe::animation
         void set_target(graphics::Sprite& sprite,
             AnimatorTargetScaleMode target_scale_mode = AnimatorTargetScaleMode::Fit);
 
-        [[nodiscard]] System::Path get_filesystem_path() const;
+        [[nodiscard]] system::Path get_filesystem_path() const;
 
         [[nodiscard]] AnimatorState make_state() const;
     };

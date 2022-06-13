@@ -30,7 +30,7 @@ namespace obe::graphics
             int width = 0;
             int height = 0;
         };
-        SizeHint m_sizeHint;
+        SizeHint m_size_hint;
         bool m_autoscaling = true;
 
         void render() const;
@@ -40,16 +40,16 @@ namespace obe::graphics
 
         SvgTexture(const SvgTexture& texture);
         SvgTexture& operator=(const SvgTexture& texture);
-        SvgTexture& operator=(SvgTexture&& texture);
+        SvgTexture& operator=(SvgTexture&& texture) noexcept;
 
-        [[nodiscard]] bool getAutoscaling() const;
-        void setAutoscaling(bool autoscaling);
-        void setSizeHint(unsigned int width, unsigned int height);
+        [[nodiscard]] bool is_autoscaled() const;
+        void set_autoscaling(bool autoscaling);
+        void set_size_hint(unsigned int width, unsigned int height);
 
-        bool success() const;
+        [[nodiscard]] bool success() const;
 
-        const sf::Texture& getTexture() const;
-        sf::Texture& getTexture();
+        [[nodiscard]] const sf::Texture& get_texture() const;
+        sf::Texture& get_texture();
     };
 
     using TextureWrapper
@@ -60,11 +60,11 @@ namespace obe::graphics
     private:
         TextureWrapper m_texture;
 
-        sf::Texture& getMutableTexture();
-        const sf::Texture& getTexture() const;
+        sf::Texture& get_mutable_texture();
+        const sf::Texture& get_texture() const;
 
     public:
-        static Texture MakeSharedTexture();
+        static Texture make_shared_texture();
 
         Texture();
         Texture(std::shared_ptr<sf::Texture> texture);
@@ -72,21 +72,21 @@ namespace obe::graphics
         Texture(const Texture& copy);
 
         bool create(unsigned int width, unsigned int height);
-        bool loadFromFile(const std::string& filename);
-        bool loadFromFile(const std::string& filename, const Transform::Rect& rect);
-        bool loadFromImage(const sf::Image& image);
+        bool load_from_file(const std::string& filename);
+        bool load_from_file(const std::string& filename, const Transform::Rect& rect);
+        bool load_from_image(const sf::Image& image);
 
-        [[nodiscard]] Transform::UnitVector getSize() const;
+        [[nodiscard]] Transform::UnitVector get_size() const;
 
-        void setSizeHint(unsigned int width, unsigned int height);
-        [[nodiscard]] bool getAutoscaling() const;
-        void setAutoscaling(bool autoscaling);
+        void set_size_hint(unsigned int width, unsigned int height);
+        [[nodiscard]] bool is_autoscaled() const;
+        void set_autoscaling(bool autoscaling);
 
-        void setAntiAliasing(bool antiAliasing);
-        [[nodiscard]] bool isAntiAliased() const;
+        void set_anti_aliasing(bool antiAliasing);
+        [[nodiscard]] bool is_anti_aliased() const;
 
-        void setRepeated(bool repeated);
-        [[nodiscard]] bool isRepeated() const;
+        void set_repeated(bool repeated);
+        [[nodiscard]] bool is_repeated() const;
 
         void reset();
 

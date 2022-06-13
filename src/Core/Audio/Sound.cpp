@@ -103,7 +103,7 @@ namespace obe::audio
         m_looping = looping;
         m_manager.setLooping(m_handle, looping);
     }
-    bool Sound::get_looping() const
+    bool Sound::is_looping() const
     {
         return m_manager.getLooping(m_handle);
     }

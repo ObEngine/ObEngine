@@ -2,7 +2,9 @@
 
 #include <iostream>
 
-namespace obe::Input
+#include <Types/SmartEnum.hpp>
+
+namespace obe::input
 {
     /**
      * \brief The type of Input
@@ -48,9 +50,5 @@ namespace obe::Input
         ScrollWheel
     };
 
-    std::string inputTypeToString(InputType type);
-    /**
-     * \nobind
-     */
-    std::ostream& operator<<(std::ostream& os, InputType m);
-} // namespace obe::Input
+    using InputTypeMeta = Types::SmartEnum<InputType>;
+} // namespace obe::input
