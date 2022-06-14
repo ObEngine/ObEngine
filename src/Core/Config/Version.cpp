@@ -14,7 +14,7 @@ namespace obe::config
                 EXC_INFO);
         }
         // Skip first letter from version string ( 'v' )
-        if (!Utils::String::isStringNumeric(parts[0]) && parts[0].size() >= 2)
+        if (!Utils::String::is_string_numeric(parts[0]) && parts[0].size() >= 2)
         {
             if (parts[0][0] != 'v')
             {

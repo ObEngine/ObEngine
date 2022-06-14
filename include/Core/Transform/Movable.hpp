@@ -2,7 +2,7 @@
 
 #include <Transform/UnitVector.hpp>
 
-namespace obe::Transform
+namespace obe::transform
 {
     /**
      * \brief A class which implements position and basic methods to manipulate it
@@ -28,10 +28,10 @@ namespace obe::Transform
          * \brief Get the Position of the Movable
          * \return The Position of the given Referential of the Movable
          */
-        [[nodiscard]] virtual UnitVector getPosition() const;
+        [[nodiscard]] virtual UnitVector get_position() const;
         /**
          * \brief Gets the type of the Movable object
          * \return An enum value from MovableType
          */
     };
-} // namespace obe::Transform
+} // namespace obe::transform

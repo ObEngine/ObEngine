@@ -29,10 +29,10 @@ namespace obe::Types
          */
         virtual void load(const vili::node& data) = 0;
 
-        void validateAndLoad(const vili::node& data);
+        void validate_and_load(const vili::node& data);
     };
 
-    inline void Serializable::validateAndLoad(const vili::node& data)
+    inline void Serializable::validate_and_load(const vili::node& data)
     {
         vili::validator::validate_tree(this->schema(), data);
         this->load(data);

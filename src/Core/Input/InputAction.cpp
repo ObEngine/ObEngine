@@ -88,15 +88,15 @@ namespace obe::input
 
     std::vector<InputButton*> InputAction::get_involved_buttons() const
     {
-        std::vector<InputButton*> involvedButtons;
+        std::vector<InputButton*> involved_buttons;
         for (const InputCondition& condition : m_conditions)
         {
-            for (const InputCombinationElement& combinationElement : condition.get_combination())
+            for (const InputCombinationElement& combination_element : condition.get_combination())
             {
-                involvedButtons.push_back(combinationElement.first);
+                involved_buttons.push_back(combination_element.first);
             }
         }
-        return involvedButtons;
+        return involved_buttons;
     }
 
     void InputAction::enable(const std::vector<InputButtonMonitorPtr>& monitors)

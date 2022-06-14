@@ -62,7 +62,7 @@ namespace obe::engine
 
         this->init_plugins();
 
-        Bindings::IndexCoreBindings(*m_lua);
+        Bindings::index_core_bindings(*m_lua);
 
         m_lua->load_config(m_config.at("Script").at("Lua"));
 
@@ -128,9 +128,9 @@ namespace obe::engine
             system::MountablePath::from_prefix("cwd").base_path);
         system::Path plugin_path_base
             = system::Path(system::MountablePath::from_prefix("cwd").base_path).add("Plugins");
-        if (Utils::File::directoryExists(plugin_path_base.to_string()))
+        if (Utils::File::directory_exists(plugin_path_base.to_string()))
         {
-            for (const std::string& filename : Utils::File::getFileList(plugin_path_base.to_string()))
+            for (const std::string& filename : Utils::File::get_file_list(plugin_path_base.to_string()))
             {
                 const std::string plugin_path = plugin_path_base.add(filename).to_string();
                 const std::string plugin_name = Utils::String::split(filename, ".")[0];
@@ -165,7 +165,7 @@ namespace obe::engine
                 {
                     std::string log_level_config_entry = logging.at("level");
                     const debug::LogLevel log_level
-                        = debug::LogLevelMeta::fromString(log_level_config_entry);
+                        = debug::LogLevelMeta::from_string(log_level_config_entry);
                     const auto level = static_cast<spdlog::level::level_enum>(log_level);
                     debug::Log->set_level(level);
                     debug::Log->info("Log Level {}", log_level);
@@ -365,7 +365,7 @@ namespace obe::engine
             = (*m_lua)["Game"]["Start"].get<sol::protected_function>();
         try
         {
-            script::safeLuaCall(boot_function);
+            script::safe_lua_call(boot_function);
         }
         catch (const BaseException& exc)
         {

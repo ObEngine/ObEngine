@@ -24,14 +24,14 @@ namespace obe::animation
         }
     }
 
-    std::string AnimationState::get_called_animation() const noexcept
+    std::string AnimationState::get_next_animation() const noexcept
     {
         return m_next_animation_name;
     }
 
     std::string Animation::get_next_animation() const noexcept
     {
-        return m_default_state.get_called_animation();
+        return m_default_state.get_next_animation();
     }
 
     std::string Animation::get_name() const noexcept
@@ -143,7 +143,7 @@ namespace obe::animation
         debug::Log->trace("<animation> Executing instruction {} / {} : {}", m_code_index,
             m_parent.m_code.size() - 1, current_command.dump());
         const AnimationCommand command
-            = AnimationCommandMeta::fromString(current_command.at("command").as_string());
+            = AnimationCommandMeta::from_string(current_command.at("command").as_string());
         if (command == AnimationCommand::Wait)
         {
             m_feed_instructions = true;
@@ -232,7 +232,7 @@ namespace obe::animation
         }
         if (meta.contains("mode"))
         {
-            m_play_mode = AnimationPlayModeMeta::fromString(meta.at("mode"));
+            m_play_mode = AnimationPlayModeMeta::from_string(meta.at("mode"));
             debug::Log->trace("    <animation> animation play-mode = '{}'", m_play_mode);
         }
     }

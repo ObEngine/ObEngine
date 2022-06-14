@@ -23,7 +23,7 @@ namespace obe::input
     bool InputManager::is_action_currently_in_use(const std::string& action_id)
     {
         return std::ranges::any_of(
-            m_current_actions, [&action_id](const auto& action) { return action->getId() == action_id; });
+            m_current_actions, [&action_id](const auto& action) { return action->get_id() == action_id; });
     }
 
     InputManager::InputManager(event::EventNamespace& event_namespace)
@@ -39,7 +39,7 @@ namespace obe::input
     {
         for (auto& action : m_all_actions)
         {
-            if (action->getId() == action_id)
+            if (action->get_id() == action_id)
             {
                 return *action;
             }
@@ -48,7 +48,7 @@ namespace obe::input
         action_ids.reserve(m_all_actions.size());
         for (auto& action : m_all_actions)
         {
-            action_ids.push_back(action->getId());
+            action_ids.push_back(action->get_id());
         }
         throw Exceptions::UnknownInputAction(action_id, action_ids, EXC_INFO);
     }
@@ -96,21 +96,21 @@ namespace obe::input
 
     bool InputManager::action_exists(const std::string& action_id) const
     {
-        return std::ranges::any_of(m_all_actions, [&action_id](const auto& action) { return action->getId() == action_id; });
+        return std::ranges::any_of(m_all_actions, [&action_id](const auto& action) { return action->get_id() == action_id; });
     }
 
     void InputManager::clear()
     {
         m_current_actions.clear();
         for (const auto& action : m_all_actions)
-            e_actions->remove(action->getId());
+            e_actions->remove(action->get_id());
         m_all_actions.clear();
     }
 
     void InputManager::configure(vili::node& config)
     {
         std::vector<std::string> already_in_file;
-        for (auto& [contextName, context] : config.items())
+        for (auto& [context_name, context] : config.items())
         {
             for (auto& [action_name, condition] : context.items())
             {
@@ -154,7 +154,7 @@ namespace obe::input
                         input_condition(this, action_name, single_condition);
                     }
                 }
-                this->get_action(action_name).add_context(contextName);
+                this->get_action(action_name).add_context(context_name);
                 already_in_file.push_back(action_name);
             }
         }
@@ -177,10 +177,10 @@ namespace obe::input
         for (auto& action : m_all_actions)
         {
             if (Utils::Vector::contains(context, action->get_contexts())
-                && !is_action_currently_in_use(action->getId()))
+                && !is_action_currently_in_use(action->get_id()))
             {
                 debug::Log->debug(
-                    "<InputManager> Add Action '{0}' in Context '{1}'", action->getId(), context);
+                    "<InputManager> Add Action '{0}' in Context '{1}'", action->get_id(), context);
                 m_current_actions.push_back(action.get());
                 std::vector<InputButtonMonitorPtr> monitors;
                 for (InputButton* button : action->get_involved_buttons())
@@ -208,7 +208,7 @@ namespace obe::input
                                        {
                                            debug::Log->debug("<InputManager> Remove Action '{0}' "
                                                              "from Context '{1}'",
-                                               action->getId(), context);
+                                               action->get_id(), context);
                                            action->disable();
                                            return true;
                                        }
@@ -330,7 +330,7 @@ namespace obe::input
         {
             for (std::string element : elements)
             {
-                Utils::String::replaceInPlace(element, " ", "");
+                Utils::String::replace_in_place(element, " ", "");
                 std::vector<std::string> state_and_button = Utils::String::split(element, ":");
                 if (state_and_button.size() == 1 || state_and_button.size() == 2)
                 {
@@ -348,7 +348,7 @@ namespace obe::input
                         if (Utils::Vector::contains(
                                 button_state, { "Idle", "Hold", "Pressed", "Released" }))
                         {
-                            button_states |= InputButtonStateMeta::fromString(button_state);
+                            button_states |= InputButtonStateMeta::from_string(button_state);
                         }
                         else
                         {

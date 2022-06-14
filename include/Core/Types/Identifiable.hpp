@@ -25,12 +25,12 @@ namespace obe::Types
          * \brief Set a new id for the Identifiable
          * \param id Sets the id of the Identifiable
          */
-        void setId(const std::string& id);
+        void set_id(const std::string& id);
         /**
          * \brief Get the id of the Identifiable
          * \return A std::string containing the id of the Identifiable
          */
-        [[nodiscard]] std::string getId() const;
+        [[nodiscard]] std::string get_id() const;
     };
 
     /**
@@ -41,13 +41,13 @@ namespace obe::Types
     class ProtectedIdentifiable : public Identifiable
     {
     private:
-        using Identifiable::setId;
+        using Identifiable::set_id;
 
     public:
         /**
          * \nobind
          */
-        using Identifiable::getId;
+        using Identifiable::get_id;
         /**
          * \nobind
          */

@@ -99,7 +99,7 @@ namespace obe::script::exceptions
             : Exception(info)
         {
             this->error("Lua encountered an error");
-            this->nestInPlace(err);
+            this->nest_in_place(err);
         }
     };
 
@@ -111,7 +111,7 @@ namespace obe::script::exceptions
             : Exception(info)
         {
             this->error("An exception occured while trying to retrieve the previous exception");
-            this->nestInPlace(err);
+            this->nest_in_place(err);
         }
     };
 }

@@ -102,7 +102,7 @@ namespace obe::animation
          *        - If index reach 0 and no more loops, the AnimationGroup index
          *        will stay at 0.
          *        - If index reach 0 and there is some loops left,
-         *        index will go at getSize() - 1.
+         *        index will go at get_textures_amount() - 1.
          * \param force Force decrements the index of the AnimationGroup without waiting
          *        for the delay if force is true
          */

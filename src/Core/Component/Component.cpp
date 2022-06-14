@@ -12,9 +12,9 @@ namespace obe::Component
     {
         for (ComponentBase* comp : Components)
         {
-            if (comp->getId() == component->getId())
+            if (comp->get_id() == component->get_id())
             {
-                throw Exceptions::ComponentIdAlreadyTaken(comp->getId(), EXC_INFO);
+                throw Exceptions::ComponentIdAlreadyTaken(comp->get_id(), EXC_INFO);
             }
         }
         Components.push_back(component);

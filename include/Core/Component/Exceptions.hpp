@@ -19,11 +19,11 @@ namespace obe::Component::Exceptions
     {
     public:
         using Exception::Exception;
-        UnknownComponentType(std::string_view componentType, DebugInfo info)
+        UnknownComponentType(std::string_view component_type, DebugInfo info)
             : Exception(info)
         {
             this->error("Component with type '{}' does not exists or has not been registered",
-                componentType);
+                component_type);
         }
     };
 }

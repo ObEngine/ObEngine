@@ -2,7 +2,7 @@
 
 #include <Exception.hpp>
 
-namespace obe::Transform::Exceptions
+namespace obe::transform::exceptions
 {
     class PolygonNotEnoughPoints : public Exception<PolygonNotEnoughPoints>
     {
@@ -42,30 +42,6 @@ namespace obe::Transform::Exceptions
             this->hint("Try one of these Referentials : (TopLeft, Top, TopRight, Left, "
                        "Center, Right, BottomLeft, Bottom, BottomRight, "
                        "Referential<double, double>");
-        }
-    };
-
-    class UnknownUnit : public Exception<UnknownUnit>
-    {
-    public:
-        using Exception::Exception;
-        UnknownUnit(std::string_view unit, DebugInfo info)
-            : Exception(info)
-        {
-            this->error("There is no Units named '{}'", unit);
-            this->hint("Try one of these Units : (ScenePixels, SceneUnits, "
-                       "ViewPercentage, ViewPixels, ViewUnits)");
-        }
-    };
-
-    class InvalidUnitsEnumValue : public Exception<InvalidUnitsEnumValue>
-    {
-    public:
-        using Exception::Exception;
-        InvalidUnitsEnumValue(int enumValue, DebugInfo info)
-            : Exception(info)
-        {
-            this->error("Enum Units can't have invalid value ({})", enumValue);
         }
     };
 }

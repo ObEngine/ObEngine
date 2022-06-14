@@ -273,12 +273,13 @@ namespace obe::animation::easing
 
     EasingFunction get(EasingType easing)
     {
-        if (const auto function = EASING_ENUM_TO_FUNCTIONS.find(easing); function != EASING_ENUM_TO_FUNCTIONS.end())
+        if (const auto function = EASING_ENUM_TO_FUNCTIONS.find(easing);
+            function != EASING_ENUM_TO_FUNCTIONS.end())
         {
             return function->second;
         }
-        const int enumValue = static_cast<std::underlying_type_t<EasingType>>(easing);
-        throw exceptions::UnknownEasingFromEnum(enumValue, EXC_INFO);
+        const int enum_value = static_cast<std::underlying_type_t<EasingType>>(easing);
+        throw exceptions::UnknownEasingFromEnum(enum_value, EXC_INFO);
     }
 
     static std::unordered_map<std::string, EasingFunction> EASING_STRING_TO_FUNCTIONS = {
@@ -317,7 +318,8 @@ namespace obe::animation::easing
 
     EasingFunction get(const std::string& easing)
     {
-        if (const auto function = EASING_STRING_TO_FUNCTIONS.find(easing); function != EASING_STRING_TO_FUNCTIONS.end())
+        if (const auto function = EASING_STRING_TO_FUNCTIONS.find(easing);
+            function != EASING_STRING_TO_FUNCTIONS.end())
         {
             return function->second;
         }

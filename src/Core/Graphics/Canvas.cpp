@@ -27,8 +27,8 @@ namespace obe::graphics::canvas
 
     void Line::draw(RenderTarget target)
     {
-        const Transform::UnitVector p1px = p1.to<Transform::Units::ScenePixels>();
-        const Transform::UnitVector p2px = p2.to<Transform::Units::ScenePixels>();
+        const transform::UnitVector p1px = p1.to<transform::Units::ScenePixels>();
+        const transform::UnitVector p2px = p2.to<transform::Units::ScenePixels>();
         if (thickness == 1)
         {
             const sf::Vertex first_vertex(sf::Vector2f(p1px.x, p1px.y), p1_color);
@@ -53,13 +53,13 @@ namespace obe::graphics::canvas
         : CanvasElement(parent, id)
     {
         // Default Canvas elements unit is ScenePixels
-        position.unit = Transform::Units::ScenePixels;
+        position.unit = transform::Units::ScenePixels;
     }
 
     Rectangle::Rectangle(Canvas& parent, const std::string& id)
         : CanvasPositionable(parent, id)
     {
-        this->size.unit = Transform::Units::ScenePixels;
+        this->size.unit = transform::Units::ScenePixels;
     }
 
     void Rectangle::draw(RenderTarget target)
@@ -77,7 +77,7 @@ namespace obe::graphics::canvas
 
     void Text::draw(RenderTarget target)
     {
-        Transform::UnitVector offset(Transform::Units::ScenePixels);
+        transform::UnitVector offset(transform::Units::ScenePixels);
         if (h_align == TextHorizontalAlign::Center)
             offset.x -= shape.get_global_bounds().get_size().x / 2;
         else if (h_align == TextHorizontalAlign::Right)
@@ -137,9 +137,9 @@ namespace obe::graphics::canvas
     {
         std::vector<::Bezier::Point> control_points;
         control_points.reserve(points.size());
-        for (Transform::UnitVector& point : points)
+        for (transform::UnitVector& point : points)
         {
-            const Transform::UnitVector pixel_position = point.to<Transform::Units::ScenePixels>();
+            const transform::UnitVector pixel_position = point.to<transform::Units::ScenePixels>();
             control_points.emplace_back(pixel_position.x, pixel_position.y);
         }
         std::vector<::Bezier::Bezier<3>> bezier_curves;
@@ -187,7 +187,7 @@ namespace obe::graphics::canvas
     {
         for (auto& elem : m_elements)
         {
-            if (elem->getId() == id)
+            if (elem->get_id() == id)
             {
                 return elem.get();
             }
@@ -221,7 +221,7 @@ namespace obe::graphics::canvas
 
     void Canvas::remove(const std::string& id)
     {
-        std::erase_if(m_elements, [&id](auto& elem) { return elem->getId() == id; });
+        std::erase_if(m_elements, [&id](auto& elem) { return elem->get_id() == id; });
     }
 
     Texture Canvas::get_texture() const

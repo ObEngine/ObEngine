@@ -51,20 +51,20 @@ namespace obe::system
             MountablePathType::Path, ".", prefixes::cwd, priorities::defaults);
         MountablePath implicit_cwd_path(MountablePathType::Path, ".", "", priorities::defaults, true);
         MountablePath implicit_root_path(MountablePathType::Path, "", "", priorities::defaults, true); 
-        MountablePath executable_path(MountablePathType::Path, Utils::File::getExecutableDirectory(),
+        MountablePath executable_path(MountablePathType::Path, Utils::File::get_executable_directory(),
             prefixes::exe, priorities::defaults);
 
         const std::string engine_config_path
             = Utils::File::join({ sago::getConfigHome(), "ObEngine" });
-        if (!Utils::File::directoryExists(engine_config_path))
+        if (!Utils::File::directory_exists(engine_config_path))
         {
-            Utils::File::createDirectory(engine_config_path);
+            Utils::File::create_directory(engine_config_path);
         }
         const std::string engine_config_project_subdirectory
             = Utils::File::join({ engine_config_path, "Projects" });
-        if (!Utils::File::directoryExists(engine_config_project_subdirectory))
+        if (!Utils::File::directory_exists(engine_config_project_subdirectory))
         {
-            Utils::File::createDirectory(engine_config_project_subdirectory);
+            Utils::File::create_directory(engine_config_project_subdirectory);
         }
 
         MountablePath config_path(
@@ -116,7 +116,7 @@ namespace obe::system
         catch (const vili::exceptions::file_not_found& e)
         {
             debug::Log->critical("<MountablePath> Unable to find 'mount.vili' : \n{}", e.what());
-            throw Exceptions::MountFileMissing(Utils::File::getCurrentDirectory(), EXC_INFO);
+            throw Exceptions::MountFileMissing(Utils::File::get_current_directory(), EXC_INFO);
         }
         catch (const std::exception& e)
         {
@@ -304,7 +304,7 @@ namespace obe::system
         {
             base_path = system::Path(base_path).find(PathType::Directory).path();
         }
-        base_path = Utils::File::canonicalPath(base_path);
+        base_path = Utils::File::canonical_path(base_path);
         deferred_resolution = false;
     }
 } // namespace obe::system

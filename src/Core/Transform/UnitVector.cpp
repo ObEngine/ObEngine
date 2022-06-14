@@ -4,14 +4,14 @@
 #include <Transform/UnitVector.hpp>
 #include <Utils/MathUtils.hpp>
 
-namespace obe::Transform
+namespace obe::transform
 {
-    void UnitVector::Init(ViewStruct*& view)
+    void UnitVector::init(ViewStruct*& view)
     {
         view = &UnitVector::View;
     }
 
-    void UnitVector::Init(const int width, const int height)
+    void UnitVector::init(const int width, const int height)
     {
         Screen.w = width;
         Screen.h = height;
@@ -31,9 +31,9 @@ namespace obe::Transform
 
     void UnitVector::set(const UnitVector& vec)
     {
-        const UnitVector pVec = vec.to(unit);
-        x = pVec.x;
-        y = pVec.y;
+        const UnitVector p_vec = vec.to(unit);
+        x = p_vec.x;
+        y = p_vec.y;
     }
 
     void UnitVector::set(const double x, const double y)
@@ -44,9 +44,9 @@ namespace obe::Transform
 
     void UnitVector::add(const UnitVector& vec)
     {
-        const UnitVector pVec = vec.to(unit);
-        x += pVec.x;
-        y += pVec.y;
+        const UnitVector p_vec = vec.to(unit);
+        x += p_vec.x;
+        y += p_vec.y;
     }
 
     void UnitVector::add(const double x, const double y)
@@ -57,57 +57,57 @@ namespace obe::Transform
 
     UnitVector UnitVector::operator+(const UnitVector& add) const
     {
-        const UnitVector pVec = add.to(unit);
-        return UnitVector(x + pVec.x, y + pVec.y, unit);
+        const UnitVector p_vec = add.to(unit);
+        return UnitVector(x + p_vec.x, y + p_vec.y, unit);
     }
 
     UnitVector& UnitVector::operator+=(const UnitVector& add)
     {
-        const UnitVector pVec = add.to(unit);
-        x += pVec.x;
-        y += pVec.y;
+        const UnitVector p_vec = add.to(unit);
+        x += p_vec.x;
+        y += p_vec.y;
         return *this;
     }
 
     UnitVector UnitVector::operator-(const UnitVector& sub) const
     {
-        const UnitVector pVec = sub.to(unit);
-        return UnitVector(x - pVec.x, y - pVec.y, unit);
+        const UnitVector p_vec = sub.to(unit);
+        return UnitVector(x - p_vec.x, y - p_vec.y, unit);
     }
 
     UnitVector& UnitVector::operator-=(const UnitVector& sub)
     {
-        const UnitVector pVec = sub.to(unit);
-        x -= pVec.x;
-        y -= pVec.y;
+        const UnitVector p_vec = sub.to(unit);
+        x -= p_vec.x;
+        y -= p_vec.y;
         return *this;
     }
 
     UnitVector UnitVector::operator*(const UnitVector& mul) const
     {
-        const UnitVector pVec = mul.to(unit);
-        return UnitVector(x * pVec.x, y * pVec.y, unit);
+        const UnitVector p_vec = mul.to(unit);
+        return UnitVector(x * p_vec.x, y * p_vec.y, unit);
     }
 
     UnitVector& UnitVector::operator*=(const UnitVector& mul)
     {
-        const UnitVector pVec = mul.to(unit);
-        x *= pVec.x;
-        y *= pVec.y;
+        const UnitVector p_vec = mul.to(unit);
+        x *= p_vec.x;
+        y *= p_vec.y;
         return *this;
     }
 
     UnitVector UnitVector::operator/(const UnitVector& div) const
     {
-        const UnitVector pVec = div.to(unit);
-        return UnitVector(x / pVec.x, y / pVec.y, unit);
+        const UnitVector p_vec = div.to(unit);
+        return UnitVector(x / p_vec.x, y / p_vec.y, unit);
     }
 
     UnitVector& UnitVector::operator/=(const UnitVector& div)
     {
-        const UnitVector pVec = div.to(unit);
-        x /= pVec.x;
-        y /= pVec.y;
+        const UnitVector p_vec = div.to(unit);
+        x /= p_vec.x;
+        y /= p_vec.y;
         return *this;
     }
 
@@ -166,19 +166,19 @@ namespace obe::Transform
 
     bool UnitVector::operator==(const UnitVector& vec) const
     {
-        const UnitVector pVec = vec.to(unit);
-        return (x == pVec.x && y == pVec.y);
+        const UnitVector p_vec = vec.to(unit);
+        return (x == p_vec.x && y == p_vec.y);
     }
 
     bool UnitVector::operator!=(const UnitVector& vec) const
     {
-        const UnitVector pVec = vec.to(unit);
-        return (x != pVec.x || y != pVec.y);
+        const UnitVector p_vec = vec.to(unit);
+        return (x != p_vec.x || y != p_vec.y);
     }
 
-    UnitVector UnitVector::to(Units pUnit) const
+    UnitVector UnitVector::to(Units p_unit) const
     {
-        switch (pUnit)
+        switch (p_unit)
         {
         case Units::ViewPercentage:
             switch (unit)
@@ -281,15 +281,15 @@ namespace obe::Transform
 
     std::ostream& operator<<(std::ostream& os, const UnitVector& m)
     {
-        os << "(" << m.x << ", " << m.y << ")::" << UnitsMeta::toString(m.unit);
+        os << "(" << m.x << ", " << m.y << ")::" << UnitsMeta::to_string(m.unit);
         return os;
     }
 
     UnitVector UnitVector::rotate(double angle, UnitVector zero) const
     {
-        const double radAngle = Utils::Math::convertToRadian(angle);
+        const double rad_angle = Utils::Math::convert_to_radian(angle);
         Matrix2D rot(
-            { std::cos(radAngle), -std::sin(radAngle), std::sin(radAngle), std::cos(radAngle) });
+            { std::cos(rad_angle), -std::sin(rad_angle), std::sin(rad_angle), std::cos(rad_angle) });
         const UnitVector result = rot.product(*this - zero) + zero;
         return result;
     }
@@ -301,4 +301,4 @@ namespace obe::Transform
     {
         return std::sqrt(std::pow(x, 2) + std::pow(y, 2));
     }
-} // namespace obe::Transform
+} // namespace obe::transform

@@ -8,11 +8,11 @@ namespace obe::Types
     class Togglable
     {
     private:
-        void changeState(bool state);
+        void change_state(bool state);
 
     protected:
         bool m_enabled;
-        virtual void onStateChange();
+        virtual void on_state_change();
 
     public:
         /**
@@ -25,7 +25,7 @@ namespace obe::Types
          * \param state A boolean to set the state of the Togglable (true /
          * false)
          */
-        void setEnabled(bool state);
+        void set_enabled(bool state);
         /**
          * \brief Togglable disables if it was enabled and enables if it wasn't
          */
@@ -42,6 +42,6 @@ namespace obe::Types
          * \brief Get if the Togglable is enabled or not
          * \return true if enabled, false otherwise
          */
-        [[nodiscard]] bool isEnabled() const;
+        [[nodiscard]] bool is_enabled() const;
     };
 } // namespace obe::Types

@@ -80,8 +80,8 @@ namespace obe::graphics::canvas
     class Line : public CanvasElement
     {
     public:
-        Transform::UnitVector p1;
-        Transform::UnitVector p2;
+        transform::UnitVector p1;
+        transform::UnitVector p2;
         unsigned int thickness = 1;
         Color p1_color;
         Color p2_color;
@@ -106,7 +106,7 @@ namespace obe::graphics::canvas
     class CanvasPositionable : public CanvasElement
     {
     public:
-        Transform::UnitVector position;
+        transform::UnitVector position;
         CanvasPositionable(Canvas& parent, const std::string& id);
     };
 
@@ -119,7 +119,7 @@ namespace obe::graphics::canvas
         static constexpr CanvasElementType Type = CanvasElementType::Rectangle;
 
         shapes::Rectangle shape;
-        Transform::UnitVector size;
+        transform::UnitVector size;
         /**
          * \brief Create a new Rectangle
          * \param parent Reference to the Canvas
@@ -219,7 +219,7 @@ namespace obe::graphics::canvas
         static constexpr CanvasElementType Type = CanvasElementType::Polygon;
 
         shapes::Polygon shape;
-        // Transform::Polygon polygon;
+        // transform::Polygon polygon;
 
         explicit Polygon(Canvas& parent, const std::string& id);
 
@@ -233,7 +233,7 @@ namespace obe::graphics::canvas
     {
     public:
         static constexpr CanvasElementType Type = CanvasElementType::Bezier;
-        std::vector<Transform::UnitVector> points;
+        std::vector<transform::UnitVector> points;
         std::vector<graphics::Color> colors;
         unsigned int precision = 10;
 
@@ -329,8 +329,8 @@ namespace obe::graphics::canvas
             }
             else
             {
-                throw exceptions::CanvasElementAlreadyExists(id, CanvasElementTypeMeta::toString(T::Type),
-                    CanvasElementTypeMeta::toString(existing_element->type), EXC_INFO);
+                throw exceptions::CanvasElementAlreadyExists(id, CanvasElementTypeMeta::to_string(T::Type),
+                    CanvasElementTypeMeta::to_string(existing_element->type), EXC_INFO);
             }
         }
         else

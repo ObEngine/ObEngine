@@ -2,5 +2,5 @@
 
 namespace obe
 {
-    void InitEngine(unsigned int surfaceWidth, unsigned int surfaceHeight);
+    void init_engine(unsigned int surface_width, unsigned int surface_height);
 }

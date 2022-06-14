@@ -20,11 +20,11 @@ namespace obe::Types
          * \brief Set the state of the Selectable
          * \param selected A boolean to set the state of the Selectable (true / false)
          */
-        void setSelected(bool selected);
+        void set_selected(bool selected);
         /**
          * \brief Selectable becomes unselected if it was selected and selected if it was not
          */
-        void toggleSelected();
+        void toggle_selected();
         /**
          * \brief Selects the Selectable
          */
@@ -37,6 +37,6 @@ namespace obe::Types
          * \brief Get if the Selectable is selected or not
          * \return true if selected, false otherwise
          */
-        [[nodiscard]] bool isSelected() const;
+        [[nodiscard]] bool is_selected() const;
     };
 } // namespace obe::Types

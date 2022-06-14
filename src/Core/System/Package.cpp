@@ -29,9 +29,9 @@ namespace obe::system::package
     {
         vili::node packages = vili::parser::from_file("obe://Packages/packages.vili"_fs);
         std::vector<std::string> package_names;
-        for (const auto& [packageName, _] : packages.items())
+        for (const auto& [package_name, _] : packages.items())
         {
-            package_names.push_back(packageName);
+            package_names.push_back(package_name);
         }
         return package_names;
     }
@@ -39,7 +39,7 @@ namespace obe::system::package
     bool install(const std::string& package_name)
     {
         debug::Log->info("<Package> Installing Package '{0}'", package_name);
-        if (!Utils::Vector::contains(package_name + ".opaque", Utils::File::getFileList("Package")))
+        if (!Utils::Vector::contains(package_name + ".opaque", Utils::File::get_file_list("Package")))
         {
             throw Exceptions::PackageFileNotFound(
                 fmt::format("Package/{}.opaque", package_name), EXC_INFO);

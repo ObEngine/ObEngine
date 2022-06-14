@@ -31,38 +31,38 @@ namespace obe::Utils::String
      * \return The amount of times the occurence of occur has been found in the
      *         string str
      */
-    int occurencesInString(const std::string& str, const std::string& occur);
+    int occurences_in_string(const std::string& str, const std::string& occur);
     /**
      * \brief Get if the string only contains letters
      * \param str String you want to check
      * \return true if the string only contains letters, false otherwise
      */
-    bool isStringAlpha(const std::string& str);
+    bool is_string_alpha(const std::string& str);
     /**
      * \brief Get if the string only contains letters and numbers
      * \param str String you want to check
      * \return true if the string only contains letters and numbers, false
      *         otherwise
      */
-    bool isStringAlphaNumeric(const std::string& str);
+    bool is_string_alpha_numeric(const std::string& str);
     /**
      * \brief Get if the string is a number
      * \param str String you want to check
      * \return true if the string only is a number, false otherwise
      */
-    bool isStringNumeric(const std::string& str);
+    bool is_string_numeric(const std::string& str);
     /**
      * \brief Get if the string is an integer
      * \param str String you want to check
      * \return true if the string is an integer, false otherwise
      */
-    bool isStringInt(const std::string& str);
+    bool is_string_int(const std::string& str);
     /**
      * \brief Get if the string is a float
      * \param str String you want to check
      * \return true if the string is a float, false otherwise
      */
-    bool isStringFloat(const std::string& str);
+    bool is_string_float(const std::string& str);
     /**
      * \nobind
      * \brief Replace all the occurences of search to replace in the string
@@ -71,7 +71,7 @@ namespace obe::Utils::String
      * \param search The string to replace
      * \param replace The content that will replace search occurences
      */
-    void replaceInPlace(
+    void replace_in_place(
         std::string& subject, const std::string& search, const std::string& replace);
     /**
      * \brief Replace all the occurences of search to replace in the string
@@ -88,14 +88,14 @@ namespace obe::Utils::String
      * \param bet String you want to check if it surrounds the first string
      * \return true if bet surrounds the string, false otherwise
      */
-    bool isSurroundedBy(const std::string& string, const std::string& bet);
+    bool is_surrounded_by(const std::string& string, const std::string& bet);
     /**
      * \brief Generates a random string witch characters from the given set
      * \param set Set of characters to use for the generation
      * \param len Length of the string you want to generate
      * \return The generated string
      */
-    std::string getRandomKey(const std::string& set, int len);
+    std::string get_random_key(const std::string& set, int len);
     /**
      * \brief Check if a string contains another one
      * \param string The string to check
@@ -109,18 +109,18 @@ namespace obe::Utils::String
      * \param search Prefix to check
      * \return true if search is a prefix of string, false otherwise
      */
-    bool startsWith(const std::string& string, const std::string& search);
+    bool starts_with(const std::string& string, const std::string& search);
     /**
      * \brief Checks if "string" ends with "search"
      * \param string String where to search the suffix
      * \param search Suffix to check
      * \return true if search is a suffix of string, false otherwise
      */
-    bool endsWith(const std::string& string, const std::string& search);
+    bool ends_with(const std::string& string, const std::string& search);
 
     std::size_t distance(std::string_view source, std::string_view target);
 
-    std::vector<std::string> sortByDistance(
+    std::vector<std::string> sort_by_distance(
         const std::string& source, const std::vector<std::string>& words, std::size_t limit = 0);
 
     std::string quote(const std::string& source);

@@ -15,7 +15,7 @@
 
 namespace obe::Bindings
 {
-    void IndexCoreBindings(sol::state_view state);
+    void index_core_bindings(sol::state_view state);
 }
 
 namespace obe::events::game

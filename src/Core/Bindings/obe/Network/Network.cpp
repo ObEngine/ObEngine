@@ -31,7 +31,7 @@ namespace obe::network::Bindings
             obe::network::TcpServer>("TcpServer", sol::call_constructor,
             sol::constructors<obe::network::TcpServer(obe::event::EventNamespace&, unsigned short)>());
         bindTcpServer["update"] = &obe::network::TcpServer::update;
-        bindTcpServer["setBufferSize"] = &obe::network::TcpServer::setBufferSize;
+        bindTcpServer["set_buffer_size"] = &obe::network::TcpServer::set_buffer_size;
     }
     void LoadClassTcpSocket(sol::state_view state)
     {

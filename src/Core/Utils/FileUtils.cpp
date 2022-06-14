@@ -29,10 +29,10 @@
 
 namespace obe::Utils::File
 {
-    std::vector<std::string> getDirectoryList(const std::string& path)
+    std::vector<std::string> get_directory_list(const std::string& path)
     {
         debug::Log->trace("<FileUtils> Get Directory List at {0}", path);
-        std::vector<std::string> folderList;
+        std::vector<std::string> folder_list;
 #ifdef _USE_FILESYSTEM_FALLBACK
         tinydir_dir dir;
         tinydir_open(&dir, path.c_str());
@@ -43,7 +43,7 @@ namespace obe::Utils::File
             tinydir_readfile(&dir, &file);
             if (file.is_dir && std::string(file.name) != "." && std::string(file.name) != "..")
             {
-                folderList.push_back(normalizePath(std::string(file.name)));
+                folder_list.push_back(normalize_path(std::string(file.name)));
             }
             tinydir_next(&dir);
         }
@@ -53,19 +53,19 @@ namespace obe::Utils::File
         {
             if (std::filesystem::is_directory(p))
             {
-                std::string dirpath = std::filesystem::path(p.path()).filename().string();
-                folderList.push_back(normalizePath(dirpath));
+                const std::string dirpath = std::filesystem::path(p.path()).filename().string();
+                folder_list.push_back(normalize_path(dirpath));
             }
         }
 #endif
-        return folderList;
+        return folder_list;
     }
 
-    std::vector<std::string> getFileList(const std::string& path)
+    std::vector<std::string> get_file_list(const std::string& path)
     {
         debug::Log->trace("<FileUtils> Get File List at {0}", path);
 
-        std::vector<std::string> fileList;
+        std::vector<std::string> file_list;
 #ifdef _USE_FILESYSTEM_FALLBACK
         tinydir_dir dir;
         tinydir_open(&dir, path.c_str());
@@ -76,7 +76,7 @@ namespace obe::Utils::File
             tinydir_readfile(&dir, &file);
             if (!file.is_dir)
             {
-                fileList.push_back(normalizePath(std::string(file.name)));
+                file_list.push_back(normalize_path(std::string(file.name)));
             }
             tinydir_next(&dir);
         }
@@ -87,27 +87,27 @@ namespace obe::Utils::File
             if (std::filesystem::is_regular_file(p))
             {
                 std::string filepath = std::filesystem::path(p.path()).filename().string();
-                fileList.push_back(normalizePath(filepath));
+                file_list.push_back(normalize_path(filepath));
             }
         }
 #endif
-        return fileList;
+        return file_list;
     }
 
-    bool fileExists(const std::string& path)
+    bool file_exists(const std::string& path)
     {
         debug::Log->trace("<FileUtils> Test File existence at {0}", path);
 
 #ifdef _USE_FILESYSTEM_FALLBACK
         struct stat buffer;
-        bool fileFound = (stat(path.c_str(), &buffer) == 0);
-        return fileFound;
+        bool file_found = (stat(path.c_str(), &buffer) == 0);
+        return file_found;
 #else
         return std::filesystem::exists(path) && std::filesystem::is_regular_file(path);
 #endif
     }
 
-    bool directoryExists(const std::string& path)
+    bool directory_exists(const std::string& path)
     {
         debug::Log->trace("<FileUtils> Get Directory existence at {0}", path);
 
@@ -124,7 +124,7 @@ namespace obe::Utils::File
 #endif
     }
 
-    bool createDirectory(const std::string& path)
+    bool create_directory(const std::string& path)
     {
         debug::Log->trace("<FileUtils> Create Directory at {0}", path);
 
@@ -140,7 +140,7 @@ namespace obe::Utils::File
 #endif
     }
 
-    void createFile(const std::string& path)
+    void create_file(const std::string& path)
     {
         debug::Log->trace("<FileUtils> Create File at {0}", path);
         std::ofstream dst(path, std::ios::binary);
@@ -158,28 +158,28 @@ namespace obe::Utils::File
         dst << src.rdbuf();
     }
 
-    bool deleteFile(const std::string& path)
+    bool delete_file(const std::string& path)
     {
         if (debug::Log != nullptr)
             debug::Log->trace("<FileUtils> Delete File at {0}", path);
         return std::remove(path.c_str()) == 0;
     }
 
-    bool deleteDirectory(const std::string& path)
+    bool delete_directory(const std::string& path)
     {
         debug::Log->trace("<FileUtils> Delete Directory at {0}", path);
 
 #ifdef _USE_FILESYSTEM_FALLBACK
-        debug::Log->error("<FileUtils> Unimplemented deleteDirectory for "
+        debug::Log->error("<FileUtils> Unimplemented delete_directory for "
                           "filesystem fallback");
 #else
-        if (directoryExists(path))
+        if (directory_exists(path))
             return std::filesystem::remove(path);
 #endif
         return false;
     }
 
-    std::string getCurrentDirectory()
+    std::string get_current_directory()
     {
 #ifdef _USE_FILESYSTEM_FALLBACK
         char buff[FILENAME_MAX];
@@ -187,7 +187,7 @@ namespace obe::Utils::File
         std::string current_working_dir(buff);
         return current_working_dir;
 #else
-        return normalizePath(std::filesystem::current_path().string());
+        return normalize_path(std::filesystem::current_path().string());
 #endif
     }
 
@@ -199,36 +199,36 @@ namespace obe::Utils::File
         return "/";
 #endif
     }
-    std::string getExecutableDirectory()
+    std::string get_executable_directory()
     {
-        std::string executablePath;
+        std::string executable_path;
 
-        int pathLength = wai_getExecutablePath(nullptr, 0, nullptr);
-        executablePath.resize(pathLength);
-        int dirnameLength;
-        wai_getExecutablePath(executablePath.data(), pathLength, &dirnameLength);
+        int path_length = wai_getExecutablePath(nullptr, 0, nullptr);
+        executable_path.resize(path_length);
+        int dirname_length;
+        wai_getExecutablePath(executable_path.data(), path_length, &dirname_length);
 
-        return normalizePath(executablePath.substr(0, dirnameLength));
+        return normalize_path(executable_path.substr(0, dirname_length));
     }
-    std::string getExecutablePath()
+    std::string get_executable_path()
     {
-        std::string executablePath;
+        std::string executable_path;
 
-        int pathLength = wai_getExecutablePath(nullptr, 0, nullptr);
-        executablePath.resize(pathLength);
-        int dirnameLength;
-        wai_getExecutablePath(executablePath.data(), pathLength, &dirnameLength);
+        int path_length = wai_getExecutablePath(nullptr, 0, nullptr);
+        executable_path.resize(path_length);
+        int dirname_length;
+        wai_getExecutablePath(executable_path.data(), path_length, &dirname_length);
 
-        return normalizePath(executablePath);
+        return normalize_path(executable_path);
     }
-    std::string normalizePath(const std::string& path)
+    std::string normalize_path(const std::string& path)
     {
-        std::string normalizedPath = path;
-        std::replace(normalizedPath.begin(), normalizedPath.end(), '\\', '/');
-        return normalizedPath;
+        std::string normalized_path = path;
+        std::ranges::replace(normalized_path, '\\', '/');
+        return normalized_path;
     }
 
-    std::string canonicalPath(const std::string& path)
+    std::string canonical_path(const std::string& path)
     {
         return std::filesystem::canonical(path).string();
     }
@@ -244,6 +244,6 @@ namespace obe::Utils::File
         {
             base /= parts[i];
         }
-        return normalizePath(base.string());
+        return normalize_path(base.string());
     }
 } // namespace obe::Utils::File

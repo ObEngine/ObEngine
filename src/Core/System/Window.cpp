@@ -75,7 +75,7 @@ namespace obe::system
                 window_width = configuration.at("width");
             else if (configuration.at("width").is<vili::string>())
             {
-                switch (WindowSizeMeta::fromString(configuration.at("width")))
+                switch (WindowSizeMeta::from_string(configuration.at("width")))
                 {
                 case WindowSize::Screen:
                     window_width = screen_size.width;
@@ -92,7 +92,7 @@ namespace obe::system
                 window_height = configuration.at("height");
             else if (configuration.at("height").is<vili::string>())
             {
-                switch (WindowSizeMeta::fromString(configuration.at("height")))
+                switch (WindowSizeMeta::from_string(configuration.at("height")))
                 {
                 case WindowSize::Screen:
                     window_height = screen_size.height;
@@ -113,7 +113,7 @@ namespace obe::system
                     render_width = render.at("width");
                 else if (render.at("width").is<vili::string>())
                 {
-                    switch (RenderSizeMeta::fromString(render.at("width")))
+                    switch (RenderSizeMeta::from_string(render.at("width")))
                     {
                     case RenderSize::Window:
                         render_width = window_width;
@@ -133,7 +133,7 @@ namespace obe::system
                     render_height = render.at("height");
                 else if (render.at("height").is<vili::string>())
                 {
-                    switch (RenderSizeMeta::fromString(render.at("height")))
+                    switch (RenderSizeMeta::from_string(render.at("height")))
                     {
                     case RenderSize::Window:
                         render_height = window_height;
@@ -149,7 +149,7 @@ namespace obe::system
 
             if (render.contains("stretch"))
             {
-                m_stretch = StretchModeMeta::fromString(render.at("stretch"));
+                m_stretch = StretchModeMeta::from_string(render.at("stretch"));
             }
         }
         else
@@ -195,7 +195,7 @@ namespace obe::system
 
     void Window::create()
     {
-        Transform::UnitVector::Init(m_render_width, m_render_height);
+        transform::UnitVector::init(m_render_width, m_render_height);
         m_window.create(sf::VideoMode(m_width, m_height), m_title, m_style);
         m_window.setKeyRepeatEnabled(false);
 
@@ -228,25 +228,25 @@ namespace obe::system
         m_window.draw(vertices, vertex_count, type, states);
     }
 
-    Transform::UnitVector Window::get_render_size() const
+    transform::UnitVector Window::get_render_size() const
     {
-        return Transform::UnitVector(m_render_width, m_render_height, Transform::Units::ScenePixels);
+        return transform::UnitVector(m_render_width, m_render_height, transform::Units::ScenePixels);
     }
 
-    Transform::UnitVector Window::get_window_size() const
+    transform::UnitVector Window::get_window_size() const
     {
         const sf::Vector2u window_size = m_window.getSize();
-        return Transform::UnitVector(window_size.x, window_size.y, Transform::Units::ScenePixels);
+        return transform::UnitVector(window_size.x, window_size.y, transform::Units::ScenePixels);
     }
 
-    Transform::UnitVector Window::get_screen_size()
+    transform::UnitVector Window::get_screen_size()
     {
         const auto screen_size = sf::VideoMode::getDesktopMode();
-        return Transform::UnitVector(
-            screen_size.width, screen_size.height, Transform::Units::ScenePixels);
+        return transform::UnitVector(
+            screen_size.width, screen_size.height, transform::Units::ScenePixels);
     }
 
-    Transform::UnitVector Window::get_size() const
+    transform::UnitVector Window::get_size() const
     {
         return this->get_render_size();
     }
@@ -329,8 +329,8 @@ namespace obe::system
 
     void Window::set_render_size(unsigned width, unsigned height)
     {
-        Transform::UnitVector::Screen.w = width;
-        Transform::UnitVector::Screen.h = height;
+        transform::UnitVector::Screen.w = width;
+        transform::UnitVector::Screen.h = height;
         m_render_width = width;
         m_render_height = height;
         this->apply_view();

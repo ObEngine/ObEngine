@@ -28,7 +28,7 @@ namespace obe::event
     template <class EventType>
     void LuaEventListener::operator()(const EventType& event) const
     {
-        script::safeLuaCall(m_callback, event);
+        script::safe_lua_call(m_callback, event);
     }
 
     using ExternalEventListener = std::variant<LuaEventListener>;

@@ -61,7 +61,7 @@ namespace obe::network
         }*/
     }
 
-    void TcpServer::setBufferSize(unsigned int max_buffer_size)
+    void TcpServer::set_buffer_size(unsigned int max_buffer_size)
     {
         m_max_buffer_size = max_buffer_size;
         m_data.resize(m_max_buffer_size);

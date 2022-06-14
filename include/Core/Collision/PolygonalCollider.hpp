@@ -44,14 +44,14 @@ namespace obe::collision
         /**
          * \brief Maximum distance that can be traveled before collision
          */
-        Transform::UnitVector offset;
+        transform::UnitVector offset;
     };
 
     /**
      * \brief Class used for all Collisions in the engine, it's a Polygon
      * containing n points
      */
-    class PolygonalCollider : public Transform::Polygon,
+    class PolygonalCollider : public transform::Polygon,
                               public Types::Selectable,
                               public Component::Component<PolygonalCollider>
     {
@@ -67,13 +67,13 @@ namespace obe::collision
         /*
         * \brief Cached bounding box, used for AABB filtering
         */
-        mutable Transform::Rect m_bounding_box;
+        mutable transform::Rect m_bounding_box;
         /*
         * \brief If true, the bounding box is recalculated at next get_bounding_box() call
         */
         mutable bool m_update_bounding_box = true;
 
-        void reset_unit(Transform::Units unit) override;
+        void reset_unit(transform::Units unit) override;
         [[nodiscard]] bool check_tags(const PolygonalCollider& collider) const;
 
     public:
@@ -108,7 +108,7 @@ namespace obe::collision
          * \param offset The offset to apply to the source collider
          * \return CollisionData containing intersected colliders (offset doesn't change)
          */
-        [[nodiscard]] CollisionData does_collide(const Transform::UnitVector& offset) const;
+        [[nodiscard]] CollisionData does_collide(const transform::UnitVector& offset) const;
         /**
          * \brief Checks if two polygons are intersecting
          * \param collider The other collider to test
@@ -116,7 +116,7 @@ namespace obe::collision
          * \param perform_aabb_filter whether or not, the collider should perform a quick AABB filter before checking for full collision
          * \return true if the two polygons intersects, false otherwise
          */
-        bool does_collide(PolygonalCollider& collider, const Transform::UnitVector& offset,
+        bool does_collide(PolygonalCollider& collider, const transform::UnitVector& offset,
             const bool perform_aabb_filter = true) const;
         /**
          * \brief Check if the Collider contains one of the Tag in parameter
@@ -155,7 +155,7 @@ namespace obe::collision
          *         met and the maximum distance the collider can travel before colliding
          */
         [[nodiscard]] CollisionData get_distance_before_collision(
-            const Transform::UnitVector& offset) const;
+            const transform::UnitVector& offset) const;
         /**
          * \brief Gets the Maximum distance before Collision with a specific
          *        Collider
@@ -163,8 +163,8 @@ namespace obe::collision
          * \param offset Distance the Collider should move to (if nothing collides)
          * \return The maximum distance the Collider can travel before colliding
          */
-        Transform::UnitVector get_distance_before_collision(PolygonalCollider& collider,
-            const Transform::UnitVector& offset, const bool perform_aabb_filter = true) const;
+        transform::UnitVector get_distance_before_collision(PolygonalCollider& collider,
+            const transform::UnitVector& offset, const bool perform_aabb_filter = true) const;
         /**
          * \brief Get the Id of the parent of the Collider (When used in a
          *        GameObject) \return A std::string containing the Id of the parent of
@@ -199,12 +199,12 @@ namespace obe::collision
         /*
         * \brief Returns the cached bounding box. Recalculates it if necessary.
         */
-        [[nodiscard]] Transform::Rect get_bounding_box() const override;
-        void add_point(const Transform::UnitVector& position, int point_index = -1) override;
-        void move(const Transform::UnitVector& position) override;
-        void rotate(float angle, Transform::UnitVector origin) override;
-        void set_position(const Transform::UnitVector& position) override;
-        void set_rotation(float angle, Transform::UnitVector origin) override;
-        void set_position_from_centroid(const Transform::UnitVector& position) override;
+        [[nodiscard]] transform::Rect get_bounding_box() const override;
+        void add_point(const transform::UnitVector& position, int point_index = -1) override;
+        void move(const transform::UnitVector& position) override;
+        void rotate(float angle, transform::UnitVector origin) override;
+        void set_position(const transform::UnitVector& position) override;
+        void set_rotation(float angle, transform::UnitVector origin) override;
+        void set_position_from_centroid(const transform::UnitVector& position) override;
     };
 } // namespace obe::collision

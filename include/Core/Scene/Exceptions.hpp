@@ -42,7 +42,7 @@ namespace obe::scene::Exceptions
             this->error(
                 "GameObject with id '{}' does not exists inside Scene '{}'", object_id, scene_file);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(object_id.data(), all_object_ids, 5);
+                = Utils::String::sort_by_distance(object_id.data(), all_object_ids, 5);
             std::ranges::transform(suggestions
                 , suggestions.begin(), Utils::String::quote);
             suggestions.emplace_back("...");
@@ -75,7 +75,7 @@ namespace obe::scene::Exceptions
             this->error(
                 "Sprite with id '{}' does not exists inside Scene '{}'", sprite_id, scene_file);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(sprite_id.data(), all_sprites_ids, 5);
+                = Utils::String::sort_by_distance(sprite_id.data(), all_sprites_ids, 5);
             std::ranges::transform(suggestions
                 , suggestions.begin(), Utils::String::quote);
             suggestions.emplace_back("...");
@@ -94,7 +94,7 @@ namespace obe::scene::Exceptions
             this->error(
                 "Collider with id '{}' does not exists inside Scene '{}'", collider_id, scene_file);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(collider_id.data(), all_colliders_ids, 5);
+                = Utils::String::sort_by_distance(collider_id.data(), all_colliders_ids, 5);
             std::ranges::transform(suggestions
                 , suggestions.begin(), Utils::String::quote);
             suggestions.emplace_back("...");

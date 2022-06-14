@@ -2,7 +2,7 @@
 
 namespace obe::collision
 {
-    Trajectory::Trajectory(const Transform::Units unit)
+    Trajectory::Trajectory(const transform::Units unit)
         : Togglable(true)
         , m_unit(unit)
     {
@@ -70,7 +70,7 @@ namespace obe::collision
         return m_static;
     }
 
-    Transform::Units Trajectory::get_unit() const
+    transform::Units Trajectory::get_unit() const
     {
         return m_unit;
     }

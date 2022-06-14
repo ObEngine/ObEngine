@@ -20,7 +20,7 @@ namespace obe::network
     public:
         TcpServer(event::EventNamespace& event_namespace, unsigned short port);
         void update();
-        void setBufferSize(unsigned int max_buffer_size);
+        void set_buffer_size(unsigned int max_buffer_size);
         // std::vector<sf::TcpSocket&> getClients();
     };
 } // namespace obe::network

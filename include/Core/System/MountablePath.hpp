@@ -94,7 +94,8 @@ namespace obe::system
          * \param defer_resolution whether or not to resolve base_path on construction
          */
         MountablePath(MountablePathType path_type, std::string_view base_path,
-            std::string_view prefix, unsigned int priority = 0, bool implicit = false, bool defer_resolution = false);
+            std::string_view prefix, unsigned int priority = 0, bool implicit = false,
+            bool defer_resolution = false);
         /**
          * \brief Type of the mounted path
          */
@@ -118,7 +119,7 @@ namespace obe::system
         bool implicit;
 
         /**
-         * \brief Allows to defer basePath resolution to a later time
+         * \brief Allows to defer base_path resolution to a later time
          */
         bool deferred_resolution = false;
 

@@ -3,8 +3,9 @@
 #include <map>
 
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Window/Mouse.hpp>
 #include <SFML/Window/Cursor.hpp>
+#include <SFML/Window/Mouse.hpp>
+
 
 #include <Animation/Animator.hpp>
 #include <Event/EventGroup.hpp>
@@ -74,7 +75,7 @@ namespace obe::system
     };
 
     /**
-    * \brief A Class to define a custom cursor. Used for System::Cursor.setCursor()
+    * \brief A Class to define a custom cursor. Used for System::Cursor.set_cursor()
     */
     class CursorModel
     {
@@ -180,8 +181,8 @@ namespace obe::system
         void set_visible(bool visible);
         [[nodiscard]] bool is_visible() const;
 
-        [[nodiscard]] Transform::UnitVector get_position() const;
-        [[nodiscard]] Transform::UnitVector get_scene_position() const;
+        [[nodiscard]] transform::UnitVector get_position() const;
+        [[nodiscard]] transform::UnitVector get_scene_position() const;
         /**
          * \brief Updates the Cursor
          */
@@ -194,7 +195,8 @@ namespace obe::system
          * \param condition condition for the constraint to apply
          */
         void set_constraint(
-            const PositionConstraint& constraint, ConstraintCondition condition = []() { return true; });
+            const PositionConstraint& constraint,
+            ConstraintCondition condition = []() { return true; });
         bool is_pressed(sf::Mouse::Button button) const;
         /**
          * \brief Change the cursor

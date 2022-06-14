@@ -10,12 +10,12 @@ namespace obe::Utils::Exec
         this->start = start;
     }
 
-    bool RunArgsParser::argumentExists(const std::string& arg) const
+    bool RunArgsParser::argument_exists(const std::string& arg) const
     {
         return std::find(start, start + size, arg) != (start + size);
     }
 
-    std::string RunArgsParser::getArgumentValue(const std::string& arg) const
+    std::string RunArgsParser::get_argument_value(const std::string& arg) const
     {
         char** itr = std::find(start, start + size, arg);
         if (itr != (start + size) && ++itr != (start + size))

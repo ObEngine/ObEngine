@@ -53,8 +53,8 @@ namespace obe::scene
         std::string m_base_folder;
         std::string m_deferred_scene_load;
         Camera m_camera;
-        Transform::UnitVector m_camera_initial_position;
-        Transform::Referential m_camera_initial_referential;
+        transform::UnitVector m_camera_initial_position;
+        transform::Referential m_camera_initial_referential;
         bool m_update_state = true;
 
         std::vector<std::unique_ptr<graphics::Sprite>> m_sprite_array;
@@ -97,20 +97,21 @@ namespace obe::scene
         void load_from_file(const std::string& path);
         /**
          * \rename{load_from_file}
-         * \brief Same that loadFromFile excepts the map will load at the next
+         * \brief Same that load_from_file excepts the map will load at the next
          *        update
          * \param path Path to the Scene file
          */
         void set_future_load_from_file(const std::string& path);
         /**
          * \rename{load_from_file}
-         * \brief Same that loadFromFile excepts the map will load at the next
+         * \brief Same that load_from_file excepts the map will load at the next
          * update
          * \param path Path to the Scene file
          * \param callback Lua Function called when new map has
          *        been loaded
          */
-        void set_future_load_from_file(const std::string& path, const OnSceneLoadCallback& callback);
+        void set_future_load_from_file(
+            const std::string& path, const OnSceneLoadCallback& callback);
         /**
          * \brief Removes all elements in the Scene
          */
@@ -155,7 +156,8 @@ namespace obe::scene
          *        generated)
          * \return A pointer to the newly created GameObject
          */
-        script::GameObject& create_game_object(const std::string& object_type, const std::string& id = "");
+        script::GameObject& create_game_object(
+            const std::string& object_type, const std::string& id = "");
         /**
          * \brief Get how many GameObjects are present in the Scene
          * \return The amount of GameObjects in the Scene
@@ -165,7 +167,8 @@ namespace obe::scene
          * \brief Get all the GameObjects present in the Scene
          * \return
          */
-        std::vector<script::GameObject*> get_all_game_objects(const std::string& object_type = "") const;
+        std::vector<script::GameObject*> get_all_game_objects(
+            const std::string& object_type = "") const;
         /**
          * \brief Get a GameObject by Id (Raises an exception if not found)
          * \param id Id of the GameObject to retrieve
@@ -228,7 +231,8 @@ namespace obe::scene
          * \param layer Layer where to check
          * \return The pointer to a Sprite if found, nullptr otherwise
          */
-        graphics::Sprite* get_sprite_by_position(const Transform::UnitVector& position, int layer) const;
+        graphics::Sprite* get_sprite_by_position(
+            const transform::UnitVector& position, int layer) const;
         /**
          * \brief Get a Sprite by Id (Raises an exception if not found)
          * \param id Id of the Sprite to get
@@ -275,14 +279,14 @@ namespace obe::scene
          *         point at the given position and the index of the point
          */
         std::pair<collision::PolygonalCollider*, int> get_collider_point_by_position(
-            const Transform::UnitVector& position) const;
+            const transform::UnitVector& position) const;
         /**
          * \brief Get the Collider using the centroid Position
          * \param position Position to check
          * \return A Pointer to the Collider if found, nullptr otherwise
          */
         collision::PolygonalCollider* get_collider_by_centroid_position(
-            const Transform::UnitVector& position) const;
+            const transform::UnitVector& position) const;
         /**
          * \brief Get the Collider with the given Id (Raises an exception if not
          *        found)
@@ -305,7 +309,7 @@ namespace obe::scene
 
         // Other
         /**
-         * \brief Folder where was the map loaded with loadFromFile method
+         * \brief Folder where was the map loaded with load_from_file method
          * \return A std::string containing the folder where was loaded the map
          *         file
          */
@@ -320,13 +324,13 @@ namespace obe::scene
          */
         void reload(const OnSceneLoadCallback& callback);
         /**
-         * \brief Name of the last loaded map file with loadFromFile method
+         * \brief Name of the last loaded map file with load_from_file method
          * \return A std::string containing the name of the last loaded map file
-         *         with loadFromFile method
+         *         with load_from_file method
          */
         [[nodiscard]] std::string get_level_file() const;
         [[nodiscard]] SceneNode* get_scene_node_by_position(
-            const Transform::UnitVector& position) const;
+            const transform::UnitVector& position) const;
         bool has_tiles() const;
         const tiles::TileScene& get_tiles() const;
         SceneRenderOptions get_render_options() const;

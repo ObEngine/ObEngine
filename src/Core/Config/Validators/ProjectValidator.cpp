@@ -46,8 +46,8 @@ namespace obe::config::validators
             }
         };
 
-        vili::node mountValidator = mount_validator();
-        vili::object mounts = mountValidator.at("mounts").as<vili::object>();
+        vili::node mount_validator_ = mount_validator();
+        vili::object mounts = mount_validator_.at("mounts").as<vili::object>();
 
         return vili::object {
             {

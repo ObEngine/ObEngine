@@ -7,12 +7,12 @@ namespace obe::Types
         m_selected = selected;
     }
 
-    void Selectable::setSelected(bool selected)
+    void Selectable::set_selected(bool selected)
     {
         m_selected = selected;
     }
 
-    void Selectable::toggleSelected()
+    void Selectable::toggle_selected()
     {
         m_selected = !m_selected;
     }
@@ -27,7 +27,7 @@ namespace obe::Types
         m_selected = false;
     }
 
-    bool Selectable::isSelected() const
+    bool Selectable::is_selected() const
     {
         return m_selected;
     }

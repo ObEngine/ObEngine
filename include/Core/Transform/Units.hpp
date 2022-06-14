@@ -2,7 +2,7 @@
 
 #include <Types/SmartEnum.hpp>
 
-namespace obe::Transform
+namespace obe::transform
 {
     /**
      * \brief Different Units used to work with elements position / size in the
@@ -29,7 +29,7 @@ namespace obe::Transform
          *        pixels screen. The screen height will ALWAYS be 2 ViewUnits when
          *        the View size is 1, the width will depend on the screen ratio.
          *        The screen width in ViewUnits can be calculated using this formula :
-         *        2 * viewSize * (Screen.Width / Screen.Height)
+         *        2 * view_size * (Screen.Width / Screen.Height)
          */
         ViewUnits,
         /**
@@ -45,4 +45,4 @@ namespace obe::Transform
     };
 
     using UnitsMeta = Types::SmartEnum<Units>;
-} // namespace obe::Transform
+} // namespace obe::transform

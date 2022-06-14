@@ -87,7 +87,7 @@ namespace obe::animation
          * \brief The Animation will call another one.
          *        The name of the Animation to call is stored in
          *        m_nextAnimation. You can also get the Animation name to call by
-         *        using Animation::getCalledAnimation().
+         *        using Animation::get_next_animation().
          */
         Call
     };
@@ -128,9 +128,9 @@ namespace obe::animation
          *        of the Animation is equal to AnimationStatus::Call
          * \return A std::string containing the name of the Animation that will be called.
          */
-        [[nodiscard]] std::string get_called_animation() const noexcept;
+        [[nodiscard]] std::string get_next_animation() const noexcept;
         /**
-         * \brief Get AnimationGroup pointer by groupName.
+         * \brief Get AnimationGroup pointer by group_name.
          *        It will throw a
          *        ObEngine.Animation.Animation.AnimationGroupNotFound if the
          *        AnimationGroup is not found.
@@ -232,7 +232,7 @@ namespace obe::animation
          */
         [[nodiscard]] time::TimeUnit get_delay() const noexcept;
         /**
-         * \brief Get AnimationGroup pointer by groupName.
+         * \brief Get AnimationGroup pointer by group_name.
          *        It will throws a
          *        ObEngine.Animation.Animation.AnimationGroupNotFound if the
          *        AnimationGroup is not found.
@@ -321,7 +321,7 @@ namespace obe::animation
         void update();
         /**
          * \brief Enables or disables anti-aliasing for textures of this animation
-         * \param anti_aliasing should be true to enable antiAliasing, false otherwise
+         * \param anti_aliasing should be true to enable anti_aliasing, false otherwise
          */
         void set_anti_aliasing(bool anti_aliasing) noexcept;
         /**

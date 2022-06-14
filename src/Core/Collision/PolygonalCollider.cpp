@@ -7,7 +7,7 @@
 
 namespace obe::collision
 {
-    bool points_comparator(const Transform::UnitVector& first, const Transform::UnitVector& second)
+    bool points_comparator(const transform::UnitVector& first, const transform::UnitVector& second)
     {
         if (first.x < second.x)
             return true;
@@ -16,24 +16,24 @@ namespace obe::collision
         return false;
     }
 
-    double points_distance(const Transform::UnitVector& first, const Transform::UnitVector& second)
+    double points_distance(const transform::UnitVector& first, const transform::UnitVector& second)
     {
         return std::sqrt(std::pow(second.x - first.x, 2) + std::pow(second.y - first.y, 2));
     }
 
-    double cross(const Transform::UnitVector& O, const Transform::UnitVector& A,
-        const Transform::UnitVector& B)
+    double cross(const transform::UnitVector& O, const transform::UnitVector& A,
+        const transform::UnitVector& B)
     {
         return (A.x - O.x) * (B.y - O.y) - (A.y - O.y) * (B.x - O.x);
     }
 
-    std::vector<Transform::UnitVector> convex_hull(std::vector<Transform::UnitVector> points)
+    std::vector<transform::UnitVector> convex_hull(std::vector<transform::UnitVector> points)
     {
         std::ranges::sort(points, points_comparator);
         if (points.size() <= 1)
             return points;
-        std::vector<Transform::UnitVector> lower_hull;
-        for (Transform::UnitVector& point : points)
+        std::vector<transform::UnitVector> lower_hull;
+        for (transform::UnitVector& point : points)
         {
             while (lower_hull.size() >= 2
                 && cross(lower_hull[lower_hull.size() - 2], lower_hull[lower_hull.size() - 1], point)
@@ -42,8 +42,8 @@ namespace obe::collision
             lower_hull.push_back(point);
         }
         std::ranges::reverse(points);
-        std::vector<Transform::UnitVector> upper_hull;
-        for (Transform::UnitVector& point : points)
+        std::vector<transform::UnitVector> upper_hull;
+        for (transform::UnitVector& point : points)
         {
             while (upper_hull.size() >= 2
                 && cross(upper_hull[upper_hull.size() - 2], upper_hull[upper_hull.size() - 1], point)
@@ -51,7 +51,7 @@ namespace obe::collision
                 upper_hull.pop_back();
             upper_hull.push_back(point);
         }
-        std::vector<Transform::UnitVector> full_hull;
+        std::vector<transform::UnitVector> full_hull;
         full_hull.reserve(lower_hull.size() + upper_hull.size() - 2);
         full_hull.insert(full_hull.end(), lower_hull.begin(), lower_hull.end() - 1);
         full_hull.insert(full_hull.end(), upper_hull.begin(), upper_hull.end() - 1);
@@ -62,30 +62,30 @@ namespace obe::collision
      * \brief Returns colliders that may be potentially touched (Axis-Aligned Bounding Box filtering)
     */
     std::vector<PolygonalCollider*> aabb_filter(const PolygonalCollider& coll,
-        const Transform::UnitVector& offset, const std::vector<PolygonalCollider*>& colliders)
+        const transform::UnitVector& offset, const std::vector<PolygonalCollider*>& colliders)
     {
-        const Transform::Rect bounding_box = coll.get_bounding_box();
-        Transform::Rect aabb;
-        aabb.setSize(bounding_box.get_size() + Transform::UnitVector(abs(offset.x), abs(offset.y)));
+        const transform::Rect bounding_box = coll.get_bounding_box();
+        transform::Rect aabb;
+        aabb.set_size(bounding_box.get_size() + transform::UnitVector(abs(offset.x), abs(offset.y)));
         if (offset.x >= 0 && offset.y >= 0)
         {
-            aabb.set_position(bounding_box.get_position(Transform::Referential::TopLeft),
-                Transform::Referential::TopLeft);
+            aabb.set_position(bounding_box.get_position(transform::Referential::TopLeft),
+                transform::Referential::TopLeft);
         }
         else if (offset.x >= 0 && offset.y < 0)
         {
-            aabb.set_position(bounding_box.get_position(Transform::Referential::BottomLeft),
-                Transform::Referential::BottomLeft);
+            aabb.set_position(bounding_box.get_position(transform::Referential::BottomLeft),
+                transform::Referential::BottomLeft);
         }
         else if (offset.x < 0 && offset.y >= 0)
         {
-            aabb.set_position(bounding_box.get_position(Transform::Referential::TopRight),
-                Transform::Referential::TopRight);
+            aabb.set_position(bounding_box.get_position(transform::Referential::TopRight),
+                transform::Referential::TopRight);
         }
         else // offset.x < 0 && offset.y < 0
         {
-            aabb.set_position(bounding_box.get_position(Transform::Referential::BottomRight),
-                Transform::Referential::BottomRight);
+            aabb.set_position(bounding_box.get_position(transform::Referential::BottomRight),
+                transform::Referential::BottomRight);
         }
         std::vector<PolygonalCollider*> colliders_to_check;
         for (auto& collider : colliders)
@@ -104,7 +104,7 @@ namespace obe::collision
 
     PolygonalCollider::PolygonalCollider(const PolygonalCollider& collider)
         : Selectable(false)
-        , Component(collider.getId())
+        , Component(collider.get_id())
         , Polygon(collider)
         , m_parent_id(collider.m_parent_id)
         , m_tags(collider.m_tags)
@@ -122,8 +122,8 @@ namespace obe::collision
         size_t index = 0;
         for (const auto& point : collider.m_points)
         {
-            m_points.push_back(std::make_unique<Transform::PolygonPoint>(
-                *this, index++, Transform::UnitVector(point->x, point->y, point->unit)));
+            m_points.push_back(std::make_unique<transform::PolygonPoint>(
+                *this, index++, transform::UnitVector(point->x, point->y, point->unit)));
         }
 
         m_parent_id = collider.m_parent_id;
@@ -140,62 +140,62 @@ namespace obe::collision
         return ComponentType;
     }
 
-    Transform::Rect PolygonalCollider::get_bounding_box() const
+    transform::Rect PolygonalCollider::get_bounding_box() const
     {
         if (m_update_bounding_box)
         {
-            m_bounding_box = Transform::Polygon::get_bounding_box();
+            m_bounding_box = transform::Polygon::get_bounding_box();
             m_update_bounding_box = false;
         }
         return m_bounding_box;
     }
 
-    void PolygonalCollider::add_point(const Transform::UnitVector& position, int point_index)
+    void PolygonalCollider::add_point(const transform::UnitVector& position, int point_index)
     {
-        Transform::Polygon::add_point(position, point_index);
+        transform::Polygon::add_point(position, point_index);
         m_update_bounding_box = true;
     }
 
-    void PolygonalCollider::move(const Transform::UnitVector& position)
+    void PolygonalCollider::move(const transform::UnitVector& position)
     {
-        Transform::Polygon::move(position);
+        transform::Polygon::move(position);
         m_bounding_box.move(position);
     }
 
-    void PolygonalCollider::rotate(float angle, Transform::UnitVector origin)
+    void PolygonalCollider::rotate(float angle, transform::UnitVector origin)
     {
-        Transform::Polygon::rotate(angle, origin);
+        transform::Polygon::rotate(angle, origin);
         m_update_bounding_box = true;
     }
 
-    void PolygonalCollider::set_position(const Transform::UnitVector& position)
+    void PolygonalCollider::set_position(const transform::UnitVector& position)
     {
-        const Transform::UnitVector diff = position - this->getPosition();
-        Transform::Polygon::set_position(position);
+        const transform::UnitVector diff = position - this->get_position();
+        transform::Polygon::set_position(position);
         m_bounding_box.move(diff);
     }
 
-    void PolygonalCollider::set_rotation(float angle, Transform::UnitVector origin)
+    void PolygonalCollider::set_rotation(float angle, transform::UnitVector origin)
     {
-        Transform::Polygon::set_rotation(angle, origin);
+        transform::Polygon::set_rotation(angle, origin);
         m_update_bounding_box = true;
     }
 
-    void PolygonalCollider::set_position_from_centroid(const Transform::UnitVector& position)
+    void PolygonalCollider::set_position_from_centroid(const transform::UnitVector& position)
     {
-        const Transform::UnitVector old_position = this->getPosition();
-        Transform::Polygon::set_position_from_centroid(position);
-        m_bounding_box.move(old_position - this->getPosition());
+        const transform::UnitVector old_position = this->get_position();
+        transform::Polygon::set_position_from_centroid(position);
+        m_bounding_box.move(old_position - this->get_position());
     }
 
-    void PolygonalCollider::reset_unit(Transform::Units unit)
+    void PolygonalCollider::reset_unit(transform::Units unit)
     {
     }
 
     CollisionData PolygonalCollider::get_distance_before_collision(
-        const Transform::UnitVector& offset) const
+        const transform::UnitVector& offset) const
     {
-        std::vector<std::pair<PolygonalCollider*, Transform::UnitVector>> reachable_colliders;
+        std::vector<std::pair<PolygonalCollider*, transform::UnitVector>> reachable_colliders;
 
         CollisionData collision_data;
         collision_data.offset = offset;
@@ -206,7 +206,7 @@ namespace obe::collision
         {
             if (check_tags(*collider))
             {
-                const Transform::UnitVector max_distance
+                const transform::UnitVector max_distance
                     = this->get_distance_before_collision(*collider, offset, false);
                 if (max_distance != offset)
                     reachable_colliders.emplace_back(collider, max_distance);
@@ -219,7 +219,7 @@ namespace obe::collision
             for (auto& reachable : reachable_colliders)
             {
                 if (reachable.second.magnitude()
-                    < collision_data.offset.to(Transform::Units::ScenePixels).magnitude())
+                    < collision_data.offset.to(transform::Units::ScenePixels).magnitude())
                 {
                     collision_data.offset = reachable.second;
                 }
@@ -268,7 +268,7 @@ namespace obe::collision
         m_tags.at(tag_type).clear();
     }
 
-    CollisionData PolygonalCollider::does_collide(const Transform::UnitVector& offset) const
+    CollisionData PolygonalCollider::does_collide(const transform::UnitVector& offset) const
     {
         CollisionData collision_data;
         collision_data.offset = offset;
@@ -318,33 +318,33 @@ namespace obe::collision
         return m_tags.at(tag_type);
     }
 
-    Transform::UnitVector PolygonalCollider::get_distance_before_collision(
-        PolygonalCollider& collider, const Transform::UnitVector& offset,
+    transform::UnitVector PolygonalCollider::get_distance_before_collision(
+        PolygonalCollider& collider, const transform::UnitVector& offset,
         const bool perform_aabb_filter) const
     {
-        constexpr Transform::Units px_unit = Transform::Units::ScenePixels;
-        const Transform::UnitVector t_offset = offset.to(px_unit);
+        constexpr transform::Units px_unit = transform::Units::ScenePixels;
+        const transform::UnitVector t_offset = offset.to(px_unit);
         if (perform_aabb_filter && aabb_filter(*this, offset, { &collider }).empty())
             return offset;
         bool in_front = false;
-        Transform::UnitVector min_dep;
+        transform::UnitVector min_dep;
         const auto calc_min_distance_dep
-            = [this](const Transform::PolygonPath& sol1, const Transform::PolygonPath& sol2,
-                  const Transform::UnitVector& t_offset)
-            -> std::tuple<double, Transform::UnitVector, bool>
+            = [this](const transform::PolygonPath& sol1, const transform::PolygonPath& sol2,
+                  const transform::UnitVector& t_offset)
+            -> std::tuple<double, transform::UnitVector, bool>
         {
             double min_distance = -1;
             bool in_front = false;
 
-            constexpr Transform::Units px_unit = Transform::Units::ScenePixels;
-            Transform::UnitVector min_displacement(px_unit);
-            Transform::UnitVector point1(px_unit);
-            Transform::UnitVector point2(px_unit);
-            Transform::UnitVector point3(px_unit);
-            Transform::UnitVector s1(px_unit);
+            constexpr transform::Units px_unit = transform::Units::ScenePixels;
+            transform::UnitVector min_displacement(px_unit);
+            transform::UnitVector point1(px_unit);
+            transform::UnitVector point2(px_unit);
+            transform::UnitVector point3(px_unit);
+            transform::UnitVector s1(px_unit);
             for (auto& current_point : sol1)
             {
-                const Transform::UnitVector point0 = current_point->to(px_unit);
+                const transform::UnitVector point0 = current_point->to(px_unit);
                 for (int i = 0; i < sol2.size(); i++)
                 {
                     point1 = point0 + t_offset;
@@ -352,7 +352,7 @@ namespace obe::collision
                     point3 = sol2[(i == sol2.size() - 1) ? 0 : i + 1]->to(px_unit);
 
                     s1 = point1 - point0;
-                    const Transform::UnitVector s2 = point3 - point2;
+                    const transform::UnitVector s2 = point3 - point2;
 
                     const double s = (-s1.y * (point0.x - point2.x) + s1.x * (point0.y - point2.y))
                         / (-s2.x * s1.y + s1.x * s2.y);
@@ -362,8 +362,8 @@ namespace obe::collision
                     if (s >= 0 && s <= 1 && t >= 0 && t <= 1)
                     {
                         in_front = true;
-                        const Transform::UnitVector ip
-                            = point0 + (s1 * Transform::UnitVector(t, t, s1.unit));
+                        const transform::UnitVector ip
+                            = point0 + (s1 * transform::UnitVector(t, t, s1.unit));
 
                         const double distance = std::sqrt(
                             std::pow((point0.x - ip.x), 2) + std::pow((point0.y - ip.y), 2));
@@ -380,12 +380,12 @@ namespace obe::collision
             }
             return std::make_tuple(min_distance, min_displacement, in_front);
         };
-        const Transform::PolygonPath& f_path = m_points;
-        const Transform::PolygonPath& s_path = collider.getAllPoints();
+        const transform::PolygonPath& f_path = m_points;
+        const transform::PolygonPath& s_path = collider.get_all_points();
 
         const auto tdm1 = calc_min_distance_dep(f_path, s_path, t_offset);
         auto tdm2 = calc_min_distance_dep(
-            s_path, f_path, t_offset * Transform::UnitVector(-1.0, -1.0, t_offset.unit));
+            s_path, f_path, t_offset * transform::UnitVector(-1.0, -1.0, t_offset.unit));
         std::get<1>(tdm2).x = -std::get<1>(tdm2).x;
         std::get<1>(tdm2).y = -std::get<1>(tdm2).y;
         if (std::get<2>(tdm1) || std::get<2>(tdm2))
@@ -394,36 +394,36 @@ namespace obe::collision
         if (!in_front)
             min_dep = t_offset;
         else if (std::get<0>(tdm1) == 0 || std::get<0>(tdm2) == 0)
-            return Transform::UnitVector(0, 0, t_offset.unit);
+            return transform::UnitVector(0, 0, t_offset.unit);
         else if (std::get<0>(tdm1) > 0
             && (std::get<0>(tdm1) <= std::get<0>(tdm2) || std::get<0>(tdm2) == -1))
             min_dep = std::get<1>(tdm1);
         else if (std::get<0>(tdm2) > 0)
             min_dep = std::get<1>(tdm2);
         else
-            return Transform::UnitVector(0, 0, t_offset.unit);
+            return transform::UnitVector(0, 0, t_offset.unit);
 
         return min_dep;
     }
 
     bool PolygonalCollider::does_collide(PolygonalCollider& collider,
-        const Transform::UnitVector& offset, const bool perform_aabb_filter) const
+        const transform::UnitVector& offset, const bool perform_aabb_filter) const
     {
         if (perform_aabb_filter && aabb_filter(*this, offset, { &collider }).empty())
             return false;
-        std::vector<Transform::UnitVector> p_set1;
+        std::vector<transform::UnitVector> p_set1;
         p_set1.reserve(m_points.size());
-        std::vector<Transform::UnitVector> p_set2;
+        std::vector<transform::UnitVector> p_set2;
         p_set2.reserve(m_points.size());
 
         for (const auto& point : m_points)
             p_set1.push_back(*point);
-        for (const auto& point : collider.getAllPoints())
+        for (const auto& point : collider.get_all_points())
             p_set2.push_back(*point);
         for (auto& apply_offset : p_set1)
             apply_offset += offset;
-        constexpr auto point_in_polygon = [](const std::vector<Transform::UnitVector>& poly,
-            const Transform::UnitVector& p_test) -> bool
+        constexpr auto point_in_polygon = [](const std::vector<transform::UnitVector>& poly,
+            const transform::UnitVector& p_test) -> bool
         {
             int i, j, c = 0;
             const int n_pt = static_cast<int>(poly.size());
@@ -437,7 +437,7 @@ namespace obe::collision
             }
             return c;
         };
-        for (Transform::UnitVector& p_test : p_set1)
+        for (transform::UnitVector& p_test : p_set1)
         {
             if (point_in_polygon(p_set2, p_test))
                 return true;
@@ -449,11 +449,11 @@ namespace obe::collision
     vili::node PolygonalCollider::dump() const
     {
         vili::node result;
-        result["unit"] = Transform::UnitsMeta::toString(m_unit);
+        result["unit"] = transform::UnitsMeta::to_string(m_unit);
         result["points"] = vili::array {};
         for (auto& point : m_points)
         {
-            const Transform::UnitVector point_coordinates = point->to(m_unit);
+            const transform::UnitVector point_coordinates = point->to(m_unit);
             result["points"].push(vili::object { { "x", point_coordinates.x }, { "y", point_coordinates.y } });
         }
         return result;
@@ -477,7 +477,7 @@ namespace obe::collision
                     }
                     else
                     {
-                        throw Exceptions::InvalidTagFormat(m_id, ColliderTagTypeMeta::toString(type),
+                        throw Exceptions::InvalidTagFormat(m_id, ColliderTagTypeMeta::to_string(type),
                             vili::to_string(item.type()), EXC_INFO);
                     }
                 }
@@ -485,17 +485,17 @@ namespace obe::collision
             else
             {
                 throw Exceptions::InvalidTagFormat(
-                    m_id, ColliderTagTypeMeta::toString(type), vili::to_string(tag.type()), EXC_INFO);
+                    m_id, ColliderTagTypeMeta::to_string(type), vili::to_string(tag.type()), EXC_INFO);
             }
         };
-        const Transform::Units points_unit = Transform::UnitsMeta::fromString(data.at("unit"));
+        const transform::Units points_unit = transform::UnitsMeta::from_string(data.at("unit"));
         for (const vili::node& collider_point : data.at("points"))
         {
-            const Transform::UnitVector point_coordinates
-                = Transform::UnitVector(collider_point["x"], collider_point["y"], points_unit);
+            const transform::UnitVector point_coordinates
+                = transform::UnitVector(collider_point["x"], collider_point["y"], points_unit);
             this->add_point(point_coordinates);
         }
-        this->setWorkingUnit(points_unit);
+        this->set_working_unit(points_unit);
 
         if (data.contains("tag"))
         {

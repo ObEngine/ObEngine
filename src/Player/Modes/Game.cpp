@@ -2,7 +2,7 @@
 
 namespace obe::Modes
 {
-    void startGame()
+    void start_game()
     {
         engine::Engine engine;
         engine.init();
