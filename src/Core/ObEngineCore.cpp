@@ -9,14 +9,14 @@
 
 namespace obe
 {
-    void InitEngine(unsigned int surfaceWidth, unsigned int surfaceHeight)
+    void init_engine(unsigned int surface_width, unsigned int surface_height)
     {
         debug::init_logger();
 
         debug::Log->info("Using ObEngineCore (Version : {} ({}:{}))", config::OBENGINE_VERSION,
             config::OBENGINE_GIT_BRANCH, config::OBENGINE_GIT_HASH);
 
-        Transform::UnitVector::Init(surfaceWidth, surfaceHeight);
+        transform::UnitVector::init(surface_width, surface_height);
         debug::Log->debug("<ObEngine> Initialising Position Transformers");
         graphics::init_position_transformers();
 

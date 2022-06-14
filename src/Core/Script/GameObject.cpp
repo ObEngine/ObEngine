@@ -97,7 +97,7 @@ namespace obe::script
                 m_outer_environment["__OBJECT_INIT"] = true;
                 try
                 {
-                    safeLuaCall(m_outer_environment["ObjectInit"].get<sol::protected_function>());
+                    safe_lua_call(m_outer_environment["ObjectInit"].get<sol::protected_function>());
                 }
                 catch (const BaseException& e)
                 {
@@ -224,7 +224,7 @@ namespace obe::script
             animation::AnimatorTargetScaleMode scale_mode = animation::AnimatorTargetScaleMode::Fit;
             if (animator.contains("scaling"))
             {
-                scale_mode = animation::AnimatorTargetScaleModeMeta::fromString(animator.at("scaling"));
+                scale_mode = animation::AnimatorTargetScaleModeMeta::from_string(animator.at("scaling"));
             }
             if (m_sprite)
                 m_animator->set_target(*m_sprite, scale_mode);
@@ -359,7 +359,7 @@ namespace obe::script
             {
                 try
                 {
-                    safeLuaCall(m_outer_environment["ObjectDelete"].get<sol::protected_function>());
+                    safe_lua_call(m_outer_environment["ObjectDelete"].get<sol::protected_function>());
                 }
                 catch (const BaseException& e)
                 {

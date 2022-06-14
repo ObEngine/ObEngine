@@ -21,9 +21,9 @@ namespace obe::graphics
     /**
      * \brief An element meant to be displayed in a Scene
      */
-    class Sprite : public Transform::UnitBasedObject,
+    class Sprite : public transform::UnitBasedObject,
                    public Types::Selectable,
-                   public Transform::Rect,
+                   public transform::Rect,
                    public Renderable,
                    public Component::Component<Sprite>,
                    public engine::ResourceManagedObject
@@ -38,9 +38,9 @@ namespace obe::graphics
         graphics::Texture m_texture;
         bool m_antiAliasing = true;
 
-        void reset_unit(Transform::Units unit) override;
+        void reset_unit(transform::Units unit) override;
         void refresh_vector_texture(
-            const Transform::UnitVector& surface_size, const std::array<sf::Vertex, 4>& vertices);
+            const transform::UnitVector& surface_size, const std::array<sf::Vertex, 4>& vertices);
 
     public:
         /**
@@ -84,7 +84,7 @@ namespace obe::graphics
          * \return A Rect representing the bounding rectangle of the
          *         internal Sprite
          */
-        [[nodiscard]] Transform::Rect get_rect();
+        [[nodiscard]] transform::Rect get_rect();
         [[nodiscard]] Shader& get_shader() const;
         /**
          * \brief Get the internal Sprite of the Sprite
@@ -237,11 +237,11 @@ namespace obe::graphics
     {
     private:
         Sprite& m_sprite;
-        Transform::Referential m_referential;
+        transform::Referential m_referential;
         SpriteHandlePointType m_type;
 
     public:
-        Transform::UnitVector m_dp;
+        transform::UnitVector m_dp;
         /**
          * \brief The radius of a HandlePoint
          */
@@ -251,7 +251,7 @@ namespace obe::graphics
          * \param parent Rect of the parent Sprite
          * \param ref Referential of the HandlePoint
          */
-        SpriteHandlePoint(Sprite& parent, Transform::Referential ref);
+        SpriteHandlePoint(Sprite& parent, transform::Referential ref);
         /**
          * \brief Creates a Rotate HandlePoint
          * \param parent Rect of the parent Sprite
@@ -261,12 +261,12 @@ namespace obe::graphics
          * \brief Get the rect of the parent Sprite
          * \return The Rect of the parent Sprite
          */
-        [[nodiscard]] Transform::Rect& get_rect() const;
+        [[nodiscard]] transform::Rect& get_rect() const;
         /**
          * \brief Get the Referential of the HandlePoint
          * \return The Referential value
          */
-        [[nodiscard]] Transform::Referential get_referential() const;
+        [[nodiscard]] transform::Referential get_referential() const;
         /**
          * \brief Gets the type of the SpriteHandlePoint (either Rotate or
          * Scale) \return An enum value from SpriteHandlePointType
@@ -279,7 +279,7 @@ namespace obe::graphics
          * \param camera Camera used to manipulate PositionTransformers
          */
         void set_position(
-            const Transform::UnitVector& position, const Transform::UnitVector& camera);
+            const transform::UnitVector& position, const transform::UnitVector& camera);
     };
 
     /**
@@ -303,6 +303,6 @@ namespace obe::graphics
          *         is correct, nullptr otherwise
          */
         SpriteHandlePoint* get_handle_point(
-            const Transform::UnitVector& camera_position, int x, int y);
+            const transform::UnitVector& camera_position, int x, int y);
     };
 } // namespace obe::graphics

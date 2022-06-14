@@ -1,15 +1,15 @@
 #include <Transform/UnitBasedObject.hpp>
 
-namespace obe::Transform
+namespace obe::transform
 {
-    void UnitBasedObject::setWorkingUnit(Units unit)
+    void UnitBasedObject::set_working_unit(Units unit)
     {
         m_unit = unit;
         reset_unit(unit);
     }
 
-    Units UnitBasedObject::getWorkingUnit() const
+    Units UnitBasedObject::get_working_unit() const
     {
         return m_unit;
     }
-} // namespace obe::Transform
+} // namespace obe::transform

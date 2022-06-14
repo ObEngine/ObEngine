@@ -267,7 +267,7 @@ obe.canvas.Bases.Drawable = {
             return self.visible;
         end,
         id = function(self)
-            return self:getId();
+            return self:get_id();
         end
     },
     setters = {

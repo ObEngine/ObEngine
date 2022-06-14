@@ -2,16 +2,16 @@
 
 namespace obe::Types
 {
-    void Togglable::changeState(bool state)
+    void Togglable::change_state(bool state)
     {
         if (state != m_enabled)
         {
             m_enabled = state;
-            onStateChange();
+            on_state_change();
         }
     }
 
-    void Togglable::onStateChange()
+    void Togglable::on_state_change()
     {
     }
 
@@ -20,27 +20,27 @@ namespace obe::Types
     {
     }
 
-    void Togglable::setEnabled(bool state)
+    void Togglable::set_enabled(bool state)
     {
-        changeState(state);
+        change_state(state);
     }
 
     void Togglable::toggle()
     {
-        changeState(!m_enabled);
+        change_state(!m_enabled);
     }
 
     void Togglable::enable()
     {
-        changeState(true);
+        change_state(true);
     }
 
     void Togglable::disable()
     {
-        changeState(false);
+        change_state(false);
     }
 
-    bool Togglable::isEnabled() const
+    bool Togglable::is_enabled() const
     {
         return m_enabled;
     }

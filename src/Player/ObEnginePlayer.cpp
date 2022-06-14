@@ -13,14 +13,14 @@ using namespace obe;
 
 int main(int argc, char** argv)
 {
-    const unsigned int surfaceWidth = sf::VideoMode::getDesktopMode().width;
-    const unsigned int surfaceHeight = sf::VideoMode::getDesktopMode().height;
+    const unsigned int surface_width = sf::VideoMode::getDesktopMode().width;
+    const unsigned int surface_height = sf::VideoMode::getDesktopMode().height;
 #if defined _DEBUG
-    InitEngine(surfaceWidth, surfaceHeight);
+    init_engine(surface_width, surface_height);
 #else
     try
     {
-        InitEngine(surfaceWidth, surfaceHeight);
+        init_engine(surface_width, surface_height);
     }
     catch (const std::exception& e)
     {
@@ -31,14 +31,14 @@ int main(int argc, char** argv)
 #endif
 
     debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
-        Transform::UnitVector::Screen.w, Transform::UnitVector::Screen.h);
+        transform::UnitVector::Screen.w, transform::UnitVector::Screen.h);
 
 #if defined _DEBUG
-    Modes::startGame();
+    Modes::start_game();
 #else
     try
     {
-        Modes::startGame();
+        Modes::start_game();
     }
     catch (const std::exception& e)
     {

@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Transform::Bindings
+namespace obe::transform::Bindings
 {
     void LoadClassMatrix2D(sol::state_view state);
     void LoadClassMovable(sol::state_view state);

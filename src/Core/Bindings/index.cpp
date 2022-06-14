@@ -69,7 +69,7 @@
 #include <sol/sol.hpp>
 namespace obe::Bindings
 {
-    void IndexCoreBindings(sol::state_view state)
+    void index_core_bindings(sol::state_view state)
     {
         state["obe"].get_or_create<sol::table>();
         state["vili"].get_or_create<sol::table>();
@@ -88,7 +88,7 @@ namespace obe::Bindings
         state["obe"]["system"].get_or_create<sol::table>();
         state["obe"]["tiles"].get_or_create<sol::table>();
         state["obe"]["time"].get_or_create<sol::table>();
-        state["obe"]["Transform"].get_or_create<sol::table>();
+        state["obe"]["transform"].get_or_create<sol::table>();
         state["obe"]["Types"].get_or_create<sol::table>();
         state["obe"]["Utils"].get_or_create<sol::table>();
         state["vili"]["exceptions"].get_or_create<sol::table>();
@@ -114,7 +114,7 @@ namespace obe::Bindings
         state["obe"]["system"]["exceptions"].get_or_create<sol::table>();
         state["obe"]["system"]["project"].get_or_create<sol::table>();
         state["obe"]["tiles"]["exceptions"].get_or_create<sol::table>();
-        state["obe"]["Transform"]["exceptions"].get_or_create<sol::table>();
+        state["obe"]["transform"]["exceptions"].get_or_create<sol::table>();
         state["obe"]["Utils"]["Exec"].get_or_create<sol::table>();
         state["obe"]["events"]["actions"].get_or_create<sol::table>();
         state["obe"]["events"]["cursor"].get_or_create<sol::table>();
@@ -370,26 +370,24 @@ namespace obe::Bindings
         obe::time::Bindings::LoadGlobalHours(state);
         obe::time::Bindings::LoadGlobalDays(state);
         obe::time::Bindings::LoadGlobalWeeks(state);
-        obe::Transform::Exceptions::Bindings::LoadClassInvalidUnitsEnumValue(state);
-        obe::Transform::Exceptions::Bindings::LoadClassPolygonNotEnoughPoints(state);
-        obe::Transform::Exceptions::Bindings::LoadClassPolygonPointIndexOverflow(state);
-        obe::Transform::Exceptions::Bindings::LoadClassUnknownReferential(state);
-        obe::Transform::Exceptions::Bindings::LoadClassUnknownUnit(state);
-        obe::Transform::Bindings::LoadClassMatrix2D(state);
-        obe::Transform::Bindings::LoadClassMovable(state);
-        obe::Transform::Bindings::LoadClassPolygon(state);
-        obe::Transform::Bindings::LoadClassPolygonPoint(state);
-        obe::Transform::Bindings::LoadClassPolygonSegment(state);
-        obe::Transform::Bindings::LoadClassRect(state);
-        obe::Transform::Bindings::LoadClassReferential(state);
-        obe::Transform::Bindings::LoadClassUnitBasedObject(state);
-        obe::Transform::Bindings::LoadClassUnitVector(state);
-        obe::Transform::Bindings::LoadClassScreenStruct(state);
-        obe::Transform::Bindings::LoadClassViewStruct(state);
-        obe::Transform::Bindings::LoadEnumRelativePositionFrom(state);
-        obe::Transform::Bindings::LoadEnumReferentialConversionType(state);
-        obe::Transform::Bindings::LoadEnumFlipAxis(state);
-        obe::Transform::Bindings::LoadEnumUnits(state);
+        obe::transform::exceptions::Bindings::LoadClassPolygonNotEnoughPoints(state);
+        obe::transform::exceptions::Bindings::LoadClassPolygonPointIndexOverflow(state);
+        obe::transform::exceptions::Bindings::LoadClassUnknownReferential(state);
+        obe::transform::Bindings::LoadClassMatrix2D(state);
+        obe::transform::Bindings::LoadClassMovable(state);
+        obe::transform::Bindings::LoadClassPolygon(state);
+        obe::transform::Bindings::LoadClassPolygonPoint(state);
+        obe::transform::Bindings::LoadClassPolygonSegment(state);
+        obe::transform::Bindings::LoadClassRect(state);
+        obe::transform::Bindings::LoadClassReferential(state);
+        obe::transform::Bindings::LoadClassUnitBasedObject(state);
+        obe::transform::Bindings::LoadClassUnitVector(state);
+        obe::transform::Bindings::LoadClassScreenStruct(state);
+        obe::transform::Bindings::LoadClassViewStruct(state);
+        obe::transform::Bindings::LoadEnumRelativePositionFrom(state);
+        obe::transform::Bindings::LoadEnumReferentialConversionType(state);
+        obe::transform::Bindings::LoadEnumFlipAxis(state);
+        obe::transform::Bindings::LoadEnumUnits(state);
         obe::Types::Bindings::LoadClassIdentifiable(state);
         obe::Types::Bindings::LoadClassProtectedIdentifiable(state);
         obe::Types::Bindings::LoadClassSelectable(state);

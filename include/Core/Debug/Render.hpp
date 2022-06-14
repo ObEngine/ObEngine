@@ -3,7 +3,7 @@
 
 namespace obe::debug::render
 {
-    void draw_polygon(const graphics::RenderTarget target, Transform::Polygon& polygon,
+    void draw_polygon(const graphics::RenderTarget target, transform::Polygon& polygon,
         bool draw_lines, bool draw_points, bool draw_centroid, bool draw_skeleton,
-        Transform::UnitVector offset);
+        transform::UnitVector offset);
 }

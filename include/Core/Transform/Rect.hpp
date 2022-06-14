@@ -12,7 +12,7 @@ namespace obe::animation
    class TweenImpl;
 }
 
-namespace obe::Transform
+namespace obe::transform
 {
     /**
      * \brief Conversion Type for Referential Usage
@@ -53,11 +53,11 @@ namespace obe::Transform
          *          - From : Referential::TopLeft to ref
          *          - To : ref to Referential::TopLeft
          */
-        void transformRef(
+        void transform_referential(
             UnitVector& vec, const Referential& ref, ReferentialConversionType type) const;
 
         Rect() = default;
-        Rect(const Transform::UnitVector& position, const Transform::UnitVector& size);
+        Rect(const transform::UnitVector& position, const transform::UnitVector& size);
         /**
          * \brief Set the position of the Rect (Movable override) using an
          *        UnitVector
@@ -70,7 +70,7 @@ namespace obe::Transform
          * \return The Position of the given Referential of the Rect (Movable
          *         Override)
          */
-        [[nodiscard]] UnitVector getPosition() const override;
+        [[nodiscard]] UnitVector get_position() const override;
         /**
          * \brief Set the position of the Rect using an UnitVector
          * \param position Position to affect to the Rect
@@ -97,7 +97,7 @@ namespace obe::Transform
          * \param position Position to affect to the specific Referential
          * \param ref Referential you want to move
          */
-        void setPointPosition(
+        void set_point_position(
             const UnitVector& position, const Referential& ref = Referential::TopLeft);
         /**
          * \brief Move a specific Referential of the Rect (The opposite Point won't move)
@@ -105,7 +105,7 @@ namespace obe::Transform
          *        Referential
          * \param ref Referential you want to move
          */
-        void movePoint(const UnitVector& position, const Referential& ref = Referential::TopLeft);
+        void move_point(const UnitVector& position, const Referential& ref = Referential::TopLeft);
 
         /**
          * \brief Set the size of the Rect
@@ -113,7 +113,7 @@ namespace obe::Transform
          * \param ref Referential used to resize the Rect (Referential that
          *        won't move)
          */
-        void setSize(const UnitVector& size, const Referential& ref = Referential::TopLeft);
+        void set_size(const UnitVector& size, const Referential& ref = Referential::TopLeft);
         /**
          * \brief Scales the Rect (Relative to the current size)
          * \param size Size to multiply to the current size
@@ -135,10 +135,10 @@ namespace obe::Transform
          *          - y attribute will be equal to -1 if the
          *            Rect is flipped vertically, 1 otherwise.
          */
-        [[nodiscard]] UnitVector getScaleFactor() const;
-        [[nodiscard]] double getRotation() const;
-        void setRotation(double angle, Transform::UnitVector origin);
-        void rotate(double angle, Transform::UnitVector origin);
+        [[nodiscard]] UnitVector get_scale_factor() const;
+        [[nodiscard]] double get_rotation() const;
+        void set_rotation(double angle, transform::UnitVector origin);
+        void rotate(double angle, transform::UnitVector origin);
         /**
          * \brief Draws the Rect for debug purposes <REMOVE>
          */
@@ -162,7 +162,7 @@ namespace obe::Transform
         [[nodiscard]] double height() const;
         /**
         * \brief Checks if the Rect intersects a specified Rect
-        * \param other The other Rect to check
+        * \param rect The other Rect to check
         * \return true if the Rect intersects the other Rect, false otherwise
         */
         [[nodiscard]] bool intersects(const Rect& rect) const;
@@ -170,4 +170,4 @@ namespace obe::Transform
         [[nodiscard]] bool contains(const Rect& rect) const;
         [[nodiscard]] bool contains(const UnitVector& position) const;
     };
-} // namespace obe::Transform
+} // namespace obe::transform

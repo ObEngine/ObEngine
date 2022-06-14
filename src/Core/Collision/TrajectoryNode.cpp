@@ -15,7 +15,7 @@ namespace obe::collision
         m_probe = probe;
     }
 
-    Trajectory& TrajectoryNode::add_trajectory(const std::string& id, Transform::Units unit)
+    Trajectory& TrajectoryNode::add_trajectory(const std::string& id, transform::Units unit)
     {
         m_trajectories[id] = std::make_unique<Trajectory>(unit);
         return *m_trajectories[id];
@@ -39,12 +39,12 @@ namespace obe::collision
             const double rad_angle = (Utils::Math::pi / 180.0) * -trajectory.get_angle();
             const double x_offset = std::cos(rad_angle) * (speed * dt);
             const double y_offset = std::sin(rad_angle) * (speed * dt);
-            return Transform::UnitVector(x_offset, y_offset, trajectory.get_unit());
+            return transform::UnitVector(x_offset, y_offset, trajectory.get_unit());
         };
         for (auto& trajectory : m_trajectories)
         {
             Trajectory* current_trajectory = trajectory.second.get();
-            if (current_trajectory->isEnabled())
+            if (current_trajectory->is_enabled())
             {
                 auto base_offset = get_offset(*current_trajectory);
 

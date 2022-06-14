@@ -9,18 +9,18 @@ namespace obe::Utils::String
     std::vector<std::string> split(const std::string& str, const std::string& delimiters)
     {
         std::vector<std::string> tokens;
-        std::string::size_type lastPos = str.find_first_not_of(delimiters, 0);
-        std::string::size_type pos = str.find_first_of(delimiters, lastPos);
-        while (std::string::npos != pos || std::string::npos != lastPos)
+        std::string::size_type last_pos = str.find_first_not_of(delimiters, 0);
+        std::string::size_type pos = str.find_first_of(delimiters, last_pos);
+        while (std::string::npos != pos || std::string::npos != last_pos)
         {
-            tokens.push_back(str.substr(lastPos, pos - lastPos));
-            lastPos = str.find_first_not_of(delimiters, pos);
-            pos = str.find_first_of(delimiters, lastPos);
+            tokens.push_back(str.substr(last_pos, pos - last_pos));
+            last_pos = str.find_first_not_of(delimiters, pos);
+            pos = str.find_first_of(delimiters, last_pos);
         }
         return tokens;
     }
 
-    int occurencesInString(const std::string& str, const std::string& occur)
+    int occurences_in_string(const std::string& str, const std::string& occur)
     {
         int occurrences = 0;
         std::string::size_type start = 0;
@@ -32,58 +32,58 @@ namespace obe::Utils::String
         return occurrences;
     }
 
-    bool isStringAlpha(const std::string& str)
+    bool is_string_alpha(const std::string& str)
     {
         if (!str.empty())
-            return all_of(str.begin(), str.end(), isalpha);
+            return std::ranges::all_of(str, isalpha);
         return false;
     }
 
-    bool isStringAlphaNumeric(const std::string& str)
+    bool is_string_alpha_numeric(const std::string& str)
     {
         if (!str.empty())
-            return all_of(str.begin(), str.end(), isalnum);
+            return std::ranges::all_of(str, isalnum);
         return false;
     }
 
-    bool isStringInt(const std::string& str)
+    bool is_string_int(const std::string& str)
     {
         if (!str.empty())
         {
             if (str.substr(0, 1) == "-")
             {
-                std::string withoutSign = str.substr(1);
-                return all_of(withoutSign.begin(), withoutSign.end(), isdigit);
+                std::string without_sign = str.substr(1);
+                return std::ranges::all_of(without_sign, isdigit);
             }
-            return all_of(str.begin(), str.end(), isdigit);
+            return std::ranges::all_of(str, isdigit);
         }
         return false;
     }
 
-    bool isStringFloat(const std::string& str)
+    bool is_string_float(const std::string& str)
     {
-        std::string modifyStr = str;
-        bool isFloat = false;
-        if (!modifyStr.empty())
+        std::string modify_str = str;
+        if (!modify_str.empty())
         {
-            if (modifyStr.substr(0, 1) == "-")
-                modifyStr = modifyStr.substr(1);
-            if (occurencesInString(modifyStr, ".") == 1)
+            bool is_float = false;
+            if (modify_str.substr(0, 1) == "-")
+                modify_str = modify_str.substr(1);
+            if (occurences_in_string(modify_str, ".") == 1)
             {
-                isFloat = true;
-                replaceInPlace(modifyStr, ".", "");
+                is_float = true;
+                replace_in_place(modify_str, ".", "");
             }
-            return (all_of(modifyStr.begin(), modifyStr.end(), isdigit) && isFloat);
+            return (std::ranges::all_of(modify_str, isdigit) && is_float);
         }
         return false;
     }
 
-    bool isStringNumeric(const std::string& str)
+    bool is_string_numeric(const std::string& str)
     {
-        return (isStringFloat(str) || isStringInt(str));
+        return (is_string_float(str) || is_string_int(str));
     }
 
-    void replaceInPlace(std::string& subject, const std::string& search, const std::string& replace)
+    void replace_in_place(std::string& subject, const std::string& search, const std::string& replace)
     {
         size_t pos = 0;
         while ((pos = subject.find(search, pos)) != std::string::npos)
@@ -104,17 +104,17 @@ namespace obe::Utils::String
         return subject;
     }
 
-    bool isSurroundedBy(const std::string& string, const std::string& bet)
+    bool is_surrounded_by(const std::string& string, const std::string& bet)
     {
         return (string.substr(0, bet.size()) == bet
             && string.substr(string.size() - bet.size(), bet.size()) == bet);
     }
 
-    std::string getRandomKey(const std::string& set, const int len)
+    std::string get_random_key(const std::string& set, const int len)
     {
         std::string r;
         for (int i = 0; i < len; i++)
-            r.push_back(set.at(size_t(Math::randint(0, 100000) % set.size())));
+            r.push_back(set.at(static_cast<size_t>(Math::randint(0, 100000) % set.size())));
         return r;
     }
 
@@ -123,14 +123,14 @@ namespace obe::Utils::String
         return (string.find(search) != std::string::npos);
     }
 
-    bool startsWith(const std::string& string, const std::string& search)
+    bool starts_with(const std::string& string, const std::string& search)
     {
         if (string.size() < search.size())
             return false;
         return (std::mismatch(search.begin(), search.end(), string.begin()).first == search.end());
     }
 
-    bool endsWith(const std::string& string, const std::string& search)
+    bool ends_with(const std::string& string, const std::string& search)
     {
         if (string.size() < search.size())
         {
@@ -179,20 +179,20 @@ namespace obe::Utils::String
         return lev_dist[min_size];
     }
 
-    std::vector<std::string> sortByDistance(
+    std::vector<std::string> sort_by_distance(
         const std::string& source, const std::vector<std::string>& words, std::size_t limit)
     {
-        std::vector<std::string> sortedByDistance = words;
-        std::sort(sortedByDistance.begin(), sortedByDistance.end(),
+        std::vector<std::string> sorted_by_distance = words;
+        std::ranges::sort(sorted_by_distance,
             [source](const std::string& s1, const std::string& s2)
             { return Utils::String::distance(s1, source) < Utils::String::distance(s2, source); });
-        if (limit && !sortedByDistance.empty())
+        if (limit && !sorted_by_distance.empty())
         {
-            return std::vector<std::string>(sortedByDistance.begin(),
-                sortedByDistance.begin() + std::min(sortedByDistance.size() - 1, limit));
+            return std::vector<std::string>(sorted_by_distance.begin(),
+                sorted_by_distance.begin() + std::min(sorted_by_distance.size() - 1, limit));
         }
         else
-            return sortedByDistance;
+            return sorted_by_distance;
     }
 
     std::string quote(const std::string& source)

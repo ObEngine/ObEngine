@@ -9,6 +9,6 @@ namespace obe::Bindings::Bindings
     void LoadFunctionIndexCoreBindings(sol::state_view state)
     {
         sol::table BindingsNamespace = state["obe"]["Bindings"].get<sol::table>();
-        BindingsNamespace.set_function("IndexCoreBindings", &obe::Bindings::IndexCoreBindings);
+        BindingsNamespace.set_function("index_core_bindings", &obe::Bindings::index_core_bindings);
     }
 };

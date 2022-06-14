@@ -35,26 +35,26 @@ namespace obe::animation
         }
     };
     template <>
-    class TweenImpl<Transform::UnitVector>
+    class TweenImpl<transform::UnitVector>
     {
     public:
-        static Transform::UnitVector step(
-            double progression, const Transform::UnitVector& from, const Transform::UnitVector& to)
+        static transform::UnitVector step(
+            double progression, const transform::UnitVector& from, const transform::UnitVector& to)
         {
-            Transform::UnitVector step = from;
+            transform::UnitVector step = from;
             step.x = (progression * (to.x - from.x)) + from.x;
             step.y = (progression * (to.y - from.y)) + from.y;
             return step;
         }
     };
     template <>
-    class TweenImpl<Transform::Rect>
+    class TweenImpl<transform::Rect>
     {
     public:
-        static Transform::Rect step(
-            double progression, const Transform::Rect& from, const Transform::Rect& to)
+        static transform::Rect step(
+            double progression, const transform::Rect& from, const transform::Rect& to)
         {
-            Transform::Rect step = from;
+            transform::Rect step = from;
             step.m_size.x = (progression * (to.m_size.x - from.m_size.x)) + from.m_size.x;
             step.m_size.y = (progression * (to.m_size.y - from.m_size.y)) + from.m_size.y;
             step.m_angle = (progression * (to.m_angle - from.m_angle)) + from.m_angle;
@@ -116,8 +116,8 @@ namespace obe::animation
     /**
      * \thints
      * \thint{ColorTweening     , TweenableClass=obe::graphics::Color}
-     * \thint{UnitVectorTweening, TweenableClass=obe::Transform::UnitVector}
-     * \thint{RectTweening      , TweenableClass=obe::Transform::Rect}
+     * \thint{UnitVectorTweening, TweenableClass=obe::transform::UnitVector}
+     * \thint{RectTweening      , TweenableClass=obe::transform::Rect}
      * \thint{TrajectoryTweening, TweenableClass=obe::collision::Trajectory}
      * \thint{IntTweening       , TweenableClass=int}
      * \thint{DoubleTweening    , TweenableClass=double}

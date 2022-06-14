@@ -29,12 +29,12 @@ namespace obe::Utils::Exec
          * \param arg Name of the argument you want to check existence
          * \return true if the argument exists, false otherwise
          */
-        [[nodiscard]] bool argumentExists(const std::string& arg) const;
+        [[nodiscard]] bool argument_exists(const std::string& arg) const;
         /**
          * \brief Get the given argument's value
          * \param arg Name of the argument you want to retrieve the value
          * \return The value of the argument
          */
-        [[nodiscard]] std::string getArgumentValue(const std::string& arg) const;
+        [[nodiscard]] std::string get_argument_value(const std::string& arg) const;
     };
 } // namespace obe::Utils::Exec

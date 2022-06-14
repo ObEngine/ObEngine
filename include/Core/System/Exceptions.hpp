@@ -80,7 +80,7 @@ namespace obe::system::Exceptions
         {
             this->error("Impossible to get Package '{}', please check it is correctly installed");
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(package.data(), all_packages, 5);
+                = Utils::String::sort_by_distance(package.data(), all_packages, 5);
             std::ranges::transform(suggestions, suggestions.begin(), Utils::String::quote);
             this->hint("Maybe you meant to get one of these packages : ({})",
                 fmt::join(suggestions, ", "));
@@ -121,7 +121,7 @@ namespace obe::system::Exceptions
                         "indexed",
                 project);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(project.data(), all_projects, 5);
+                = Utils::String::sort_by_distance(project.data(), all_projects, 5);
             std::ranges::transform(suggestions, suggestions.begin(), Utils::String::quote);
             this->hint("Maybe you meant to get one of these projects : ({})",
                 fmt::join(suggestions, ", "));
@@ -138,7 +138,7 @@ namespace obe::system::Exceptions
         {
             this->error("Path prefix '{}' does not exist", prefix);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(prefix.data(), all_prefixes, 5);
+                = Utils::String::sort_by_distance(prefix.data(), all_prefixes, 5);
             std::ranges::transform(suggestions, suggestions.begin(), Utils::String::quote);
             this->hint("Maybe you meant to use one of these prefixes : ({})",
                 fmt::join(suggestions, ", "));
@@ -186,8 +186,9 @@ namespace obe::system::Exceptions
         InvalidDeferredMountablePath(std::string_view prefix, DebugInfo info)
             : Exception(info)
         {
-            this->error("MountablePath with prefix '{}' can not be mounted as the basePath has not "
-                        "been resolved yet",
+            this->error(
+                "MountablePath with prefix '{}' can not be mounted as the base_path has not "
+                "been resolved yet",
                 prefix);
         }
     };

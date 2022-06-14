@@ -34,7 +34,7 @@ namespace obe::Bindings
     void LoadFunctionInitEngine(sol::state_view state)
     {
         sol::table obeNamespace = state["obe"].get<sol::table>();
-        obeNamespace.set_function("InitEngine", &obe::InitEngine);
+        obeNamespace.set_function("init_engine", &obe::init_engine);
     }
     void LoadGlobalObengineProduction(sol::state_view state)
     {

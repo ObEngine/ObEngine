@@ -18,26 +18,26 @@ namespace obe::animation
         {
             if (m_target->get_size().x >= m_target->get_size().y)
             {
-                m_target->setSize(Transform::UnitVector(m_target->get_size().x,
+                m_target->set_size(transform::UnitVector(m_target->get_size().x,
                     static_cast<float>(texture.get_size().y)
                         / static_cast<float>(texture.get_size().x) * m_target->get_size().x));
             }
             else
             {
-                m_target->setSize(Transform::UnitVector(static_cast<float>(texture.get_size().x)
+                m_target->set_size(transform::UnitVector(static_cast<float>(texture.get_size().x)
                         / static_cast<float>(texture.get_size().y) * m_target->get_size().y,
                     m_target->get_size().y));
             }
         }
         else if (m_target_scale_mode == AnimatorTargetScaleMode::FixedWidth)
         {
-            m_target->setSize(Transform::UnitVector(m_target->get_size().x,
+            m_target->set_size(transform::UnitVector(m_target->get_size().x,
                 static_cast<float>(texture.get_size().y) / static_cast<float>(texture.get_size().x)
                     * m_target->get_size().x));
         }
         else if (m_target_scale_mode == AnimatorTargetScaleMode::FixedHeight)
         {
-            m_target->setSize(Transform::UnitVector(static_cast<float>(texture.get_size().x)
+            m_target->set_size(transform::UnitVector(static_cast<float>(texture.get_size().x)
                     / static_cast<float>(texture.get_size().y) * m_target->get_size().y,
                 m_target->get_size().y));
         }
@@ -52,11 +52,11 @@ namespace obe::animation
 
     void AnimatorState::load()
     {
-        for (const auto& [animationName, animation] : m_parent.m_animations)
+        for (const auto& [animation_name, animation] : m_parent.m_animations)
         {
             auto state = std::make_unique<AnimationState>(*animation.get());
             state->load();
-            m_states.emplace(animationName, std::move(state));
+            m_states.emplace(animation_name, std::move(state));
         }
     }
 
@@ -207,7 +207,7 @@ namespace obe::animation
             if (m_current_animation->get_status() == AnimationStatus::Call)
             {
                 m_current_animation->reset();
-                const std::string next_animation = m_current_animation->get_called_animation();
+                const std::string next_animation = m_current_animation->get_next_animation();
                 if (m_parent.m_animations.find(next_animation) == m_parent.m_animations.end())
                     throw exceptions::UnknownAnimation(m_parent.m_path.to_string(), next_animation,
                         m_parent.get_all_animations_names(), EXC_INFO);

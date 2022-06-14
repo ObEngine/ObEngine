@@ -62,7 +62,7 @@ namespace obe::system
             }
             else
             {
-                path_type = PathTypeMeta::toString(m_type);
+                path_type = PathTypeMeta::to_string(m_type);
             }
             throw Exceptions::ResourceNotFound(m_path, path_type, mounts_as_strings, EXC_INFO);
         }
@@ -250,11 +250,11 @@ namespace obe::system
         {
             std::string full_path = Utils::File::join({ mounted_path->base_path, m_path });
 
-            if (Utils::File::directoryExists(full_path))
+            if (Utils::File::directory_exists(full_path))
             {
                 if (path_type == PathType::All || path_type == PathType::Directory)
                 {
-                    std::vector<std::string> directories = Utils::File::getDirectoryList(full_path);
+                    std::vector<std::string> directories = Utils::File::get_directory_list(full_path);
                     for (const std::string& directory : directories)
                     {
                         results.emplace_back(PathType::Directory, mounted_path,
@@ -263,7 +263,7 @@ namespace obe::system
                 }
                 else if (path_type == PathType::All || path_type == PathType::File)
                 {
-                    std::vector<std::string> files = Utils::File::getFileList(full_path);
+                    std::vector<std::string> files = Utils::File::get_file_list(full_path);
                     for (const std::string& file : files)
                     {
                         results.emplace_back(PathType::File, mounted_path,
@@ -298,7 +298,7 @@ namespace obe::system
             const std::string full_path
                 = mounted_path->base_path + ((!mounted_path->base_path.empty()) ? "/" : "") + m_path;
             if ((path_type == PathType::All || path_type == PathType::File)
-                && Utils::File::fileExists(full_path))
+                && Utils::File::file_exists(full_path))
             {
                 const std::string result = Utils::File::join({ mounted_path->base_path, m_path });
                 return PathCache
@@ -306,7 +306,7 @@ namespace obe::system
                     .first->second;
             }
             else if ((path_type == PathType::All || path_type == PathType::Directory)
-                && Utils::File::directoryExists(full_path))
+                && Utils::File::directory_exists(full_path))
             {
                 const std::string result = Utils::File::join({ mounted_path->base_path, m_path });
                 return PathCache
@@ -326,12 +326,12 @@ namespace obe::system
         {
             const std::string full_path = Utils::File::join({ mounted_path->base_path, m_path });
             if ((path_type == PathType::All || path_type == PathType::File)
-                && Utils::File::fileExists(full_path))
+                && Utils::File::file_exists(full_path))
             {
                 results.emplace_back(PathType::File, mounted_path, full_path, query);
             }
             else if ((path_type == PathType::All || path_type == PathType::Directory)
-                && Utils::File::directoryExists(full_path))
+                && Utils::File::directory_exists(full_path))
             {
                 results.emplace_back(PathType::Directory, mounted_path, full_path, query);
             }

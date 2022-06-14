@@ -12,15 +12,15 @@ namespace obe::graphics::shapes
     {
     }
 
-    Transform::UnitVector Rectangle::get_size() const
+    transform::UnitVector Rectangle::get_size() const
     {
         const sf::Vector2f pixel_size = shape.getSize();
-        return Transform::UnitVector(pixel_size.x, pixel_size.y, Transform::Units::ScenePixels);
+        return transform::UnitVector(pixel_size.x, pixel_size.y, transform::Units::ScenePixels);
     }
 
-    void Rectangle::set_size(Transform::UnitVector size)
+    void Rectangle::set_size(transform::UnitVector size)
     {
-        const Transform::UnitVector pixel_size = size.to<Transform::Units::ScenePixels>();
+        const transform::UnitVector pixel_size = size.to<transform::Units::ScenePixels>();
         shape.setSize(sf::Vector2f(pixel_size.x, pixel_size.y));
     }
 
@@ -94,9 +94,9 @@ namespace obe::graphics::shapes
         return shape;
     }
 
-    void Polygon::set_point_position(std::size_t index, const Transform::UnitVector& position)
+    void Polygon::set_point_position(std::size_t index, const transform::UnitVector& position)
     {
-        const Transform::UnitVector pixel_position = position.to<Transform::Units::ScenePixels>();
+        const transform::UnitVector pixel_position = position.to<transform::Units::ScenePixels>();
         if (shape.getPointCount() <= index)
         {
             shape.setPointCount(index + 1);
@@ -104,11 +104,11 @@ namespace obe::graphics::shapes
         shape.setPoint(index, sf::Vector2f(pixel_position.x, pixel_position.y));
     }
 
-    Transform::UnitVector Polygon::get_point_position(std::size_t index) const
+    transform::UnitVector Polygon::get_point_position(std::size_t index) const
     {
         const sf::Vector2f pixel_position = shape.getPoint(index);
-        return Transform::UnitVector(
-            pixel_position.x, pixel_position.y, Transform::Units::ScenePixels);
+        return transform::UnitVector(
+            pixel_position.x, pixel_position.y, transform::Units::ScenePixels);
     }
 
     void Polygon::draw(sf::RenderTarget& target, sf::RenderStates states) const

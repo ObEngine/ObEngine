@@ -4,7 +4,7 @@
 
 #include <Transform/UnitVector.hpp>
 
-namespace obe::Transform
+namespace obe::transform
 {
     /**
      * \brief Enum which contains value to indicate which kind of
@@ -23,12 +23,12 @@ namespace obe::Transform
     class Referential
     {
     private:
-        double m_refX;
-        double m_refY;
+        double m_ref_x;
+        double m_ref_y;
 
     public:
         Referential();
-        Referential(double refX, double refY);
+        Referential(double x, double y);
 
         bool operator==(const Referential& ref) const;
         bool operator!=(const Referential& ref) const;
@@ -44,34 +44,34 @@ namespace obe::Transform
          *        Rect
          * \return true if Referential is on left side, false otherwise
          */
-        [[nodiscard]] bool isOnLeftSide() const;
+        [[nodiscard]] bool is_on_left_side() const;
         /**
          * \brief Get if the Referential is on the right side of a normalized
          *        Rect
          * \return true if Referential is on right side, false otherwise
          */
-        [[nodiscard]] bool isOnRightSide() const;
+        [[nodiscard]] bool is_on_right_side() const;
         /**
          * \brief Get if the Referential is on the top side of a normalized Rect
          * \return true if Referential is on top side, false otherwise
          */
-        [[nodiscard]] bool isOnTopSide() const;
+        [[nodiscard]] bool is_on_top_side() const;
         /**
          * \brief Get if the Referential is on the bottom side of a normalized
          *        Rect
          * \return true if Referential is on bottom side, false otherwise
          */
-        [[nodiscard]] bool isOnBottomSide() const;
+        [[nodiscard]] bool is_on_bottom_side() const;
         /**
          * \brief Get if the Referential is on a corner of a normalized Rect
          * \return true if Referential is on a corner, false otherwise
          */
-        [[nodiscard]] bool isOnCorner() const;
+        [[nodiscard]] bool is_on_corner() const;
         /**
          * \brief Get if the Referential is on a side of a normalized Rect
          * \return true if Referential is on a side, false otherwise
          */
-        [[nodiscard]] bool isOnSide() const;
+        [[nodiscard]] bool is_on_side() const;
         /**
          * \brief Get if the Referential is one of the 9 known referentials
          *        (TopLeft, Top, TopRight, Left, Center, Right, BottomLeft, Bottom,
@@ -79,26 +79,26 @@ namespace obe::Transform
          * \return true is the Referential is one of the 9 known
          *         referentials, false otherwise
          */
-        [[nodiscard]] bool isKnown() const;
+        [[nodiscard]] bool is_known() const;
         /**
          * \brief Get the normalized position of a Referential in a Rect
          *        (-1 : Left / Top, 0 = Center, 1 = Right / Bottom)
          * \return The normalized position of a Referential in a Rect
          */
-        [[nodiscard]] UnitVector getOffset() const;
+        [[nodiscard]] UnitVector get_offset() const;
 
         /**
          * \brief Get the name of a Referential in std::string form
          * \param format Format (fmt) of the string returned
          * \return The name of the Referential in std::string form
          */
-        [[nodiscard]] std::string toString(const std::string& format = "Referential<{}>") const;
+        [[nodiscard]] std::string to_string(const std::string& format = "Referential<{}>") const;
         /**
          * \brief Gets a Referential based on its name
          * \param ref Name of the Referential
          * \return The Referential enum value corresponding to the given name
          */
-        static Referential FromString(const std::string& ref);
+        static Referential from_string(const std::string& ref);
         /**
          * \brief Overload of operator<< to print Referentials
          * \param os The stream you want to print the Referential
@@ -228,4 +228,4 @@ namespace obe::Transform
          */
         static std::array<Referential, 9> Referentials;
     };
-} // namespace obe::Transform
+} // namespace obe::transform

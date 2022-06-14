@@ -1,6 +1,6 @@
 #include <Transform/Movable.hpp>
 
-namespace obe::Transform
+namespace obe::transform
 {
     void Movable::set_position(const UnitVector& position)
     {
@@ -12,8 +12,8 @@ namespace obe::Transform
         m_position.add(position);
     }
 
-    UnitVector Movable::getPosition() const
+    UnitVector Movable::get_position() const
     {
         return m_position;
     }
-} // namespace obe::Transform
+} // namespace obe::transform

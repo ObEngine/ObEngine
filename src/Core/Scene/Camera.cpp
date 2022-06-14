@@ -4,7 +4,7 @@ namespace obe::scene
 {
     Camera::Camera()
     {
-        Transform::UnitVector::Init(m_camera);
+        transform::UnitVector::init(m_camera);
     }
 
     void Camera::apply() const
@@ -16,28 +16,28 @@ namespace obe::scene
     }
 
     void Camera::set_position(
-        const Transform::UnitVector& position, const Transform::Referential& ref)
+        const transform::UnitVector& position, const transform::Referential& ref)
     {
         Rect::set_position(position, ref);
         this->apply();
     }
 
-    void Camera::move(const Transform::UnitVector& position)
+    void Camera::move(const transform::UnitVector& position)
     {
         Rect::move(position);
         this->apply();
     }
 
-    void Camera::set_size(const double size, const Transform::Referential& ref)
+    void Camera::set_size(const double size, const transform::Referential& ref)
     {
-        Rect::setSize(Transform::UnitVector(size * 2
-                              * (Transform::UnitVector::Screen.w / Transform::UnitVector::Screen.h),
+        Rect::set_size(transform::UnitVector(size * 2
+                              * (transform::UnitVector::Screen.w / transform::UnitVector::Screen.h),
                           size * 2, m_size.unit),
             ref);
         this->apply();
     }
 
-    void Camera::scale(const double scale_, const Transform::Referential& ref)
+    void Camera::scale(const double scale_, const transform::Referential& ref)
     {
         this->set_size((m_size.y / 2) * scale_, ref);
         this->apply();
@@ -53,12 +53,12 @@ namespace obe::scene
         if (!m_locked) m_angle += angle;
     }*/
 
-    Transform::UnitVector Camera::get_position(const Transform::Referential& ref) const
+    transform::UnitVector Camera::get_position(const transform::Referential& ref) const
     {
         return Rect::get_position(ref);
     }
 
-    Transform::UnitVector Camera::get_size() const
+    transform::UnitVector Camera::get_size() const
     {
         return m_size;
     }

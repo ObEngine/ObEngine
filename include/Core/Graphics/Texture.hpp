@@ -9,7 +9,7 @@
 
 namespace obe
 {
-    namespace Transform
+    namespace transform
     {
         class Rect;
         class UnitVector;
@@ -73,16 +73,16 @@ namespace obe::graphics
 
         bool create(unsigned int width, unsigned int height);
         bool load_from_file(const std::string& filename);
-        bool load_from_file(const std::string& filename, const Transform::Rect& rect);
+        bool load_from_file(const std::string& filename, const transform::Rect& rect);
         bool load_from_image(const sf::Image& image);
 
-        [[nodiscard]] Transform::UnitVector get_size() const;
+        [[nodiscard]] transform::UnitVector get_size() const;
 
         void set_size_hint(unsigned int width, unsigned int height);
         [[nodiscard]] bool is_autoscaled() const;
         void set_autoscaling(bool autoscaling);
 
-        void set_anti_aliasing(bool antiAliasing);
+        void set_anti_aliasing(bool anti_aliasing);
         [[nodiscard]] bool is_anti_aliased() const;
 
         void set_repeated(bool repeated);
@@ -90,10 +90,10 @@ namespace obe::graphics
 
         void reset();
 
-        unsigned int useCount() const;
+        unsigned int use_count() const;
 
-        bool isVector() const;
-        bool isBitmap() const;
+        bool is_vector() const;
+        bool is_bitmap() const;
 
         operator sf::Texture&();
         operator const sf::Texture&() const;

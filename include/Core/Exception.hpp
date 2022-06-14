@@ -32,7 +32,7 @@ namespace obe
 #define EXC_INFO EXC_INFO_WRAPPER()
 
     template <typename T>
-    constexpr auto getTypeName() -> std::string_view
+    constexpr auto get_type_name() -> std::string_view
     {
 #if defined(__clang__)
         constexpr auto prefix = std::string_view { "[T = " };
@@ -43,7 +43,7 @@ namespace obe
         constexpr auto suffix = "; ";
         constexpr auto function = std::string_view { __PRETTY_FUNCTION__ };
 #elif defined(_MSC_VER)
-        constexpr auto prefix = std::string_view { "getTypeName<" };
+        constexpr auto prefix = std::string_view { "get_type_name<" };
         constexpr auto suffix = ">(void)";
         constexpr auto function = std::string_view { __FUNCSIG__ };
 #else
@@ -63,8 +63,8 @@ namespace obe
         std::string m_message;
         std::vector<std::runtime_error> m_traceback;
 
-        void nestInPlace(const std::exception& exception);
-        void nestInPlace(const BaseException& exception);
+        void nest_in_place(const std::exception& exception);
+        void nest_in_place(const BaseException& exception);
 
     public:
         BaseException() = default;
@@ -96,14 +96,14 @@ namespace obe
         ExceptionType nest(const BaseException& exception);
     };
 
-    inline void BaseException::nestInPlace(const std::exception& exception)
+    inline void BaseException::nest_in_place(const std::exception& exception)
     {
         m_traceback = std::vector { std::runtime_error(exception.what()) };
         m_message += "  Cause:\n";
         m_message += "    " + Utils::String::replace(exception.what(), "\n", "\n    ");
     }
 
-    inline void BaseException::nestInPlace(const BaseException& exception)
+    inline void BaseException::nest_in_place(const BaseException& exception)
     {
         const std::vector<std::runtime_error>& traceback = exception.traceback();
         m_traceback = std::vector<std::runtime_error>(traceback.begin(), traceback.end());
@@ -120,7 +120,7 @@ namespace obe
     template <class ExceptionType>
     Exception<ExceptionType>::Exception(DebugInfo info)
     {
-        m_message = fmt::format("Exception [{}] occured\n", getTypeName<ExceptionType>());
+        m_message = fmt::format("Exception [{}] occured\n", get_type_name<ExceptionType>());
 #if defined _DEBUG
         m_message += fmt::format("  In file: '{}' (line {})\n", info.file, info.line);
         m_message += fmt::format("  In function: {}\n", info.function);
@@ -130,16 +130,16 @@ namespace obe
     template <class... Args>
     void BaseException::error(Args&&... args)
     {
-        const std::string errorMsg = fmt::format(std::forward<Args>(args)...);
-        m_message += fmt::format("  Error: {}\n", errorMsg);
+        const std::string error_msg = fmt::format(std::forward<Args>(args)...);
+        m_message += fmt::format("  Error: {}\n", error_msg);
         fprintf(stderr, "%s", m_message.c_str());
     }
 
     template <class... Args>
     void BaseException::hint(Args&&... args)
     {
-        const std::string hintMsg = fmt::format(std::forward<Args>(args)...);
-        m_message += fmt::format("  Hint: {}\n", hintMsg);
+        const std::string hint_msg = fmt::format(std::forward<Args>(args)...);
+        m_message += fmt::format("  Hint: {}\n", hint_msg);
     }
 
     inline const char* BaseException::what() const noexcept
@@ -155,16 +155,16 @@ namespace obe
     template <class ExceptionType>
     ExceptionType Exception<ExceptionType>::nest(const std::exception& exception)
     {
-        ExceptionType nestedException(*this);
-        nestedException.nestInPlace(exception);
-        return nestedException;
+        ExceptionType nested_exception(*this);
+        nested_exception.nest_in_place(exception);
+        return nested_exception;
     }
 
     template <class ExceptionType>
     ExceptionType Exception<ExceptionType>::nest(const BaseException& exception)
     {
-        ExceptionType nestedException(*this);
-        nestedException.nestInPlace(exception);
-        return nestedException;
+        ExceptionType nested_exception(*this);
+        nested_exception.nest_in_place(exception);
+        return nested_exception;
     }
 }

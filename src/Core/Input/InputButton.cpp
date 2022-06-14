@@ -60,7 +60,7 @@ namespace obe::input
         if (std::holds_alternative<sf::Keyboard::Key>(m_button))
             return std::get<sf::Keyboard::Key>(m_button);
         throw Exceptions::InputButtonInvalidOperation(
-            InputTypeMeta::toString(m_type), "GetKey", EXC_INFO);
+            InputTypeMeta::to_string(m_type), "GetKey", EXC_INFO);
     }
 
     std::string InputButton::get_name() const
@@ -112,7 +112,7 @@ namespace obe::input
                 m_gamepad_index, std::get<sf::Joystick::Axis>(m_button));
         else
             throw Exceptions::InputButtonInvalidOperation(
-                InputTypeMeta::toString(m_type), "GetAxisPosition", EXC_INFO);
+                InputTypeMeta::to_string(m_type), "GetAxisPosition", EXC_INFO);
     }
 
     int InputButton::get_wheel_delta() const

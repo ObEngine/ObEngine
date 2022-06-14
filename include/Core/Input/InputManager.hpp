@@ -48,7 +48,7 @@ namespace obe::input
          */
         InputManager& add_context(const std::string& context);
         /**
-         * \brief Get the KeyboardAction identified by actionId if it exists
+         * \brief Get the KeyboardAction identified by action_id if it exists
          * \param action_id Id of the KeyboardAction to retrieve
          * \return A reference to the KeyboardAction if found
          */

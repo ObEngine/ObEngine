@@ -79,16 +79,6 @@ namespace obe::tiles
                     std::unique_ptr<collision::PolygonalCollider> model
                         = std::make_unique<collision::PolygonalCollider>(collision_id);
                     model->load(collision);
-                    /*int i = 0;
-                    for (const vili::node& point : collision.at("points"))
-                    {
-                        model->add_point(Transform::UnitVector(
-                            point.at("x"), point.at("y"), Transform::Units::ScenePixels));
-                        Transform::PolygonPoint pointDbg = model->get(i);
-                        debug::Log->info("  - BUILD[{}] P{} = ({}, {})", collisionId, i,
-                            pointDbg.x, pointDbg.y);
-                        i++;
-                    }*/
                     m_collider_models.push_back(std::move(model));
                 }
             }
@@ -147,8 +137,8 @@ namespace obe::tiles
     std::vector<TileLayer*> TileScene::get_all_layers() const
     {
         std::vector<TileLayer*> layers;
-        std::ranges::transform(m_layers, std::back_inserter(layers),
-            [](const auto& layer) { return layer.get(); });
+        std::ranges::transform(
+            m_layers, std::back_inserter(layers), [](const auto& layer) { return layer.get(); });
         return layers;
     }
 

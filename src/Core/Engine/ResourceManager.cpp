@@ -59,11 +59,11 @@ namespace obe::engine
     {
         for (auto& texture_pair : m_textures)
         {
-            if (texture_pair.second.first && texture_pair.second.first->useCount() == 1)
+            if (texture_pair.second.first && texture_pair.second.first->use_count() == 1)
             {
                 texture_pair.second.first.reset();
             }
-            if (texture_pair.second.second && texture_pair.second.second->useCount() == 1)
+            if (texture_pair.second.second && texture_pair.second.second->use_count() == 1)
             {
                 texture_pair.second.second.reset();
             }

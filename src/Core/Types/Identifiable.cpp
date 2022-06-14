@@ -7,12 +7,12 @@ namespace obe::Types
         m_id = id;
     }
 
-    void Identifiable::setId(const std::string& id)
+    void Identifiable::set_id(const std::string& id)
     {
         m_id = id;
     }
 
-    std::string Identifiable::getId() const
+    std::string Identifiable::get_id() const
     {
         return m_id;
     }

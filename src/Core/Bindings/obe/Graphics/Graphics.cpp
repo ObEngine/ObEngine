@@ -336,8 +336,8 @@ namespace obe::graphics::Bindings
         sol::table GraphicsNamespace = state["obe"]["graphics"].get<sol::table>();
         sol::usertype<obe::graphics::Sprite> bindSprite
             = GraphicsNamespace.new_usertype<obe::graphics::Sprite>("Sprite", sol::base_classes,
-                sol::bases<obe::Transform::UnitBasedObject, obe::Types::Selectable,
-                    obe::Transform::Rect, obe::Transform::Movable, obe::graphics::Renderable,
+                sol::bases<obe::transform::UnitBasedObject, obe::Types::Selectable,
+                    obe::transform::Rect, obe::transform::Movable, obe::graphics::Renderable,
                     obe::Component::Component<obe::graphics::Sprite>, obe::Component::ComponentBase,
                     obe::Types::Identifiable, obe::Types::Serializable,
                     obe::engine::ResourceManagedObject>());
@@ -440,7 +440,7 @@ namespace obe::graphics::Bindings
             = sol::overload(static_cast<bool (obe::graphics::Texture::*)(const std::string&)>(
                                 &obe::graphics::Texture::load_from_file),
                 static_cast<bool (obe::graphics::Texture::*)(const std::string&,
-                    const obe::Transform::Rect&)>(&obe::graphics::Texture::load_from_file));
+                    const obe::transform::Rect&)>(&obe::graphics::Texture::load_from_file));
         bindTexture["load_from_image"] = &obe::graphics::Texture::load_from_image;
         bindTexture["get_size"] = &obe::graphics::Texture::get_size;
         bindTexture["set_size_hint"] = &obe::graphics::Texture::set_size_hint;
@@ -451,9 +451,9 @@ namespace obe::graphics::Bindings
         bindTexture["set_repeated"] = &obe::graphics::Texture::set_repeated;
         bindTexture["is_repeated"] = &obe::graphics::Texture::is_repeated;
         bindTexture["reset"] = &obe::graphics::Texture::reset;
-        bindTexture["useCount"] = &obe::graphics::Texture::useCount;
-        bindTexture["isVector"] = &obe::graphics::Texture::isVector;
-        bindTexture["isBitmap"] = &obe::graphics::Texture::isBitmap;
+        bindTexture["use_count"] = &obe::graphics::Texture::use_count;
+        bindTexture["is_vector"] = &obe::graphics::Texture::is_vector;
+        bindTexture["is_bitmap"] = &obe::graphics::Texture::is_bitmap;
         bindTexture["make_shared_texture"] = &obe::graphics::Texture::make_shared_texture;
     }
     void LoadClassHsv(sol::state_view state)

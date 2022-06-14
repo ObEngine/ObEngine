@@ -41,15 +41,15 @@ namespace obe::scene
         m_game_object_ids.clear();
         for (const auto& item : m_sprite_array)
         {
-            m_sprite_ids.emplace(item->getId());
+            m_sprite_ids.emplace(item->get_id());
         }
         for (const auto& item : m_collider_array)
         {
-            m_collider_ids.emplace(item->getId());
+            m_collider_ids.emplace(item->get_id());
         }
         for (const auto& item : m_game_object_array)
         {
-            m_game_object_ids.emplace(item->getId());
+            m_game_object_ids.emplace(item->get_id());
         }
     }
 
@@ -196,7 +196,7 @@ namespace obe::scene
             script::GameObject* game_object = it->get();
             if (!game_object->is_permanent())
             {
-                debug::Log->debug("<Scene> Deleting GameObject {0}", game_object->getId());
+                debug::Log->debug("<Scene> Deleting GameObject {0}", game_object->get_id());
                 game_object->delete_object();
             }
         }
@@ -248,8 +248,8 @@ namespace obe::scene
         result["View"]["size"] = m_camera.get_size().y / 2;
         result["View"]["position"]
             = vili::object { { "x", m_camera_initial_position.x }, { "y", m_camera_initial_position.y },
-                  { "unit", Transform::UnitsMeta::toString(m_camera_initial_position.unit) } };
-        result["View"]["referential"] = m_camera_initial_referential.toString("{}");
+                  { "unit", transform::UnitsMeta::to_string(m_camera_initial_position.unit) } };
+        result["View"]["referential"] = m_camera_initial_referential.to_string("{}");
 
         // Sprites
         if (!m_sprite_array.empty())
@@ -258,7 +258,7 @@ namespace obe::scene
         {
             if (sprite->get_parent_id().empty())
             {
-                result["Sprites"][sprite->getId()] = sprite->dump();
+                result["Sprites"][sprite->get_id()] = sprite->dump();
             }
         }
 
@@ -269,7 +269,7 @@ namespace obe::scene
         {
             if (collider->get_parent_id().empty())
             {
-                result["Collisions"][collider->getId()] = collider->dump();
+                result["Collisions"][collider->get_id()] = collider->dump();
             }
         }
 
@@ -278,7 +278,7 @@ namespace obe::scene
             result["GameObjects"] = vili::object {};
         for (auto& game_object : m_game_object_array)
         {
-            result["GameObjects"][game_object->getId()] = game_object->dump();
+            result["GameObjects"][game_object->get_id()] = game_object->dump();
         }
 
         // Scripts
@@ -314,7 +314,7 @@ namespace obe::scene
             m_camera.set_size(view.at("size"));
             double x = 0.f;
             double y = 0.f;
-            Transform::Units unit = Transform::Units::SceneUnits;
+            transform::Units unit = transform::Units::SceneUnits;
             if (view.contains("position"))
             {
                 const vili::node& position = view.at("position");
@@ -328,20 +328,20 @@ namespace obe::scene
                 }
                 if (position.contains("unit"))
                 {
-                    unit = Transform::UnitsMeta::fromString(position.at("unit"));
+                    unit = transform::UnitsMeta::from_string(position.at("unit"));
                 }
             }
-            m_camera_initial_position = Transform::UnitVector(x, y, unit);
-            m_camera_initial_referential = Transform::Referential::TopLeft;
+            m_camera_initial_position = transform::UnitVector(x, y, unit);
+            m_camera_initial_referential = transform::Referential::TopLeft;
             if (view.contains("referential"))
             {
                 m_camera_initial_referential
-                    = Transform::Referential::FromString(view.at("referential"));
+                    = transform::Referential::from_string(view.at("referential"));
             }
             debug::Log->debug("<Scene> Set Camera Position at : {0}, {1} using "
                               "Referential {2}",
                 m_camera_initial_position.x, m_camera_initial_position.y,
-                m_camera_initial_referential.toString());
+                m_camera_initial_referential.to_string());
             m_camera.set_position(m_camera_initial_position, m_camera_initial_referential);
         }
         else
@@ -352,9 +352,9 @@ namespace obe::scene
             const vili::node& sprites = data.at("Sprites");
             m_sprite_array.reserve(sprites.size());
             m_sprite_ids.reserve(sprites.size());
-            for (auto [spriteId, sprite] : data.at("Sprites").items())
+            for (auto [sprite_id, sprite] : data.at("Sprites").items())
             {
-                this->create_sprite(spriteId).load(sprite);
+                this->create_sprite(sprite_id).load(sprite);
             }
         }
 
@@ -363,9 +363,9 @@ namespace obe::scene
             const vili::node& collisions = data.at("Collisions");
             m_collider_array.reserve(collisions.size());
             m_collider_ids.reserve(collisions.size());
-            for (auto [collisionId, collision] : data.at("Collisions").items())
+            for (auto [collision_id, collision] : data.at("Collisions").items())
             {
-                this->create_collider(collisionId).load(collision);
+                this->create_collider(collision_id).load(collision);
             }
         }
 
@@ -469,12 +469,12 @@ namespace obe::scene
                 [this](const std::unique_ptr<script::GameObject>& ptr) {
                     if (ptr->deletable)
                     {
-                        m_game_object_ids.erase(ptr->getId());
-                        debug::Log->debug("<Scene> Removing GameObject {}", ptr->getId());
+                        m_game_object_ids.erase(ptr->get_id());
+                        debug::Log->debug("<Scene> Removing GameObject {}", ptr->get_id());
                         if (ptr->m_sprite)
-                            this->remove_sprite(ptr->get_sprite().getId());
+                            this->remove_sprite(ptr->get_sprite().get_id());
                         if (ptr->m_collider)
-                            this->remove_collider(ptr->get_collider().getId());
+                            this->remove_collider(ptr->get_collider().get_id());
                         return true;
                     }
                     return false;
@@ -515,10 +515,10 @@ namespace obe::scene
             {
                 sf::CircleShape scene_node_shape;
                 SceneNode& scene_node = game_object->get_scene_node();
-                const Transform::UnitVector scene_node_position
-                    = scene_node.getPosition().to<Transform::Units::ViewPixels>();
+                const transform::UnitVector scene_node_position
+                    = scene_node.get_position().to<transform::Units::ViewPixels>();
                 scene_node_shape.setPosition(scene_node_position.x - 3, scene_node_position.y - 3);
-                if (scene_node.isSelected())
+                if (scene_node.is_selected())
                     scene_node_shape.setFillColor(sf::Color::Green);
                 else
                     scene_node_shape.setFillColor(sf::Color::Red);
@@ -566,14 +566,14 @@ namespace obe::scene
     {
         for (auto& game_object : m_game_object_array)
         {
-            if (game_object->getId() == id && !game_object->deletable)
+            if (game_object->get_id() == id && !game_object->deletable)
                 return *game_object;
         }
         std::vector<std::string> object_ids;
         object_ids.reserve(m_game_object_array.size());
         for (const auto& object : m_game_object_array)
         {
-            object_ids.push_back(object->getId());
+            object_ids.push_back(object->get_id());
         }
         throw Exceptions::UnknownGameObject(m_level_file_name, id, object_ids, EXC_INFO);
     }
@@ -587,7 +587,7 @@ namespace obe::scene
     {
         std::erase_if(m_game_object_array,
             [&id](const std::unique_ptr<script::GameObject>& ptr) {
-                return (ptr->getId() == id);
+                return (ptr->get_id() == id);
             });
         m_game_object_ids.erase(id);
     }
@@ -612,7 +612,7 @@ namespace obe::scene
             while (use_id.empty() || this->does_game_object_exists(use_id))
             {
                 use_id = object_type + "_"
-                    + Utils::String::getRandomKey(
+                    + Utils::String::get_random_key(
                         Utils::String::Alphabet + Utils::String::Numbers, 8);
             }
         }
@@ -681,22 +681,22 @@ namespace obe::scene
     }
 
     graphics::Sprite* Scene::get_sprite_by_position(
-        const Transform::UnitVector& position, const int layer) const
+        const transform::UnitVector& position, const int layer) const
     {
-        std::vector<Transform::Referential> rect_pts
-            = { Transform::Referential::TopLeft, Transform::Referential::TopRight,
-                  Transform::Referential::BottomRight, Transform::Referential::BottomLeft };
-        const Transform::UnitVector zero_offset(0, 0);
+        std::vector<transform::Referential> rect_pts
+            = { transform::Referential::TopLeft, transform::Referential::TopRight,
+                  transform::Referential::BottomRight, transform::Referential::BottomLeft };
+        const transform::UnitVector zero_offset(0, 0);
 
         const std::vector<graphics::Sprite*> sprites_on_layer = this->get_sprites_by_layer(layer);
-        const Transform::UnitVector camera
-            = -(m_camera.get_position().to<Transform::Units::ScenePixels>());
+        const transform::UnitVector camera
+            = -(m_camera.get_position().to<transform::Units::ScenePixels>());
         for (const auto& sprite : sprites_on_layer)
         {
             collision::PolygonalCollider position_collider("positionCollider");
             position_collider.add_point(sprite->get_position_transformer()(position, camera, layer));
             collision::PolygonalCollider sprite_collider("sprCollider");
-            for (Transform::Referential& ref : rect_pts)
+            for (transform::Referential& ref : rect_pts)
             {
                 sprite_collider.add_point(sprite->get_position(ref));
             }
@@ -712,14 +712,14 @@ namespace obe::scene
     {
         for (const auto& sprite : m_sprite_array)
         {
-            if (sprite->getId() == id)
+            if (sprite->get_id() == id)
                 return *sprite;
         }
         std::vector<std::string> sprites_ids;
         sprites_ids.reserve(m_sprite_array.size());
         for (const auto& sprite : m_sprite_array)
         {
-            sprites_ids.push_back(sprite->getId());
+            sprites_ids.push_back(sprite->get_id());
         }
         throw Exceptions::UnknownSprite(m_level_file_name, id, sprites_ids, EXC_INFO);
     }
@@ -734,26 +734,26 @@ namespace obe::scene
         debug::Log->debug("<Scene> Removing Sprite {0}", id);
         std::erase_if(m_sprite_array,
             [&id](const std::unique_ptr<graphics::Sprite>& sprite) {
-                return (sprite->getId() == id);
+                return (sprite->get_id() == id);
             });
         m_sprite_ids.erase(id);
     }
 
-    SceneNode* Scene::get_scene_node_by_position(const Transform::UnitVector& position) const
+    SceneNode* Scene::get_scene_node_by_position(const transform::UnitVector& position) const
     {
         for (auto& game_object : m_game_object_array)
         {
-            const Transform::UnitVector scene_node_position
-                = game_object->get_scene_node().getPosition();
-            const Transform::UnitVector p_vec = position.to<Transform::Units::SceneUnits>();
-            const Transform::UnitVector p_tolerance
-                = Transform::UnitVector(6, 6, Transform::Units::ScenePixels)
-                      .to<Transform::Units::SceneUnits>();
+            const transform::UnitVector scene_node_position
+                = game_object->get_scene_node().get_position();
+            const transform::UnitVector p_vec = position.to<transform::Units::SceneUnits>();
+            const transform::UnitVector p_tolerance
+                = transform::UnitVector(6, 6, transform::Units::ScenePixels)
+                      .to<transform::Units::SceneUnits>();
 
-            if (Utils::Math::isBetween(
+            if (Utils::Math::is_between(
                     p_vec.x, scene_node_position.x - p_tolerance.x, scene_node_position.x + p_tolerance.x))
             {
-                if (Utils::Math::isBetween(p_vec.y, scene_node_position.y - p_tolerance.x,
+                if (Utils::Math::is_between(p_vec.y, scene_node_position.y - p_tolerance.x,
                         scene_node_position.y + p_tolerance.y))
                     return &game_object->get_scene_node();
             }
@@ -787,15 +787,15 @@ namespace obe::scene
     }
 
     std::pair<collision::PolygonalCollider*, int> Scene::get_collider_point_by_position(
-        const Transform::UnitVector& position) const
+        const transform::UnitVector& position) const
     {
-        const Transform::UnitVector p_pos = position.to<Transform::Units::ScenePixels>();
-        const Transform::UnitVector p_tolerance
-            = Transform::UnitVector(6, 6, Transform::Units::ScenePixels);
+        const transform::UnitVector p_pos = position.to<transform::Units::ScenePixels>();
+        const transform::UnitVector p_tolerance
+            = transform::UnitVector(6, 6, transform::Units::ScenePixels);
         for (const auto& collider : m_collider_array)
         {
             // TODO: Fix here
-            if (auto point = collider->getPointAroundPosition(p_pos, p_tolerance); point.has_value())
+            if (auto point = collider->get_point_near_position(p_pos, p_tolerance); point.has_value())
             {
                 return std::make_pair(collider.get(), point.value()->index);
             }
@@ -804,14 +804,14 @@ namespace obe::scene
     }
 
     collision::PolygonalCollider* Scene::get_collider_by_centroid_position(
-        const Transform::UnitVector& position) const
+        const transform::UnitVector& position) const
     {
-        const Transform::UnitVector p_pos = position.to<Transform::Units::ScenePixels>();
-        const Transform::UnitVector p_tolerance
-            = Transform::UnitVector(6, 6, Transform::Units::ScenePixels);
+        const transform::UnitVector p_pos = position.to<transform::Units::ScenePixels>();
+        const transform::UnitVector p_tolerance
+            = transform::UnitVector(6, 6, transform::Units::ScenePixels);
         for (const auto& collider : m_collider_array)
         {
-            if (collider->isCentroidAroundPosition(p_pos, p_tolerance))
+            if (collider->is_centroid_near_position(p_pos, p_tolerance))
                 return collider.get();
         }
         return nullptr;
@@ -821,7 +821,7 @@ namespace obe::scene
     {
         for (const auto& collider : m_collider_array)
         {
-            if (id == collider->getId())
+            if (id == collider->get_id())
             {
                 return *collider;
             }
@@ -830,7 +830,7 @@ namespace obe::scene
         colliders_ids.reserve(m_collider_array.size());
         for (const auto& collider : m_collider_array)
         {
-            colliders_ids.push_back(collider->getId());
+            colliders_ids.push_back(collider->get_id());
         }
         throw Exceptions::UnknownCollider(m_level_file_name, id, colliders_ids, EXC_INFO);
     }
@@ -844,7 +844,7 @@ namespace obe::scene
     {
         std::erase_if(m_collider_array,
             [&id](const std::unique_ptr<collision::PolygonalCollider>& collider) {
-                return (collider->getId() == id);
+                return (collider->get_id() == id);
             });
         m_collider_ids.erase(id);
     }

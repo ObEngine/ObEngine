@@ -54,11 +54,11 @@ namespace obe::system::project
                     = MountablePath::from_prefix(obe::system::prefixes::cfg.data()).base_path;
                 project_cfg_path = Utils::File::join({ cfg_path, "Projects", project.get_id() });
             }
-            if (!Utils::File::directoryExists(project_cfg_path))
+            if (!Utils::File::directory_exists(project_cfg_path))
             {
                 debug::Log->debug("<Project> Could not find Project configuration directory, "
                                   "creating a new one...");
-                Utils::File::createDirectory(project_cfg_path);
+                Utils::File::create_directory(project_cfg_path);
                 debug::Log->debug(
                     "<Project> Project configuration directory created at '{}'", project_cfg_path);
             }
@@ -75,9 +75,9 @@ namespace obe::system::project
         const std::string projects_file_location = "obe://projects.vili"_fs;
         vili::node projects = vili::parser::from_file(projects_file_location);
         std::vector<std::string> projects_names;
-        for (const auto& [projectName, _] : projects.items())
+        for (const auto& [project_name, _] : projects.items())
         {
-            projects_names.push_back(projectName);
+            projects_names.push_back(project_name);
         }
         return projects_names;
     }

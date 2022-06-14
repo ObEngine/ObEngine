@@ -106,7 +106,7 @@ namespace obe::animation::exceptions
                         "name : '{}'",
                 easing_name);
             std::vector<std::string> suggestions
-                = Utils::String::sortByDistance(easing_name.data(), all_easings, 5);
+                = Utils::String::sort_by_distance(easing_name.data(), all_easings, 5);
             std::transform(
                 suggestions.begin(), suggestions.end(), suggestions.begin(), Utils::String::quote);
             suggestions.emplace_back("...");

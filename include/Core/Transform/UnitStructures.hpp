@@ -1,6 +1,6 @@
 #pragma once
 
-namespace obe::Transform
+namespace obe::transform
 {
     /**
      * \brief Struct representing the View used for internal UnitVector
@@ -23,4 +23,4 @@ namespace obe::Transform
         double w;
         double h;
     };
-} // namespace obe::Transform
+} // namespace obe::transform

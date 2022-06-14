@@ -11,7 +11,7 @@ namespace obe::animation
     class TweenImpl;
 }
 
-namespace obe::Transform
+namespace obe::transform
 {
     /**
      * \brief Class widely used in the Engine to scale and position elements in
@@ -27,7 +27,7 @@ namespace obe::Transform
          * \brief Initialize the conversion module (Step 1) by passing the
          *        pointer to the ViewStruct
          */
-        static void Init(ViewStruct*&);
+        static void init(ViewStruct*&);
         /**
          * \nobind
          * \brief Initialize the conversion module (Step 2) by passing the
@@ -35,7 +35,7 @@ namespace obe::Transform
          * \param width Width of the screen
          * \param height Height of the screen
          */
-        static void Init(int width, int height);
+        static void init(int width, int height);
 
         /**
          * \brief Struct used for UnitVector conversions, do not modify !
@@ -248,10 +248,10 @@ namespace obe::Transform
         /**
          * \brief Return an UnitVector with the converted values (x, y) to the
          *        Unit you want
-         * \param pUnit An enum value from Transform::Units
+         * \param p_unit An enum value from Transform::Units
          * \return A new UnitVector containing the converted values with the new Units
          */
-        [[nodiscard]] UnitVector to(Units pUnit) const;
+        [[nodiscard]] UnitVector to(Units p_unit) const;
 
         /**
          * \brief Unpacks the UnitVector to a tuple (can be used with structured
@@ -382,4 +382,4 @@ namespace obe::Transform
             return UnitVector(0, 0);
         }
     }
-} // namespace obe::Transform
+} // namespace obe::transform

@@ -16,8 +16,8 @@ namespace obe::Types::Bindings
             = TypesNamespace.new_usertype<obe::Types::Identifiable>("Identifiable",
                 sol::call_constructor,
                 sol::constructors<obe::Types::Identifiable(const std::string&)>());
-        bindIdentifiable["setId"] = &obe::Types::Identifiable::setId;
-        bindIdentifiable["getId"] = &obe::Types::Identifiable::getId;
+        bindIdentifiable["set_id"] = &obe::Types::Identifiable::set_id;
+        bindIdentifiable["get_id"] = &obe::Types::Identifiable::get_id;
     }
     void LoadClassProtectedIdentifiable(sol::state_view state)
     {
@@ -33,11 +33,11 @@ namespace obe::Types::Bindings
             = TypesNamespace.new_usertype<obe::Types::Selectable>("Selectable",
                 sol::call_constructor,
                 sol::constructors<obe::Types::Selectable(), obe::Types::Selectable(bool)>());
-        bindSelectable["setSelected"] = &obe::Types::Selectable::setSelected;
-        bindSelectable["toggleSelected"] = &obe::Types::Selectable::toggleSelected;
+        bindSelectable["set_selected"] = &obe::Types::Selectable::set_selected;
+        bindSelectable["toggle_selected"] = &obe::Types::Selectable::toggle_selected;
         bindSelectable["select"] = &obe::Types::Selectable::select;
         bindSelectable["unselect"] = &obe::Types::Selectable::unselect;
-        bindSelectable["isSelected"] = &obe::Types::Selectable::isSelected;
+        bindSelectable["is_selected"] = &obe::Types::Selectable::is_selected;
     }
     void LoadClassSerializable(sol::state_view state)
     {
@@ -53,10 +53,10 @@ namespace obe::Types::Bindings
         sol::usertype<obe::Types::Togglable> bindTogglable
             = TypesNamespace.new_usertype<obe::Types::Togglable>("Togglable", sol::call_constructor,
                 sol::constructors<obe::Types::Togglable(bool)>());
-        bindTogglable["setEnabled"] = &obe::Types::Togglable::setEnabled;
+        bindTogglable["set_enabled"] = &obe::Types::Togglable::set_enabled;
         bindTogglable["toggle"] = &obe::Types::Togglable::toggle;
         bindTogglable["enable"] = &obe::Types::Togglable::enable;
         bindTogglable["disable"] = &obe::Types::Togglable::disable;
-        bindTogglable["isEnabled"] = &obe::Types::Togglable::isEnabled;
+        bindTogglable["is_enabled"] = &obe::Types::Togglable::is_enabled;
     }
 };

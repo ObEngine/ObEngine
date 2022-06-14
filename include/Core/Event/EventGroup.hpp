@@ -169,11 +169,11 @@ namespace obe::event
         [[nodiscard]] std::string get_name() const;
 
         /**
-         * \brief Register a callback for when Event::addListener is called
+         * \brief Register a callback for when Event::add_listener is called
          */
         void on_add_listener(const std::string& event_name, OnListenerChange callback) const;
         /**
-         * \brief Register a callback for when Event::removeListener is called
+         * \brief Register a callback for when Event::remote_listener is called
          */
         void on_remove_listener(const std::string& event_name, OnListenerChange callback) const;
         [[nodiscard]] vili::node get_profiler_results() const;

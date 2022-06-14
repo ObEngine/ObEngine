@@ -30,7 +30,7 @@ namespace obe::script
     }
 
     template <class... Args>
-    void safeLuaCall(sol::protected_function callback, Args&&... args)
+    void safe_lua_call(sol::protected_function callback, Args&&... args)
     {
         const sol::protected_function_result result = callback(args...);
         if (!result.valid())
@@ -39,8 +39,8 @@ namespace obe::script
             {
                 try
                 {
-                    const auto errObj = result.get<sol::error>();
-                    throw exceptions::LuaExecutionError(errObj, EXC_INFO);
+                    const auto err_obj = result.get<sol::error>();
+                    throw exceptions::LuaExecutionError(err_obj, EXC_INFO);
                 }
                 catch (const sol::error& err)
                 {

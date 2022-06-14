@@ -12,7 +12,7 @@
 
 namespace obe::Bindings
 {
-    void IndexCoreBindings(sol::state_view state);
+    void index_core_bindings(sol::state_view state);
 }
 
 int lua_exception_handler2(lua_State* L, sol::optional<const std::exception&> maybe_exception,
@@ -30,7 +30,7 @@ int lua_exception_handler2(lua_State* L, sol::optional<const std::exception&> ma
     return sol::stack::push(L, description);
 }
 
-styler::Foreground convertColor(obe::graphics::Color color)
+styler::Foreground convert_color(obe::graphics::Color color)
 {
     if (color.to_name() == "white")
     {
@@ -86,7 +86,7 @@ void run(std::string command)
     // Table shared across all environments, for easy value sharing
     lua["global"] = sol::new_table();
 
-    Bindings::IndexCoreBindings(lua);
+    Bindings::index_core_bindings(lua);
     lua.safe_script_file("obe://Lib/Internal/Require.lua"_fs);
     lua.safe_script_file("obe://Lib/Internal/Helpers.lua"_fs);
     lua.safe_script_file("obe://Lib/Internal/Logger.lua"_fs);
@@ -99,7 +99,7 @@ void run(std::string command)
         {
             const std::string_view text = texts[i];
             const graphics::Color color = colors[i];
-            std::cout << convertColor(color) << text;
+            std::cout << convert_color(color) << text;
         }
         std::cout << std::endl;
     };
@@ -107,7 +107,7 @@ void run(std::string command)
     lua.safe_script_file("obe://Lib/Toolkit/Toolkit.lua"_fs);
     lua["TOOLKIT_CONTEXTS"] = std::map<std::string, bool> { { "terminal", true } };
 
-    auto isInteractive = [&lua]()
+    auto is_interactive = [&lua]()
     {
         std::map<std::string, bool> contexts
             = lua["TOOLKIT_CONTEXTS"].get<std::map<std::string, bool>>();
@@ -117,11 +117,11 @@ void run(std::string command)
         }
         return true;
     };
-    script::safeLuaCall(lua["evaluate"].get<sol::protected_function>(), command);
+    script::safe_lua_call(lua["evaluate"].get<sol::protected_function>(), command);
 
-    if (!isInteractive())
+    if (!is_interactive())
     {
-        script::safeLuaCall(lua["prompt"].get<sol::protected_function>());
+        script::safe_lua_call(lua["prompt"].get<sol::protected_function>());
     }
 }
 

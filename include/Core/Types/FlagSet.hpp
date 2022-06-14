@@ -208,12 +208,12 @@ namespace obe::Types
             return static_cast<bool>(*this) != o;
         }
 
-        std::size_t size() const
+        [[nodiscard]] std::size_t size() const
         {
             return bitset.size();
         }
 
-        std::size_t count() const
+        [[nodiscard]] std::size_t count() const
         {
             return bitset.count();
         }
@@ -282,7 +282,8 @@ namespace obe::Types
             : bitset(repr)
         {
         }
-        const bitset_type& get_bitset() const
+
+        [[nodiscard]] const bitset_type& get_bitset() const
         {
             return bitset;
         }

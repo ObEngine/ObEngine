@@ -4,7 +4,7 @@
 #include <ostream> // Weird fix on latest versions of MSVC
 #include <regex>
 
-namespace obe::Transform
+namespace obe::transform
 {
     Referential Referential::TopLeft = Referential(0, 0);
     Referential Referential::Top = Referential(0.5, 0);
@@ -20,22 +20,22 @@ namespace obe::Transform
         Referential::BottomLeft, Referential::Bottom, Referential::BottomRight };
 
     Referential::Referential()
-        : m_refX(0)
-        , m_refY(0)
+        : m_ref_x(0)
+        , m_ref_y(0)
     {
     }
 
-    Referential::Referential(const double refX, const double refY)
-        : m_refX(refX)
-        , m_refY(refY)
+    Referential::Referential(const double x, const double y)
+        : m_ref_x(x)
+        , m_ref_y(y)
     {
-        assert(refX >= -1 && refX <= 1);
-        assert(refY >= -1 && refY <= 1);
+        assert(x >= -1 && x <= 1);
+        assert(y >= -1 && y <= 1);
     }
 
     bool Referential::operator==(const Referential& ref) const
     {
-        return (getOffset() == ref.getOffset());
+        return (get_offset() == ref.get_offset());
     }
     bool Referential::operator!=(const Referential& ref) const
     {
@@ -44,78 +44,78 @@ namespace obe::Transform
 
     Referential Referential::flip(FlipAxis axis) const
     {
-        const bool bothOrHorizontal = (axis == FlipAxis::Both || axis == FlipAxis::Horizontal);
-        const bool bothOrVertical = (axis == FlipAxis::Both || axis == FlipAxis::Vertical);
+        const bool both_or_horizontal = (axis == FlipAxis::Both || axis == FlipAxis::Horizontal);
+        const bool both_or_vertical = (axis == FlipAxis::Both || axis == FlipAxis::Vertical);
         return Referential(
-            bothOrHorizontal ? 1 - m_refX : m_refX, bothOrVertical ? 1 - m_refY : m_refY);
+            both_or_horizontal ? 1 - m_ref_x : m_ref_x, both_or_vertical ? 1 - m_ref_y : m_ref_y);
     }
 
-    bool Referential::isOnLeftSide() const
+    bool Referential::is_on_left_side() const
     {
-        return m_refX == 0;
+        return m_ref_x == 0;
     }
 
-    bool Referential::isOnRightSide() const
+    bool Referential::is_on_right_side() const
     {
-        return m_refX == 1;
+        return m_ref_x == 1;
     }
 
-    bool Referential::isOnTopSide() const
+    bool Referential::is_on_top_side() const
     {
-        return m_refY == 0;
+        return m_ref_y == 0;
     }
 
-    bool Referential::isOnBottomSide() const
+    bool Referential::is_on_bottom_side() const
     {
-        return m_refY == 1;
+        return m_ref_y == 1;
     }
 
-    bool Referential::isOnCorner() const
+    bool Referential::is_on_corner() const
     {
-        return (isOnLeftSide() || isOnRightSide()) && (isOnTopSide() || isOnBottomSide());
+        return (is_on_left_side() || is_on_right_side()) && (is_on_top_side() || is_on_bottom_side());
     }
 
-    bool Referential::isOnSide() const
+    bool Referential::is_on_side() const
     {
-        return (isOnLeftSide() || isOnRightSide()) ^ (isOnTopSide() || isOnBottomSide());
+        return (is_on_left_side() || is_on_right_side()) ^ (is_on_top_side() || is_on_bottom_side());
     }
 
-    bool Referential::isKnown() const
+    bool Referential::is_known() const
     {
-        return (m_refX == 0 || m_refX == 0.5 || m_refX == 1)
-            && (m_refY == 0 || m_refY == 0.5 || m_refY == 1);
+        return (m_ref_x == 0 || m_ref_x == 0.5 || m_ref_x == 1)
+            && (m_ref_y == 0 || m_ref_y == 0.5 || m_ref_y == 1);
     }
 
-    UnitVector Referential::getOffset() const
+    UnitVector Referential::get_offset() const
     {
-        return UnitVector(m_refX, m_refY);
+        return UnitVector(m_ref_x, m_ref_y);
     }
 
-    std::string Referential::toString(const std::string& format) const
+    std::string Referential::to_string(const std::string& format) const
     {
-        if (m_refX == 0 && m_refY == 0)
+        if (m_ref_x == 0 && m_ref_y == 0)
             return fmt::format(format, "TopLeft");
-        if (m_refX == 0.5 && m_refY == 0)
+        if (m_ref_x == 0.5 && m_ref_y == 0)
             return fmt::format(format, "Top");
-        if (m_refX == 1 && m_refY == 0)
+        if (m_ref_x == 1 && m_ref_y == 0)
             return fmt::format(format, "TopRight");
-        if (m_refX == 0 && m_refY == 0.5)
+        if (m_ref_x == 0 && m_ref_y == 0.5)
             return fmt::format(format, "Left");
-        if (m_refX == 0.5 && m_refY == 0.5)
+        if (m_ref_x == 0.5 && m_ref_y == 0.5)
             return fmt::format(format, "Center");
-        if (m_refX == 1 && m_refY == 0.5)
+        if (m_ref_x == 1 && m_ref_y == 0.5)
             return fmt::format(format, "Right");
-        if (m_refX == 0 && m_refY == 1)
+        if (m_ref_x == 0 && m_ref_y == 1)
             return fmt::format(format, "BottomLeft");
-        if (m_refX == 0.5 && m_refY == 1)
+        if (m_ref_x == 0.5 && m_ref_y == 1)
             return fmt::format(format, "Bottom");
-        if (m_refX == 1 && m_refY == 1)
+        if (m_ref_x == 1 && m_ref_y == 1)
             return fmt::format(format, "BottomRight");
         else
-            return fmt::format(format, fmt::format("{}, {}", m_refX, m_refY), m_refX, m_refY);
+            return fmt::format(format, fmt::format("{}, {}", m_ref_x, m_ref_y), m_ref_x, m_ref_y);
     }
 
-    Referential Referential::FromString(const std::string& ref)
+    Referential Referential::from_string(const std::string& ref)
     {
         if (ref == "TopLeft")
             return Referential::TopLeft;
@@ -135,19 +135,19 @@ namespace obe::Transform
             return Referential::Bottom;
         if (ref == "BottomRight")
             return Referential::BottomRight;
-        std::cmatch regMatch;
-        const std::regex refRegex(R"(Referential<\s*(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)\s*>)");
-        std::regex_match(ref.c_str(), regMatch, refRegex);
-        if (regMatch.size() == 5)
+        std::cmatch reg_match;
+        const std::regex ref_regex(R"(Referential<\s*(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)\s*>)");
+        std::regex_match(ref.c_str(), reg_match, ref_regex);
+        if (reg_match.size() == 5)
         {
-            return Referential(std::stod(regMatch[1]), std::stod(regMatch[3]));
+            return Referential(std::stod(reg_match[1]), std::stod(reg_match[3]));
         }
-        throw Exceptions::UnknownReferential(ref, EXC_INFO);
+        throw exceptions::UnknownReferential(ref, EXC_INFO);
     }
 
     std::ostream& operator<<(std::ostream& os, Referential m)
     {
-        os << m.toString();
+        os << m.to_string();
         return os;
     }
-} // namespace obe::Transform
+} // namespace obe::transform

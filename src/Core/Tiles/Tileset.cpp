@@ -21,8 +21,8 @@ namespace obe::tiles
     {
         m_image.load_from_file(system::Path(m_image_path).find());
         // m_image.set_anti_aliasing(true);
-        m_image_width = m_image.get_size().to<Transform::Units::ScenePixels>().x;
-        m_image_height = m_image.get_size().to<Transform::Units::ScenePixels>().y;
+        m_image_width = m_image.get_size().to<transform::Units::ScenePixels>().x;
+        m_image_height = m_image.get_size().to<transform::Units::ScenePixels>().y;
     }
 
     uint32_t Tileset::get_first_tile_id() const
@@ -95,7 +95,7 @@ namespace obe::tiles
     {
         for (const auto& tileset : m_tilesets)
         {
-            if (tileset->getId() == id)
+            if (tileset->get_id() == id)
             {
                 return *tileset;
             }
@@ -104,7 +104,7 @@ namespace obe::tiles
         tilesets_ids.reserve(m_tilesets.size());
         for (const auto& tileset : m_tilesets)
         {
-            tilesets_ids.push_back(tileset->getId());
+            tilesets_ids.push_back(tileset->get_id());
         }
         throw exceptions::UnknownTileset(id, tilesets_ids, EXC_INFO);
     }
@@ -128,7 +128,7 @@ namespace obe::tiles
         std::map<std::string, std::pair<uint32_t, uint32_t>> tileset_ids;
         for (const auto& tileset : m_tilesets)
         {
-            tileset_ids[tileset->getId()]
+            tileset_ids[tileset->get_id()]
                 = std::make_pair(tileset->get_first_tile_id(), tileset->get_last_tile_id());
         }
         throw exceptions::UnknownTileId(tile_id, max_tile_id, tileset_ids, EXC_INFO);

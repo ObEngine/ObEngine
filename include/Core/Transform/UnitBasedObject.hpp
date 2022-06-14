@@ -2,7 +2,7 @@
 
 #include <Transform/Units.hpp>
 
-namespace obe::Transform
+namespace obe::transform
 {
     /**
      * \brief Classes that works with Units should inherit from this Class
@@ -25,11 +25,11 @@ namespace obe::Transform
          * \brief Set the unit the Object should work with
          * \param unit Unit you want the Object to work with
          */
-        void setWorkingUnit(Units unit);
+        void set_working_unit(Units unit);
         /**
          * \brief Get the unit the Object works with
          * \return The unit the Object works with
          */
-        [[nodiscard]] Units getWorkingUnit() const;
+        [[nodiscard]] Units get_working_unit() const;
     };
-} // namespace obe::Transform
+} // namespace obe::transform

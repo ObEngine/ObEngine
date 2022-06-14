@@ -3,7 +3,7 @@
 #include <Transform/UnitVector.hpp>
 #include <array>
 
-namespace obe::Transform
+namespace obe::transform
 {
     class Matrix2D
     {
@@ -14,4 +14,4 @@ namespace obe::Transform
         Matrix2D(std::array<double, 4> elements);
         UnitVector product(UnitVector vector);
     };
-} // namespace obe::Transform
+} // namespace obe::transform

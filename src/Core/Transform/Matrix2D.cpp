@@ -1,6 +1,6 @@
 #include <Transform/Matrix2D.hpp>
 
-namespace obe::Transform
+namespace obe::transform
 {
 
     Matrix2D::Matrix2D(std::array<double, 4> elements)
@@ -15,4 +15,4 @@ namespace obe::Transform
         result.y = m_elements[2] * vector.x + m_elements[3] * vector.y;
         return result;
     }
-} // namespace obe::Transform
+} // namespace obe::transform

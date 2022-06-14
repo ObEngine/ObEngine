@@ -83,7 +83,7 @@ namespace obe::graphics
          * \param layer Layer of the element
          * \return The new transformer position
          */
-        Transform::UnitVector operator()(const Transform::UnitVector& position,
-            const Transform::UnitVector& camera, int layer) const;
+        transform::UnitVector operator()(const transform::UnitVector& position,
+            const transform::UnitVector& camera, int layer) const;
     };
 } // namespace obe::graphics

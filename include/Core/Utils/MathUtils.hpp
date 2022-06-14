@@ -26,11 +26,11 @@ namespace obe::Utils::Math
      * \param min2 Second value to check
      * \return The lowest value
      * \thints
-     * \thint{getMin, N=$numerics}
+     * \thint{get_min, N=$numerics}
      * \endthints
      */
     template <typename N>
-    N getMin(const N& min1, const N& min2);
+    N get_min(const N& min1, const N& min2);
     /**
      * \brief Get the highest value between the two given values
      * \tparam N Type of both values
@@ -38,11 +38,11 @@ namespace obe::Utils::Math
      * \param max2 Second value to check
      * \return The highest value
      * \thints
-     * \thint{getMax, N=$numerics}
+     * \thint{get_max, N=$numerics}
      * \endthints
      */
     template <typename N>
-    N getMax(const N& max1, const N& max2);
+    N get_max(const N& max1, const N& max2);
     /**
      * \brief Check if the given value is between the lower bound and the upper
      *        bound
@@ -50,21 +50,21 @@ namespace obe::Utils::Math
      * \tparam N1 Type of the lower bound
      * \tparam N2 Type of the upper bound
      * \param target Value to check
-     * \param lowerBound Lower bound
-     * \param upperBound Upper bound
+     * \param lower_bound Lower bound
+     * \param upper_bound Upper bound
      * \return true if the value is between the given bound, false otherwise
      * \thints
-     * \thint{isBetween, N=$numerics;N1=$numerics;N2=$numerics}
+     * \thint{is_between, N=$numerics;N1=$numerics;N2=$numerics}
      * \endthints
      */
     template <typename N, typename N1, typename N2>
-    bool isBetween(const N& target, const N1& lowerBound, const N2& upperBound);
+    bool is_between(const N& target, const N1& lower_bound, const N2& upper_bound);
     /**
      * \brief Check if a double is an integer (3.0 for example is equal to 3)
      * \param value Value to check
      * \return true if the double is an integer, false otherwise
      */
-    bool isDoubleInt(const double& value);
+    bool is_double_int(const double& value);
     /**
      * \brief Get the sign of the given number
      * \tparam T Type of the value to check
@@ -82,13 +82,13 @@ namespace obe::Utils::Math
      * \param value Angle in degrees
      * \return A double containing the converted value
      */
-    double convertToRadian(double value);
+    double convert_to_radian(double value);
     /**
      * \brief Converts a radians angle to degrees
      * \param value Angle in  radians
      * \return A double containing the converted value
      */
-    double convertToDegree(double value);
+    double convert_to_degrees(double value);
     /**
      * \brief Normalizes a value between start and end
      * \param value Value to normalize
@@ -102,21 +102,21 @@ namespace obe::Utils::Math
     double normalize(double value, double start, double end);
 
     template <typename N>
-    N getMin(const N& min1, const N& min2)
+    N get_min(const N& min1, const N& min2)
     {
         return (min1 < min2) ? min1 : min2;
     }
 
     template <typename N>
-    N getMax(const N& max1, const N& max2)
+    N get_max(const N& max1, const N& max2)
     {
         return (max1 > max2) ? max1 : max2;
     }
 
     template <typename N, typename N1, typename N2>
-    bool isBetween(const N& target, const N1& lowerBound, const N2& upperBound)
+    bool is_between(const N& target, const N1& lower_bound, const N2& upper_bound)
     {
-        if (target >= lowerBound && target <= upperBound)
+        if (target >= lower_bound && target <= upper_bound)
             return true;
         return false;
     }

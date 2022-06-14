@@ -18,10 +18,10 @@ namespace obe::graphics
 
         void draw(const sf::Drawable& drawable,
             const sf::RenderStates& states = sf::RenderStates::Default) const;
-        void draw(const sf::Vertex* vertices, std::size_t vertexCount, sf::PrimitiveType type,
+        void draw(const sf::Vertex* vertices, std::size_t vertex_count, sf::PrimitiveType type,
             const sf::RenderStates& states = sf::RenderStates::Default) const;
 
-        [[nodiscard]] Transform::UnitVector get_size() const;
+        [[nodiscard]] transform::UnitVector get_size() const;
 
         operator sf::RenderTarget&() const;
         operator const sf::RenderTarget&() const;
@@ -43,16 +43,16 @@ namespace obe::graphics
         m_target.draw(drawable, states);
     }
 
-    inline void RenderTarget::draw(const sf::Vertex* vertices, std::size_t vertexCount,
+    inline void RenderTarget::draw(const sf::Vertex* vertices, std::size_t vertex_count,
         sf::PrimitiveType type, const sf::RenderStates& states) const
     {
-        m_target.draw(vertices, vertexCount, type, states);
+        m_target.draw(vertices, vertex_count, type, states);
     }
 
-    inline Transform::UnitVector RenderTarget::get_size() const
+    inline transform::UnitVector RenderTarget::get_size() const
     {
         const sf::Vector2u size = m_target.getSize();
-        return Transform::UnitVector(size.x, size.y, Transform::Units::ScenePixels);
+        return transform::UnitVector(size.x, size.y, transform::Units::ScenePixels);
     }
 
     inline RenderTarget::operator sf::RenderTarget&() const

@@ -20,17 +20,17 @@ namespace obe::Utils::Math
         return dis(rng);
     }
 
-    bool isDoubleInt(const double& value)
+    bool is_double_int(const double& value)
     {
         return (int(value) == value);
     }
 
-    double convertToRadian(const double value)
+    double convert_to_radian(const double value)
     {
         return (Utils::Math::pi / 180.0) * value;
     }
 
-    double convertToDegree(const double value)
+    double convert_to_degrees(const double value)
     {
         return (180.0 / Utils::Math::pi) * value;
     }
@@ -38,8 +38,8 @@ namespace obe::Utils::Math
     double normalize(const double value, const double start, const double end)
     {
         const double width = end - start;
-        const double offsetValue = value - start;
+        const double offset_value = value - start;
 
-        return (offsetValue - (floor(offsetValue / width) * width)) + start;
+        return (offset_value - (floor(offset_value / width) * width)) + start;
     }
 } // namespace obe::Utils::Math

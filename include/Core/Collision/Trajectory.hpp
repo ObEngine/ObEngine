@@ -21,9 +21,9 @@ namespace obe::collision
     class PolygonalCollider;
 
     using OnCollideCallback
-        = std::function<void(Trajectory&, Transform::UnitVector, collision::CollisionData)>;
+        = std::function<void(Trajectory&, transform::UnitVector, collision::CollisionData)>;
     using TrajectoryCheckFunction
-        = std::function<void(Trajectory&, Transform::UnitVector&, PolygonalCollider*)>;
+        = std::function<void(Trajectory&, transform::UnitVector&, PolygonalCollider*)>;
 
  
     /**
@@ -40,11 +40,11 @@ namespace obe::collision
         OnCollideCallback m_on_collide_callback;
         double m_speed = 0;
         bool m_static = false;
-        Transform::Units m_unit;
+        transform::Units m_unit;
         friend class TrajectoryNode;
 
     public:
-        Trajectory(Transform::Units unit = Transform::Units::SceneUnits);
+        Trajectory(transform::Units unit = transform::Units::SceneUnits);
         Trajectory& add_acceleration(double acceleration);
         Trajectory& add_angle(double angle);
         void add_check(const TrajectoryCheckFunction& check);
@@ -55,7 +55,7 @@ namespace obe::collision
         OnCollideCallback& get_on_collide_callback();
         [[nodiscard]] double get_speed() const;
         [[nodiscard]] bool is_static() const;
-        [[nodiscard]] Transform::Units get_unit() const;
+        [[nodiscard]] transform::Units get_unit() const;
         void on_collide(const OnCollideCallback& callback);
         Trajectory& set_acceleration(double acceleration);
         Trajectory& set_angle(double angle);

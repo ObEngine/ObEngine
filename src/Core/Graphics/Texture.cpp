@@ -9,14 +9,14 @@ namespace obe::graphics
 {
     namespace
     {
-        sf::IntRect toSfRect(const Transform::Rect& rect)
+        sf::IntRect to_sfml_rect(const transform::Rect& rect)
         {
-            const Transform::UnitVector position
-                = rect.getPosition().to<Transform::Units::ScenePixels>();
-            const Transform::UnitVector size
-                = rect.getPosition().to<Transform::Units::ScenePixels>();
-            const sf::IntRect sfRect(position.x, position.y, size.x, size.y);
-            return sfRect;
+            const transform::UnitVector position
+                = rect.get_position().to<transform::Units::ScenePixels>();
+            const transform::UnitVector size
+                = rect.get_position().to<transform::Units::ScenePixels>();
+            const sf::IntRect sf_rect(position.x, position.y, size.x, size.y);
+            return sf_rect;
         }
     }
 
@@ -173,7 +173,7 @@ namespace obe::graphics
 
     bool Texture::load_from_file(const std::string& filename)
     {
-        if (Utils::String::endsWith(filename, ".svg"))
+        if (Utils::String::ends_with(filename, ".svg"))
         {
             m_texture = SvgTexture(filename);
             return std::get<SvgTexture>(m_texture).success();
@@ -181,16 +181,16 @@ namespace obe::graphics
         return get_mutable_texture().loadFromFile(filename);
     }
 
-    bool Texture::load_from_file(const std::string& filename, const Transform::Rect& rect)
+    bool Texture::load_from_file(const std::string& filename, const transform::Rect& rect)
     {
-        const sf::IntRect sfRect = toSfRect(rect);
-        if (Utils::String::endsWith(filename, ".svg"))
+        const sf::IntRect sf_rect = to_sfml_rect(rect);
+        if (Utils::String::ends_with(filename, ".svg"))
         {
             m_texture = SvgTexture(filename);
             // TODO: Implement load_from_file(path, rect)
             return std::get<SvgTexture>(m_texture).success();
         }
-        return get_mutable_texture().loadFromFile(filename, sfRect);
+        return get_mutable_texture().loadFromFile(filename, sf_rect);
     }
 
     bool Texture::load_from_image(const sf::Image& image)
@@ -198,10 +198,10 @@ namespace obe::graphics
         return get_mutable_texture().loadFromImage(image);
     }
 
-    Transform::UnitVector Texture::get_size() const
+    transform::UnitVector Texture::get_size() const
     {
-        const sf::Vector2u textureSize = get_texture().getSize();
-        return Transform::UnitVector(textureSize.x, textureSize.y, Transform::Units::ScenePixels);
+        const sf::Vector2u texture_size = get_texture().getSize();
+        return transform::UnitVector(texture_size.x, texture_size.y, transform::Units::ScenePixels);
     }
 
     void Texture::set_size_hint(unsigned width, unsigned height)
@@ -229,9 +229,9 @@ namespace obe::graphics
         }
     }
 
-    void Texture::set_anti_aliasing(bool antiAliasing)
+    void Texture::set_anti_aliasing(bool anti_aliasing)
     {
-        get_mutable_texture().setSmooth(antiAliasing);
+        get_mutable_texture().setSmooth(anti_aliasing);
     }
 
     bool Texture::is_anti_aliased() const
@@ -254,7 +254,7 @@ namespace obe::graphics
         m_texture = sf::Texture {};
     }
 
-    unsigned int Texture::useCount() const
+    unsigned int Texture::use_count() const
     {
         if (std::holds_alternative<sf::Texture>(m_texture))
         {
@@ -271,14 +271,14 @@ namespace obe::graphics
         return 0;
     }
 
-    bool Texture::isVector() const
+    bool Texture::is_vector() const
     {
         return std::holds_alternative<SvgTexture>(m_texture);
     }
 
-    bool Texture::isBitmap() const
+    bool Texture::is_bitmap() const
     {
-        return !isVector();
+        return !is_vector();
     }
 
     Texture::operator sf::Texture&()
