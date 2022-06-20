@@ -4,11 +4,10 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Bindings
+namespace obe::bindings
 {
-    void LoadClassBaseException(sol::state_view state);
-    void LoadClassDebugInfo(sol::state_view state);
-    void LoadFunctionGetTypeName(sol::state_view state);
-    void LoadFunctionInitEngine(sol::state_view state);
-    void LoadGlobalObengineProduction(sol::state_view state);
+    void load_class_base_exception(sol::state_view state);
+    void load_class_debug_info(sol::state_view state);
+    void load_function_get_type_name(sol::state_view state);
+    void load_function_init_engine(sol::state_view state);
 };

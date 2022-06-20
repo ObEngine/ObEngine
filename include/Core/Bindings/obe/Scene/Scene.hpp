@@ -4,10 +4,10 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::scene::Bindings
+namespace obe::scene::bindings
 {
-    void LoadClassCamera(sol::state_view state);
-    void LoadClassScene(sol::state_view state);
-    void LoadClassSceneNode(sol::state_view state);
-    void LoadClassSceneRenderOptions(sol::state_view state);
+    void load_class_camera(sol::state_view state);
+    void load_class_scene(sol::state_view state);
+    void load_class_scene_node(sol::state_view state);
+    void load_class_scene_render_options(sol::state_view state);
 };

@@ -37,10 +37,10 @@ namespace obe::system
         m_button_state[sf::Mouse::Button::Right]
             = sf::Mouse::isButtonPressed(sf::Mouse::Button::Right);
 
-        e_cursor->add<events::cursor::Move>();
-        e_cursor->add<events::cursor::Press>();
-        e_cursor->add<events::cursor::Release>();
-        e_cursor->add<events::cursor::Hold>();
+        e_cursor->add<events::Cursor::Move>();
+        e_cursor->add<events::Cursor::Press>();
+        e_cursor->add<events::Cursor::Release>();
+        e_cursor->add<events::Cursor::Hold>();
 
         m_old_position = sf::Mouse::getPosition();
     }
@@ -128,7 +128,8 @@ namespace obe::system
         m_y = mouse_pos.y;
         if (mouse_pos != m_old_position)
         {
-            e_cursor->trigger(events::cursor::Move { m_x, m_y, m_old_position.x, m_old_position.y });
+            e_cursor->trigger(
+                events::Cursor::Move { m_x, m_y, m_old_position.x, m_old_position.y });
             m_old_position = mouse_pos;
         }
         std::pair<int, int> constrained_position;
@@ -144,14 +145,14 @@ namespace obe::system
             if (sf::Mouse::isButtonPressed(state.first) && state.second)
             {
                 e_cursor->trigger(
-                    events::cursor::Hold { m_x, m_y, state.first == sf::Mouse::Button::Left,
+                    events::Cursor::Hold { m_x, m_y, state.first == sf::Mouse::Button::Left,
                         state.first == sf::Mouse::Button::Middle,
                         state.first == sf::Mouse::Button::Right });
             }
             if (sf::Mouse::isButtonPressed(state.first) && !state.second)
             {
                 e_cursor->trigger(
-                    events::cursor::Press { m_x, m_y, state.first == sf::Mouse::Button::Left,
+                    events::Cursor::Press { m_x, m_y, state.first == sf::Mouse::Button::Left,
                         state.first == sf::Mouse::Button::Middle,
                         state.first == sf::Mouse::Button::Right });
                 state.second = true;
@@ -159,7 +160,7 @@ namespace obe::system
             if (!sf::Mouse::isButtonPressed(state.first) && state.second)
             {
                 e_cursor->trigger(
-                    events::cursor::Release { m_x, m_y, state.first == sf::Mouse::Button::Left,
+                    events::Cursor::Release { m_x, m_y, state.first == sf::Mouse::Button::Left,
                         state.first == sf::Mouse::Button::Middle,
                         state.first == sf::Mouse::Button::Right });
                 state.second = false;

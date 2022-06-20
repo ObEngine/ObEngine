@@ -4,8 +4,8 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Utils::Vector::Bindings
+namespace obe::utils::vector::bindings
 {
-    void LoadFunctionContains(sol::state_view state);
-    void LoadFunctionJoin(sol::state_view state);
+    void load_function_contains(sol::state_view state);
+    void load_function_join(sol::state_view state);
 };

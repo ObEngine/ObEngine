@@ -1,4 +1,4 @@
-#include <Bindings/obe/Event/Event.hpp>
+#include <Bindings/obe/event/Event.hpp>
 
 #include <Event/CallbackScheduler.hpp>
 #include <Event/Event.hpp>
@@ -10,168 +10,173 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::event::Bindings
+namespace obe::event::bindings
 {
-    void LoadEnumCallbackSchedulerState(sol::state_view state)
+    void load_enum_callback_scheduler_state(sol::state_view state)
     {
-        sol::table EventNamespace = state["obe"]["event"].get<sol::table>();
-        EventNamespace.new_enum<obe::event::CallbackSchedulerState>("CallbackSchedulerState",
+        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
+        event_namespace.new_enum<obe::event::CallbackSchedulerState>("CallbackSchedulerState",
             { { "Standby", obe::event::CallbackSchedulerState::Standby },
                 { "Ready", obe::event::CallbackSchedulerState::Ready },
                 { "Done", obe::event::CallbackSchedulerState::Done } });
     }
-    void LoadEnumListenerChangeState(sol::state_view state)
+    void load_enum_listener_change_state(sol::state_view state)
     {
-        sol::table EventNamespace = state["obe"]["event"].get<sol::table>();
-        EventNamespace.new_enum<obe::event::ListenerChangeState>("ListenerChangeState",
+        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
+        event_namespace.new_enum<obe::event::ListenerChangeState>("ListenerChangeState",
             { { "Added", obe::event::ListenerChangeState::Added },
                 { "Removed", obe::event::ListenerChangeState::Removed } });
     }
-    void LoadClassCallbackProfiler(sol::state_view state)
+    void load_class_callback_profiler(sol::state_view state)
     {
-        sol::table EventNamespace = state["obe"]["event"].get<sol::table>();
-        sol::usertype<obe::event::CallbackProfiler> bindCallbackProfiler
-            = EventNamespace.new_usertype<obe::event::CallbackProfiler>(
+        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
+        sol::usertype<obe::event::CallbackProfiler> bind_callback_profiler
+            = event_namespace.new_usertype<obe::event::CallbackProfiler>(
                 "CallbackProfiler", sol::call_constructor, sol::default_constructor);
-        bindCallbackProfiler["hits"] = &obe::event::CallbackProfiler::hits;
-        bindCallbackProfiler["time"] = &obe::event::CallbackProfiler::time;
-        bindCallbackProfiler["min"] = &obe::event::CallbackProfiler::min;
-        bindCallbackProfiler["max"] = &obe::event::CallbackProfiler::max;
+        bind_callback_profiler["hits"] = &obe::event::CallbackProfiler::hits;
+        bind_callback_profiler["time"] = &obe::event::CallbackProfiler::time;
+        bind_callback_profiler["min"] = &obe::event::CallbackProfiler::min;
+        bind_callback_profiler["max"] = &obe::event::CallbackProfiler::max;
     }
-    void LoadClassCallbackScheduler(sol::state_view state)
+    void load_class_callback_scheduler(sol::state_view state)
     {
-        sol::table EventNamespace = state["obe"]["event"].get<sol::table>();
-        sol::usertype<obe::event::CallbackScheduler> bindCallbackScheduler
-            = EventNamespace.new_usertype<obe::event::CallbackScheduler>("CallbackScheduler",
+        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
+        sol::usertype<obe::event::CallbackScheduler> bind_callback_scheduler
+            = event_namespace.new_usertype<obe::event::CallbackScheduler>("CallbackScheduler",
                 sol::call_constructor, sol::constructors<obe::event::CallbackScheduler()>());
-        bindCallbackScheduler["after"] = &obe::event::CallbackScheduler::after;
-        bindCallbackScheduler["every"] = &obe::event::CallbackScheduler::every;
-        bindCallbackScheduler["repeat"] = &obe::event::CallbackScheduler::repeat;
-        bindCallbackScheduler["run"] = &obe::event::CallbackScheduler::run;
-        bindCallbackScheduler["stop"] = &obe::event::CallbackScheduler::stop;
+        bind_callback_scheduler["after"] = &obe::event::CallbackScheduler::after;
+        bind_callback_scheduler["every"] = &obe::event::CallbackScheduler::every;
+        bind_callback_scheduler["repeat"] = &obe::event::CallbackScheduler::repeat;
+        bind_callback_scheduler["run"] = &obe::event::CallbackScheduler::run;
+        bind_callback_scheduler["stop"] = &obe::event::CallbackScheduler::stop;
     }
-    void LoadClassEventBase(sol::state_view state)
+    void load_class_event_base(sol::state_view state)
     {
-        sol::table EventNamespace = state["obe"]["event"].get<sol::table>();
-        sol::usertype<obe::event::EventBase> bindEventBase
-            = EventNamespace.new_usertype<obe::event::EventBase>("EventBase", sol::call_constructor,
+        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
+        sol::usertype<obe::event::EventBase> bind_event_base
+            = event_namespace.new_usertype<obe::event::EventBase>("EventBase",
+                sol::call_constructor,
                 sol::constructors<obe::event::EventBase(const std::string&, const std::string&),
                     obe::event::EventBase(const std::string&, const std::string&, bool)>());
-        bindEventBase["get_state"] = &obe::event::EventBase::get_state;
-        bindEventBase["get_name"] = &obe::event::EventBase::get_name;
-        bindEventBase["get_identifier"] = &obe::event::EventBase::get_identifier;
-        bindEventBase["add_external_listener"] = &obe::event::EventBase::add_external_listener;
-        bindEventBase["remove_external_listener"] = &obe::event::EventBase::remove_external_listener;
-        bindEventBase["get_profiler"] = &obe::event::EventBase::get_profiler;
+        bind_event_base["get_state"] = &obe::event::EventBase::get_state;
+        bind_event_base["get_name"] = &obe::event::EventBase::get_name;
+        bind_event_base["get_identifier"] = &obe::event::EventBase::get_identifier;
+        bind_event_base["add_external_listener"] = &obe::event::EventBase::add_external_listener;
+        bind_event_base["remove_external_listener"]
+            = &obe::event::EventBase::remove_external_listener;
+        bind_event_base["get_profiler"] = &obe::event::EventBase::get_profiler;
     }
-    void LoadClassEventGroup(sol::state_view state)
+    void load_class_event_group(sol::state_view state)
     {
-        sol::table EventNamespace = state["obe"]["event"].get<sol::table>();
-        sol::usertype<obe::event::EventGroup> bindEventGroup = EventNamespace.new_usertype<
+        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
+        sol::usertype<obe::event::EventGroup> bind_event_group = event_namespace.new_usertype<
             obe::event::EventGroup>("EventGroup", sol::call_constructor,
             sol::constructors<obe::event::EventGroup(const std::string&, const std::string&)>());
-        bindEventGroup["get_view"] = &obe::event::EventGroup::get_view;
-        bindEventGroup["set_joinable"] = &obe::event::EventGroup::set_joinable;
-        bindEventGroup["is_joinable"] = &obe::event::EventGroup::is_joinable;
-        bindEventGroup["get"] = static_cast<obe::event::EventBase& (
+        bind_event_group["get_view"] = &obe::event::EventGroup::get_view;
+        bind_event_group["set_joinable"] = &obe::event::EventGroup::set_joinable;
+        bind_event_group["is_joinable"] = &obe::event::EventGroup::is_joinable;
+        bind_event_group["get"] = static_cast<obe::event::EventBase& (
             obe::event::EventGroup::*)(const std::string&) const>(&obe::event::EventGroup::get);
-        bindEventGroup["contains"] = &obe::event::EventGroup::contains;
-        bindEventGroup["add"] = &obe::event::add_lua_event;
-        bindEventGroup["remove"] = &obe::event::EventGroup::remove;
-        bindEventGroup["trigger"] = sol::overload(
+        bind_event_group["contains"] = &obe::event::EventGroup::contains;
+        bind_event_group["add"] = &obe::event::add_lua_event;
+        bind_event_group["remove"] = &obe::event::EventGroup::remove;
+        bind_event_group["trigger"] = sol::overload(
             [](obe::event::EventGroup* self, const std::string& name) -> void {
                 return obe::event::trigger_lua_event(self, name);
             },
             [](obe::event::EventGroup* self, const std::string& name, sol::table data) -> void {
                 return obe::event::trigger_lua_event(self, name, data);
             });
-        bindEventGroup["get_events_names"] = &obe::event::EventGroup::get_events_names;
-        bindEventGroup["get_events"] = &obe::event::EventGroup::get_events;
-        bindEventGroup["get_identifier"] = &obe::event::EventGroup::get_identifier;
-        bindEventGroup["get_name"] = &obe::event::EventGroup::get_name;
-        bindEventGroup["on_add_listener"] = &obe::event::EventGroup::on_add_listener;
-        bindEventGroup["on_remove_listener"] = &obe::event::EventGroup::on_remove_listener;
-        bindEventGroup["get_profiler_results"] = &obe::event::EventGroup::get_profiler_results;
+        bind_event_group["get_events_names"] = &obe::event::EventGroup::get_events_names;
+        bind_event_group["get_events"] = &obe::event::EventGroup::get_events;
+        bind_event_group["get_identifier"] = &obe::event::EventGroup::get_identifier;
+        bind_event_group["get_name"] = &obe::event::EventGroup::get_name;
+        bind_event_group["on_add_listener"] = &obe::event::EventGroup::on_add_listener;
+        bind_event_group["on_remove_listener"] = &obe::event::EventGroup::on_remove_listener;
+        bind_event_group["get_profiler_results"] = &obe::event::EventGroup::get_profiler_results;
     }
-    void LoadClassEventGroupView(sol::state_view state)
+    void load_class_event_group_view(sol::state_view state)
     {
-        sol::table EventNamespace = state["obe"]["event"].get<sol::table>();
-        sol::usertype<obe::event::EventGroupView> bindEventGroupView
-            = EventNamespace.new_usertype<obe::event::EventGroupView>("EventGroupView",
+        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
+        sol::usertype<obe::event::EventGroupView> bind_event_group_view
+            = event_namespace.new_usertype<obe::event::EventGroupView>("EventGroupView",
                 sol::call_constructor,
                 sol::constructors<obe::event::EventGroupView(const obe::event::EventGroup&)>());
-        bindEventGroupView["get_events_names"] = &obe::event::EventGroupView::get_events_names;
-        bindEventGroupView["get_events"] = &obe::event::EventGroupView::get_events;
-        bindEventGroupView["get_identifier"] = &obe::event::EventGroupView::get_identifier;
-        bindEventGroupView["get_name"] = &obe::event::EventGroupView::get_name;
-        bindEventGroupView["is_joinable"] = &obe::event::EventGroupView::is_joinable;
-        bindEventGroupView["get"]
+        bind_event_group_view["get_events_names"] = &obe::event::EventGroupView::get_events_names;
+        bind_event_group_view["get_events"] = &obe::event::EventGroupView::get_events;
+        bind_event_group_view["get_identifier"] = &obe::event::EventGroupView::get_identifier;
+        bind_event_group_view["get_name"] = &obe::event::EventGroupView::get_name;
+        bind_event_group_view["is_joinable"] = &obe::event::EventGroupView::is_joinable;
+        bind_event_group_view["get"]
             = static_cast<obe::event::EventBase& (obe::event::EventGroupView::*)(const std::string&)
                     const>(&obe::event::EventGroupView::get);
-        bindEventGroupView["contains"] = &obe::event::EventGroupView::contains;
-        bindEventGroupView["get_profiler_results"] = &obe::event::EventGroupView::get_profiler_results;
+        bind_event_group_view["contains"] = &obe::event::EventGroupView::contains;
+        bind_event_group_view["get_profiler_results"]
+            = &obe::event::EventGroupView::get_profiler_results;
     }
-    void LoadClassEventManager(sol::state_view state)
+    void load_class_event_manager(sol::state_view state)
     {
-        sol::table EventNamespace = state["obe"]["event"].get<sol::table>();
-        sol::usertype<obe::event::EventManager> bindEventManager
-            = EventNamespace.new_usertype<obe::event::EventManager>("EventManager",
+        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
+        sol::usertype<obe::event::EventManager> bind_event_manager
+            = event_namespace.new_usertype<obe::event::EventManager>("EventManager",
                 sol::call_constructor, sol::constructors<obe::event::EventManager()>());
-        bindEventManager["update"] = &obe::event::EventManager::update;
-        bindEventManager["clear"] = &obe::event::EventManager::clear;
-        bindEventManager["create_namespace"] = &obe::event::EventManager::create_namespace;
-        bindEventManager["join_namespace"] = &obe::event::EventManager::join_namespace;
-        bindEventManager["get_namespace"] = &obe::event::EventManager::get_namespace;
-        bindEventManager["get_all_namespaces_names"]
+        bind_event_manager["update"] = &obe::event::EventManager::update;
+        bind_event_manager["clear"] = &obe::event::EventManager::clear;
+        bind_event_manager["create_namespace"] = &obe::event::EventManager::create_namespace;
+        bind_event_manager["join_namespace"] = &obe::event::EventManager::join_namespace;
+        bind_event_manager["get_namespace"] = &obe::event::EventManager::get_namespace;
+        bind_event_manager["get_all_namespaces_names"]
             = &obe::event::EventManager::get_all_namespaces_names;
-        bindEventManager["schedule"] = &obe::event::EventManager::schedule;
-        bindEventManager["dump_profiler_results"] = &obe::event::EventManager::dump_profiler_results;
+        bind_event_manager["schedule"] = &obe::event::EventManager::schedule;
+        bind_event_manager["dump_profiler_results"]
+            = &obe::event::EventManager::dump_profiler_results;
     }
-    void LoadClassEventNamespace(sol::state_view state)
+    void load_class_event_namespace(sol::state_view state)
     {
-        sol::table EventNamespace = state["obe"]["event"].get<sol::table>();
-        sol::usertype<obe::event::EventNamespace> bindEventNamespace
-            = EventNamespace.new_usertype<obe::event::EventNamespace>("EventNamespace",
+        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
+        sol::usertype<obe::event::EventNamespace> bind_event_namespace
+            = event_namespace.new_usertype<obe::event::EventNamespace>("EventNamespace",
                 sol::call_constructor,
                 sol::constructors<obe::event::EventNamespace(const std::string&)>());
-        bindEventNamespace["create_group"] = &obe::event::EventNamespace::create_group;
-        bindEventNamespace["join_group"] = &obe::event::EventNamespace::join_group;
-        bindEventNamespace["get_group"] = &obe::event::EventNamespace::get_group;
-        bindEventNamespace["get_all_groups_names"] = &obe::event::EventNamespace::get_all_groups_names;
-        bindEventNamespace["remove_group"] = &obe::event::EventNamespace::remove_group;
-        bindEventNamespace["does_group_exists"] = &obe::event::EventNamespace::does_group_exists;
-        bindEventNamespace["get_view"] = &obe::event::EventNamespace::get_view;
-        bindEventNamespace["set_joinable"] = &obe::event::EventNamespace::set_joinable;
-        bindEventNamespace["is_joinable"] = &obe::event::EventNamespace::is_joinable;
+        bind_event_namespace["create_group"] = &obe::event::EventNamespace::create_group;
+        bind_event_namespace["join_group"] = &obe::event::EventNamespace::join_group;
+        bind_event_namespace["get_group"] = &obe::event::EventNamespace::get_group;
+        bind_event_namespace["get_all_groups_names"]
+            = &obe::event::EventNamespace::get_all_groups_names;
+        bind_event_namespace["remove_group"] = &obe::event::EventNamespace::remove_group;
+        bind_event_namespace["does_group_exists"] = &obe::event::EventNamespace::does_group_exists;
+        bind_event_namespace["get_view"] = &obe::event::EventNamespace::get_view;
+        bind_event_namespace["set_joinable"] = &obe::event::EventNamespace::set_joinable;
+        bind_event_namespace["is_joinable"] = &obe::event::EventNamespace::is_joinable;
     }
-    void LoadClassEventNamespaceView(sol::state_view state)
+    void load_class_event_namespace_view(sol::state_view state)
     {
-        sol::table EventNamespace = state["obe"]["event"].get<sol::table>();
-        sol::usertype<obe::event::EventNamespaceView> bindEventNamespaceView
-            = EventNamespace.new_usertype<obe::event::EventNamespaceView>("EventNamespaceView",
+        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
+        sol::usertype<obe::event::EventNamespaceView> bind_event_namespace_view
+            = event_namespace.new_usertype<obe::event::EventNamespaceView>("EventNamespaceView",
                 sol::call_constructor,
                 sol::constructors<obe::event::EventNamespaceView(
                     const obe::event::EventNamespace&)>());
-        bindEventNamespaceView["join_group"] = &obe::event::EventNamespaceView::join_group;
-        bindEventNamespaceView["get_group"] = &obe::event::EventNamespaceView::get_group;
-        bindEventNamespaceView["get_all_groups_names"]
+        bind_event_namespace_view["join_group"] = &obe::event::EventNamespaceView::join_group;
+        bind_event_namespace_view["get_group"] = &obe::event::EventNamespaceView::get_group;
+        bind_event_namespace_view["get_all_groups_names"]
             = &obe::event::EventNamespaceView::get_all_groups_names;
-        bindEventNamespaceView["does_group_exists"]
+        bind_event_namespace_view["does_group_exists"]
             = &obe::event::EventNamespaceView::does_group_exists;
     }
-    void LoadClassLuaEventListener(sol::state_view state)
+    void load_class_lua_event_listener(sol::state_view state)
     {
-        sol::table EventNamespace = state["obe"]["event"].get<sol::table>();
-        sol::usertype<obe::event::LuaEventListener> bindLuaEventListener
-            = EventNamespace.new_usertype<obe::event::LuaEventListener>("LuaEventListener",
+        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
+        sol::usertype<obe::event::LuaEventListener> bind_lua_event_listener
+            = event_namespace.new_usertype<obe::event::LuaEventListener>("LuaEventListener",
                 sol::call_constructor,
                 sol::constructors<obe::event::LuaEventListener(sol::protected_function)>());
     }
-    void LoadClassScopeProfiler(sol::state_view state)
+    void load_class_scope_profiler(sol::state_view state)
     {
-        sol::table EventNamespace = state["obe"]["event"].get<sol::table>();
-        sol::usertype<obe::event::ScopeProfiler> bindScopeProfiler
-            = EventNamespace.new_usertype<obe::event::ScopeProfiler>("ScopeProfiler",
+        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
+        sol::usertype<obe::event::ScopeProfiler> bind_scope_profiler
+            = event_namespace.new_usertype<obe::event::ScopeProfiler>("ScopeProfiler",
                 sol::call_constructor,
                 sol::constructors<obe::event::ScopeProfiler(obe::event::CallbackProfiler&)>());
     }

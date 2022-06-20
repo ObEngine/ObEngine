@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::events::actions::Bindings
+namespace obe::events::actions::bindings
 {
-    void LoadClassAction(sol::state_view state);
+    void load_class_action(sol::state_view state);
 };

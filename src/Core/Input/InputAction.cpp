@@ -9,7 +9,7 @@ namespace obe::input
         : Identifiable(id)
     {
         e_actions = actions_events;
-        e_actions->add<events::actions::Action>(id);
+        e_actions->add<events::Actions::Action>(id);
     }
 
     void InputAction::add_condition(const InputCondition& condition)
@@ -29,7 +29,7 @@ namespace obe::input
 
     void InputAction::add_context(const std::string& context)
     {
-        if (!Utils::Vector::contains(context, m_contexts))
+        if (!utils::vector::contains(context, m_contexts))
             m_contexts.push_back(context);
     }
 
@@ -66,7 +66,7 @@ namespace obe::input
                     if (m_repeat.is_over()) // Reset repeat when combination is unchecked <REVISION>
                     {
                         m_repeat.reset();
-                        e_actions->trigger(m_id, events::actions::Action { *this, condition });
+                        e_actions->trigger(m_id, events::Actions::Action { *this, condition });
                     }
                 }
                 else

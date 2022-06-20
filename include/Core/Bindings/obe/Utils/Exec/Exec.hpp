@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Utils::Exec::Bindings
+namespace obe::utils::exec::bindings
 {
-    void LoadClassRunArgsParser(sol::state_view state);
+    void load_class_run_args_parser(sol::state_view state);
 };

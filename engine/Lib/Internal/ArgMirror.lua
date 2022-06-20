@@ -1,6 +1,4 @@
-local Mirror = {};
-
-function Mirror.GetArgs(func)
+local function get_args(func)
     local args = {}
 
     for i = 1, debug.getinfo(func).nparams, 1 do
@@ -9,17 +7,21 @@ function Mirror.GetArgs(func)
     return args;
 end
 
-Mirror.__nil_table = {__NIL = true};
+local __nil_table = {__NIL = true};
 
-function Mirror.Unpack(t, i)
-    i = i or 1
-    if t[i] ~= nil then
-        if t[i] == Mirror.__nil_table then
-            return nil, Mirror.Unpack(t, i + 1)
+local function unpack_with_nil(tbl, from_index)
+    local i = from_index or 1;
+    if tbl[i] ~= nil then
+        if tbl[i] == __nil_table then
+            return nil, unpack_with_nil(tbl, i + 1);
         else
-            return t[i], Mirror.Unpack(t, i + 1)
+            return tbl[i], unpack_with_nil(tbl, i + 1);
         end
     end
 end
 
-return Mirror;
+return {
+    __nil_table = __nil_table,
+    get_args = get_args,
+    unpack_with_nil = unpack_with_nil
+};

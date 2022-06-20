@@ -6,7 +6,7 @@
 /**
  * \brief Various functions related to filesystem manipulation
  */
-namespace obe::Utils::File
+namespace obe::utils::file
 {
     /**
      * \brief Get a list of directories
@@ -98,4 +98,4 @@ namespace obe::Utils::File
     std::string canonical_path(const std::string& path);
 
     std::string join(const std::vector<std::string> parts);
-} // namespace obe::Utils::File
+} // namespace obe::utils::file

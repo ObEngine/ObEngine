@@ -28,7 +28,7 @@ Images:
             type: "array"
             items:
                 type: "union"
-                types: [string, integer]
+                types: ["string", "integer"]
             min_size: 1
         model:
             type: "string"

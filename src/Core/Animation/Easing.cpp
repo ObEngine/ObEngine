@@ -6,7 +6,7 @@
 
 namespace obe::animation::easing
 {
-    using Utils::Math::pi;
+    using utils::math::pi;
 
     double linear(double t)
     {

@@ -5,7 +5,7 @@
 /**
  * \brief Some Classes and Functions to manipulate Engine Execution
  */
-namespace obe::Utils::Exec
+namespace obe::utils::exec
 {
     /**
      * TODO: Replace RunArgsParser with a real argument parsing library
@@ -37,4 +37,4 @@ namespace obe::Utils::Exec
          */
         [[nodiscard]] std::string get_argument_value(const std::string& arg) const;
     };
-} // namespace obe::Utils::Exec
+} // namespace obe::utils::exec

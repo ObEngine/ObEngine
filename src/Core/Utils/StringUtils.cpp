@@ -4,7 +4,7 @@
 #include <Utils/MathUtils.hpp>
 #include <Utils/StringUtils.hpp>
 
-namespace obe::Utils::String
+namespace obe::utils::string
 {
     std::vector<std::string> split(const std::string& str, const std::string& delimiters)
     {
@@ -114,7 +114,7 @@ namespace obe::Utils::String
     {
         std::string r;
         for (int i = 0; i < len; i++)
-            r.push_back(set.at(static_cast<size_t>(Math::randint(0, 100000) % set.size())));
+            r.push_back(set.at(static_cast<size_t>(math::randint(0, 100000) % set.size())));
         return r;
     }
 
@@ -185,7 +185,7 @@ namespace obe::Utils::String
         std::vector<std::string> sorted_by_distance = words;
         std::ranges::sort(sorted_by_distance,
             [source](const std::string& s1, const std::string& s2)
-            { return Utils::String::distance(s1, source) < Utils::String::distance(s2, source); });
+            { return utils::string::distance(s1, source) < utils::string::distance(s2, source); });
         if (limit && !sorted_by_distance.empty())
         {
             return std::vector<std::string>(sorted_by_distance.begin(),
@@ -208,4 +208,4 @@ namespace obe::Utils::String
         }
         return source;
     }
-} // namespace obe::Utils::String
+} // namespace obe::utils::string

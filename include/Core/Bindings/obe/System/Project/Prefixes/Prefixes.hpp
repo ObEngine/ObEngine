@@ -4,8 +4,8 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::system::project::Prefixes::Bindings
+namespace obe::system::project::Prefixes::bindings
 {
-    void LoadGlobalObjects(sol::state_view state);
-    void LoadGlobalScenes(sol::state_view state);
+    void load_global_objects(sol::state_view state);
+    void load_global_scenes(sol::state_view state);
 };

@@ -4,9 +4,9 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::events::network::Bindings
+namespace obe::events::network::bindings
 {
-    void LoadClassConnected(sol::state_view state);
-    void LoadClassDataReceived(sol::state_view state);
-    void LoadClassDisconnected(sol::state_view state);
+    void load_class_connected(sol::state_view state);
+    void load_class_data_received(sol::state_view state);
+    void load_class_disconnected(sol::state_view state);
 };

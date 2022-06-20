@@ -46,19 +46,19 @@ namespace obe::system::project
             if (project.is_standalone())
             {
                 std::string cfg_path = sago::getConfigHome();
-                project_cfg_path = Utils::File::join({ cfg_path, project.get_id() });
+                project_cfg_path = utils::file::join({ cfg_path, project.get_id() });
             }
             else
             {
                 std::string cfg_path
                     = MountablePath::from_prefix(obe::system::prefixes::cfg.data()).base_path;
-                project_cfg_path = Utils::File::join({ cfg_path, "Projects", project.get_id() });
+                project_cfg_path = utils::file::join({ cfg_path, "Projects", project.get_id() });
             }
-            if (!Utils::File::directory_exists(project_cfg_path))
+            if (!utils::file::directory_exists(project_cfg_path))
             {
                 debug::Log->debug("<Project> Could not find Project configuration directory, "
                                   "creating a new one...");
-                Utils::File::create_directory(project_cfg_path);
+                utils::file::create_directory(project_cfg_path);
                 debug::Log->debug(
                     "<Project> Project configuration directory created at '{}'", project_cfg_path);
             }
@@ -257,7 +257,7 @@ namespace obe::system::project
         try
         {
             const MountablePath objects_path(MountablePathType::Path,
-                Utils::File::join({ project_root, "GameObjects" }), Prefixes::objects,
+                utils::file::join({ project_root, "GameObjects" }), Prefixes::objects,
                 priorities::projectmount);
             MountablePath::mount(objects_path, SamePrefixPolicy::Skip);
         }
@@ -268,7 +268,7 @@ namespace obe::system::project
         try
         {
             const MountablePath scenes_path(MountablePathType::Path,
-                Utils::File::join({ project_root, "Scenes" }), Prefixes::scenes,
+                utils::file::join({ project_root, "Scenes" }), Prefixes::scenes,
                 priorities::projectmount);
             MountablePath::mount(scenes_path, SamePrefixPolicy::Skip);
         }

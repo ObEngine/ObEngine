@@ -3,7 +3,7 @@
 /**
  * \brief Functions to work with maths
  */
-namespace obe::Utils::Math
+namespace obe::utils::math
 {
     constexpr static double pi = 3.14159265359;
 
@@ -126,4 +126,4 @@ namespace obe::Utils::Math
     {
         return (T(0) < val) - (val < T(0));
     }
-} // namespace obe::Utils::Math
+} // namespace obe::utils::math

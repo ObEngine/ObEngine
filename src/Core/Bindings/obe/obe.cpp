@@ -1,44 +1,38 @@
-#include <Bindings/obe/obe.hpp>
+#include <Bindings/obe/Obe.hpp>
 
 #include <Exception.hpp>
 #include <ObEngineCore.hpp>
 
 #include <Bindings/Config.hpp>
-#include <Config/Flags.hpp>
 
-namespace obe::Bindings
+namespace obe::bindings
 {
-    void LoadClassBaseException(sol::state_view state)
+    void load_class_base_exception(sol::state_view state)
     {
-        sol::table obeNamespace = state["obe"].get<sol::table>();
-        sol::usertype<obe::BaseException> bindBaseException
-            = obeNamespace.new_usertype<obe::BaseException>(
+        sol::table obe_namespace = state["obe"].get<sol::table>();
+        sol::usertype<obe::BaseException> bind_base_exception
+            = obe_namespace.new_usertype<obe::BaseException>(
                 "BaseException", sol::call_constructor, sol::constructors<obe::BaseException()>());
-        bindBaseException["what"] = &obe::BaseException::what;
-        bindBaseException["traceback"] = &obe::BaseException::traceback;
+        bind_base_exception["what"] = &obe::BaseException::what;
+        bind_base_exception["traceback"] = &obe::BaseException::traceback;
     }
-    void LoadClassDebugInfo(sol::state_view state)
+    void load_class_debug_info(sol::state_view state)
     {
-        sol::table obeNamespace = state["obe"].get<sol::table>();
-        sol::usertype<obe::DebugInfo> bindDebugInfo
-            = obeNamespace.new_usertype<obe::DebugInfo>("DebugInfo", sol::call_constructor,
+        sol::table obe_namespace = state["obe"].get<sol::table>();
+        sol::usertype<obe::DebugInfo> bind_debug_info
+            = obe_namespace.new_usertype<obe::DebugInfo>("DebugInfo", sol::call_constructor,
                 sol::constructors<obe::DebugInfo(std::string_view, int, std::string_view)>());
-        bindDebugInfo["file"] = &obe::DebugInfo::file;
-        bindDebugInfo["line"] = &obe::DebugInfo::line;
-        bindDebugInfo["function"] = &obe::DebugInfo::function;
+        bind_debug_info["file"] = &obe::DebugInfo::file;
+        bind_debug_info["line"] = &obe::DebugInfo::line;
+        bind_debug_info["function"] = &obe::DebugInfo::function;
     }
-    void LoadFunctionGetTypeName(sol::state_view state)
+    void load_function_get_type_name(sol::state_view state)
     {
-        sol::table obeNamespace = state["obe"].get<sol::table>();
+        sol::table obe_namespace = state["obe"].get<sol::table>();
     }
-    void LoadFunctionInitEngine(sol::state_view state)
+    void load_function_init_engine(sol::state_view state)
     {
-        sol::table obeNamespace = state["obe"].get<sol::table>();
-        obeNamespace.set_function("init_engine", &obe::init_engine);
-    }
-    void LoadGlobalObengineProduction(sol::state_view state)
-    {
-        sol::table obeNamespace = state["obe"].get<sol::table>();
-        obeNamespace["OBENGINE_PRODUCTION"] = obe::config::OBENGINE_PRODUCTION;
+        sol::table obe_namespace = state["obe"].get<sol::table>();
+        obe_namespace.set_function("init_engine", &obe::init_engine);
     }
 };

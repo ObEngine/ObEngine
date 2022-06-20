@@ -1,50 +1,50 @@
-#include <Bindings/vili/utils/string/string.hpp>
+#include <Bindings/vili/utils/string/String.hpp>
 
 #include <vili/utils.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace vili::utils::string::Bindings
+namespace vili::utils::string::bindings
 {
-    void LoadFunctionReplace(sol::state_view state)
+    void load_function_replace(sol::state_view state)
     {
-        sol::table stringNamespace = state["vili"]["utils"]["string"].get<sol::table>();
-        stringNamespace.set_function("replace", &vili::utils::string::replace);
+        sol::table string_namespace = state["vili"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("replace", &vili::utils::string::replace);
     }
-    void LoadFunctionIsInt(sol::state_view state)
+    void load_function_is_int(sol::state_view state)
     {
-        sol::table stringNamespace = state["vili"]["utils"]["string"].get<sol::table>();
-        stringNamespace.set_function("is_int", &vili::utils::string::is_int);
+        sol::table string_namespace = state["vili"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("is_int", &vili::utils::string::is_int);
     }
-    void LoadFunctionIsFloat(sol::state_view state)
+    void load_function_is_float(sol::state_view state)
     {
-        sol::table stringNamespace = state["vili"]["utils"]["string"].get<sol::table>();
-        stringNamespace.set_function("is_float", &vili::utils::string::is_float);
+        sol::table string_namespace = state["vili"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("is_float", &vili::utils::string::is_float);
     }
-    void LoadFunctionTruncateFloat(sol::state_view state)
+    void load_function_truncate_float(sol::state_view state)
     {
-        sol::table stringNamespace = state["vili"]["utils"]["string"].get<sol::table>();
-        stringNamespace.set_function("truncate_float", &vili::utils::string::truncate_float);
+        sol::table string_namespace = state["vili"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("truncate_float", &vili::utils::string::truncate_float);
     }
-    void LoadFunctionQuote(sol::state_view state)
+    void load_function_quote(sol::state_view state)
     {
-        sol::table stringNamespace = state["vili"]["utils"]["string"].get<sol::table>();
-        stringNamespace.set_function("quote", &vili::utils::string::quote);
+        sol::table string_namespace = state["vili"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("quote", &vili::utils::string::quote);
     }
-    void LoadFunctionToDouble(sol::state_view state)
+    void load_function_to_double(sol::state_view state)
     {
-        sol::table stringNamespace = state["vili"]["utils"]["string"].get<sol::table>();
-        stringNamespace.set_function("to_double", &vili::utils::string::to_double);
+        sol::table string_namespace = state["vili"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("to_double", &vili::utils::string::to_double);
     }
-    void LoadFunctionToLong(sol::state_view state)
+    void load_function_to_long(sol::state_view state)
     {
-        sol::table stringNamespace = state["vili"]["utils"]["string"].get<sol::table>();
-        stringNamespace.set_function("to_long", &vili::utils::string::to_long);
+        sol::table string_namespace = state["vili"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("to_long", &vili::utils::string::to_long);
     }
-    void LoadFunctionIndent(sol::state_view state)
+    void load_function_indent(sol::state_view state)
     {
-        sol::table stringNamespace = state["vili"]["utils"]["string"].get<sol::table>();
-        stringNamespace.set_function("indent",
+        sol::table string_namespace = state["vili"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("indent",
             sol::overload([](const std::string& input)
                               -> std::string { return vili::utils::string::indent(input); },
                 [](const std::string& input, unsigned int indent_level) -> std::string {
@@ -55,14 +55,14 @@ namespace vili::utils::string::Bindings
                     return vili::utils::string::indent(input, indent_level, pad_left);
                 }));
     }
-    void LoadFunctionDistance(sol::state_view state)
+    void load_function_distance(sol::state_view state)
     {
-        sol::table stringNamespace = state["vili"]["utils"]["string"].get<sol::table>();
-        stringNamespace.set_function("distance", &vili::utils::string::distance);
+        sol::table string_namespace = state["vili"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("distance", &vili::utils::string::distance);
     }
-    void LoadFunctionSortByDistance(sol::state_view state)
+    void load_function_sort_by_distance(sol::state_view state)
     {
-        sol::table stringNamespace = state["vili"]["utils"]["string"].get<sol::table>();
-        stringNamespace.set_function("sort_by_distance", &vili::utils::string::sort_by_distance);
+        sol::table string_namespace = state["vili"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("sort_by_distance", &vili::utils::string::sort_by_distance);
     }
 };

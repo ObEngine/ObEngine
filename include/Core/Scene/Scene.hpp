@@ -23,13 +23,16 @@ namespace obe
     }
 }
 
-namespace obe::events::scene
+namespace obe::events
 {
-    struct Loaded
+    namespace Scene
     {
-        static constexpr std::string_view id = "Loaded";
-        std::string filename;
-    };
+        struct Loaded
+        {
+            static constexpr std::string_view id = "Loaded";
+            std::string filename;
+        };
+    }
 }
 
 namespace obe::scene
@@ -341,16 +344,16 @@ namespace obe::scene
     };
 
     /**
-     * \proxy{obe::scene::scene::get_game_object}
+     * \proxy{obe::scene::Scene::get_game_object}
      */
     sol::table scene_get_game_object_proxy(const Scene* self, const std::string& id);
     /**
-     * \proxy{obe::scene::scene::create_game_object}
+     * \proxy{obe::scene::Scene::create_game_object}
      */
     sol::function scene_create_game_object_proxy(
         Scene* self, const std::string& object_type, const std::string& id = "");
     /**
-    * \proxy{obe::scene::scene::get_all_game_objects}
+    * \proxy{obe::scene::Scene::get_all_game_objects}
     */
     sol::nested<std::vector<sol::table>> scene_get_all_game_objects_proxy(
         const Scene* self, const std::string& object_type = "");

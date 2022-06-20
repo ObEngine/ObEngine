@@ -255,7 +255,7 @@ namespace obe::collision
 
     void PolygonalCollider::add_tag(ColliderTagType tag_type, const std::string& tag)
     {
-        if (!Utils::Vector::contains(tag, m_tags.at(tag_type)))
+        if (!utils::vector::contains(tag, m_tags.at(tag_type)))
             m_tags.at(tag_type).push_back(tag);
         else
             debug::Log->warn("<PolygonalCollider> Tag '{0}' is already in "
@@ -297,7 +297,7 @@ namespace obe::collision
 
     bool PolygonalCollider::contains_tag(ColliderTagType tag_type, const std::string& tag) const
     {
-        return Utils::Vector::contains(tag, m_tags.at(tag_type));
+        return utils::vector::contains(tag, m_tags.at(tag_type));
     }
 
     bool PolygonalCollider::matches_any_tag(
@@ -307,7 +307,7 @@ namespace obe::collision
             return false;
         for (const std::string& tag : tags)
         {
-            if (Utils::Vector::contains(tag, m_tags.at(tag_type)))
+            if (utils::vector::contains(tag, m_tags.at(tag_type)))
                 return true;
         }
         return false;

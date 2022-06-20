@@ -4,8 +4,8 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::config::Bindings
+namespace obe::config::bindings
 {
-    void LoadClassConfigurationManager(sol::state_view state);
-    void LoadClassVersion(sol::state_view state);
+    void load_class_configuration_manager(sol::state_view state);
+    void load_class_version(sol::state_view state);
 };

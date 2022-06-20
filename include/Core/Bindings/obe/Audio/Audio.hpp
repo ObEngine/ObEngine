@@ -4,10 +4,10 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::audio::Bindings
+namespace obe::audio::bindings
 {
-    void LoadClassAudioManager(sol::state_view state);
-    void LoadClassSound(sol::state_view state);
-    void LoadEnumLoadPolicy(sol::state_view state);
-    void LoadEnumSoundStatus(sol::state_view state);
+    void load_class_audio_manager(sol::state_view state);
+    void load_class_sound(sol::state_view state);
+    void load_enum_load_policy(sol::state_view state);
+    void load_enum_sound_status(sol::state_view state);
 };

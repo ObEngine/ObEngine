@@ -17,7 +17,7 @@ namespace obe::debug
     Logger Log;
     void init_logger()
     {
-        Utils::File::delete_file("debug.log");
+        utils::file::delete_file("debug.log");
         auto dist_sink = std::make_shared<spdlog::sinks::dist_sink_st>();
 
         const auto sink1 = std::make_shared<spdlog::sinks::stdout_color_sink_st>();

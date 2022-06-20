@@ -1,37 +1,37 @@
-#include <Bindings/obe/Utils/Vector/Vector.hpp>
+#include <Bindings/obe/utils/vector/Vector.hpp>
 
 #include <Utils/VectorUtils.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Utils::Vector::Bindings
+namespace obe::utils::vector::bindings
 {
-    void LoadFunctionContains(sol::state_view state)
+    void load_function_contains(sol::state_view state)
     {
-        sol::table VectorNamespace = state["obe"]["Utils"]["Vector"].get<sol::table>();
-        VectorNamespace.set_function("contains",
+        sol::table vector_namespace = state["obe"]["utils"]["vector"].get<sol::table>();
+        vector_namespace.set_function("contains",
             sol::overload(
-                static_cast<bool (*)(int, const std::vector<int>&)>(&obe::Utils::Vector::contains),
+                static_cast<bool (*)(int, const std::vector<int>&)>(&obe::utils::vector::contains),
                 static_cast<bool (*)(double, const std::vector<double>&)>(
-                    &obe::Utils::Vector::contains),
+                    &obe::utils::vector::contains),
                 static_cast<bool (*)(std::string, const std::vector<std::string>&)>(
-                    &obe::Utils::Vector::contains),
+                    &obe::utils::vector::contains),
                 static_cast<bool (*)(bool, const std::vector<bool>&)>(
-                    &obe::Utils::Vector::contains)));
+                    &obe::utils::vector::contains)));
     }
-    void LoadFunctionJoin(sol::state_view state)
+    void load_function_join(sol::state_view state)
     {
-        sol::table VectorNamespace = state["obe"]["Utils"]["Vector"].get<sol::table>();
-        VectorNamespace.set_function("join",
+        sol::table vector_namespace = state["obe"]["utils"]["vector"].get<sol::table>();
+        vector_namespace.set_function("join",
             sol::overload([](std::vector<std::string>& vector)
-                              -> std::string { return obe::Utils::Vector::join(vector); },
+                              -> std::string { return obe::utils::vector::join(vector); },
                 [](std::vector<std::string>& vector, std::string sep) -> std::string {
-                    return obe::Utils::Vector::join(vector, sep);
+                    return obe::utils::vector::join(vector, sep);
                 },
                 [](std::vector<std::string>& vector, std::string sep, int start) -> std::string {
-                    return obe::Utils::Vector::join(vector, sep, start);
+                    return obe::utils::vector::join(vector, sep, start);
                 },
                 [](std::vector<std::string>& vector, std::string sep, int start, int stop)
-                    -> std::string { return obe::Utils::Vector::join(vector, sep, start, stop); }));
+                    -> std::string { return obe::utils::vector::join(vector, sep, start, stop); }));
     }
 };

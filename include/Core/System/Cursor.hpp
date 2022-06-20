@@ -6,53 +6,55 @@
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/Mouse.hpp>
 
-
 #include <Animation/Animator.hpp>
 #include <Event/EventGroup.hpp>
 #include <Event/EventNamespace.hpp>
 #include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
 
-namespace obe::events::cursor
+namespace obe::events
 {
-    struct Move
+    namespace Cursor
     {
-        static constexpr std::string_view id = "Move";
-        int x;
-        int y;
-        int previous_x;
-        int previous_y;
-    };
+        struct Move
+        {
+            static constexpr std::string_view id = "Move";
+            int x;
+            int y;
+            int previous_x;
+            int previous_y;
+        };
 
-    struct Press
-    {
-        static constexpr std::string_view id = "Press";
-        int x;
-        int y;
-        bool left;
-        bool middle;
-        bool right;
-    };
+        struct Press
+        {
+            static constexpr std::string_view id = "Press";
+            int x;
+            int y;
+            bool left;
+            bool middle;
+            bool right;
+        };
 
-    struct Hold
-    {
-        static constexpr std::string_view id = "Hold";
-        int x;
-        int y;
-        bool left;
-        bool middle;
-        bool right;
-    };
+        struct Hold
+        {
+            static constexpr std::string_view id = "Hold";
+            int x;
+            int y;
+            bool left;
+            bool middle;
+            bool right;
+        };
 
-    struct Release
-    {
-        static constexpr std::string_view id = "Release";
-        int x;
-        int y;
-        bool left;
-        bool middle;
-        bool right;
-    };
+        struct Release
+        {
+            static constexpr std::string_view id = "Release";
+            int x;
+            int y;
+            bool left;
+            bool middle;
+            bool right;
+        };
+    }
 }
 
 namespace obe::system

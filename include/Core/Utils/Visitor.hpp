@@ -1,7 +1,7 @@
 
 #pragma once
 
-namespace obe::Utils
+namespace obe::utils
 {
     /**
      * \brief A function object class to apply functions to a variant
@@ -24,4 +24,4 @@ namespace obe::Utils
     template <typename... T>
     Visitor(T...) -> Visitor<T...>;
 
-} //namespace obe::Utils::Misc
+} //namespace obe::utils::Misc

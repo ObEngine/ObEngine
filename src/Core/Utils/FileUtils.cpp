@@ -27,7 +27,7 @@
 #include <Debug/Logger.hpp>
 #include <Utils/FileUtils.hpp>
 
-namespace obe::Utils::File
+namespace obe::utils::file
 {
     std::vector<std::string> get_directory_list(const std::string& path)
     {
@@ -246,4 +246,4 @@ namespace obe::Utils::File
         }
         return normalize_path(base.string());
     }
-} // namespace obe::Utils::File
+} // namespace obe::utils::file

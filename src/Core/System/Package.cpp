@@ -39,7 +39,7 @@ namespace obe::system::package
     bool install(const std::string& package_name)
     {
         debug::Log->info("<Package> Installing Package '{0}'", package_name);
-        if (!Utils::Vector::contains(package_name + ".opaque", Utils::File::get_file_list("Package")))
+        if (!utils::vector::contains(package_name + ".opaque", utils::file::get_file_list("Package")))
         {
             throw Exceptions::PackageFileNotFound(
                 fmt::format("Package/{}.opaque", package_name), EXC_INFO);

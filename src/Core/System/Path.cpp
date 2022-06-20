@@ -105,7 +105,7 @@ namespace obe::system
         {
             if (mount->prefix == prefix)
             {
-                return Utils::File::join({ mount->base_path, path });
+                return utils::file::join({ mount->base_path, path });
             }
         }
 
@@ -224,7 +224,7 @@ namespace obe::system
 
     std::string Path::last() const
     {
-        std::vector<std::string> split_path = Utils::String::split(m_path, "/");
+        std::vector<std::string> split_path = utils::string::split(m_path, "/");
         return split_path.back();
     }
 
@@ -248,26 +248,26 @@ namespace obe::system
         const MountList valid_mounts = filter_mountable_paths_with_prefix(*m_mounts, m_prefix);
         for (const auto& mounted_path : valid_mounts)
         {
-            std::string full_path = Utils::File::join({ mounted_path->base_path, m_path });
+            std::string full_path = utils::file::join({ mounted_path->base_path, m_path });
 
-            if (Utils::File::directory_exists(full_path))
+            if (utils::file::directory_exists(full_path))
             {
                 if (path_type == PathType::All || path_type == PathType::Directory)
                 {
-                    std::vector<std::string> directories = Utils::File::get_directory_list(full_path);
+                    std::vector<std::string> directories = utils::file::get_directory_list(full_path);
                     for (const std::string& directory : directories)
                     {
                         results.emplace_back(PathType::Directory, mounted_path,
-                            Utils::File::join({ full_path, directory }), query, directory);
+                            utils::file::join({ full_path, directory }), query, directory);
                     }
                 }
                 else if (path_type == PathType::All || path_type == PathType::File)
                 {
-                    std::vector<std::string> files = Utils::File::get_file_list(full_path);
+                    std::vector<std::string> files = utils::file::get_file_list(full_path);
                     for (const std::string& file : files)
                     {
                         results.emplace_back(PathType::File, mounted_path,
-                            Utils::File::join({ full_path, file }), query, file);
+                            utils::file::join({ full_path, file }), query, file);
                     }
                 }
             }
@@ -298,17 +298,17 @@ namespace obe::system
             const std::string full_path
                 = mounted_path->base_path + ((!mounted_path->base_path.empty()) ? "/" : "") + m_path;
             if ((path_type == PathType::All || path_type == PathType::File)
-                && Utils::File::file_exists(full_path))
+                && utils::file::file_exists(full_path))
             {
-                const std::string result = Utils::File::join({ mounted_path->base_path, m_path });
+                const std::string result = utils::file::join({ mounted_path->base_path, m_path });
                 return PathCache
                     .emplace(query, FindResult(PathType::File, mounted_path, result, query))
                     .first->second;
             }
             else if ((path_type == PathType::All || path_type == PathType::Directory)
-                && Utils::File::directory_exists(full_path))
+                && utils::file::directory_exists(full_path))
             {
-                const std::string result = Utils::File::join({ mounted_path->base_path, m_path });
+                const std::string result = utils::file::join({ mounted_path->base_path, m_path });
                 return PathCache
                     .emplace(query, FindResult(PathType::Directory, mounted_path, result, query))
                     .first->second;
@@ -324,14 +324,14 @@ namespace obe::system
         const MountList valid_mounts = filter_mountable_paths_with_prefix(*m_mounts, m_prefix);
         for (const auto& mounted_path : valid_mounts)
         {
-            const std::string full_path = Utils::File::join({ mounted_path->base_path, m_path });
+            const std::string full_path = utils::file::join({ mounted_path->base_path, m_path });
             if ((path_type == PathType::All || path_type == PathType::File)
-                && Utils::File::file_exists(full_path))
+                && utils::file::file_exists(full_path))
             {
                 results.emplace_back(PathType::File, mounted_path, full_path, query);
             }
             else if ((path_type == PathType::All || path_type == PathType::Directory)
-                && Utils::File::directory_exists(full_path))
+                && utils::file::directory_exists(full_path))
             {
                 results.emplace_back(PathType::Directory, mounted_path, full_path, query);
             }

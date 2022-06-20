@@ -4,10 +4,10 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::events::cursor::Bindings
+namespace obe::events::cursor::bindings
 {
-    void LoadClassHold(sol::state_view state);
-    void LoadClassMove(sol::state_view state);
-    void LoadClassPress(sol::state_view state);
-    void LoadClassRelease(sol::state_view state);
+    void load_class_hold(sol::state_view state);
+    void load_class_move(sol::state_view state);
+    void load_class_press(sol::state_view state);
+    void load_class_release(sol::state_view state);
 };

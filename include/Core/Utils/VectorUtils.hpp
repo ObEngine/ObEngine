@@ -6,7 +6,7 @@
 /**
  * \brief Functions to work with vectors (C++ Arrays)
  */
-namespace obe::Utils::Vector
+namespace obe::utils::vector
 {
     /**
      * \brief Check if a given item is in the given std::vector
@@ -44,4 +44,4 @@ namespace obe::Utils::Vector
         }
         return false;
     }
-} // namespace obe::Utils::Vector
+} // namespace obe::utils::vector

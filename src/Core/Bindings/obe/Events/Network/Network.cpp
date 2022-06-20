@@ -1,35 +1,35 @@
-#include <Bindings/obe/Events/Network/Network.hpp>
+#include <Bindings/obe/events/network/Network.hpp>
 
 #include <Network/NetworkHandler.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::events::network::Bindings
+namespace obe::events::network::bindings
 {
-    void LoadClassConnected(sol::state_view state)
+    void load_class_connected(sol::state_view state)
     {
-        sol::table NetworkNamespace = state["obe"]["events"]["network"].get<sol::table>();
-        sol::usertype<obe::events::network::Connected> bindConnected
-            = NetworkNamespace.new_usertype<obe::events::network::Connected>(
+        sol::table network_namespace = state["obe"]["events"]["network"].get<sol::table>();
+        sol::usertype<obe::events::Network::Connected> bind_connected
+            = network_namespace.new_usertype<obe::events::Network::Connected>(
                 "Connected", sol::call_constructor, sol::default_constructor);
-        bindConnected["ip"] = &obe::events::network::Connected::ip;
-        bindConnected["id"] = sol::var(&obe::events::network::Connected::id);
+        bind_connected["ip"] = &obe::events::Network::Connected::ip;
+        bind_connected["id"] = sol::var(&obe::events::Network::Connected::id);
     }
-    void LoadClassDataReceived(sol::state_view state)
+    void load_class_data_received(sol::state_view state)
     {
-        sol::table NetworkNamespace = state["obe"]["events"]["network"].get<sol::table>();
-        sol::usertype<obe::events::network::DataReceived> bindDataReceived
-            = NetworkNamespace.new_usertype<obe::events::network::DataReceived>(
+        sol::table network_namespace = state["obe"]["events"]["network"].get<sol::table>();
+        sol::usertype<obe::events::Network::DataReceived> bind_data_received
+            = network_namespace.new_usertype<obe::events::Network::DataReceived>(
                 "DataReceived", sol::call_constructor, sol::default_constructor);
-        bindDataReceived["content"] = &obe::events::network::DataReceived::content;
-        bindDataReceived["id"] = sol::var(&obe::events::network::DataReceived::id);
+        bind_data_received["content"] = &obe::events::Network::DataReceived::content;
+        bind_data_received["id"] = sol::var(&obe::events::Network::DataReceived::id);
     }
-    void LoadClassDisconnected(sol::state_view state)
+    void load_class_disconnected(sol::state_view state)
     {
-        sol::table NetworkNamespace = state["obe"]["events"]["network"].get<sol::table>();
-        sol::usertype<obe::events::network::Disconnected> bindDisconnected
-            = NetworkNamespace.new_usertype<obe::events::network::Disconnected>(
+        sol::table network_namespace = state["obe"]["events"]["network"].get<sol::table>();
+        sol::usertype<obe::events::Network::Disconnected> bind_disconnected
+            = network_namespace.new_usertype<obe::events::Network::Disconnected>(
                 "Disconnected", sol::call_constructor, sol::default_constructor);
-        bindDisconnected["id"] = sol::var(&obe::events::network::Disconnected::id);
+        bind_disconnected["id"] = sol::var(&obe::events::Network::Disconnected::id);
     }
 };

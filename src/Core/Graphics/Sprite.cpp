@@ -300,12 +300,12 @@ namespace obe::graphics
 
     int Sprite::get_x_scale_factor() const
     {
-        return obe::Utils::Math::sign(m_sprite.getScale().x);
+        return obe::utils::math::sign(m_sprite.getScale().x);
     }
 
     int Sprite::get_y_scale_factor() const
     {
-        return obe::Utils::Math::sign(m_sprite.getScale().y);
+        return obe::utils::math::sign(m_sprite.getScale().y);
     }
 
     void Sprite::set_position_transformer(const PositionTransformer& transformer)
@@ -381,7 +381,7 @@ namespace obe::graphics
                 = m_sprite.get_position(transform::Referential::Center)
                       .to<transform::Units::ScenePixels>();
             const double n = (90 + ((m_sprite.get_scale_factor().y < 0) ? 180 : 0))
-                - (std::atan2(center.y - m_dp.y, center.x - m_dp.x)) * 180.0 / obe::Utils::Math::pi;
+                - (std::atan2(center.y - m_dp.y, center.x - m_dp.x)) * 180.0 / obe::utils::math::pi;
 
             m_sprite.set_rotation(std::fmod(n, 360));
         }
@@ -561,20 +561,20 @@ namespace obe::graphics
                 ref_point.x - SpriteHandlePoint::radius, ref_point.x + SpriteHandlePoint::radius);
             int upper_x_bound = std::max(
                 ref_point.x - SpriteHandlePoint::radius, ref_point.x + SpriteHandlePoint::radius);
-            if (obe::Utils::Math::is_between(target_pos.x, lower_x_bound, upper_x_bound)
+            if (obe::utils::math::is_between(target_pos.x, lower_x_bound, upper_x_bound)
                 && ref != transform::Referential::Center)
             {
                 int lower_y_bound = std::min(
                     ref_point.y - SpriteHandlePoint::radius, ref_point.y + SpriteHandlePoint::radius);
                 int upper_y_bound = std::max(
                     ref_point.y - SpriteHandlePoint::radius, ref_point.y + SpriteHandlePoint::radius);
-                if (obe::Utils::Math::is_between(target_pos.y, lower_y_bound, upper_y_bound))
+                if (obe::utils::math::is_between(target_pos.y, lower_y_bound, upper_y_bound))
                     return &m_handlePoints[i];
             }
             i++;
         }
 
-        const double rad_angle = obe::Utils::Math::convert_to_radian(-m_angle);
+        const double rad_angle = obe::utils::math::convert_to_radian(-m_angle);
         const double cos_angle = std::cos(rad_angle);
         const double sin_angle = std::sin(rad_angle);
         const transform::UnitVector top_pos
@@ -590,13 +590,13 @@ namespace obe::graphics
             rot_handle.x - SpriteHandlePoint::radius, rot_handle.x + SpriteHandlePoint::radius);
         const int upper_x_bound = std::max(
             rot_handle.x - SpriteHandlePoint::radius, rot_handle.x + SpriteHandlePoint::radius);
-        if (obe::Utils::Math::is_between(target_pos.x, lower_x_bound, upper_x_bound))
+        if (obe::utils::math::is_between(target_pos.x, lower_x_bound, upper_x_bound))
         {
             const int lower_y_bound = std::min(
                 rot_handle.y - SpriteHandlePoint::radius, rot_handle.y + SpriteHandlePoint::radius);
             const int upper_y_bound = std::max(
                 rot_handle.y - SpriteHandlePoint::radius, rot_handle.y + SpriteHandlePoint::radius);
-            if (obe::Utils::Math::is_between(target_pos.y, lower_y_bound, upper_y_bound))
+            if (obe::utils::math::is_between(target_pos.y, lower_y_bound, upper_y_bound))
                 return &m_handlePoints.back();
         }
         return nullptr;

@@ -318,7 +318,7 @@ namespace obe::input
 
             if (!e_inputs->contains(button->get_name()))
             {
-                e_inputs->add<events::keys::StateChanged>(button->get_name());
+                e_inputs->add<events::Keys::StateChanged>(button->get_name());
                 e_inputs->on_add_listener(button->get_name(),
                     [button, this](event::ListenerChangeState, const std::string&)
                     { m_key_monitors.push_back(this->monitor(*button)); });

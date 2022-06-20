@@ -1,33 +1,33 @@
-#include <Bindings/obe/Config/Validators/Validators.hpp>
+#include <Bindings/obe/config/validators/Validators.hpp>
 
 #include <Config/Validators.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::config::validators::Bindings
+namespace obe::config::validators::bindings
 {
-    void LoadFunctionAnimationValidator(sol::state_view state)
+    void load_function_animation_validator(sol::state_view state)
     {
-        sol::table ValidatorsNamespace = state["obe"]["config"]["validators"].get<sol::table>();
-        ValidatorsNamespace.set_function(
+        sol::table validators_namespace = state["obe"]["config"]["validators"].get<sol::table>();
+        validators_namespace.set_function(
             "animation_validator", &obe::config::validators::animation_validator);
     }
-    void LoadFunctionConfigValidator(sol::state_view state)
+    void load_function_config_validator(sol::state_view state)
     {
-        sol::table ValidatorsNamespace = state["obe"]["config"]["validators"].get<sol::table>();
-        ValidatorsNamespace.set_function(
+        sol::table validators_namespace = state["obe"]["config"]["validators"].get<sol::table>();
+        validators_namespace.set_function(
             "config_validator", &obe::config::validators::config_validator);
     }
-    void LoadFunctionMountValidator(sol::state_view state)
+    void load_function_mount_validator(sol::state_view state)
     {
-        sol::table ValidatorsNamespace = state["obe"]["config"]["validators"].get<sol::table>();
-        ValidatorsNamespace.set_function(
+        sol::table validators_namespace = state["obe"]["config"]["validators"].get<sol::table>();
+        validators_namespace.set_function(
             "mount_validator", &obe::config::validators::mount_validator);
     }
-    void LoadFunctionProjectValidator(sol::state_view state)
+    void load_function_project_validator(sol::state_view state)
     {
-        sol::table ValidatorsNamespace = state["obe"]["config"]["validators"].get<sol::table>();
-        ValidatorsNamespace.set_function(
+        sol::table validators_namespace = state["obe"]["config"]["validators"].get<sol::table>();
+        validators_namespace.set_function(
             "project_validator", &obe::config::validators::project_validator);
     }
 };

@@ -1,14 +1,14 @@
-#include <Bindings/obe/Debug/Render/Render.hpp>
+#include <Bindings/obe/debug/render/Render.hpp>
 
 #include <Debug/Render.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::debug::render::Bindings
+namespace obe::debug::render::bindings
 {
-    void LoadFunctionDrawPolygon(sol::state_view state)
+    void load_function_draw_polygon(sol::state_view state)
     {
-        sol::table RenderNamespace = state["obe"]["debug"]["render"].get<sol::table>();
-        RenderNamespace.set_function("draw_polygon", &obe::debug::render::draw_polygon);
+        sol::table render_namespace = state["obe"]["debug"]["render"].get<sol::table>();
+        render_namespace.set_function("draw_polygon", &obe::debug::render::draw_polygon);
     }
 };

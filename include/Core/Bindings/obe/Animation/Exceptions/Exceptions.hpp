@@ -4,16 +4,16 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::animation::exceptions::Bindings
+namespace obe::animation::exceptions::bindings
 {
-    void LoadClassAnimationGroupTextureIndexOverflow(sol::state_view state);
-    void LoadClassAnimationTextureIndexOverflow(sol::state_view state);
-    void LoadClassInvalidAnimationFile(sol::state_view state);
-    void LoadClassNoSelectedAnimation(sol::state_view state);
-    void LoadClassNoSelectedAnimationGroup(sol::state_view state);
-    void LoadClassUnknownAnimation(sol::state_view state);
-    void LoadClassUnknownAnimationGroup(sol::state_view state);
-    void LoadClassUnknownEasingFromEnum(sol::state_view state);
-    void LoadClassUnknownEasingFromString(sol::state_view state);
-    void LoadClassUnknownTargetScaleMode(sol::state_view state);
+    void load_class_animation_group_texture_index_overflow(sol::state_view state);
+    void load_class_animation_texture_index_overflow(sol::state_view state);
+    void load_class_invalid_animation_file(sol::state_view state);
+    void load_class_invalid_easing_function(sol::state_view state);
+    void load_class_no_selected_animation(sol::state_view state);
+    void load_class_no_selected_animation_group(sol::state_view state);
+    void load_class_unknown_animation(sol::state_view state);
+    void load_class_unknown_animation_group(sol::state_view state);
+    void load_class_unknown_easing_from_enum(sol::state_view state);
+    void load_class_unknown_easing_from_string(sol::state_view state);
 };

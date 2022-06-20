@@ -29,8 +29,8 @@ namespace obe::script
         }
     }
 
-    template <class... Args>
-    void safe_lua_call(sol::protected_function callback, Args&&... args)
+    template <class ReturnType = void, class... Args>
+    ReturnType safe_lua_call(sol::protected_function callback, Args&&... args)
     {
         const sol::protected_function_result result = callback(args...);
         if (!result.valid())
@@ -54,6 +54,10 @@ namespace obe::script
                 const std::string error_str = fmt::format("No error, status : '{}'", status_str);
                 throw exceptions::LuaExecutionError(std::runtime_error(error_str), EXC_INFO);
             }
+        }
+        if constexpr (!std::is_same_v<ReturnType, void>)
+        {
+            return result.get<ReturnType>();
         }
     }
 }

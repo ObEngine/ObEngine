@@ -1,8 +1,8 @@
-#include <Bindings/obe/Utils/Utils.hpp>
+#include <Bindings/obe/utils/Utils.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Utils::Bindings
+namespace obe::utils::bindings
 {
 
 };

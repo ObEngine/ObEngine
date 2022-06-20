@@ -1,16 +1,16 @@
-#include <Bindings/obe/Audio/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/audio/exceptions/Exceptions.hpp>
 
 #include <Audio/Exceptions.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::audio::exceptions::Bindings
+namespace obe::audio::exceptions::bindings
 {
-    void LoadClassAudioFileNotFound(sol::state_view state)
+    void load_class_audio_file_not_found(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["audio"]["exceptions"].get<sol::table>();
-        sol::usertype<obe::audio::exceptions::AudioFileNotFound> bindAudioFileNotFound
-            = ExceptionsNamespace.new_usertype<obe::audio::exceptions::AudioFileNotFound>(
+        sol::table exceptions_namespace = state["obe"]["audio"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::audio::exceptions::AudioFileNotFound> bind_audio_file_not_found
+            = exceptions_namespace.new_usertype<obe::audio::exceptions::AudioFileNotFound>(
                 "AudioFileNotFound", sol::call_constructor,
                 sol::constructors<obe::audio::exceptions::AudioFileNotFound(
                     std::string_view, std::vector<std::string>, obe::DebugInfo)>(),

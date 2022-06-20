@@ -13,34 +13,36 @@
 #include <System/Window.hpp>
 #include <Time/FramerateManager.hpp>
 
-namespace obe::Bindings
+namespace obe::bindings
 {
     void index_core_bindings(sol::state_view state);
 }
 
-namespace obe::events::game
+namespace obe::events
 {
-    struct Start
+    namespace Game
     {
-        static constexpr std::string_view id = "Start";
-    };
+        struct Start
+        {
+            static constexpr std::string_view id = "Start";
+        };
 
-    struct Update
-    {
-        static constexpr std::string_view id = "Update";
-        double dt;
-    };
+        struct Update
+        {
+            static constexpr std::string_view id = "Update";
+            double dt;
+        };
 
-    struct End
-    {
-        static constexpr std::string_view id = "End";
-    };
+        struct End
+        {
+            static constexpr std::string_view id = "End";
+        };
 
-    struct Render
-    {
-        static constexpr std::string_view id = "Render";
-    };
-
+        struct Render
+        {
+            static constexpr std::string_view id = "Render";
+        };
+    }
 }
 
 namespace obe::engine

@@ -6,17 +6,20 @@
 #include <Input/InputButton.hpp>
 #include <Input/InputButtonState.hpp>
 
-namespace obe::events::keys
+namespace obe::events
 {
-    /**
-     * \brief Event triggered when the state of an InputButton changes
-     * \noconstructor
-     */
-    struct StateChanged
+    namespace Keys
     {
-        const input::InputButtonState state;
-        const input::InputButtonState previous_state;
-    };
+        /**
+        * \brief Event triggered when the state of an InputButton changes
+        * \noconstructor
+        */
+        struct StateChanged
+        {
+            const input::InputButtonState state;
+            const input::InputButtonState previous_state;
+        };
+    }
 }
 
 namespace obe::input

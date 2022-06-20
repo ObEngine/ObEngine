@@ -1,39 +1,39 @@
-#include <Bindings/obe/System/Priorities/Priorities.hpp>
+#include <Bindings/obe/system/priorities/Priorities.hpp>
 
 #include <System/MountablePath.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::system::priorities::Bindings
+namespace obe::system::priorities::bindings
 {
-    void LoadGlobalHigh(sol::state_view state)
+    void load_global_high(sol::state_view state)
     {
-        sol::table PrioritiesNamespace = state["obe"]["system"]["priorities"].get<sol::table>();
-        PrioritiesNamespace["high"] = obe::system::priorities::high;
+        sol::table priorities_namespace = state["obe"]["system"]["priorities"].get<sol::table>();
+        priorities_namespace["high"] = obe::system::priorities::high;
     }
-    void LoadGlobalProjectmount(sol::state_view state)
+    void load_global_projectmount(sol::state_view state)
     {
-        sol::table PrioritiesNamespace = state["obe"]["system"]["priorities"].get<sol::table>();
-        PrioritiesNamespace["projectmount"] = obe::system::priorities::projectmount;
+        sol::table priorities_namespace = state["obe"]["system"]["priorities"].get<sol::table>();
+        priorities_namespace["projectmount"] = obe::system::priorities::projectmount;
     }
-    void LoadGlobalProject(sol::state_view state)
+    void load_global_project(sol::state_view state)
     {
-        sol::table PrioritiesNamespace = state["obe"]["system"]["priorities"].get<sol::table>();
-        PrioritiesNamespace["project"] = obe::system::priorities::project;
+        sol::table priorities_namespace = state["obe"]["system"]["priorities"].get<sol::table>();
+        priorities_namespace["project"] = obe::system::priorities::project;
     }
-    void LoadGlobalMount(sol::state_view state)
+    void load_global_mount(sol::state_view state)
     {
-        sol::table PrioritiesNamespace = state["obe"]["system"]["priorities"].get<sol::table>();
-        PrioritiesNamespace["mount"] = obe::system::priorities::mount;
+        sol::table priorities_namespace = state["obe"]["system"]["priorities"].get<sol::table>();
+        priorities_namespace["mount"] = obe::system::priorities::mount;
     }
-    void LoadGlobalDefaults(sol::state_view state)
+    void load_global_defaults(sol::state_view state)
     {
-        sol::table PrioritiesNamespace = state["obe"]["system"]["priorities"].get<sol::table>();
-        PrioritiesNamespace["defaults"] = obe::system::priorities::defaults;
+        sol::table priorities_namespace = state["obe"]["system"]["priorities"].get<sol::table>();
+        priorities_namespace["defaults"] = obe::system::priorities::defaults;
     }
-    void LoadGlobalLow(sol::state_view state)
+    void load_global_low(sol::state_view state)
     {
-        sol::table PrioritiesNamespace = state["obe"]["system"]["priorities"].get<sol::table>();
-        PrioritiesNamespace["low"] = obe::system::priorities::low;
+        sol::table priorities_namespace = state["obe"]["system"]["priorities"].get<sol::table>();
+        priorities_namespace["low"] = obe::system::priorities::low;
     }
 };

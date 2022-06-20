@@ -3,7 +3,7 @@
 
 #include <Utils/MathUtils.hpp>
 
-namespace obe::Utils::Math
+namespace obe::utils::math
 {
     std::random_device rd;
     std::mt19937 rng { rd() };
@@ -27,12 +27,12 @@ namespace obe::Utils::Math
 
     double convert_to_radian(const double value)
     {
-        return (Utils::Math::pi / 180.0) * value;
+        return (utils::math::pi / 180.0) * value;
     }
 
     double convert_to_degrees(const double value)
     {
-        return (180.0 / Utils::Math::pi) * value;
+        return (180.0 / utils::math::pi) * value;
     }
 
     double normalize(const double value, const double start, const double end)
@@ -42,4 +42,4 @@ namespace obe::Utils::Math
 
         return (offset_value - (floor(offset_value / width) * width)) + start;
     }
-} // namespace obe::Utils::Math
+} // namespace obe::utils::math

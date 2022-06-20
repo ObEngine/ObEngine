@@ -1,32 +1,32 @@
-#include <Bindings/obe/Config/Config.hpp>
+#include <Bindings/obe/config/Config.hpp>
 
 #include <Config/Config.hpp>
 #include <Config/Version.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::config::Bindings
+namespace obe::config::bindings
 {
-    void LoadClassConfigurationManager(sol::state_view state)
+    void load_class_configuration_manager(sol::state_view state)
     {
-        sol::table ConfigNamespace = state["obe"]["config"].get<sol::table>();
-        sol::usertype<obe::config::ConfigurationManager> bindConfigurationManager
-            = ConfigNamespace.new_usertype<obe::config::ConfigurationManager>(
+        sol::table config_namespace = state["obe"]["config"].get<sol::table>();
+        sol::usertype<obe::config::ConfigurationManager> bind_configuration_manager
+            = config_namespace.new_usertype<obe::config::ConfigurationManager>(
                 "ConfigurationManager", sol::call_constructor,
                 sol::constructors<obe::config::ConfigurationManager()>(), sol::base_classes,
                 sol::bases<vili::node>());
-        bindConfigurationManager["load"] = &obe::config::ConfigurationManager::load;
+        bind_configuration_manager["load"] = &obe::config::ConfigurationManager::load;
     }
-    void LoadClassVersion(sol::state_view state)
+    void load_class_version(sol::state_view state)
     {
-        sol::table ConfigNamespace = state["obe"]["config"].get<sol::table>();
-        sol::usertype<obe::config::Version> bindVersion
-            = ConfigNamespace.new_usertype<obe::config::Version>("Version", sol::call_constructor,
+        sol::table config_namespace = state["obe"]["config"].get<sol::table>();
+        sol::usertype<obe::config::Version> bind_version
+            = config_namespace.new_usertype<obe::config::Version>("Version", sol::call_constructor,
                 sol::constructors<obe::config::Version(int, int, int),
                     obe::config::Version(const std::string&)>());
-        bindVersion["string"] = &obe::config::Version::string;
-        bindVersion["major"] = &obe::config::Version::major;
-        bindVersion["minor"] = &obe::config::Version::minor;
-        bindVersion["patch"] = &obe::config::Version::patch;
+        bind_version["string"] = &obe::config::Version::string;
+        bind_version["major"] = &obe::config::Version::major;
+        bind_version["minor"] = &obe::config::Version::minor;
+        bind_version["patch"] = &obe::config::Version::patch;
     }
 };

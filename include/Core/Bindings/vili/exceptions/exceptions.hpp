@@ -4,20 +4,20 @@ namespace sol
 {
     class state_view;
 };
-namespace vili::exceptions::Bindings
+namespace vili::exceptions::bindings
 {
-    void LoadClassArrayIndexOverflow(sol::state_view state);
-    void LoadClassBaseException(sol::state_view state);
-    void LoadClassDebugInfo(sol::state_view state);
-    void LoadClassFileNotFound(sol::state_view state);
-    void LoadClassInconsistentIndentation(sol::state_view state);
-    void LoadClassIntegerDumpError(sol::state_view state);
-    void LoadClassInvalidCast(sol::state_view state);
-    void LoadClassInvalidDataType(sol::state_view state);
-    void LoadClassInvalidMerge(sol::state_view state);
-    void LoadClassInvalidNodeType(sol::state_view state);
-    void LoadClassNumberDumpError(sol::state_view state);
-    void LoadClassParsingError(sol::state_view state);
-    void LoadClassTooMuchIndentation(sol::state_view state);
-    void LoadClassUnknownChildNode(sol::state_view state);
+    void load_class_array_index_overflow(sol::state_view state);
+    void load_class_base_exception(sol::state_view state);
+    void load_class_debug_info(sol::state_view state);
+    void load_class_file_not_found(sol::state_view state);
+    void load_class_inconsistent_indentation(sol::state_view state);
+    void load_class_integer_dump_error(sol::state_view state);
+    void load_class_invalid_cast(sol::state_view state);
+    void load_class_invalid_data_type(sol::state_view state);
+    void load_class_invalid_merge(sol::state_view state);
+    void load_class_invalid_node_type(sol::state_view state);
+    void load_class_number_dump_error(sol::state_view state);
+    void load_class_parsing_error(sol::state_view state);
+    void load_class_too_much_indentation(sol::state_view state);
+    void load_class_unknown_child_node(sol::state_view state);
 };

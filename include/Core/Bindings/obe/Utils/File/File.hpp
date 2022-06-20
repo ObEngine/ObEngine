@@ -4,22 +4,22 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Utils::File::Bindings
+namespace obe::utils::file::bindings
 {
-    void LoadFunctionGetDirectoryList(sol::state_view state);
-    void LoadFunctionGetFileList(sol::state_view state);
-    void LoadFunctionFileExists(sol::state_view state);
-    void LoadFunctionDirectoryExists(sol::state_view state);
-    void LoadFunctionCreateDirectory(sol::state_view state);
-    void LoadFunctionCreateFile(sol::state_view state);
-    void LoadFunctionCopy(sol::state_view state);
-    void LoadFunctionDeleteFile(sol::state_view state);
-    void LoadFunctionDeleteDirectory(sol::state_view state);
-    void LoadFunctionGetCurrentDirectory(sol::state_view state);
-    void LoadFunctionSeparator(sol::state_view state);
-    void LoadFunctionGetExecutableDirectory(sol::state_view state);
-    void LoadFunctionGetExecutablePath(sol::state_view state);
-    void LoadFunctionNormalizePath(sol::state_view state);
-    void LoadFunctionCanonicalPath(sol::state_view state);
-    void LoadFunctionJoin(sol::state_view state);
+    void load_function_get_directory_list(sol::state_view state);
+    void load_function_get_file_list(sol::state_view state);
+    void load_function_file_exists(sol::state_view state);
+    void load_function_directory_exists(sol::state_view state);
+    void load_function_create_directory(sol::state_view state);
+    void load_function_create_file(sol::state_view state);
+    void load_function_copy(sol::state_view state);
+    void load_function_delete_file(sol::state_view state);
+    void load_function_delete_directory(sol::state_view state);
+    void load_function_get_current_directory(sol::state_view state);
+    void load_function_separator(sol::state_view state);
+    void load_function_get_executable_directory(sol::state_view state);
+    void load_function_get_executable_path(sol::state_view state);
+    void load_function_normalize_path(sol::state_view state);
+    void load_function_canonical_path(sol::state_view state);
+    void load_function_join(sol::state_view state);
 };

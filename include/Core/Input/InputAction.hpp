@@ -90,15 +90,18 @@ namespace obe::input
     };
 } // namespace obe::input
 
-namespace obe::events::actions
+namespace obe::events
 {
-    /**
-     * \brief Event containing information about an Action that has been triggered
-     * \noconstructor
-     */
-    struct Action
+    namespace Actions
     {
-        input::InputAction& action;
-        input::InputCondition& condition;
-    };
+        /**
+        * \brief Event containing information about an Action that has been triggered
+        * \noconstructor
+        */
+        struct Action
+        {
+            input::InputAction& action;
+            input::InputCondition& condition;
+        };
+    }
 };

@@ -1,60 +1,60 @@
-#include <Bindings/obe/Events/Cursor/Cursor.hpp>
+#include <Bindings/obe/events/cursor/Cursor.hpp>
 
 #include <System/Cursor.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::events::cursor::Bindings
+namespace obe::events::cursor::bindings
 {
-    void LoadClassHold(sol::state_view state)
+    void load_class_hold(sol::state_view state)
     {
-        sol::table CursorNamespace = state["obe"]["events"]["cursor"].get<sol::table>();
-        sol::usertype<obe::events::cursor::Hold> bindHold
-            = CursorNamespace.new_usertype<obe::events::cursor::Hold>(
+        sol::table cursor_namespace = state["obe"]["events"]["cursor"].get<sol::table>();
+        sol::usertype<obe::events::Cursor::Hold> bind_hold
+            = cursor_namespace.new_usertype<obe::events::Cursor::Hold>(
                 "Hold", sol::call_constructor, sol::default_constructor);
-        bindHold["x"] = &obe::events::cursor::Hold::x;
-        bindHold["y"] = &obe::events::cursor::Hold::y;
-        bindHold["left"] = &obe::events::cursor::Hold::left;
-        bindHold["middle"] = &obe::events::cursor::Hold::middle;
-        bindHold["right"] = &obe::events::cursor::Hold::right;
-        bindHold["id"] = sol::var(&obe::events::cursor::Hold::id);
+        bind_hold["x"] = &obe::events::Cursor::Hold::x;
+        bind_hold["y"] = &obe::events::Cursor::Hold::y;
+        bind_hold["left"] = &obe::events::Cursor::Hold::left;
+        bind_hold["middle"] = &obe::events::Cursor::Hold::middle;
+        bind_hold["right"] = &obe::events::Cursor::Hold::right;
+        bind_hold["id"] = sol::var(&obe::events::Cursor::Hold::id);
     }
-    void LoadClassMove(sol::state_view state)
+    void load_class_move(sol::state_view state)
     {
-        sol::table CursorNamespace = state["obe"]["events"]["cursor"].get<sol::table>();
-        sol::usertype<obe::events::cursor::Move> bindMove
-            = CursorNamespace.new_usertype<obe::events::cursor::Move>(
+        sol::table cursor_namespace = state["obe"]["events"]["cursor"].get<sol::table>();
+        sol::usertype<obe::events::Cursor::Move> bind_move
+            = cursor_namespace.new_usertype<obe::events::Cursor::Move>(
                 "Move", sol::call_constructor, sol::default_constructor);
-        bindMove["x"] = &obe::events::cursor::Move::x;
-        bindMove["y"] = &obe::events::cursor::Move::y;
-        bindMove["previous_x"] = &obe::events::cursor::Move::previous_x;
-        bindMove["previous_y"] = &obe::events::cursor::Move::previous_y;
-        bindMove["id"] = sol::var(&obe::events::cursor::Move::id);
+        bind_move["x"] = &obe::events::Cursor::Move::x;
+        bind_move["y"] = &obe::events::Cursor::Move::y;
+        bind_move["previous_x"] = &obe::events::Cursor::Move::previous_x;
+        bind_move["previous_y"] = &obe::events::Cursor::Move::previous_y;
+        bind_move["id"] = sol::var(&obe::events::Cursor::Move::id);
     }
-    void LoadClassPress(sol::state_view state)
+    void load_class_press(sol::state_view state)
     {
-        sol::table CursorNamespace = state["obe"]["events"]["cursor"].get<sol::table>();
-        sol::usertype<obe::events::cursor::Press> bindPress
-            = CursorNamespace.new_usertype<obe::events::cursor::Press>(
+        sol::table cursor_namespace = state["obe"]["events"]["cursor"].get<sol::table>();
+        sol::usertype<obe::events::Cursor::Press> bind_press
+            = cursor_namespace.new_usertype<obe::events::Cursor::Press>(
                 "Press", sol::call_constructor, sol::default_constructor);
-        bindPress["x"] = &obe::events::cursor::Press::x;
-        bindPress["y"] = &obe::events::cursor::Press::y;
-        bindPress["left"] = &obe::events::cursor::Press::left;
-        bindPress["middle"] = &obe::events::cursor::Press::middle;
-        bindPress["right"] = &obe::events::cursor::Press::right;
-        bindPress["id"] = sol::var(&obe::events::cursor::Press::id);
+        bind_press["x"] = &obe::events::Cursor::Press::x;
+        bind_press["y"] = &obe::events::Cursor::Press::y;
+        bind_press["left"] = &obe::events::Cursor::Press::left;
+        bind_press["middle"] = &obe::events::Cursor::Press::middle;
+        bind_press["right"] = &obe::events::Cursor::Press::right;
+        bind_press["id"] = sol::var(&obe::events::Cursor::Press::id);
     }
-    void LoadClassRelease(sol::state_view state)
+    void load_class_release(sol::state_view state)
     {
-        sol::table CursorNamespace = state["obe"]["events"]["cursor"].get<sol::table>();
-        sol::usertype<obe::events::cursor::Release> bindRelease
-            = CursorNamespace.new_usertype<obe::events::cursor::Release>(
+        sol::table cursor_namespace = state["obe"]["events"]["cursor"].get<sol::table>();
+        sol::usertype<obe::events::Cursor::Release> bind_release
+            = cursor_namespace.new_usertype<obe::events::Cursor::Release>(
                 "Release", sol::call_constructor, sol::default_constructor);
-        bindRelease["x"] = &obe::events::cursor::Release::x;
-        bindRelease["y"] = &obe::events::cursor::Release::y;
-        bindRelease["left"] = &obe::events::cursor::Release::left;
-        bindRelease["middle"] = &obe::events::cursor::Release::middle;
-        bindRelease["right"] = &obe::events::cursor::Release::right;
-        bindRelease["id"] = sol::var(&obe::events::cursor::Release::id);
+        bind_release["x"] = &obe::events::Cursor::Release::x;
+        bind_release["y"] = &obe::events::Cursor::Release::y;
+        bind_release["left"] = &obe::events::Cursor::Release::left;
+        bind_release["middle"] = &obe::events::Cursor::Release::middle;
+        bind_release["right"] = &obe::events::Cursor::Release::right;
+        bind_release["id"] = sol::var(&obe::events::Cursor::Release::id);
     }
 };

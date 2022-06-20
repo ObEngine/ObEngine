@@ -4,25 +4,25 @@ namespace sol
 {
     class state_view;
 };
-namespace vili::Bindings
+namespace vili::bindings
 {
-    void LoadClassConstNodeIterator(sol::state_view state);
-    void LoadClassNode(sol::state_view state);
-    void LoadClassNodeIterator(sol::state_view state);
-    void LoadEnumNodeType(sol::state_view state);
-    void LoadFunctionFromString(sol::state_view state);
-    void LoadFunctionToString(sol::state_view state);
-    void LoadGlobalPERMISSIVECAST(sol::state_view state);
-    void LoadGlobalVERBOSEEXCEPTIONS(sol::state_view state);
-    void LoadGlobalTrueValue(sol::state_view state);
-    void LoadGlobalFalseValue(sol::state_view state);
-    void LoadGlobalNullTypename(sol::state_view state);
-    void LoadGlobalBooleanTypename(sol::state_view state);
-    void LoadGlobalIntegerTypename(sol::state_view state);
-    void LoadGlobalNumberTypename(sol::state_view state);
-    void LoadGlobalStringTypename(sol::state_view state);
-    void LoadGlobalObjectTypename(sol::state_view state);
-    void LoadGlobalArrayTypename(sol::state_view state);
-    void LoadGlobalUnknownTypename(sol::state_view state);
-    void LoadGlobalContainerTypename(sol::state_view state);
+    void load_class_const_node_iterator(sol::state_view state);
+    void load_class_node(sol::state_view state);
+    void load_class_node_iterator(sol::state_view state);
+    void load_enum_node_type(sol::state_view state);
+    void load_function_from_string(sol::state_view state);
+    void load_function_to_string(sol::state_view state);
+    void load_global_permissive_cast(sol::state_view state);
+    void load_global_verbose_exceptions(sol::state_view state);
+    void load_global_true_value(sol::state_view state);
+    void load_global_false_value(sol::state_view state);
+    void load_global_null_typename(sol::state_view state);
+    void load_global_boolean_typename(sol::state_view state);
+    void load_global_integer_typename(sol::state_view state);
+    void load_global_number_typename(sol::state_view state);
+    void load_global_string_typename(sol::state_view state);
+    void load_global_object_typename(sol::state_view state);
+    void load_global_array_typename(sol::state_view state);
+    void load_global_unknown_typename(sol::state_view state);
+    void load_global_container_typename(sol::state_view state);
 };

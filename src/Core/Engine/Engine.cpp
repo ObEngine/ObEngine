@@ -62,7 +62,7 @@ namespace obe::engine
 
         this->init_plugins();
 
-        Bindings::index_core_bindings(*m_lua);
+        bindings::index_core_bindings(*m_lua);
 
         m_lua->load_config(m_config.at("Script").at("Lua"));
 
@@ -84,15 +84,15 @@ namespace obe::engine
         m_user_event_namespace->set_joinable(true);
 
         e_game = m_event_namespace->create_group("Game");
-        e_game->add<events::game::Start>();
-        e_game->add<events::game::End>();
-        e_game->add<events::game::Update>();
-        e_game->add<events::game::Render>();
+        e_game->add<events::Game::Start>();
+        e_game->add<events::Game::End>();
+        e_game->add<events::Game::Update>();
+        e_game->add<events::Game::Render>();
 
         e_custom = m_user_event_namespace->create_group("Custom");
         e_custom->set_joinable(true);
 
-        e_game->trigger(events::game::Start {});
+        e_game->trigger(events::Game::Start {});
     }
 
     void Engine::init_resources()
@@ -128,12 +128,12 @@ namespace obe::engine
             system::MountablePath::from_prefix("cwd").base_path);
         system::Path plugin_path_base
             = system::Path(system::MountablePath::from_prefix("cwd").base_path).add("Plugins");
-        if (Utils::File::directory_exists(plugin_path_base.to_string()))
+        if (utils::file::directory_exists(plugin_path_base.to_string()))
         {
-            for (const std::string& filename : Utils::File::get_file_list(plugin_path_base.to_string()))
+            for (const std::string& filename : utils::file::get_file_list(plugin_path_base.to_string()))
             {
                 const std::string plugin_path = plugin_path_base.add(filename).to_string();
-                const std::string plugin_name = Utils::String::split(filename, ".")[0];
+                const std::string plugin_name = utils::string::split(filename, ".")[0];
                 auto plugin = std::make_unique<system::Plugin>(plugin_name, plugin_path);
                 if (plugin->is_valid())
                 {
@@ -178,7 +178,7 @@ namespace obe::engine
     {
         if (e_game)
         {
-            e_game->trigger(events::game::End {});
+            e_game->trigger(events::Game::End {});
         }
         if (m_scene)
         {
@@ -382,13 +382,13 @@ namespace obe::engine
             if (m_framerate->should_update())
             {
                 dts.push_back(m_framerate->get_game_speed());
-                e_game->trigger(events::game::Update { m_framerate->get_game_speed() });
+                e_game->trigger(events::Game::Update { m_framerate->get_game_speed() });
                 this->update();
             }
 
             if (m_framerate->should_render())
             {
-                e_game->trigger(events::game::Render {});
+                e_game->trigger(events::Game::Render {});
                 this->render();
                 m_framerate->reset();
             }

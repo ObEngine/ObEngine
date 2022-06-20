@@ -5,24 +5,27 @@
 #include <Event/EventGroup.hpp>
 #include <Event/EventNamespace.hpp>
 
-namespace obe::events::network
+namespace obe::events
 {
-    struct Connected
+    namespace Network
     {
-        static constexpr std::string_view id = "Connected";
-        const std::string ip;
-    };
+        struct Connected
+        {
+            static constexpr std::string_view id = "Connected";
+            const std::string ip;
+        };
 
-    struct Disconnected
-    {
-        static constexpr std::string_view id = "Disconnected";
-    };
+        struct Disconnected
+        {
+            static constexpr std::string_view id = "Disconnected";
+        };
 
-    struct DataReceived
-    {
-        static constexpr std::string_view id = "DataReceived";
-        const std::string content;
-    };
+        struct DataReceived
+        {
+            static constexpr std::string_view id = "DataReceived";
+            const std::string content;
+        };
+    }
 }
 
 namespace obe::network
