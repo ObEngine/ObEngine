@@ -4,22 +4,23 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::animation::Bindings
+namespace obe::animation::bindings
 {
-    void LoadClassAnimation(sol::state_view state);
-    void LoadClassAnimationGroup(sol::state_view state);
-    void LoadClassAnimationState(sol::state_view state);
-    void LoadClassAnimator(sol::state_view state);
-    void LoadClassAnimatorState(sol::state_view state);
-    void LoadClassColorTweening(sol::state_view state);
-    void LoadClassUnitVectorTweening(sol::state_view state);
-    void LoadClassRectTweening(sol::state_view state);
-    void LoadClassTrajectoryTweening(sol::state_view state);
-    void LoadClassIntTweening(sol::state_view state);
-    void LoadClassDoubleTweening(sol::state_view state);
-    void LoadEnumAnimationPlayMode(sol::state_view state);
-    void LoadEnumAnimationStatus(sol::state_view state);
-    void LoadEnumAnimatorTargetScaleMode(sol::state_view state);
-    void LoadFunctionTemplateSpecializationExistsImpl(sol::state_view state);
-    void LoadFunctionTween(sol::state_view state);
+    void load_class_animation(sol::state_view state);
+    void load_class_animation_group(sol::state_view state);
+    void load_class_animation_state(sol::state_view state);
+    void load_class_animator(sol::state_view state);
+    void load_class_animator_state(sol::state_view state);
+    void load_class_color_tweening(sol::state_view state);
+    void load_class_unit_vector_tweening(sol::state_view state);
+    void load_class_rect_tweening(sol::state_view state);
+    void load_class_trajectory_tweening(sol::state_view state);
+    void load_class_int_tweening(sol::state_view state);
+    void load_class_double_tweening(sol::state_view state);
+    void load_enum_animation_play_mode(sol::state_view state);
+    void load_enum_animation_command(sol::state_view state);
+    void load_enum_animation_status(sol::state_view state);
+    void load_enum_animator_target_scale_mode(sol::state_view state);
+    void load_function_template_specialization_exists_impl(sol::state_view state);
+    void load_function_tween(sol::state_view state);
 };

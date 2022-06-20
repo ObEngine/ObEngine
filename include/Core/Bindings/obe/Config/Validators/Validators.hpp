@@ -4,10 +4,10 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::config::validators::Bindings
+namespace obe::config::validators::bindings
 {
-    void LoadFunctionAnimationValidator(sol::state_view state);
-    void LoadFunctionConfigValidator(sol::state_view state);
-    void LoadFunctionMountValidator(sol::state_view state);
-    void LoadFunctionProjectValidator(sol::state_view state);
+    void load_function_animation_validator(sol::state_view state);
+    void load_function_config_validator(sol::state_view state);
+    void load_function_mount_validator(sol::state_view state);
+    void load_function_project_validator(sol::state_view state);
 };

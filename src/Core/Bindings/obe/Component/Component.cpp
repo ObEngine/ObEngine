@@ -4,19 +4,19 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Component::Bindings
+namespace obe::Component::bindings
 {
-    void LoadClassComponentBase(sol::state_view state)
+    void load_class_component_base(sol::state_view state)
     {
-        sol::table ComponentNamespace = state["obe"]["Component"].get<sol::table>();
-        sol::usertype<obe::Component::ComponentBase> bindComponentBase
-            = ComponentNamespace.new_usertype<obe::Component::ComponentBase>("ComponentBase",
+        sol::table Component_namespace = state["obe"]["Component"].get<sol::table>();
+        sol::usertype<obe::Component::ComponentBase> bind_component_base
+            = Component_namespace.new_usertype<obe::Component::ComponentBase>("ComponentBase",
                 sol::base_classes,
                 sol::bases<obe::Types::Identifiable, obe::Types::Serializable>());
-        bindComponentBase["remove"] = &obe::Component::ComponentBase::remove;
-        bindComponentBase["dump"] = &obe::Component::ComponentBase::dump;
-        bindComponentBase["load"] = &obe::Component::ComponentBase::load;
-        bindComponentBase["type"] = &obe::Component::ComponentBase::type;
-        bindComponentBase["cast"] = &obe::Component::ComponentBase::cast;
+        bind_component_base["remove"] = &obe::Component::ComponentBase::remove;
+        bind_component_base["dump"] = &obe::Component::ComponentBase::dump;
+        bind_component_base["load"] = &obe::Component::ComponentBase::load;
+        bind_component_base["type"] = &obe::Component::ComponentBase::type;
+        bind_component_base["cast"] = &obe::Component::ComponentBase::cast;
     }
 };

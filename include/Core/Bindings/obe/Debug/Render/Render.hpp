@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::debug::render::Bindings
+namespace obe::debug::render::bindings
 {
-    void LoadFunctionDrawPolygon(sol::state_view state);
+    void load_function_draw_polygon(sol::state_view state);
 };

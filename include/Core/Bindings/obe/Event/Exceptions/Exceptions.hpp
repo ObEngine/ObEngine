@@ -4,16 +4,16 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::event::Exceptions::Bindings
+namespace obe::event::Exceptions::bindings
 {
-    void LoadClassCallbackCreationError(sol::state_view state);
-    void LoadClassEventAlreadyExists(sol::state_view state);
-    void LoadClassEventExecutionError(sol::state_view state);
-    void LoadClassEventGroupAlreadyExists(sol::state_view state);
-    void LoadClassEventGroupNotJoinable(sol::state_view state);
-    void LoadClassEventNamespaceAlreadyExists(sol::state_view state);
-    void LoadClassEventNamespaceNotJoinable(sol::state_view state);
-    void LoadClassUnknownEvent(sol::state_view state);
-    void LoadClassUnknownEventGroup(sol::state_view state);
-    void LoadClassUnknownEventNamespace(sol::state_view state);
+    void load_class_callback_creation_error(sol::state_view state);
+    void load_class_event_already_exists(sol::state_view state);
+    void load_class_event_execution_error(sol::state_view state);
+    void load_class_event_group_already_exists(sol::state_view state);
+    void load_class_event_group_not_joinable(sol::state_view state);
+    void load_class_event_namespace_already_exists(sol::state_view state);
+    void load_class_event_namespace_not_joinable(sol::state_view state);
+    void load_class_unknown_event(sol::state_view state);
+    void load_class_unknown_event_group(sol::state_view state);
+    void load_class_unknown_event_namespace(sol::state_view state);
 };

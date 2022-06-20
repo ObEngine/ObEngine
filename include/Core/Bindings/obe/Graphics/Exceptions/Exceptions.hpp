@@ -4,14 +4,14 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::graphics::exceptions::Bindings
+namespace obe::graphics::exceptions::bindings
 {
-    void LoadClassCanvasElementAlreadyExists(sol::state_view state);
-    void LoadClassImageFileNotFound(sol::state_view state);
-    void LoadClassInvalidColorName(sol::state_view state);
-    void LoadClassInvalidHexFormat(sol::state_view state);
-    void LoadClassInvalidHsvFormat(sol::state_view state);
-    void LoadClassInvalidRgbFormat(sol::state_view state);
-    void LoadClassInvalidSpriteColorType(sol::state_view state);
-    void LoadClassReadOnlyTexture(sol::state_view state);
+    void load_class_canvas_element_already_exists(sol::state_view state);
+    void load_class_image_file_not_found(sol::state_view state);
+    void load_class_invalid_color_name(sol::state_view state);
+    void load_class_invalid_hex_format(sol::state_view state);
+    void load_class_invalid_hsv_format(sol::state_view state);
+    void load_class_invalid_rgb_format(sol::state_view state);
+    void load_class_invalid_sprite_color_type(sol::state_view state);
+    void load_class_read_only_texture(sol::state_view state);
 };

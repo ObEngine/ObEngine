@@ -1,19 +1,20 @@
-#include <Bindings/obe/Utils/Exec/Exec.hpp>
+#include <Bindings/obe/utils/exec/Exec.hpp>
 
 #include <Utils/ExecUtils.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Utils::Exec::Bindings
+namespace obe::utils::exec::bindings
 {
-    void LoadClassRunArgsParser(sol::state_view state)
+    void load_class_run_args_parser(sol::state_view state)
     {
-        sol::table ExecNamespace = state["obe"]["Utils"]["Exec"].get<sol::table>();
-        sol::usertype<obe::Utils::Exec::RunArgsParser> bindRunArgsParser
-            = ExecNamespace.new_usertype<obe::Utils::Exec::RunArgsParser>("RunArgsParser",
+        sol::table exec_namespace = state["obe"]["utils"]["exec"].get<sol::table>();
+        sol::usertype<obe::utils::exec::RunArgsParser> bind_run_args_parser
+            = exec_namespace.new_usertype<obe::utils::exec::RunArgsParser>("RunArgsParser",
                 sol::call_constructor,
-                sol::constructors<obe::Utils::Exec::RunArgsParser(int, char**)>());
-        bindRunArgsParser["argument_exists"] = &obe::Utils::Exec::RunArgsParser::argument_exists;
-        bindRunArgsParser["get_argument_value"] = &obe::Utils::Exec::RunArgsParser::get_argument_value;
+                sol::constructors<obe::utils::exec::RunArgsParser(int, char**)>());
+        bind_run_args_parser["argument_exists"] = &obe::utils::exec::RunArgsParser::argument_exists;
+        bind_run_args_parser["get_argument_value"]
+            = &obe::utils::exec::RunArgsParser::get_argument_value;
     }
 };

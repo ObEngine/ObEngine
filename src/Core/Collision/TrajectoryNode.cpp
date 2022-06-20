@@ -36,7 +36,7 @@ namespace obe::collision
         auto get_offset = [&dt](const Trajectory& trajectory)
         {
             const double speed = trajectory.get_speed() + trajectory.get_acceleration() * dt;
-            const double rad_angle = (Utils::Math::pi / 180.0) * -trajectory.get_angle();
+            const double rad_angle = (utils::math::pi / 180.0) * -trajectory.get_angle();
             const double x_offset = std::cos(rad_angle) * (speed * dt);
             const double y_offset = std::sin(rad_angle) * (speed * dt);
             return transform::UnitVector(x_offset, y_offset, trajectory.get_unit());

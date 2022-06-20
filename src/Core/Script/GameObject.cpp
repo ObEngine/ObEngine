@@ -14,14 +14,18 @@ namespace obe::script
     sol::table GameObject::access() const
     {
         if (m_has_script_engine)
-            return m_inner_storage;
+        {
+            const auto get_storage_wrapper
+                = m_outer_environment["__WRAP_GET_STORAGE"].get<sol::protected_function>();
+            return safe_lua_call<sol::table>(get_storage_wrapper);
+        }
         throw exceptions::NoSuchComponent("Script", m_type, m_id, EXC_INFO);
     }
 
-    sol::function GameObject::get_constructor() const
+    sol::protected_function GameObject::get_constructor() const
     {
         if (m_has_script_engine)
-            return m_outer_environment["ObjectInitFromLua"].get<sol::function>();
+            return m_outer_environment["__WRAP_CALL_INIT"].get<sol::protected_function>();
         throw exceptions::NoSuchComponent("Script", m_type, m_id, EXC_INFO);
     }
 
@@ -55,19 +59,12 @@ namespace obe::script
             if (object_definition_path.empty())
                 throw exceptions::ObjectDefinitionNotFound(type, EXC_INFO);
 
-            vili::node definition_data = vili::parser::from_file(
-                object_definition_path);
+            vili::node definition_data = vili::parser::from_file(object_definition_path);
 
             AllDefinitions[type] = definition_data;
             return definition_data;
         }
         return AllDefinitions.at(type);
-    }
-
-    void GameObjectDatabase::ApplyRequirements(
-        sol::environment environment, const vili::node& requirements)
-    {
-        environment["__INIT_ARG_TABLE"] = vili_lua_bridge::vili_to_lua(requirements);
     }
 
     void GameObjectDatabase::clear()
@@ -82,7 +79,7 @@ namespace obe::script
         , m_lua(std::move(lua))
         , m_type(type)
         , m_filesystem_context(system::Path(system::project::Prefixes::objects, type)
-                             .find(system::PathType::Directory))
+                                   .find(system::PathType::Directory))
     {
     }
 
@@ -94,14 +91,13 @@ namespace obe::script
             m_initialized = true;
             if (m_has_script_engine)
             {
-                m_outer_environment["__OBJECT_INIT"] = true;
                 try
                 {
-                    safe_lua_call(m_outer_environment["ObjectInit"].get<sol::protected_function>());
+                    safe_lua_call(this->get_constructor());
                 }
                 catch (const BaseException& e)
                 {
-                    throw exceptions::GameObjectScriptError(m_type, m_id, "ObjectInit", EXC_INFO)
+                    throw exceptions::GameObjectScriptError(m_type, m_id, "GameObject:init", EXC_INFO)
                         .nest(e);
                 }
             }
@@ -125,14 +121,6 @@ namespace obe::script
         }
     }
 
-    void GameObject::send_init_arg_from_lua(const std::string& arg_name, sol::object value)
-    {
-        debug::Log->debug("<GameObject> Sending Local.Init argument {0} to "
-                          "GameObject {1} ({2}) (From Lua)",
-            arg_name, m_id, m_type);
-        m_outer_environment["__INIT_ARG_TABLE"][arg_name] = value;
-    }
-
     void GameObject::load_game_object(
         scene::Scene& scene, vili::node& obj, engine::ResourceManager* resources)
     {
@@ -148,21 +136,9 @@ namespace obe::script
             vili::node& script = obj.at("Script");
             m_has_script_engine = true;
             m_outer_environment = sol::environment(m_lua, sol::create, m_lua.globals());
-            m_inner_storage = m_lua.create_table();
-            m_inner_environment = sol::environment(
-                m_lua, sol::create, m_outer_environment);
-            sol::table inner_environment_mt = m_inner_environment[sol::metatable_key];
-            inner_environment_mt["__index"] = m_lua["Helpers"]["fetch_from_one_of"](
-                m_inner_storage.as<sol::table>(), m_outer_environment.as<sol::table>());
-            inner_environment_mt["__newindex"] = m_inner_storage;
-            inner_environment_mt["__len"] = m_lua["Helpers"]["len_from"](m_inner_storage);
-            inner_environment_mt["__pairs"] = m_lua["Helpers"]["pairs_from"](m_inner_storage);
+            m_inner_environment = sol::environment(m_lua, sol::create, m_outer_environment);
 
             m_outer_environment["This"] = this;
-
-            m_outer_environment["__OBJECT_TYPE"] = m_type;
-            m_outer_environment["__OBJECT_ID"] = m_id;
-            m_outer_environment["__OBJECT_INIT"] = false;
 
             load_source("obe://Lib/Internal/ObjectInit.lua", EnvironmentTarget::Outer);
 
@@ -196,19 +172,13 @@ namespace obe::script
                 }
             }
         }
-        if (m_has_script_engine)
-        {
-            m_outer_environment["Components"]["SceneNode"] = &m_objectNode;
-        }
         // Sprite
         if (obj.contains("Sprite"))
         {
             m_sprite = &scene.create_sprite(m_id, false);
-            m_objectNode.add_child(*m_sprite);
+            m_object_node.add_child(*m_sprite);
             m_sprite->load(obj.at("Sprite"));
             m_sprite->set_parent_id(m_id);
-            if (m_has_script_engine)
-                m_outer_environment["Components"]["Sprite"] = m_sprite;
             scene.reorganize_layers();
         }
         if (obj.contains("Animator"))
@@ -224,7 +194,8 @@ namespace obe::script
             animation::AnimatorTargetScaleMode scale_mode = animation::AnimatorTargetScaleMode::Fit;
             if (animator.contains("scaling"))
             {
-                scale_mode = animation::AnimatorTargetScaleModeMeta::from_string(animator.at("scaling"));
+                scale_mode
+                    = animation::AnimatorTargetScaleModeMeta::from_string(animator.at("scaling"));
             }
             if (m_sprite)
                 m_animator->set_target(*m_sprite, scale_mode);
@@ -236,19 +207,14 @@ namespace obe::script
             {
                 m_animator->set_animation(animator.at("default"));
             }
-            if (m_has_script_engine)
-                m_outer_environment["Components"]["Animation"] = m_animator.get();
         }
         // Collider
         if (obj.contains("Collider"))
         {
             m_collider = &scene.create_collider(m_id, false);
-            m_objectNode.add_child(*m_collider);
+            m_object_node.add_child(*m_collider);
             m_collider->load(obj.at("Collider"));
             m_collider->set_parent_id(m_id);
-
-            if (m_has_script_engine)
-                m_outer_environment["Components"]["Collider"] = m_collider;
         }
     }
 
@@ -319,7 +285,7 @@ namespace obe::script
 
     scene::SceneNode& GameObject::get_scene_node()
     {
-        return m_objectNode;
+        return m_object_node;
     }
 
     collision::PolygonalCollider& GameObject::get_collider() const
@@ -346,24 +312,26 @@ namespace obe::script
         debug::Log->debug("<GameObject> Sending Local.Init table to "
                           "GameObject {1} ({2}) (From Vili)",
             m_id, m_type);
-        m_outer_environment["__INIT_ARG_TABLE"] = vili_lua_bridge::vili_to_lua(data);
+        auto constructor_args = vili_lua_bridge::vili_to_lua(data);
+        safe_lua_call(this->get_constructor(), constructor_args);
     }
 
-    void GameObject::delete_object()
+    void GameObject::destroy()
     {
         if (!this->deletable)
         {
-            debug::Log->debug("GameObject::delete_object called for '{0}' ({1})", m_id, m_type);
+            debug::Log->debug("GameObject::destroy called for '{0}' ({1})", m_id, m_type);
 
             if (m_has_script_engine)
             {
                 try
                 {
-                    safe_lua_call(m_outer_environment["ObjectDelete"].get<sol::protected_function>());
+                    safe_lua_call(
+                        m_outer_environment["__WRAP_CALL_DESTROY"].get<sol::protected_function>());
                 }
                 catch (const BaseException& e)
                 {
-                    throw exceptions::GameObjectScriptError(m_type, m_id, "ObjectDelete", EXC_INFO)
+                    throw exceptions::GameObjectScriptError(m_type, m_id, "GameObject:destroy", EXC_INFO)
                         .nest(e);
                 }
             }
@@ -417,7 +385,8 @@ namespace obe::script
         if (auto dump_function = this->access()["Dump"]; dump_function.valid())
         {
             const sol::table save_table_ref = dump_function().get<sol::table>();
-            vili::node save_requirements = script::vili_lua_bridge::lua_table_to_vili_object(save_table_ref);
+            vili::node save_requirements
+                = script::vili_lua_bridge::lua_table_to_vili_object(save_table_ref);
             result["Requires"] = save_requirements;
         }
 
@@ -450,7 +419,9 @@ namespace obe::script
             ScriptCache.emplace(full_path, bytecode.dump());
         }
         const std::string_view source = ScriptCache.at(full_path).as_string_view();
-        if (const sol::protected_function_result load_result = m_lua.safe_script(source, environment); !load_result.valid())
+        if (const sol::protected_function_result load_result
+            = m_lua.safe_script(source, environment);
+            !load_result.valid())
         {
             throw exceptions::InvalidScript(
                 full_path, load_result.get<sol::error>().what(), EXC_INFO);

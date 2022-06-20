@@ -1,117 +1,123 @@
-#include <Bindings/obe/Utils/String/String.hpp>
+#include <Bindings/obe/utils/string/String.hpp>
 
 #include <Utils/StringUtils.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Utils::String::Bindings
+namespace obe::utils::string::bindings
 {
-    void LoadFunctionSplit(sol::state_view state)
+    void load_function_split(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("split",
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("split",
             sol::overload(
                 [](const std::string& str) -> std::vector<std::string> {
-                    return obe::Utils::String::split(str);
+                    return obe::utils::string::split(str);
                 },
                 [](const std::string& str,
                     const std::string& delimiters) -> std::vector<std::string> {
-                    return obe::Utils::String::split(str, delimiters);
+                    return obe::utils::string::split(str, delimiters);
                 }));
     }
-    void LoadFunctionOccurencesInString(sol::state_view state)
+    void load_function_occurences_in_string(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("occurences_in_string", &obe::Utils::String::occurences_in_string);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function(
+            "occurences_in_string", &obe::utils::string::occurences_in_string);
     }
-    void LoadFunctionIsStringAlpha(sol::state_view state)
+    void load_function_is_string_alpha(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("is_string_alpha", &obe::Utils::String::is_string_alpha);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("is_string_alpha", &obe::utils::string::is_string_alpha);
     }
-    void LoadFunctionIsStringAlphaNumeric(sol::state_view state)
+    void load_function_is_string_alpha_numeric(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function(
-            "is_string_alpha_numeric", &obe::Utils::String::is_string_alpha_numeric);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function(
+            "is_string_alpha_numeric", &obe::utils::string::is_string_alpha_numeric);
     }
-    void LoadFunctionIsStringNumeric(sol::state_view state)
+    void load_function_is_string_numeric(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("is_string_numeric", &obe::Utils::String::is_string_numeric);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("is_string_numeric", &obe::utils::string::is_string_numeric);
     }
-    void LoadFunctionIsStringInt(sol::state_view state)
+    void load_function_is_string_int(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("is_string_int", &obe::Utils::String::is_string_int);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("is_string_int", &obe::utils::string::is_string_int);
     }
-    void LoadFunctionIsStringFloat(sol::state_view state)
+    void load_function_is_string_float(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("is_string_float", &obe::Utils::String::is_string_float);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("is_string_float", &obe::utils::string::is_string_float);
     }
-    void LoadFunctionReplace(sol::state_view state)
+    void load_function_replace(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("replace", &obe::Utils::String::replace);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("replace", &obe::utils::string::replace);
     }
-    void LoadFunctionIsSurroundedBy(sol::state_view state)
+    void load_function_is_surrounded_by(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("is_surrounded_by", &obe::Utils::String::is_surrounded_by);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("is_surrounded_by", &obe::utils::string::is_surrounded_by);
     }
-    void LoadFunctionGetRandomKey(sol::state_view state)
+    void load_function_get_random_key(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("get_random_key", &obe::Utils::String::get_random_key);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("get_random_key", &obe::utils::string::get_random_key);
     }
-    void LoadFunctionContains(sol::state_view state)
+    void load_function_contains(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("contains", &obe::Utils::String::contains);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("contains", &obe::utils::string::contains);
     }
-    void LoadFunctionStartsWith(sol::state_view state)
+    void load_function_starts_with(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("starts_with", &obe::Utils::String::starts_with);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("starts_with", &obe::utils::string::starts_with);
     }
-    void LoadFunctionEndsWith(sol::state_view state)
+    void load_function_ends_with(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("ends_with", &obe::Utils::String::ends_with);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("ends_with", &obe::utils::string::ends_with);
     }
-    void LoadFunctionDistance(sol::state_view state)
+    void load_function_distance(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("distance", &obe::Utils::String::distance);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("distance", &obe::utils::string::distance);
     }
-    void LoadFunctionSortByDistance(sol::state_view state)
+    void load_function_sort_by_distance(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("sort_by_distance",
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("sort_by_distance",
             sol::overload(
                 [](const std::string& source,
                     const std::vector<std::string>& words) -> std::vector<std::string> {
-                    return obe::Utils::String::sort_by_distance(source, words);
+                    return obe::utils::string::sort_by_distance(source, words);
                 },
                 [](const std::string& source, const std::vector<std::string>& words,
                     std::size_t limit) -> std::vector<std::string> {
-                    return obe::Utils::String::sort_by_distance(source, words, limit);
+                    return obe::utils::string::sort_by_distance(source, words, limit);
                 }));
     }
-    void LoadFunctionQuote(sol::state_view state)
+    void load_function_quote(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace.set_function("quote", &obe::Utils::String::quote);
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("quote", &obe::utils::string::quote);
     }
-    void LoadGlobalAlphabet(sol::state_view state)
+    void load_function_titleize(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace["Alphabet"] = obe::Utils::String::Alphabet;
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace.set_function("titleize", &obe::utils::string::titleize);
     }
-    void LoadGlobalNumbers(sol::state_view state)
+    void load_global_alphabet(sol::state_view state)
     {
-        sol::table StringNamespace = state["obe"]["Utils"]["String"].get<sol::table>();
-        StringNamespace["Numbers"] = obe::Utils::String::Numbers;
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace["Alphabet"] = obe::utils::string::Alphabet;
+    }
+    void load_global_numbers(sol::state_view state)
+    {
+        sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
+        string_namespace["Numbers"] = obe::utils::string::Numbers;
     }
 };

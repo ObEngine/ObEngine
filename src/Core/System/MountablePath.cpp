@@ -51,20 +51,20 @@ namespace obe::system
             MountablePathType::Path, ".", prefixes::cwd, priorities::defaults);
         MountablePath implicit_cwd_path(MountablePathType::Path, ".", "", priorities::defaults, true);
         MountablePath implicit_root_path(MountablePathType::Path, "", "", priorities::defaults, true); 
-        MountablePath executable_path(MountablePathType::Path, Utils::File::get_executable_directory(),
+        MountablePath executable_path(MountablePathType::Path, utils::file::get_executable_directory(),
             prefixes::exe, priorities::defaults);
 
         const std::string engine_config_path
-            = Utils::File::join({ sago::getConfigHome(), "ObEngine" });
-        if (!Utils::File::directory_exists(engine_config_path))
+            = utils::file::join({ sago::getConfigHome(), "ObEngine" });
+        if (!utils::file::directory_exists(engine_config_path))
         {
-            Utils::File::create_directory(engine_config_path);
+            utils::file::create_directory(engine_config_path);
         }
         const std::string engine_config_project_subdirectory
-            = Utils::File::join({ engine_config_path, "Projects" });
-        if (!Utils::File::directory_exists(engine_config_project_subdirectory))
+            = utils::file::join({ engine_config_path, "Projects" });
+        if (!utils::file::directory_exists(engine_config_project_subdirectory))
         {
-            Utils::File::create_directory(engine_config_project_subdirectory);
+            utils::file::create_directory(engine_config_project_subdirectory);
         }
 
         MountablePath config_path(
@@ -97,7 +97,7 @@ namespace obe::system
         {
             auto string_paths = MountablePath::string_paths();
             std::ranges::transform(string_paths
-                , string_paths.begin(), Utils::String::quote);
+                , string_paths.begin(), utils::string::quote);
 
             debug::Log->info("No 'mount.vili' file found in the following directories ({})",
                 fmt::join(string_paths.begin(), string_paths.end(), ", "));
@@ -116,7 +116,7 @@ namespace obe::system
         catch (const vili::exceptions::file_not_found& e)
         {
             debug::Log->critical("<MountablePath> Unable to find 'mount.vili' : \n{}", e.what());
-            throw Exceptions::MountFileMissing(Utils::File::get_current_directory(), EXC_INFO);
+            throw Exceptions::MountFileMissing(utils::file::get_current_directory(), EXC_INFO);
         }
         catch (const std::exception& e)
         {
@@ -304,7 +304,7 @@ namespace obe::system
         {
             base_path = system::Path(base_path).find(PathType::Directory).path();
         }
-        base_path = Utils::File::canonical_path(base_path);
+        base_path = utils::file::canonical_path(base_path);
         deferred_resolution = false;
     }
 } // namespace obe::system

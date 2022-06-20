@@ -1,16 +1,16 @@
-#include <Bindings/obe/Scene/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/scene/Exceptions/Exceptions.hpp>
 
 #include <Scene/Exceptions.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::scene::Exceptions::Bindings
+namespace obe::scene::Exceptions::bindings
 {
-    void LoadClassChildNotInSceneNode(sol::state_view state)
+    void load_class_child_not_in_scene_node(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["scene"]["exceptions"].get<sol::table>();
-        sol::usertype<obe::scene::Exceptions::ChildNotInSceneNode> bindChildNotInSceneNode
-            = ExceptionsNamespace.new_usertype<obe::scene::Exceptions::ChildNotInSceneNode>(
+        sol::table Exceptions_namespace = state["obe"]["scene"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::scene::Exceptions::ChildNotInSceneNode> bind_child_not_in_scene_node
+            = Exceptions_namespace.new_usertype<obe::scene::Exceptions::ChildNotInSceneNode>(
                 "ChildNotInSceneNode", sol::call_constructor,
                 sol::constructors<obe::scene::Exceptions::ChildNotInSceneNode(
                     void*, void*, obe::DebugInfo)>(),
@@ -18,11 +18,12 @@ namespace obe::scene::Exceptions::Bindings
                 sol::bases<obe::Exception<obe::scene::Exceptions::ChildNotInSceneNode>,
                     obe::BaseException>());
     }
-    void LoadClassGameObjectAlreadyExists(sol::state_view state)
+    void load_class_game_object_already_exists(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["scene"]["exceptions"].get<sol::table>();
-        sol::usertype<obe::scene::Exceptions::GameObjectAlreadyExists> bindGameObjectAlreadyExists
-            = ExceptionsNamespace.new_usertype<obe::scene::Exceptions::GameObjectAlreadyExists>(
+        sol::table Exceptions_namespace = state["obe"]["scene"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::scene::Exceptions::GameObjectAlreadyExists>
+            bind_game_object_already_exists
+            = Exceptions_namespace.new_usertype<obe::scene::Exceptions::GameObjectAlreadyExists>(
                 "GameObjectAlreadyExists", sol::call_constructor,
                 sol::constructors<obe::scene::Exceptions::GameObjectAlreadyExists(
                     std::string_view, std::string_view, std::string_view, obe::DebugInfo)>(),
@@ -30,11 +31,11 @@ namespace obe::scene::Exceptions::Bindings
                 sol::bases<obe::Exception<obe::scene::Exceptions::GameObjectAlreadyExists>,
                     obe::BaseException>());
     }
-    void LoadClassInvalidSceneFile(sol::state_view state)
+    void load_class_invalid_scene_file(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["scene"]["exceptions"].get<sol::table>();
-        sol::usertype<obe::scene::Exceptions::InvalidSceneFile> bindInvalidSceneFile
-            = ExceptionsNamespace.new_usertype<obe::scene::Exceptions::InvalidSceneFile>(
+        sol::table Exceptions_namespace = state["obe"]["scene"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::scene::Exceptions::InvalidSceneFile> bind_invalid_scene_file
+            = Exceptions_namespace.new_usertype<obe::scene::Exceptions::InvalidSceneFile>(
                 "InvalidSceneFile", sol::call_constructor,
                 sol::constructors<obe::scene::Exceptions::InvalidSceneFile(
                     std::string_view, obe::DebugInfo)>(),
@@ -42,11 +43,11 @@ namespace obe::scene::Exceptions::Bindings
                 sol::bases<obe::Exception<obe::scene::Exceptions::InvalidSceneFile>,
                     obe::BaseException>());
     }
-    void LoadClassMissingSceneFileBlock(sol::state_view state)
+    void load_class_missing_scene_file_block(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["scene"]["exceptions"].get<sol::table>();
-        sol::usertype<obe::scene::Exceptions::MissingSceneFileBlock> bindMissingSceneFileBlock
-            = ExceptionsNamespace.new_usertype<obe::scene::Exceptions::MissingSceneFileBlock>(
+        sol::table Exceptions_namespace = state["obe"]["scene"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::scene::Exceptions::MissingSceneFileBlock> bind_missing_scene_file_block
+            = Exceptions_namespace.new_usertype<obe::scene::Exceptions::MissingSceneFileBlock>(
                 "MissingSceneFileBlock", sol::call_constructor,
                 sol::constructors<obe::scene::Exceptions::MissingSceneFileBlock(
                     std::string_view, std::string_view, obe::DebugInfo)>(),
@@ -54,11 +55,12 @@ namespace obe::scene::Exceptions::Bindings
                 sol::bases<obe::Exception<obe::scene::Exceptions::MissingSceneFileBlock>,
                     obe::BaseException>());
     }
-    void LoadClassSceneOnLoadCallbackError(sol::state_view state)
+    void load_class_scene_on_load_callback_error(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["scene"]["exceptions"].get<sol::table>();
-        sol::usertype<obe::scene::Exceptions::SceneOnLoadCallbackError> bindSceneOnLoadCallbackError
-            = ExceptionsNamespace.new_usertype<obe::scene::Exceptions::SceneOnLoadCallbackError>(
+        sol::table Exceptions_namespace = state["obe"]["scene"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::scene::Exceptions::SceneOnLoadCallbackError>
+            bind_scene_on_load_callback_error
+            = Exceptions_namespace.new_usertype<obe::scene::Exceptions::SceneOnLoadCallbackError>(
                 "SceneOnLoadCallbackError", sol::call_constructor,
                 sol::constructors<obe::scene::Exceptions::SceneOnLoadCallbackError(
                     std::string_view, std::string_view, std::string_view, obe::DebugInfo)>(),
@@ -66,11 +68,12 @@ namespace obe::scene::Exceptions::Bindings
                 sol::bases<obe::Exception<obe::scene::Exceptions::SceneOnLoadCallbackError>,
                     obe::BaseException>());
     }
-    void LoadClassSceneScriptLoadingError(sol::state_view state)
+    void load_class_scene_script_loading_error(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["scene"]["exceptions"].get<sol::table>();
-        sol::usertype<obe::scene::Exceptions::SceneScriptLoadingError> bindSceneScriptLoadingError
-            = ExceptionsNamespace.new_usertype<obe::scene::Exceptions::SceneScriptLoadingError>(
+        sol::table Exceptions_namespace = state["obe"]["scene"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::scene::Exceptions::SceneScriptLoadingError>
+            bind_scene_script_loading_error
+            = Exceptions_namespace.new_usertype<obe::scene::Exceptions::SceneScriptLoadingError>(
                 "SceneScriptLoadingError", sol::call_constructor,
                 sol::constructors<obe::scene::Exceptions::SceneScriptLoadingError(
                     std::string_view, std::string_view, std::string_view, obe::DebugInfo)>(),
@@ -78,11 +81,11 @@ namespace obe::scene::Exceptions::Bindings
                 sol::bases<obe::Exception<obe::scene::Exceptions::SceneScriptLoadingError>,
                     obe::BaseException>());
     }
-    void LoadClassUnknownCollider(sol::state_view state)
+    void load_class_unknown_collider(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["scene"]["exceptions"].get<sol::table>();
-        sol::usertype<obe::scene::Exceptions::UnknownCollider> bindUnknownCollider
-            = ExceptionsNamespace.new_usertype<obe::scene::Exceptions::UnknownCollider>(
+        sol::table Exceptions_namespace = state["obe"]["scene"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::scene::Exceptions::UnknownCollider> bind_unknown_collider
+            = Exceptions_namespace.new_usertype<obe::scene::Exceptions::UnknownCollider>(
                 "UnknownCollider", sol::call_constructor,
                 sol::constructors<obe::scene::Exceptions::UnknownCollider(std::string_view,
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),
@@ -90,11 +93,11 @@ namespace obe::scene::Exceptions::Bindings
                 sol::bases<obe::Exception<obe::scene::Exceptions::UnknownCollider>,
                     obe::BaseException>());
     }
-    void LoadClassUnknownGameObject(sol::state_view state)
+    void load_class_unknown_game_object(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["scene"]["exceptions"].get<sol::table>();
-        sol::usertype<obe::scene::Exceptions::UnknownGameObject> bindUnknownGameObject
-            = ExceptionsNamespace.new_usertype<obe::scene::Exceptions::UnknownGameObject>(
+        sol::table Exceptions_namespace = state["obe"]["scene"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::scene::Exceptions::UnknownGameObject> bind_unknown_game_object
+            = Exceptions_namespace.new_usertype<obe::scene::Exceptions::UnknownGameObject>(
                 "UnknownGameObject", sol::call_constructor,
                 sol::constructors<obe::scene::Exceptions::UnknownGameObject(std::string_view,
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),
@@ -102,11 +105,11 @@ namespace obe::scene::Exceptions::Bindings
                 sol::bases<obe::Exception<obe::scene::Exceptions::UnknownGameObject>,
                     obe::BaseException>());
     }
-    void LoadClassUnknownSprite(sol::state_view state)
+    void load_class_unknown_sprite(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["scene"]["exceptions"].get<sol::table>();
-        sol::usertype<obe::scene::Exceptions::UnknownSprite> bindUnknownSprite
-            = ExceptionsNamespace.new_usertype<obe::scene::Exceptions::UnknownSprite>(
+        sol::table Exceptions_namespace = state["obe"]["scene"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::scene::Exceptions::UnknownSprite> bind_unknown_sprite
+            = Exceptions_namespace.new_usertype<obe::scene::Exceptions::UnknownSprite>(
                 "UnknownSprite", sol::call_constructor,
                 sol::constructors<obe::scene::Exceptions::UnknownSprite(std::string_view,
                     std::string_view, const std::vector<std::string>&, obe::DebugInfo)>(),

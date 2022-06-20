@@ -1,16 +1,17 @@
-#include <Bindings/obe/Transform/Exceptions/Exceptions.hpp>
+#include <Bindings/obe/transform/exceptions/Exceptions.hpp>
 
 #include <Transform/Exceptions.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::transform::exceptions::Bindings
+namespace obe::transform::exceptions::bindings
 {
-    void LoadClassPolygonNotEnoughPoints(sol::state_view state)
+    void load_class_polygon_not_enough_points(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["transform"]["exceptions"].get<sol::table>();
-        sol::usertype<obe::transform::exceptions::PolygonNotEnoughPoints> bindPolygonNotEnoughPoints
-            = ExceptionsNamespace.new_usertype<obe::transform::exceptions::PolygonNotEnoughPoints>(
+        sol::table exceptions_namespace = state["obe"]["transform"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::transform::exceptions::PolygonNotEnoughPoints>
+            bind_polygon_not_enough_points
+            = exceptions_namespace.new_usertype<obe::transform::exceptions::PolygonNotEnoughPoints>(
                 "PolygonNotEnoughPoints", sol::call_constructor,
                 sol::constructors<obe::transform::exceptions::PolygonNotEnoughPoints(
                     void*, std::size_t, obe::DebugInfo)>(),
@@ -18,11 +19,11 @@ namespace obe::transform::exceptions::Bindings
                 sol::bases<obe::Exception<obe::transform::exceptions::PolygonNotEnoughPoints>,
                     obe::BaseException>());
     }
-    void LoadClassPolygonPointIndexOverflow(sol::state_view state)
+    void load_class_polygon_point_index_overflow(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["transform"]["exceptions"].get<sol::table>();
+        sol::table exceptions_namespace = state["obe"]["transform"]["exceptions"].get<sol::table>();
         sol::usertype<obe::transform::exceptions::PolygonPointIndexOverflow>
-            bindPolygonPointIndexOverflow = ExceptionsNamespace.new_usertype<
+            bind_polygon_point_index_overflow = exceptions_namespace.new_usertype<
                 obe::transform::exceptions::PolygonPointIndexOverflow>("PolygonPointIndexOverflow",
                 sol::call_constructor,
                 sol::constructors<obe::transform::exceptions::PolygonPointIndexOverflow(
@@ -31,11 +32,11 @@ namespace obe::transform::exceptions::Bindings
                 sol::bases<obe::Exception<obe::transform::exceptions::PolygonPointIndexOverflow>,
                     obe::BaseException>());
     }
-    void LoadClassUnknownReferential(sol::state_view state)
+    void load_class_unknown_referential(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["transform"]["exceptions"].get<sol::table>();
-        sol::usertype<obe::transform::exceptions::UnknownReferential> bindUnknownReferential
-            = ExceptionsNamespace.new_usertype<obe::transform::exceptions::UnknownReferential>(
+        sol::table exceptions_namespace = state["obe"]["transform"]["exceptions"].get<sol::table>();
+        sol::usertype<obe::transform::exceptions::UnknownReferential> bind_unknown_referential
+            = exceptions_namespace.new_usertype<obe::transform::exceptions::UnknownReferential>(
                 "UnknownReferential", sol::call_constructor,
                 sol::constructors<obe::transform::exceptions::UnknownReferential(
                     std::string_view, obe::DebugInfo)>(),

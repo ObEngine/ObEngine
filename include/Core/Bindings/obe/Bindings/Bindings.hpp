@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Bindings::Bindings
+namespace obe::bindings::bindings
 {
-    void LoadFunctionIndexCoreBindings(sol::state_view state);
+    void load_function_index_core_bindings(sol::state_view state);
 };

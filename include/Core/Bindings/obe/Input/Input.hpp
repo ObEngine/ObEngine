@@ -4,15 +4,15 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::input::Bindings
+namespace obe::input::bindings
 {
-    void LoadClassInputAction(sol::state_view state);
-    void LoadClassInputButton(sol::state_view state);
-    void LoadClassInputButtonMonitor(sol::state_view state);
-    void LoadClassInputCondition(sol::state_view state);
-    void LoadClassInputManager(sol::state_view state);
-    void LoadEnumMouseWheelScrollDirection(sol::state_view state);
-    void LoadEnumAxisThresholdDirection(sol::state_view state);
-    void LoadEnumInputButtonState(sol::state_view state);
-    void LoadEnumInputType(sol::state_view state);
+    void load_class_input_action(sol::state_view state);
+    void load_class_input_button(sol::state_view state);
+    void load_class_input_button_monitor(sol::state_view state);
+    void load_class_input_condition(sol::state_view state);
+    void load_class_input_manager(sol::state_view state);
+    void load_enum_mouse_wheel_scroll_direction(sol::state_view state);
+    void load_enum_axis_threshold_direction(sol::state_view state);
+    void load_enum_input_button_state(sol::state_view state);
+    void load_enum_input_type(sol::state_view state);
 };

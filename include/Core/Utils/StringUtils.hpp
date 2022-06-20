@@ -6,7 +6,7 @@
 /**
  * \brief Functions to work with Strings
  */
-namespace obe::Utils::String
+namespace obe::utils::string
 {
     /**
      * \brief A string containing all the letters of the Alphabet
@@ -126,4 +126,4 @@ namespace obe::Utils::String
     std::string quote(const std::string& source);
 
     std::string titleize(const std::string& source);
-} // namespace obe::Utils::String
+} // namespace obe::utils::string

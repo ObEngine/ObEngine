@@ -1,90 +1,91 @@
-#include <Bindings/obe/Utils/File/File.hpp>
+#include <Bindings/obe/utils/file/File.hpp>
 
 #include <Utils/FileUtils.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Utils::File::Bindings
+namespace obe::utils::file::bindings
 {
-    void LoadFunctionGetDirectoryList(sol::state_view state)
+    void load_function_get_directory_list(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("get_directory_list", &obe::Utils::File::get_directory_list);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("get_directory_list", &obe::utils::file::get_directory_list);
     }
-    void LoadFunctionGetFileList(sol::state_view state)
+    void load_function_get_file_list(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("get_file_list", &obe::Utils::File::get_file_list);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("get_file_list", &obe::utils::file::get_file_list);
     }
-    void LoadFunctionFileExists(sol::state_view state)
+    void load_function_file_exists(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("file_exists", &obe::Utils::File::file_exists);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("file_exists", &obe::utils::file::file_exists);
     }
-    void LoadFunctionDirectoryExists(sol::state_view state)
+    void load_function_directory_exists(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("directory_exists", &obe::Utils::File::directory_exists);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("directory_exists", &obe::utils::file::directory_exists);
     }
-    void LoadFunctionCreateDirectory(sol::state_view state)
+    void load_function_create_directory(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("create_directory", &obe::Utils::File::create_directory);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("create_directory", &obe::utils::file::create_directory);
     }
-    void LoadFunctionCreateFile(sol::state_view state)
+    void load_function_create_file(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("create_file", &obe::Utils::File::create_file);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("create_file", &obe::utils::file::create_file);
     }
-    void LoadFunctionCopy(sol::state_view state)
+    void load_function_copy(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("copy", &obe::Utils::File::copy);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("copy", &obe::utils::file::copy);
     }
-    void LoadFunctionDeleteFile(sol::state_view state)
+    void load_function_delete_file(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("delete_file", &obe::Utils::File::delete_file);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("delete_file", &obe::utils::file::delete_file);
     }
-    void LoadFunctionDeleteDirectory(sol::state_view state)
+    void load_function_delete_directory(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("delete_directory", &obe::Utils::File::delete_directory);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("delete_directory", &obe::utils::file::delete_directory);
     }
-    void LoadFunctionGetCurrentDirectory(sol::state_view state)
+    void load_function_get_current_directory(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("get_current_directory", &obe::Utils::File::get_current_directory);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function(
+            "get_current_directory", &obe::utils::file::get_current_directory);
     }
-    void LoadFunctionSeparator(sol::state_view state)
+    void load_function_separator(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("separator", &obe::Utils::File::separator);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("separator", &obe::utils::file::separator);
     }
-    void LoadFunctionGetExecutableDirectory(sol::state_view state)
+    void load_function_get_executable_directory(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function(
-            "get_executable_directory", &obe::Utils::File::get_executable_directory);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function(
+            "get_executable_directory", &obe::utils::file::get_executable_directory);
     }
-    void LoadFunctionGetExecutablePath(sol::state_view state)
+    void load_function_get_executable_path(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("get_executable_path", &obe::Utils::File::get_executable_path);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("get_executable_path", &obe::utils::file::get_executable_path);
     }
-    void LoadFunctionNormalizePath(sol::state_view state)
+    void load_function_normalize_path(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("normalize_path", &obe::Utils::File::normalize_path);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("normalize_path", &obe::utils::file::normalize_path);
     }
-    void LoadFunctionCanonicalPath(sol::state_view state)
+    void load_function_canonical_path(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("canonical_path", &obe::Utils::File::canonical_path);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("canonical_path", &obe::utils::file::canonical_path);
     }
-    void LoadFunctionJoin(sol::state_view state)
+    void load_function_join(sol::state_view state)
     {
-        sol::table FileNamespace = state["obe"]["Utils"]["File"].get<sol::table>();
-        FileNamespace.set_function("join", &obe::Utils::File::join);
+        sol::table file_namespace = state["obe"]["utils"]["file"].get<sol::table>();
+        file_namespace.set_function("join", &obe::utils::file::join);
     }
 };

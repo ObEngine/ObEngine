@@ -42,9 +42,9 @@ namespace obe::scene::Exceptions
             this->error(
                 "GameObject with id '{}' does not exists inside Scene '{}'", object_id, scene_file);
             std::vector<std::string> suggestions
-                = Utils::String::sort_by_distance(object_id.data(), all_object_ids, 5);
+                = utils::string::sort_by_distance(object_id.data(), all_object_ids, 5);
             std::ranges::transform(suggestions
-                , suggestions.begin(), Utils::String::quote);
+                , suggestions.begin(), utils::string::quote);
             suggestions.emplace_back("...");
             this->hint("Try one of the GameObjects with id ({})", fmt::join(suggestions, ", "));
         }
@@ -75,9 +75,9 @@ namespace obe::scene::Exceptions
             this->error(
                 "Sprite with id '{}' does not exists inside Scene '{}'", sprite_id, scene_file);
             std::vector<std::string> suggestions
-                = Utils::String::sort_by_distance(sprite_id.data(), all_sprites_ids, 5);
+                = utils::string::sort_by_distance(sprite_id.data(), all_sprites_ids, 5);
             std::ranges::transform(suggestions
-                , suggestions.begin(), Utils::String::quote);
+                , suggestions.begin(), utils::string::quote);
             suggestions.emplace_back("...");
             this->hint("Try one of the Sprites with id ({})", fmt::join(suggestions, ", "));
         }
@@ -94,9 +94,9 @@ namespace obe::scene::Exceptions
             this->error(
                 "Collider with id '{}' does not exists inside Scene '{}'", collider_id, scene_file);
             std::vector<std::string> suggestions
-                = Utils::String::sort_by_distance(collider_id.data(), all_colliders_ids, 5);
+                = utils::string::sort_by_distance(collider_id.data(), all_colliders_ids, 5);
             std::ranges::transform(suggestions
-                , suggestions.begin(), Utils::String::quote);
+                , suggestions.begin(), utils::string::quote);
             suggestions.emplace_back("...");
             this->hint("Try one of the Colliders with id ({})", fmt::join(suggestions, ", "));
         }

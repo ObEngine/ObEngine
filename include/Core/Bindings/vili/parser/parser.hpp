@@ -4,11 +4,11 @@ namespace sol
 {
     class state_view;
 };
-namespace vili::parser::Bindings
+namespace vili::parser::bindings
 {
-    void LoadClassNodeInStack(sol::state_view state);
-    void LoadClassState(sol::state_view state);
-    void LoadClassError(sol::state_view state);
-    void LoadFunctionFromString(sol::state_view state);
-    void LoadFunctionFromFile(sol::state_view state);
+    void load_class_node_in_stack(sol::state_view state);
+    void load_class_state(sol::state_view state);
+    void load_class_error(sol::state_view state);
+    void load_function_from_string(sol::state_view state);
+    void load_function_from_file(sol::state_view state);
 };

@@ -1,4 +1,4 @@
-#include <Bindings/obe/Time/Time.hpp>
+#include <Bindings/obe/time/Time.hpp>
 
 #include <Time/Chronometer.hpp>
 #include <Time/FramerateCounter.hpp>
@@ -7,99 +7,100 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::time::Bindings
+namespace obe::time::bindings
 {
-    void LoadClassChronometer(sol::state_view state)
+    void load_class_chronometer(sol::state_view state)
     {
-        sol::table TimeNamespace = state["obe"]["time"].get<sol::table>();
-        sol::usertype<obe::time::Chronometer> bindChronometer
-            = TimeNamespace.new_usertype<obe::time::Chronometer>(
+        sol::table time_namespace = state["obe"]["time"].get<sol::table>();
+        sol::usertype<obe::time::Chronometer> bind_chronometer
+            = time_namespace.new_usertype<obe::time::Chronometer>(
                 "Chronometer", sol::call_constructor, sol::default_constructor);
-        bindChronometer["start"] = &obe::time::Chronometer::start;
-        bindChronometer["stop"] = &obe::time::Chronometer::stop;
-        bindChronometer["reset"] = &obe::time::Chronometer::reset;
-        bindChronometer["get_elapsed_time"] = &obe::time::Chronometer::get_elapsed_time;
-        bindChronometer["set_limit"] = &obe::time::Chronometer::set_limit;
-        bindChronometer["get_limit"] = &obe::time::Chronometer::get_limit;
-        bindChronometer["is_over"] = &obe::time::Chronometer::is_over;
+        bind_chronometer["start"] = &obe::time::Chronometer::start;
+        bind_chronometer["stop"] = &obe::time::Chronometer::stop;
+        bind_chronometer["reset"] = &obe::time::Chronometer::reset;
+        bind_chronometer["get_elapsed_time"] = &obe::time::Chronometer::get_elapsed_time;
+        bind_chronometer["set_limit"] = &obe::time::Chronometer::set_limit;
+        bind_chronometer["get_limit"] = &obe::time::Chronometer::get_limit;
+        bind_chronometer["is_over"] = &obe::time::Chronometer::is_over;
     }
-    void LoadClassFramerateCounter(sol::state_view state)
+    void load_class_framerate_counter(sol::state_view state)
     {
-        sol::table TimeNamespace = state["obe"]["time"].get<sol::table>();
-        sol::usertype<obe::time::FramerateCounter> bindFramerateCounter
-            = TimeNamespace.new_usertype<obe::time::FramerateCounter>(
+        sol::table time_namespace = state["obe"]["time"].get<sol::table>();
+        sol::usertype<obe::time::FramerateCounter> bind_framerate_counter
+            = time_namespace.new_usertype<obe::time::FramerateCounter>(
                 "FramerateCounter", sol::call_constructor, sol::default_constructor);
-        bindFramerateCounter["render_tick"] = &obe::time::FramerateCounter::render_tick;
-        bindFramerateCounter["update_tick"] = &obe::time::FramerateCounter::update_tick;
-        bindFramerateCounter["load_font"] = &obe::time::FramerateCounter::load_font;
-        bindFramerateCounter["draw"] = &obe::time::FramerateCounter::draw;
+        bind_framerate_counter["render_tick"] = &obe::time::FramerateCounter::render_tick;
+        bind_framerate_counter["update_tick"] = &obe::time::FramerateCounter::update_tick;
+        bind_framerate_counter["load_font"] = &obe::time::FramerateCounter::load_font;
+        bind_framerate_counter["draw"] = &obe::time::FramerateCounter::draw;
     }
-    void LoadClassFramerateManager(sol::state_view state)
+    void load_class_framerate_manager(sol::state_view state)
     {
-        sol::table TimeNamespace = state["obe"]["time"].get<sol::table>();
-        sol::usertype<obe::time::FramerateManager> bindFramerateManager
-            = TimeNamespace.new_usertype<obe::time::FramerateManager>("FramerateManager",
+        sol::table time_namespace = state["obe"]["time"].get<sol::table>();
+        sol::usertype<obe::time::FramerateManager> bind_framerate_manager
+            = time_namespace.new_usertype<obe::time::FramerateManager>("FramerateManager",
                 sol::call_constructor,
                 sol::constructors<obe::time::FramerateManager(obe::system::Window&)>());
-        bindFramerateManager["configure"] = &obe::time::FramerateManager::configure;
-        bindFramerateManager["update"] = &obe::time::FramerateManager::update;
-        bindFramerateManager["should_render"] = &obe::time::FramerateManager::should_render;
-        bindFramerateManager["should_update"] = &obe::time::FramerateManager::should_update;
-        bindFramerateManager["start"] = &obe::time::FramerateManager::start;
-        bindFramerateManager["reset"] = &obe::time::FramerateManager::reset;
-        bindFramerateManager["get_delta_time"] = &obe::time::FramerateManager::get_delta_time;
-        bindFramerateManager["get_game_speed"] = &obe::time::FramerateManager::get_game_speed;
-        bindFramerateManager["get_speed_coefficient"]
+        bind_framerate_manager["configure"] = &obe::time::FramerateManager::configure;
+        bind_framerate_manager["update"] = &obe::time::FramerateManager::update;
+        bind_framerate_manager["should_render"] = &obe::time::FramerateManager::should_render;
+        bind_framerate_manager["should_update"] = &obe::time::FramerateManager::should_update;
+        bind_framerate_manager["start"] = &obe::time::FramerateManager::start;
+        bind_framerate_manager["reset"] = &obe::time::FramerateManager::reset;
+        bind_framerate_manager["get_delta_time"] = &obe::time::FramerateManager::get_delta_time;
+        bind_framerate_manager["get_game_speed"] = &obe::time::FramerateManager::get_game_speed;
+        bind_framerate_manager["get_speed_coefficient"]
             = &obe::time::FramerateManager::get_speed_coefficient;
-        bindFramerateManager["is_framerate_limited"]
+        bind_framerate_manager["is_framerate_limited"]
             = &obe::time::FramerateManager::is_framerate_limited;
-        bindFramerateManager["get_framerate_target"]
+        bind_framerate_manager["get_framerate_target"]
             = &obe::time::FramerateManager::get_framerate_target;
-        bindFramerateManager["is_vsync_enabled"] = &obe::time::FramerateManager::is_vsync_enabled;
-        bindFramerateManager["set_speed_coefficient"]
+        bind_framerate_manager["is_vsync_enabled"] = &obe::time::FramerateManager::is_vsync_enabled;
+        bind_framerate_manager["set_speed_coefficient"]
             = &obe::time::FramerateManager::set_speed_coefficient;
-        bindFramerateManager["set_framerate_target"]
+        bind_framerate_manager["set_framerate_target"]
             = &obe::time::FramerateManager::set_framerate_target;
-        bindFramerateManager["set_vsync_enabled"] = &obe::time::FramerateManager::set_vsync_enabled;
+        bind_framerate_manager["set_vsync_enabled"]
+            = &obe::time::FramerateManager::set_vsync_enabled;
     }
-    void LoadFunctionEpoch(sol::state_view state)
+    void load_function_epoch(sol::state_view state)
     {
-        sol::table TimeNamespace = state["obe"]["time"].get<sol::table>();
-        TimeNamespace.set_function("epoch", &obe::time::epoch);
+        sol::table time_namespace = state["obe"]["time"].get<sol::table>();
+        time_namespace.set_function("epoch", &obe::time::epoch);
     }
-    void LoadGlobalSeconds(sol::state_view state)
+    void load_global_seconds(sol::state_view state)
     {
-        sol::table TimeNamespace = state["obe"]["time"].get<sol::table>();
-        TimeNamespace["seconds"] = obe::time::seconds;
+        sol::table time_namespace = state["obe"]["time"].get<sol::table>();
+        time_namespace["seconds"] = obe::time::seconds;
     }
-    void LoadGlobalMilliseconds(sol::state_view state)
+    void load_global_milliseconds(sol::state_view state)
     {
-        sol::table TimeNamespace = state["obe"]["time"].get<sol::table>();
-        TimeNamespace["milliseconds"] = obe::time::milliseconds;
+        sol::table time_namespace = state["obe"]["time"].get<sol::table>();
+        time_namespace["milliseconds"] = obe::time::milliseconds;
     }
-    void LoadGlobalMicroseconds(sol::state_view state)
+    void load_global_microseconds(sol::state_view state)
     {
-        sol::table TimeNamespace = state["obe"]["time"].get<sol::table>();
-        TimeNamespace["microseconds"] = obe::time::microseconds;
+        sol::table time_namespace = state["obe"]["time"].get<sol::table>();
+        time_namespace["microseconds"] = obe::time::microseconds;
     }
-    void LoadGlobalMinutes(sol::state_view state)
+    void load_global_minutes(sol::state_view state)
     {
-        sol::table TimeNamespace = state["obe"]["time"].get<sol::table>();
-        TimeNamespace["minutes"] = obe::time::minutes;
+        sol::table time_namespace = state["obe"]["time"].get<sol::table>();
+        time_namespace["minutes"] = obe::time::minutes;
     }
-    void LoadGlobalHours(sol::state_view state)
+    void load_global_hours(sol::state_view state)
     {
-        sol::table TimeNamespace = state["obe"]["time"].get<sol::table>();
-        TimeNamespace["hours"] = obe::time::hours;
+        sol::table time_namespace = state["obe"]["time"].get<sol::table>();
+        time_namespace["hours"] = obe::time::hours;
     }
-    void LoadGlobalDays(sol::state_view state)
+    void load_global_days(sol::state_view state)
     {
-        sol::table TimeNamespace = state["obe"]["time"].get<sol::table>();
-        TimeNamespace["days"] = obe::time::days;
+        sol::table time_namespace = state["obe"]["time"].get<sol::table>();
+        time_namespace["days"] = obe::time::days;
     }
-    void LoadGlobalWeeks(sol::state_view state)
+    void load_global_weeks(sol::state_view state)
     {
-        sol::table TimeNamespace = state["obe"]["time"].get<sol::table>();
-        TimeNamespace["weeks"] = obe::time::weeks;
+        sol::table time_namespace = state["obe"]["time"].get<sol::table>();
+        time_namespace["weeks"] = obe::time::weeks;
     }
 };

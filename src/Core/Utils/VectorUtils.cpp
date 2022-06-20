@@ -2,7 +2,7 @@
 
 #include <Utils/VectorUtils.hpp>
 
-namespace obe::Utils::Vector
+namespace obe::utils::vector
 {
     std::string join(std::vector<std::string>& vector, std::string sep, int start, int end)
     {
@@ -20,4 +20,4 @@ namespace obe::Utils::Vector
         }
         return result;
     }
-} // namespace obe::Utils::Vector
+} // namespace obe::utils::vector

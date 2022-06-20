@@ -5,7 +5,7 @@ namespace obe::config
 {
     Version::Version(const std::string& str)
     {
-        std::vector<std::string> parts = Utils::String::split(str, ".");
+        std::vector<std::string> parts = utils::string::split(str, ".");
         if (parts.size() != 3)
         {
             throw Exceptions::InvalidVersionFormat(
@@ -14,7 +14,7 @@ namespace obe::config
                 EXC_INFO);
         }
         // Skip first letter from version string ( 'v' )
-        if (!Utils::String::is_string_numeric(parts[0]) && parts[0].size() >= 2)
+        if (!utils::string::is_string_numeric(parts[0]) && parts[0].size() >= 2)
         {
             if (parts[0][0] != 'v')
             {

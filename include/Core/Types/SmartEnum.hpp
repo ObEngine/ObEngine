@@ -21,9 +21,9 @@ namespace obe::Types
         {
             this->error("Enum '{}' does not have entry '{}'", enum_name, entry_name);
             std::vector<std::string> suggestions
-                = Utils::String::sort_by_distance(entry_name.data(), all_entries, 5);
+                = utils::string::sort_by_distance(entry_name.data(), all_entries, 5);
             std::ranges::transform(suggestions
-                , suggestions.begin(), Utils::String::quote);
+                , suggestions.begin(), utils::string::quote);
             suggestions.emplace_back("...");
             this->hint("Try one of ({})", fmt::join(suggestions, ", "));
         }

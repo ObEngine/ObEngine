@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::collision::Exceptions::Bindings
+namespace obe::collision::Exceptions::bindings
 {
-    void LoadClassInvalidTagFormat(sol::state_view state);
+    void load_class_invalid_tag_format(sol::state_view state);
 };

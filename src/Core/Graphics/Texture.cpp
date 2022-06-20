@@ -108,7 +108,7 @@ namespace obe::graphics
 
     sf::Texture& Texture::get_mutable_texture()
     {
-        constexpr static obe::Utils::Visitor visitor {
+        constexpr static obe::utils::Visitor visitor {
             [](sf::Texture& texture) -> sf::Texture& { return texture; },
             [](std::shared_ptr<sf::Texture>& texture) -> sf::Texture& { return *texture; },
             [](const sf::Texture*) -> sf::Texture& {
@@ -121,7 +121,7 @@ namespace obe::graphics
 
     const sf::Texture& Texture::get_texture() const
     {
-        constexpr static obe::Utils::Visitor visitor {
+        constexpr static obe::utils::Visitor visitor {
             [](const sf::Texture& texture) -> const sf::Texture& { return texture; },
             [](const std::shared_ptr<sf::Texture>& texture) -> const sf::Texture& {
                 return *texture;
@@ -173,7 +173,7 @@ namespace obe::graphics
 
     bool Texture::load_from_file(const std::string& filename)
     {
-        if (Utils::String::ends_with(filename, ".svg"))
+        if (utils::string::ends_with(filename, ".svg"))
         {
             m_texture = SvgTexture(filename);
             return std::get<SvgTexture>(m_texture).success();
@@ -184,7 +184,7 @@ namespace obe::graphics
     bool Texture::load_from_file(const std::string& filename, const transform::Rect& rect)
     {
         const sf::IntRect sf_rect = to_sfml_rect(rect);
-        if (Utils::String::ends_with(filename, ".svg"))
+        if (utils::string::ends_with(filename, ".svg"))
         {
             m_texture = SvgTexture(filename);
             // TODO: Implement load_from_file(path, rect)

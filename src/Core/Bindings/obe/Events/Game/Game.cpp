@@ -1,42 +1,42 @@
-#include <Bindings/obe/Events/Game/Game.hpp>
+#include <Bindings/obe/events/game/Game.hpp>
 
 #include <Engine/Engine.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::events::game::Bindings
+namespace obe::events::game::bindings
 {
-    void LoadClassEnd(sol::state_view state)
+    void load_class_end(sol::state_view state)
     {
-        sol::table GameNamespace = state["obe"]["events"]["game"].get<sol::table>();
-        sol::usertype<obe::events::game::End> bindEnd
-            = GameNamespace.new_usertype<obe::events::game::End>(
+        sol::table game_namespace = state["obe"]["events"]["game"].get<sol::table>();
+        sol::usertype<obe::events::Game::End> bind_end
+            = game_namespace.new_usertype<obe::events::Game::End>(
                 "End", sol::call_constructor, sol::default_constructor);
-        bindEnd["id"] = sol::var(&obe::events::game::End::id);
+        bind_end["id"] = sol::var(&obe::events::Game::End::id);
     }
-    void LoadClassRender(sol::state_view state)
+    void load_class_render(sol::state_view state)
     {
-        sol::table GameNamespace = state["obe"]["events"]["game"].get<sol::table>();
-        sol::usertype<obe::events::game::Render> bindRender
-            = GameNamespace.new_usertype<obe::events::game::Render>(
+        sol::table game_namespace = state["obe"]["events"]["game"].get<sol::table>();
+        sol::usertype<obe::events::Game::Render> bind_render
+            = game_namespace.new_usertype<obe::events::Game::Render>(
                 "Render", sol::call_constructor, sol::default_constructor);
-        bindRender["id"] = sol::var(&obe::events::game::Render::id);
+        bind_render["id"] = sol::var(&obe::events::Game::Render::id);
     }
-    void LoadClassStart(sol::state_view state)
+    void load_class_start(sol::state_view state)
     {
-        sol::table GameNamespace = state["obe"]["events"]["game"].get<sol::table>();
-        sol::usertype<obe::events::game::Start> bindStart
-            = GameNamespace.new_usertype<obe::events::game::Start>(
+        sol::table game_namespace = state["obe"]["events"]["game"].get<sol::table>();
+        sol::usertype<obe::events::Game::Start> bind_start
+            = game_namespace.new_usertype<obe::events::Game::Start>(
                 "Start", sol::call_constructor, sol::default_constructor);
-        bindStart["id"] = sol::var(&obe::events::game::Start::id);
+        bind_start["id"] = sol::var(&obe::events::Game::Start::id);
     }
-    void LoadClassUpdate(sol::state_view state)
+    void load_class_update(sol::state_view state)
     {
-        sol::table GameNamespace = state["obe"]["events"]["game"].get<sol::table>();
-        sol::usertype<obe::events::game::Update> bindUpdate
-            = GameNamespace.new_usertype<obe::events::game::Update>(
+        sol::table game_namespace = state["obe"]["events"]["game"].get<sol::table>();
+        sol::usertype<obe::events::Game::Update> bind_update
+            = game_namespace.new_usertype<obe::events::Game::Update>(
                 "Update", sol::call_constructor, sol::default_constructor);
-        bindUpdate["dt"] = &obe::events::game::Update::dt;
-        bindUpdate["id"] = sol::var(&obe::events::game::Update::id);
+        bind_update["dt"] = &obe::events::Game::Update::dt;
+        bind_update["id"] = sol::var(&obe::events::Game::Update::id);
     }
 };

@@ -74,7 +74,7 @@ namespace obe::transform
         const double delta_x = second.x - first.x;
         const double delta_y
             = first.y - second.y; // inverse y to get angle in counterclockwise direction
-        return (std::atan2(delta_y, delta_x) * 180.0 / Utils::Math::pi);
+        return (std::atan2(delta_y, delta_x) * 180.0 / utils::math::pi);
     }
 
     double PolygonSegment::get_length() const
@@ -130,7 +130,7 @@ namespace obe::transform
             {
                 const double current_point_distance = m_points[i]->distance(p_vec);
                 if ((shortest_distance == -1 || shortest_distance > current_point_distance)
-                    && !Utils::Vector::contains(i, excluded_points))
+                    && !utils::vector::contains(i, excluded_points))
                 {
                     closest_point = i;
                     shortest_distance = current_point_distance;
@@ -218,7 +218,7 @@ namespace obe::transform
             const double line_length = m_points[i]->distance(this->get(next_node));
             const double first_length = m_points[i]->distance(position);
             const double second_length = m_points[next_node]->distance(position);
-            if (Utils::Math::is_between(line_length, first_length + second_length - tolerance,
+            if (utils::math::is_between(line_length, first_length + second_length - tolerance,
                     first_length + second_length + tolerance))
                 return std::make_optional(this->get_segment(i));
         }
@@ -273,10 +273,10 @@ namespace obe::transform
         point_index_t i = 0;
         for (auto& m_point : m_points)
         {
-            if (Utils::Math::is_between(
+            if (utils::math::is_between(
                     p_vec.x, m_point->x - p_tolerance.x, m_point->x + p_tolerance.x))
             {
-                if (Utils::Math::is_between(
+                if (utils::math::is_between(
                         p_vec.y, m_point->y - p_tolerance.y, m_point->y + p_tolerance.y))
                     return std::optional<PolygonPoint*>(m_point.get());
             }
@@ -291,9 +291,9 @@ namespace obe::transform
         const transform::UnitVector p_vec = position.to<transform::Units::SceneUnits>();
         const transform::UnitVector p_tolerance = tolerance.to<transform::Units::SceneUnits>();
         const transform::UnitVector centroid = this->get_centroid();
-        if (Utils::Math::is_between(p_vec.x, centroid.x - p_tolerance.x, centroid.x + p_tolerance.x))
+        if (utils::math::is_between(p_vec.x, centroid.x - p_tolerance.x, centroid.x + p_tolerance.x))
         {
-            if (Utils::Math::is_between(
+            if (utils::math::is_between(
                     p_vec.y, centroid.y - p_tolerance.x, centroid.y + p_tolerance.y))
                 return true;
         }
@@ -327,7 +327,7 @@ namespace obe::transform
     {
         m_angle += angle;
 
-        const double rad_angle = (Utils::Math::pi / 180.0) * -angle;
+        const double rad_angle = (utils::math::pi / 180.0) * -angle;
         for (const auto& point : m_points)
         {
             point->set(std::cos(rad_angle) * (point->x - origin.x)

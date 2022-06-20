@@ -104,7 +104,7 @@ namespace obe::tiles
         {
             if (game_object.at("tileId").as<vili::integer>() == tile_info.tile_id)
             {
-                std::string game_object_id = Utils::String::replace(game_object.at("id"), "{index}",
+                std::string game_object_id = utils::string::replace(game_object.at("id"), "{index}",
                     std::to_string(m_scene.get_scene().get_game_object_amount()));
                 vili::node requirements = game_object.at("Requires");
                 transform::UnitVector game_object_position(x * tileset.get_tile_width(),

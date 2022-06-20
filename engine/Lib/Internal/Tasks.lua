@@ -31,7 +31,7 @@ function TaskManagerContext:wait_for(condition, ...)
         local listener_id = "taskwaitfor." .. condition;
         local ref = {};
         task:on_clean(function()
-            getmetatable(ref.hook).clean(ref.hook);
+            getmetatable(ref.listener).clean(ref.listener);
         end);
         local event_callback = ...;
         ref.callback = function(evt)
@@ -39,9 +39,9 @@ function TaskManagerContext:wait_for(condition, ...)
                 return;
             end
             ctx:wake(co);
-            getmetatable(ref.hook).clean(ref.hook);
+            getmetatable(ref.listener).clean(ref.listener);
         end
-        ref.hook = self.task_manager.listen(
+        ref.listener = self.task_manager.listen(
             condition, ref.callback, listener_id
         );
     elseif type(condition) == "function" then
@@ -49,13 +49,13 @@ function TaskManagerContext:wait_for(condition, ...)
         local listener_id = "taskwaitfor.funccondition";
         local ref = {};
         task:on_clean(function()
-            getmetatable(ref.hook).clean(ref.hook);
+            getmetatable(ref.listener).clean(ref.listener);
         end);
-        ref.hook = self.task_manager.listen(
+        ref.listener = self.task_manager.listen(
             "Event.Game.Update", function(evt)
                 if condition(evt) then
                     ctx:wake(co);
-                    getmetatable(ref.hook).clean(ref.hook);
+                    getmetatable(ref.listener).clean(ref.listener);
                 end
             end, listener_id
         );
@@ -135,7 +135,7 @@ function TaskManager:_init(event_functions)
     self.unlisten = event_functions.unlisten;
     self.schedule = event_functions.schedule;
     self.task_count = 0;
-    self.pump_hook = nil;
+    self.listener_pump = nil;
     self.tasks_to_resume = {};
     self.tasks = {};
     self.ctx = TaskManagerContext(self);
@@ -149,8 +149,8 @@ end
 
 function TaskManager:_create_or_delete_pump()
     local task_manager = self;
-    if self.pump_hook == nil and self.task_count >= 1 then
-        self.pump_hook = self.listen(
+    if self.listener_pump == nil and self.task_count >= 1 then
+        self.listener_pump = self.listen(
             "Event.Game.Update", function()
                 for _, task in pairs(task_manager.tasks_to_resume) do
                     task_manager:_resume(task);
@@ -158,11 +158,11 @@ function TaskManager:_create_or_delete_pump()
                 task_manager.tasks_to_resume = {};
             end, "TaskManagerPump"
         );
-    elseif self.pump_hook and self.task_count < 1 then
-        self.unlisten(self.pump_hook);
-        self.pump_hook = nil;
+    elseif self.listener_pump and self.task_count < 1 then
+        self.unlisten(self.listener_pump);
+        self.listener_pump = nil;
     end
-    return self.pump_hook;
+    return self.listener_pump;
 end
 
 function TaskManager:_resume(task, ...)

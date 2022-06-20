@@ -4,26 +4,26 @@
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Component::Exceptions::Bindings
+namespace obe::Component::Exceptions::bindings
 {
-    void LoadClassComponentIdAlreadyTaken(sol::state_view state)
+    void load_class_component_id_already_taken(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Component"]["exceptions"].get<sol::table>();
+        sol::table Exceptions_namespace = state["obe"]["Component"]["Exceptions"].get<sol::table>();
         sol::usertype<obe::Component::Exceptions::ComponentIdAlreadyTaken>
-            bindComponentIdAlreadyTaken
-            = ExceptionsNamespace.new_usertype<obe::Component::Exceptions::ComponentIdAlreadyTaken>(
-                "ComponentIdAlreadyTaken", sol::call_constructor,
+            bind_component_id_already_taken = Exceptions_namespace.new_usertype<
+                obe::Component::Exceptions::ComponentIdAlreadyTaken>("ComponentIdAlreadyTaken",
+                sol::call_constructor,
                 sol::constructors<obe::Component::Exceptions::ComponentIdAlreadyTaken(
                     std::string_view, obe::DebugInfo)>(),
                 sol::base_classes,
                 sol::bases<obe::Exception<obe::Component::Exceptions::ComponentIdAlreadyTaken>,
                     obe::BaseException>());
     }
-    void LoadClassUnknownComponentType(sol::state_view state)
+    void load_class_unknown_component_type(sol::state_view state)
     {
-        sol::table ExceptionsNamespace = state["obe"]["Component"]["exceptions"].get<sol::table>();
-        sol::usertype<obe::Component::Exceptions::UnknownComponentType> bindUnknownComponentType
-            = ExceptionsNamespace.new_usertype<obe::Component::Exceptions::UnknownComponentType>(
+        sol::table Exceptions_namespace = state["obe"]["Component"]["Exceptions"].get<sol::table>();
+        sol::usertype<obe::Component::Exceptions::UnknownComponentType> bind_unknown_component_type
+            = Exceptions_namespace.new_usertype<obe::Component::Exceptions::UnknownComponentType>(
                 "UnknownComponentType", sol::call_constructor,
                 sol::constructors<obe::Component::Exceptions::UnknownComponentType(
                     std::string_view, obe::DebugInfo)>(),

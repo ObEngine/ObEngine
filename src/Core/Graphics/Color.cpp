@@ -665,11 +665,11 @@ namespace obe::graphics
         int alpha = 255;
         if (random_alpha)
         {
-            alpha = Utils::Math::randint(0, 255);
+            alpha = utils::math::randint(0, 255);
         }
-        const int r = Utils::Math::randint(0, 255);
-        const int g = Utils::Math::randint(0, 255);
-        const int b = Utils::Math::randint(0, 255);
+        const int r = utils::math::randint(0, 255);
+        const int g = utils::math::randint(0, 255);
+        const int b = utils::math::randint(0, 255);
         return Color(r, g, b, alpha);
     }
 

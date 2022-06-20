@@ -1,86 +1,86 @@
-#include <Bindings/obe/Utils/Math/Math.hpp>
+#include <Bindings/obe/utils/math/Math.hpp>
 
 #include <Utils/MathUtils.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::Utils::Math::Bindings
+namespace obe::utils::math::bindings
 {
-    void LoadFunctionRandint(sol::state_view state)
+    void load_function_randint(sol::state_view state)
     {
-        sol::table MathNamespace = state["obe"]["Utils"]["Math"].get<sol::table>();
-        MathNamespace.set_function("randint", &obe::Utils::Math::randint);
+        sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
+        math_namespace.set_function("randint", &obe::utils::math::randint);
     }
-    void LoadFunctionRandfloat(sol::state_view state)
+    void load_function_randfloat(sol::state_view state)
     {
-        sol::table MathNamespace = state["obe"]["Utils"]["Math"].get<sol::table>();
-        MathNamespace.set_function("randfloat", &obe::Utils::Math::randfloat);
+        sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
+        math_namespace.set_function("randfloat", &obe::utils::math::randfloat);
     }
-    void LoadFunctionGetMin(sol::state_view state)
+    void load_function_get_min(sol::state_view state)
     {
-        sol::table MathNamespace = state["obe"]["Utils"]["Math"].get<sol::table>();
-        MathNamespace.set_function("get_min",
-            sol::overload(static_cast<int (*)(const int&, const int&)>(&obe::Utils::Math::get_min),
-                static_cast<double (*)(const double&, const double&)>(&obe::Utils::Math::get_min)));
+        sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
+        math_namespace.set_function("get_min",
+            sol::overload(static_cast<int (*)(const int&, const int&)>(&obe::utils::math::get_min),
+                static_cast<double (*)(const double&, const double&)>(&obe::utils::math::get_min)));
     }
-    void LoadFunctionGetMax(sol::state_view state)
+    void load_function_get_max(sol::state_view state)
     {
-        sol::table MathNamespace = state["obe"]["Utils"]["Math"].get<sol::table>();
-        MathNamespace.set_function("get_max",
-            sol::overload(static_cast<int (*)(const int&, const int&)>(&obe::Utils::Math::get_max),
-                static_cast<double (*)(const double&, const double&)>(&obe::Utils::Math::get_max)));
+        sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
+        math_namespace.set_function("get_max",
+            sol::overload(static_cast<int (*)(const int&, const int&)>(&obe::utils::math::get_max),
+                static_cast<double (*)(const double&, const double&)>(&obe::utils::math::get_max)));
     }
-    void LoadFunctionIsBetween(sol::state_view state)
+    void load_function_is_between(sol::state_view state)
     {
-        sol::table MathNamespace = state["obe"]["Utils"]["Math"].get<sol::table>();
-        MathNamespace.set_function("is_between",
+        sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
+        math_namespace.set_function("is_between",
             sol::overload(static_cast<bool (*)(const int&, const int&, const int&)>(
-                              &obe::Utils::Math::is_between),
+                              &obe::utils::math::is_between),
                 static_cast<bool (*)(const int&, const int&, const double&)>(
-                    &obe::Utils::Math::is_between),
+                    &obe::utils::math::is_between),
                 static_cast<bool (*)(const int&, const double&, const int&)>(
-                    &obe::Utils::Math::is_between),
+                    &obe::utils::math::is_between),
                 static_cast<bool (*)(const int&, const double&, const double&)>(
-                    &obe::Utils::Math::is_between),
+                    &obe::utils::math::is_between),
                 static_cast<bool (*)(const double&, const int&, const int&)>(
-                    &obe::Utils::Math::is_between),
+                    &obe::utils::math::is_between),
                 static_cast<bool (*)(const double&, const int&, const double&)>(
-                    &obe::Utils::Math::is_between),
+                    &obe::utils::math::is_between),
                 static_cast<bool (*)(const double&, const double&, const int&)>(
-                    &obe::Utils::Math::is_between),
+                    &obe::utils::math::is_between),
                 static_cast<bool (*)(const double&, const double&, const double&)>(
-                    &obe::Utils::Math::is_between)));
+                    &obe::utils::math::is_between)));
     }
-    void LoadFunctionIsDoubleInt(sol::state_view state)
+    void load_function_is_double_int(sol::state_view state)
     {
-        sol::table MathNamespace = state["obe"]["Utils"]["Math"].get<sol::table>();
-        MathNamespace.set_function("is_double_int", &obe::Utils::Math::is_double_int);
+        sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
+        math_namespace.set_function("is_double_int", &obe::utils::math::is_double_int);
     }
-    void LoadFunctionSign(sol::state_view state)
+    void load_function_sign(sol::state_view state)
     {
-        sol::table MathNamespace = state["obe"]["Utils"]["Math"].get<sol::table>();
-        MathNamespace.set_function("sign",
-            sol::overload(static_cast<int (*)(int)>(&obe::Utils::Math::sign),
-                static_cast<int (*)(double)>(&obe::Utils::Math::sign)));
+        sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
+        math_namespace.set_function("sign",
+            sol::overload(static_cast<int (*)(int)>(&obe::utils::math::sign),
+                static_cast<int (*)(double)>(&obe::utils::math::sign)));
     }
-    void LoadFunctionConvertToRadian(sol::state_view state)
+    void load_function_convert_to_radian(sol::state_view state)
     {
-        sol::table MathNamespace = state["obe"]["Utils"]["Math"].get<sol::table>();
-        MathNamespace.set_function("convert_to_radian", &obe::Utils::Math::convert_to_radian);
+        sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
+        math_namespace.set_function("convert_to_radian", &obe::utils::math::convert_to_radian);
     }
-    void LoadFunctionConvertToDegree(sol::state_view state)
+    void load_function_convert_to_degrees(sol::state_view state)
     {
-        sol::table MathNamespace = state["obe"]["Utils"]["Math"].get<sol::table>();
-        MathNamespace.set_function("convert_to_degrees", &obe::Utils::Math::convert_to_degrees);
+        sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
+        math_namespace.set_function("convert_to_degrees", &obe::utils::math::convert_to_degrees);
     }
-    void LoadFunctionNormalize(sol::state_view state)
+    void load_function_normalize(sol::state_view state)
     {
-        sol::table MathNamespace = state["obe"]["Utils"]["Math"].get<sol::table>();
-        MathNamespace.set_function("normalize", &obe::Utils::Math::normalize);
+        sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
+        math_namespace.set_function("normalize", &obe::utils::math::normalize);
     }
-    void LoadGlobalPi(sol::state_view state)
+    void load_global_pi(sol::state_view state)
     {
-        sol::table MathNamespace = state["obe"]["Utils"]["Math"].get<sol::table>();
-        MathNamespace["pi"] = obe::Utils::Math::pi;
+        sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
+        math_namespace["pi"] = obe::utils::math::pi;
     }
 };

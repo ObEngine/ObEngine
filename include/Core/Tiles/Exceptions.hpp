@@ -38,8 +38,8 @@ namespace obe::tiles::exceptions
         {
             this->error("Impossible to find Tileset with id '{}'", tileset_id);
             std::vector<std::string> suggestions
-                = Utils::String::sort_by_distance(tileset_id, tilesets_ids, 5);
-            std::ranges::transform(suggestions, suggestions.begin(), Utils::String::quote);
+                = utils::string::sort_by_distance(tileset_id, tilesets_ids, 5);
+            std::ranges::transform(suggestions, suggestions.begin(), utils::string::quote);
             this->hint(
                 "Maybe you meant one of these tilesets : ({})", fmt::join(suggestions, ", "));
         }
@@ -69,9 +69,9 @@ namespace obe::tiles::exceptions
         {
             this->error("Impossible to find Tile Layer with id '{}'", layer_id);
             std::vector<std::string> suggestions
-                = Utils::String::sort_by_distance(layer_id, layer_ids, 5);
+                = utils::string::sort_by_distance(layer_id, layer_ids, 5);
             std::ranges::transform(suggestions
-                , suggestions.begin(), Utils::String::quote);
+                , suggestions.begin(), utils::string::quote);
             this->hint("Maybe you meant one of these layers : ({})", fmt::join(suggestions, ", "));
         }
     };

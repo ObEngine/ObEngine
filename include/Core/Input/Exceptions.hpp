@@ -43,9 +43,9 @@ namespace obe::input::Exceptions
         {
             this->error("InputAction named '{}' does not exists", action_name);
             std::vector<std::string> suggestions
-                = Utils::String::sort_by_distance(action_name.data(), existing_actions, 5);
+                = utils::string::sort_by_distance(action_name.data(), existing_actions, 5);
             std::ranges::transform(suggestions
-                , suggestions.begin(), Utils::String::quote);
+                , suggestions.begin(), utils::string::quote);
             this->hint(
                 "Try one of the following InputAction : ({}...)", fmt::join(suggestions, ", "));
         }
@@ -61,9 +61,9 @@ namespace obe::input::Exceptions
         {
             this->error("InputButton named '{}' does not exists", button_name);
             std::vector<std::string> suggestions
-                = Utils::String::sort_by_distance(button_name.data(), existing_buttons, 5);
+                = utils::string::sort_by_distance(button_name.data(), existing_buttons, 5);
             std::ranges::transform(suggestions
-                , suggestions.begin(), &Utils::String::quote);
+                , suggestions.begin(), &utils::string::quote);
             this->hint(
                 "Try one of the following InputButton : ({}...)", fmt::join(suggestions, ", "));
         }

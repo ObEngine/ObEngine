@@ -4,19 +4,19 @@ namespace sol
 {
     class state_view;
 };
-namespace vili::writer::Bindings
+namespace vili::writer::bindings
 {
-    void LoadClassDumpOptions(sol::state_view state);
-    void LoadClass_array(sol::state_view state);
-    void LoadClass_object(sol::state_view state);
-    void LoadEnumDelimiterNewlinePolicy(sol::state_view state);
-    void LoadEnumCommaSpacingPolicy(sol::state_view state);
-    void LoadEnumObjectStyle(sol::state_view state);
-    void LoadFunctionDumpInteger(sol::state_view state);
-    void LoadFunctionDumpNumber(sol::state_view state);
-    void LoadFunctionDumpBoolean(sol::state_view state);
-    void LoadFunctionDumpString(sol::state_view state);
-    void LoadFunctionDumpArray(sol::state_view state);
-    void LoadFunctionDumpObject(sol::state_view state);
-    void LoadFunctionDump(sol::state_view state);
+    void load_class_dump_options(sol::state_view state);
+    void load_class__array(sol::state_view state);
+    void load_class__object(sol::state_view state);
+    void load_enum_delimiter_newline_policy(sol::state_view state);
+    void load_enum_comma_spacing_policy(sol::state_view state);
+    void load_enum_object_style(sol::state_view state);
+    void load_function_dump_integer(sol::state_view state);
+    void load_function_dump_number(sol::state_view state);
+    void load_function_dump_boolean(sol::state_view state);
+    void load_function_dump_string(sol::state_view state);
+    void load_function_dump_array(sol::state_view state);
+    void load_function_dump_object(sol::state_view state);
+    void load_function_dump(sol::state_view state);
 };

@@ -61,7 +61,7 @@ namespace obe::config::validators
             "GP_[0-9]+_BTN_[0-9]+",
             "GP_[0-9]+_AXIS_(X|Y|Z|R|U|PovX|PovY)_(LEFT|UP|RIGHT|DOWN)"
         };
-        std::string all_inputs = Utils::Vector::join(input_list, "|");
+        std::string all_inputs = utils::vector::join(input_list, "|");
         // clang-format on
         std::string action_re = fmt::format("((Idle|Hold|Pressed|Released)"
                                            "\\s*:\\s*({0}))(\\s*\\+\\s*"

@@ -4,12 +4,12 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::engine::exceptions::Bindings
+namespace obe::engine::exceptions::bindings
 {
-    void LoadClassBootScriptExecutionError(sol::state_view state);
-    void LoadClassBootScriptLoadingError(sol::state_view state);
-    void LoadClassBootScriptMissing(sol::state_view state);
-    void LoadClassFontNotFound(sol::state_view state);
-    void LoadClassTextureNotFound(sol::state_view state);
-    void LoadClassUnitializedEngine(sol::state_view state);
+    void load_class_boot_script_execution_error(sol::state_view state);
+    void load_class_boot_script_loading_error(sol::state_view state);
+    void load_class_boot_script_missing(sol::state_view state);
+    void load_class_font_not_found(sol::state_view state);
+    void load_class_texture_not_found(sol::state_view state);
+    void load_class_unitialized_engine(sol::state_view state);
 };

@@ -253,7 +253,7 @@ namespace obe::animation
             std::string texture_name;
             if (image.is<vili::integer>() && !model.empty())
             {
-                texture_name = Utils::String::replace(
+                texture_name = utils::string::replace(
                     model, "%s", std::to_string(image.as<vili::integer>()));
                 debug::Log->trace("    <animation> Loading image '{}' (name determined "
                                   "with template[int])",
@@ -261,7 +261,7 @@ namespace obe::animation
             }
             else if (image.is<vili::string>() && !model.empty())
             {
-                texture_name = Utils::String::replace(model, "%s", image);
+                texture_name = utils::string::replace(model, "%s", image);
                 debug::Log->trace("    <animation> Loading image '{}' (name determined "
                                   "with template[str])",
                     texture_name);

@@ -48,13 +48,6 @@ namespace obe::script
          */
         static vili::node get_definition_for_game_object(const std::string& type);
         /**
-         * \brief Applies the Requirements to a GameObject using a Requires
-         *        ComplexNode
-         * \param obj GameObject to applies the requirements to
-         * \param requirements ComplexNode containing the Requirements
-         */
-        static void ApplyRequirements(sol::environment environment, const vili::node& requirements);
-        /**
          * \brief Clears the GameObjectDatabase (cache reload)
          */
         static void clear();
@@ -76,10 +69,9 @@ namespace obe::script
         std::unique_ptr<animation::Animator> m_animator;
         graphics::Sprite* m_sprite = nullptr;
         collision::PolygonalCollider* m_collider = nullptr;
-        scene::SceneNode m_objectNode;
+        scene::SceneNode m_object_node;
         sol::state_view m_lua;
         sol::environment m_outer_environment;
-        sol::table m_inner_storage;
         sol::environment m_inner_environment;
 
         std::string m_type;
@@ -183,21 +175,6 @@ namespace obe::script
         void exec(const std::string& query);
         void init_from_vili(const vili::node& data);
         /**
-         * \brief Send a parameter to the Local.Init trigger
-         * \tparam U Template Type of the Parameter
-         * \param arg_name Name of the Parameter to push
-         * \param value Value of the Parameter
-         */
-        template <typename U>
-        void send_init_arg(const std::string& arg_name, U value);
-        /**
-         * \rename{send_init_arg}
-         * \brief Send a parameter to the Local.Init trigger from a Lua VM
-         * \param arg_name Name of the Parameter to push
-         * \param value Value of the Parameter
-         */
-        void send_init_arg_from_lua(const std::string& arg_name, sol::object value);
-        /**
          * \brief Loads the GameObject through the GameObject Definition File
          * \param scene Scene reference to create components
          * \param obj Vili Node containing the GameObject components
@@ -210,10 +187,10 @@ namespace obe::script
          */
         void update();
         /**
-         * \bind delete
+         * \rename{destroy}
          * \brief Deletes the GameObject
          */
-        void delete_object();
+        void destroy();
         /**
          * \brief Delete State of the GameObject (false = not deleted)
          */
@@ -228,7 +205,7 @@ namespace obe::script
          *        GameObject (Local.Init proxy)
          * \return A reference to the Lua function used to build the GameObject
          */
-        [[nodiscard]] sol::function get_constructor() const;
+        [[nodiscard]] sol::protected_function get_constructor() const;
         /**
          * \brief Triggers the GameObject's Local.Init
          */
@@ -254,12 +231,4 @@ namespace obe::script
         void load(const vili::node& data) override;
         void load_source(const std::string& path, EnvironmentTarget env);
     };
-
-    template <typename U>
-    void GameObject::send_init_arg(const std::string& arg_name, U value)
-    {
-        debug::Log->debug(
-            "<GameObject> Sending Local.Init argument {0} to GameObject {1}", arg_name, m_id);
-        m_outer_environment["__INIT_ARG_TABLE"][arg_name] = value;
-    }
 } // namespace obe::script

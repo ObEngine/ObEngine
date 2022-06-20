@@ -4,11 +4,12 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Types::Bindings
+namespace obe::Types::bindings
 {
-    void LoadClassIdentifiable(sol::state_view state);
-    void LoadClassProtectedIdentifiable(sol::state_view state);
-    void LoadClassSelectable(sol::state_view state);
-    void LoadClassSerializable(sol::state_view state);
-    void LoadClassTogglable(sol::state_view state);
+    void load_class_identifiable(sol::state_view state);
+    void load_class_protected_identifiable(sol::state_view state);
+    void load_class_selectable(sol::state_view state);
+    void load_class_serializable(sol::state_view state);
+    void load_class_togglable(sol::state_view state);
+    void load_class_unknown_enum_entry(sol::state_view state);
 };

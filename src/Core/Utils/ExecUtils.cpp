@@ -2,7 +2,7 @@
 
 #include <Utils/ExecUtils.hpp>
 
-namespace obe::Utils::Exec
+namespace obe::utils::exec
 {
     RunArgsParser::RunArgsParser(int size, char** start)
     {
@@ -24,4 +24,4 @@ namespace obe::Utils::Exec
         }
         return "";
     }
-} // namespace obe::Utils::Exec
+} // namespace obe::utils::exec

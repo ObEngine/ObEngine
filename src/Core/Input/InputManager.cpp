@@ -119,7 +119,7 @@ namespace obe::input
                     m_all_actions.push_back(
                         std::make_unique<InputAction>(e_actions.get(), action_name));
                 }
-                else if (!Utils::Vector::contains(action_name, already_in_file))
+                else if (!utils::vector::contains(action_name, already_in_file))
                 {
                     this->get_action(action_name).clear_conditions();
                 }
@@ -176,7 +176,7 @@ namespace obe::input
         debug::Log->debug("<InputManager> Adding Context '{0}'", context);
         for (auto& action : m_all_actions)
         {
-            if (Utils::Vector::contains(context, action->get_contexts())
+            if (utils::vector::contains(context, action->get_contexts())
                 && !is_action_currently_in_use(action->get_id()))
             {
                 debug::Log->debug(
@@ -325,13 +325,13 @@ namespace obe::input
     InputCombination InputManager::make_combination(const std::string& code)
     {
         InputCombination combination;
-        const std::vector<std::string> elements = Utils::String::split(code, "+");
+        const std::vector<std::string> elements = utils::string::split(code, "+");
         if (code != "NotAssociated")
         {
             for (std::string element : elements)
             {
-                Utils::String::replace_in_place(element, " ", "");
-                std::vector<std::string> state_and_button = Utils::String::split(element, ":");
+                utils::string::replace_in_place(element, " ", "");
+                std::vector<std::string> state_and_button = utils::string::split(element, ":");
                 if (state_and_button.size() == 1 || state_and_button.size() == 2)
                 {
                     if (state_and_button.size() == 1)
@@ -341,11 +341,11 @@ namespace obe::input
                     }
 
                     std::vector<std::string> state_list
-                        = Utils::String::split(state_and_button[0], ",");
+                        = utils::string::split(state_and_button[0], ",");
                     Types::FlagSet<InputButtonState> button_states;
                     for (std::string& button_state : state_list)
                     {
-                        if (Utils::Vector::contains(
+                        if (utils::vector::contains(
                                 button_state, { "Idle", "Hold", "Pressed", "Released" }))
                         {
                             button_states |= InputButtonStateMeta::from_string(button_state);
@@ -359,7 +359,7 @@ namespace obe::input
                     // Detect gamepad button / axis and initialize whole gamepad
                     if (key_id.substr(0, 3) == "GP_")
                     {
-                        auto gamepad_parts = Utils::String::split(key_id, "_");
+                        auto gamepad_parts = utils::string::split(key_id, "_");
                         unsigned int gamepad_index;
                         try
                         {

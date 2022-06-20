@@ -32,19 +32,19 @@ namespace obe::transform
 
     void Rect::rotate(double angle, transform::UnitVector origin)
     {
-        const double rad_angle = Utils::Math::convert_to_radian(-angle);
+        const double rad_angle = utils::math::convert_to_radian(-angle);
 
         m_position = rotate_point_around_center(origin, m_position, rad_angle);
         m_angle += angle;
         if (m_angle < 0 || m_angle > 360)
-            m_angle = Utils::Math::normalize(m_angle, 0, 360);
+            m_angle = utils::math::normalize(m_angle, 0, 360);
     }
 
     void Rect::transform_referential(
         UnitVector& vec, const Referential& ref, ReferentialConversionType type) const
     {
         const double factor = (type == ReferentialConversionType::From) ? 1.0 : -1.0;
-        const double rad_angle = Utils::Math::convert_to_radian(-m_angle);
+        const double rad_angle = utils::math::convert_to_radian(-m_angle);
         const double cos_angle = std::cos(rad_angle);
         const double sin_angle = std::sin(rad_angle);
 
@@ -80,7 +80,7 @@ namespace obe::transform
             draw_points.push_back(world);
         }
 
-        const double rad_angle = Utils::Math::convert_to_radian(-m_angle);
+        const double rad_angle = utils::math::convert_to_radian(-m_angle);
         const double cos_angle = std::cos(rad_angle);
         const double sin_angle = std::sin(rad_angle);
         UnitVector top_pos;
@@ -198,7 +198,7 @@ namespace obe::transform
     void Rect::set_point_position(const UnitVector& position, const Referential& ref)
     {
         const UnitVector opposite_point_position = this->get_position(ref.flip());
-        const double rad_angle = Utils::Math::convert_to_radian(-m_angle);
+        const double rad_angle = utils::math::convert_to_radian(-m_angle);
         const UnitVector moved_point
             = rotate_point_around_center(position, opposite_point_position, -rad_angle);
 
@@ -295,6 +295,6 @@ namespace obe::transform
 
     UnitVector Rect::get_scale_factor() const
     {
-        return UnitVector(Utils::Math::sign(m_size.x), Utils::Math::sign(m_size.y));
+        return UnitVector(utils::math::sign(m_size.x), utils::math::sign(m_size.y));
     }
 } // namespace obe::transform

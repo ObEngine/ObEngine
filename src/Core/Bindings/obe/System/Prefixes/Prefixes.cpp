@@ -1,49 +1,49 @@
-#include <Bindings/obe/System/Prefixes/Prefixes.hpp>
+#include <Bindings/obe/system/prefixes/Prefixes.hpp>
 
 #include <System/MountablePath.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::system::prefixes::Bindings
+namespace obe::system::prefixes::bindings
 {
-    void LoadGlobalObe(sol::state_view state)
+    void load_global_obe(sol::state_view state)
     {
-        sol::table PrefixesNamespace = state["obe"]["system"]["prefixes"].get<sol::table>();
-        PrefixesNamespace["obe"] = obe::system::prefixes::obe;
+        sol::table prefixes_namespace = state["obe"]["system"]["prefixes"].get<sol::table>();
+        prefixes_namespace["obe"] = obe::system::prefixes::obe;
     }
-    void LoadGlobalCwd(sol::state_view state)
+    void load_global_cwd(sol::state_view state)
     {
-        sol::table PrefixesNamespace = state["obe"]["system"]["prefixes"].get<sol::table>();
-        PrefixesNamespace["cwd"] = obe::system::prefixes::cwd;
+        sol::table prefixes_namespace = state["obe"]["system"]["prefixes"].get<sol::table>();
+        prefixes_namespace["cwd"] = obe::system::prefixes::cwd;
     }
-    void LoadGlobalExe(sol::state_view state)
+    void load_global_exe(sol::state_view state)
     {
-        sol::table PrefixesNamespace = state["obe"]["system"]["prefixes"].get<sol::table>();
-        PrefixesNamespace["exe"] = obe::system::prefixes::exe;
+        sol::table prefixes_namespace = state["obe"]["system"]["prefixes"].get<sol::table>();
+        prefixes_namespace["exe"] = obe::system::prefixes::exe;
     }
-    void LoadGlobalCfg(sol::state_view state)
+    void load_global_cfg(sol::state_view state)
     {
-        sol::table PrefixesNamespace = state["obe"]["system"]["prefixes"].get<sol::table>();
-        PrefixesNamespace["cfg"] = obe::system::prefixes::cfg;
+        sol::table prefixes_namespace = state["obe"]["system"]["prefixes"].get<sol::table>();
+        prefixes_namespace["cfg"] = obe::system::prefixes::cfg;
     }
-    void LoadGlobalMount(sol::state_view state)
+    void load_global_mount(sol::state_view state)
     {
-        sol::table PrefixesNamespace = state["obe"]["system"]["prefixes"].get<sol::table>();
-        PrefixesNamespace["mount"] = obe::system::prefixes::mount;
+        sol::table prefixes_namespace = state["obe"]["system"]["prefixes"].get<sol::table>();
+        prefixes_namespace["mount"] = obe::system::prefixes::mount;
     }
-    void LoadGlobalExtlibs(sol::state_view state)
+    void load_global_extlibs(sol::state_view state)
     {
-        sol::table PrefixesNamespace = state["obe"]["system"]["prefixes"].get<sol::table>();
-        PrefixesNamespace["extlibs"] = obe::system::prefixes::extlibs;
+        sol::table prefixes_namespace = state["obe"]["system"]["prefixes"].get<sol::table>();
+        prefixes_namespace["extlibs"] = obe::system::prefixes::extlibs;
     }
-    void LoadGlobalRoot(sol::state_view state)
+    void load_global_root(sol::state_view state)
     {
-        sol::table PrefixesNamespace = state["obe"]["system"]["prefixes"].get<sol::table>();
-        PrefixesNamespace["root"] = obe::system::prefixes::root;
+        sol::table prefixes_namespace = state["obe"]["system"]["prefixes"].get<sol::table>();
+        prefixes_namespace["root"] = obe::system::prefixes::root;
     }
-    void LoadGlobalGame(sol::state_view state)
+    void load_global_game(sol::state_view state)
     {
-        sol::table PrefixesNamespace = state["obe"]["system"]["prefixes"].get<sol::table>();
-        PrefixesNamespace["game"] = obe::system::prefixes::game;
+        sol::table prefixes_namespace = state["obe"]["system"]["prefixes"].get<sol::table>();
+        prefixes_namespace["game"] = obe::system::prefixes::game;
     }
 };

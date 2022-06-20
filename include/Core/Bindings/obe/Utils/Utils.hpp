@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Utils::Bindings
+namespace obe::utils::bindings
 {
 
 };

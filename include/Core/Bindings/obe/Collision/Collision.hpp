@@ -4,11 +4,11 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::collision::Bindings
+namespace obe::collision::bindings
 {
-    void LoadClassCollisionData(sol::state_view state);
-    void LoadClassPolygonalCollider(sol::state_view state);
-    void LoadClassTrajectory(sol::state_view state);
-    void LoadClassTrajectoryNode(sol::state_view state);
-    void LoadEnumColliderTagType(sol::state_view state);
+    void load_class_collision_data(sol::state_view state);
+    void load_class_polygonal_collider(sol::state_view state);
+    void load_class_trajectory(sol::state_view state);
+    void load_class_trajectory_node(sol::state_view state);
+    void load_enum_collider_tag_type(sol::state_view state);
 };
