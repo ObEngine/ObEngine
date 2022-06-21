@@ -10,7 +10,7 @@
 #include <Script/Scripting.hpp>
 #include <System/Path.hpp>
 
-namespace obe::Bindings
+namespace obe::bindings
 {
     void index_core_bindings(sol::state_view state);
 }
@@ -84,9 +84,9 @@ void run(std::string command)
         sol::lib::io, sol::lib::bit32);
     lua["__ENV_ID"] = "[Global Environment]";
     // Table shared across all environments, for easy value sharing
-    lua["global"] = sol::new_table();
+    lua["Global"] = sol::new_table();
 
-    Bindings::index_core_bindings(lua);
+    bindings::index_core_bindings(lua);
     lua.safe_script_file("obe://Lib/Internal/Require.lua"_fs);
     lua.safe_script_file("obe://Lib/Internal/Helpers.lua"_fs);
     lua.safe_script_file("obe://Lib/Internal/Logger.lua"_fs);

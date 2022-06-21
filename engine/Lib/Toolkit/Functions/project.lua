@@ -3,7 +3,7 @@ local Commands = require("Lib/Toolkit/Commands");
 local Style = require("Lib/Toolkit/Stylesheet");
 local SampleProjectTemplate = require("Lib/Toolkit/Templates/SampleProject");
 
-local fs = obe.Utils.File;
+local fs = obe.utils.file;
 
 local function is_in_engine_directory()
     return fs.fileExists("projects.vili");
@@ -32,12 +32,12 @@ local function get_project_list()
 end
 
 local function get_non_indexed_projects()
-    local lookup_path = fs.getCurrentDirectory();
+    local lookup_path = fs.get_current_directory();
     if is_in_engine_directory() then
-        lookup_path = fs.getCurrentDirectory() .. "/Projects";
+        lookup_path = fs.get_current_directory() .. "/Projects";
     end
     print("Lookup path", lookup_path);
-    local all_directories = fs.getDirectoryList(lookup_path);
+    local all_directories = fs.get_directory_list(lookup_path);
     local indexed_projects = get_project_list();
 
     local non_indexed_projects = {};
@@ -54,8 +54,12 @@ end
 local function write_to_file(path, content)
     print("Opening file", path)
     local file_handle = io.open(path, "w");
-    file_handle:write(content);
-    file_handle:close();
+    if file_handle ~= nil then
+        file_handle:write(content);
+        file_handle:close();
+    else
+        error(("failed to write to file at path '%s'"):format(path))
+    end
 end
 
 local function _mount_(project_name)

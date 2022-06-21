@@ -1,10 +1,13 @@
-local canvas;
+---@class SampleObject : GameObjectCls
+local SampleObject = GameObject();
 
-function Local.Init()
-    local screen_size = Engine.Window:getSize();
-    canvas = obe.Canvas.Canvas(screen_size.x, screen_size.y);
+local _canvas;
 
-    canvas:Text "hello" {
+function SampleObject:init()
+    local screen_size = Engine.Window:get_size();
+    _canvas = obe.Canvas.Canvas(screen_size.x, screen_size.y);
+
+    _canvas:Text "hello" {
         text = "Hello, world!",
         size = 128,
         color = obe.Graphics.Color.White,
@@ -19,5 +22,5 @@ function Local.Init()
 end
 
 function Event.Game.Render()
-    canvas:render(Object.Sprite);
+    _canvas:render(SampleObject.components.Sprite);
 end

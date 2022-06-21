@@ -99,8 +99,10 @@ namespace obe
     inline void BaseException::nest_in_place(const std::exception& exception)
     {
         m_traceback = std::vector { std::runtime_error(exception.what()) };
-        m_message += "  Cause:\n";
-        m_message += "    " + utils::string::replace(exception.what(), "\n", "\n    ");
+        std::string cause = "  Cause:\n";
+        cause += "    " + utils::string::replace(exception.what(), "\n", "\n    ");
+        m_message += cause;
+        fprintf(stderr, "%s", cause.c_str());
     }
 
     inline void BaseException::nest_in_place(const BaseException& exception)
@@ -108,8 +110,10 @@ namespace obe
         const std::vector<std::runtime_error>& traceback = exception.traceback();
         m_traceback = std::vector<std::runtime_error>(traceback.begin(), traceback.end());
         m_traceback.push_back(std::runtime_error(exception.what()));
-        m_message += "  Cause:\n";
-        m_message += "    " + utils::string::replace(exception.what(), "\n", "\n    ");
+        std::string cause = "  Cause:\n";
+        cause += "    " + utils::string::replace(exception.what(), "\n", "\n    ");
+        m_message += cause;
+        fprintf(stderr, "%s", cause.c_str());
     }
 
     inline BaseException::BaseException(const std::exception& e) noexcept

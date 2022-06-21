@@ -1,6 +1,6 @@
 local GameObjectHandle = require("obe://Lib/Internal/GameObject");
 
-__GAME_OBJECT = GameObjectHandle:new(This);
+local __GAME_OBJECT = GameObjectHandle:new(This);
 
 ---@return GameObjectCls
 function GameObject()

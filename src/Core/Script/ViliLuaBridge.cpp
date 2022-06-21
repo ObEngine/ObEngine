@@ -76,7 +76,6 @@ namespace obe::script::vili_lua_bridge
     sol::lua_value vili_array_to_lua_table(const vili::node& convert)
     {
         std::vector<sol::lua_value> result;
-        std::size_t index = 0;
         for (const vili::node& value : convert)
         {
             if (value.is_primitive())
@@ -93,7 +92,7 @@ namespace obe::script::vili_lua_bridge
     {
         vili::node result = vili::object {};
 
-        for (auto& [key, value] : convert)
+        for (const auto& [key, value] : convert.pairs())
         {
             result.insert(key.as<std::string>(), lua_to_vili(value));
         }

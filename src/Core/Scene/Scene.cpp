@@ -384,6 +384,10 @@ namespace obe::scene
                         const vili::node& object_requirements = game_object.at("Requires");
                         new_object.init_from_vili(object_requirements);
                     }
+                    else
+                    {
+                        new_object.initialize();
+                    }
                 }
                 else if (!this->get_game_object(game_object_id).is_permanent())
                 {
@@ -436,13 +440,13 @@ namespace obe::scene
     {
         if (!m_deferred_scene_load.empty())
         {
+            const sol::protected_function on_load_callback = std::move(m_on_load_callback);
             const std::string future_load_buffer = std::move(m_deferred_scene_load);
             const std::string current_scene = m_level_file_name;
             this->load_from_file(future_load_buffer);
-            if (m_on_load_callback)
+            if (on_load_callback)
             {
-                const sol::protected_function_result result
-                    = m_on_load_callback(future_load_buffer);
+                const sol::protected_function_result result = on_load_callback(future_load_buffer);
                 if (!result.valid())
                 {
                     const auto error = result.get<sol::error>();
