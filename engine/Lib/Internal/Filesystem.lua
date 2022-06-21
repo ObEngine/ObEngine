@@ -1,5 +1,5 @@
 local function realpath(path)
-    return obe.system.Path(path):find():hypotheticalPath();
+    return obe.system.Path(path):find():hypothetical_path();
 end
 
 -- UPL stands for Unpatched Lua Functions

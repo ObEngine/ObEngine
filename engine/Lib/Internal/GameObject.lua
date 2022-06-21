@@ -21,7 +21,13 @@ local ComponentsMT = {
         };
         return component_dispatcher[key]();
     end
-}
+};
+
+local function make_storage(handle)
+    return setmetatable({}, {
+        __index = handle
+    });
+end
 
 ---@class GameObjectCls
 local GameObjectHandle = {};
@@ -30,9 +36,9 @@ GameObjectHandle.__index = GameObjectHandle;
 
 function GameObjectHandle:listen(listen_target, callback, listener_id)
     if listener_id == nil then
-        listener_id = self._id;
+        listener_id = self._full_id;
     elseif type(listener_id) == "string" then
-        listener_id = ("%s.%s"):format(self._id, listener_id);
+        listener_id = ("%s.%s"):format(self._full_id, listener_id);
     else
         error(("expect listener_id parameter to be a <string> (got <%s>)"):format(type(listener_id)));
     end
@@ -118,7 +124,7 @@ function GameObjectHandle:__newindex(key, value)
 end
 
 function GameObjectHandle:__index(key)
-    return self._storage[key] or GameObjectHandle[key];
+    return rawget(self._storage, key) or GameObjectHandle[key];
 end
 
 ---Creates a new GameObjectHandle
@@ -130,7 +136,7 @@ function GameObjectHandle:new(object)
         -- Used to store event hooks
         _events_listeners = {},
         -- ID used for all event listeners
-        _id = ("%s.%s"):format(object:get_type(), object:get_id()),
+        _full_id = ("%s.%s"):format(object:get_type(), object:get_id()),
         -- Flag to detect whether the GameObject is already initialized or not
         _initialized = false,
         -- Used to store constructor arguments
@@ -139,11 +145,10 @@ function GameObjectHandle:new(object)
         _object = object,
         -- Used to store all schedulers
         _schedulers = {};
-        -- Used to store all GameObject custom methods / attributes
-        _storage = {},
 
         --- Attributes
-        components = setmetatable({object=object}, ComponentsMT),
+        components = setmetatable({_object=object}, ComponentsMT),
+        id = object:get_id(),
         type = object:get_type(),
 
         --- Methods
@@ -162,6 +167,7 @@ function GameObjectHandle:new(object)
         unlisten = function(...) return instance:unlisten(...) end,
         schedule = function(...) return instance:schedule(...) end,
     };
+    instance._storage = make_storage(instance);
 
     return setmetatable(instance, self);
 end

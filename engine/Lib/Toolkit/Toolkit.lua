@@ -6,14 +6,14 @@ local tablex = require("extlibs://pl.tablex");
 
 local currentExecution;
 
-local fs = obe.Utils.File;
+local fs = obe.utils.file;
 
 TOOLKIT_CONTEXTS = {};
 
 -- Load all Toolkit functions located in Lib/Toolkit/Functions
 local function loadToolkitFunctions()
     local toolkitFunctionsDirectory = obe.system.Path("obe://Lib/Toolkit/Functions"):find(obe.system.PathType.Directory);
-    local fileList = fs.getFileList(toolkitFunctionsDirectory:path());
+    local fileList = fs.get_file_list(toolkitFunctionsDirectory:path());
     local allFunctions = {};
     for _, content in pairs(fileList) do
         -- print("Loading Toolkit function :", "Lib/Toolkit/Functions/", content);
@@ -166,9 +166,9 @@ local function buildCommandExecution(func, args)
         value = {func = function() print("Called autocomplete"); end}
     };
     args["autocomplete"] = autocomplete;
-    local ArgMirror = require('obe://Lib/Internal/ArgMirror');
+    local argmirror = require('obe://Lib/Internal/ArgMirror');
     -- Getting arguments names of the function
-    local argList = ArgMirror.GetArgs(func);
+    local argList = argmirror.get_args(func);
     local callArgs = {};
     -- We create a table containing arguments of the function at the correct index
     for _, arg in pairs(argList) do
@@ -179,7 +179,7 @@ local function buildCommandExecution(func, args)
     end
     local exec = coroutine.create(function()
         local subroutine = coroutine.create(function()
-            func(ArgMirror.Unpack(callArgs));
+            func(argmirror.unpack_with_nil(callArgs));
         end);
         local ok, msg = coroutine.resume(subroutine);
         if not ok then
