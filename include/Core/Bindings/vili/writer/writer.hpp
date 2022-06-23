@@ -10,13 +10,6 @@ namespace vili::writer::bindings
     void load_class__array(sol::state_view state);
     void load_class__object(sol::state_view state);
     void load_enum_delimiter_newline_policy(sol::state_view state);
-    void load_enum_comma_spacing_policy(sol::state_view state);
     void load_enum_object_style(sol::state_view state);
-    void load_function_dump_integer(sol::state_view state);
-    void load_function_dump_number(sol::state_view state);
-    void load_function_dump_boolean(sol::state_view state);
-    void load_function_dump_string(sol::state_view state);
-    void load_function_dump_array(sol::state_view state);
-    void load_function_dump_object(sol::state_view state);
     void load_function_dump(sol::state_view state);
 };

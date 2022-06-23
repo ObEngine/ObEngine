@@ -32,8 +32,7 @@ namespace vili::parser
             ss << e.what() << '\n'
                << input.line_at(p) << '\n'
                << std::setw(p.byte) << ' ' << '^' << std::endl;
-            throw exceptions::parsing_error(
-                input.source(), p.line, p.byte, VILI_EXC_INFO)
+            throw exceptions::parsing_error(input.source(), p.line, p.byte, VILI_EXC_INFO)
                 .nest(std::runtime_error(ss.str()));
         }
         /*catch (vili::exceptions::base_exception& e)
@@ -52,10 +51,10 @@ namespace vili::parser
 
     vili::node from_file(std::string_view path)
     {
-      try
+        try
         {
-          state parser_state;
-          peg::file_input in(path);
+            state parser_state;
+            peg::file_input in(path);
             return parse(in, parser_state);
         }
         catch (const std::system_error& e)

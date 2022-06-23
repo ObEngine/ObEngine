@@ -397,6 +397,11 @@ namespace vili
         return this->at(index);
     }
 
+    node& node::operator[](unsigned int index)
+    {
+        return this->at(index);
+    }
+
     const node & node::operator[](const char *key) const
     {
         return this->at(key);

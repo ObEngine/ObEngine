@@ -39,7 +39,7 @@ namespace obe::event
         /**
          * \brief calls the callback `amount` times at the rate configured in the `every(x)` call
          *
-         * \bind{replay}
+         * \rename{replay}
          */
         CallbackScheduler& repeat(unsigned int amount);
         void run(const Callback& callback);
