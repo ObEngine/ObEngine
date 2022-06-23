@@ -7,13 +7,11 @@
 namespace vili::parser
 {
     /**
-     * \nobind
      * \brief Base error message
      */
     template <typename> inline constexpr const char* error_message = nullptr;
 
     /**
-     * \nobind
      * \brief Message that will be printed when the parser
      *        does not find an expected affectation operator
      */
@@ -23,7 +21,6 @@ namespace vili::parser
 
     // String
     /**
-     * \nobind
      * \brief Message that will be printed when the parser
      *        does not found digits after unicode character
      */
@@ -31,14 +28,12 @@ namespace vili::parser
     inline constexpr auto
         error_message<rules::xdigit> = "incomplete universal character name";
     /**
-     * \nobind
      * \brief Message that will be printed when the parser
      *        find an incorrect escape sequence
      */
     template <>
     inline constexpr auto error_message<rules::escaped> = "unknown escape sequence";
     /**
-     * \nobind
      * \brief Message that will be printed when the parser
      *        find an incorrect character in a vili string
      */
@@ -46,7 +41,6 @@ namespace vili::parser
     inline constexpr auto
         error_message<rules::char_> = "invalid character in vili string";
     /**
-     * \nobind
      * \brief Message that will be printed when the parser
      *        find an unterminated string
      */
@@ -56,7 +50,6 @@ namespace vili::parser
 
     // Data
     /**
-     * \nobind
      * \brief Message that will be printed when the parser
      *        does not find an expected inline_element
      */
@@ -64,14 +57,12 @@ namespace vili::parser
     inline constexpr auto
         error_message<rules::inline_element> = "invalid vili inline element";
     /**
-     * \nobind
      * \brief Message that will be printed when the parser
      *        does not find an expected inline node
      */
     template <>
     inline constexpr auto error_message<rules::inline_node> = "invalid vili inline node";
     /**
-     * \nobind
      * \brief Message that will be printed when the parser
      *        does not find an expected vili element
      */
@@ -80,7 +71,6 @@ namespace vili::parser
 
     // Arrays
     /**
-     * \nobind
      * \brief Message that will be printed when the parser
      *        find an unclosed array
      */
@@ -90,7 +80,6 @@ namespace vili::parser
 
     // Objects
     /**
-     * \nobind
      * \brief Message that will be printed when the parser
      *        find an unclosed object
      */
@@ -100,13 +89,11 @@ namespace vili::parser
 
     // Nodes
     /**
-     * \nobind
      * \brief Message that will be printed when the parser
      *        find an invalid block
      */
     template <> inline constexpr auto error_message<rules::block> = "invalid block";
     /**
-     * \nobind
      * \brief Message that will be printed when the parser
      *        does find an invalid vili content
      */

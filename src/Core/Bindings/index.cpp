@@ -516,14 +516,7 @@ namespace obe::bindings
         vili::writer::bindings::load_class__array(state);
         vili::writer::bindings::load_class__object(state);
         vili::writer::bindings::load_enum_delimiter_newline_policy(state);
-        vili::writer::bindings::load_enum_comma_spacing_policy(state);
         vili::writer::bindings::load_enum_object_style(state);
-        vili::writer::bindings::load_function_dump_integer(state);
-        vili::writer::bindings::load_function_dump_number(state);
-        vili::writer::bindings::load_function_dump_boolean(state);
-        vili::writer::bindings::load_function_dump_string(state);
-        vili::writer::bindings::load_function_dump_array(state);
-        vili::writer::bindings::load_function_dump_object(state);
         vili::writer::bindings::load_function_dump(state);
         obe::animation::easing::bindings::load_enum_easing_type(state);
         obe::animation::easing::bindings::load_function_linear(state);

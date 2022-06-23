@@ -31,7 +31,7 @@ function obe.event._CallbackScheduler:every(amount) end
 ---
 ---@param amount number #
 ---@return obe.event.CallbackScheduler
-function obe.event._CallbackScheduler:repeat(amount) end
+function obe.event._CallbackScheduler:replay(amount) end
 
 ---@param callback obe.event.Callback #
 function obe.event._CallbackScheduler:run(callback) end
