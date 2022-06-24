@@ -3,28 +3,6 @@
 
 namespace obe::event
 {
-    ScopeProfiler::ScopeProfiler(CallbackProfiler& results)
-        : m_start(time::epoch())
-        , m_results(results)
-    {
-    }
-
-    ScopeProfiler::~ScopeProfiler()
-    {
-        const time::TimeUnit duration = time::epoch() - m_start;
-
-        m_results.time += duration;
-        ++m_results.hits;
-        if (duration < m_results.min || m_results.min == 0)
-        {
-            m_results.min = duration;
-        }
-        if (duration > m_results.max)
-        {
-            m_results.max = duration;
-        }
-    }
-
     void EventBase::on_add_listener(OnListenerChange callback)
     {
         m_on_add_listener = std::move(callback);
@@ -47,7 +25,8 @@ namespace obe::event
         m_garbage_collector.clear();
     }
 
-    EventBase::EventBase(const std::string& parent_name, const std::string& name, bool initial_state)
+    EventBase::EventBase(
+        const std::string& parent_name, const std::string& name, bool initial_state)
         : m_name(name)
         , m_enabled(initial_state)
     {
@@ -93,10 +72,5 @@ namespace obe::event
         {
             m_on_remove_listener(ListenerChangeState::Removed, id);
         }
-    }
-
-    const EventProfiler& EventBase::get_profiler() const
-    {
-        return m_profiler;
     }
 } // namespace obe::event

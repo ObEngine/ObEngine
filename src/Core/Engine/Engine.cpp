@@ -130,7 +130,8 @@ namespace obe::engine
             = system::Path(system::MountablePath::from_prefix("cwd").base_path).add("Plugins");
         if (utils::file::directory_exists(plugin_path_base.to_string()))
         {
-            for (const std::string& filename : utils::file::get_file_list(plugin_path_base.to_string()))
+            for (const std::string& filename :
+                utils::file::get_file_list(plugin_path_base.to_string()))
             {
                 const std::string plugin_path = plugin_path_base.add(filename).to_string();
                 const std::string plugin_name = utils::string::split(filename, ".")[0];
@@ -373,7 +374,6 @@ namespace obe::engine
         }
 
         m_framerate->start();
-        vili::array dts;
         time::TimeUnit start = time::epoch();
         while (m_window->is_open())
         {
@@ -381,7 +381,6 @@ namespace obe::engine
 
             if (m_framerate->should_update())
             {
-                dts.push_back(m_framerate->get_game_speed());
                 e_game->trigger(events::Game::Update { m_framerate->get_game_speed() });
                 this->update();
             }
@@ -399,20 +398,7 @@ namespace obe::engine
             }
         }
         time::TimeUnit total_time = time::epoch() - start;
-        double dt_sum = 0;
-        for (auto dt : dts)
-        {
-            dt_sum += dt.as<double>();
-        }
-        debug::Log->info("Execution completed with {} ticks in {} seconds (dt sum: {})", dts.size(),
-            total_time, dt_sum);
-        vili::node profiler = m_events->dump_profiler_results();
-        profiler.emplace("dts", dts);
-        std::ofstream profiler_output;
-        profiler_output.open("profiler.vili");
-        std::string dump = profiler.dump();
-        profiler_output.write(dump.data(), dump.size());
-        profiler_output.close();
+        debug::Log->info("Execution completed in {} seconds", total_time);
     }
 
     audio::AudioManager& Engine::get_audio_manager()

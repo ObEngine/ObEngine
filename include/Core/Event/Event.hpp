@@ -11,28 +11,6 @@ namespace obe::event
 {
     class EventGroup;
 
-    class CallbackProfiler
-    {
-    public:
-        std::uint64_t hits = 0;
-        time::TimeUnit time = 0;
-        time::TimeUnit min = 0;
-        time::TimeUnit max = 0;
-    };
-
-    class ScopeProfiler
-    {
-    private:
-        const time::TimeUnit m_start;
-        CallbackProfiler& m_results;
-
-    public:
-        ScopeProfiler(CallbackProfiler& results);
-        ~ScopeProfiler();
-    };
-
-    using EventProfiler = std::unordered_map<std::string, CallbackProfiler>;
-
     class EventBase
     {
     private:
@@ -44,7 +22,7 @@ namespace obe::event
         std::string m_identifier;
         bool m_triggered = false;
         bool m_enabled = true;
-        EventProfiler m_profiler;
+
         OnListenerChange m_on_add_listener;
         OnListenerChange m_on_remove_listener;
 
@@ -96,7 +74,6 @@ namespace obe::event
          * \param id id of the Listener to unregister
          */
         void remove_external_listener(const std::string& id);
-        [[nodiscard]] const EventProfiler& get_profiler() const;
     };
 
     /**
@@ -165,8 +142,6 @@ namespace obe::event
         {
             return;
         }
-        CallbackProfiler& profiler = m_profiler[listener_id];
-        ScopeProfiler scope_profiler(profiler);
         try
         {
             listener(event);
@@ -215,7 +190,8 @@ namespace obe::event
     }
 
     template <class EventType>
-    Event<EventType>::Event(const std::string& parent_name, const std::string& name, bool initial_state)
+    Event<EventType>::Event(
+        const std::string& parent_name, const std::string& name, bool initial_state)
         : EventBase(parent_name, name, initial_state)
     {
     }
