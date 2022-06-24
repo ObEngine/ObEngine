@@ -27,17 +27,6 @@ namespace obe::event::bindings
             { { "Added", obe::event::ListenerChangeState::Added },
                 { "Removed", obe::event::ListenerChangeState::Removed } });
     }
-    void load_class_callback_profiler(sol::state_view state)
-    {
-        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
-        sol::usertype<obe::event::CallbackProfiler> bind_callback_profiler
-            = event_namespace.new_usertype<obe::event::CallbackProfiler>(
-                "CallbackProfiler", sol::call_constructor, sol::default_constructor);
-        bind_callback_profiler["hits"] = &obe::event::CallbackProfiler::hits;
-        bind_callback_profiler["time"] = &obe::event::CallbackProfiler::time;
-        bind_callback_profiler["min"] = &obe::event::CallbackProfiler::min;
-        bind_callback_profiler["max"] = &obe::event::CallbackProfiler::max;
-    }
     void load_class_callback_scheduler(sol::state_view state)
     {
         sol::table event_namespace = state["obe"]["event"].get<sol::table>();
@@ -64,7 +53,6 @@ namespace obe::event::bindings
         bind_event_base["add_external_listener"] = &obe::event::EventBase::add_external_listener;
         bind_event_base["remove_external_listener"]
             = &obe::event::EventBase::remove_external_listener;
-        bind_event_base["get_profiler"] = &obe::event::EventBase::get_profiler;
     }
     void load_class_event_group(sol::state_view state)
     {
@@ -80,20 +68,17 @@ namespace obe::event::bindings
         bind_event_group["contains"] = &obe::event::EventGroup::contains;
         bind_event_group["add"] = &obe::event::add_lua_event;
         bind_event_group["remove"] = &obe::event::EventGroup::remove;
-        bind_event_group["trigger"] = sol::overload(
-            [](obe::event::EventGroup* self, const std::string& name) -> void {
-                return obe::event::trigger_lua_event(self, name);
-            },
-            [](obe::event::EventGroup* self, const std::string& name, sol::table data) -> void {
-                return obe::event::trigger_lua_event(self, name, data);
-            });
+        bind_event_group["trigger"]
+            = sol::overload([](obe::event::EventGroup* self, const std::string& name) -> void
+                { return obe::event::trigger_lua_event(self, name); },
+                [](obe::event::EventGroup* self, const std::string& name, sol::table data) -> void
+                { return obe::event::trigger_lua_event(self, name, data); });
         bind_event_group["get_events_names"] = &obe::event::EventGroup::get_events_names;
         bind_event_group["get_events"] = &obe::event::EventGroup::get_events;
         bind_event_group["get_identifier"] = &obe::event::EventGroup::get_identifier;
         bind_event_group["get_name"] = &obe::event::EventGroup::get_name;
         bind_event_group["on_add_listener"] = &obe::event::EventGroup::on_add_listener;
         bind_event_group["on_remove_listener"] = &obe::event::EventGroup::on_remove_listener;
-        bind_event_group["get_profiler_results"] = &obe::event::EventGroup::get_profiler_results;
     }
     void load_class_event_group_view(sol::state_view state)
     {
@@ -111,8 +96,6 @@ namespace obe::event::bindings
             = static_cast<obe::event::EventBase& (obe::event::EventGroupView::*)(const std::string&)
                     const>(&obe::event::EventGroupView::get);
         bind_event_group_view["contains"] = &obe::event::EventGroupView::contains;
-        bind_event_group_view["get_profiler_results"]
-            = &obe::event::EventGroupView::get_profiler_results;
     }
     void load_class_event_manager(sol::state_view state)
     {
@@ -128,8 +111,6 @@ namespace obe::event::bindings
         bind_event_manager["get_all_namespaces_names"]
             = &obe::event::EventManager::get_all_namespaces_names;
         bind_event_manager["schedule"] = &obe::event::EventManager::schedule;
-        bind_event_manager["dump_profiler_results"]
-            = &obe::event::EventManager::dump_profiler_results;
     }
     void load_class_event_namespace(sol::state_view state)
     {
@@ -171,13 +152,5 @@ namespace obe::event::bindings
             = event_namespace.new_usertype<obe::event::LuaEventListener>("LuaEventListener",
                 sol::call_constructor,
                 sol::constructors<obe::event::LuaEventListener(sol::protected_function)>());
-    }
-    void load_class_scope_profiler(sol::state_view state)
-    {
-        sol::table event_namespace = state["obe"]["event"].get<sol::table>();
-        sol::usertype<obe::event::ScopeProfiler> bind_scope_profiler
-            = event_namespace.new_usertype<obe::event::ScopeProfiler>("ScopeProfiler",
-                sol::call_constructor,
-                sol::constructors<obe::event::ScopeProfiler(obe::event::CallbackProfiler&)>());
     }
 };

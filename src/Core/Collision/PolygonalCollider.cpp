@@ -36,7 +36,8 @@ namespace obe::collision
         for (transform::UnitVector& point : points)
         {
             while (lower_hull.size() >= 2
-                && cross(lower_hull[lower_hull.size() - 2], lower_hull[lower_hull.size() - 1], point)
+                && cross(
+                       lower_hull[lower_hull.size() - 2], lower_hull[lower_hull.size() - 1], point)
                     <= 0)
                 lower_hull.pop_back();
             lower_hull.push_back(point);
@@ -46,7 +47,8 @@ namespace obe::collision
         for (transform::UnitVector& point : points)
         {
             while (upper_hull.size() >= 2
-                && cross(upper_hull[upper_hull.size() - 2], upper_hull[upper_hull.size() - 1], point)
+                && cross(
+                       upper_hull[upper_hull.size() - 2], upper_hull[upper_hull.size() - 1], point)
                     <= 0)
                 upper_hull.pop_back();
             upper_hull.push_back(point);
@@ -66,7 +68,8 @@ namespace obe::collision
     {
         const transform::Rect bounding_box = coll.get_bounding_box();
         transform::Rect aabb;
-        aabb.set_size(bounding_box.get_size() + transform::UnitVector(abs(offset.x), abs(offset.y)));
+        aabb.set_size(
+            bounding_box.get_size() + transform::UnitVector(abs(offset.x), abs(offset.y)));
         if (offset.x >= 0 && offset.y >= 0)
         {
             aabb.set_position(bounding_box.get_position(transform::Referential::TopLeft),
@@ -372,7 +375,8 @@ namespace obe::collision
                             min_distance = distance;
                             const double x_comp = t * s1.x;
                             const double y_comp = t * s1.y;
-                            min_displacement.set((x_comp > 0) ? std::floor(x_comp) : std::ceil(x_comp),
+                            min_displacement.set(
+                                (x_comp > 0) ? std::floor(x_comp) : std::ceil(x_comp),
                                 (y_comp > 0) ? std::floor(y_comp) : std::ceil(y_comp));
                         }
                     }
@@ -423,7 +427,7 @@ namespace obe::collision
         for (auto& apply_offset : p_set1)
             apply_offset += offset;
         constexpr auto point_in_polygon = [](const std::vector<transform::UnitVector>& poly,
-            const transform::UnitVector& p_test) -> bool
+                                              const transform::UnitVector& p_test) -> bool
         {
             int i, j, c = 0;
             const int n_pt = static_cast<int>(poly.size());
@@ -442,8 +446,9 @@ namespace obe::collision
             if (point_in_polygon(p_set2, p_test))
                 return true;
         }
-        return std::ranges::any_of(
-            p_set2, [&p_set1](const auto& p_test) { return point_in_polygon(p_set1, p_test); });
+        return std::ranges::any_of(p_set2,
+            [&point_in_polygon, &p_set1](const auto& p_test)
+            { return point_in_polygon(p_set1, p_test); });
     }
 
     vili::node PolygonalCollider::dump() const
@@ -454,7 +459,8 @@ namespace obe::collision
         for (auto& point : m_points)
         {
             const transform::UnitVector point_coordinates = point->to(m_unit);
-            result["points"].push(vili::object { { "x", point_coordinates.x }, { "y", point_coordinates.y } });
+            result["points"].push(
+                vili::object { { "x", point_coordinates.x }, { "y", point_coordinates.y } });
         }
         return result;
     }
@@ -477,15 +483,16 @@ namespace obe::collision
                     }
                     else
                     {
-                        throw Exceptions::InvalidTagFormat(m_id, ColliderTagTypeMeta::to_string(type),
-                            vili::to_string(item.type()), EXC_INFO);
+                        throw Exceptions::InvalidTagFormat(m_id,
+                            ColliderTagTypeMeta::to_string(type), vili::to_string(item.type()),
+                            EXC_INFO);
                     }
                 }
             }
             else
             {
-                throw Exceptions::InvalidTagFormat(
-                    m_id, ColliderTagTypeMeta::to_string(type), vili::to_string(tag.type()), EXC_INFO);
+                throw Exceptions::InvalidTagFormat(m_id, ColliderTagTypeMeta::to_string(type),
+                    vili::to_string(tag.type()), EXC_INFO);
             }
         };
         const transform::Units points_unit = transform::UnitsMeta::from_string(data.at("unit"));

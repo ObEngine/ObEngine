@@ -31,7 +31,6 @@ namespace vili::writer::bindings
         bind_dump_options["indent"] = &vili::writer::dump_options::indent;
         bind_dump_options["array"] = &vili::writer::dump_options::array;
         bind_dump_options["object"] = &vili::writer::dump_options::object;
-        bind_dump_options["root"] = &vili::writer::dump_options::root;
     }
     void load_class__array(sol::state_view state)
     {
@@ -66,9 +65,9 @@ namespace vili::writer::bindings
     {
         sol::table writer_namespace = state["vili"]["writer"].get<sol::table>();
         writer_namespace.set_function("dump",
-            sol::overload(
-                [](const vili::node& data) -> std::string { return vili::writer::dump(data); },
-                [](const vili::node& data, const vili::writer::dump_options& options)
-                    -> std::string { return vili::writer::dump(data, options); }));
+            sol::overload([](const vili::node& data) -> std::string
+                { return vili::writer::dump(data); },
+                [](const vili::node& data, const vili::writer::dump_options& options) -> std::string
+                { return vili::writer::dump(data, options); }));
     }
 };

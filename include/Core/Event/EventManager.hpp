@@ -40,6 +40,5 @@ namespace obe::event
         [[nodiscard]] std::vector<std::string> get_all_namespaces_names() const;
 
         CallbackScheduler& schedule();
-        [[nodiscard]] vili::node dump_profiler_results() const;
     };
 } // namespace obe::event

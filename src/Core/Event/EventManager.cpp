@@ -25,7 +25,8 @@ namespace obe::event
         }
         m_schedulers.erase(
             std::ranges::remove_if(m_schedulers,
-                [](auto& scheduler) { return scheduler->m_state == CallbackSchedulerState::Done; }).begin(),
+                [](auto& scheduler) { return scheduler->m_state == CallbackSchedulerState::Done; })
+                .begin(),
             m_schedulers.end());
     }
 
@@ -64,7 +65,8 @@ namespace obe::event
             throw Exceptions::EventNamespaceNotJoinable(event_namespace, EXC_INFO);
         }
 
-        throw Exceptions::UnknownEventNamespace(event_namespace, this->get_all_namespaces_names(), EXC_INFO);
+        throw Exceptions::UnknownEventNamespace(
+            event_namespace, this->get_all_namespaces_names(), EXC_INFO);
     }
 
     EventNamespaceView EventManager::get_namespace(const std::string& event_namespace)
@@ -93,23 +95,5 @@ namespace obe::event
     {
         m_schedulers.push_back(std::make_unique<CallbackScheduler>());
         return *m_schedulers.back();
-    }
-
-    vili::node EventManager::dump_profiler_results() const
-    {
-        vili::node result = vili::object {};
-        for (const auto& namespace_itr : m_namespaces)
-        {
-            debug::Log->debug("Profiling EventNamespace '{}'", namespace_itr.first);
-            result.emplace(namespace_itr.first, vili::object {});
-            for (const auto& group_name : namespace_itr.second->get_all_groups_names())
-            {
-                debug::Log->debug("Namespace group {}", group_name);
-                result.at(namespace_itr.first)
-                    .emplace(
-                        group_name, namespace_itr.second->get_group(group_name).get_profiler_results());
-            }
-        }
-        return result;
     }
 } // namespace obe::event

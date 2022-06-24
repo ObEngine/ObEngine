@@ -43,11 +43,6 @@ namespace obe::event
         return m_group.contains(event_name);
     }
 
-    vili::node EventGroupView::get_profiler_results() const
-    {
-        return m_group.get_profiler_results();
-    }
-
     EventGroup::EventGroup(const std::string& event_namespace, const std::string& name)
     {
         m_identifier = event_namespace + "." + name;
@@ -65,7 +60,8 @@ namespace obe::event
         {
             return *event->second;
         }
-        throw Exceptions::UnknownEvent(m_identifier, event_name, this->get_events_names(), EXC_INFO);
+        throw Exceptions::UnknownEvent(
+            m_identifier, event_name, this->get_events_names(), EXC_INFO);
     }
 
     bool EventGroup::contains(const std::string& event_name) const
@@ -132,37 +128,9 @@ namespace obe::event
         this->get(event_name).on_add_listener(callback);
     }
 
-    void EventGroup::on_remove_listener(const std::string& event_name, OnListenerChange callback) const
+    void EventGroup::on_remove_listener(
+        const std::string& event_name, OnListenerChange callback) const
     {
         this->get(event_name).on_remove_listener(callback);
-    }
-
-    vili::node EventGroup::get_profiler_results() const
-    {
-        vili::node result = vili::object {};
-        for (auto& [event_name, event] : m_events)
-        {
-            const std::string full_name = m_name + "." + event_name;
-            debug::Log->debug("Dumping {}", full_name);
-            result[full_name] = vili::object {};
-            time::TimeUnit total_time = 0;
-            long long int total_hits = 0;
-            result.at(full_name).emplace("callbacks", vili::object {});
-            vili::node& callbacks = result.at(full_name).at("callbacks");
-            for (const auto& [event_id, event_records] : event->get_profiler())
-            {
-                callbacks.emplace(event_id, vili::object {});
-                vili::node& callback = callbacks.at(event_id);
-                callback.emplace("time", event_records.time);
-                callback.emplace("hits", vili::integer(event_records.hits));
-                callback.emplace("min", event_records.min);
-                callback.emplace("max", event_records.max);
-                total_time += event_records.time;
-                total_hits += event_records.hits;
-            }
-            result.at(full_name).emplace("time", total_time);
-            result.at(full_name).emplace("hits", total_hits);
-        }
-        return result;
     }
 } // namespace obe::event

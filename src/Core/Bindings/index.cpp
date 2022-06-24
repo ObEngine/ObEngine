@@ -213,7 +213,6 @@ namespace obe::bindings
         obe::engine::exceptions::bindings::load_class_font_not_found(state);
         obe::engine::exceptions::bindings::load_class_texture_not_found(state);
         obe::engine::exceptions::bindings::load_class_unitialized_engine(state);
-        obe::event::bindings::load_class_callback_profiler(state);
         obe::event::bindings::load_class_callback_scheduler(state);
         obe::event::bindings::load_class_event_base(state);
         obe::event::bindings::load_class_event_group(state);
@@ -222,7 +221,6 @@ namespace obe::bindings
         obe::event::bindings::load_class_event_namespace(state);
         obe::event::bindings::load_class_event_namespace_view(state);
         obe::event::bindings::load_class_lua_event_listener(state);
-        obe::event::bindings::load_class_scope_profiler(state);
         obe::event::bindings::load_enum_callback_scheduler_state(state);
         obe::event::bindings::load_enum_listener_change_state(state);
         obe::event::Exceptions::bindings::load_class_callback_creation_error(state);

@@ -72,7 +72,6 @@ namespace obe::event
          */
         template <class EventType>
         Event<EventType>& get() const;
-        [[nodiscard]] vili::node get_profiler_results() const;
     };
 
     /**
@@ -176,7 +175,6 @@ namespace obe::event
          * \brief Register a callback for when Event::remote_listener is called
          */
         void on_remove_listener(const std::string& event_name, OnListenerChange callback) const;
-        [[nodiscard]] vili::node get_profiler_results() const;
     };
 
     template <class EventType>
