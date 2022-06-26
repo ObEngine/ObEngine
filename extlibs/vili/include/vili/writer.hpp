@@ -15,7 +15,7 @@ namespace vili::writer
     };
     struct dump_options
     {
-        struct items_per_line
+        struct _items_per_line
         {
             unsigned int any = 0;
             unsigned int primitives = 0;
@@ -26,7 +26,7 @@ namespace vili::writer
         unsigned int indent = 4;
         struct _array
         {
-            items_per_line items_per_line;
+            _items_per_line items_per_line;
             unsigned int max_line_length = 80;
             delimiter_newline_policy starts_with_newline
                 = delimiter_newline_policy::only_if_multiline;
@@ -38,7 +38,7 @@ namespace vili::writer
 
         struct _object
         {
-            items_per_line items_per_line { 1, 1, 1, 1 };
+            _items_per_line items_per_line { 1, 1, 1, 1 };
             unsigned int max_line_length = 80;
             delimiter_newline_policy starts_with_newline
                 = delimiter_newline_policy::only_if_multiline;
