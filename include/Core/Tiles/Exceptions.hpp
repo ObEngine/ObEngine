@@ -24,7 +24,7 @@ namespace obe::tiles::exceptions
                     min_max_id.first, min_max_id.second);
             }
             hint_msg += tileset_hint_list;
-            this->hint(hint_msg);
+            this->hint("{}", hint_msg);
         }
     };
 

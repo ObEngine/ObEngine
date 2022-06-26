@@ -247,7 +247,7 @@ namespace obe::scene
         result["View"]["position"] = vili::object { { "x", m_camera_initial_position.x },
             { "y", m_camera_initial_position.y },
             { "unit", transform::UnitsMeta::to_string(m_camera_initial_position.unit) } };
-        result["View"]["referential"] = m_camera_initial_referential.to_string("{}");
+        result["View"]["referential"] = m_camera_initial_referential.to_string();
 
         // Sprites
         if (!m_sprite_array.empty())

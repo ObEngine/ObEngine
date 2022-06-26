@@ -43,6 +43,13 @@ namespace obe::Types
             os << SmartEnum<Enum>::name() << "::" << SmartEnum<Enum>::to_string(value);
             return os;
         }
+
+        template <typename ArgFormatter>
+        friend void format_arg(
+            fmt::basic_format_context<char, ArgFormatter>& f, const char*& format_str, Enum e)
+        {
+            f.writer() << to_string(e);
+        }
     };
 
     template <class Enum>

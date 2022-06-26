@@ -265,11 +265,8 @@ namespace obe::transform::bindings
         bind_referential["is_on_side"] = &obe::transform::Referential::is_on_side;
         bind_referential["is_known"] = &obe::transform::Referential::is_known;
         bind_referential["get_offset"] = &obe::transform::Referential::get_offset;
-        bind_referential["to_string"] = sol::overload(
-            [](obe::transform::Referential* self) -> std::string { return self->to_string(); },
-            [](obe::transform::Referential* self, const std::string& format) -> std::string {
-                return self->to_string(format);
-            });
+        bind_referential["to_string"]
+            = [](obe::transform::Referential* self) -> std::string { return self->to_string(); };
         bind_referential["from_string"] = &obe::transform::Referential::from_string;
         bind_referential["TopLeft"] = sol::var(&obe::transform::Referential::TopLeft);
         bind_referential["Top"] = sol::var(&obe::transform::Referential::Top);

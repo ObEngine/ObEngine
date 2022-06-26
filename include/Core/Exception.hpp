@@ -76,12 +76,12 @@ namespace obe
          * \nobind
          */
         template <class... Args>
-        void error(Args&&... args);
+        void error(fmt::format_string<Args...> message, Args&&... args);
         /**
          * \nobind
          */
         template <class... Args>
-        void hint(Args&&... args);
+        void hint(fmt::format_string<Args...> message, Args&&... args);
         [[nodiscard]] const char* what() const noexcept override;
         const std::vector<std::runtime_error>& traceback() const;
     };
@@ -132,17 +132,17 @@ namespace obe
     }
 
     template <class... Args>
-    void BaseException::error(Args&&... args)
+    void BaseException::error(fmt::format_string<Args...> message, Args&&... args)
     {
-        const std::string error_msg = fmt::format(std::forward<Args>(args)...);
+        const std::string error_msg = fmt::format(message, std::forward<Args>(args)...);
         m_message += fmt::format("  Error: {}\n", error_msg);
         fprintf(stderr, "%s", m_message.c_str());
     }
 
     template <class... Args>
-    void BaseException::hint(Args&&... args)
+    void BaseException::hint(fmt::format_string<Args...> message, Args&&... args)
     {
-        const std::string hint_msg = fmt::format(std::forward<Args>(args)...);
+        const std::string hint_msg = fmt::format(message, std::forward<Args>(args)...);
         m_message += fmt::format("  Hint: {}\n", hint_msg);
     }
 

@@ -92,7 +92,7 @@ namespace obe::transform
          * \param format Format (fmt) of the string returned
          * \return The name of the Referential in std::string form
          */
-        [[nodiscard]] std::string to_string(const std::string& format = "Referential<{}>") const;
+        [[nodiscard]] std::string to_string() const;
         /**
          * \brief Gets a Referential based on its name
          * \param ref Name of the Referential
