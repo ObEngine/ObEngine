@@ -233,7 +233,8 @@ namespace obe::animation
         if (meta.contains("mode"))
         {
             m_play_mode = AnimationPlayModeMeta::from_string(meta.at("mode"));
-            debug::Log->trace("    <animation> animation play-mode = '{}'", m_play_mode);
+            debug::Log->trace(
+                "    <animation> animation play-mode = '{}'", AnimationPlayModeMeta::to_string(m_play_mode));
         }
     }
 

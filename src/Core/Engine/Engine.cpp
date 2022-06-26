@@ -169,7 +169,7 @@ namespace obe::engine
                         = debug::LogLevelMeta::from_string(log_level_config_entry);
                     const auto level = static_cast<spdlog::level::level_enum>(log_level);
                     debug::Log->set_level(level);
-                    debug::Log->info("Log Level {}", log_level);
+                    debug::Log->info("Log Level {}", log_level_config_entry);
                 }
             }
         }

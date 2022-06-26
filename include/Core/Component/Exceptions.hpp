@@ -11,7 +11,7 @@ namespace obe::Component::Exceptions
         ComponentIdAlreadyTaken(std::string_view id, DebugInfo info)
             : Exception(info)
         {
-            this->error("Component with id '{}' already exists");
+            this->error("Component with id '{}' already exists", id);
         }
     };
 

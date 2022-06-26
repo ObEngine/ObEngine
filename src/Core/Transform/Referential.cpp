@@ -91,28 +91,28 @@ namespace obe::transform
         return UnitVector(m_ref_x, m_ref_y);
     }
 
-    std::string Referential::to_string(const std::string& format) const
+    std::string Referential::to_string() const
     {
         if (m_ref_x == 0 && m_ref_y == 0)
-            return fmt::format(format, "TopLeft");
+            return "TopLeft";
         if (m_ref_x == 0.5 && m_ref_y == 0)
-            return fmt::format(format, "Top");
+            return "Top";
         if (m_ref_x == 1 && m_ref_y == 0)
-            return fmt::format(format, "TopRight");
+            return "TopRight";
         if (m_ref_x == 0 && m_ref_y == 0.5)
-            return fmt::format(format, "Left");
+            return "Left";
         if (m_ref_x == 0.5 && m_ref_y == 0.5)
-            return fmt::format(format, "Center");
+            return "Center";
         if (m_ref_x == 1 && m_ref_y == 0.5)
-            return fmt::format(format, "Right");
+            return "Right";
         if (m_ref_x == 0 && m_ref_y == 1)
-            return fmt::format(format, "BottomLeft");
+            return "BottomLeft";
         if (m_ref_x == 0.5 && m_ref_y == 1)
-            return fmt::format(format, "Bottom");
+            return "Bottom";
         if (m_ref_x == 1 && m_ref_y == 1)
-            return fmt::format(format, "BottomRight");
+            return "BottomRight";
         else
-            return fmt::format(format, fmt::format("{}, {}", m_ref_x, m_ref_y), m_ref_x, m_ref_y);
+            return fmt::format("{}, {}", m_ref_x, m_ref_y);
     }
 
     Referential Referential::from_string(const std::string& ref)

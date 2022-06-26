@@ -37,8 +37,10 @@ namespace vili::exceptions
 
     public:
         const char* what() const noexcept override;
-        template <class... Args> void error(Args&&... args);
-        template <class... Args> void hint(Args&&... args);
+        template <class... Args>
+        void error(fmt::format_string<Args...> message, Args&&... args);
+        template <class... Args>
+        void hint(fmt::format_string<Args...> message, Args&&... args);
     };
 
     template <class exception_type> class exception : public base_exception
@@ -81,24 +83,26 @@ namespace vili::exceptions
         return m_message.c_str();
     }
 
-    template <class... Args> void base_exception::error(Args&&... args)
+    template <class... Args>
+    void base_exception::error(fmt::format_string<Args...> message, Args&&... args)
     {
-        const std::string errorMsg = fmt::format(std::forward<Args>(args)...);
+        const std::string error_msg = fmt::format(message, std::forward<Args>(args)...);
         if constexpr (VERBOSE_EXCEPTIONS)
         {
-            m_message += fmt::format("  Error: {}\n", errorMsg);
+            m_message += fmt::format("  Error: {}\n", error_msg);
         }
         else
         {
-            m_message += (": " + errorMsg);
+            m_message += (": " + error_msg);
         }
     }
-    template <class... Args> void base_exception::hint(Args&&... args)
+    template <class... Args>
+    void base_exception::hint(fmt::format_string<Args...> message, Args&&... args)
     {
-        const std::string hintMsg = fmt::format(std::forward<Args>(args)...);
+        const std::string hint_msg = fmt::format(message, std::forward<Args>(args)...);
         if constexpr (VERBOSE_EXCEPTIONS)
         {
-            m_message += fmt::format("  Hint: {}\n", hintMsg);
+            m_message += fmt::format("  Hint: {}\n", hint_msg);
         }
     }
 
