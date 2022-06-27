@@ -30,7 +30,7 @@ namespace obe::collision
      * \brief A Trajectory makes a TrajectoryNode moves using angle, speed and
      *        acceleration (Linear Trajectory)
      */
-    class Trajectory : public Types::Togglable
+    class Trajectory : public types::Togglable
     {
         friend class animation::TweenImpl<Trajectory>;
     private:

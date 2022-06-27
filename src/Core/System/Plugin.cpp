@@ -7,7 +7,7 @@
 namespace obe::system
 {
     Plugin::Plugin(const std::string& id, const std::string& path)
-        : Types::Identifiable(id)
+        : types::Identifiable(id)
     {
         debug::Log->info("<System:Plugin> : Loading Plugin '{}' ...", id);
         try

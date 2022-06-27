@@ -48,7 +48,7 @@ namespace obe::scene::bindings
                 sol::constructors<obe::scene::Scene(
                     obe::event::EventNamespace&, sol::state_view)>(),
                 sol::base_classes,
-                sol::bases<obe::Types::Serializable, obe::engine::ResourceManagedObject>());
+                sol::bases<obe::types::Serializable, obe::engine::ResourceManagedObject>());
         bind_scene["load_from_file"]
             = sol::overload(static_cast<void (obe::scene::Scene::*)(const std::string&)>(
                                 &obe::scene::Scene::set_future_load_from_file),
@@ -134,7 +134,7 @@ namespace obe::scene::bindings
         sol::usertype<obe::scene::SceneNode> bind_scene_node
             = scene_namespace.new_usertype<obe::scene::SceneNode>("SceneNode",
                 sol::call_constructor, sol::default_constructor, sol::base_classes,
-                sol::bases<obe::transform::Movable, obe::Types::Selectable>());
+                sol::bases<obe::transform::Movable, obe::types::Selectable>());
         bind_scene_node["add_child"] = &obe::scene::SceneNode::add_child;
         bind_scene_node["remove_child"] = &obe::scene::SceneNode::remove_child;
         bind_scene_node["set_position"] = &obe::scene::SceneNode::set_position;

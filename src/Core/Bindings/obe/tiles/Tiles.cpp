@@ -54,7 +54,7 @@ namespace obe::tiles::bindings
             = tiles_namespace.new_usertype<obe::tiles::TileScene>("TileScene",
                 sol::call_constructor,
                 sol::constructors<obe::tiles::TileScene(obe::scene::Scene&)>(), sol::base_classes,
-                sol::bases<obe::Types::Serializable>());
+                sol::bases<obe::types::Serializable>());
         bind_tile_scene["schema"] = &obe::tiles::TileScene::schema;
         bind_tile_scene["dump"] = &obe::tiles::TileScene::dump;
         bind_tile_scene["load"] = &obe::tiles::TileScene::load;
@@ -89,7 +89,7 @@ namespace obe::tiles::bindings
                         uint32_t, uint32_t, uint32_t, uint32_t),
                     obe::tiles::Tileset(const std::string&, uint32_t, uint32_t, const std::string&,
                         uint32_t, uint32_t, uint32_t, uint32_t, uint32_t)>(),
-                sol::base_classes, sol::bases<obe::Types::Identifiable>());
+                sol::base_classes, sol::bases<obe::types::Identifiable>());
         bind_tileset["get_first_tile_id"] = &obe::tiles::Tileset::get_first_tile_id;
         bind_tileset["get_last_tile_id"] = &obe::tiles::Tileset::get_last_tile_id;
         bind_tileset["get_tile_count"] = &obe::tiles::Tileset::get_tile_count;

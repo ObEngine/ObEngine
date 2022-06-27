@@ -31,13 +31,13 @@ namespace obe::graphics::canvas
         Bezier
     };
 
-    using CanvasElementTypeMeta = Types::SmartEnum<CanvasElementType>;
+    using CanvasElementTypeMeta = types::SmartEnum<CanvasElementType>;
 
     class Canvas;
     /**
      * \brief A Drawable Canvas Element
      */
-    class CanvasElement : public Types::ProtectedIdentifiable
+    class CanvasElement : public types::ProtectedIdentifiable
     {
     public:
         static constexpr CanvasElementType Type = CanvasElementType::CanvasElement;

@@ -13,7 +13,7 @@ namespace obe::input
     /**
      * \brief Class used to manage KeyClass and KeyboardAction
      */
-    class InputManager : public Types::Togglable
+    class InputManager : public types::Togglable
     {
     private:
         bool m_refresh = true;

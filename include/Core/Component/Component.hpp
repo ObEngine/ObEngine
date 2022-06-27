@@ -10,7 +10,7 @@
 
 namespace obe::Component
 {
-    class ComponentBase : public Types::Identifiable, public Types::Serializable
+    class ComponentBase : public types::Identifiable, public types::Serializable
     {
     public:
         using Caster = std::function<sol::lua_value(ComponentBase*)>;

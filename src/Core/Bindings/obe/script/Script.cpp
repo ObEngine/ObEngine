@@ -25,7 +25,7 @@ namespace obe::script::bindings
                 sol::constructors<obe::script::GameObject(
                     sol::state_view, const std::string&, const std::string&)>(),
                 sol::base_classes,
-                sol::bases<obe::Types::Identifiable, obe::Types::Serializable>());
+                sol::bases<obe::types::Identifiable, obe::types::Serializable>());
         bind_game_object["get_type"] = &obe::script::GameObject::get_type;
         bind_game_object["does_have_animator"] = &obe::script::GameObject::does_have_animator;
         bind_game_object["does_have_collider"] = &obe::script::GameObject::does_have_collider;

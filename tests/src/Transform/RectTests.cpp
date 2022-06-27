@@ -2,4 +2,4 @@
 
 #include <Transform/Rect.hpp>
 
-using namespace obe::Transform;
+using namespace obe::transform;

@@ -2,7 +2,7 @@
 
 #include <Transform/Referential.hpp>
 
-using namespace obe::Transform;
+using namespace obe::transform;
 
 TEST_CASE("Flipping Referentials should give correct results",
     "[obe.Transform.Referential.flip]")
@@ -61,162 +61,136 @@ TEST_CASE("We should be able to test the position of referentials based on crite
 {
     SECTION("Testing if known referentials are on a corner")
     {
-        REQUIRE(Referential::TopLeft.isOnCorner());
-        REQUIRE(Referential::TopRight.isOnCorner());
-        REQUIRE(Referential::BottomLeft.isOnCorner());
-        REQUIRE(Referential::BottomRight.isOnCorner());
-        REQUIRE_FALSE(Referential::Top.isOnCorner());
-        REQUIRE_FALSE(Referential::Left.isOnCorner());
-        REQUIRE_FALSE(Referential::Center.isOnCorner());
-        REQUIRE_FALSE(Referential::Right.isOnCorner());
-        REQUIRE_FALSE(Referential::Bottom.isOnCorner());
+        REQUIRE(Referential::TopLeft.is_on_corner());
+        REQUIRE(Referential::TopRight.is_on_corner());
+        REQUIRE(Referential::BottomLeft.is_on_corner());
+        REQUIRE(Referential::BottomRight.is_on_corner());
+        REQUIRE_FALSE(Referential::Top.is_on_corner());
+        REQUIRE_FALSE(Referential::Left.is_on_corner());
+        REQUIRE_FALSE(Referential::Center.is_on_corner());
+        REQUIRE_FALSE(Referential::Right.is_on_corner());
+        REQUIRE_FALSE(Referential::Bottom.is_on_corner());
     }
     SECTION("Testing if known referentials are on a side")
     {
-        REQUIRE_FALSE(Referential::TopLeft.isOnSide());
-        REQUIRE_FALSE(Referential::TopRight.isOnSide());
-        REQUIRE_FALSE(Referential::BottomLeft.isOnSide());
-        REQUIRE_FALSE(Referential::BottomRight.isOnSide());
-        REQUIRE(Referential::Top.isOnSide());
-        REQUIRE(Referential::Left.isOnSide());
-        REQUIRE_FALSE(Referential::Center.isOnSide());
-        REQUIRE(Referential::Right.isOnSide());
-        REQUIRE(Referential::Bottom.isOnSide());
+        REQUIRE_FALSE(Referential::TopLeft.is_on_side());
+        REQUIRE_FALSE(Referential::TopRight.is_on_side());
+        REQUIRE_FALSE(Referential::BottomLeft.is_on_side());
+        REQUIRE_FALSE(Referential::BottomRight.is_on_side());
+        REQUIRE(Referential::Top.is_on_side());
+        REQUIRE(Referential::Left.is_on_side());
+        REQUIRE_FALSE(Referential::Center.is_on_side());
+        REQUIRE(Referential::Right.is_on_side());
+        REQUIRE(Referential::Bottom.is_on_side());
     }
     SECTION("Testing if known referentials are on the left")
     {
-        REQUIRE(Referential::TopLeft.isOnLeftSide());
-        REQUIRE_FALSE(Referential::Top.isOnLeftSide());
-        REQUIRE_FALSE(Referential::TopRight.isOnLeftSide());
-        REQUIRE(Referential::Left.isOnLeftSide());
-        REQUIRE_FALSE(Referential::Center.isOnLeftSide());
-        REQUIRE_FALSE(Referential::Right.isOnLeftSide());
-        REQUIRE(Referential::BottomLeft.isOnLeftSide());
-        REQUIRE_FALSE(Referential::Bottom.isOnLeftSide());
-        REQUIRE_FALSE(Referential::BottomRight.isOnLeftSide());
+        REQUIRE(Referential::TopLeft.is_on_left_side());
+        REQUIRE_FALSE(Referential::Top.is_on_left_side());
+        REQUIRE_FALSE(Referential::TopRight.is_on_left_side());
+        REQUIRE(Referential::Left.is_on_left_side());
+        REQUIRE_FALSE(Referential::Center.is_on_left_side());
+        REQUIRE_FALSE(Referential::Right.is_on_left_side());
+        REQUIRE(Referential::BottomLeft.is_on_left_side());
+        REQUIRE_FALSE(Referential::Bottom.is_on_left_side());
+        REQUIRE_FALSE(Referential::BottomRight.is_on_left_side());
     }
     SECTION("Testing if known referentials are on the right")
     {
-        REQUIRE_FALSE(Referential::TopLeft.isOnRightSide());
-        REQUIRE_FALSE(Referential::Top.isOnRightSide());
-        REQUIRE(Referential::TopRight.isOnRightSide());
-        REQUIRE_FALSE(Referential::Left.isOnRightSide());
-        REQUIRE_FALSE(Referential::Center.isOnRightSide());
-        REQUIRE(Referential::Right.isOnRightSide());
-        REQUIRE_FALSE(Referential::BottomLeft.isOnRightSide());
-        REQUIRE_FALSE(Referential::Bottom.isOnRightSide());
-        REQUIRE(Referential::BottomRight.isOnRightSide());
+        REQUIRE_FALSE(Referential::TopLeft.is_on_right_side());
+        REQUIRE_FALSE(Referential::Top.is_on_right_side());
+        REQUIRE(Referential::TopRight.is_on_right_side());
+        REQUIRE_FALSE(Referential::Left.is_on_right_side());
+        REQUIRE_FALSE(Referential::Center.is_on_right_side());
+        REQUIRE(Referential::Right.is_on_right_side());
+        REQUIRE_FALSE(Referential::BottomLeft.is_on_right_side());
+        REQUIRE_FALSE(Referential::Bottom.is_on_right_side());
+        REQUIRE(Referential::BottomRight.is_on_right_side());
     }
     SECTION("Testing if known referentials are on the top")
     {
-        REQUIRE(Referential::TopLeft.isOnTopSide());
-        REQUIRE(Referential::Top.isOnTopSide());
-        REQUIRE(Referential::TopRight.isOnTopSide());
-        REQUIRE_FALSE(Referential::Left.isOnTopSide());
-        REQUIRE_FALSE(Referential::Center.isOnTopSide());
-        REQUIRE_FALSE(Referential::Right.isOnTopSide());
-        REQUIRE_FALSE(Referential::BottomLeft.isOnTopSide());
-        REQUIRE_FALSE(Referential::Bottom.isOnTopSide());
-        REQUIRE_FALSE(Referential::BottomRight.isOnTopSide());
+        REQUIRE(Referential::TopLeft.is_on_top_side());
+        REQUIRE(Referential::Top.is_on_top_side());
+        REQUIRE(Referential::TopRight.is_on_top_side());
+        REQUIRE_FALSE(Referential::Left.is_on_top_side());
+        REQUIRE_FALSE(Referential::Center.is_on_top_side());
+        REQUIRE_FALSE(Referential::Right.is_on_top_side());
+        REQUIRE_FALSE(Referential::BottomLeft.is_on_top_side());
+        REQUIRE_FALSE(Referential::Bottom.is_on_top_side());
+        REQUIRE_FALSE(Referential::BottomRight.is_on_top_side());
     }
     SECTION("Testing if known referentials are on the bottom")
     {
-        REQUIRE_FALSE(Referential::TopLeft.isOnBottomSide());
-        REQUIRE_FALSE(Referential::Top.isOnBottomSide());
-        REQUIRE_FALSE(Referential::TopRight.isOnBottomSide());
-        REQUIRE_FALSE(Referential::Left.isOnBottomSide());
-        REQUIRE_FALSE(Referential::Center.isOnBottomSide());
-        REQUIRE_FALSE(Referential::Right.isOnBottomSide());
-        REQUIRE(Referential::BottomLeft.isOnBottomSide());
-        REQUIRE(Referential::Bottom.isOnBottomSide());
-        REQUIRE(Referential::BottomRight.isOnBottomSide());
+        REQUIRE_FALSE(Referential::TopLeft.is_on_bottom_side());
+        REQUIRE_FALSE(Referential::Top.is_on_bottom_side());
+        REQUIRE_FALSE(Referential::TopRight.is_on_bottom_side());
+        REQUIRE_FALSE(Referential::Left.is_on_bottom_side());
+        REQUIRE_FALSE(Referential::Center.is_on_bottom_side());
+        REQUIRE_FALSE(Referential::Right.is_on_bottom_side());
+        REQUIRE(Referential::BottomLeft.is_on_bottom_side());
+        REQUIRE(Referential::Bottom.is_on_bottom_side());
+        REQUIRE(Referential::BottomRight.is_on_bottom_side());
     }
     SECTION("Testing random referentials and their positions")
     {
-        REQUIRE(Referential(1, 0.33).isOnRightSide());
-        REQUIRE(Referential(0, 0.66).isOnLeftSide());
-        REQUIRE(Referential(0.22, 1).isOnBottomSide());
-        REQUIRE(Referential(-0.11, 0).isOnTopSide());
-        REQUIRE(Referential(0.99, 1).isOnSide());
-        REQUIRE(Referential(0, 0).isOnCorner());
-        REQUIRE_FALSE(Referential(0.999, 0.33).isOnRightSide());
-        REQUIRE_FALSE(Referential(1, 0.66).isOnLeftSide());
-        REQUIRE_FALSE(Referential(0.22, 0).isOnBottomSide());
-        REQUIRE_FALSE(Referential(0.11, 1).isOnTopSide());
-        REQUIRE_FALSE(Referential(0.99, 0.99).isOnSide());
-        REQUIRE_FALSE(Referential(0.4, 0).isOnCorner());
+        REQUIRE(Referential(1, 0.33).is_on_right_side());
+        REQUIRE(Referential(0, 0.66).is_on_left_side());
+        REQUIRE(Referential(0.22, 1).is_on_bottom_side());
+        REQUIRE(Referential(-0.11, 0).is_on_top_side());
+        REQUIRE(Referential(0.99, 1).is_on_side());
+        REQUIRE(Referential(0, 0).is_on_corner());
+        REQUIRE_FALSE(Referential(0.999, 0.33).is_on_right_side());
+        REQUIRE_FALSE(Referential(1, 0.66).is_on_left_side());
+        REQUIRE_FALSE(Referential(0.22, 0).is_on_bottom_side());
+        REQUIRE_FALSE(Referential(0.11, 1).is_on_top_side());
+        REQUIRE_FALSE(Referential(0.99, 0.99).is_on_side());
+        REQUIRE_FALSE(Referential(0.4, 0).is_on_corner());
     }
 }
 
 TEST_CASE("We should be able to represent a Referential as a string",
-    "[obe.Transform.Referential.toString]")
+    "[obe.Transform.Referential.to_string]")
 {
     SECTION("Transforming known referentials to string with default formatter")
     {
-        REQUIRE(Referential::TopLeft.toString() == "Referential<TopLeft>");
-        REQUIRE(Referential::Top.toString() == "Referential<Top>");
-        REQUIRE(Referential::TopRight.toString() == "Referential<TopRight>");
-        REQUIRE(Referential::Left.toString() == "Referential<Left>");
-        REQUIRE(Referential::Center.toString() == "Referential<Center>");
-        REQUIRE(Referential::Right.toString() == "Referential<Right>");
-        REQUIRE(Referential::BottomLeft.toString() == "Referential<BottomLeft>");
-        REQUIRE(Referential::Bottom.toString() == "Referential<Bottom>");
-        REQUIRE(Referential::BottomRight.toString() == "Referential<BottomRight>");
-    }
-    SECTION("Transforming known referentials to string with custom formatter")
-    {
-        REQUIRE(Referential::TopLeft.toString("A({})") == "A(TopLeft)");
-        REQUIRE(Referential::Top.toString("+{}") == "+Top");
-        REQUIRE(Referential::TopRight.toString("/{}/") == "/TopRight/");
-        REQUIRE(Referential::Left.toString("Why did you {} me") == "Why did you Left me");
-        REQUIRE(Referential::Center.toString("{} of the Earth") == "Center of the Earth");
-        REQUIRE(Referential::Right.toString("You were actually {}")
-            == "You were actually Right");
-        REQUIRE(Referential::BottomLeft.toString("1+2={}") == "1+2=BottomLeft");
-        REQUIRE(Referential::Bottom.toString("Bikini {}") == "Bikini Bottom");
-        REQUIRE(Referential::BottomRight.toString("{0} == {0}")
-            == "BottomRight == BottomRight");
+        REQUIRE(Referential::TopLeft.to_string() == "TopLeft");
+        REQUIRE(Referential::Top.to_string() == "Top");
+        REQUIRE(Referential::TopRight.to_string() == "TopRight");
+        REQUIRE(Referential::Left.to_string() == "Left");
+        REQUIRE(Referential::Center.to_string() == "Center");
+        REQUIRE(Referential::Right.to_string() == "Right");
+        REQUIRE(Referential::BottomLeft.to_string() == "BottomLeft");
+        REQUIRE(Referential::Bottom.to_string() == "Bottom");
+        REQUIRE(Referential::BottomRight.to_string() == "BottomRight");
     }
     SECTION("Transforming random referentials to string with default formatter")
     {
-        REQUIRE(Referential(0.123, 0.456).toString() == "Referential<0.123, 0.456>");
-        REQUIRE(Referential(0.6666, 0.9999).toString() == "Referential<0.6666, 0.9999>");
-    }
-    SECTION("Transforming random referentials to string with custom formatter")
-    {
-        REQUIRE(Referential(0.9, 0.1).toString("{}") == "0.9, 0.1");
-        REQUIRE(Referential(0.1234, 0.5678).toString("Referential => {}")
-            == "Referential => 0.1234, 0.5678");
-        REQUIRE(Referential(0.666, 1).toString("The devil is == {1}")
-            == "The devil is == 0.666");
-        REQUIRE(Referential(0.1, 0.42).toString("I wonder why {2} is the answer")
-            == "I wonder why 0.42 is the answer");
-        REQUIRE(Referential(0.456, 0.123).toString("y = {2}, x = {1}")
-            == "y = 0.123, x = 0.456");
+        REQUIRE(Referential(0.123, 0.456).to_string() == "0.123, 0.456");
+        REQUIRE(Referential(0.6666, 0.9999).to_string() == "0.6666, 0.9999");
     }
 }
 
 TEST_CASE("We should be able to load a Referential from a string",
-    "[obe.Transform.Referential.FromString]")
+    "[obe.Transform.Referential.from_string]")
 {
     SECTION("Loading known referentials from a string")
     {
-        REQUIRE(Referential::FromString("TopLeft") == Referential::TopLeft);
-        REQUIRE(Referential::FromString("Top") == Referential::Top);
-        REQUIRE(Referential::FromString("TopRight") == Referential::TopRight);
-        REQUIRE(Referential::FromString("Left") == Referential::Left);
-        REQUIRE(Referential::FromString("Center") == Referential::Center);
-        REQUIRE(Referential::FromString("Right") == Referential::Right);
-        REQUIRE(Referential::FromString("BottomLeft") == Referential::BottomLeft);
-        REQUIRE(Referential::FromString("Bottom") == Referential::Bottom);
-        REQUIRE(Referential::FromString("BottomRight") == Referential::BottomRight);
+        REQUIRE(Referential::from_string("TopLeft") == Referential::TopLeft);
+        REQUIRE(Referential::from_string("Top") == Referential::Top);
+        REQUIRE(Referential::from_string("TopRight") == Referential::TopRight);
+        REQUIRE(Referential::from_string("Left") == Referential::Left);
+        REQUIRE(Referential::from_string("Center") == Referential::Center);
+        REQUIRE(Referential::from_string("Right") == Referential::Right);
+        REQUIRE(Referential::from_string("BottomLeft") == Referential::BottomLeft);
+        REQUIRE(Referential::from_string("Bottom") == Referential::Bottom);
+        REQUIRE(Referential::from_string("BottomRight") == Referential::BottomRight);
     }
     SECTION("Loading random referentials from a string")
     {
-        REQUIRE(Referential::FromString("Referential<0.1, 0.666>")
+        REQUIRE(Referential::from_string("0.1, 0.666")
             == Referential(0.1, 0.666));
         REQUIRE(
-            Referential::FromString("Referential<-0.55, -1>") == Referential(-0.55, -1));
-        REQUIRE_THROWS(Referential::FromString("?"));
+            Referential::from_string("-0.55, -1") == Referential(-0.55, -1));
+        REQUIRE_THROWS(Referential::from_string("?"));
     }
 }

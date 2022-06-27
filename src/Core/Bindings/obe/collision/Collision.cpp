@@ -32,10 +32,10 @@ namespace obe::collision::bindings
             = collision_namespace.new_usertype<obe::collision::PolygonalCollider>(
                 "PolygonalCollider", sol::base_classes,
                 sol::bases<obe::transform::Polygon, obe::transform::UnitBasedObject,
-                    obe::transform::Movable, obe::Types::Selectable,
+                    obe::transform::Movable, obe::types::Selectable,
                     obe::Component::Component<obe::collision::PolygonalCollider>,
-                    obe::Component::ComponentBase, obe::Types::Identifiable,
-                    obe::Types::Serializable>());
+                    obe::Component::ComponentBase, obe::types::Identifiable,
+                    obe::types::Serializable>());
         bind_polygonal_collider["add_tag"] = &obe::collision::PolygonalCollider::add_tag;
         bind_polygonal_collider["clear_tags"] = &obe::collision::PolygonalCollider::clear_tags;
         bind_polygonal_collider["does_collide"] = sol::overload(
@@ -97,7 +97,7 @@ namespace obe::collision::bindings
                 sol::call_constructor,
                 sol::constructors<obe::collision::Trajectory(),
                     obe::collision::Trajectory(obe::transform::Units)>(),
-                sol::base_classes, sol::bases<obe::Types::Togglable>());
+                sol::base_classes, sol::bases<obe::types::Togglable>());
         bind_trajectory["add_acceleration"] = &obe::collision::Trajectory::add_acceleration;
         bind_trajectory["add_angle"] = &obe::collision::Trajectory::add_angle;
         bind_trajectory["add_check"] = &obe::collision::Trajectory::add_check;

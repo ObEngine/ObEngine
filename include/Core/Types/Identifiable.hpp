@@ -2,7 +2,7 @@
 
 #include <string>
 
-namespace obe::Types
+namespace obe::types
 {
     /**
      * \brief A Base class that does carry an unique identifier for a given
@@ -53,4 +53,4 @@ namespace obe::Types
          */
         using Identifiable::Identifiable;
     };
-} // namespace obe::Types
+} // namespace obe::types

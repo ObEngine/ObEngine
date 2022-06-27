@@ -1,6 +1,6 @@
 #include <Types/Togglable.hpp>
 
-namespace obe::Types
+namespace obe::types
 {
     void Togglable::change_state(bool state)
     {
@@ -44,4 +44,4 @@ namespace obe::Types
     {
         return m_enabled;
     }
-} // namespace obe::Types
+} // namespace obe::types

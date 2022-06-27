@@ -5,7 +5,7 @@
 
 namespace obe::tiles
 {
-    class Tileset : public Types::Identifiable
+    class Tileset : public types::Identifiable
     {
     private:
         uint32_t m_first_tile_id;

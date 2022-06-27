@@ -43,7 +43,7 @@ namespace obe::system::project
         unsigned int priority = priorities::project);
     std::vector<std::string> list_projects();
 
-    class ProjectURLs : Types::Serializable
+    class ProjectURLs : types::Serializable
     {
     public:
         std::string homepage;
@@ -65,7 +65,7 @@ namespace obe::system::project
         void load(const vili::node& data) override;
     };
 
-    class Project : Types::Serializable
+    class Project : types::Serializable
     {
     private:
         std::string m_id;

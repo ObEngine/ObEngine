@@ -28,5 +28,5 @@ namespace obe::input
         LAST__
     };
 
-    using InputButtonStateMeta = Types::SmartEnum<InputButtonState>;
+    using InputButtonStateMeta = types::SmartEnum<InputButtonState>;
 } // namespace obe::input

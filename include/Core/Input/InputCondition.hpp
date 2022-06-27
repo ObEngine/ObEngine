@@ -10,7 +10,7 @@
 
 namespace obe::input
 {
-    using InputCombinationElement = std::pair<InputButton*, Types::FlagSet<InputButtonState>>;
+    using InputCombinationElement = std::pair<InputButton*, types::FlagSet<InputButtonState>>;
     using InputCombination = std::vector<InputCombinationElement>;
 
     /**

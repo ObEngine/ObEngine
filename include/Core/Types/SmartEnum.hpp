@@ -9,7 +9,7 @@
 
 #include <Exception.hpp>
 
-namespace obe::Types
+namespace obe::types
 {
     class UnknownEnumEntry : public Exception<UnknownEnumEntry>
     {

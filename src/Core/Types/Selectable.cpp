@@ -1,6 +1,6 @@
 #include <Types/Selectable.hpp>
 
-namespace obe::Types
+namespace obe::types
 {
     Selectable::Selectable(bool selected)
     {
@@ -31,4 +31,4 @@ namespace obe::Types
     {
         return m_selected;
     }
-} // namespace obe::Types
+} // namespace obe::types

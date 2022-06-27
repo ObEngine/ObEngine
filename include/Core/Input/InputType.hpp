@@ -50,5 +50,5 @@ namespace obe::input
         ScrollWheel
     };
 
-    using InputTypeMeta = Types::SmartEnum<InputType>;
+    using InputTypeMeta = types::SmartEnum<InputType>;
 } // namespace obe::input

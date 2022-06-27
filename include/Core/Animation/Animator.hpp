@@ -37,7 +37,7 @@ namespace obe::animation
         // animation texture will keep its size, ignoring target's size
         TextureSize
     };
-    using AnimatorTargetScaleModeMeta = Types::SmartEnum<AnimatorTargetScaleMode>;
+    using AnimatorTargetScaleModeMeta = types::SmartEnum<AnimatorTargetScaleMode>;
 
     class AnimatorState
     {

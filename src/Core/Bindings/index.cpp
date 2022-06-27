@@ -76,7 +76,7 @@ namespace obe::bindings
         state["obe"].get_or_create<sol::table>();
         state["vili"].get_or_create<sol::table>();
         state["obe"]["Component"].get_or_create<sol::table>();
-        state["obe"]["Types"].get_or_create<sol::table>();
+        state["obe"]["types"].get_or_create<sol::table>();
         state["obe"]["animation"].get_or_create<sol::table>();
         state["obe"]["audio"].get_or_create<sol::table>();
         state["obe"]["collision"].get_or_create<sol::table>();
@@ -153,12 +153,12 @@ namespace obe::bindings
         obe::Component::bindings::load_class_component_base(state);
         obe::Component::Exceptions::bindings::load_class_component_id_already_taken(state);
         obe::Component::Exceptions::bindings::load_class_unknown_component_type(state);
-        obe::Types::bindings::load_class_identifiable(state);
-        obe::Types::bindings::load_class_protected_identifiable(state);
-        obe::Types::bindings::load_class_selectable(state);
-        obe::Types::bindings::load_class_serializable(state);
-        obe::Types::bindings::load_class_togglable(state);
-        obe::Types::bindings::load_class_unknown_enum_entry(state);
+        obe::types::bindings::load_class_identifiable(state);
+        obe::types::bindings::load_class_protected_identifiable(state);
+        obe::types::bindings::load_class_selectable(state);
+        obe::types::bindings::load_class_serializable(state);
+        obe::types::bindings::load_class_togglable(state);
+        obe::types::bindings::load_class_unknown_enum_entry(state);
         obe::animation::bindings::load_class_animation(state);
         obe::animation::bindings::load_class_animation_group(state);
         obe::animation::bindings::load_class_animation_state(state);

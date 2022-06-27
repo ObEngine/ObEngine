@@ -53,7 +53,7 @@ namespace obe::animation
         Force
     };
 
-    using AnimationPlayModeMeta = Types::SmartEnum<AnimationPlayMode>;
+    using AnimationPlayModeMeta = types::SmartEnum<AnimationPlayMode>;
 
     enum class AnimationCommand
     {
@@ -71,7 +71,7 @@ namespace obe::animation
         SetAnimation
     };
 
-    using AnimationCommandMeta = Types::SmartEnum<AnimationCommand>;
+    using AnimationCommandMeta = types::SmartEnum<AnimationCommand>;
 
     /**
      * \brief The AnimationStatus indicates whether the current Animation should
@@ -173,7 +173,7 @@ namespace obe::animation
      * \brief A whole Animation that contains one or more AnimationGroup.
      *
      */
-    class Animation : public Types::Serializable
+    class Animation : public types::Serializable
     {
     private:
         AnimationState m_default_state;

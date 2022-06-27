@@ -9,7 +9,7 @@
 
 #pragma once
 
-namespace obe::Types
+namespace obe::types
 {
     /**
      * FlagSet implements a bitset usable with `enum` and `enum class`.

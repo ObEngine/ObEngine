@@ -16,7 +16,7 @@ namespace obe::system
         File
     };
 
-    using PathTypeMeta = Types::SmartEnum<PathType>;
+    using PathTypeMeta = types::SmartEnum<PathType>;
 
     /**
      * \brief represents the result of the `find`, `findAll` and `list` operations of Path

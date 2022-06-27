@@ -1,6 +1,6 @@
 #include <Types/SmartEnum.hpp>
 
-namespace obe::Types
+namespace obe::types
 {
     
 }

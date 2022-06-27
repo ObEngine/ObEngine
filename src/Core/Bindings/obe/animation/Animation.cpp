@@ -50,7 +50,7 @@ namespace obe::animation::bindings
         sol::usertype<obe::animation::Animation> bind_animation
             = animation_namespace.new_usertype<obe::animation::Animation>("Animation",
                 sol::call_constructor, sol::constructors<obe::animation::Animation()>(),
-                sol::base_classes, sol::bases<obe::Types::Serializable>());
+                sol::base_classes, sol::bases<obe::types::Serializable>());
         bind_animation["apply_parameters"] = &obe::animation::Animation::apply_parameters;
         bind_animation["get_all_animation_groups_names"]
             = &obe::animation::Animation::get_all_animation_groups_names;

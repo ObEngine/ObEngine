@@ -235,7 +235,7 @@ namespace obe::system::bindings
         sol::usertype<obe::system::Plugin> bind_plugin
             = system_namespace.new_usertype<obe::system::Plugin>("Plugin", sol::call_constructor,
                 sol::constructors<obe::system::Plugin(const std::string&, const std::string&)>(),
-                sol::base_classes, sol::bases<obe::Types::Identifiable>());
+                sol::base_classes, sol::bases<obe::types::Identifiable>());
         bind_plugin["on_init"] = &obe::system::Plugin::on_init;
         bind_plugin["on_exit"] = &obe::system::Plugin::on_exit;
         bind_plugin["has_on_init"] = &obe::system::Plugin::has_on_init;

@@ -2,14 +2,14 @@
 
 #include <Transform/UnitVector.hpp>
 
-using namespace obe::Transform;
+using namespace obe::transform;
 
 TEST_CASE(
     "Testing value unpack of UnitVectors", "[obe.Transform.UnitVector.unpack]")
 {
     SECTION("Simple case")
     {
-        UnitVector test(12, 23);
+        const UnitVector test(12, 23);
         auto [x, y] = test.unpack();
         REQUIRE(x == 12);
         REQUIRE(y == 23);
