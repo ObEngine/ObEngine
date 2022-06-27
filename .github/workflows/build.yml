@@ -22,7 +22,7 @@ jobs:
       - name: Install CMake
         run: sudo apt-get install -y cmake
       - name: Install G++ and build-essential
-        run: sudo apt-get install -y build-essential g++
+        run: sudo apt-get install -y build-essential g++-10
       - name: Install git
         run: sudo apt-get install -y git
       - name: Install ALSA
@@ -34,7 +34,7 @@ jobs:
       - name: Compile and install SFML
         run: cd SFML; cmake .; make -j8; sudo make install
       - name: Compile ObEngine
-        run: cd build; cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..; make -j8
+        run: cd build; CC=/usr/bin/gcc-10 CXX=/usr/bin/g++-10 cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..; make -j8
       - name: Run tests
         run: export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/usr/local/lib"; ./build/tests/ObEngineTests
 
