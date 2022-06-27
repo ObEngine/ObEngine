@@ -17,8 +17,8 @@ namespace obe::transform::bindings
     void load_class_unit_vector(sol::state_view state);
     void load_class_screen_struct(sol::state_view state);
     void load_class_view_struct(sol::state_view state);
-    void load_enum_relative_position_from(sol::state_view state);
     void load_enum_referential_conversion_type(sol::state_view state);
     void load_enum_flip_axis(sol::state_view state);
     void load_enum_units(sol::state_view state);
+    void load_enum_relative_position_from(sol::state_view state);
 };

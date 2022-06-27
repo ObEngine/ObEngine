@@ -4,7 +4,7 @@
 
 #include <vili/parser/grammar.hpp>
 
-namespace vili::parser
+namespace vili::parser::error_messages
 {
     /**
      * \brief Base error message

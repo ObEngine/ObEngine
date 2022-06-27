@@ -1,16 +1,16 @@
-#include <Bindings/obe/events/cursor/Cursor.hpp>
+#include <Bindings/obe/events/Cursor/Cursor.hpp>
 
 #include <System/Cursor.hpp>
 
 #include <Bindings/Config.hpp>
 
-namespace obe::events::cursor::bindings
+namespace obe::events::Cursor::bindings
 {
     void load_class_hold(sol::state_view state)
     {
-        sol::table cursor_namespace = state["obe"]["events"]["cursor"].get<sol::table>();
+        sol::table Cursor_namespace = state["obe"]["events"]["Cursor"].get<sol::table>();
         sol::usertype<obe::events::Cursor::Hold> bind_hold
-            = cursor_namespace.new_usertype<obe::events::Cursor::Hold>(
+            = Cursor_namespace.new_usertype<obe::events::Cursor::Hold>(
                 "Hold", sol::call_constructor, sol::default_constructor);
         bind_hold["x"] = &obe::events::Cursor::Hold::x;
         bind_hold["y"] = &obe::events::Cursor::Hold::y;
@@ -21,9 +21,9 @@ namespace obe::events::cursor::bindings
     }
     void load_class_move(sol::state_view state)
     {
-        sol::table cursor_namespace = state["obe"]["events"]["cursor"].get<sol::table>();
+        sol::table Cursor_namespace = state["obe"]["events"]["Cursor"].get<sol::table>();
         sol::usertype<obe::events::Cursor::Move> bind_move
-            = cursor_namespace.new_usertype<obe::events::Cursor::Move>(
+            = Cursor_namespace.new_usertype<obe::events::Cursor::Move>(
                 "Move", sol::call_constructor, sol::default_constructor);
         bind_move["x"] = &obe::events::Cursor::Move::x;
         bind_move["y"] = &obe::events::Cursor::Move::y;
@@ -33,9 +33,9 @@ namespace obe::events::cursor::bindings
     }
     void load_class_press(sol::state_view state)
     {
-        sol::table cursor_namespace = state["obe"]["events"]["cursor"].get<sol::table>();
+        sol::table Cursor_namespace = state["obe"]["events"]["Cursor"].get<sol::table>();
         sol::usertype<obe::events::Cursor::Press> bind_press
-            = cursor_namespace.new_usertype<obe::events::Cursor::Press>(
+            = Cursor_namespace.new_usertype<obe::events::Cursor::Press>(
                 "Press", sol::call_constructor, sol::default_constructor);
         bind_press["x"] = &obe::events::Cursor::Press::x;
         bind_press["y"] = &obe::events::Cursor::Press::y;
@@ -46,9 +46,9 @@ namespace obe::events::cursor::bindings
     }
     void load_class_release(sol::state_view state)
     {
-        sol::table cursor_namespace = state["obe"]["events"]["cursor"].get<sol::table>();
+        sol::table Cursor_namespace = state["obe"]["events"]["Cursor"].get<sol::table>();
         sol::usertype<obe::events::Cursor::Release> bind_release
-            = cursor_namespace.new_usertype<obe::events::Cursor::Release>(
+            = Cursor_namespace.new_usertype<obe::events::Cursor::Release>(
                 "Release", sol::call_constructor, sol::default_constructor);
         bind_release["x"] = &obe::events::Cursor::Release::x;
         bind_release["y"] = &obe::events::Cursor::Release::y;

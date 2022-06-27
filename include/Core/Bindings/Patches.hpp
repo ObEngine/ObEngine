@@ -65,4 +65,10 @@ namespace vili::parser
     class _Patch_error_message
     {
     };
+    /**
+     * \nobind
+     */
+    namespace error_messages
+    {
+    }
 }
