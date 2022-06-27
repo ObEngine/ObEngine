@@ -44,7 +44,7 @@ namespace obe::transform::exceptions
             this->error("'{}' is not a valid known Referential", referential);
             this->hint("Try one of these Referentials : (TopLeft, Top, TopRight, Left, "
                        "Center, Right, BottomLeft, Bottom, BottomRight, "
-                       "Referential<double, double>");
+                       "Referential<double, double>)");
         }
     };
 }

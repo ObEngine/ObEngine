@@ -342,7 +342,7 @@ namespace obe::input
 
                     std::vector<std::string> state_list
                         = utils::string::split(state_and_button[0], ",");
-                    Types::FlagSet<InputButtonState> button_states;
+                    types::FlagSet<InputButtonState> button_states;
                     for (std::string& button_state : state_list)
                     {
                         if (utils::vector::contains(

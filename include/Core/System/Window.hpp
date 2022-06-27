@@ -28,14 +28,14 @@ namespace obe::system
         Fit,
     };
 
-    using StretchModeMeta = Types::SmartEnum<StretchMode>;
+    using StretchModeMeta = types::SmartEnum<StretchMode>;
 
     enum class WindowSize
     {
         Screen
     };
 
-    using WindowSizeMeta = Types::SmartEnum<WindowSize>;
+    using WindowSizeMeta = types::SmartEnum<WindowSize>;
 
     enum class RenderSize
     {
@@ -43,7 +43,7 @@ namespace obe::system
         Screen,
     };
 
-    using RenderSizeMeta = Types::SmartEnum<RenderSize>;
+    using RenderSizeMeta = types::SmartEnum<RenderSize>;
 
     class Window
     {

@@ -4,7 +4,7 @@ namespace sol
 {
     class state_view;
 };
-namespace obe::Types::bindings
+namespace obe::types::bindings
 {
     void load_class_identifiable(sol::state_view state);
     void load_class_protected_identifiable(sol::state_view state);

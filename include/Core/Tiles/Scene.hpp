@@ -23,7 +23,7 @@ namespace obe::scene
  */
 namespace obe::tiles
 {
-    class TileScene : public Types::Serializable
+    class TileScene : public types::Serializable
     {
     private:
         scene::Scene& m_scene;

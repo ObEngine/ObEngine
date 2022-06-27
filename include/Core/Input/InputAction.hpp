@@ -14,7 +14,7 @@ namespace obe::input
     /**
      * \brief Action triggered by one or more Keyboard key(s)
      */
-    class InputAction : public Types::Identifiable
+    class InputAction : public types::Identifiable
     {
     private:
         event::EventGroup* e_actions;

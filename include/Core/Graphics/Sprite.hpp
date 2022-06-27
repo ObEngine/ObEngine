@@ -22,7 +22,7 @@ namespace obe::graphics
      * \brief An element meant to be displayed in a Scene
      */
     class Sprite : public transform::UnitBasedObject,
-                   public Types::Selectable,
+                   public types::Selectable,
                    public transform::Rect,
                    public Renderable,
                    public Component::Component<Sprite>,

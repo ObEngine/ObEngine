@@ -11,7 +11,7 @@ namespace obe::scene
      * \brief A SceneNode holds objects inherited from Movable class and "links"
      * their position
      */
-    class SceneNode : public transform::Movable, public Types::Selectable
+    class SceneNode : public transform::Movable, public types::Selectable
     {
     private:
         std::vector<transform::Movable*> m_children;

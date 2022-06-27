@@ -1,6 +1,6 @@
 #pragma once
 
-namespace obe::Types
+namespace obe::types
 {
     /**
      * \brief A Base Class that you can select or unselect
@@ -39,4 +39,4 @@ namespace obe::Types
          */
         [[nodiscard]] bool is_selected() const;
     };
-} // namespace obe::Types
+} // namespace obe::types

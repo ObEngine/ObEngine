@@ -136,7 +136,7 @@ namespace obe::transform
         if (ref == "BottomRight")
             return Referential::BottomRight;
         std::cmatch reg_match;
-        const std::regex ref_regex(R"(Referential<\s*(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)\s*>)");
+        const std::regex ref_regex(R"(\s*(-?\d+(\.\d+)?)\s*,\s*(-?\d+(\.\d+)?)\s*)");
         std::regex_match(ref.c_str(), reg_match, ref_regex);
         if (reg_match.size() == 5)
         {

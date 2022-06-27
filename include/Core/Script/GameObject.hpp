@@ -62,7 +62,7 @@ namespace obe::script
     /**
      * \brief A GameObject is a set of Components used in the Scene
      */
-    class GameObject final : public Types::Identifiable, public Types::Serializable
+    class GameObject final : public types::Identifiable, public types::Serializable
     {
     private:
         bool m_permanent = false;

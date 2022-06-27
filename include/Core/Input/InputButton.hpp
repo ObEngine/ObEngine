@@ -44,7 +44,7 @@ namespace obe::input
         More
     };
 
-    using AxisThresholdDirectionMeta = Types::SmartEnum<AxisThresholdDirection>;
+    using AxisThresholdDirectionMeta = types::SmartEnum<AxisThresholdDirection>;
 
     /**
      * \brief Class that does represent an Input button

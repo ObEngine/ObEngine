@@ -29,7 +29,7 @@ namespace obe::graphics
     /**
      * \brief A class to handle colors
      */
-    class Color : public Types::Serializable
+    class Color : public types::Serializable
     {
         friend class animation::TweenImpl<Color>;
     private:

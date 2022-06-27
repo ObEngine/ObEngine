@@ -1,6 +1,6 @@
 #include <Types/Identifiable.hpp>
 
-namespace obe::Types
+namespace obe::types
 {
     Identifiable::Identifiable(const std::string& id)
     {
@@ -16,4 +16,4 @@ namespace obe::Types
     {
         return m_id;
     }
-} // namespace obe::Types
+} // namespace obe::types

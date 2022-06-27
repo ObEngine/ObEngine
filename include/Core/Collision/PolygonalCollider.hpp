@@ -28,7 +28,7 @@ namespace obe::collision
         // Tags the Collider should reject
         Rejected
     };
-    using ColliderTagTypeMeta = Types::SmartEnum<ColliderTagType>;
+    using ColliderTagTypeMeta = types::SmartEnum<ColliderTagType>;
 
     class PolygonalCollider;
     /**
@@ -52,7 +52,7 @@ namespace obe::collision
      * containing n points
      */
     class PolygonalCollider : public transform::Polygon,
-                              public Types::Selectable,
+                              public types::Selectable,
                               public Component::Component<PolygonalCollider>
     {
     private:

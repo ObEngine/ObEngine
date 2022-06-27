@@ -44,5 +44,5 @@ namespace obe::transform
         SceneUnits
     };
 
-    using UnitsMeta = Types::SmartEnum<Units>;
+    using UnitsMeta = types::SmartEnum<Units>;
 } // namespace obe::transform

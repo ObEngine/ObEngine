@@ -2,7 +2,7 @@
 
 #include <Config/Version.hpp>
 
-using obe::Config::Version;
+using obe::config::Version;
 
 TEST_CASE("Version objects", "[obe.Config.Version]")
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-namespace obe::Types
+namespace obe::types
 {
     /**
      * \brief A Base Class that you can enable or disable
@@ -44,4 +44,4 @@ namespace obe::Types
          */
         [[nodiscard]] bool is_enabled() const;
     };
-} // namespace obe::Types
+} // namespace obe::types

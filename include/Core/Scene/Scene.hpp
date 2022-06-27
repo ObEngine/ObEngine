@@ -49,7 +49,7 @@ namespace obe::scene
     /**
      * \brief The Scene class is a container of all the game elements
      */
-    class Scene : public Types::Serializable, public engine::ResourceManagedObject
+    class Scene : public types::Serializable, public engine::ResourceManagedObject
     {
     private:
         std::string m_level_name;

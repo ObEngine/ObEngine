@@ -37,7 +37,7 @@ namespace obe::graphics::bindings
             sol::constructors<obe::graphics::Color(), obe::graphics::Color(double, double, double),
                 obe::graphics::Color(double, double, double, double),
                 obe::graphics::Color(const std::string&), obe::graphics::Color(const sf::Color&)>(),
-            sol::base_classes, sol::bases<obe::Types::Serializable>());
+            sol::base_classes, sol::bases<obe::types::Serializable>());
         bind_color["schema"] = &obe::graphics::Color::schema;
         bind_color["dump"] = sol::overload(
             static_cast<vili::node (obe::graphics::Color::*)(obe::graphics::ColorType) const>(
@@ -237,10 +237,10 @@ namespace obe::graphics::bindings
             = graphics_namespace.new_usertype<obe::graphics::EditorSprite>("EditorSprite",
                 sol::base_classes,
                 sol::bases<obe::graphics::Sprite, obe::transform::UnitBasedObject,
-                    obe::Types::Selectable, obe::transform::Rect, obe::transform::Movable,
+                    obe::types::Selectable, obe::transform::Rect, obe::transform::Movable,
                     obe::graphics::Renderable, obe::Component::Component<obe::graphics::Sprite>,
-                    obe::Component::ComponentBase, obe::Types::Identifiable,
-                    obe::Types::Serializable, obe::engine::ResourceManagedObject>());
+                    obe::Component::ComponentBase, obe::types::Identifiable,
+                    obe::types::Serializable, obe::engine::ResourceManagedObject>());
         bind_editor_sprite["get_handle_point"] = &obe::graphics::EditorSprite::get_handle_point;
     }
     void load_class_font(sol::state_view state)
@@ -336,7 +336,7 @@ namespace obe::graphics::bindings
                 sol::call_constructor,
                 sol::constructors<obe::graphics::Shader(),
                     obe::graphics::Shader(const std::string&)>(),
-                sol::base_classes, sol::bases<obe::Types::Serializable>());
+                sol::base_classes, sol::bases<obe::types::Serializable>());
         bind_shader["schema"] = &obe::graphics::Shader::schema;
         bind_shader["dump"] = &obe::graphics::Shader::dump;
         bind_shader["load"] = &obe::graphics::Shader::load;
@@ -347,10 +347,10 @@ namespace obe::graphics::bindings
         sol::table graphics_namespace = state["obe"]["graphics"].get<sol::table>();
         sol::usertype<obe::graphics::Sprite> bind_sprite
             = graphics_namespace.new_usertype<obe::graphics::Sprite>("Sprite", sol::base_classes,
-                sol::bases<obe::transform::UnitBasedObject, obe::Types::Selectable,
+                sol::bases<obe::transform::UnitBasedObject, obe::types::Selectable,
                     obe::transform::Rect, obe::transform::Movable, obe::graphics::Renderable,
                     obe::Component::Component<obe::graphics::Sprite>, obe::Component::ComponentBase,
-                    obe::Types::Identifiable, obe::Types::Serializable,
+                    obe::types::Identifiable, obe::types::Serializable,
                     obe::engine::ResourceManagedObject>());
         bind_sprite["draw_handle"] = &obe::graphics::Sprite::draw_handle;
         bind_sprite["get_color"] = &obe::graphics::Sprite::get_color;

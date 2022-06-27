@@ -27,7 +27,7 @@ namespace obe::system
     PluginFunction<T> get_plugin_function(
         std::shared_ptr<dynamicLinker::dynamicLinker> dl, const std::string& function_name);
 
-    class Plugin : public Types::Identifiable
+    class Plugin : public types::Identifiable
     {
     private:
         bool m_valid = false;

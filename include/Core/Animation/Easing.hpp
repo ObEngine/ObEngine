@@ -42,7 +42,7 @@ namespace obe::animation::easing
         InOutBounce
     };
 
-    using EasingTypeMeta = Types::SmartEnum<EasingType>;
+    using EasingTypeMeta = types::SmartEnum<EasingType>;
 
     double linear(double t);
     double in_sine(double t);

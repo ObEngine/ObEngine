@@ -20,7 +20,7 @@ namespace obe::debug
         Critical,
         Off
     };
-    using LogLevelMeta = Types::SmartEnum<LogLevel>;
+    using LogLevelMeta = types::SmartEnum<LogLevel>;
 
     // TODO: Create a Logger class wrapper instead of separate function with a global
     /**

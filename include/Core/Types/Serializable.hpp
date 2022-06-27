@@ -3,7 +3,7 @@
 #include <vili/node.hpp>
 #include <vld8/validator.hpp>
 
-namespace obe::Types
+namespace obe::types
 {
     /**
      * \brief A Base Class that represents a vili serializable object
@@ -37,4 +37,4 @@ namespace obe::Types
         vili::validator::validate_tree(this->schema(), data);
         this->load(data);
     }
-} // namespace obe::Types
+} // namespace obe::types

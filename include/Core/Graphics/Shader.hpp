@@ -10,7 +10,7 @@ namespace obe::graphics
     /**
      * \brief Shader class to use GLSL
      */
-    class Shader : public sf::Shader, public Types::Serializable
+    class Shader : public sf::Shader, public types::Serializable
     {
     private:
         std::string m_path;

@@ -6,7 +6,7 @@
 #include <fmt/format.h>
 
 
-using namespace obe::Graphics;
+using namespace obe::graphics;
 
 std::string expectedHsv(std::string_view H, std::string_view S, std::string_view V)
 {
@@ -109,7 +109,7 @@ TEST_CASE("Color dump should be able to infer the desired ColorType from the las
     SECTION("ColorType is Rgba")
     {
         Color color;
-        color.fromRgb(123, 104, 238, 220);
+        color.from_rgb(123, 104, 238, 220);
         vili::node node = color.dump();
         REQUIRE(node.at("r").as<vili::number>() == 123.0);
         REQUIRE(node.at("g").as<vili::number>() == 104.0);
@@ -119,7 +119,7 @@ TEST_CASE("Color dump should be able to infer the desired ColorType from the las
     SECTION("ColorType is Hsv")
     {
         Color color;
-        color.fromHsv(248.507463, 0.563025, 0.933333);
+        color.from_hsv(248.507463, 0.563025, 0.933333);
         vili::node node = color.dump();
         REQUIRE(node.at("H").as<vili::number>() == Approx(248.507463));
         REQUIRE(node.at("S").as<vili::number>() == Approx(0.563025));
@@ -128,35 +128,35 @@ TEST_CASE("Color dump should be able to infer the desired ColorType from the las
     SECTION("ColorType is Hex")
     {
         Color color;
-        color.fromHex("#7b68ee");
+        color.from_hex("#7b68ee");
         vili::node node = color.dump();
         REQUIRE(node.as<vili::string>() == "#7b68ee");
     }
     SECTION("ColorType is Hex (with alpha)")
     {
         Color color;
-        color.fromHex("#7b68eefa");
+        color.from_hex("#7b68eefa");
         vili::node node = color.dump();
         REQUIRE(node.as<vili::string>() == "#7b68eefa");
     }
     SECTION("ColorType is Hex using generic fromString method")
     {
         Color color;
-        color.fromString("#7b68ee");
+        color.from_string("#7b68ee");
         vili::node node = color.dump();
         REQUIRE(node.as<vili::string>() == "#7b68ee");
     }
     SECTION("ColorType is ColorName")
     {
         Color color;
-        color.fromName("MediumSlateBlue");
+        color.from_name("MediumSlateBlue");
         vili::node node = color.dump();
         REQUIRE(node.as<vili::string>() == "mediumslateblue");
     }
     SECTION("ColorType is ColorName using generic fromString method")
     {
         Color color;
-        color.fromString("MediumSlateBlue");
+        color.from_string("MediumSlateBlue");
         vili::node node = color.dump();
         REQUIRE(node.as<vili::string>() == "mediumslateblue");
     }
@@ -167,11 +167,11 @@ TEST_CASE("Color should output the correct name", "[obe.Graphics.Color.toName]")
     SECTION("Correct name")
     {
         const Color color(255, 0, 0);
-        REQUIRE(color.toName() == "red");
+        REQUIRE(color.to_name() == "red");
     }
     SECTION("Incorrect name")
     {
         const Color color(1, 2, 3);
-        REQUIRE(!color.toName().has_value());
+        REQUIRE(!color.to_name().has_value());
     }
 }
