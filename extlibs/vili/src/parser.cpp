@@ -20,7 +20,7 @@ namespace vili::parser
         try
         {
             peg::parse<vili::parser::rules::grammar, vili::parser::action,
-                vili::parser::control>(std::forward<input_type&&>(input), parser_state);
+                vili::parser::error_messages::control>(std::forward<input_type&&>(input), parser_state);
             // std::cout << "Begin parsing" << std::endl;
             /*peg::standard_trace<vili::parser::rules::grammar, vili::parser::action,
                 vili::parser::control>(std::forward<input_type&&>(input), parser_state);*/

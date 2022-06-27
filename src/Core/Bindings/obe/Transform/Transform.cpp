@@ -14,14 +14,6 @@
 
 namespace obe::transform::bindings
 {
-    void load_enum_relative_position_from(sol::state_view state)
-    {
-        sol::table transform_namespace = state["obe"]["transform"].get<sol::table>();
-        transform_namespace.new_enum<obe::transform::PolygonPoint::RelativePositionFrom>(
-            "RelativePositionFrom",
-            { { "Point0", obe::transform::PolygonPoint::RelativePositionFrom::Point0 },
-                { "Centroid", obe::transform::PolygonPoint::RelativePositionFrom::Centroid } });
-    }
     void load_enum_referential_conversion_type(sol::state_view state)
     {
         sol::table transform_namespace = state["obe"]["transform"].get<sol::table>();
@@ -47,6 +39,14 @@ namespace obe::transform::bindings
                 { "ViewUnits", obe::transform::Units::ViewUnits },
                 { "ScenePixels", obe::transform::Units::ScenePixels },
                 { "SceneUnits", obe::transform::Units::SceneUnits } });
+    }
+    void load_enum_relative_position_from(sol::state_view state)
+    {
+        sol::table transform_namespace = state["obe"]["transform"].get<sol::table>();
+        transform_namespace.new_enum<obe::transform::PolygonPoint::RelativePositionFrom>(
+            "RelativePositionFrom",
+            { { "Point0", obe::transform::PolygonPoint::RelativePositionFrom::Point0 },
+                { "Centroid", obe::transform::PolygonPoint::RelativePositionFrom::Centroid } });
     }
     void load_class_matrix2_d(sol::state_view state)
     {
@@ -265,8 +265,7 @@ namespace obe::transform::bindings
         bind_referential["is_on_side"] = &obe::transform::Referential::is_on_side;
         bind_referential["is_known"] = &obe::transform::Referential::is_known;
         bind_referential["get_offset"] = &obe::transform::Referential::get_offset;
-        bind_referential["to_string"]
-            = [](obe::transform::Referential* self) -> std::string { return self->to_string(); };
+        bind_referential["to_string"] = &obe::transform::Referential::to_string;
         bind_referential["from_string"] = &obe::transform::Referential::from_string;
         bind_referential["TopLeft"] = sol::var(&obe::transform::Referential::TopLeft);
         bind_referential["Top"] = sol::var(&obe::transform::Referential::Top);

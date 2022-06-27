@@ -1,6 +1,5 @@
 #include <Bindings/vili/Vili.hpp>
 
-#include <System/Path.hpp>
 #include <vili/config.hpp>
 #include <vili/node.hpp>
 #include <vili/types.hpp>
@@ -65,6 +64,7 @@ namespace vili::bindings
             static_cast<vili::node& (vili::node::*)(const char*)>(&vili::node::operator[]),
             static_cast<vili::node& (vili::node::*)(const std::string&)>(&vili::node::operator[]),
             static_cast<vili::node& (vili::node::*)(size_t)>(&vili::node::operator[]),
+            static_cast<vili::node& (vili::node::*)(unsigned int)>(&vili::node::operator[]),
             static_cast<const vili::node& (vili::node::*)(const char*) const>(
                 &vili::node::operator[]),
             static_cast<const vili::node& (vili::node::*)(const std::string&) const>(
@@ -97,12 +97,12 @@ namespace vili::bindings
             static_cast<const vili::node& (vili::node::*)(const std::string&) const>(
                 &vili::node::at),
             static_cast<const vili::node& (vili::node::*)(size_t) const>(&vili::node::at));
+        bind_node["data"] = &vili::node::data;
         bind_node["size"] = &vili::node::size;
         bind_node["empty"] = &vili::node::empty;
         bind_node["clear"] = &vili::node::clear;
         bind_node[sol::meta_function::equal_to] = &vili::node::operator==;
         bind_node["from_type"] = &vili::node::from_type;
-        state.script_file("obe://Lib/Internal/Vili.lua"_fs);
     }
     void load_class_node_iterator(sol::state_view state)
     {

@@ -2,7 +2,6 @@
 
 #include <Bindings/Patches.hpp>
 #include <vili/parser.hpp>
-#include <vili/parser/grammar_errors.hpp>
 #include <vili/parser/parser_state.hpp>
 
 #include <Bindings/Config.hpp>
@@ -33,13 +32,6 @@ namespace vili::parser::bindings
         bind_state["close_block"] = &vili::parser::state::close_block;
         bind_state["push"] = &vili::parser::state_push_proxy;
         bind_state["root"] = &vili::parser::state::root;
-    }
-    void load_class_error(sol::state_view state)
-    {
-        sol::table parser_namespace = state["vili"]["parser"].get<sol::table>();
-        sol::usertype<vili::parser::error> bind_error
-            = parser_namespace.new_usertype<vili::parser::error>(
-                "error", sol::call_constructor, sol::default_constructor);
     }
     void load_function_from_string(sol::state_view state)
     {
