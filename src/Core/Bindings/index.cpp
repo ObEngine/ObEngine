@@ -7,22 +7,16 @@
 #include <Bindings/obe/Types/Types.hpp>
 #include <Bindings/obe/animation/Animation.hpp>
 #include <Bindings/obe/animation/easing/Easing.hpp>
-#include <Bindings/obe/animation/exceptions/Exceptions.hpp>
 #include <Bindings/obe/animation/schemas/Schemas.hpp>
 #include <Bindings/obe/audio/Audio.hpp>
-#include <Bindings/obe/audio/exceptions/Exceptions.hpp>
 #include <Bindings/obe/bindings/Bindings.hpp>
 #include <Bindings/obe/collision/Collision.hpp>
-#include <Bindings/obe/collision/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/config/Config.hpp>
-#include <Bindings/obe/config/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/config/validators/Validators.hpp>
 #include <Bindings/obe/debug/Debug.hpp>
 #include <Bindings/obe/debug/render/Render.hpp>
 #include <Bindings/obe/engine/Engine.hpp>
-#include <Bindings/obe/engine/exceptions/Exceptions.hpp>
 #include <Bindings/obe/event/Event.hpp>
-#include <Bindings/obe/event/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/events/Actions/Actions.hpp>
 #include <Bindings/obe/events/Cursor/Cursor.hpp>
 #include <Bindings/obe/events/Game/Game.hpp>
@@ -31,19 +25,14 @@
 #include <Bindings/obe/events/Scene/Scene.hpp>
 #include <Bindings/obe/graphics/Graphics.hpp>
 #include <Bindings/obe/graphics/canvas/Canvas.hpp>
-#include <Bindings/obe/graphics/exceptions/Exceptions.hpp>
 #include <Bindings/obe/graphics/shapes/Shapes.hpp>
 #include <Bindings/obe/graphics/utils/Utils.hpp>
-#include <Bindings/obe/input/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/input/Input.hpp>
 #include <Bindings/obe/network/Network.hpp>
-#include <Bindings/obe/scene/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/scene/Scene.hpp>
 #include <Bindings/obe/script/Helpers/Helpers.hpp>
 #include <Bindings/obe/script/Script.hpp>
-#include <Bindings/obe/script/exceptions/Exceptions.hpp>
 #include <Bindings/obe/script/vili_lua_bridge/ViliLuaBridge.hpp>
-#include <Bindings/obe/system/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/system/System.hpp>
 #include <Bindings/obe/system/constraints/Constraints.hpp>
 #include <Bindings/obe/system/package/Package.hpp>
@@ -52,10 +41,8 @@
 #include <Bindings/obe/system/project/Prefixes/Prefixes.hpp>
 #include <Bindings/obe/system/project/Project.hpp>
 #include <Bindings/obe/tiles/Tiles.hpp>
-#include <Bindings/obe/tiles/exceptions/Exceptions.hpp>
 #include <Bindings/obe/time/Time.hpp>
 #include <Bindings/obe/transform/Transform.hpp>
-#include <Bindings/obe/transform/exceptions/Exceptions.hpp>
 #include <Bindings/obe/utils/Utils.hpp>
 #include <Bindings/obe/utils/exec/Exec.hpp>
 #include <Bindings/obe/utils/file/File.hpp>
@@ -63,7 +50,6 @@
 #include <Bindings/obe/utils/string/String.hpp>
 #include <Bindings/obe/utils/vector/Vector.hpp>
 #include <Bindings/vili/Vili.hpp>
-#include <Bindings/vili/exceptions/Exceptions.hpp>
 #include <Bindings/vili/parser/Parser.hpp>
 #include <Bindings/vili/parser/rules/Rules.hpp>
 #include <Bindings/vili/utils/string/String.hpp>
@@ -93,7 +79,6 @@ namespace obe::bindings
         state["obe"]["time"].get_or_create<sol::table>();
         state["obe"]["transform"].get_or_create<sol::table>();
         state["obe"]["utils"].get_or_create<sol::table>();
-        state["vili"]["exceptions"].get_or_create<sol::table>();
         state["vili"]["parser"].get_or_create<sol::table>();
         state["vili"]["writer"].get_or_create<sol::table>();
         state["obe"]["debug"].get_or_create<sol::table>();
@@ -101,22 +86,9 @@ namespace obe::bindings
         state["obe"]["events"].get_or_create<sol::table>();
         state["vili"]["utils"].get_or_create<sol::table>();
         state["obe"]["Component"]["Exceptions"].get_or_create<sol::table>();
-        state["obe"]["animation"]["exceptions"].get_or_create<sol::table>();
-        state["obe"]["audio"]["exceptions"].get_or_create<sol::table>();
-        state["obe"]["collision"]["Exceptions"].get_or_create<sol::table>();
-        state["obe"]["config"]["Exceptions"].get_or_create<sol::table>();
-        state["obe"]["engine"]["exceptions"].get_or_create<sol::table>();
-        state["obe"]["event"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["graphics"]["canvas"].get_or_create<sol::table>();
-        state["obe"]["graphics"]["exceptions"].get_or_create<sol::table>();
         state["obe"]["graphics"]["shapes"].get_or_create<sol::table>();
-        state["obe"]["input"]["Exceptions"].get_or_create<sol::table>();
-        state["obe"]["scene"]["Exceptions"].get_or_create<sol::table>();
-        state["obe"]["script"]["exceptions"].get_or_create<sol::table>();
-        state["obe"]["system"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["system"]["project"].get_or_create<sol::table>();
-        state["obe"]["tiles"]["exceptions"].get_or_create<sol::table>();
-        state["obe"]["transform"]["exceptions"].get_or_create<sol::table>();
         state["obe"]["utils"]["exec"].get_or_create<sol::table>();
         state["obe"]["events"]["Actions"].get_or_create<sol::table>();
         state["obe"]["events"]["Cursor"].get_or_create<sol::table>();
@@ -176,41 +148,20 @@ namespace obe::bindings
         obe::animation::bindings::load_enum_animator_target_scale_mode(state);
         obe::animation::bindings::load_function_template_specialization_exists_impl(state);
         obe::animation::bindings::load_function_tween(state);
-        obe::animation::exceptions::bindings::load_class_animation_group_texture_index_overflow(
-            state);
-        obe::animation::exceptions::bindings::load_class_animation_texture_index_overflow(state);
-        obe::animation::exceptions::bindings::load_class_invalid_animation_file(state);
-        obe::animation::exceptions::bindings::load_class_invalid_easing_function(state);
-        obe::animation::exceptions::bindings::load_class_no_selected_animation(state);
-        obe::animation::exceptions::bindings::load_class_no_selected_animation_group(state);
-        obe::animation::exceptions::bindings::load_class_unknown_animation(state);
-        obe::animation::exceptions::bindings::load_class_unknown_animation_group(state);
-        obe::animation::exceptions::bindings::load_class_unknown_easing_from_enum(state);
-        obe::animation::exceptions::bindings::load_class_unknown_easing_from_string(state);
         obe::audio::bindings::load_class_audio_manager(state);
         obe::audio::bindings::load_class_sound(state);
         obe::audio::bindings::load_enum_load_policy(state);
         obe::audio::bindings::load_enum_sound_status(state);
-        obe::audio::exceptions::bindings::load_class_audio_file_not_found(state);
         obe::collision::bindings::load_class_collision_data(state);
         obe::collision::bindings::load_class_polygonal_collider(state);
         obe::collision::bindings::load_class_trajectory(state);
         obe::collision::bindings::load_class_trajectory_node(state);
         obe::collision::bindings::load_enum_collider_tag_type(state);
-        obe::collision::Exceptions::bindings::load_class_invalid_tag_format(state);
         obe::config::bindings::load_class_configuration_manager(state);
         obe::config::bindings::load_class_version(state);
-        obe::config::Exceptions::bindings::load_class_config_error(state);
-        obe::config::Exceptions::bindings::load_class_invalid_version_format(state);
         obe::engine::bindings::load_class_engine(state);
         obe::engine::bindings::load_class_resource_managed_object(state);
         obe::engine::bindings::load_class_resource_manager(state);
-        obe::engine::exceptions::bindings::load_class_boot_script_execution_error(state);
-        obe::engine::exceptions::bindings::load_class_boot_script_loading_error(state);
-        obe::engine::exceptions::bindings::load_class_boot_script_missing(state);
-        obe::engine::exceptions::bindings::load_class_font_not_found(state);
-        obe::engine::exceptions::bindings::load_class_texture_not_found(state);
-        obe::engine::exceptions::bindings::load_class_unitialized_engine(state);
         obe::event::bindings::load_class_callback_scheduler(state);
         obe::event::bindings::load_class_event_base(state);
         obe::event::bindings::load_class_event_group(state);
@@ -221,16 +172,6 @@ namespace obe::bindings
         obe::event::bindings::load_class_lua_event_listener(state);
         obe::event::bindings::load_enum_callback_scheduler_state(state);
         obe::event::bindings::load_enum_listener_change_state(state);
-        obe::event::Exceptions::bindings::load_class_callback_creation_error(state);
-        obe::event::Exceptions::bindings::load_class_event_already_exists(state);
-        obe::event::Exceptions::bindings::load_class_event_execution_error(state);
-        obe::event::Exceptions::bindings::load_class_event_group_already_exists(state);
-        obe::event::Exceptions::bindings::load_class_event_group_not_joinable(state);
-        obe::event::Exceptions::bindings::load_class_event_namespace_already_exists(state);
-        obe::event::Exceptions::bindings::load_class_event_namespace_not_joinable(state);
-        obe::event::Exceptions::bindings::load_class_unknown_event(state);
-        obe::event::Exceptions::bindings::load_class_unknown_event_group(state);
-        obe::event::Exceptions::bindings::load_class_unknown_event_namespace(state);
         obe::graphics::bindings::load_class_color(state);
         obe::graphics::bindings::load_class_editor_sprite(state);
         obe::graphics::bindings::load_class_font(state);
@@ -265,26 +206,10 @@ namespace obe::bindings
         obe::graphics::canvas::bindings::load_enum_canvas_element_type(state);
         obe::graphics::canvas::bindings::load_enum_text_horizontal_align(state);
         obe::graphics::canvas::bindings::load_enum_text_vertical_align(state);
-        obe::graphics::exceptions::bindings::load_class_canvas_element_already_exists(state);
-        obe::graphics::exceptions::bindings::load_class_image_file_not_found(state);
-        obe::graphics::exceptions::bindings::load_class_invalid_color_name(state);
-        obe::graphics::exceptions::bindings::load_class_invalid_hex_format(state);
-        obe::graphics::exceptions::bindings::load_class_invalid_hsv_format(state);
-        obe::graphics::exceptions::bindings::load_class_invalid_rgb_format(state);
-        obe::graphics::exceptions::bindings::load_class_invalid_sprite_color_type(state);
-        obe::graphics::exceptions::bindings::load_class_read_only_texture(state);
         obe::graphics::shapes::bindings::load_class_circle(state);
         obe::graphics::shapes::bindings::load_class_polygon(state);
         obe::graphics::shapes::bindings::load_class_rectangle(state);
         obe::graphics::shapes::bindings::load_class_text(state);
-        obe::input::Exceptions::bindings::load_class_input_button_already_in_combination(state);
-        obe::input::Exceptions::bindings::load_class_input_button_invalid_operation(state);
-        obe::input::Exceptions::bindings::load_class_invalid_gamepad_button(state);
-        obe::input::Exceptions::bindings::load_class_invalid_input_button_state(state);
-        obe::input::Exceptions::bindings::load_class_invalid_input_combination_code(state);
-        obe::input::Exceptions::bindings::load_class_invalid_input_type_enum_value(state);
-        obe::input::Exceptions::bindings::load_class_unknown_input_action(state);
-        obe::input::Exceptions::bindings::load_class_unknown_input_button(state);
         obe::input::bindings::load_class_input_action(state);
         obe::input::bindings::load_class_input_button(state);
         obe::input::bindings::load_class_input_button_monitor(state);
@@ -302,29 +227,12 @@ namespace obe::bindings
         obe::scene::bindings::load_class_scene(state);
         obe::scene::bindings::load_class_scene_node(state);
         obe::scene::bindings::load_class_scene_render_options(state);
-        obe::scene::Exceptions::bindings::load_class_child_not_in_scene_node(state);
-        obe::scene::Exceptions::bindings::load_class_game_object_already_exists(state);
-        obe::scene::Exceptions::bindings::load_class_invalid_scene_file(state);
-        obe::scene::Exceptions::bindings::load_class_missing_scene_file_block(state);
-        obe::scene::Exceptions::bindings::load_class_scene_on_load_callback_error(state);
-        obe::scene::Exceptions::bindings::load_class_scene_script_loading_error(state);
-        obe::scene::Exceptions::bindings::load_class_unknown_collider(state);
-        obe::scene::Exceptions::bindings::load_class_unknown_game_object(state);
-        obe::scene::Exceptions::bindings::load_class_unknown_sprite(state);
         obe::script::bindings::load_class_game_object(state);
         obe::script::bindings::load_class_game_object_database(state);
         obe::script::bindings::load_class_lua_state(state);
         obe::script::bindings::load_enum_environment_target(state);
         obe::script::bindings::load_function_sol_call_status_to_string(state);
         obe::script::bindings::load_function_safe_lua_call(state);
-        obe::script::exceptions::bindings::load_class_game_object_script_error(state);
-        obe::script::exceptions::bindings::load_class_invalid_script(state);
-        obe::script::exceptions::bindings::load_class_lua_execution_error(state);
-        obe::script::exceptions::bindings::load_class_lua_nested_exception_error(state);
-        obe::script::exceptions::bindings::load_class_no_such_component(state);
-        obe::script::exceptions::bindings::load_class_object_definition_not_found(state);
-        obe::script::exceptions::bindings::load_class_script_file_not_found(state);
-        obe::script::exceptions::bindings::load_class_wrong_source_attribute_type(state);
         obe::system::bindings::load_class_contextual_path_factory(state);
         obe::system::bindings::load_class_cursor(state);
         obe::system::bindings::load_class_cursor_model(state);
@@ -339,20 +247,6 @@ namespace obe::bindings
         obe::system::bindings::load_enum_window_size(state);
         obe::system::bindings::load_enum_render_size(state);
         obe::system::bindings::load_function_split_path_and_prefix(state);
-        obe::system::Exceptions::bindings::load_class_invalid_deferred_mountable_path(state);
-        obe::system::Exceptions::bindings::load_class_invalid_mount_file(state);
-        obe::system::Exceptions::bindings::load_class_invalid_mouse_button_enum_value(state);
-        obe::system::Exceptions::bindings::load_class_invalid_project_file(state);
-        obe::system::Exceptions::bindings::load_class_missing_default_mount_point(state);
-        obe::system::Exceptions::bindings::load_class_mount_file_missing(state);
-        obe::system::Exceptions::bindings::load_class_mountable_path_index_overflow(state);
-        obe::system::Exceptions::bindings::load_class_package_already_installed(state);
-        obe::system::Exceptions::bindings::load_class_package_file_not_found(state);
-        obe::system::Exceptions::bindings::load_class_path_error(state);
-        obe::system::Exceptions::bindings::load_class_resource_not_found(state);
-        obe::system::Exceptions::bindings::load_class_unknown_package(state);
-        obe::system::Exceptions::bindings::load_class_unknown_path_prefix(state);
-        obe::system::Exceptions::bindings::load_class_unknown_project(state);
         obe::system::project::bindings::load_class_project(state);
         obe::system::project::bindings::load_class_project_ur_ls(state);
         obe::system::project::bindings::load_function_get_project_location(state);
@@ -369,10 +263,6 @@ namespace obe::bindings
         obe::tiles::bindings::load_function_get_tile_info(state);
         obe::tiles::bindings::load_function_strip_tile_flags(state);
         obe::tiles::bindings::load_function_apply_texture_quads_transforms(state);
-        obe::tiles::exceptions::bindings::load_class_tile_position_outside_layer(state);
-        obe::tiles::exceptions::bindings::load_class_unknown_tile_id(state);
-        obe::tiles::exceptions::bindings::load_class_unknown_tile_layer(state);
-        obe::tiles::exceptions::bindings::load_class_unknown_tileset(state);
         obe::time::bindings::load_class_chronometer(state);
         obe::time::bindings::load_class_framerate_counter(state);
         obe::time::bindings::load_class_framerate_manager(state);
@@ -399,9 +289,6 @@ namespace obe::bindings
         obe::transform::bindings::load_enum_flip_axis(state);
         obe::transform::bindings::load_enum_units(state);
         obe::transform::bindings::load_enum_relative_position_from(state);
-        obe::transform::exceptions::bindings::load_class_polygon_not_enough_points(state);
-        obe::transform::exceptions::bindings::load_class_polygon_point_index_overflow(state);
-        obe::transform::exceptions::bindings::load_class_unknown_referential(state);
         obe::utils::exec::bindings::load_class_run_args_parser(state);
         vili::bindings::load_class_const_node_iterator(state);
         vili::bindings::load_class_node(state);
@@ -422,20 +309,6 @@ namespace obe::bindings
         vili::bindings::load_global_array_typename(state);
         vili::bindings::load_global_unknown_typename(state);
         vili::bindings::load_global_container_typename(state);
-        vili::exceptions::bindings::load_class_array_index_overflow(state);
-        vili::exceptions::bindings::load_class_base_exception(state);
-        vili::exceptions::bindings::load_class_debug_info(state);
-        vili::exceptions::bindings::load_class_file_not_found(state);
-        vili::exceptions::bindings::load_class_inconsistent_indentation(state);
-        vili::exceptions::bindings::load_class_integer_dump_error(state);
-        vili::exceptions::bindings::load_class_invalid_cast(state);
-        vili::exceptions::bindings::load_class_invalid_data_type(state);
-        vili::exceptions::bindings::load_class_invalid_merge(state);
-        vili::exceptions::bindings::load_class_invalid_node_type(state);
-        vili::exceptions::bindings::load_class_number_dump_error(state);
-        vili::exceptions::bindings::load_class_parsing_error(state);
-        vili::exceptions::bindings::load_class_too_much_indentation(state);
-        vili::exceptions::bindings::load_class_unknown_child_node(state);
         vili::parser::bindings::load_class_node_in_stack(state);
         vili::parser::bindings::load_class_state(state);
         vili::parser::bindings::load_function_from_string(state);
