@@ -2,6 +2,9 @@
 
 #include <Exception.hpp>
 
+/**
+ * \nobind
+ */
 namespace obe::transform::exceptions
 {
     class PolygonNotEnoughPoints : public Exception<PolygonNotEnoughPoints>

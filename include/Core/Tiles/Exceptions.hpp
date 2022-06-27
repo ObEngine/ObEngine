@@ -4,6 +4,9 @@
 #include <map>
 #include <vector>
 
+/**
+ * \nobind
+ */
 namespace obe::tiles::exceptions
 {
     class UnknownTileId : public Exception<UnknownTileId>

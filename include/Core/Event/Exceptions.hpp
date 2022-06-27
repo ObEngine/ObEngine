@@ -2,6 +2,9 @@
 
 #include <Exception.hpp>
 
+/**
+ * \nobind
+ */
 namespace obe::event::Exceptions
 {
     class CallbackCreationError : public Exception<CallbackCreationError>

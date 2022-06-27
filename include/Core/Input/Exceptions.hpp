@@ -5,6 +5,9 @@
 #include <Exception.hpp>
 #include <vector>
 
+/**
+ * \nobind
+ */
 namespace obe::input::Exceptions
 {
     class InputButtonInvalidOperation : public Exception<InputButtonInvalidOperation>

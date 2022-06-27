@@ -2,6 +2,9 @@
 
 #include <string_view>
 
+/**
+ * \nobind
+ */
 namespace obe::config::Exceptions
 {
     class InvalidVersionFormat : public Exception<InvalidVersionFormat>

@@ -2,6 +2,9 @@
 
 #include <Exception.hpp>
 
+/**
+ * \nobind
+ */
 namespace obe::animation::exceptions
 {
     class UnknownAnimationGroup : public Exception<UnknownAnimationGroup>
