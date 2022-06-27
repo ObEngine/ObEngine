@@ -2,6 +2,9 @@
 
 #include <Exception.hpp>
 
+/**
+ * \nobind
+ */
 namespace obe::collision::Exceptions
 {
     class InvalidTagFormat : public Exception<InvalidTagFormat>

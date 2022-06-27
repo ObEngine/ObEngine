@@ -5,6 +5,9 @@
 
 #include <Exception.hpp>
 
+/**
+ * \nobind
+ */
 namespace obe::script::exceptions
 {
     class NoSuchComponent : public Exception<NoSuchComponent>

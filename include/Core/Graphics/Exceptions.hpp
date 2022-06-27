@@ -2,6 +2,9 @@
 
 #include <Exception.hpp>
 
+/**
+ * \nobind
+ */
 namespace obe::graphics::exceptions
 {
     class ReadOnlyTexture : public Exception<ReadOnlyTexture>

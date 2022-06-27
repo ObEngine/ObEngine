@@ -3,6 +3,9 @@
 #include <Exception.hpp>
 #include <vector>
 
+/**
+ * \nobind
+ */
 namespace obe::engine::exceptions
 {
     class BootScriptMissing : public Exception<BootScriptMissing>

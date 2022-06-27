@@ -3,6 +3,9 @@
 
 #include <fmt/format.h>
 
+/**
+ * \nobind
+ */
 namespace obe::audio::exceptions
 {
     class AudioFileNotFound : public Exception<AudioFileNotFound>

@@ -5,6 +5,9 @@
 #include <Exception.hpp>
 #include <vector>
 
+/**
+ * \nobind
+ */
 namespace obe::system::Exceptions
 {
     class ResourceNotFound : public Exception<ResourceNotFound>

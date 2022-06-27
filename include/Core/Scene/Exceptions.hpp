@@ -2,6 +2,9 @@
 
 #include <Exception.hpp>
 
+/**
+ * \nobind
+ */
 namespace obe::scene::Exceptions
 {
     class ChildNotInSceneNode : public Exception<ChildNotInSceneNode>
