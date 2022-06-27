@@ -1,5 +1,6 @@
 #include <Bindings/vili/Vili.hpp>
 
+#include <System/Path.hpp>
 #include <vili/config.hpp>
 #include <vili/node.hpp>
 #include <vili/types.hpp>
@@ -103,6 +104,7 @@ namespace vili::bindings
         bind_node["clear"] = &vili::node::clear;
         bind_node[sol::meta_function::equal_to] = &vili::node::operator==;
         bind_node["from_type"] = &vili::node::from_type;
+        state.script_file("obe://Lib/Internal/Vili.lua"_fs);
     }
     void load_class_node_iterator(sol::state_view state)
     {
