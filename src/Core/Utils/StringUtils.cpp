@@ -35,14 +35,14 @@ namespace obe::utils::string
     bool is_string_alpha(const std::string& str)
     {
         if (!str.empty())
-            return std::ranges::all_of(str, isalpha);
+            return std::all_of(str.begin(), str.end(), isalpha);
         return false;
     }
 
     bool is_string_alpha_numeric(const std::string& str)
     {
         if (!str.empty())
-            return std::ranges::all_of(str, isalnum);
+            return std::all_of(str.begin(), str.end(), isalnum);
         return false;
     }
 
@@ -53,9 +53,9 @@ namespace obe::utils::string
             if (str.substr(0, 1) == "-")
             {
                 std::string without_sign = str.substr(1);
-                return std::ranges::all_of(without_sign, isdigit);
+                return std::all_of(without_sign.begin(), without_sign.end(), isdigit);
             }
-            return std::ranges::all_of(str, isdigit);
+            return std::all_of(str.begin(), str.end(), isdigit);
         }
         return false;
     }
@@ -73,7 +73,7 @@ namespace obe::utils::string
                 is_float = true;
                 replace_in_place(modify_str, ".", "");
             }
-            return (std::ranges::all_of(modify_str, isdigit) && is_float);
+            return (std::all_of(modify_str.begin(), modify_str.end(), isdigit) && is_float);
         }
         return false;
     }
@@ -83,7 +83,8 @@ namespace obe::utils::string
         return (is_string_float(str) || is_string_int(str));
     }
 
-    void replace_in_place(std::string& subject, const std::string& search, const std::string& replace)
+    void replace_in_place(
+        std::string& subject, const std::string& search, const std::string& replace)
     {
         size_t pos = 0;
         while ((pos = subject.find(search, pos)) != std::string::npos)
@@ -183,9 +184,9 @@ namespace obe::utils::string
         const std::string& source, const std::vector<std::string>& words, std::size_t limit)
     {
         std::vector<std::string> sorted_by_distance = words;
-        std::ranges::sort(sorted_by_distance,
+        std::sort(sorted_by_distance.begin(), sorted_by_distance.end(),
             [source](const std::string& s1, const std::string& s2)
-            { return utils::string::distance(s1, source) < utils::string::distance(s2, source); });
+            { return distance(s1, source) < distance(s2, source); });
         if (limit && !sorted_by_distance.empty())
         {
             return std::vector<std::string>(sorted_by_distance.begin(),

@@ -12,7 +12,7 @@ namespace obe::scene
 
     void SceneNode::remove_child(Movable& child)
     {
-        const auto child_to_remove = std::ranges::remove(m_children, &child).begin();
+        const auto child_to_remove = std::remove(m_children.begin(), m_children.end(), &child);
         if (child_to_remove == m_children.end())
             throw Exceptions::ChildNotInSceneNode(this, &child, EXC_INFO);
         m_children.erase(child_to_remove, m_children.end());

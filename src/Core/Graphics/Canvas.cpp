@@ -174,7 +174,7 @@ namespace obe::graphics::canvas
 
     void Canvas::sort_elements()
     {
-        std::ranges::sort(m_elements,
+        std::sort(m_elements.begin(), m_elements.end(),
             [](const auto& elem1, const auto& elem2) { return elem1->layer > elem2->layer; });
     }
 

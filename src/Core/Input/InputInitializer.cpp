@@ -273,7 +273,8 @@ namespace obe::input
                     = (!invert_axis) ? gamepad_axis_name + "_UP" : gamepad_axis_name + "_DOWN";
                 const std::string down_axis_name
                     = (!invert_axis) ? gamepad_axis_name + "_DOWN" : gamepad_axis_name + "_UP";
-                set_or_reset_button(up_axis_name, InputButton(gamepad_index, axis, up_y, up_axis_name));
+                set_or_reset_button(
+                    up_axis_name, InputButton(gamepad_index, axis, up_y, up_axis_name));
                 set_or_reset_button(
                     down_axis_name, InputButton(gamepad_index, axis, down_y, down_axis_name));
             }
@@ -326,7 +327,7 @@ namespace obe::input
                     [button, this](event::ListenerChangeState, const std::string&)
                     {
                         const auto position
-                            = std::ranges::find_if(m_key_monitors,
+                            = std::find_if(m_key_monitors.begin(), m_key_monitors.end(),
                                 [button](const auto& monitor)
                                 { return &monitor->get_button() == button; });
                         if (position != m_key_monitors.end())

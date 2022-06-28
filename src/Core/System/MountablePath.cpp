@@ -96,8 +96,8 @@ namespace obe::system
         if (!mount_file_path)
         {
             auto string_paths = MountablePath::string_paths();
-            std::ranges::transform(string_paths
-                , string_paths.begin(), utils::string::quote);
+            std::transform(
+                string_paths.begin(), string_paths.end(), string_paths.begin(), utils::string::quote);
 
             debug::Log->info("No 'mount.vili' file found in the following directories ({})",
                 fmt::join(string_paths.begin(), string_paths.end(), ", "));
@@ -210,7 +210,7 @@ namespace obe::system
         }
         auto path_cmp = [&path](const auto& mounted_path) { return path == *mounted_path; };
         const bool path_already_exists
-            = std::ranges::find_if(MountedPaths, path_cmp) != MountedPaths.end();
+            = std::find_if(MountedPaths.begin(), MountedPaths.end(), path_cmp) != MountedPaths.end();
         if (path_already_exists)
         {
             debug::Log->warn("[MountablePath] Can't Mount the same path twice: "
@@ -231,7 +231,7 @@ namespace obe::system
         }
         else
         {
-            const auto existing_prefix_it = std::ranges::find_if(MountedPaths,
+            const auto existing_prefix_it = std::find_if(MountedPaths.begin(), MountedPaths.end(),
                 [path](const auto& mountable_path) { return mountable_path->prefix == path.prefix; });
             if (existing_prefix_it == MountedPaths.end())
             {
@@ -270,7 +270,7 @@ namespace obe::system
 
     void MountablePath::sort()
     {
-        std::ranges::sort(MountedPaths,
+        std::sort(MountedPaths.begin(), MountedPaths.end(),
             [](const auto& first, const auto& second)
             { return first->priority > second->priority; });
     }
@@ -292,7 +292,7 @@ namespace obe::system
         MountList mounts = MountedPaths;
         std::vector<std::string> all_prefixes;
         all_prefixes.reserve(mounts.size());
-        std::ranges::transform(mounts, std::back_inserter(all_prefixes),
+        std::transform(mounts.begin(), mounts.end(), std::back_inserter(all_prefixes),
             [](const auto& mount) { return mount->prefix; });
         return all_prefixes;
     }

@@ -20,16 +20,17 @@ namespace obe::scene
             m_render_cache.insert(m_render_cache.end(), tile_layers.begin(), tile_layers.end());
         }
 
-        std::ranges::sort(m_render_cache, [](const auto& renderable1, const auto& renderable2) {
-            if (renderable1->get_layer() == renderable2->get_layer())
-            {
-                return renderable1->get_sublayer() > renderable2->get_sublayer();
-            }
-            else
-            {
-                return renderable1->get_layer() > renderable2->get_layer();
-            }
-        });
+        std::sort(m_render_cache.begin(), m_render_cache.end(),
+            [](const auto& renderable1, const auto& renderable2) {
+                if (renderable1->get_layer() == renderable2->get_layer())
+                {
+                    return renderable1->get_sublayer() > renderable2->get_sublayer();
+                }
+                else
+                {
+                    return renderable1->get_layer() > renderable2->get_layer();
+                }
+            });
         m_sort_renderables = false;
     }
 
