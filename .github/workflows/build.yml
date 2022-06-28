@@ -71,7 +71,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install MacPorts
-        run:
+        run: |
           wget https://github.com/macports/macports-base/releases/download/v2.7.1/MacPorts-2.7.1-11-BigSur.pkg
           sudo installer -pkg ./MacPorts-2.7.1-11-BigSur.pkg -target /
       - name: Install Clang-14
