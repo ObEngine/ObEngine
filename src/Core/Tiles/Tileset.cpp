@@ -1,8 +1,8 @@
 #include <System/Path.hpp>
 #include <Tiles/Exceptions.hpp>
 #include <Tiles/Tileset.hpp>
-#include <Transform/Units.hpp>
 #include <Transform/UnitVector.hpp>
+#include <Transform/Units.hpp>
 
 namespace obe::tiles
 {
@@ -86,7 +86,7 @@ namespace obe::tiles
     {
         m_tilesets.push_back(
             std::make_unique<Tileset>(id, first_tile_id, count, source, columns, width, height));
-        std::ranges::sort(m_tilesets,
+        std::sort(m_tilesets.begin(), m_tilesets.end(),
             [](const std::unique_ptr<Tileset>& tileset1, const std::unique_ptr<Tileset>& tileset2)
             { return tileset1->get_first_tile_id() > tileset2->get_first_tile_id(); });
     }

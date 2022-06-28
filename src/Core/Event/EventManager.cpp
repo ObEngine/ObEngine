@@ -24,9 +24,8 @@ namespace obe::event
             }
         }
         m_schedulers.erase(
-            std::ranges::remove_if(m_schedulers,
-                [](auto& scheduler) { return scheduler->m_state == CallbackSchedulerState::Done; })
-                .begin(),
+            std::remove_if(m_schedulers.begin(), m_schedulers.end(),
+                [](auto& scheduler) { return scheduler->m_state == CallbackSchedulerState::Done; }),
             m_schedulers.end());
     }
 

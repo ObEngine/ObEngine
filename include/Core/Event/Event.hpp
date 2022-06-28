@@ -138,7 +138,8 @@ namespace obe::event
     void EventBase::call_listener(
         const std::string& listener_id, ListenerType&& listener, const EventType& event)
     {
-        if (std::ranges::find(m_garbage_collector, listener_id) != m_garbage_collector.end())
+        if (std::find(m_garbage_collector.begin(), m_garbage_collector.end(), listener_id)
+            != m_garbage_collector.end())
         {
             return;
         }

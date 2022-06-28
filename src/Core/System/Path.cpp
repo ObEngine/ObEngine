@@ -38,7 +38,7 @@ namespace obe::system
         {
             std::vector<std::string> all_prefixes;
             all_prefixes.reserve(mounts.size());
-            std::ranges::transform(mounts, std::back_inserter(all_prefixes),
+            std::transform(mounts.begin(), mounts.end(), std::back_inserter(all_prefixes),
                 [](const auto& mount) { return mount->prefix; });
             throw Exceptions::UnknownPathPrefix(prefix, all_prefixes, EXC_INFO);
         }
@@ -52,7 +52,7 @@ namespace obe::system
         if (!success())
         {
             std::vector<std::string> mounts_as_strings;
-            std::ranges::transform(m_mounts, std::back_inserter(mounts_as_strings),
+            std::transform(m_mounts.begin(), m_mounts.end(), std::back_inserter(mounts_as_strings),
                 [](const auto& mount)
                 { return fmt::format("\"{}:// = {}\"", mount->prefix, mount->base_path); });
             std::string path_type;
@@ -238,7 +238,8 @@ namespace obe::system
         {
             mount_names.push_back(mount->base_path);
         }
-        throw Exceptions::MountablePathIndexOverflow(index, m_mounts->size(), mount_names, EXC_INFO);
+        throw Exceptions::MountablePathIndexOverflow(
+            index, m_mounts->size(), mount_names, EXC_INFO);
     }
 
     std::vector<FindResult> Path::list(PathType path_type) const
@@ -254,7 +255,8 @@ namespace obe::system
             {
                 if (path_type == PathType::All || path_type == PathType::Directory)
                 {
-                    std::vector<std::string> directories = utils::file::get_directory_list(full_path);
+                    std::vector<std::string> directories
+                        = utils::file::get_directory_list(full_path);
                     for (const std::string& directory : directories)
                     {
                         results.emplace_back(PathType::Directory, mounted_path,
@@ -295,8 +297,8 @@ namespace obe::system
 
         for (const auto& mounted_path : valid_mounts)
         {
-            const std::string full_path
-                = mounted_path->base_path + ((!mounted_path->base_path.empty()) ? "/" : "") + m_path;
+            const std::string full_path = mounted_path->base_path
+                + ((!mounted_path->base_path.empty()) ? "/" : "") + m_path;
             if ((path_type == PathType::All || path_type == PathType::File)
                 && utils::file::file_exists(full_path))
             {

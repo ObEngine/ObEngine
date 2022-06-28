@@ -84,7 +84,8 @@ namespace obe::system::Exceptions
             this->error("Impossible to get Package '{}', please check it is correctly installed", package);
             std::vector<std::string> suggestions
                 = utils::string::sort_by_distance(package.data(), all_packages, 5);
-            std::ranges::transform(suggestions, suggestions.begin(), utils::string::quote);
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), utils::string::quote);
             this->hint("Maybe you meant to get one of these packages : ({})",
                 fmt::join(suggestions, ", "));
         }
@@ -125,7 +126,8 @@ namespace obe::system::Exceptions
                 project);
             std::vector<std::string> suggestions
                 = utils::string::sort_by_distance(project.data(), all_projects, 5);
-            std::ranges::transform(suggestions, suggestions.begin(), utils::string::quote);
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), utils::string::quote);
             this->hint("Maybe you meant to get one of these projects : ({})",
                 fmt::join(suggestions, ", "));
         }
@@ -142,7 +144,8 @@ namespace obe::system::Exceptions
             this->error("Path prefix '{}' does not exist", prefix);
             std::vector<std::string> suggestions
                 = utils::string::sort_by_distance(prefix.data(), all_prefixes, 5);
-            std::ranges::transform(suggestions, suggestions.begin(), utils::string::quote);
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), utils::string::quote);
             this->hint("Maybe you meant to use one of these prefixes : ({})",
                 fmt::join(suggestions, ", "));
         }

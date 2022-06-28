@@ -22,8 +22,14 @@ namespace obe::input
 
     bool InputManager::is_action_currently_in_use(const std::string& action_id)
     {
-        return std::ranges::any_of(
-            m_current_actions, [&action_id](const auto& action) { return action->get_id() == action_id; });
+        for (const auto& action : m_current_actions)
+        {
+            if (action->get_id() == action_id)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     InputManager::InputManager(event::EventNamespace& event_namespace)
@@ -96,7 +102,14 @@ namespace obe::input
 
     bool InputManager::action_exists(const std::string& action_id) const
     {
-        return std::ranges::any_of(m_all_actions, [&action_id](const auto& action) { return action->get_id() == action_id; });
+        for (auto& action : m_all_actions)
+        {
+            if (action->get_id() == action_id)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     void InputManager::clear()

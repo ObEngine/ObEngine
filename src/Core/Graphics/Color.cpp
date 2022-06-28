@@ -512,7 +512,7 @@ namespace obe::graphics
 
     std::optional<std::string> Color::to_name() const
     {
-        const auto it = std::ranges::find_if(ColorNames,
+        auto it = std::find_if(ColorNames.begin(), ColorNames.end(),
             [this](const std::pair<std::string, Color>& color) { return color.second == *this; });
         if (it != ColorNames.end())
         {

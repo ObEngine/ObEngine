@@ -51,7 +51,8 @@ namespace obe::event::Exceptions
                 event_group);
             std::vector<std::string> suggestions
                 = utils::string::sort_by_distance(event_name.data(), existing_events, 5);
-            std::ranges::transform(suggestions, suggestions.begin(), utils::string::quote);
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), utils::string::quote);
             this->hint("Try one of the following Events ({}...)", fmt::join(suggestions, ", "));
         }
     };
@@ -67,7 +68,8 @@ namespace obe::event::Exceptions
             this->error("Unable to find a EventNamespace named '{}'", event_namespace);
             std::vector<std::string> suggestions
                 = utils::string::sort_by_distance(event_namespace.data(), existing_namespaces, 5);
-            std::ranges::transform(suggestions, suggestions.begin(), utils::string::quote);
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), utils::string::quote);
             this->hint(
                 "Try one of the following EventNamespaces ({}...)", fmt::join(suggestions, ", "));
         }
@@ -85,7 +87,8 @@ namespace obe::event::Exceptions
                 event_group, event_namespace);
             std::vector<std::string> suggestions
                 = utils::string::sort_by_distance(event_group.data(), existing_groups, 5);
-            std::ranges::transform(suggestions, suggestions.begin(), utils::string::quote);
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), utils::string::quote);
             this->hint(
                 "Try one of the following EventGroups ({}...)", fmt::join(suggestions, ", "));
         }

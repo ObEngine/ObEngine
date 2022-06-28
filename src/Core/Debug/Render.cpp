@@ -28,7 +28,7 @@ namespace obe::debug::render
             pixel_points.reserve(polygon_points.size());
             draw_points.reserve(polygon_points.size());
 
-            std::ranges::transform(polygon_points,
+            std::transform(polygon_points.begin(), polygon_points.end(),
                 std::back_inserter(pixel_points),
                 [](const auto& point) { return point->to(transform::Units::ScenePixels); });
 

@@ -224,7 +224,7 @@ namespace obe::utils::file
     std::string normalize_path(const std::string& path)
     {
         std::string normalized_path = path;
-        std::ranges::replace(normalized_path, '\\', '/');
+        std::replace(normalized_path.begin(), normalized_path.end(), '\\', '/');
         return normalized_path;
     }
 

@@ -29,7 +29,7 @@ namespace obe::collision
 
     std::vector<transform::UnitVector> convex_hull(std::vector<transform::UnitVector> points)
     {
-        std::ranges::sort(points, points_comparator);
+        std::sort(points.begin(), points.end(), points_comparator);
         if (points.size() <= 1)
             return points;
         std::vector<transform::UnitVector> lower_hull;
@@ -42,7 +42,7 @@ namespace obe::collision
                 lower_hull.pop_back();
             lower_hull.push_back(point);
         }
-        std::ranges::reverse(points);
+        std::reverse(points.begin(), points.end());
         std::vector<transform::UnitVector> upper_hull;
         for (transform::UnitVector& point : points)
         {
@@ -446,9 +446,11 @@ namespace obe::collision
             if (point_in_polygon(p_set2, p_test))
                 return true;
         }
-        return std::ranges::any_of(p_set2,
-            [&point_in_polygon, &p_set1](const auto& p_test)
-            { return point_in_polygon(p_set1, p_test); });
+        for (transform::UnitVector& p_test : p_set2)
+        {
+            if (point_in_polygon(p_set1, p_test))
+                return true;
+        }
     }
 
     vili::node PolygonalCollider::dump() const

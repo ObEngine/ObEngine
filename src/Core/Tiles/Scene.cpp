@@ -137,8 +137,8 @@ namespace obe::tiles
     std::vector<TileLayer*> TileScene::get_all_layers() const
     {
         std::vector<TileLayer*> layers;
-        std::ranges::transform(
-            m_layers, std::back_inserter(layers), [](const auto& layer) { return layer.get(); });
+        std::transform(m_layers.begin(), m_layers.end(), std::back_inserter(layers),
+            [](const auto& layer) { return layer.get(); });
         return layers;
     }
 
