@@ -70,12 +70,18 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: Install MacPorts
+        run: |
+          wget https://github.com/macports/macports-base/releases/download/v2.7.1/MacPorts-2.7.1-11-BigSur.pkg
+          sudo installer -pkg ./MacPorts-2.7.1-11-BigSur.pkg -target /
+      - name: Install Clang-14
+        run: port install clang-14
       - name: Install SFML
         run: brew install sfml
       - name: Create build directory
         run: mkdir build
       - name: Run CMake on ObEngine
-        run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..
+        run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_C_COMPILER=/opt/local/bin/clang-mp-14 -DCMAKE_CXX_COMPILER=/opt/local/bin/clang++-mp-14 ..
       - name: Compile ObEngine
         run: cd build && make -j8
       - name: Run tests
