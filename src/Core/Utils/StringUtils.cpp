@@ -185,8 +185,9 @@ namespace obe::utils::string
     {
         std::vector<std::string> sorted_by_distance = words;
         std::sort(sorted_by_distance.begin(), sorted_by_distance.end(),
-            [source](const std::string& s1, const std::string& s2)
-            { return distance(s1, source) < distance(s2, source); });
+            [source](const std::string& s1, const std::string& s2) {
+                return utils::string::distance(s1, source) < utils::string::distance(s2, source);
+            });
         if (limit && !sorted_by_distance.empty())
         {
             return std::vector<std::string>(sorted_by_distance.begin(),
