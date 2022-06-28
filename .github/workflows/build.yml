@@ -75,7 +75,7 @@ jobs:
       - name: Create build directory
         run: mkdir build
       - name: Run CMake on ObEngine
-        run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_C_COMPILER=/opt/local/bin/clang-mp-14 -DCMAKE_CXX_COMPILER=/opt/local/bin/clang++-mp-14 ..
+        run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..
       - name: Compile ObEngine
         run: cd build && make -j8
       - name: Run tests
