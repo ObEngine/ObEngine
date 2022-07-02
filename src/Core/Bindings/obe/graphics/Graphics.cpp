@@ -46,16 +46,18 @@ namespace obe::graphics::bindings
         bind_color["load"] = &obe::graphics::Color::load;
         bind_color["from_string"] = &obe::graphics::Color::from_string;
         bind_color["from_name"]
-            = sol::overload([](obe::graphics::Color* self, std::string name) -> bool
-                { return self->from_name(name); },
-                [](obe::graphics::Color* self, std::string name, bool strict) -> bool
-                { return self->from_name(name, strict); });
+            = sol::overload([](obe::graphics::Color* self,
+                                std::string name) -> bool { return self->from_name(name); },
+                [](obe::graphics::Color* self, std::string name, bool strict) -> bool {
+                    return self->from_name(name, strict);
+                });
         bind_color["from_hex"] = &obe::graphics::Color::from_hex;
         bind_color["from_rgb"]
-            = sol::overload([](obe::graphics::Color* self, double r, double g, double b) -> void
-                { return self->from_rgb(r, g, b); },
-                [](obe::graphics::Color* self, double r, double g, double b, double a) -> void
-                { return self->from_rgb(r, g, b, a); });
+            = sol::overload([](obe::graphics::Color* self, double r, double g,
+                                double b) -> void { return self->from_rgb(r, g, b); },
+                [](obe::graphics::Color* self, double r, double g, double b, double a) -> void {
+                    return self->from_rgb(r, g, b, a);
+                });
         bind_color["from_hsv"] = &obe::graphics::Color::from_hsv;
         bind_color["to_integer"] = &obe::graphics::Color::to_integer;
         bind_color["to_hex"] = &obe::graphics::Color::to_hex;
@@ -82,8 +84,9 @@ namespace obe::graphics::bindings
                 &obe::graphics::Color::operator/));
         bind_color["Random"]
             = sol::overload([]() -> obe::graphics::Color { return obe::graphics::Color::Random(); },
-                [](bool random_alpha) -> obe::graphics::Color
-                { return obe::graphics::Color::Random(random_alpha); });
+                [](bool random_alpha) -> obe::graphics::Color {
+                    return obe::graphics::Color::Random(random_alpha);
+                });
         bind_color["r"] = &obe::graphics::Color::r;
         bind_color["g"] = &obe::graphics::Color::g;
         bind_color["b"] = &obe::graphics::Color::b;
@@ -282,17 +285,20 @@ namespace obe::graphics::bindings
                 sol::constructors<obe::graphics::RenderTarget(sf::RenderTarget&),
                     obe::graphics::RenderTarget(sf::RenderWindow&)>());
         bind_render_target["draw"] = sol::overload(
-            [](obe::graphics::RenderTarget* self, const sf::Drawable& drawable) -> void
-            { return self->draw(drawable); },
+            [](obe::graphics::RenderTarget* self, const sf::Drawable& drawable) -> void {
+                return self->draw(drawable);
+            },
             [](obe::graphics::RenderTarget* self, const sf::Drawable& drawable,
                 const sf::RenderStates& states) -> void { return self->draw(drawable, states); },
             [](obe::graphics::RenderTarget* self, const sf::Vertex* vertices,
-                std::size_t vertex_count, sf::PrimitiveType type) -> void
-            { return self->draw(vertices, vertex_count, type); },
+                std::size_t vertex_count, sf::PrimitiveType type) -> void {
+                return self->draw(vertices, vertex_count, type);
+            },
             [](obe::graphics::RenderTarget* self, const sf::Vertex* vertices,
                 std::size_t vertex_count, sf::PrimitiveType type,
-                const sf::RenderStates& states) -> void
-            { return self->draw(vertices, vertex_count, type, states); });
+                const sf::RenderStates& states) -> void {
+                return self->draw(vertices, vertex_count, type, states);
+            });
         bind_render_target["get_size"] = &obe::graphics::RenderTarget::get_size;
     }
     void load_class_renderable(sol::state_view state)

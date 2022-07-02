@@ -2,6 +2,6 @@
 
 #include <Exception.hpp>
 
-namespace obe::Bindings::Exceptions
+namespace obe::bindings::exceptions
 {
 }

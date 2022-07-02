@@ -122,12 +122,13 @@ namespace vili::writer::bindings
     {
         sol::table writer_namespace = state["vili"]["writer"].get<sol::table>();
         writer_namespace.set_function("dump",
-            sol::overload([](const vili::node& data) -> std::string
-                { return vili::writer::dump(data); },
-                [](const vili::node& data, const vili::writer::dump_options& options) -> std::string
-                { return vili::writer::dump(data, options); },
+            sol::overload(
+                [](const vili::node& data) -> std::string { return vili::writer::dump(data); },
+                [](const vili::node& data, const vili::writer::dump_options& options)
+                    -> std::string { return vili::writer::dump(data, options); },
                 [](const vili::node& data, const vili::writer::dump_options& options,
-                    vili::writer::dump_state state) -> std::string
-                { return vili::writer::dump(data, options, state); }));
+                    vili::writer::dump_state state) -> std::string {
+                    return vili::writer::dump(data, options, state);
+                }));
     }
 };

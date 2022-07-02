@@ -32,11 +32,13 @@ namespace obe::audio::bindings
             = audio_namespace.new_usertype<obe::audio::AudioManager>("AudioManager",
                 sol::call_constructor, sol::constructors<obe::audio::AudioManager()>());
         bind_audio_manager["load"] = sol::overload(
-            [](obe::audio::AudioManager* self, const obe::system::Path& path) -> obe::audio::Sound
-            { return self->load(path); },
+            [](obe::audio::AudioManager* self, const obe::system::Path& path) -> obe::audio::Sound {
+                return self->load(path);
+            },
             [](obe::audio::AudioManager* self, const obe::system::Path& path,
-                obe::audio::LoadPolicy load_policy) -> obe::audio::Sound
-            { return self->load(path, load_policy); });
+                obe::audio::LoadPolicy load_policy) -> obe::audio::Sound {
+                return self->load(path, load_policy);
+            });
     }
     void load_class_sound(sol::state_view state)
     {

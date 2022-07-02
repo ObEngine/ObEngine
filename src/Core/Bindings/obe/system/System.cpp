@@ -116,12 +116,12 @@ namespace obe::system::bindings
         bind_cursor["get_scene_position"] = &obe::system::Cursor::get_scene_position;
         bind_cursor["update"] = &obe::system::Cursor::update;
         bind_cursor["set_constraint"] = sol::overload(
-            [](obe::system::Cursor* self,
-                const obe::system::Cursor::PositionConstraint& constraint) -> void
-            { return self->set_constraint(constraint); },
+            [](obe::system::Cursor* self, const obe::system::Cursor::PositionConstraint& constraint)
+                -> void { return self->set_constraint(constraint); },
             [](obe::system::Cursor* self, const obe::system::Cursor::PositionConstraint& constraint,
-                obe::system::Cursor::ConstraintCondition condition) -> void
-            { return self->set_constraint(constraint, condition); });
+                obe::system::Cursor::ConstraintCondition condition) -> void {
+                return self->set_constraint(constraint, condition);
+            });
         bind_cursor["is_pressed"] = &obe::system::Cursor::is_pressed;
         bind_cursor["set_cursor"] = &obe::system::Cursor::set_cursor;
     }
@@ -173,15 +173,18 @@ namespace obe::system::bindings
         bind_mountable_path["resolve_base_path"] = &obe::system::MountablePath::resolve_base_path;
         bind_mountable_path["load_mount_file"]
             = sol::overload([]() -> void { return obe::system::MountablePath::load_mount_file(); },
-                [](bool from_cwd) -> void
-                { return obe::system::MountablePath::load_mount_file(from_cwd); },
-                [](bool from_cwd, bool from_exe) -> void
-                { return obe::system::MountablePath::load_mount_file(from_cwd, from_exe); });
-        bind_mountable_path["mount"] = sol::overload([](obe::system::MountablePath path) -> void
-            { return obe::system::MountablePath::mount(path); },
-            [](obe::system::MountablePath path,
-                obe::system::SamePrefixPolicy same_prefix_policy) -> void
-            { return obe::system::MountablePath::mount(path, same_prefix_policy); });
+                [](bool from_cwd) -> void {
+                    return obe::system::MountablePath::load_mount_file(from_cwd);
+                },
+                [](bool from_cwd, bool from_exe) -> void {
+                    return obe::system::MountablePath::load_mount_file(from_cwd, from_exe);
+                });
+        bind_mountable_path["mount"] = sol::overload(
+            [](obe::system::MountablePath path) -> void {
+                return obe::system::MountablePath::mount(path);
+            },
+            [](obe::system::MountablePath path, obe::system::SamePrefixPolicy same_prefix_policy)
+                -> void { return obe::system::MountablePath::mount(path, same_prefix_policy); });
         bind_mountable_path["unmount"] = &obe::system::MountablePath::unmount;
         bind_mountable_path["unmount_all"] = &obe::system::MountablePath::unmount_all;
         bind_mountable_path["paths"] = &obe::system::MountablePath::paths;
@@ -209,22 +212,22 @@ namespace obe::system::bindings
         bind_path["add"] = &obe::system::Path::add;
         bind_path["last"] = &obe::system::Path::last;
         bind_path["get_path"] = &obe::system::Path::get_path;
-        bind_path["list"]
-            = sol::overload([](obe::system::Path* self) -> std::vector<obe::system::FindResult>
-                { return self->list(); },
-                [](obe::system::Path* self,
-                    obe::system::PathType path_type) -> std::vector<obe::system::FindResult>
-                { return self->list(path_type); });
-        bind_path["find"] = sol::overload([](obe::system::Path* self) -> obe::system::FindResult
-            { return self->find(); },
-            [](obe::system::Path* self, obe::system::PathType path_type) -> obe::system::FindResult
-            { return self->find(path_type); });
-        bind_path["find_all"]
-            = sol::overload([](obe::system::Path* self) -> std::vector<obe::system::FindResult>
-                { return self->find_all(); },
-                [](obe::system::Path* self,
-                    obe::system::PathType path_type) -> std::vector<obe::system::FindResult>
-                { return self->find_all(path_type); });
+        bind_path["list"] = sol::overload(
+            [](obe::system::Path* self) -> std::vector<obe::system::FindResult> {
+                return self->list();
+            },
+            [](obe::system::Path* self, obe::system::PathType path_type)
+                -> std::vector<obe::system::FindResult> { return self->list(path_type); });
+        bind_path["find"] = sol::overload(
+            [](obe::system::Path* self) -> obe::system::FindResult { return self->find(); },
+            [](obe::system::Path* self, obe::system::PathType path_type)
+                -> obe::system::FindResult { return self->find(path_type); });
+        bind_path["find_all"] = sol::overload(
+            [](obe::system::Path* self) -> std::vector<obe::system::FindResult> {
+                return self->find_all();
+            },
+            [](obe::system::Path* self, obe::system::PathType path_type)
+                -> std::vector<obe::system::FindResult> { return self->find_all(path_type); });
         bind_path["to_string"] = &obe::system::Path::to_string;
         state.script_file("obe://Lib/Internal/Require.lua"_fs);
         state.script_file("obe://Lib/Internal/Filesystem.lua"_fs);
@@ -275,10 +278,13 @@ namespace obe::system::bindings
     {
         sol::table system_namespace = state["obe"]["system"].get<sol::table>();
         system_namespace.set_function("split_path_and_prefix",
-            sol::overload([](const std::string& path) -> std::pair<std::string, std::string>
-                { return obe::system::split_path_and_prefix(path); },
+            sol::overload(
+                [](const std::string& path) -> std::pair<std::string, std::string> {
+                    return obe::system::split_path_and_prefix(path);
+                },
                 [](const std::string& path,
-                    bool warn_on_missing_prefix) -> std::pair<std::string, std::string>
-                { return obe::system::split_path_and_prefix(path, warn_on_missing_prefix); }));
+                    bool warn_on_missing_prefix) -> std::pair<std::string, std::string> {
+                    return obe::system::split_path_and_prefix(path, warn_on_missing_prefix);
+                }));
     }
 };

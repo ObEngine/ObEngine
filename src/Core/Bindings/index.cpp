@@ -17,6 +17,7 @@
 #include <Bindings/obe/event/Event.hpp>
 #include <Bindings/obe/events/Actions/Actions.hpp>
 #include <Bindings/obe/events/Cursor/Cursor.hpp>
+#include <Bindings/obe/events/Events.hpp>
 #include <Bindings/obe/events/Game/Game.hpp>
 #include <Bindings/obe/events/Keys/Keys.hpp>
 #include <Bindings/obe/events/Network/Network.hpp>
@@ -51,6 +52,7 @@
 #include <Bindings/vili/Vili.hpp>
 #include <Bindings/vili/parser/Parser.hpp>
 #include <Bindings/vili/parser/rules/Rules.hpp>
+#include <Bindings/vili/utils/Utils.hpp>
 #include <Bindings/vili/utils/string/String.hpp>
 #include <Bindings/vili/writer/Writer.hpp>
 #include <sol/sol.hpp>

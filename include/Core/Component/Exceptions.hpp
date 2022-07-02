@@ -5,7 +5,7 @@
 /**
  * \nobind
  */
-namespace obe::component::Exceptions
+namespace obe::component::exceptions
 {
     class ComponentIdAlreadyTaken : public Exception<ComponentIdAlreadyTaken>
     {

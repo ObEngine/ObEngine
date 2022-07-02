@@ -41,11 +41,13 @@ namespace obe::script::bindings
         bind_game_object["exec"] = &obe::script::GameObject::exec;
         bind_game_object["init_from_vili"] = &obe::script::GameObject::init_from_vili;
         bind_game_object["load_game_object"] = sol::overload(
-            [](obe::script::GameObject* self, obe::scene::Scene& scene, vili::node& obj) -> void
-            { return self->load_game_object(scene, obj); },
+            [](obe::script::GameObject* self, obe::scene::Scene& scene, vili::node& obj) -> void {
+                return self->load_game_object(scene, obj);
+            },
             [](obe::script::GameObject* self, obe::scene::Scene& scene, vili::node& obj,
-                obe::engine::ResourceManager* resources) -> void
-            { return self->load_game_object(scene, obj, resources); });
+                obe::engine::ResourceManager* resources) -> void {
+                return self->load_game_object(scene, obj, resources);
+            });
         bind_game_object["update"] = &obe::script::GameObject::update;
         bind_game_object["destroy"] = &obe::script::GameObject::destroy;
         bind_game_object["access"] = &obe::script::GameObject::access;

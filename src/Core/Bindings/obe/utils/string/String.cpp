@@ -10,11 +10,14 @@ namespace obe::utils::string::bindings
     {
         sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
         string_namespace.set_function("split",
-            sol::overload([](const std::string& str) -> std::vector<std::string>
-                { return obe::utils::string::split(str); },
+            sol::overload(
+                [](const std::string& str) -> std::vector<std::string> {
+                    return obe::utils::string::split(str);
+                },
                 [](const std::string& str,
-                    const std::string& delimiters) -> std::vector<std::string>
-                { return obe::utils::string::split(str, delimiters); }));
+                    const std::string& delimiters) -> std::vector<std::string> {
+                    return obe::utils::string::split(str, delimiters);
+                }));
     }
     void load_function_occurences_in_string(sol::state_view state)
     {
@@ -87,12 +90,15 @@ namespace obe::utils::string::bindings
     {
         sol::table string_namespace = state["obe"]["utils"]["string"].get<sol::table>();
         string_namespace.set_function("sort_by_distance",
-            sol::overload([](const std::string& source,
-                              const std::vector<std::string>& words) -> std::vector<std::string>
-                { return obe::utils::string::sort_by_distance(source, words); },
+            sol::overload(
+                [](const std::string& source,
+                    const std::vector<std::string>& words) -> std::vector<std::string> {
+                    return obe::utils::string::sort_by_distance(source, words);
+                },
                 [](const std::string& source, const std::vector<std::string>& words,
-                    std::size_t limit) -> std::vector<std::string>
-                { return obe::utils::string::sort_by_distance(source, words, limit); }));
+                    std::size_t limit) -> std::vector<std::string> {
+                    return obe::utils::string::sort_by_distance(source, words, limit);
+                }));
     }
     void load_function_quote(sol::state_view state)
     {

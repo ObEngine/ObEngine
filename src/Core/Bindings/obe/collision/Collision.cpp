@@ -43,11 +43,13 @@ namespace obe::collision::bindings
                 const obe::transform::UnitVector&) const>(
                 &obe::collision::PolygonalCollider::does_collide),
             [](obe::collision::PolygonalCollider* self, obe::collision::PolygonalCollider& collider,
-                const obe::transform::UnitVector& offset) -> bool
-            { return self->does_collide(collider, offset); },
+                const obe::transform::UnitVector& offset) -> bool {
+                return self->does_collide(collider, offset);
+            },
             [](obe::collision::PolygonalCollider* self, obe::collision::PolygonalCollider& collider,
-                const obe::transform::UnitVector& offset, const bool perform_aabb_filter) -> bool
-            { return self->does_collide(collider, offset, perform_aabb_filter); });
+                const obe::transform::UnitVector& offset, const bool perform_aabb_filter) -> bool {
+                return self->does_collide(collider, offset, perform_aabb_filter);
+            });
         bind_polygonal_collider["matches_any_tag"]
             = &obe::collision::PolygonalCollider::matches_any_tag;
         bind_polygonal_collider["contains_tag"] = &obe::collision::PolygonalCollider::contains_tag;
@@ -57,12 +59,14 @@ namespace obe::collision::bindings
                 const obe::transform::UnitVector&) const>(
                 &obe::collision::PolygonalCollider::get_distance_before_collision),
             [](obe::collision::PolygonalCollider* self, obe::collision::PolygonalCollider& collider,
-                const obe::transform::UnitVector& offset) -> obe::transform::UnitVector
-            { return self->get_distance_before_collision(collider, offset); },
+                const obe::transform::UnitVector& offset) -> obe::transform::UnitVector {
+                return self->get_distance_before_collision(collider, offset);
+            },
             [](obe::collision::PolygonalCollider* self, obe::collision::PolygonalCollider& collider,
                 const obe::transform::UnitVector& offset,
-                const bool perform_aabb_filter) -> obe::transform::UnitVector
-            { return self->get_distance_before_collision(collider, offset, perform_aabb_filter); });
+                const bool perform_aabb_filter) -> obe::transform::UnitVector {
+                return self->get_distance_before_collision(collider, offset, perform_aabb_filter);
+            });
         bind_polygonal_collider["get_parent_id"]
             = &obe::collision::PolygonalCollider::get_parent_id;
         bind_polygonal_collider["schema"] = &obe::collision::PolygonalCollider::schema;
@@ -75,9 +79,8 @@ namespace obe::collision::bindings
         bind_polygonal_collider["get_bounding_box"]
             = &obe::collision::PolygonalCollider::get_bounding_box;
         bind_polygonal_collider["add_point"] = sol::overload(
-            [](obe::collision::PolygonalCollider* self,
-                const obe::transform::UnitVector& position) -> void
-            { return self->add_point(position); },
+            [](obe::collision::PolygonalCollider* self, const obe::transform::UnitVector& position)
+                -> void { return self->add_point(position); },
             [](obe::collision::PolygonalCollider* self, const obe::transform::UnitVector& position,
                 int point_index) -> void { return self->add_point(position, point_index); });
         bind_polygonal_collider["move"] = &obe::collision::PolygonalCollider::move;
@@ -124,12 +127,12 @@ namespace obe::collision::bindings
                 sol::call_constructor,
                 sol::constructors<obe::collision::TrajectoryNode(obe::scene::SceneNode&)>());
         bind_trajectory_node["add_trajectory"]
-            = sol::overload([](obe::collision::TrajectoryNode* self,
-                                const std::string& id) -> obe::collision::Trajectory&
-                { return self->add_trajectory(id); },
+            = sol::overload([](obe::collision::TrajectoryNode* self, const std::string& id)
+                                -> obe::collision::Trajectory& { return self->add_trajectory(id); },
                 [](obe::collision::TrajectoryNode* self, const std::string& id,
-                    obe::transform::Units unit) -> obe::collision::Trajectory&
-                { return self->add_trajectory(id, unit); });
+                    obe::transform::Units unit) -> obe::collision::Trajectory& {
+                    return self->add_trajectory(id, unit);
+                });
         bind_trajectory_node["get_scene_node"] = &obe::collision::TrajectoryNode::get_scene_node;
         bind_trajectory_node["get_trajectory"] = &obe::collision::TrajectoryNode::get_trajectory;
         bind_trajectory_node["remove_trajectory"]
