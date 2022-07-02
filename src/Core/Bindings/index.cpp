@@ -61,7 +61,7 @@ namespace obe::bindings
     {
         state["obe"].get_or_create<sol::table>();
         state["vili"].get_or_create<sol::table>();
-        state["obe"]["Component"].get_or_create<sol::table>();
+        state["obe"]["component"].get_or_create<sol::table>();
         state["obe"]["types"].get_or_create<sol::table>();
         state["obe"]["animation"].get_or_create<sol::table>();
         state["obe"]["audio"].get_or_create<sol::table>();
@@ -85,7 +85,7 @@ namespace obe::bindings
         state["obe"]["bindings"].get_or_create<sol::table>();
         state["obe"]["events"].get_or_create<sol::table>();
         state["vili"]["utils"].get_or_create<sol::table>();
-        state["obe"]["Component"]["Exceptions"].get_or_create<sol::table>();
+        state["obe"]["component"]["Exceptions"].get_or_create<sol::table>();
         state["obe"]["graphics"]["canvas"].get_or_create<sol::table>();
         state["obe"]["graphics"]["shapes"].get_or_create<sol::table>();
         state["obe"]["system"]["project"].get_or_create<sol::table>();
@@ -122,9 +122,9 @@ namespace obe::bindings
         obe::bindings::load_class_debug_info(state);
         obe::bindings::load_function_get_type_name(state);
         obe::bindings::load_function_init_engine(state);
-        obe::Component::bindings::load_class_component_base(state);
-        obe::Component::Exceptions::bindings::load_class_component_id_already_taken(state);
-        obe::Component::Exceptions::bindings::load_class_unknown_component_type(state);
+        obe::component::bindings::load_class_component_base(state);
+        obe::component::Exceptions::bindings::load_class_component_id_already_taken(state);
+        obe::component::Exceptions::bindings::load_class_unknown_component_type(state);
         obe::types::bindings::load_class_identifiable(state);
         obe::types::bindings::load_class_protected_identifiable(state);
         obe::types::bindings::load_class_selectable(state);

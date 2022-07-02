@@ -25,7 +25,7 @@ namespace obe::graphics
                    public types::Selectable,
                    public transform::Rect,
                    public Renderable,
-                   public Component::Component<Sprite>,
+                   public component::Component<Sprite>,
                    public engine::ResourceManagedObject
     {
     protected:

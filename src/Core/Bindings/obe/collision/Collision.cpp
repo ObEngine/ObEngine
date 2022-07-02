@@ -33,8 +33,8 @@ namespace obe::collision::bindings
                 "PolygonalCollider", sol::base_classes,
                 sol::bases<obe::transform::Polygon, obe::transform::UnitBasedObject,
                     obe::transform::Movable, obe::types::Selectable,
-                    obe::Component::Component<obe::collision::PolygonalCollider>,
-                    obe::Component::ComponentBase, obe::types::Identifiable,
+                    obe::component::Component<obe::collision::PolygonalCollider>,
+                    obe::component::ComponentBase, obe::types::Identifiable,
                     obe::types::Serializable>());
         bind_polygonal_collider["add_tag"] = &obe::collision::PolygonalCollider::add_tag;
         bind_polygonal_collider["clear_tags"] = &obe::collision::PolygonalCollider::clear_tags;

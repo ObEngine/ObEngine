@@ -3,7 +3,7 @@
 #include <Component/Component.hpp>
 #include <Component/Exceptions.hpp>
 
-namespace obe::Component
+namespace obe::component
 {
     std::vector<ComponentBase*> ComponentBase::Components;
     std::unordered_map<std::string_view, ComponentBase::Caster> ComponentBase::ComponentCasters;
@@ -39,4 +39,4 @@ namespace obe::Component
         }
         return ComponentCasters.at(this->type())(this);
     }
-} // namespace obe::Component
+} // namespace obe::component

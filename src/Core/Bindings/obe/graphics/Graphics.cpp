@@ -238,8 +238,8 @@ namespace obe::graphics::bindings
                 sol::base_classes,
                 sol::bases<obe::graphics::Sprite, obe::transform::UnitBasedObject,
                     obe::types::Selectable, obe::transform::Rect, obe::transform::Movable,
-                    obe::graphics::Renderable, obe::Component::Component<obe::graphics::Sprite>,
-                    obe::Component::ComponentBase, obe::types::Identifiable,
+                    obe::graphics::Renderable, obe::component::Component<obe::graphics::Sprite>,
+                    obe::component::ComponentBase, obe::types::Identifiable,
                     obe::types::Serializable, obe::engine::ResourceManagedObject>());
         bind_editor_sprite["get_handle_point"] = &obe::graphics::EditorSprite::get_handle_point;
     }
@@ -349,7 +349,7 @@ namespace obe::graphics::bindings
             = graphics_namespace.new_usertype<obe::graphics::Sprite>("Sprite", sol::base_classes,
                 sol::bases<obe::transform::UnitBasedObject, obe::types::Selectable,
                     obe::transform::Rect, obe::transform::Movable, obe::graphics::Renderable,
-                    obe::Component::Component<obe::graphics::Sprite>, obe::Component::ComponentBase,
+                    obe::component::Component<obe::graphics::Sprite>, obe::component::ComponentBase,
                     obe::types::Identifiable, obe::types::Serializable,
                     obe::engine::ResourceManagedObject>());
         bind_sprite["draw_handle"] = &obe::graphics::Sprite::draw_handle;

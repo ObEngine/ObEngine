@@ -8,7 +8,7 @@
 #include <Types/Identifiable.hpp>
 #include <Types/Serializable.hpp>
 
-namespace obe::Component
+namespace obe::component
 {
     class ComponentBase : public types::Identifiable, public types::Serializable
     {
@@ -104,4 +104,4 @@ namespace obe::Component
 
     template <class DerivedComponent>
     std::vector<DerivedComponent*> Component<DerivedComponent>::Pool;
-} // namespace obe::Component
+} // namespace obe::component

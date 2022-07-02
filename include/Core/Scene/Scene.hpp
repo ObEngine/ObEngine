@@ -80,7 +80,7 @@ namespace obe::scene
         event::EventGroupPtr e_scene;
         sol::state_view m_lua;
 
-        std::unordered_map<std::string, Component::ComponentBase*> m_components;
+        std::unordered_map<std::string, component::ComponentBase*> m_components;
 
         bool m_sort_renderables = true;
         std::vector<graphics::Renderable*> m_render_cache;
@@ -340,7 +340,7 @@ namespace obe::scene
         void set_render_options(SceneRenderOptions options);
 
         // Components
-        Component::ComponentBase* get_component(const std::string& id) const;
+        component::ComponentBase* get_component(const std::string& id) const;
     };
 
     /**

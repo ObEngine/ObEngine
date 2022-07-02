@@ -53,7 +53,7 @@ namespace obe::collision
      */
     class PolygonalCollider : public transform::Polygon,
                               public types::Selectable,
-                              public Component::Component<PolygonalCollider>
+                              public component::Component<PolygonalCollider>
     {
     private:
         std::string m_parent_id = "";

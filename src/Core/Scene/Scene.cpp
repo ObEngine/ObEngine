@@ -786,7 +786,7 @@ namespace obe::scene
         m_render_options = options;
     }
 
-    Component::ComponentBase* Scene::get_component(const std::string& id) const
+    component::ComponentBase* Scene::get_component(const std::string& id) const
     {
         return m_components.at(id);
     }
