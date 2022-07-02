@@ -1,7 +1,7 @@
 ---@meta
 
 obe.input = {};
----@class obe.input.InputAction : obe.Types.Identifiable
+---@class obe.input.InputAction : obe.types.Identifiable
 obe.input._InputAction = {};
 
 --- Creates a new InputAction.
@@ -226,7 +226,7 @@ function obe.input._InputCondition:disable() end
 function obe.input._InputCondition:is_enabled() end
 
 
----@class obe.input.InputManager : obe.Types.Togglable
+---@class obe.input.InputManager : obe.types.Togglable
 obe.input._InputManager = {};
 
 --- Creates a new KeyboardManager.
@@ -307,17 +307,17 @@ function obe.input._InputManager:initialize_gamepad(gamepad_index) end
 
 
 
----@alias obe.input.AxisThresholdDirectionMeta obe.Types.SmartEnum[obe.input.AxisThresholdDirection]
+---@alias obe.input.AxisThresholdDirectionMeta obe.types.SmartEnum[obe.input.AxisThresholdDirection]
 
 ---@alias obe.input.InputButtonMonitorPtr obe.input.InputButtonMonitor
 
----@alias obe.input.InputButtonStateMeta obe.Types.SmartEnum[obe.input.InputButtonState]
+---@alias obe.input.InputButtonStateMeta obe.types.SmartEnum[obe.input.InputButtonState]
 
 ---@alias obe.input.InputCombinationElement Tuple_ObeInputInputButton_ObeTypesFlagSetObeInputInputButtonState
 
 ---@alias obe.input.InputCombination obe.input.InputCombinationElement[]
 
----@alias obe.input.InputTypeMeta obe.Types.SmartEnum[obe.input.InputType]
+---@alias obe.input.InputTypeMeta obe.types.SmartEnum[obe.input.InputType]
 
 --- 
 ---

@@ -1,7 +1,7 @@
 ---@meta
 
 obe.animation = {};
----@class obe.animation.Animation : obe.Types.Serializable
+---@class obe.animation.Animation : obe.types.Serializable
 obe.animation._Animation = {};
 
 --- obe.animation.Animation constructor
@@ -435,11 +435,11 @@ function obe.animation._ValueTweening:step(dt) end
 
 
 
----@alias obe.animation.AnimationPlayModeMeta obe.Types.SmartEnum[obe.animation.AnimationPlayMode]
+---@alias obe.animation.AnimationPlayModeMeta obe.types.SmartEnum[obe.animation.AnimationPlayMode]
 
----@alias obe.animation.AnimationCommandMeta obe.Types.SmartEnum[obe.animation.AnimationCommand]
+---@alias obe.animation.AnimationCommandMeta obe.types.SmartEnum[obe.animation.AnimationCommand]
 
----@alias obe.animation.AnimatorTargetScaleModeMeta obe.Types.SmartEnum[obe.animation.AnimatorTargetScaleMode]
+---@alias obe.animation.AnimatorTargetScaleModeMeta obe.types.SmartEnum[obe.animation.AnimatorTargetScaleMode]
 ---@param p0 T #
 ---@return std.true_type
 function obe.animation.template_specialization_exists_impl(p0) end

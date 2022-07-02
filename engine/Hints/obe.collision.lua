@@ -8,7 +8,7 @@ obe.collision._CollisionData = {};
 
 
 
----@class obe.collision.PolygonalCollider : obe.transform.Polygon, obe.Types.Selectable, obe.Component.Component[obe.collision.PolygonalCollider]
+---@class obe.collision.PolygonalCollider : obe.transform.Polygon, obe.types.Selectable, obe.component.Component[obe.collision.PolygonalCollider]
 ---@field ComponentType string #
 obe.collision._PolygonalCollider = {};
 
@@ -125,7 +125,7 @@ function obe.collision._PolygonalCollider:set_rotation(angle, origin) end
 function obe.collision._PolygonalCollider:set_position_from_centroid(position) end
 
 
----@class obe.collision.Trajectory : obe.Types.Togglable
+---@class obe.collision.Trajectory : obe.types.Togglable
 obe.collision._Trajectory = {};
 
 --- obe.collision.Trajectory constructor
@@ -224,7 +224,7 @@ function obe.collision._TrajectoryNode:update(dt) end
 
 
 
----@alias obe.collision.ColliderTagTypeMeta obe.Types.SmartEnum[obe.collision.ColliderTagType]
+---@alias obe.collision.ColliderTagTypeMeta obe.types.SmartEnum[obe.collision.ColliderTagType]
 
 ---@alias obe.collision.OnCollideCallback fun(p0:obe.collision.Trajectory, p1:obe.transform.UnitVector, p2:obe.collision.CollisionData)
 

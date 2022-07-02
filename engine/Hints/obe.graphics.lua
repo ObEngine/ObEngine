@@ -1,7 +1,7 @@
 ---@meta
 
 obe.graphics = {};
----@class obe.graphics.Color : obe.Types.Serializable
+---@class obe.graphics.Color : obe.types.Serializable
 ---@field r number #
 ---@field g number #
 ---@field b number #
@@ -421,7 +421,7 @@ function obe.graphics._RichText:getLocalBounds() end
 function obe.graphics._RichText:getGlobalBounds() end
 
 
----@class obe.graphics.Shader : sf.Shader, obe.Types.Serializable
+---@class obe.graphics.Shader : sf.Shader, obe.types.Serializable
 obe.graphics._Shader = {};
 
 --- obe.graphics.Shader constructor
@@ -455,7 +455,7 @@ function obe.graphics._Shader:load(data) end
 function obe.graphics._Shader:load_from_file(path) end
 
 
----@class obe.graphics.Sprite : obe.transform.UnitBasedObject, obe.Types.Selectable, obe.transform.Rect, obe.graphics.Renderable, obe.Component.Component[obe.graphics.Sprite], obe.engine.ResourceManagedObject
+---@class obe.graphics.Sprite : obe.transform.UnitBasedObject, obe.types.Selectable, obe.transform.Rect, obe.graphics.Renderable, obe.component.Component[obe.graphics.Sprite], obe.engine.ResourceManagedObject
 ---@field ComponentType string #
 obe.graphics._Sprite = {};
 

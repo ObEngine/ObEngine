@@ -16,7 +16,7 @@ _Tuple_ObeCollisionPolygonalCollider_Number = {};
 
 ---@class Tuple_ObeInputInputButton_ObeTypesFlagSetObeInputInputButtonState
 ---@field [0] obe.input.InputButton #
----@field [1] obe.Types.FlagSet[obe.input.InputButtonState] #
+---@field [1] obe.types.FlagSet[obe.input.InputButtonState] #
 _Tuple_ObeInputInputButton_ObeTypesFlagSetObeInputInputButtonState = {};
 
 

@@ -380,9 +380,8 @@ function obe.transform._Referential:get_offset() end
 
 --- Get the name of a Referential in std::string form.
 ---
----@param format? string #Format (fmt) of the string returned
 ---@return string
-function obe.transform._Referential:to_string(format) end
+function obe.transform._Referential:to_string() end
 
 --- Gets a Referential based on its name.
 ---
@@ -476,7 +475,7 @@ obe.transform._ViewStruct = {};
 
 ---@alias obe.transform.PolygonPath obe.transform.PolygonPoint[]
 
----@alias obe.transform.UnitsMeta obe.Types.SmartEnum[obe.transform.Units]
+---@alias obe.transform.UnitsMeta obe.types.SmartEnum[obe.transform.Units]
 
 --- Conversion Type for Referential Usage.
 ---

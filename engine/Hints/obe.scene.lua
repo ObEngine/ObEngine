@@ -45,7 +45,7 @@ function obe.scene._Camera:set_position(position, ref) end
 function obe.scene._Camera:set_size(size, ref) end
 
 
----@class obe.scene.Scene : obe.Types.Serializable, obe.engine.ResourceManagedObject
+---@class obe.scene.Scene : obe.types.Serializable, obe.engine.ResourceManagedObject
 obe.scene._Scene = {};
 
 --- Creates a new Scene.
@@ -266,11 +266,11 @@ function obe.scene._Scene:get_render_options() end
 function obe.scene._Scene:set_render_options(options) end
 
 ---@param id string #
----@return obe.Component.ComponentBase
+---@return obe.component.ComponentBase
 function obe.scene._Scene:get_component(id) end
 
 
----@class obe.scene.SceneNode : obe.transform.Movable, obe.Types.Selectable
+---@class obe.scene.SceneNode : obe.transform.Movable, obe.types.Selectable
 obe.scene._SceneNode = {};
 
 

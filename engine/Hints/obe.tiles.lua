@@ -69,7 +69,7 @@ function obe.tiles._TileLayer:set_tile(x, y, tile_id) end
 function obe.tiles._TileLayer:get_tile(x, y) end
 
 
----@class obe.tiles.TileScene : obe.Types.Serializable
+---@class obe.tiles.TileScene : obe.types.Serializable
 obe.tiles._TileScene = {};
 
 --- obe.tiles.TileScene constructor
@@ -148,7 +148,7 @@ function obe.tiles._TileScene:is_anti_aliased() end
 function obe.tiles._TileScene:get_scene() end
 
 
----@class obe.tiles.Tileset : obe.Types.Identifiable
+---@class obe.tiles.Tileset : obe.types.Identifiable
 obe.tiles._Tileset = {};
 
 --- obe.tiles.Tileset constructor

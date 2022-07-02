@@ -2,7 +2,7 @@
 
 obe.animation.easing = {};
 
----@alias obe.animation.easing.EasingTypeMeta obe.Types.SmartEnum[obe.animation.easing.EasingType]
+---@alias obe.animation.easing.EasingTypeMeta obe.types.SmartEnum[obe.animation.easing.EasingType]
 
 ---@alias obe.animation.easing.EasingFunction fun(p0:number):number
 ---@param t number #

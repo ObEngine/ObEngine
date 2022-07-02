@@ -1,15 +1,6 @@
 ---@meta
 
 obe.event = {};
----@class obe.event.CallbackProfiler
----@field hits number #
----@field time obe.time.TimeUnit #
----@field min obe.time.TimeUnit #
----@field max obe.time.TimeUnit #
-obe.event._CallbackProfiler = {};
-
-
-
 ---@class obe.event.CallbackScheduler
 obe.event._CallbackScheduler = {};
 
@@ -76,9 +67,6 @@ function obe.event._EventBase:add_external_listener(id, listener) end
 ---
 ---@param id string #id of the Listener to unregister
 function obe.event._EventBase:remove_external_listener(id) end
-
----@return obe.event.EventProfiler
-function obe.event._EventBase:get_profiler() end
 
 
 ---@class obe.event.EventGroup
@@ -148,9 +136,6 @@ function obe.event._EventGroup:on_add_listener(event_name, callback) end
 ---@param callback obe.event.OnListenerChange #
 function obe.event._EventGroup:on_remove_listener(event_name, callback) end
 
----@return vili.node
-function obe.event._EventGroup:get_profiler_results() end
-
 
 ---@class obe.event.EventGroupView
 obe.event._EventGroupView = {};
@@ -193,9 +178,6 @@ function obe.event._EventGroupView:is_joinable() end
 ---@return boolean
 function obe.event._EventGroupView:contains(event_name) end
 
----@return vili.node
-function obe.event._EventGroupView:get_profiler_results() end
-
 
 ---@class obe.event.EventManager
 obe.event._EventManager = {};
@@ -231,9 +213,6 @@ function obe.event._EventManager:get_all_namespaces_names() end
 
 ---@return obe.event.CallbackScheduler
 function obe.event._EventManager:schedule() end
-
----@return vili.node
-function obe.event._EventManager:dump_profiler_results() end
 
 
 ---@class obe.event.EventNamespace
@@ -333,21 +312,8 @@ function obe.event.LuaEventListener(callback) end
 
 
 
----@class obe.event.ScopeProfiler
-obe.event._ScopeProfiler = {};
-
---- obe.event.ScopeProfiler constructor
----
----@param results obe.event.CallbackProfiler #
----@return obe.event.ScopeProfiler
-function obe.event.ScopeProfiler(results) end
-
-
-
 
 ---@alias obe.event.Callback fun()
-
----@alias obe.event.EventProfiler table<string, obe.event.CallbackProfiler>
 
 ---@alias obe.event.EventGroupPtr obe.event.EventGroup
 

@@ -69,7 +69,7 @@ function obe.graphics.canvas._Canvas:get_texture() end
 function obe.graphics.canvas._Canvas:requires_sort() end
 
 
----@class obe.graphics.canvas.CanvasElement : obe.Types.ProtectedIdentifiable
+---@class obe.graphics.canvas.CanvasElement : obe.types.ProtectedIdentifiable
 ---@field parent obe.graphics.canvas.Canvas #
 ---@field layer number #
 ---@field visible boolean #
@@ -217,7 +217,7 @@ function obe.graphics.canvas._Text:refresh() end
 
 
 
----@alias obe.graphics.canvas.CanvasElementTypeMeta obe.Types.SmartEnum[obe.graphics.canvas.CanvasElementType]
+---@alias obe.graphics.canvas.CanvasElementTypeMeta obe.types.SmartEnum[obe.graphics.canvas.CanvasElementType]
 
 --- Type of the CanvasElement, used for identification \lua_bind{Canvas.Type}.
 ---

@@ -4,7 +4,7 @@ obe.debug = {};
 
 ---@alias obe.debug.Logger spdlog.logger
 
----@alias obe.debug.LogLevelMeta obe.Types.SmartEnum[obe.debug.LogLevel]
+---@alias obe.debug.LogLevelMeta obe.types.SmartEnum[obe.debug.LogLevel]
 --- Initialize the Logger.
 ---
 function obe.debug.init_logger() end

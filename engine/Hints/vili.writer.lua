@@ -5,8 +5,15 @@ vili.writer = {};
 ---@field indent number #
 ---@field array vili.writer.dump_options._array #
 ---@field object vili.writer.dump_options._object #
----@field root boolean #
 vili.writer._dump_options = {};
+
+
+
+---@class vili.writer.dump_state
+---@field root boolean #
+---@field depth number #
+---@field object_mode vili.writer.object_style #
+vili.writer._dump_state = {};
 
 
 
@@ -27,19 +34,22 @@ function vili.writer.dump_boolean(data) end
 function vili.writer.dump_string(data) end
 
 ---@param data vili.node #
----@param options? vili.writer.dump_options #
+---@param options vili.writer.dump_options #
+---@param state vili.writer.dump_state #
 ---@return string
-function vili.writer.dump_array(data, options) end
+function vili.writer.dump_array(data, options, state) end
+
+---@param data vili.node #
+---@param options vili.writer.dump_options #
+---@param state vili.writer.dump_state #
+---@return string
+function vili.writer.dump_object(data, options, state) end
 
 ---@param data vili.node #
 ---@param options? vili.writer.dump_options #
+---@param state? vili.writer.dump_state #
 ---@return string
-function vili.writer.dump_object(data, options) end
-
----@param data vili.node #
----@param options? vili.writer.dump_options #
----@return string
-function vili.writer.dump(data, options) end
+function vili.writer.dump(data, options, state) end
 
 
 --- 
@@ -49,15 +59,6 @@ vili.writer.delimiter_newline_policy = {
     never = 0,
     only_if_multiline = 1,
     always = 2,
-};
-
---- 
----
----@class vili.writer.comma_spacing_policy
-vili.writer.comma_spacing_policy = {
-    left_side = 0,
-    right_side = 1,
-    both = 2,
 };
 
 --- 

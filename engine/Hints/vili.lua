@@ -206,6 +206,11 @@ function vili._node:front() end
 ---@return vili.node
 function vili._node:back() end
 
+--- Directly access underlying variant.
+---
+---@return vili.node_data
+function vili._node:data() end
+
 ---@return number
 function vili._node:size() end
 

@@ -308,7 +308,7 @@ function obe.system._Path:find_all(path_type) end
 function obe.system._Path:to_string() end
 
 
----@class obe.system.Plugin : obe.Types.Identifiable
+---@class obe.system.Plugin : obe.types.Identifiable
 obe.system._Plugin = {};
 
 --- obe.system.Plugin constructor
@@ -415,15 +415,15 @@ function obe.system._Window:get_screen_size() end
 
 ---@alias obe.system.MountList obe.system.MountablePath[]
 
----@alias obe.system.PathTypeMeta obe.Types.SmartEnum[obe.system.PathType]
+---@alias obe.system.PathTypeMeta obe.types.SmartEnum[obe.system.PathType]
 
 ---@alias obe.system.PluginFunction dynamicLinker.dynamicLinker.dlSymbol[T]?
 
----@alias obe.system.StretchModeMeta obe.Types.SmartEnum[obe.system.StretchMode]
+---@alias obe.system.StretchModeMeta obe.types.SmartEnum[obe.system.StretchMode]
 
----@alias obe.system.WindowSizeMeta obe.Types.SmartEnum[obe.system.WindowSize]
+---@alias obe.system.WindowSizeMeta obe.types.SmartEnum[obe.system.WindowSize]
 
----@alias obe.system.RenderSizeMeta obe.Types.SmartEnum[obe.system.RenderSize]
+---@alias obe.system.RenderSizeMeta obe.types.SmartEnum[obe.system.RenderSize]
 ---@param path string #
 ---@param warn_on_missing_prefix? boolean #
 ---@return table<number, string>

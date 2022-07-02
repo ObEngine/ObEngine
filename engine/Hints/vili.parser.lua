@@ -53,13 +53,6 @@ function vili.parser._state:close_block() end
 function vili.parser._state:push(data) end
 
 
----@class vili.parser.error
-vili.parser._error = {};
-
-
-
-
----@alias vili.parser.control tao.pegtl.must_if[vili.parser.error >.vili.parser.control[Rule]]
 ---@param data string #
 ---@param parser_state? vili.parser.state #
 ---@return vili.node

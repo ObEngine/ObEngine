@@ -1,34 +1,34 @@
 ---@meta
 
-obe.Component = {};
----@class obe.Component.ComponentBase : obe.Types.Identifiable, obe.Types.Serializable
+obe.component = {};
+---@class obe.component.ComponentBase : obe.types.Identifiable, obe.types.Serializable
 ---@field ComponentType string #
-obe.Component._ComponentBase = {};
+obe.component._ComponentBase = {};
 
---- obe.Component.ComponentBase constructor
+--- obe.component.ComponentBase constructor
 ---
 ---@param id string #
----@return obe.Component.ComponentBase
-function obe.Component.ComponentBase(id) end
+---@return obe.component.ComponentBase
+function obe.component.ComponentBase(id) end
 
 
-function obe.Component._ComponentBase:remove() end
+function obe.component._ComponentBase:remove() end
 
 --- Dumps the content of the Serializable object to a vili node.
 ---
 ---@return vili.node
-function obe.Component._ComponentBase:dump() end
+function obe.component._ComponentBase:dump() end
 
 --- Loads an object from a vili node.
 ---
 ---@param data vili.node #vili node containing the data of the object
-function obe.Component._ComponentBase:load(data) end
+function obe.component._ComponentBase:load(data) end
 
 ---@return string
-function obe.Component._ComponentBase:type() end
+function obe.component._ComponentBase:type() end
 
 ---@return sol.lua_value
-function obe.Component._ComponentBase:cast() end
+function obe.component._ComponentBase:cast() end
 
 
-return obe.Component;
+return obe.component;
