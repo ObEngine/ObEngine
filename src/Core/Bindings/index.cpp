@@ -1,16 +1,14 @@
 #include <Bindings/Config.hpp>
 #include <Bindings/Exceptions.hpp>
 #include <Bindings/Patches.hpp>
-#include <Bindings/obe/Component/Component.hpp>
-#include <Bindings/obe/Component/Exceptions/Exceptions.hpp>
 #include <Bindings/obe/Obe.hpp>
-#include <Bindings/obe/Types/Types.hpp>
 #include <Bindings/obe/animation/Animation.hpp>
 #include <Bindings/obe/animation/easing/Easing.hpp>
 #include <Bindings/obe/animation/schemas/Schemas.hpp>
 #include <Bindings/obe/audio/Audio.hpp>
 #include <Bindings/obe/bindings/Bindings.hpp>
 #include <Bindings/obe/collision/Collision.hpp>
+#include <Bindings/obe/component/Component.hpp>
 #include <Bindings/obe/config/Config.hpp>
 #include <Bindings/obe/config/validators/Validators.hpp>
 #include <Bindings/obe/debug/Debug.hpp>
@@ -43,6 +41,7 @@
 #include <Bindings/obe/tiles/Tiles.hpp>
 #include <Bindings/obe/time/Time.hpp>
 #include <Bindings/obe/transform/Transform.hpp>
+#include <Bindings/obe/types/Types.hpp>
 #include <Bindings/obe/utils/Utils.hpp>
 #include <Bindings/obe/utils/exec/Exec.hpp>
 #include <Bindings/obe/utils/file/File.hpp>
@@ -61,11 +60,10 @@ namespace obe::bindings
     {
         state["obe"].get_or_create<sol::table>();
         state["vili"].get_or_create<sol::table>();
-        state["obe"]["component"].get_or_create<sol::table>();
-        state["obe"]["types"].get_or_create<sol::table>();
         state["obe"]["animation"].get_or_create<sol::table>();
         state["obe"]["audio"].get_or_create<sol::table>();
         state["obe"]["collision"].get_or_create<sol::table>();
+        state["obe"]["component"].get_or_create<sol::table>();
         state["obe"]["config"].get_or_create<sol::table>();
         state["obe"]["engine"].get_or_create<sol::table>();
         state["obe"]["event"].get_or_create<sol::table>();
@@ -78,6 +76,7 @@ namespace obe::bindings
         state["obe"]["tiles"].get_or_create<sol::table>();
         state["obe"]["time"].get_or_create<sol::table>();
         state["obe"]["transform"].get_or_create<sol::table>();
+        state["obe"]["types"].get_or_create<sol::table>();
         state["obe"]["utils"].get_or_create<sol::table>();
         state["vili"]["parser"].get_or_create<sol::table>();
         state["vili"]["writer"].get_or_create<sol::table>();
@@ -85,7 +84,6 @@ namespace obe::bindings
         state["obe"]["bindings"].get_or_create<sol::table>();
         state["obe"]["events"].get_or_create<sol::table>();
         state["vili"]["utils"].get_or_create<sol::table>();
-        state["obe"]["component"]["exceptions"].get_or_create<sol::table>();
         state["obe"]["graphics"]["canvas"].get_or_create<sol::table>();
         state["obe"]["graphics"]["shapes"].get_or_create<sol::table>();
         state["obe"]["system"]["project"].get_or_create<sol::table>();
@@ -122,15 +120,6 @@ namespace obe::bindings
         obe::bindings::load_class_debug_info(state);
         obe::bindings::load_function_get_type_name(state);
         obe::bindings::load_function_init_engine(state);
-        obe::component::bindings::load_class_component_base(state);
-        obe::component::exceptions::bindings::load_class_component_id_already_taken(state);
-        obe::component::exceptions::bindings::load_class_unknown_component_type(state);
-        obe::types::bindings::load_class_identifiable(state);
-        obe::types::bindings::load_class_protected_identifiable(state);
-        obe::types::bindings::load_class_selectable(state);
-        obe::types::bindings::load_class_serializable(state);
-        obe::types::bindings::load_class_togglable(state);
-        obe::types::bindings::load_class_unknown_enum_entry(state);
         obe::animation::bindings::load_class_animation(state);
         obe::animation::bindings::load_class_animation_group(state);
         obe::animation::bindings::load_class_animation_state(state);
@@ -157,6 +146,7 @@ namespace obe::bindings
         obe::collision::bindings::load_class_trajectory(state);
         obe::collision::bindings::load_class_trajectory_node(state);
         obe::collision::bindings::load_enum_collider_tag_type(state);
+        obe::component::bindings::load_class_component_base(state);
         obe::config::bindings::load_class_configuration_manager(state);
         obe::config::bindings::load_class_version(state);
         obe::engine::bindings::load_class_engine(state);
@@ -289,6 +279,12 @@ namespace obe::bindings
         obe::transform::bindings::load_enum_flip_axis(state);
         obe::transform::bindings::load_enum_units(state);
         obe::transform::bindings::load_enum_relative_position_from(state);
+        obe::types::bindings::load_class_identifiable(state);
+        obe::types::bindings::load_class_protected_identifiable(state);
+        obe::types::bindings::load_class_selectable(state);
+        obe::types::bindings::load_class_serializable(state);
+        obe::types::bindings::load_class_togglable(state);
+        obe::types::bindings::load_class_unknown_enum_entry(state);
         obe::utils::exec::bindings::load_class_run_args_parser(state);
         vili::bindings::load_class_const_node_iterator(state);
         vili::bindings::load_class_node(state);

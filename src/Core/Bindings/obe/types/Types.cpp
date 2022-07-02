@@ -1,4 +1,4 @@
-#include <Bindings/obe/Types/Types.hpp>
+#include <Bindings/obe/types/Types.hpp>
 
 #include <Types/Identifiable.hpp>
 #include <Types/Selectable.hpp>
@@ -12,9 +12,9 @@ namespace obe::types::bindings
 {
     void load_class_identifiable(sol::state_view state)
     {
-        sol::table Types_namespace = state["obe"]["types"].get<sol::table>();
+        sol::table types_namespace = state["obe"]["types"].get<sol::table>();
         sol::usertype<obe::types::Identifiable> bind_identifiable
-            = Types_namespace.new_usertype<obe::types::Identifiable>("Identifiable",
+            = types_namespace.new_usertype<obe::types::Identifiable>("Identifiable",
                 sol::call_constructor,
                 sol::constructors<obe::types::Identifiable(const std::string&)>());
         bind_identifiable["set_id"] = &obe::types::Identifiable::set_id;
@@ -22,16 +22,16 @@ namespace obe::types::bindings
     }
     void load_class_protected_identifiable(sol::state_view state)
     {
-        sol::table Types_namespace = state["obe"]["types"].get<sol::table>();
+        sol::table types_namespace = state["obe"]["types"].get<sol::table>();
         sol::usertype<obe::types::ProtectedIdentifiable> bind_protected_identifiable
-            = Types_namespace.new_usertype<obe::types::ProtectedIdentifiable>(
+            = types_namespace.new_usertype<obe::types::ProtectedIdentifiable>(
                 "ProtectedIdentifiable", sol::base_classes, sol::bases<obe::types::Identifiable>());
     }
     void load_class_selectable(sol::state_view state)
     {
-        sol::table Types_namespace = state["obe"]["types"].get<sol::table>();
+        sol::table types_namespace = state["obe"]["types"].get<sol::table>();
         sol::usertype<obe::types::Selectable> bind_selectable
-            = Types_namespace.new_usertype<obe::types::Selectable>("Selectable",
+            = types_namespace.new_usertype<obe::types::Selectable>("Selectable",
                 sol::call_constructor,
                 sol::constructors<obe::types::Selectable(), obe::types::Selectable(bool)>());
         bind_selectable["set_selected"] = &obe::types::Selectable::set_selected;
@@ -42,9 +42,9 @@ namespace obe::types::bindings
     }
     void load_class_serializable(sol::state_view state)
     {
-        sol::table Types_namespace = state["obe"]["types"].get<sol::table>();
+        sol::table types_namespace = state["obe"]["types"].get<sol::table>();
         sol::usertype<obe::types::Serializable> bind_serializable
-            = Types_namespace.new_usertype<obe::types::Serializable>("Serializable");
+            = types_namespace.new_usertype<obe::types::Serializable>("Serializable");
         bind_serializable["schema"] = &obe::types::Serializable::schema;
         bind_serializable["dump"] = &obe::types::Serializable::dump;
         bind_serializable["load"] = &obe::types::Serializable::load;
@@ -52,9 +52,9 @@ namespace obe::types::bindings
     }
     void load_class_togglable(sol::state_view state)
     {
-        sol::table Types_namespace = state["obe"]["types"].get<sol::table>();
+        sol::table types_namespace = state["obe"]["types"].get<sol::table>();
         sol::usertype<obe::types::Togglable> bind_togglable
-            = Types_namespace.new_usertype<obe::types::Togglable>("Togglable",
+            = types_namespace.new_usertype<obe::types::Togglable>("Togglable",
                 sol::call_constructor, sol::constructors<obe::types::Togglable(bool)>());
         bind_togglable["set_enabled"] = &obe::types::Togglable::set_enabled;
         bind_togglable["toggle"] = &obe::types::Togglable::toggle;
@@ -64,9 +64,9 @@ namespace obe::types::bindings
     }
     void load_class_unknown_enum_entry(sol::state_view state)
     {
-        sol::table Types_namespace = state["obe"]["types"].get<sol::table>();
+        sol::table types_namespace = state["obe"]["types"].get<sol::table>();
         sol::usertype<obe::types::UnknownEnumEntry> bind_unknown_enum_entry
-            = Types_namespace.new_usertype<obe::types::UnknownEnumEntry>("UnknownEnumEntry",
+            = types_namespace.new_usertype<obe::types::UnknownEnumEntry>("UnknownEnumEntry",
                 sol::call_constructor,
                 sol::constructors<obe::types::UnknownEnumEntry(std::string_view, std::string_view,
                     const std::vector<std::string>&, obe::DebugInfo)>(),
