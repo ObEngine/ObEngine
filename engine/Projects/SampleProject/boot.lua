@@ -1,3 +1,3 @@
 function Game.Start()
-    Engine.Scene:loadFromFile("scenes://sample.map.vili");
+    Engine.Scene:load_from_file("scenes://sample.map.vili");
 end

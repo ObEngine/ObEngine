@@ -49,10 +49,12 @@ namespace obe::system
         MountablePath root_path(MountablePathType::Path, "", prefixes::root, priorities::defaults);
         MountablePath working_directory_path(
             MountablePathType::Path, ".", prefixes::cwd, priorities::defaults);
-        MountablePath implicit_cwd_path(MountablePathType::Path, ".", "", priorities::defaults, true);
-        MountablePath implicit_root_path(MountablePathType::Path, "", "", priorities::defaults, true); 
-        MountablePath executable_path(MountablePathType::Path, utils::file::get_executable_directory(),
-            prefixes::exe, priorities::defaults);
+        MountablePath implicit_cwd_path(
+            MountablePathType::Path, ".", "", priorities::defaults, true);
+        MountablePath implicit_root_path(
+            MountablePathType::Path, "", "", priorities::defaults, true);
+        MountablePath executable_path(MountablePathType::Path,
+            utils::file::get_executable_directory(), prefixes::exe, priorities::defaults);
 
         const std::string engine_config_path
             = utils::file::join({ sago::getConfigHome(), "ObEngine" });
@@ -87,8 +89,8 @@ namespace obe::system
         }
         MountablePath::mount(base_path);
 
-        MountablePath engine_path(
-            MountablePathType::Path, executable_path.base_path, prefixes::obe, priorities::defaults);
+        MountablePath engine_path(MountablePathType::Path, executable_path.base_path, prefixes::obe,
+            priorities::defaults);
         MountablePath::mount(engine_path);
 
         FindResult mount_file_path
@@ -96,8 +98,8 @@ namespace obe::system
         if (!mount_file_path)
         {
             auto string_paths = MountablePath::string_paths();
-            std::transform(
-                string_paths.begin(), string_paths.end(), string_paths.begin(), utils::string::quote);
+            std::transform(string_paths.begin(), string_paths.end(), string_paths.begin(),
+                utils::string::quote);
 
             debug::Log->info("No 'mount.vili' file found in the following directories ({})",
                 fmt::join(string_paths.begin(), string_paths.end(), ", "));
@@ -110,8 +112,7 @@ namespace obe::system
         vili::node mounted_paths;
         try
         {
-            mounted_paths
-                = vili::parser::from_file(mount_file_path);
+            mounted_paths = vili::parser::from_file(mount_file_path);
         }
         catch (const vili::exceptions::file_not_found& e)
         {
@@ -210,7 +211,8 @@ namespace obe::system
         }
         auto path_cmp = [&path](const auto& mounted_path) { return path == *mounted_path; };
         const bool path_already_exists
-            = std::find_if(MountedPaths.begin(), MountedPaths.end(), path_cmp) != MountedPaths.end();
+            = std::find_if(MountedPaths.begin(), MountedPaths.end(), path_cmp)
+            != MountedPaths.end();
         if (path_already_exists)
         {
             debug::Log->warn("[MountablePath] Can't Mount the same path twice: "
@@ -220,9 +222,9 @@ namespace obe::system
         }
         if (same_prefix_policy == SamePrefixPolicy::Replace)
         {
-            std::erase_if(MountedPaths,
-                [path](const auto& mountable_path)
-                { return mountable_path->prefix == path.prefix; });
+            std::erase_if(MountedPaths, [path](const auto& mountable_path) {
+                return mountable_path->prefix == path.prefix;
+            });
             MountedPaths.push_back(std::make_shared<MountablePath>(path));
         }
         if (same_prefix_policy != SamePrefixPolicy::Skip)
@@ -231,8 +233,10 @@ namespace obe::system
         }
         else
         {
-            const auto existing_prefix_it = std::find_if(MountedPaths.begin(), MountedPaths.end(),
-                [path](const auto& mountable_path) { return mountable_path->prefix == path.prefix; });
+            const auto existing_prefix_it = std::find_if(
+                MountedPaths.begin(), MountedPaths.end(), [path](const auto& mountable_path) {
+                    return mountable_path->prefix == path.prefix;
+                });
             if (existing_prefix_it == MountedPaths.end())
             {
                 MountedPaths.push_back(std::make_shared<MountablePath>(path));
@@ -243,8 +247,8 @@ namespace obe::system
 
     void MountablePath::unmount(const MountablePath path)
     {
-        std::erase_if(MountedPaths,
-            [path](const auto& mountable_path) { return *mountable_path == path; });
+        std::erase_if(
+            MountedPaths, [path](const auto& mountable_path) { return *mountable_path == path; });
     }
 
     void MountablePath::unmount_all()
@@ -270,9 +274,10 @@ namespace obe::system
 
     void MountablePath::sort()
     {
-        std::sort(MountedPaths.begin(), MountedPaths.end(),
-            [](const auto& first, const auto& second)
-            { return first->priority > second->priority; });
+        std::sort(
+            MountedPaths.begin(), MountedPaths.end(), [](const auto& first, const auto& second) {
+                return first->priority > second->priority;
+            });
     }
 
     const MountablePath& MountablePath::from_prefix(const std::string& prefix)
@@ -303,6 +308,10 @@ namespace obe::system
         if (!prefix_in_path.empty())
         {
             base_path = system::Path(base_path).find(PathType::Directory).path();
+        }
+        if (base_path.empty())
+        {
+            base_path = "."; // empty paths not supported on UNIX
         }
         base_path = utils::file::canonical_path(base_path);
         deferred_resolution = false;
