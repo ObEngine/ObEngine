@@ -2,6 +2,9 @@
 
 #include <Exception.hpp>
 
+/**
+ * \nobind
+ */
 namespace obe::component::Exceptions
 {
     class ComponentIdAlreadyTaken : public Exception<ComponentIdAlreadyTaken>

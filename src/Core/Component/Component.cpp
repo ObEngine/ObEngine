@@ -14,7 +14,7 @@ namespace obe::component
         {
             if (comp->get_id() == component->get_id())
             {
-                throw Exceptions::ComponentIdAlreadyTaken(comp->get_id(), EXC_INFO);
+                throw exceptions::ComponentIdAlreadyTaken(comp->get_id(), EXC_INFO);
             }
         }
         Components.push_back(component);
@@ -35,7 +35,7 @@ namespace obe::component
     {
         if (!ComponentCasters.count(this->type()))
         {
-            throw Exceptions::UnknownComponentType(this->type(), EXC_INFO);
+            throw exceptions::UnknownComponentType(this->type(), EXC_INFO);
         }
         return ComponentCasters.at(this->type())(this);
     }
