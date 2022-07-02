@@ -1,9 +1,8 @@
 #pragma once
 
-#include <vector>
-
 #include <Transform/Movable.hpp>
 #include <Types/Selectable.hpp>
+#include <vector>
 
 namespace obe::scene
 {

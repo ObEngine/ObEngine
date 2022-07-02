@@ -21,4 +21,4 @@ namespace obe::collision::Exceptions
                        "array of strings (for multiple tags)");
         }
     };
-}
+} // namespace obe::collision::Exceptions

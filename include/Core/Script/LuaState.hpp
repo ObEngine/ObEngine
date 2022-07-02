@@ -1,8 +1,7 @@
 #pragma once
 
-#include <sol/sol.hpp>
-
 #include <Types/Serializable.hpp>
+#include <sol/sol.hpp>
 
 namespace obe::script
 {
@@ -11,4 +10,4 @@ namespace obe::script
     public:
         void load_config(const vili::node& config);
     };
-}
+} // namespace obe::script

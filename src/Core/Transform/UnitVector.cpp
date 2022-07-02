@@ -288,8 +288,8 @@ namespace obe::transform
     UnitVector UnitVector::rotate(double angle, UnitVector zero) const
     {
         const double rad_angle = utils::math::convert_to_radian(angle);
-        Matrix2D rot(
-            { std::cos(rad_angle), -std::sin(rad_angle), std::sin(rad_angle), std::cos(rad_angle) });
+        Matrix2D rot({ std::cos(rad_angle), -std::sin(rad_angle), std::sin(rad_angle),
+            std::cos(rad_angle) });
         const UnitVector result = rot.product(*this - zero) + zero;
         return result;
     }

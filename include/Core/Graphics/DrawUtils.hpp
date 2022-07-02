@@ -1,8 +1,7 @@
 #pragma once
 
-#include <unordered_map>
-
 #include <Graphics/Color.hpp>
+#include <unordered_map>
 
 namespace obe::graphics
 {

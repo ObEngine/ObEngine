@@ -1,16 +1,14 @@
 #pragma once
 
-#include <map>
-
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <SFML/Window/Cursor.hpp>
-#include <SFML/Window/Mouse.hpp>
-
 #include <Animation/Animator.hpp>
 #include <Event/EventGroup.hpp>
 #include <Event/EventNamespace.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <SFML/Window/Cursor.hpp>
+#include <SFML/Window/Mouse.hpp>
 #include <System/Window.hpp>
 #include <Transform/UnitVector.hpp>
+#include <map>
 
 namespace obe::events
 {
@@ -54,8 +52,8 @@ namespace obe::events
             bool middle;
             bool right;
         };
-    }
-}
+    } // namespace Cursor
+} // namespace obe::events
 
 namespace obe::system
 {

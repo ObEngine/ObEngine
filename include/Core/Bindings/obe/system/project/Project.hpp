@@ -12,4 +12,4 @@ namespace obe::system::project::bindings
     void load_function_project_exists(sol::state_view state);
     void load_function_load(sol::state_view state);
     void load_function_list_projects(sol::state_view state);
-};
+}; // namespace obe::system::project::bindings

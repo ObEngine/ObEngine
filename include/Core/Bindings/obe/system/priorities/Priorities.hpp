@@ -12,4 +12,4 @@ namespace obe::system::priorities::bindings
     void load_global_mount(sol::state_view state);
     void load_global_defaults(sol::state_view state);
     void load_global_low(sol::state_view state);
-};
+}; // namespace obe::system::priorities::bindings

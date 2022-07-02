@@ -1,9 +1,8 @@
 #pragma once
 
-#include <vector>
-
 #include <Animation/Animation.hpp>
 #include <System/Path.hpp>
+#include <vector>
 
 namespace obe
 {
@@ -11,8 +10,8 @@ namespace obe
     {
         class Sprite;
         class Texture;
-    }
-}
+    } // namespace graphics
+} // namespace obe
 
 /**
  * \additionalinclude{Graphics/Sprite.hpp}

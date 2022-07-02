@@ -81,7 +81,8 @@ namespace obe::system::Exceptions
             std::string_view package, const std::vector<std::string>& all_packages, DebugInfo info)
             : Exception(info)
         {
-            this->error("Impossible to get Package '{}', please check it is correctly installed", package);
+            this->error(
+                "Impossible to get Package '{}', please check it is correctly installed", package);
             std::vector<std::string> suggestions
                 = utils::string::sort_by_distance(package.data(), all_packages, 5);
             std::transform(
@@ -198,4 +199,4 @@ namespace obe::system::Exceptions
                 prefix);
         }
     };
-}
+} // namespace obe::system::Exceptions

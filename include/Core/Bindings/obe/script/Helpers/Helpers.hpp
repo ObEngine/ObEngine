@@ -11,4 +11,4 @@ namespace obe::script::Helpers::bindings
     void load_function_rawget_from(sol::state_view state);
     void load_function_len_from(sol::state_view state);
     void load_function_pairs_from(sol::state_view state);
-};
+}; // namespace obe::script::Helpers::bindings

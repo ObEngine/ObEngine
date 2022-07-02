@@ -78,4 +78,4 @@ namespace obe::engine::exceptions
             this->error("Impossible to run Engine if not initialized beforehand");
         }
     };
-}
+} // namespace obe::engine::exceptions

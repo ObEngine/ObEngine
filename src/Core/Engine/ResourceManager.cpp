@@ -79,7 +79,8 @@ namespace obe::engine
     {
         if (!m_fonts.contains(path))
         {
-            const system::FindResult search_result = system::Path(path).find(system::PathType::File);
+            const system::FindResult search_result
+                = system::Path(path).find(system::PathType::File);
             std::shared_ptr<graphics::Font> new_font = std::make_shared<graphics::Font>();
             new_font->load_from_file(search_result);
 

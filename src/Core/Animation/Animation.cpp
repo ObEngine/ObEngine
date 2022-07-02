@@ -105,8 +105,7 @@ namespace obe::animation
     {
         debug::Log->debug("<animation> Loading animation at {}", path.to_string());
         const std::string animation_config_file = path.add(path.last() + ".ani.vili").find();
-        vili::node animation_config = vili::parser::from_file(
-            animation_config_file);
+        vili::node animation_config = vili::parser::from_file(animation_config_file);
 
         try
         {
@@ -177,7 +176,8 @@ namespace obe::animation
         {
             return;
         }
-        debug::Log->trace("    <animation> Updating AnimationGroup '{}'", m_current_group->get_name());
+        debug::Log->trace(
+            "    <animation> Updating AnimationGroup '{}'", m_current_group->get_name());
         m_current_group->next();
         if (m_current_group->is_over())
         {
@@ -233,8 +233,8 @@ namespace obe::animation
         if (meta.contains("mode"))
         {
             m_play_mode = AnimationPlayModeMeta::from_string(meta.at("mode"));
-            debug::Log->trace(
-                "    <animation> animation play-mode = '{}'", AnimationPlayModeMeta::to_string(m_play_mode));
+            debug::Log->trace("    <animation> animation play-mode = '{}'",
+                AnimationPlayModeMeta::to_string(m_play_mode));
         }
     }
 

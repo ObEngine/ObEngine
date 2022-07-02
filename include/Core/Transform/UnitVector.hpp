@@ -1,9 +1,8 @@
 #pragma once
 
-#include <tuple>
-
 #include <Transform/UnitStructures.hpp>
 #include <Transform/Units.hpp>
+#include <tuple>
 
 namespace obe::animation
 {
@@ -21,6 +20,7 @@ namespace obe::transform
     class UnitVector
     {
         friend class animation::TweenImpl<UnitVector>;
+
     public:
         /**
          * \nobind

@@ -15,4 +15,4 @@ namespace obe::input::bindings
     void load_enum_axis_threshold_direction(sol::state_view state);
     void load_enum_input_button_state(sol::state_view state);
     void load_enum_input_type(sol::state_view state);
-};
+}; // namespace obe::input::bindings

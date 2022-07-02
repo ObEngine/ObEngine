@@ -18,4 +18,4 @@ namespace obe::graphics::canvas::bindings
     void load_enum_canvas_element_type(sol::state_view state);
     void load_enum_text_horizontal_align(sol::state_view state);
     void load_enum_text_vertical_align(sol::state_view state);
-};
+}; // namespace obe::graphics::canvas::bindings

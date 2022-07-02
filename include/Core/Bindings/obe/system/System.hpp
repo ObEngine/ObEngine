@@ -23,4 +23,4 @@ namespace obe::system::bindings
     void load_enum_window_size(sol::state_view state);
     void load_enum_render_size(sol::state_view state);
     void load_function_split_path_and_prefix(sol::state_view state);
-};
+}; // namespace obe::system::bindings

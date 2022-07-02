@@ -1,12 +1,10 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
-#include <SFML/Graphics/VertexArray.hpp>
-
 #include <Collision/PolygonalCollider.hpp>
 #include <Graphics/Renderable.hpp>
+#include <SFML/Graphics/VertexArray.hpp>
+#include <string>
+#include <vector>
 
 namespace obe::tiles
 {
@@ -48,4 +46,4 @@ namespace obe::tiles
         void set_tile(uint32_t x, uint32_t y, uint32_t tile_id);
         uint32_t get_tile(uint32_t x, uint32_t y) const;
     };
-}
+} // namespace obe::tiles

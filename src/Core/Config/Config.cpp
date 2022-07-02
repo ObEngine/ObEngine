@@ -33,8 +33,7 @@ namespace obe::config
         for (const auto& find_result : load_result)
         {
             debug::Log->info("Loading config file from '{}'", find_result.path());
-            vili::node conf
-                = vili::parser::from_file(find_result.path());
+            vili::node conf = vili::parser::from_file(find_result.path());
             debug::Log->trace("Configuration '{}' content : {}", find_result.path(), conf.dump());
             this->merge(conf);
         }

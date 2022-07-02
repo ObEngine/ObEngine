@@ -1,11 +1,9 @@
 #pragma once
 
+#include <Types/Identifiable.hpp>
+#include <dynamicLinker/dynamicLinker.hpp>
 #include <memory>
 #include <optional>
-
-#include <dynamicLinker/dynamicLinker.hpp>
-
-#include <Types/Identifiable.hpp>
 
 namespace obe::engine
 {

@@ -192,7 +192,8 @@ namespace obe::graphics
             m_bounds.height -= line.get_global_bounds().height;
 
             // Append text
-            line.append_text(create_text(*it, text.color, text.outline, text.thickness, text.style));
+            line.append_text(
+                create_text(*it, text.color, text.outline, text.thickness, text.style));
 
             // Update bounds
             m_bounds.height += line.get_global_bounds().height;
@@ -204,7 +205,8 @@ namespace obe::graphics
         {
             Line line;
             line.setPosition(0.f, m_bounds.height);
-            line.append_text(create_text(*it, text.color, text.outline, text.thickness, text.style));
+            line.append_text(
+                create_text(*it, text.color, text.outline, text.thickness, text.style));
 
             // Update bounds
             m_bounds.height += line.get_global_bounds().height;

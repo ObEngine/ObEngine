@@ -14,9 +14,10 @@ namespace obe::audio
     }
 
     Sound::Sound(SoLoud::Soloud& manager, std::shared_ptr<SoLoud::AudioSource> source)
-        : m_manager(manager), m_source(std::move(source)),
-          m_handle(m_manager.play(*m_source, m_source->mVolume, 0, true)),
-          m_base_samplerate(m_source->mBaseSamplerate)
+        : m_manager(manager)
+        , m_source(std::move(source))
+        , m_handle(m_manager.play(*m_source, m_source->mVolume, 0, true))
+        , m_base_samplerate(m_source->mBaseSamplerate)
     {
     }
     double Sound::get_duration() const

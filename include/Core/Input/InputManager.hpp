@@ -1,12 +1,10 @@
 #pragma once
 
-#include <memory>
-
-#include <vili/node.hpp>
-
 #include <Event/EventNamespace.hpp>
 #include <Input/InputAction.hpp>
 #include <Types/Togglable.hpp>
+#include <memory>
+#include <vili/node.hpp>
 
 namespace obe::input
 {

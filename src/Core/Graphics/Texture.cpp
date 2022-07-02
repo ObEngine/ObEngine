@@ -32,14 +32,16 @@ namespace obe::graphics
         m_texture->loadFromImage(image);
     }
 
-    SvgTexture::SvgTexture(const std::string& filename) : m_path(filename)
+    SvgTexture::SvgTexture(const std::string& filename)
+        : m_path(filename)
     {
         m_document = lunasvg::Document::loadFromFile(filename);
         m_texture = std::make_unique<sf::Texture>();
         render();
     }
 
-    SvgTexture::SvgTexture(const SvgTexture& texture) : SvgTexture(texture.m_path)
+    SvgTexture::SvgTexture(const SvgTexture& texture)
+        : SvgTexture(texture.m_path)
     {
         m_size_hint.width = texture.m_size_hint.width;
         m_size_hint.height = texture.m_size_hint.height;
@@ -108,14 +110,14 @@ namespace obe::graphics
 
     sf::Texture& Texture::get_mutable_texture()
     {
-        constexpr static obe::utils::Visitor visitor {
-            [](sf::Texture& texture) -> sf::Texture& { return texture; },
+        constexpr static obe::utils::Visitor visitor { [](sf::Texture& texture) -> sf::Texture& {
+                                                          return texture;
+                                                      },
             [](std::shared_ptr<sf::Texture>& texture) -> sf::Texture& { return *texture; },
             [](const sf::Texture*) -> sf::Texture& {
                 throw exceptions::ReadOnlyTexture("create", EXC_INFO);
             },
-            [](SvgTexture& texture) -> sf::Texture& { return texture.get_texture(); }
-        };
+            [](SvgTexture& texture) -> sf::Texture& { return texture.get_texture(); } };
         return std::visit(visitor, m_texture);
     }
 

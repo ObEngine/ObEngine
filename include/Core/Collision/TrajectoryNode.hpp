@@ -1,10 +1,9 @@
 #pragma once
 
-#include <unordered_map>
-
 #include <Collision/PolygonalCollider.hpp>
 #include <Collision/Trajectory.hpp>
 #include <Scene/SceneNode.hpp>
+#include <unordered_map>
 
 namespace obe::collision
 {

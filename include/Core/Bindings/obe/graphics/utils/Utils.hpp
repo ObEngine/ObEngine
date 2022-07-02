@@ -10,4 +10,4 @@ namespace obe::graphics::utils::bindings
     void load_function_draw_point(sol::state_view state);
     void load_function_draw_line(sol::state_view state);
     void load_function_draw_polygon(sol::state_view state);
-};
+}; // namespace obe::graphics::utils::bindings

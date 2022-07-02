@@ -81,9 +81,9 @@ namespace obe::input
                         break;
                     }
                 }
-                std::erase_if(m_monitors,
-                    [this](const std::weak_ptr<InputButtonMonitor>& element)
-                    { return update_or_clean_monitor(e_inputs, element); });
+                std::erase_if(m_monitors, [this](const std::weak_ptr<InputButtonMonitor>& element) {
+                    return update_or_clean_monitor(e_inputs, element);
+                });
                 for (const auto& monitor_ptr : m_monitors)
                 {
                     if (const auto& monitor = monitor_ptr.lock())
@@ -136,9 +136,8 @@ namespace obe::input
                 {
                     this->get_action(action_name).clear_conditions();
                 }
-                auto input_condition = [this](const InputManager* input_manager, const std::string& action,
-                                          vili::node& condition)
-                {
+                auto input_condition = [this](const InputManager* input_manager,
+                                           const std::string& action, vili::node& condition) {
                     InputCondition action_condition;
                     InputCombination combination;
                     try
@@ -211,25 +210,24 @@ namespace obe::input
         //<REVISION> Multiple context, keep which one, remove keys of wrong
         // context
         m_current_actions.erase(std::remove_if(m_current_actions.begin(), m_current_actions.end(),
-                                   [&context](auto& action) -> bool
-                                   {
-                                       const auto& contexts = action->get_contexts();
-                                       auto is_action_in_context
-                                           = std::find(contexts.begin(), contexts.end(), context)
-                                           != contexts.end();
-                                       if (is_action_in_context)
-                                       {
-                                           debug::Log->debug("<InputManager> Remove Action '{0}' "
-                                                             "from Context '{1}'",
-                                               action->get_id(), context);
-                                           action->disable();
-                                           return true;
-                                       }
-                                       else
-                                       {
-                                           return false;
-                                       }
-                                   }),
+                                    [&context](auto& action) -> bool {
+                                        const auto& contexts = action->get_contexts();
+                                        auto is_action_in_context
+                                            = std::find(contexts.begin(), contexts.end(), context)
+                                            != contexts.end();
+                                        if (is_action_in_context)
+                                        {
+                                            debug::Log->debug("<InputManager> Remove Action '{0}' "
+                                                              "from Context '{1}'",
+                                                action->get_id(), context);
+                                            action->disable();
+                                            return true;
+                                        }
+                                        else
+                                        {
+                                            return false;
+                                        }
+                                    }),
             m_current_actions.end());
         return *this;
     }

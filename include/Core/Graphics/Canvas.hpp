@@ -1,18 +1,16 @@
 #pragma once
 
-#include <string>
-#include <vector>
-
-#include <SFML/Graphics/RenderTexture.hpp>
-#include <sfe/RichText.hpp>
-
 #include <Debug/Logger.hpp>
 #include <Graphics/Exceptions.hpp>
 #include <Graphics/Shapes.hpp>
 #include <Graphics/Sprite.hpp>
 #include <Graphics/Text.hpp>
+#include <SFML/Graphics/RenderTexture.hpp>
 #include <Transform/Polygon.hpp>
 #include <Types/Identifiable.hpp>
+#include <sfe/RichText.hpp>
+#include <string>
+#include <vector>
 
 namespace obe::graphics::canvas
 {
@@ -329,7 +327,8 @@ namespace obe::graphics::canvas
             }
             else
             {
-                throw exceptions::CanvasElementAlreadyExists(id, CanvasElementTypeMeta::to_string(T::Type),
+                throw exceptions::CanvasElementAlreadyExists(id,
+                    CanvasElementTypeMeta::to_string(T::Type),
                     CanvasElementTypeMeta::to_string(existing_element->type), EXC_INFO);
             }
         }

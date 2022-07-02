@@ -22,8 +22,8 @@ namespace obe::tiles
 
     public:
         Tileset(const std::string& id, uint32_t first_tile_id, uint32_t count,
-            const std::string& image_path, uint32_t columns, uint32_t tile_width, uint32_t tile_height,
-            uint32_t margin = 0, uint32_t spacing = 0);
+            const std::string& image_path, uint32_t columns, uint32_t tile_width,
+            uint32_t tile_height, uint32_t margin = 0, uint32_t spacing = 0);
         uint32_t get_first_tile_id() const;
         uint32_t get_last_tile_id() const;
         uint32_t get_tile_count() const;
@@ -53,4 +53,4 @@ namespace obe::tiles
         [[nodiscard]] std::vector<uint32_t> get_tilesets_first_tiles_ids() const;
         void clear();
     };
-} // namespace obe::scene
+} // namespace obe::tiles

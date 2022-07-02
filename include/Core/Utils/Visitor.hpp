@@ -24,4 +24,4 @@ namespace obe::utils
     template <typename... T>
     Visitor(T...) -> Visitor<T...>;
 
-} //namespace obe::utils::Misc
+} // namespace obe::utils

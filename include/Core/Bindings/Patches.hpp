@@ -10,7 +10,7 @@ namespace vili
     namespace exceptions
     {
     }
-}
+} // namespace vili
 
 namespace vili::parser
 {
@@ -67,4 +67,4 @@ namespace vili::parser
     namespace error_messages
     {
     }
-}
+} // namespace vili::parser

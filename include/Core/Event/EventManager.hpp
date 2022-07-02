@@ -1,12 +1,11 @@
 #pragma once
 
-#include <map>
-
 #include <Event/CallbackScheduler.hpp>
 #include <Event/Event.hpp>
 #include <Event/EventGroup.hpp>
 #include <Event/EventNamespace.hpp>
 #include <Time/Chronometer.hpp>
+#include <map>
 
 namespace obe::event
 {

@@ -1,9 +1,8 @@
 #pragma once
 
 #include <SFML/Graphics/Shader.hpp>
-#include <vili/node.hpp>
-
 #include <Types/Serializable.hpp>
+#include <vili/node.hpp>
 
 namespace obe::graphics
 {

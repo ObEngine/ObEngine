@@ -1,12 +1,10 @@
 #pragma once
 
-#include <algorithm>
-#include <vector>
-
-#include <sol/sol.hpp>
-
 #include <Types/Identifiable.hpp>
 #include <Types/Serializable.hpp>
+#include <algorithm>
+#include <sol/sol.hpp>
+#include <vector>
 
 namespace obe::component
 {
@@ -14,11 +12,13 @@ namespace obe::component
     {
     public:
         using Caster = std::function<sol::lua_value(ComponentBase*)>;
+
     protected:
         static std::vector<ComponentBase*> Components;
         static std::unordered_map<std::string_view, Caster> ComponentCasters;
         static void AddComponent(ComponentBase* component);
         static void RemoveComponent(ComponentBase* component);
+
     public:
         /**
          * \nobind
@@ -41,7 +41,6 @@ namespace obe::component
     class Component : public ComponentBase
     {
     private:
-        
     public:
         static void Register();
         /**
@@ -67,8 +66,9 @@ namespace obe::component
     void Component<DerivedComponent>::Register()
     {
         ComponentCasters[DerivedComponent::ComponentType]
-            = [](ComponentBase* component) -> sol::lua_value
-        { return static_cast<DerivedComponent*>(component); };
+            = [](ComponentBase* component) -> sol::lua_value {
+            return static_cast<DerivedComponent*>(component);
+        };
     }
 
     template <class DerivedComponent>
@@ -98,7 +98,7 @@ namespace obe::component
         RemoveComponent(this);
         DerivedComponent::Pool.erase(
             std::remove_if(DerivedComponent::Pool.begin(), DerivedComponent::Pool.end(),
-                          [&](auto& elem) { return (this == elem); }),
+                [&](auto& elem) { return (this == elem); }),
             DerivedComponent::Pool.end());
     }
 

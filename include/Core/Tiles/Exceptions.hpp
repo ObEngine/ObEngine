@@ -17,8 +17,8 @@ namespace obe::tiles::exceptions
             std::map<std::string, std::pair<uint32_t, uint32_t>> tilesets, DebugInfo info)
             : Exception(info)
         {
-            this->error("Impossible to load tile with id '{}' when maximum tile id is '{}'", tile_id,
-                max_tile_id);
+            this->error("Impossible to load tile with id '{}' when maximum tile id is '{}'",
+                tile_id, max_tile_id);
             std::string hint_msg = "The following tilesets are loaded :\n";
             std::string tileset_hint_list;
             for (const auto& [tileset_id, min_max_id] : tilesets)
@@ -79,4 +79,4 @@ namespace obe::tiles::exceptions
             this->hint("Maybe you meant one of these layers : ({})", fmt::join(suggestions, ", "));
         }
     };
-}
+} // namespace obe::tiles::exceptions

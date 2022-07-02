@@ -72,12 +72,14 @@ namespace obe::transform
 
     bool Referential::is_on_corner() const
     {
-        return (is_on_left_side() || is_on_right_side()) && (is_on_top_side() || is_on_bottom_side());
+        return (is_on_left_side() || is_on_right_side())
+            && (is_on_top_side() || is_on_bottom_side());
     }
 
     bool Referential::is_on_side() const
     {
-        return (is_on_left_side() || is_on_right_side()) ^ (is_on_top_side() || is_on_bottom_side());
+        return (is_on_left_side() || is_on_right_side())
+            ^ (is_on_top_side() || is_on_bottom_side());
     }
 
     bool Referential::is_known() const

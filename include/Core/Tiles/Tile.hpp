@@ -26,4 +26,4 @@ namespace obe::tiles
     };
 
     void apply_texture_quads_transforms(const TileInfo& info, TextureQuadsIndex& quads);
-}
+} // namespace obe::tiles

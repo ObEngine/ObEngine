@@ -1,9 +1,9 @@
 #pragma once
 
 #include <fmt/format.h>
-#include <string_view>
 
 #include <Exception.hpp>
+#include <string_view>
 
 /**
  * \nobind
@@ -33,8 +33,8 @@ namespace obe::script::exceptions
         ObjectDefinitionNotFound(std::string_view object_type, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Can't find a GameObject Definition File for GameObjects of type '{}'", object_type);
+            this->error("Can't find a GameObject Definition File for GameObjects of type '{}'",
+                object_type);
             this->hint("Try to check if there is a file named "
                        "GameObject/{0}/{0}.obj.vili",
                 object_type);
@@ -117,4 +117,4 @@ namespace obe::script::exceptions
             this->nest_in_place(err);
         }
     };
-}
+} // namespace obe::script::exceptions

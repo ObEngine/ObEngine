@@ -1,9 +1,8 @@
 #pragma once
 
-#include <SFML/Network.hpp>
-
 #include <Event/EventGroup.hpp>
 #include <Event/EventNamespace.hpp>
+#include <SFML/Network.hpp>
 
 namespace obe::network
 {

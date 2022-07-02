@@ -20,7 +20,8 @@ namespace obe::animation
     }
 
     AnimationGroup::AnimationGroup(const AnimationGroup& group)
-        : m_delay(group.m_delay), m_textures(group.m_textures)
+        : m_delay(group.m_delay)
+        , m_textures(group.m_textures)
     {
     }
 

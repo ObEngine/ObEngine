@@ -55,4 +55,4 @@ namespace vili::parser::rules::bindings
     void load_class_unicode(sol::state_view state);
     void load_class_vili_grammar(sol::state_view state);
     void load_class_xdigit(sol::state_view state);
-};
+}; // namespace vili::parser::rules::bindings

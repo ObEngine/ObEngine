@@ -25,4 +25,4 @@ namespace vili::bindings
     void load_global_array_typename(sol::state_view state);
     void load_global_unknown_typename(sol::state_view state);
     void load_global_container_typename(sol::state_view state);
-};
+}; // namespace vili::bindings

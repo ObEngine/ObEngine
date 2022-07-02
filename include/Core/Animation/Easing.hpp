@@ -1,9 +1,8 @@
 #pragma once
 
+#include <Types/SmartEnum.hpp>
 #include <functional>
 #include <string>
-
-#include <Types/SmartEnum.hpp>
 
 namespace obe::animation::easing
 {
@@ -80,4 +79,4 @@ namespace obe::animation::easing
 
     EasingFunction get(const std::string& easing);
     EasingFunction get(EasingType easing);
-}
+} // namespace obe::animation::easing

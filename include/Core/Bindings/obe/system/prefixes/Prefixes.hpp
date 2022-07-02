@@ -14,4 +14,4 @@ namespace obe::system::prefixes::bindings
     void load_global_extlibs(sol::state_view state);
     void load_global_root(sol::state_view state);
     void load_global_game(sol::state_view state);
-};
+}; // namespace obe::system::prefixes::bindings

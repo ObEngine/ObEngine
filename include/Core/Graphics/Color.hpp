@@ -1,9 +1,8 @@
 #pragma once
 
-#include <string>
-
 #include <SFML/Graphics/Color.hpp>
 #include <Types/Serializable.hpp>
+#include <string>
 
 namespace obe::animation
 {
@@ -32,10 +31,11 @@ namespace obe::graphics
     class Color : public types::Serializable
     {
         friend class animation::TweenImpl<Color>;
+
     private:
         ColorType m_type;
-    public:
 
+    public:
         double r = 0;
         double g = 0;
         double b = 0;

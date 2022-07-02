@@ -8,7 +8,7 @@ namespace SoLoud
 {
     class Wav;
     class Soloud;
-}
+} // namespace SoLoud
 
 namespace obe
 {
@@ -16,7 +16,7 @@ namespace obe
     {
         class Path;
     }
-}
+} // namespace obe
 
 /**
  * \additionalinclude{System/Path.hpp}
@@ -74,4 +74,4 @@ namespace obe::audio
          */
         Sound load(const system::Path& path, LoadPolicy load_policy = LoadPolicy::Normal);
     };
-}
+} // namespace obe::audio

@@ -1,10 +1,9 @@
 #pragma once
 
-#include <vector>
-
 #include <Tiles/Tile.hpp>
 #include <Tiles/Tileset.hpp>
 #include <Time/TimeUtils.hpp>
+#include <vector>
 
 namespace obe::tiles
 {
@@ -33,4 +32,4 @@ namespace obe::tiles
     };
 
     using AnimatedTiles = std::vector<AnimatedTile*>;
-}
+} // namespace obe::tiles

@@ -64,9 +64,9 @@ namespace obe::config::validators
         std::string all_inputs = utils::vector::join(input_list, "|");
         // clang-format on
         std::string action_re = fmt::format("((Idle|Hold|Pressed|Released)"
-                                           "\\s*:\\s*({0}))(\\s*\\+\\s*"
-                                           "(Idle|Hold|Pressed|Released)"
-                                           "\\s*:\\s*({0}))*",
+                                            "\\s*:\\s*({0}))(\\s*\\+\\s*"
+                                            "(Idle|Hold|Pressed|Released)"
+                                            "\\s*:\\s*({0}))*",
             all_inputs);
 
         // clang-format off

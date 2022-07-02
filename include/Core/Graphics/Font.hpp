@@ -51,4 +51,4 @@ namespace obe::graphics
     {
         return !m_font.getInfo().family.empty();
     }
-}
+} // namespace obe::graphics

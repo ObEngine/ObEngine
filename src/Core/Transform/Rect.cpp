@@ -105,7 +105,9 @@ namespace obe::transform
                   { 6, graphics::Color::Magenta }, { 7, graphics::Color(0, 128, 255) },
                   { 8, graphics::Color::Blue } };
 
-        graphics::utils::DrawPolygonOptions options { .lines = true, .points = true, .radius = radius, .specific_point_color = points_color };
+        graphics::utils::DrawPolygonOptions options {
+            .lines = true, .points = true, .radius = radius, .specific_point_color = points_color
+        };
 
         graphics::utils::draw_polygon(surface, draw_points, options);
     }
@@ -142,7 +144,8 @@ namespace obe::transform
         const auto r2_min_y = std::min(rect.m_position.y, rect.m_position.y + rect.m_size.y);
         const auto r2_max_y = std::max(rect.m_position.y, rect.m_position.y + rect.m_size.y);
 
-        return !(r2_min_x > r1_max_x || r2_max_x < r1_min_x || r2_min_y > r1_max_y || r2_max_y < r1_min_y);
+        return !(r2_min_x > r1_max_x || r2_max_x < r1_min_x || r2_min_y > r1_max_y
+            || r2_max_y < r1_min_y);
     }
 
     std::optional<Rect> Rect::intersection(const Rect& rect) const

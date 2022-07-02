@@ -334,8 +334,7 @@ namespace obe::collision
         const auto calc_min_distance_dep
             = [this](const transform::PolygonPath& sol1, const transform::PolygonPath& sol2,
                   const transform::UnitVector& t_offset)
-            -> std::tuple<double, transform::UnitVector, bool>
-        {
+            -> std::tuple<double, transform::UnitVector, bool> {
             double min_distance = -1;
             bool in_front = false;
 
@@ -427,8 +426,7 @@ namespace obe::collision
         for (auto& apply_offset : p_set1)
             apply_offset += offset;
         constexpr auto point_in_polygon = [](const std::vector<transform::UnitVector>& poly,
-                                              const transform::UnitVector& p_test) -> bool
-        {
+                                              const transform::UnitVector& p_test) -> bool {
             int i, j, c = 0;
             const int n_pt = static_cast<int>(poly.size());
             for (i = 0, j = n_pt - 1; i < n_pt; j = i++)
@@ -469,8 +467,7 @@ namespace obe::collision
 
     void PolygonalCollider::load(const vili::node& data)
     {
-        auto add_tag_helper = [this](ColliderTagType type, const vili::node& tag)
-        {
+        auto add_tag_helper = [this](ColliderTagType type, const vili::node& tag) {
             if (tag.is<vili::string>())
             {
                 this->add_tag(type, tag);

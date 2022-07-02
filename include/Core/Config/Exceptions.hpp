@@ -1,5 +1,4 @@
 #include <Exception.hpp>
-
 #include <string_view>
 
 /**
@@ -29,4 +28,4 @@ namespace obe::config::Exceptions
                 fmt::join(config_files, ", "));
         }
     };
-}
+} // namespace obe::config::Exceptions

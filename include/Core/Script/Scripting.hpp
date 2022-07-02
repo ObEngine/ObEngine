@@ -1,8 +1,7 @@
 #pragma once
 
-#include <sol/sol.hpp>
-
 #include <Script/Exceptions.hpp>
+#include <sol/sol.hpp>
 
 namespace obe::script
 {
@@ -60,4 +59,4 @@ namespace obe::script
             return result.get<ReturnType>();
         }
     }
-}
+} // namespace obe::script

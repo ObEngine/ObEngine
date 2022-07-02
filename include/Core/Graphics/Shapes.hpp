@@ -1,12 +1,11 @@
 #pragma once
 
-#include <SFML/Graphics/CircleShape.hpp>
-#include <SFML/Graphics/ConvexShape.hpp>
-#include <SFML/Graphics/RectangleShape.hpp>
-
 #include <Graphics/Color.hpp>
 #include <Graphics/Text.hpp>
 #include <Graphics/Texture.hpp>
+#include <SFML/Graphics/CircleShape.hpp>
+#include <SFML/Graphics/ConvexShape.hpp>
+#include <SFML/Graphics/RectangleShape.hpp>
 #include <Transform/Rect.hpp>
 #include <Transform/UnitVector.hpp>
 
@@ -170,8 +169,10 @@ namespace obe::graphics::shapes
     {
         const transform::UnitVector pixel_position
             = rect.get_position().to<transform::Units::ScenePixels>();
-        const transform::UnitVector pixel_size = rect.get_size().to<transform::Units::ScenePixels>();
-        const sf::IntRect pixel_rect(pixel_position.x, pixel_position.y, pixel_size.x, pixel_size.y);
+        const transform::UnitVector pixel_size
+            = rect.get_size().to<transform::Units::ScenePixels>();
+        const sf::IntRect pixel_rect(
+            pixel_position.x, pixel_position.y, pixel_size.x, pixel_size.y);
         static_cast<T&>(*this).shape.setTextureRect(pixel_rect);
     }
 
@@ -414,4 +415,4 @@ namespace obe::graphics::shapes
 
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     };
-}
+} // namespace obe::graphics::shapes

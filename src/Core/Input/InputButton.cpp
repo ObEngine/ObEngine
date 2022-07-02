@@ -12,30 +12,43 @@ namespace obe::input
 
     InputButton::InputButton(sf::Keyboard::Key key, const std::string& name,
         const std::string& return_char, InputType type)
-        : m_button(key), m_name(name), m_return_char(return_char), m_type(type)
+        : m_button(key)
+        , m_name(name)
+        , m_return_char(return_char)
+        , m_type(type)
     {
     }
 
     InputButton::InputButton(sf::Mouse::Button key, const std::string& name)
-        : m_button(key), m_name(name), m_type(InputType::Mouse)
+        : m_button(key)
+        , m_name(name)
+        , m_type(InputType::Mouse)
     {
     }
 
     InputButton::InputButton(
         const unsigned int gamepad_index, unsigned int button_index, const std::string& name)
-        : m_button(button_index), m_gamepad_index(gamepad_index), m_name(name),
-          m_type(InputType::GamepadButton)
+        : m_button(button_index)
+        , m_gamepad_index(gamepad_index)
+        , m_name(name)
+        , m_type(InputType::GamepadButton)
     {
     }
 
     InputButton::InputButton(const unsigned int gamepad_index, sf::Joystick::Axis gamepad_axis,
         std::pair<AxisThresholdDirection, float> detect, const std::string& name)
-        : m_button(gamepad_axis), m_detect_axis(detect), m_gamepad_index(gamepad_index), m_name(name), m_type(InputType::GamepadAxis)
+        : m_button(gamepad_axis)
+        , m_detect_axis(detect)
+        , m_gamepad_index(gamepad_index)
+        , m_name(name)
+        , m_type(InputType::GamepadAxis)
     {
     }
 
     InputButton::InputButton(MouseWheelScrollDirection direction, const std::string& name)
-        : m_button(direction), m_name(name), m_type(InputType::ScrollWheel)
+        : m_button(direction)
+        , m_name(name)
+        , m_type(InputType::ScrollWheel)
     {
     }
 

@@ -1,14 +1,12 @@
 #pragma once
 
-#include <vector>
-
+#include <Graphics/Color.hpp>
+#include <Graphics/Font.hpp>
 #include <SFML/Graphics/Drawable.hpp>
 #include <SFML/Graphics/Text.hpp>
 #include <SFML/Graphics/Transformable.hpp>
-
-#include <Graphics/Color.hpp>
-#include <Graphics/Font.hpp>
 #include <Transform/Rect.hpp>
+#include <vector>
 
 namespace sf
 {
@@ -17,7 +15,7 @@ namespace sf
     template <class T>
     class Rect;
     typedef Rect<float> FloatRect;
-}
+} // namespace sf
 
 namespace obe::graphics
 {
@@ -92,4 +90,4 @@ namespace obe::graphics
         unsigned int m_character_size;
         mutable sf::FloatRect m_bounds;
     };
-}
+} // namespace obe::graphics

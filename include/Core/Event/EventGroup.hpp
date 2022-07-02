@@ -1,11 +1,9 @@
 #pragma once
 
+#include <Event/Event.hpp>
 #include <map>
 #include <memory>
-
 #include <vili/node.hpp>
-
-#include <Event/Event.hpp>
 
 template <typename T>
 class HasId

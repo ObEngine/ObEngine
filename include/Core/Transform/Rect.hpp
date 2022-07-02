@@ -1,15 +1,14 @@
 #pragma once
 
-#include <optional>
-
 #include <Graphics/RenderTarget.hpp>
 #include <Transform/Movable.hpp>
 #include <Transform/Referential.hpp>
+#include <optional>
 
 namespace obe::animation
 {
-   template <class T>
-   class TweenImpl;
+    template <class T>
+    class TweenImpl;
 }
 
 namespace obe::transform
@@ -36,6 +35,7 @@ namespace obe::transform
     class Rect : public Movable
     {
         friend class animation::TweenImpl<Rect>;
+
     protected:
         /**
          * \brief Size of the Rect

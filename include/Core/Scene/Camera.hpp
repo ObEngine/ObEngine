@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SFML/Graphics/View.hpp>
-
 #include <Transform/Rect.hpp>
 #include <Transform/Referential.hpp>
 #include <Transform/UnitVector.hpp>

@@ -53,8 +53,9 @@ namespace obe::system
         {
             std::vector<std::string> mounts_as_strings;
             std::transform(m_mounts.begin(), m_mounts.end(), std::back_inserter(mounts_as_strings),
-                [](const auto& mount)
-                { return fmt::format("\"{}:// = {}\"", mount->prefix, mount->base_path); });
+                [](const auto& mount) {
+                    return fmt::format("\"{}:// = {}\"", mount->prefix, mount->base_path);
+                });
             std::string path_type;
             if (m_type == PathType::All)
             {

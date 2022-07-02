@@ -37,5 +37,6 @@ namespace obe::system::package
      * \return true if the Package has been successfully loaded, false
      *         otherwise.
      */
-    bool load(const std::string& package_name, const std::string& prefix, unsigned int priority = 1);
+    bool load(
+        const std::string& package_name, const std::string& prefix, unsigned int priority = 1);
 } // namespace obe::system::package

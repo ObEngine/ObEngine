@@ -1,11 +1,10 @@
 #pragma once
 
-#include <map>
-
 #include <Debug/Logger.hpp>
 #include <Event/EventListener.hpp>
 #include <Event/Exceptions.hpp>
 #include <Time/TimeUtils.hpp>
+#include <map>
 
 namespace obe::event
 {

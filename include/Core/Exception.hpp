@@ -1,11 +1,10 @@
 #pragma once
 
-#include <exception>
-#include <string>
-
 #include <fmt/core.h>
 
 #include <Utils/StringUtils.hpp>
+#include <exception>
+#include <string>
 
 namespace obe
 {
@@ -171,4 +170,4 @@ namespace obe
         nested_exception.nest_in_place(exception);
         return nested_exception;
     }
-}
+} // namespace obe

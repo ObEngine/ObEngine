@@ -1,10 +1,9 @@
 #pragma once
 
-#include <functional>
-#include <string>
-
 #include <Script/Scripting.hpp>
 #include <Script/ViliLuaBridge.hpp>
+#include <functional>
+#include <string>
 
 namespace obe::event
 {
@@ -40,4 +39,4 @@ namespace obe::event
     };
 
     using OnListenerChange = std::function<void(ListenerChangeState, const std::string&)>;
-}
+} // namespace obe::event

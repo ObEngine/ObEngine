@@ -1,11 +1,10 @@
 #pragma once
 
-#include <memory>
-#include <unordered_map>
-
 #include <Event/EventGroup.hpp>
 #include <Graphics/Font.hpp>
 #include <Graphics/Texture.hpp>
+#include <memory>
+#include <unordered_map>
 
 namespace obe
 {
@@ -13,7 +12,7 @@ namespace obe
     {
         class Path;
     }
-}
+} // namespace obe
 
 namespace obe::engine
 {
@@ -60,4 +59,4 @@ namespace obe::engine
         virtual void remove_resource_manager();
         virtual void attach_resource_manager(ResourceManager& resources);
     };
-} // namespace obe::graphics
+} // namespace obe::engine

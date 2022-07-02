@@ -1,12 +1,11 @@
 #pragma once
 
-#include <vector>
-
 #include <Input/InputButton.hpp>
 #include <Input/InputButtonMonitor.hpp>
 #include <Input/InputButtonState.hpp>
 #include <Types/FlagSet.hpp>
 #include <Types/Togglable.hpp>
+#include <vector>
 
 namespace obe::input
 {

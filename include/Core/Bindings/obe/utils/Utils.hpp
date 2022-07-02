@@ -6,5 +6,4 @@ namespace sol
 };
 namespace obe::utils::bindings
 {
-
 };

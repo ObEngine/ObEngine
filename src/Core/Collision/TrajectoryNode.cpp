@@ -33,8 +33,7 @@ namespace obe::collision
 
     void TrajectoryNode::update(const double dt) const
     {
-        auto get_offset = [&dt](const Trajectory& trajectory)
-        {
+        auto get_offset = [&dt](const Trajectory& trajectory) {
             const double speed = trajectory.get_speed() + trajectory.get_acceleration() * dt;
             const double rad_angle = (utils::math::pi / 180.0) * -trajectory.get_angle();
             const double x_offset = std::cos(rad_angle) * (speed * dt);
@@ -61,7 +60,8 @@ namespace obe::collision
                     collision_data.offset = base_offset;
                     if (m_probe != nullptr)
                     {
-                        collision_data = m_probe->get_distance_before_collision(collision_data.offset);
+                        collision_data
+                            = m_probe->get_distance_before_collision(collision_data.offset);
                     }
                     m_scene_node.move(collision_data.offset);
                     auto on_collide_callback = trajectory.second->get_on_collide_callback();

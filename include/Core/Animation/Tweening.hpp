@@ -5,9 +5,8 @@
 #include <Collision/Trajectory.hpp>
 #include <Graphics/Color.hpp>
 #include <Time/TimeUtils.hpp>
-#include <Transform/UnitVector.hpp>
 #include <Transform/Rect.hpp>
-
+#include <Transform/UnitVector.hpp>
 
 namespace obe::animation
 {
@@ -24,7 +23,8 @@ namespace obe::animation
     class TweenImpl<graphics::Color>
     {
     public:
-        static graphics::Color step(double progression, const graphics::Color& from, const graphics::Color& to)
+        static graphics::Color step(
+            double progression, const graphics::Color& from, const graphics::Color& to)
         {
             graphics::Color step = from;
             step.r = (progression * (to.r - from.r)) + from.r;
@@ -90,8 +90,7 @@ namespace obe::animation
     class TweenImpl<double>
     {
     public:
-        static double step(
-            double progression, const double& from, const double& to)
+        static double step(double progression, const double& from, const double& to)
         {
             return (progression * (to - from)) + from;
         }
@@ -111,7 +110,6 @@ namespace obe::animation
     template <class T>
     using template_specialization_exists
         = decltype(template_specialization_exists_impl(std::declval<T*>()));
-
 
     /**
      * \thints
@@ -136,10 +134,11 @@ namespace obe::animation
         bool m_started = false;
 
     public:
-        explicit ValueTweening(time::TimeUnit duration, easing::EasingFunction easing = easing::linear)
+        explicit ValueTweening(
+            time::TimeUnit duration, easing::EasingFunction easing = easing::linear)
             : m_easing(std::move(easing))
             , m_duration(duration)
-            
+
         {
             static_assert(template_specialization_exists<TweenImpl<TweenableClass>>());
             if (!m_easing)
@@ -225,4 +224,4 @@ namespace obe::animation
             return TweenImpl<TweenableClass>::step(m_easing(progression), m_from, m_to);
         }
     };
-}
+} // namespace obe::animation

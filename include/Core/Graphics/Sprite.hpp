@@ -1,7 +1,5 @@
 #pragma once
 
-#include <sfe/ComplexSprite.hpp>
-
 #include <Component/Component.hpp>
 #include <Engine/ResourceManager.hpp>
 #include <Graphics/Color.hpp>
@@ -13,6 +11,7 @@
 #include <Transform/Referential.hpp>
 #include <Transform/UnitBasedObject.hpp>
 #include <Types/Selectable.hpp>
+#include <sfe/ComplexSprite.hpp>
 
 namespace obe::graphics
 {
@@ -29,7 +28,6 @@ namespace obe::graphics
                    public engine::ResourceManagedObject
     {
     protected:
-        
         std::string m_parentId;
         std::string m_path;
         PositionTransformer m_position_transformer;
@@ -210,7 +208,7 @@ namespace obe::graphics
         [[nodiscard]] std::string_view type() const override;
     };
 
-        /**
+    /**
      * \brief Type of the handle point of a Sprite (either scale or rotate)
      */
     enum class SpriteHandlePointType
@@ -289,6 +287,7 @@ namespace obe::graphics
     {
     private:
         std::vector<SpriteHandlePoint> m_handlePoints {};
+
     public:
         explicit EditorSprite(const std::string& id);
         /**

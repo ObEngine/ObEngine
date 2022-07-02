@@ -85,4 +85,4 @@ namespace obe::event
          */
         [[nodiscard]] bool is_joinable() const;
     };
-}
+} // namespace obe::event

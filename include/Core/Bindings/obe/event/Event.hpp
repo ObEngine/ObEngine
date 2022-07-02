@@ -16,4 +16,4 @@ namespace obe::event::bindings
     void load_class_lua_event_listener(sol::state_view state);
     void load_enum_callback_scheduler_state(sol::state_view state);
     void load_enum_listener_change_state(sol::state_view state);
-};
+}; // namespace obe::event::bindings

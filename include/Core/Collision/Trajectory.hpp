@@ -1,12 +1,11 @@
 #pragma once
 
-#include <functional>
-#include <vector>
-
 #include <Collision/PolygonalCollider.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Transform/Units.hpp>
 #include <Types/Togglable.hpp>
+#include <functional>
+#include <vector>
 
 namespace obe::animation
 {
@@ -25,7 +24,6 @@ namespace obe::collision
     using TrajectoryCheckFunction
         = std::function<void(Trajectory&, transform::UnitVector&, PolygonalCollider*)>;
 
- 
     /**
      * \brief A Trajectory makes a TrajectoryNode moves using angle, speed and
      *        acceleration (Linear Trajectory)
@@ -33,6 +31,7 @@ namespace obe::collision
     class Trajectory : public types::Togglable
     {
         friend class animation::TweenImpl<Trajectory>;
+
     private:
         double m_acceleration = 0;
         double m_angle = 0;

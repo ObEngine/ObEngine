@@ -24,7 +24,8 @@ namespace obe::system
                 const float y_offset = ((f_height - f_render_height) / 2) / f_height;
                 const float viewport_width = f_render_width / f_width;
                 const float viewport_height = f_render_height / f_height;
-                m_view.setViewport(sf::FloatRect(x_offset, y_offset, viewport_width, viewport_height));
+                m_view.setViewport(
+                    sf::FloatRect(x_offset, y_offset, viewport_width, viewport_height));
                 m_view.setCenter(m_render_width / 2, m_render_height / 2);
                 m_window.setView(m_view);
             }
@@ -53,7 +54,8 @@ namespace obe::system
                 const float y_offset = (1 - expected_height) / 2;
 
                 m_view.setSize(f_render_width, f_render_height);
-                m_view.setViewport(sf::FloatRect(x_offset, y_offset, expected_width, expected_height));
+                m_view.setViewport(
+                    sf::FloatRect(x_offset, y_offset, expected_width, expected_height));
                 m_view.setCenter(f_render_width / 2.f, f_render_height / 2.f);
                 m_window.setView(m_view);
             }
@@ -230,7 +232,8 @@ namespace obe::system
 
     transform::UnitVector Window::get_render_size() const
     {
-        return transform::UnitVector(m_render_width, m_render_height, transform::Units::ScenePixels);
+        return transform::UnitVector(
+            m_render_width, m_render_height, transform::Units::ScenePixels);
     }
 
     transform::UnitVector Window::get_window_size() const

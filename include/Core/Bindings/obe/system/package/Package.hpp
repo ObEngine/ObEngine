@@ -11,4 +11,4 @@ namespace obe::system::package::bindings
     void load_function_list_packages(sol::state_view state);
     void load_function_install(sol::state_view state);
     void load_function_load(sol::state_view state);
-};
+}; // namespace obe::system::package::bindings

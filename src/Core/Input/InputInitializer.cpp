@@ -219,8 +219,7 @@ namespace obe::input
             button_count = sf::Joystick::getButtonCount(gamepad_index);
         }
 
-        auto set_or_reset_button = [this](const std::string& name, const InputButton& button)
-        {
+        auto set_or_reset_button = [this](const std::string& name, const InputButton& button) {
             if (!m_inputs.contains(name))
             {
                 m_inputs[name] = std::make_unique<InputButton>(button);
@@ -239,10 +238,9 @@ namespace obe::input
                 gamepad_button_name, InputButton(gamepad_index, button_index, gamepad_button_name));
         }
 
-        auto add_horizontal_axis
-            = [&gamepad_index, use_every_axis, set_or_reset_button, this](
-                  sf::Joystick::Axis axis, const std::string& axis_name, bool invert_axis = false)
-        {
+        auto add_horizontal_axis = [&gamepad_index, use_every_axis, set_or_reset_button, this](
+                                       sf::Joystick::Axis axis, const std::string& axis_name,
+                                       bool invert_axis = false) {
             if (use_every_axis || sf::Joystick::hasAxis(gamepad_index, axis))
             {
                 const std::string gamepad_axis_name
@@ -259,10 +257,9 @@ namespace obe::input
                     right_axis_name, InputButton(gamepad_index, axis, right_x, right_axis_name));
             }
         };
-        auto add_vertical_axis
-            = [&gamepad_index, use_every_axis, set_or_reset_button, this](
-                  sf::Joystick::Axis axis, const std::string& axis_name, bool invert_axis = false)
-        {
+        auto add_vertical_axis = [&gamepad_index, use_every_axis, set_or_reset_button, this](
+                                     sf::Joystick::Axis axis, const std::string& axis_name,
+                                     bool invert_axis = false) {
             if (use_every_axis || sf::Joystick::hasAxis(gamepad_index, axis))
             {
                 const std::string gamepad_axis_name
@@ -321,15 +318,15 @@ namespace obe::input
             {
                 e_inputs->add<events::Keys::StateChanged>(button->get_name());
                 e_inputs->on_add_listener(button->get_name(),
-                    [button, this](event::ListenerChangeState, const std::string&)
-                    { m_key_monitors.push_back(this->monitor(*button)); });
+                    [button, this](event::ListenerChangeState, const std::string&) {
+                        m_key_monitors.push_back(this->monitor(*button));
+                    });
                 e_inputs->on_remove_listener(button->get_name(),
-                    [button, this](event::ListenerChangeState, const std::string&)
-                    {
-                        const auto position
-                            = std::find_if(m_key_monitors.begin(), m_key_monitors.end(),
-                                [button](const auto& monitor)
-                                { return &monitor->get_button() == button; });
+                    [button, this](event::ListenerChangeState, const std::string&) {
+                        const auto position = std::find_if(m_key_monitors.begin(),
+                            m_key_monitors.end(), [button](const auto& monitor) {
+                                return &monitor->get_button() == button;
+                            });
                         if (position != m_key_monitors.end())
                             m_key_monitors.erase(position);
                     });

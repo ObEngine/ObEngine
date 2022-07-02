@@ -22,8 +22,7 @@ namespace obe::tiles
 
     uint32_t strip_tile_flags(uint32_t tile_id)
     {
-        return tile_id
-            & ~(FLIP_HORIZONTAL_FLAG | FLIP_VERTICAL_FLAG | FLIP_DIAGONAL_FLAG);
+        return tile_id & ~(FLIP_HORIZONTAL_FLAG | FLIP_VERTICAL_FLAG | FLIP_DIAGONAL_FLAG);
     }
 
     void TextureQuadsIndex::transform(const TileInfo& info)

@@ -1,13 +1,12 @@
 #pragma once
 
-#include <memory>
-#include <optional>
-#include <vector>
-
 #include <Transform/Movable.hpp>
 #include <Transform/Rect.hpp>
 #include <Transform/UnitBasedObject.hpp>
 #include <Transform/UnitVector.hpp>
+#include <memory>
+#include <optional>
+#include <vector>
 
 namespace obe::transform
 {
@@ -35,7 +34,8 @@ namespace obe::transform
         void remove() const;
         [[nodiscard]] double distance(const transform::UnitVector& position) const;
         [[nodiscard]] UnitVector get_relative_position(RelativePositionFrom from) const;
-        void set_relative_position(RelativePositionFrom from, const transform::UnitVector& position);
+        void set_relative_position(
+            RelativePositionFrom from, const transform::UnitVector& position);
         void move(const transform::UnitVector& position);
     };
 
@@ -94,8 +94,8 @@ namespace obe::transform
          * \return The index of the Point (or one of its neighbor)
          *         that is the closest one of the given Position
          */
-        PolygonPoint& find_closest_point(const transform::UnitVector& position, bool neighbor = false,
-            const std::vector<point_index_t>& excluded_points = {});
+        PolygonPoint& find_closest_point(const transform::UnitVector& position,
+            bool neighbor = false, const std::vector<point_index_t>& excluded_points = {});
         /**
          * \brief Get all the Points of the Polygon
          * \return A Path containing all the Points of the Polygon

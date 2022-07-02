@@ -1,11 +1,10 @@
 #pragma once
-#include <memory>
-#include <string>
-#include <variant>
-
 #include <lunasvg.h>
 
 #include <SFML/Graphics/Texture.hpp>
+#include <memory>
+#include <string>
+#include <variant>
 
 namespace obe
 {
@@ -13,8 +12,8 @@ namespace obe
     {
         class Rect;
         class UnitVector;
-    }
-}
+    } // namespace transform
+} // namespace obe
 
 namespace obe::graphics
 {
@@ -102,4 +101,4 @@ namespace obe::graphics
         Texture& operator=(const sf::Texture& texture);
         Texture& operator=(std::shared_ptr<sf::Texture> texture);
     };
-}
+} // namespace obe::graphics

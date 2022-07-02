@@ -11,12 +11,10 @@ namespace obe::tiles
             return;
 
         TileInfo tile_info = get_tile_info(tile_id);
-        tile_info.flip_diagonal
-            = tile_info.flip_diagonal ^ additional_tile_info.flip_diagonal;
+        tile_info.flip_diagonal = tile_info.flip_diagonal ^ additional_tile_info.flip_diagonal;
         tile_info.flip_horizontal
             = tile_info.flip_horizontal ^ additional_tile_info.flip_horizontal;
-        tile_info.flip_vertical
-            = tile_info.flip_vertical ^ additional_tile_info.flip_vertical;
+        tile_info.flip_vertical = tile_info.flip_vertical ^ additional_tile_info.flip_vertical;
 
         const uint32_t first_tile_id = tileset.get_first_tile_id();
 
@@ -30,10 +28,12 @@ namespace obe::tiles
         quads.transform(tile_info);
 
         quad[quads.q0].texCoords = sf::Vector2f(texture_x * tile_width, texture_y * tile_height);
-        quad[quads.q1].texCoords = sf::Vector2f((texture_x + 1) * tile_width, texture_y * tile_height);
+        quad[quads.q1].texCoords
+            = sf::Vector2f((texture_x + 1) * tile_width, texture_y * tile_height);
         quad[quads.q2].texCoords
             = sf::Vector2f((texture_x + 1) * tile_width, (texture_y + 1) * tile_height);
-        quad[quads.q3].texCoords = sf::Vector2f(texture_x * tile_width, (texture_y + 1) * tile_height);
+        quad[quads.q3].texCoords
+            = sf::Vector2f(texture_x * tile_width, (texture_y + 1) * tile_height);
     }
 
     AnimatedTile::AnimatedTile(
@@ -52,8 +52,7 @@ namespace obe::tiles
     void AnimatedTile::detach_quad(sf::Vertex* quad)
     {
         std::erase_if(m_quads,
-            [&quad](const std::pair<sf::Vertex*, TileInfo>& item)
-            { return item.first == quad; });
+            [&quad](const std::pair<sf::Vertex*, TileInfo>& item) { return item.first == quad; });
     }
 
     void AnimatedTile::start()

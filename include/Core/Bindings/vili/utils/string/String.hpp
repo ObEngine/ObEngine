@@ -16,4 +16,4 @@ namespace vili::utils::string::bindings
     void load_function_indent(sol::state_view state);
     void load_function_distance(sol::state_view state);
     void load_function_sort_by_distance(sol::state_view state);
-};
+}; // namespace vili::utils::string::bindings

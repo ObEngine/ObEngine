@@ -1,17 +1,15 @@
 #pragma once
 
-#include <cstdint>
-#include <memory>
-#include <vector>
-
-#include <vili/node.hpp>
-
 #include <Graphics/RenderTarget.hpp>
 #include <Scene/Camera.hpp>
 #include <Tiles/Animation.hpp>
 #include <Tiles/Layer.hpp>
 #include <Tiles/Tileset.hpp>
 #include <Types/Serializable.hpp>
+#include <cstdint>
+#include <memory>
+#include <vector>
+#include <vili/node.hpp>
 
 namespace obe::scene
 {
@@ -69,4 +67,4 @@ namespace obe::tiles
 
         [[nodiscard]] scene::Scene& get_scene() const;
     };
-}
+} // namespace obe::tiles

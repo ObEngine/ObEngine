@@ -21,4 +21,4 @@ namespace sol
     struct is_callable<obe::event::LuaEventListener> : std::false_type
     {
     };
-}
+} // namespace sol

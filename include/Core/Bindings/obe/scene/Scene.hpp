@@ -10,4 +10,4 @@ namespace obe::scene::bindings
     void load_class_scene(sol::state_view state);
     void load_class_scene_node(sol::state_view state);
     void load_class_scene_render_options(sol::state_view state);
-};
+}; // namespace obe::scene::bindings

@@ -1,5 +1,11 @@
 #pragma once
 
+#include <fmt/format.h>
+#include <fmt/ostream.h>
+#include <spdlog/spdlog.h>
+
+#include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
 #include <algorithm>
 #include <array>
 #include <bitset>
@@ -10,17 +16,11 @@
 #include <map>
 #include <memory>
 #include <optional>
+#include <sol/sol.hpp>
 #include <string>
 #include <string_view>
 #include <tuple>
 #include <unordered_map>
 #include <variant>
 #include <vector>
-
-#include <SFML/Graphics.hpp>
-#include <fmt/format.h>
-#include <fmt/ostream.h>
-#include <SFML/Audio.hpp>
-#include <sol/sol.hpp>
-#include <spdlog/spdlog.h>
 #include <vili/node.hpp>

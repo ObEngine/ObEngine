@@ -179,7 +179,8 @@ namespace obe::animation
             {
                 temp_animation->set_anti_aliasing(m_default_state.get_target()->is_anti_aliased());
             }
-            temp_animation->load_animation(path.add(system::Path(directory.path()).last()), resources);
+            temp_animation->load_animation(
+                path.add(system::Path(directory.path()).last()), resources);
             if (!animator_cfg_file.is_null())
             {
                 if (animator_cfg_file.contains("all"))
@@ -228,7 +229,8 @@ namespace obe::animation
         m_default_state.update();
     }
 
-    void AnimatorState::set_target(graphics::Sprite& sprite, AnimatorTargetScaleMode target_scale_mode)
+    void AnimatorState::set_target(
+        graphics::Sprite& sprite, AnimatorTargetScaleMode target_scale_mode)
     {
         m_target = &sprite;
         m_target_scale_mode = target_scale_mode;

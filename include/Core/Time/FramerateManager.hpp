@@ -1,12 +1,10 @@
 #pragma once
 
-#include <optional>
-
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/System/Clock.hpp>
 #include <System/Window.hpp>
 #include <Time/TimeUtils.hpp>
-
+#include <optional>
 #include <vili/node.hpp>
 
 namespace obe::time

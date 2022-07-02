@@ -167,4 +167,4 @@ namespace obe::event::Exceptions
                        "event_namespace.set_joinable(true) from its manager");
         }
     };
-}
+} // namespace obe::event::Exceptions

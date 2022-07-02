@@ -1,13 +1,12 @@
 #pragma once
 
-#include <unordered_map>
-
 #include <Component/Component.hpp>
 #include <Transform/Polygon.hpp>
 #include <Transform/UnitBasedObject.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Types/Selectable.hpp>
 #include <Types/Serializable.hpp>
+#include <unordered_map>
 
 namespace obe::scene
 {

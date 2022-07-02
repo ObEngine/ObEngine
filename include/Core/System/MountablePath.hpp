@@ -16,7 +16,7 @@ namespace obe::system
         constexpr std::string_view extlibs = "extlibs";
         constexpr std::string_view root = "root";
         constexpr std::string_view game = "game";
-    }
+    } // namespace prefixes
 
     /**
      * \brief contains default priorities of mounts
@@ -31,7 +31,7 @@ namespace obe::system
         constexpr int mount = 2;
         constexpr int defaults = 1;
         constexpr int low = 0;
-    }
+    } // namespace priorities
 
     /**
      * \brief Defines the source of a mounted path

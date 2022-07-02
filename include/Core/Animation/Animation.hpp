@@ -1,11 +1,10 @@
 #pragma once
 
-#include <unordered_map>
-
 #include <Animation/AnimationGroup.hpp>
 #include <Time/TimeUtils.hpp>
 #include <Types/Serializable.hpp>
 #include <Types/SmartEnum.hpp>
+#include <unordered_map>
 
 namespace obe
 {
@@ -21,7 +20,7 @@ namespace obe
     {
         class Path;
     }
-}
+} // namespace obe
 
 namespace vili
 {

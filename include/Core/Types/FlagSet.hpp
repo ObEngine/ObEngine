@@ -308,4 +308,4 @@ namespace obe::types
 
         return bs;
     }
-}
+} // namespace obe::types

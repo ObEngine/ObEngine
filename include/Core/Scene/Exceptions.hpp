@@ -28,8 +28,8 @@ namespace obe::scene::Exceptions
             std::string_view scene_file, std::string_view block_name, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Scene from file '{}' does not have any required <{}> block", scene_file, block_name);
+            this->error("Scene from file '{}' does not have any required <{}> block", scene_file,
+                block_name);
             this->hint("Add a '{}' block to the Scene file", block_name);
         }
     };
@@ -143,4 +143,4 @@ namespace obe::scene::Exceptions
             this->error("Encountered error while loading Scene from file '{}'", scene_file);
         }
     };
-}
+} // namespace obe::scene::Exceptions

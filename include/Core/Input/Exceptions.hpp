@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Utils/StringUtils.hpp"
-
 #include <Exception.hpp>
 #include <vector>
+
+#include "Utils/StringUtils.hpp"
 
 /**
  * \nobind
@@ -124,4 +124,4 @@ namespace obe::input::Exceptions
                 gamepad_button_id);
         }
     };
-}
+} // namespace obe::input::Exceptions

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <SFML/Graphics/Text.hpp>
-
 #include <Graphics/Font.hpp>
+#include <SFML/Graphics/Text.hpp>
 #include <Time/TimeUtils.hpp>
 
 namespace obe::time

@@ -10,4 +10,4 @@ namespace obe::config
         ConfigurationManager();
         void load();
     };
-} // namespace obe::system
+} // namespace obe::config

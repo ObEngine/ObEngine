@@ -1,8 +1,7 @@
 #pragma once
 
-#include <iostream>
-
 #include <Types/SmartEnum.hpp>
+#include <iostream>
 
 namespace obe::input
 {

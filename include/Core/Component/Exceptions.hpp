@@ -29,4 +29,4 @@ namespace obe::component::exceptions
                 component_type);
         }
     };
-}
+} // namespace obe::component::exceptions

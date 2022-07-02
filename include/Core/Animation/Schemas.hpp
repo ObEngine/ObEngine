@@ -1,7 +1,6 @@
 #pragma once
 
 #include <string_view>
-
 #include <vili/parser.hpp>
 
 namespace obe::animation::schemas
@@ -68,4 +67,4 @@ animation:
 )SCHEMA";
 
     static vili::node AnimationSchema = vili::parser::from_string(AnimationSchemaStr);
-}
+} // namespace obe::animation::schemas

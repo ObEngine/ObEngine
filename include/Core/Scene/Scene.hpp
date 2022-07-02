@@ -1,10 +1,5 @@
 #pragma once
 
-#include <unordered_set>
-
-#include <sol/sol.hpp>
-#include <vili/node.hpp>
-
 #include <Collision/PolygonalCollider.hpp>
 #include <Engine/ResourceManager.hpp>
 #include <Event/EventGroup.hpp>
@@ -14,6 +9,9 @@
 #include <Scene/SceneNode.hpp>
 #include <Script/GameObject.hpp>
 #include <Tiles/Scene.hpp>
+#include <sol/sol.hpp>
+#include <unordered_set>
+#include <vili/node.hpp>
 
 namespace obe
 {
@@ -21,7 +19,7 @@ namespace obe
     {
         class Window;
     }
-}
+} // namespace obe
 
 namespace obe::events
 {
@@ -32,8 +30,8 @@ namespace obe::events
             static constexpr std::string_view id = "Loaded";
             std::string filename;
         };
-    }
-}
+    } // namespace Scene
+} // namespace obe::events
 
 namespace obe::scene
 {

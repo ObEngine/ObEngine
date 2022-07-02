@@ -47,4 +47,4 @@ namespace obe::transform::exceptions
                        "Referential<double, double>)");
         }
     };
-}
+} // namespace obe::transform::exceptions

@@ -42,8 +42,8 @@ namespace obe::events
         {
             static constexpr std::string_view id = "Render";
         };
-    }
-}
+    } // namespace Game
+} // namespace obe::events
 
 namespace obe::engine
 {
@@ -159,4 +159,4 @@ namespace obe::engine
          */
         debug::Logger get_logger() const;
     };
-}
+} // namespace obe::engine

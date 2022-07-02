@@ -163,43 +163,45 @@ namespace obe::transform
         const transform::UnitVector p3 = position.to<transform::Units::SceneUnits>();
         constexpr auto distance_line_from_point
             = [](const transform::UnitVector& point, const transform::UnitVector& line_p1,
-                  const transform::UnitVector& line_p2)
-        {
-            transform::UnitVector line_diff = line_p2 - line_p1;
-            if (line_diff.x == 0 && line_diff.y == 0)
-            {
-                line_diff = point - line_p1;
-                return sqrt(line_diff.x * line_diff.x + line_diff.y * line_diff.y);
-            }
+                  const transform::UnitVector& line_p2) {
+                  transform::UnitVector line_diff = line_p2 - line_p1;
+                  if (line_diff.x == 0 && line_diff.y == 0)
+                  {
+                      line_diff = point - line_p1;
+                      return sqrt(line_diff.x * line_diff.x + line_diff.y * line_diff.y);
+                  }
 
-            const double t = ((point.x - line_p1.x) * line_diff.x + (point.y - line_p1.y) * line_diff.y)
-                / (line_diff.x * line_diff.x + line_diff.y * line_diff.y);
+                  const double t
+                      = ((point.x - line_p1.x) * line_diff.x + (point.y - line_p1.y) * line_diff.y)
+                      / (line_diff.x * line_diff.x + line_diff.y * line_diff.y);
 
-            if (t < 0)
-            {
-                // point is nearest to the first point i.e x1 and y1
-                line_diff = point - line_p1;
-            }
-            else if (t > 1)
-            {
-                // point is nearest to the end point i.e x2 and y2
-                line_diff = point - line_p2;
-            }
-            else
-            {
-                // if perpendicular line intersect the line segment.
-                line_diff.x = point.x - (line_p1.x + t * line_diff.x);
-                line_diff.y = point.y - (line_p1.y + t * line_diff.y);
-            }
+                  if (t < 0)
+                  {
+                      // point is nearest to the first point i.e x1 and y1
+                      line_diff = point - line_p1;
+                  }
+                  else if (t > 1)
+                  {
+                      // point is nearest to the end point i.e x2 and y2
+                      line_diff = point - line_p2;
+                  }
+                  else
+                  {
+                      // if perpendicular line intersect the line segment.
+                      line_diff.x = point.x - (line_p1.x + t * line_diff.x);
+                      line_diff.y = point.y - (line_p1.y + t * line_diff.y);
+                  }
 
-            // returning shortest distance
-            return sqrt(line_diff.x * line_diff.x + line_diff.y * line_diff.y);
-        };
+                  // returning shortest distance
+                  return sqrt(line_diff.x * line_diff.x + line_diff.y * line_diff.y);
+              };
         double shortest_distance = -1;
         std::size_t shortest_index = 0;
-        for (std::size_t i = 0, j = get_all_points().size() - 1; i < get_all_points().size(); j = i++)
+        for (std::size_t i = 0, j = get_all_points().size() - 1; i < get_all_points().size();
+             j = i++)
         {
-            const double current_distance = distance_line_from_point(p3, this->get(i), this->get(j));
+            const double current_distance
+                = distance_line_from_point(p3, this->get(i), this->get(j));
             if (shortest_distance == -1 || current_distance < shortest_distance)
             {
                 shortest_distance = current_distance;
@@ -291,7 +293,8 @@ namespace obe::transform
         const transform::UnitVector p_vec = position.to<transform::Units::SceneUnits>();
         const transform::UnitVector p_tolerance = tolerance.to<transform::Units::SceneUnits>();
         const transform::UnitVector centroid = this->get_centroid();
-        if (utils::math::is_between(p_vec.x, centroid.x - p_tolerance.x, centroid.x + p_tolerance.x))
+        if (utils::math::is_between(
+                p_vec.x, centroid.x - p_tolerance.x, centroid.x + p_tolerance.x))
         {
             if (utils::math::is_between(
                     p_vec.y, centroid.y - p_tolerance.x, centroid.y + p_tolerance.y))

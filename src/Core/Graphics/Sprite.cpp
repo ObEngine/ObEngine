@@ -57,7 +57,8 @@ namespace obe::graphics
             const float min_y = min_vy->position.y;
             const float max_y = max_vy->position.y;
             if (((min_x >= 0 && min_x <= surface_size.x) || (max_x >= 0 && max_x <= surface_size.x))
-                && ((min_y >= 0 && min_y <= surface_size.y) || (max_y >= 0 && max_y <= surface_size.y)))
+                && ((min_y >= 0 && min_y <= surface_size.y)
+                    || (max_y >= 0 && max_y <= surface_size.y)))
             {
                 m_texture.set_size_hint(new_width, new_height);
             }
@@ -95,16 +96,16 @@ namespace obe::graphics
 
         vertices[0] = to_sf_vertex(m_position_transformer(
             Rect::get_position(transform::Referential::TopLeft), pixel_camera, m_layer)
-                                     .to<transform::Units::ScenePixels>());
+                                       .to<transform::Units::ScenePixels>());
         vertices[1] = to_sf_vertex(m_position_transformer(
             Rect::get_position(transform::Referential::BottomLeft), pixel_camera, m_layer)
-                                     .to<transform::Units::ScenePixels>());
+                                       .to<transform::Units::ScenePixels>());
         vertices[2] = to_sf_vertex(m_position_transformer(
             Rect::get_position(transform::Referential::TopRight), pixel_camera, m_layer)
-                                     .to<transform::Units::ScenePixels>());
+                                       .to<transform::Units::ScenePixels>());
         vertices[3] = to_sf_vertex(m_position_transformer(
             Rect::get_position(transform::Referential::BottomRight), pixel_camera, m_layer)
-                                     .to<transform::Units::ScenePixels>());
+                                       .to<transform::Units::ScenePixels>());
 
         /*if (m_position_transformer.get_x_transformer_name() == "Parallax"
             && m_position_transformer.get_y_transformer_name() == "Parallax")
@@ -350,14 +351,17 @@ namespace obe::graphics
                 const double sprite_angle = m_sprite.get_rotation();
                 const transform::UnitVector opposite_pos_in_ref
                     = opposite_pos.rotate(sprite_angle, center_sprite_pos);
-                const transform::UnitVector pos_in_ref = pos.rotate(sprite_angle, center_sprite_pos);
-                const transform::UnitVector cursor_in_ref = m_dp.rotate(sprite_angle, center_sprite_pos);
+                const transform::UnitVector pos_in_ref
+                    = pos.rotate(sprite_angle, center_sprite_pos);
+                const transform::UnitVector cursor_in_ref
+                    = m_dp.rotate(sprite_angle, center_sprite_pos);
                 const transform::UnitVector scale_vector
                     = (cursor_in_ref - opposite_pos_in_ref) / (pos_in_ref - opposite_pos_in_ref);
                 const double v_scale = std::max(scale_vector.x, scale_vector.y);
                 if ((cursor_in_ref - opposite_pos_in_ref).x != 0
                     && (cursor_in_ref - opposite_pos_in_ref).y != 0)
-                    m_sprite.scale(transform::UnitVector(v_scale, v_scale, m_sprite.get_size().unit),
+                    m_sprite.scale(
+                        transform::UnitVector(v_scale, v_scale, m_sprite.get_size().unit),
                         m_referential.flip());
             }
             else
@@ -496,7 +500,8 @@ namespace obe::graphics
             {
                 sprite_y_transformer = transform.at("y");
             }
-            const PositionTransformer position_transformer(sprite_x_transformer, sprite_y_transformer);
+            const PositionTransformer position_transformer(
+                sprite_x_transformer, sprite_y_transformer);
             this->set_position_transformer(position_transformer);
         }
 
@@ -564,10 +569,10 @@ namespace obe::graphics
             if (obe::utils::math::is_between(target_pos.x, lower_x_bound, upper_x_bound)
                 && ref != transform::Referential::Center)
             {
-                int lower_y_bound = std::min(
-                    ref_point.y - SpriteHandlePoint::radius, ref_point.y + SpriteHandlePoint::radius);
-                int upper_y_bound = std::max(
-                    ref_point.y - SpriteHandlePoint::radius, ref_point.y + SpriteHandlePoint::radius);
+                int lower_y_bound = std::min(ref_point.y - SpriteHandlePoint::radius,
+                    ref_point.y + SpriteHandlePoint::radius);
+                int upper_y_bound = std::max(ref_point.y - SpriteHandlePoint::radius,
+                    ref_point.y + SpriteHandlePoint::radius);
                 if (obe::utils::math::is_between(target_pos.y, lower_y_bound, upper_y_bound))
                     return &m_handlePoints[i];
             }

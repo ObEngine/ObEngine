@@ -1,13 +1,12 @@
 #pragma once
 
-#include <algorithm>
-#include <ostream>
-#include <vector>
-
 #include <fmt/format.h>
-#include <magic_enum/magic_enum.hpp>
 
 #include <Exception.hpp>
+#include <algorithm>
+#include <magic_enum/magic_enum.hpp>
+#include <ostream>
+#include <vector>
 
 namespace obe::types
 {
@@ -22,7 +21,8 @@ namespace obe::types
             this->error("Enum '{}' does not have entry '{}'", enum_name, entry_name);
             std::vector<std::string> suggestions
                 = utils::string::sort_by_distance(entry_name.data(), all_entries, 5);
-            std::transform(suggestions.begin(), suggestions.end(), suggestions.begin(), utils::string::quote);
+            std::transform(
+                suggestions.begin(), suggestions.end(), suggestions.begin(), utils::string::quote);
             suggestions.emplace_back("...");
             this->hint("Try one of ({})", fmt::join(suggestions, ", "));
         }
@@ -66,7 +66,8 @@ namespace obe::types
             return enum_value.value();
         }
 
-        throw UnknownEnumEntry(magic_enum::enum_type_name<Enum>(), value, SmartEnum<Enum>::entries(),  EXC_INFO);
+        throw UnknownEnumEntry(
+            magic_enum::enum_type_name<Enum>(), value, SmartEnum<Enum>::entries(), EXC_INFO);
     }
 
     template <class Enum>
@@ -87,4 +88,4 @@ namespace obe::types
         }
         return enum_names_vec;
     }
-}
+} // namespace obe::types

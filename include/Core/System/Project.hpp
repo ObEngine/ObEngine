@@ -1,12 +1,11 @@
 #pragma once
 
-#include <set>
-#include <string>
-#include <vector>
-
 #include <Config/Version.hpp>
 #include <System/MountablePath.hpp>
 #include <Types/Serializable.hpp>
+#include <set>
+#include <string>
+#include <vector>
 
 /**
  * \brief Various functions to work with Projects
@@ -17,7 +16,7 @@ namespace obe::system::project
     {
         constexpr std::string_view objects = "objects";
         constexpr std::string_view scenes = "scenes";
-    }
+    } // namespace Prefixes
     /**
      * \brief Get the Location of the Project identified by project_name
      * \param project_name Name of the Project you want to get the path.
@@ -51,7 +50,6 @@ namespace obe::system::project
         std::string readme;
         std::string documentation;
         std::string license;
-
 
         [[nodiscard]] vili::node schema() const override;
         /**

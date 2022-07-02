@@ -22,4 +22,4 @@ namespace obe::utils::file::bindings
     void load_function_normalize_path(sol::state_view state);
     void load_function_canonical_path(sol::state_view state);
     void load_function_join(sol::state_view state);
-};
+}; // namespace obe::utils::file::bindings

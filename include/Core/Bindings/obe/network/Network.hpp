@@ -10,4 +10,4 @@ namespace obe::network::bindings
     void load_class_network_handler(sol::state_view state);
     void load_class_tcp_server(sol::state_view state);
     void load_class_tcp_socket(sol::state_view state);
-};
+}; // namespace obe::network::bindings

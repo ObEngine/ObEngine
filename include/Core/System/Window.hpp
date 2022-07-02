@@ -1,16 +1,14 @@
 #pragma once
 
-#include <string>
-
+#include <Graphics/Color.hpp>
+#include <Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
-#include <vili/node.hpp>
-
-#include <Graphics/Color.hpp>
-#include <Graphics/RenderTarget.hpp>
 #include <Transform/UnitVector.hpp>
+#include <string>
+#include <vili/node.hpp>
 
 namespace obe::system
 {

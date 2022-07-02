@@ -2,5 +2,5 @@
 
 namespace obe::types
 {
-    
+
 }

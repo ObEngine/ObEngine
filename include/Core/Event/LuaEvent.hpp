@@ -1,8 +1,7 @@
 #pragma once
 
-#include <string>
-
 #include <sol/sol.hpp>
+#include <string>
 
 namespace obe::event
 {
@@ -17,5 +16,6 @@ namespace obe::event
      * \proxy{obe::event::EventGroup::trigger}
      * \rename{trigger}
      */
-    void trigger_lua_event(EventGroup* self, const std::string& name, sol::table data = sol::lua_nil);
-}
+    void trigger_lua_event(
+        EventGroup* self, const std::string& name, sol::table data = sol::lua_nil);
+} // namespace obe::event

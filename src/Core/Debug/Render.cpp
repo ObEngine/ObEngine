@@ -17,9 +17,7 @@ namespace obe::debug::render
             const float r = 6.f;
 
             const graphics::utils::DrawPolygonOptions draw_options {
-                .lines = draw_lines,
-                .points = draw_points,
-                .radius = r
+                .lines = draw_lines, .points = draw_points, .radius = r
             };
 
             std::vector<transform::UnitVector> draw_points;

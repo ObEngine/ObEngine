@@ -97,7 +97,8 @@ namespace obe::script
                 }
                 catch (const BaseException& e)
                 {
-                    throw exceptions::GameObjectScriptError(m_type, m_id, "GameObject:init", EXC_INFO)
+                    throw exceptions::GameObjectScriptError(
+                        m_type, m_id, "GameObject:init", EXC_INFO)
                         .nest(e);
                 }
             }
@@ -331,7 +332,8 @@ namespace obe::script
                 }
                 catch (const BaseException& e)
                 {
-                    throw exceptions::GameObjectScriptError(m_type, m_id, "GameObject:destroy", EXC_INFO)
+                    throw exceptions::GameObjectScriptError(
+                        m_type, m_id, "GameObject:destroy", EXC_INFO)
                         .nest(e);
                 }
             }

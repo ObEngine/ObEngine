@@ -1,9 +1,8 @@
 #pragma once
 
+#include <Transform/UnitVector.hpp>
 #include <functional>
 #include <map>
-
-#include <Transform/UnitVector.hpp>
 
 namespace obe::graphics
 {

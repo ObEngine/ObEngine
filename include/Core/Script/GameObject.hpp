@@ -1,16 +1,12 @@
 #pragma once
 
-#include <vili/node.hpp>
-
 #include <Animation/Animator.hpp>
 #include <Collision/PolygonalCollider.hpp>
 #include <Debug/Logger.hpp>
 #include <Graphics/Sprite.hpp>
 #include <Scene/SceneNode.hpp>
 #include <Types/Serializable.hpp>
-
 #include <sol/sol.hpp>
-
 #include <vili/node.hpp>
 
 namespace obe::scene

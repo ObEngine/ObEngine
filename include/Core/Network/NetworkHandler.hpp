@@ -1,9 +1,8 @@
 #pragma once
 
-#include <SFML/Network.hpp>
-
 #include <Event/EventGroup.hpp>
 #include <Event/EventNamespace.hpp>
+#include <SFML/Network.hpp>
 
 namespace obe::events
 {
@@ -25,8 +24,8 @@ namespace obe::events
             static constexpr std::string_view id = "DataReceived";
             const std::string content;
         };
-    }
-}
+    } // namespace Network
+} // namespace obe::events
 
 namespace obe::network
 {

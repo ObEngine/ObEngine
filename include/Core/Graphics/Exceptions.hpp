@@ -75,8 +75,7 @@ namespace obe::graphics::exceptions
         InvalidHexFormat(std::string_view hex_code, DebugInfo info)
             : Exception(info)
         {
-            this->error(
-                "Invalid Color hex code : '{}'", hex_code);
+            this->error("Invalid Color hex code : '{}'", hex_code);
         }
     };
 
@@ -89,7 +88,8 @@ namespace obe::graphics::exceptions
             : Exception(info)
         {
             this->error("Impossible to create a Canvas::{} with id '{}' as there is "
-                        "already a Canvas::{} with the same id", new_element_type, id, existing_element_type);
+                        "already a Canvas::{} with the same id",
+                new_element_type, id, existing_element_type);
         }
     };
 
@@ -105,4 +105,4 @@ namespace obe::graphics::exceptions
                 type, value);
         }
     };
-}
+} // namespace obe::graphics::exceptions

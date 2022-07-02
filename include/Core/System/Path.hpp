@@ -38,8 +38,8 @@ namespace obe::system
     public:
         FindResult(PathType path_type, const std::string& path_not_found, const std::string& query,
             const MountList& mounts);
-        FindResult(PathType path_type, std::shared_ptr<MountablePath> mount, const std::string& path,
-            const std::string& query, const std::string& element = "");
+        FindResult(PathType path_type, std::shared_ptr<MountablePath> mount,
+            const std::string& path, const std::string& query, const std::string& element = "");
         [[nodiscard]] std::string hypothetical_path() const;
         [[nodiscard]] const std::string& path() const;
         [[nodiscard]] const MountablePath& mount() const;

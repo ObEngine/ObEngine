@@ -8,7 +8,7 @@ namespace SoLoud
     class AudioSource;
 
     using Handle = unsigned int; // Forward declare equivalent type "handle" without name collision
-}
+} // namespace SoLoud
 
 namespace obe::audio
 {
@@ -67,4 +67,4 @@ namespace obe::audio
         void set_looping(bool looping);
         [[nodiscard]] bool is_looping() const;
     };
-}
+} // namespace obe::audio

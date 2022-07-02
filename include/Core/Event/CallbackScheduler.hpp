@@ -1,8 +1,7 @@
 #pragma once
 
-#include <functional>
-
 #include <Time/TimeUtils.hpp>
+#include <functional>
 
 namespace obe::event
 {
@@ -45,4 +44,4 @@ namespace obe::event
         void run(const Callback& callback);
         void stop();
     };
-}
+} // namespace obe::event

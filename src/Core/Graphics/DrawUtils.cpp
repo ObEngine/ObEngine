@@ -59,8 +59,8 @@ namespace obe::graphics::utils // <REVISION> Move to utils/ ?
             const transform::UnitVector& point1 = points[i].to<transform::Units::ScenePixels>();
             if (options.points)
             {
-                const Color current_point_color = get_key_or(
-                    options.specific_point_color, static_cast<unsigned int>(i), options.point_color);
+                const Color current_point_color = get_key_or(options.specific_point_color,
+                    static_cast<unsigned int>(i), options.point_color);
                 point_shape.setFillColor(current_point_color);
                 point_shape.setPosition(point1.x - options.radius, point1.y - options.radius);
                 surface.draw(point_shape);

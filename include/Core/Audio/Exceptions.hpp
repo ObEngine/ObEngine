@@ -1,7 +1,7 @@
+#include <fmt/format.h>
+
 #include <Exception.hpp>
 #include <vector>
-
-#include <fmt/format.h>
 
 /**
  * \nobind
@@ -21,4 +21,4 @@ namespace obe::audio::exceptions
                 fmt::join(mounted_paths, ", "));
         }
     };
-}
+} // namespace obe::audio::exceptions

@@ -1,8 +1,7 @@
 #pragma once
 
-#include <cstdint>
-
 #include <Graphics/RenderTarget.hpp>
+#include <cstdint>
 
 namespace obe::scene
 {
@@ -63,4 +62,4 @@ namespace obe::graphics
 
         virtual void draw(RenderTarget& surface, const scene::Camera& camera) = 0;
     };
-}
+} // namespace obe::graphics

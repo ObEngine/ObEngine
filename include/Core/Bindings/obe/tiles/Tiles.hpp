@@ -16,4 +16,4 @@ namespace obe::tiles::bindings
     void load_function_get_tile_info(sol::state_view state);
     void load_function_strip_tile_flags(sol::state_view state);
     void load_function_apply_texture_quads_transforms(sol::state_view state);
-};
+}; // namespace obe::tiles::bindings

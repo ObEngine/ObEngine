@@ -138,4 +138,4 @@ namespace obe::animation::exceptions
             this->error("Invalid easing function");
         }
     };
-}
+} // namespace obe::animation::exceptions

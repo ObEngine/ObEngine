@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Transform/UnitVector.hpp"
-
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+
+#include "Transform/UnitVector.hpp"
 
 namespace obe::graphics
 {
@@ -64,4 +64,4 @@ namespace obe::graphics
     {
         return m_target;
     }
-}
+} // namespace obe::graphics

@@ -1,16 +1,14 @@
 #pragma once
 
-#include <functional>
-#include <vector>
-
 #include <Event/EventGroup.hpp>
 #include <Input/InputCondition.hpp>
 #include <Time/Chronometer.hpp>
 #include <Types/Identifiable.hpp>
+#include <functional>
+#include <vector>
 
 namespace obe::input
 {
-
     /**
      * \brief Action triggered by one or more Keyboard key(s)
      */
@@ -103,5 +101,5 @@ namespace obe::events
             input::InputAction& action;
             input::InputCondition& condition;
         };
-    }
-};
+    } // namespace Actions
+}; // namespace obe::events

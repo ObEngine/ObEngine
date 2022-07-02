@@ -1,10 +1,9 @@
 #pragma once
 
-#include <memory>
-
 #include <Event/EventGroup.hpp>
 #include <Input/InputButton.hpp>
 #include <Input/InputButtonState.hpp>
+#include <memory>
 
 namespace obe::events
 {
@@ -19,8 +18,8 @@ namespace obe::events
             const input::InputButtonState state;
             const input::InputButtonState previous_state;
         };
-    }
-}
+    } // namespace Keys
+} // namespace obe::events
 
 namespace obe::input
 {
