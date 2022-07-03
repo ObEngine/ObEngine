@@ -206,7 +206,7 @@ namespace obe::tiles
     }
 
     TileLayer::TileLayer(const TileScene& scene, const std::string& id, int32_t layer, uint32_t x,
-        uint32_t y, uint32_t width, uint32_t height, std::vector<uint32_t> data)
+        uint32_t y, uint32_t width, uint32_t height, std::vector<uint32_t> data, bool visible)
         : m_scene(scene)
         , m_id(id)
         , m_x(x)
@@ -214,9 +214,9 @@ namespace obe::tiles
         , m_width(width)
         , m_height(height)
         , m_data(std::move(data))
+        , m_visible(visible)
     {
         m_layer = layer;
-        m_visible = true;
     }
 
     std::string TileLayer::get_id() const
@@ -247,6 +247,10 @@ namespace obe::tiles
 
     void TileLayer::draw(graphics::RenderTarget& surface, const scene::Camera& camera)
     {
+        if (!m_visible)
+        {
+            return;
+        }
         for (const auto& [first_tile_id, layer] : m_cache)
         {
             sf::RenderStates states;

@@ -10,68 +10,38 @@ namespace obe::config::validators
         // clang-format off
         return vili::object {
             {
-                "Meta", vili::object {
-                    {"type", vili::object_typename},
-                    {
-                        "properties", vili::object {
-                            {
-                                "name", vili::object {
-                                    {"type", vili::string_typename},
-                                    {"min_length", 1}
-                                }
-                            },
-                            {
-                                "clock", vili::object {
-                                    {"type", vili::number_typename},
-                                    {"optional", true},
-                                    {"min", 0.f}
-                                }
-                            },
-                            {
-                                "mode", vili::object {
-                                    {"type", vili::string_typename},
-                                    {"values", vili::array {"OneTime", "Loop", "Force"}},
-                                    {"optional", true}
-                                }
-                            }
-                        }
-                    }
-                },
-            },
-            {
-                "Images", vili::object {
-                    {"type", vili::object_typename},
-                    {
-                        "properties", vili::object {
-                            {
-                                "images", vili::object {
-                                    {"type", vili::array_typename},
-                                    {
-                                        "items", vili::object {
-                                            {"type", "union"},
-                                            {
-                                                "types", vili::array {
-                                                    vili::object {{"type", vili::integer_typename}},
-                                                    vili::object {{"type", vili::string_typename}},
-                                                }
-                                            }
-                                        }
-                                    },
-                                    {"min_size", 1}
-                                }
-                            },
-                            {
-                                "model", vili::object {
-                                    {"type", vili::string_typename},
-                                    {"optional", true}
-                                }
-                            }
-                        }
-                    }
+                "name", vili::object {
+                    {"type", vili::string_typename},
+                    {"min_length", 1}
                 }
             },
             {
-                "Groups", vili::object {
+                "framerate", vili::object {
+                    {"type", vili::number_typename},
+                    {"optional", true},
+                    {"min", 0.f}
+                }
+            },
+            {
+                "mode", vili::object {
+                    {"type", vili::string_typename},
+                    {"values", vili::array {"OneTime", "Loop", "Force"}},
+                    {"optional", true}
+                }
+            },
+            {
+                "images", vili::object {
+                    {"type", vili::array_typename},
+                    {
+                        "items", vili::object {
+                            {"type", vili::string_typename}
+                        }
+                    },
+                    {"min_size", 1}
+                }
+            },
+            {
+                "groups", vili::object {
                     {"type", vili::object_typename},
                     {
                         "items", vili::object {
@@ -89,7 +59,7 @@ namespace obe::config::validators
                                         }
                                     },
                                     {
-                                        "clock", vili::object {
+                                        "framerate", vili::object {
                                             {"type", vili::number_typename},
                                             {"optional", true}
                                         }
@@ -101,50 +71,41 @@ namespace obe::config::validators
                 }
             },
             {
-                "Animation", vili::object {
-                    {"type", vili::object_typename},
+                "code", vili::object {
+                    {"type", vili::array_typename},
                     {
-                        "properties", vili::object {
+                        "items", vili::object {
+                            {"type", vili::object_typename},
                             {
-                                "code", vili::object {
-                                    {"type", vili::array_typename},
+                                "properties", vili::object {
                                     {
-                                        "items", vili::object {
-                                            {"type", vili::object_typename},
+                                        "command", vili::object {
+                                            {"type", vili::string_typename},
                                             {
-                                                "properties", vili::object {
-                                                    {
-                                                        "command", vili::object {
-                                                            {"type", vili::string_typename},
-                                                            {
-                                                                "values", vili::array {
-                                                                    magic_enum::enum_name(animation::AnimationCommand::PlayGroup),
-                                                                    magic_enum::enum_name(animation::AnimationCommand::SetAnimation),
-                                                                    magic_enum::enum_name(animation::AnimationCommand::Wait)
-                                                                }
-                                                            }
-                                                        },
-                                                    },
-                                                    {
-                                                        "group", vili::object {
-                                                            {"type", vili::string_typename},
-                                                            {"optional", true}
-                                                        }
-                                                    },
-                                                    {
-                                                        "repeat", vili::object {
-                                                            {"type", vili::integer_typename},
-                                                            {"optional", true}
-                                                        }
-                                                    },
-                                                    {
-                                                        "animation", vili::object {
-                                                            {"type", vili::string_typename},
-                                                            {"optional", true}
-                                                        }
-                                                    }
+                                                "values", vili::array {
+                                                    magic_enum::enum_name(animation::AnimationCommand::PlayGroup),
+                                                    magic_enum::enum_name(animation::AnimationCommand::SetAnimation),
+                                                    magic_enum::enum_name(animation::AnimationCommand::Wait)
                                                 }
                                             }
+                                        },
+                                    },
+                                    {
+                                        "group", vili::object {
+                                            {"type", vili::string_typename},
+                                            {"optional", true}
+                                        }
+                                    },
+                                    {
+                                        "repeat", vili::object {
+                                            {"type", vili::integer_typename},
+                                            {"optional", true}
+                                        }
+                                    },
+                                    {
+                                        "animation", vili::object {
+                                            {"type", vili::string_typename},
+                                            {"optional", true}
                                         }
                                     }
                                 }

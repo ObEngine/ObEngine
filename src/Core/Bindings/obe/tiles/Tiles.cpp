@@ -38,7 +38,7 @@ namespace obe::tiles::bindings
                 sol::call_constructor,
                 sol::constructors<obe::tiles::TileLayer(const obe::tiles::TileScene&,
                     const std::string&, int32_t, uint32_t, uint32_t, uint32_t, uint32_t,
-                    std::vector<uint32_t>)>(),
+                    std::vector<uint32_t>, bool)>(),
                 sol::base_classes, sol::bases<obe::graphics::Renderable>());
         bind_tile_layer["get_id"] = &obe::tiles::TileLayer::get_id;
         bind_tile_layer["build"] = &obe::tiles::TileLayer::build;

@@ -23,6 +23,7 @@ namespace obe::tiles
         uint32_t m_y;
         uint32_t m_width;
         uint32_t m_height;
+        bool m_visible = true;
         double m_opacity = 1.0;
         std::vector<uint32_t> m_data;
 
@@ -33,7 +34,7 @@ namespace obe::tiles
 
     public:
         TileLayer(const TileScene& scene, const std::string& id, int32_t layer, uint32_t x,
-            uint32_t y, uint32_t width, uint32_t height, std::vector<uint32_t> data);
+            uint32_t y, uint32_t width, uint32_t height, std::vector<uint32_t> data, bool visible);
 
         [[nodiscard]] std::string get_id() const;
 

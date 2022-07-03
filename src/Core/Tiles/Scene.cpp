@@ -102,8 +102,14 @@ namespace obe::tiles
             {
                 tiles.push_back(tile);
             }
+            bool visible = true;
+            if (layer.contains("visible"))
+            {
+                visible = layer.at("visible");
+            }
+
             m_layers.push_back(std::make_unique<TileLayer>(*this, layer_id, layer["layer"],
-                layer["x"], layer["y"], layer["width"], layer["height"], tiles));
+                layer["x"], layer["y"], layer["width"], layer["height"], tiles, visible));
         }
 
         this->build();

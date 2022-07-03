@@ -119,7 +119,12 @@ namespace obe::animation
                 m_current_group->reset();
             m_feed_instructions = false;
             m_current_group = &get_animation_group(current_command.at("group"));
-            m_current_group->set_loops(current_command.at("repeat"));
+            int repeat = 1;
+            if (current_command.contains("repeat"))
+            {
+                repeat = current_command.at("repeat");
+            }
+            m_current_group->set_loops(repeat);
         }
         else if (command == AnimationCommand::SetAnimation)
         {
@@ -187,8 +192,7 @@ namespace obe::animation
 
     void Animation::load_images(const vili::node& images)
     {
-        const vili::node& image_list = images.at("images");
-        for (auto& image : image_list)
+        for (auto& image : images)
         {
             std::string texture_name = image;
             debug::Log->trace("    <animation> Loading image '{}'", texture_name);
@@ -243,7 +247,7 @@ namespace obe::animation
 
     void Animation::load_code(const vili::node& code)
     {
-        for (const vili::node& command : code.at("code"))
+        for (const vili::node& command : code)
         {
             debug::Log->trace("    <animation> Parsing animation command '{}'", command);
             m_code.push_back(command);
@@ -383,7 +387,7 @@ namespace obe::animation
 
             m_default_state.load();
         }
-        catch (const BaseException& e)
+        catch (const std::exception& e)
         {
             throw exceptions::InvalidAnimationFile(m_path.to_string(), EXC_INFO).nest(e);
         }
