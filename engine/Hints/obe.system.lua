@@ -434,18 +434,31 @@ function obe.system.split_path_and_prefix(path, warn_on_missing_prefix) end
 ---
 ---@class obe.system.CursorType
 obe.system.CursorType = {
+    ---@type obe.system.CursorType
     Arrow = 0,
+    ---@type obe.system.CursorType
     ArrowWait = 1,
+    ---@type obe.system.CursorType
     Wait = 2,
+    ---@type obe.system.CursorType
     Text = 3,
+    ---@type obe.system.CursorType
     Hand = 4,
+    ---@type obe.system.CursorType
     SizeHorizontal = 5,
+    ---@type obe.system.CursorType
     SizeVertical = 6,
+    ---@type obe.system.CursorType
     SizeTopLeftBottomRight = 7,
+    ---@type obe.system.CursorType
     SizeBottomLeftTopRight = 8,
+    ---@type obe.system.CursorType
     SizeAll = 9,
+    ---@type obe.system.CursorType
     Cross = 10,
+    ---@type obe.system.CursorType
     Help = 11,
+    ---@type obe.system.CursorType
     NotAllowed = 12,
 };
 
@@ -453,8 +466,11 @@ obe.system.CursorType = {
 ---
 ---@class obe.system.MountablePathType
 obe.system.MountablePathType = {
+    ---@type obe.system.MountablePathType
     Path = 0,
+    ---@type obe.system.MountablePathType
     Package = 1,
+    ---@type obe.system.MountablePathType
     Project = 2,
 };
 
@@ -462,8 +478,11 @@ obe.system.MountablePathType = {
 ---
 ---@class obe.system.SamePrefixPolicy
 obe.system.SamePrefixPolicy = {
+    ---@type obe.system.SamePrefixPolicy
     KeepBoth = 0,
+    ---@type obe.system.SamePrefixPolicy
     Skip = 1,
+    ---@type obe.system.SamePrefixPolicy
     Replace = 2,
 };
 
@@ -471,8 +490,11 @@ obe.system.SamePrefixPolicy = {
 ---
 ---@class obe.system.PathType
 obe.system.PathType = {
+    ---@type obe.system.PathType
     All = 0,
+    ---@type obe.system.PathType
     Directory = 1,
+    ---@type obe.system.PathType
     File = 2,
 };
 
@@ -480,7 +502,9 @@ obe.system.PathType = {
 ---
 ---@class obe.system.WindowContext
 obe.system.WindowContext = {
+    ---@type obe.system.WindowContext
     GameWindow = 0,
+    ---@type obe.system.WindowContext
     EditorWindow = 1,
 };
 
@@ -488,9 +512,13 @@ obe.system.WindowContext = {
 ---
 ---@class obe.system.StretchMode
 obe.system.StretchMode = {
+    ---@type obe.system.StretchMode
     None = 0,
+    ---@type obe.system.StretchMode
     Center = 1,
+    ---@type obe.system.StretchMode
     Stretch = 2,
+    ---@type obe.system.StretchMode
     Fit = 3,
 };
 
@@ -498,6 +526,7 @@ obe.system.StretchMode = {
 ---
 ---@class obe.system.WindowSize
 obe.system.WindowSize = {
+    ---@type obe.system.WindowSize
     Screen = 0,
 };
 
@@ -505,7 +534,9 @@ obe.system.WindowSize = {
 ---
 ---@class obe.system.RenderSize
 obe.system.RenderSize = {
+    ---@type obe.system.RenderSize
     Window = 0,
+    ---@type obe.system.RenderSize
     Screen = 1,
 };
 return obe.system;

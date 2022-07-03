@@ -48,6 +48,17 @@ function obe.engine.ResourceManager() end
 ---@return obe.graphics.Font
 function obe.engine._ResourceManager:get_font(path) end
 
+--- Get the texture at the given path. If it's already in cache it returns the cached version. Otherwise it loads the texture and caches it.
+---
+---@param path obe.system.Path #Relative of absolute path to the texture, it uses the obe::System::Path loading system
+---@param anti_aliasing boolean #Uses Anti-Aliasing for the texture when first loading it
+---@return obe.graphics.Texture
+function obe.engine._ResourceManager:get_texture(path, anti_aliasing) end
+
+---@param path obe.system.Path #
+---@return obe.graphics.Texture
+function obe.engine._ResourceManager:get_texture(path) end
+
 function obe.engine._ResourceManager:clean() end
 
 

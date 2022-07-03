@@ -181,6 +181,15 @@ function obe.graphics.Color(color) end
 ---@return vili.node
 function obe.graphics._Color:schema() end
 
+---@param type obe.graphics.ColorType #
+---@return vili.node
+function obe.graphics._Color:dump(type) end
+
+--- Dumps the content of the Serializable object to a vili node.
+---
+---@return vili.node
+function obe.graphics._Color:dump() end
+
 --- Loads an object from a vili node.
 ---
 ---@param data vili.node #vili node containing the data of the object
@@ -325,6 +334,16 @@ function obe.graphics.RenderTarget(target) end
 ---@return obe.graphics.RenderTarget
 function obe.graphics.RenderTarget(window) end
 
+
+---@param drawable sf.Drawable #
+---@param states? sf.RenderStates #
+function obe.graphics._RenderTarget:draw(drawable, states) end
+
+---@param vertices sf.Vertex #
+---@param vertex_count number #
+---@param type sf.PrimitiveType #
+---@param states? sf.RenderStates #
+function obe.graphics._RenderTarget:draw(vertices, vertex_count, type, states) end
 
 ---@return obe.transform.UnitVector
 function obe.graphics._RenderTarget:get_size() end
@@ -515,6 +534,16 @@ function obe.graphics._Sprite:get_height() end
 ---@return number
 function obe.graphics._Sprite:get_width() end
 
+--- Gets a reference to the texture of the Sprite.
+---
+---@return obe.graphics.Texture
+function obe.graphics._Sprite:get_texture() end
+
+--- Gets a reference to the texture of the Sprite.
+---
+---@return obe.graphics.Texture
+function obe.graphics._Sprite:get_texture() end
+
 --- Get the x Coordinate of the scale factor of the Sprite.
 ---
 ---@return number
@@ -696,6 +725,12 @@ function obe.graphics._SvgTexture:set_size_hint(width, height) end
 ---@return boolean
 function obe.graphics._SvgTexture:success() end
 
+---@return sf.Texture
+function obe.graphics._SvgTexture:get_texture() end
+
+---@return sf.Texture
+function obe.graphics._SvgTexture:get_texture() end
+
 
 ---@class obe.graphics.Text
 ---@field color obe.graphics.Color #
@@ -749,6 +784,15 @@ function obe.graphics.Texture(copy) end
 ---@param height number #
 ---@return boolean
 function obe.graphics._Texture:create(width, height) end
+
+---@param filename string #
+---@return boolean
+function obe.graphics._Texture:load_from_file(filename) end
+
+---@param filename string #
+---@param rect obe.transform.Rect #
+---@return boolean
+function obe.graphics._Texture:load_from_file(filename, rect) end
 
 ---@param image sf.Image #
 ---@return boolean
@@ -827,9 +871,13 @@ obe.graphics.Position = {};
 ---
 ---@class obe.graphics.ColorType
 obe.graphics.ColorType = {
+    ---@type obe.graphics.ColorType
     Rgba = 0,
+    ---@type obe.graphics.ColorType
     Hsv = 1,
+    ---@type obe.graphics.ColorType
     Hex = 2,
+    ---@type obe.graphics.ColorType
     ColorName = 3,
 };
 
@@ -837,7 +885,9 @@ obe.graphics.ColorType = {
 ---
 ---@class obe.graphics.SpriteHandlePointType
 obe.graphics.SpriteHandlePointType = {
+    ---@type obe.graphics.SpriteHandlePointType
     ScaleHandle = 0,
+    ---@type obe.graphics.SpriteHandlePointType
     RotateHandle = 1,
 };
 return obe.graphics;

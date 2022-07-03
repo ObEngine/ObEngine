@@ -77,8 +77,11 @@ function obe.audio._Sound:is_looping() end
 ---
 ---@class obe.audio.LoadPolicy
 obe.audio.LoadPolicy = {
+    ---@type obe.audio.LoadPolicy
     Normal = 0,
+    ---@type obe.audio.LoadPolicy
     Cache = 1,
+    ---@type obe.audio.LoadPolicy
     Stream = 2,
 };
 
@@ -86,8 +89,11 @@ obe.audio.LoadPolicy = {
 ---
 ---@class obe.audio.SoundStatus
 obe.audio.SoundStatus = {
+    ---@type obe.audio.SoundStatus
     Playing = 0,
+    ---@type obe.audio.SoundStatus
     Paused = 1,
+    ---@type obe.audio.SoundStatus
     Stopped = 2,
 };
 return obe.audio;

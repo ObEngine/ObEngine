@@ -64,11 +64,6 @@ function obe.types._Selectable:is_selected() end
 obe.types._Serializable = {};
 
 
---- Gets the validation schema of the Serializable object as a vili node.
----
----@return vili.node
-function obe.types._Serializable:schema() end
-
 --- Dumps the content of the Serializable object to a vili node.
 ---
 ---@return vili.node
@@ -78,6 +73,9 @@ function obe.types._Serializable:dump() end
 ---
 ---@param data vili.node #vili node containing the data of the object
 function obe.types._Serializable:load(data) end
+
+---@param path string #
+function obe.types._Serializable:load_from_file(path) end
 
 ---@param data vili.node #
 function obe.types._Serializable:validate_and_load(data) end

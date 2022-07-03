@@ -293,10 +293,29 @@ function obe.input._InputManager:update() end
 ---@return obe.input.InputButton
 function obe.input._InputManager:get_input(key) end
 
+--- Get a list of all InputButtons.
+---
+---@return obe.input.InputButton[]
+function obe.input._InputManager:get_inputs() end
+
+--- Get a list of all InputButtons with a given type.
+---
+---@param filter obe.input.InputType #Type the InputButtons you want to get
+---@return obe.input.InputButton[]
+function obe.input._InputManager:get_inputs(filter) end
+
 --- Get a list of all InputButtons which are pressed.
 ---
 ---@return obe.input.InputButton[]
 function obe.input._InputManager:get_pressed_inputs() end
+
+---@param name string #
+---@return obe.input.InputButtonMonitorPtr
+function obe.input._InputManager:monitor(name) end
+
+---@param input obe.input.InputButton #
+---@return obe.input.InputButtonMonitorPtr
+function obe.input._InputManager:monitor(input) end
 
 function obe.input._InputManager:require_refresh() end
 
@@ -323,9 +342,13 @@ function obe.input._InputManager:initialize_gamepad(gamepad_index) end
 ---
 ---@class obe.input.MouseWheelScrollDirection
 obe.input.MouseWheelScrollDirection = {
+    ---@type obe.input.MouseWheelScrollDirection
     Up = 0,
+    ---@type obe.input.MouseWheelScrollDirection
     Down = 1,
+    ---@type obe.input.MouseWheelScrollDirection
     Left = 2,
+    ---@type obe.input.MouseWheelScrollDirection
     Right = 3,
 };
 
@@ -333,7 +356,9 @@ obe.input.MouseWheelScrollDirection = {
 ---
 ---@class obe.input.AxisThresholdDirection
 obe.input.AxisThresholdDirection = {
+    ---@type obe.input.AxisThresholdDirection
     Less = 0,
+    ---@type obe.input.AxisThresholdDirection
     More = 1,
 };
 
@@ -341,10 +366,15 @@ obe.input.AxisThresholdDirection = {
 ---
 ---@class obe.input.InputButtonState
 obe.input.InputButtonState = {
+    ---@type obe.input.InputButtonState
     Idle = 0,
+    ---@type obe.input.InputButtonState
     Hold = 1,
+    ---@type obe.input.InputButtonState
     Pressed = 2,
+    ---@type obe.input.InputButtonState
     Released = 3,
+    ---@type obe.input.InputButtonState
     LAST__ = 4,
 };
 
@@ -352,15 +382,25 @@ obe.input.InputButtonState = {
 ---
 ---@class obe.input.InputType
 obe.input.InputType = {
+    ---@type obe.input.InputType
     Alpha = 0,
+    ---@type obe.input.InputType
     Numeric = 1,
+    ---@type obe.input.InputType
     NumericNP = 2,
+    ---@type obe.input.InputType
     Arrows = 3,
+    ---@type obe.input.InputType
     Functions = 4,
+    ---@type obe.input.InputType
     Mouse = 5,
+    ---@type obe.input.InputType
     Others = 6,
+    ---@type obe.input.InputType
     GamepadButton = 7,
+    ---@type obe.input.InputType
     GamepadAxis = 8,
+    ---@type obe.input.InputType
     ScrollWheel = 9,
 };
 return obe.input;

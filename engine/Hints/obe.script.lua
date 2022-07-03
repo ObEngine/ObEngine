@@ -86,7 +86,7 @@ function obe.script._GameObject:access() end
 ---@return function
 function obe.script._GameObject:get_constructor() end
 
---- Calls the GameObject constructor
+--- Calls the GameObject constructor.
 ---
 function obe.script._GameObject:initialize() end
 
@@ -169,7 +169,9 @@ function obe.script.safe_lua_call(callback, args) end
 ---
 ---@class obe.script.EnvironmentTarget
 obe.script.EnvironmentTarget = {
+    ---@type obe.script.EnvironmentTarget
     Outer = 0,
+    ---@type obe.script.EnvironmentTarget
     Inner = 1,
 };
 return obe.script;

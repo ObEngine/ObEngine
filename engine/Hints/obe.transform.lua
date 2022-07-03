@@ -149,6 +149,14 @@ function obe.transform._Polygon:set_rotation(angle, origin) end
 ---@param position obe.transform.UnitVector #
 function obe.transform._Polygon:set_position_from_centroid(position) end
 
+---@param i obe.transform.point_index_t #
+---@return obe.transform.PolygonPoint
+function obe.transform._Polygon:get(i) end
+
+---@param i obe.transform.point_index_t #
+---@return obe.transform.PolygonPoint
+function obe.transform._Polygon:get(i) end
+
 ---@return obe.transform.Rect
 function obe.transform._Polygon:get_bounding_box() end
 
@@ -238,6 +246,28 @@ function obe.transform.Rect(position, size) end
 ---@param type obe.transform.ReferentialConversionType #The way you want to transform your UnitVector From : Referential::TopLeft to ref To : ref to Referential::TopLeft
 function obe.transform._Rect:transform_referential(vec, ref, type) end
 
+--- Set the position of the Rect (Movable override) using an UnitVector.
+---
+---@param position obe.transform.UnitVector #Position to affect to the Rect (Movable override)
+function obe.transform._Rect:set_position(position) end
+
+--- Set the position of the Rect using an UnitVector.
+---
+---@param position obe.transform.UnitVector #Position to affect to the Rect
+---@param ref obe.transform.Referential #Referential used to set the Position
+function obe.transform._Rect:set_position(position, ref) end
+
+--- Get the Position of the Rect (Movable Override)
+---
+---@return obe.transform.UnitVector
+function obe.transform._Rect:get_position() end
+
+--- Get the Position of the Rect.
+---
+---@param ref obe.transform.Referential #Referential of the Rect you want to use to get the Position
+---@return obe.transform.UnitVector
+function obe.transform._Rect:get_position(ref) end
+
 --- Moves the Rectangle (Adds the given position to the current one)
 ---
 ---@param position obe.transform.UnitVector #Position to add to the current Position
@@ -304,6 +334,14 @@ function obe.transform._Rect:intersects(rect) end
 ---@param rect obe.transform.Rect #
 ---@return obe.transform.Rect?
 function obe.transform._Rect:intersection(rect) end
+
+---@param rect obe.transform.Rect #
+---@return boolean
+function obe.transform._Rect:contains(rect) end
+
+---@param position obe.transform.UnitVector #
+---@return boolean
+function obe.transform._Rect:contains(position) end
 
 
 ---@class obe.transform.Referential
@@ -428,6 +466,28 @@ function obe.transform.UnitVector(unit) end
 function obe.transform.UnitVector(x, y, unit) end
 
 
+--- Set the values of the given UnitVector but keeps base Unit.
+---
+---@param vec obe.transform.UnitVector #UnitVector containing the new values
+function obe.transform._UnitVector:set(vec) end
+
+--- Set the new given values but keeps base Unit.
+---
+---@param x number #New x Coordinate
+---@param y number #New y Coordinate
+function obe.transform._UnitVector:set(x, y) end
+
+--- Adds the values of the the given UnitVector but keeps base Unit.
+---
+---@param vec obe.transform.UnitVector #UnitVector containing the values to add
+function obe.transform._UnitVector:add(vec) end
+
+--- Add the new given values but keeps base Unit.
+---
+---@param x number #x Coordinate to add
+---@param y number #y Coordinate to add
+function obe.transform._UnitVector:add(x, y) end
+
 --- Return an UnitVector with the converted values (x, y) to the Unit you want.
 ---
 ---@param p_unit obe.transform.Units #An enum value from Transform::Units
@@ -481,7 +541,9 @@ obe.transform._ViewStruct = {};
 ---
 ---@class obe.transform.ReferentialConversionType
 obe.transform.ReferentialConversionType = {
+    ---@type obe.transform.ReferentialConversionType
     From = 0,
+    ---@type obe.transform.ReferentialConversionType
     To = 1,
 };
 
@@ -489,8 +551,11 @@ obe.transform.ReferentialConversionType = {
 ---
 ---@class obe.transform.FlipAxis
 obe.transform.FlipAxis = {
+    ---@type obe.transform.FlipAxis
     Horizontal = 0,
+    ---@type obe.transform.FlipAxis
     Vertical = 1,
+    ---@type obe.transform.FlipAxis
     Both = 2,
 };
 
@@ -498,10 +563,15 @@ obe.transform.FlipAxis = {
 ---
 ---@class obe.transform.Units
 obe.transform.Units = {
+    ---@type obe.transform.Units
     ViewPercentage = 0,
+    ---@type obe.transform.Units
     ViewPixels = 1,
+    ---@type obe.transform.Units
     ViewUnits = 2,
+    ---@type obe.transform.Units
     ScenePixels = 3,
+    ---@type obe.transform.Units
     SceneUnits = 4,
 };
 return obe.transform;

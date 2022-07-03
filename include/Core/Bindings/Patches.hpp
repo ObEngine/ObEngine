@@ -55,6 +55,13 @@ namespace vili::parser
     {
     };
     /**
+     * \flagsurrogate{vili::node::erase}
+     * \paramrename{end,end_}
+     */
+    class _PatchNode_erase
+    {
+    };
+    /**
      * \flagsurrogate{vili::parser::error_message}
      * \nobind
      */

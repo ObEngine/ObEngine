@@ -36,6 +36,20 @@ function obe.collision._PolygonalCollider:add_tag(tag_type, tag) end
 ---@param tag_type obe.collision.ColliderTagType #List you want to clear (Tag / Accepted /Rejected)
 function obe.collision._PolygonalCollider:clear_tags(tag_type) end
 
+--- Checks if the collider is intersecting other colliders.
+---
+---@param offset obe.transform.UnitVector #The offset to apply to the source collider
+---@return obe.collision.CollisionData
+function obe.collision._PolygonalCollider:does_collide(offset) end
+
+--- Checks if two polygons are intersecting.
+---
+---@param collider obe.collision.PolygonalCollider #The other collider to test
+---@param offset obe.transform.UnitVector #The offset to apply to the source collider
+---@param perform_aabb_filter? boolean #whether or not, the collider should perform a quick AABB filter before checking for full collision
+---@return boolean
+function obe.collision._PolygonalCollider:does_collide(collider, offset, perform_aabb_filter) end
+
 --- Check if the Collider contains one of the Tag in parameter.
 ---
 ---@param tag_type obe.collision.ColliderTagType #List from where you want to check the Tags existence (Tag / Accepted / Rejected)
@@ -55,6 +69,20 @@ function obe.collision._PolygonalCollider:contains_tag(tag_type, tag) end
 ---@param tag_type obe.collision.ColliderTagType #List where you want to get all the Tags from (Tag / Accepted / Rejected)
 ---@return string[]
 function obe.collision._PolygonalCollider:get_all_tags(tag_type) end
+
+--- Gets the Maximum distance before Collision in all the Colliders of the Scene.
+---
+---@param offset obe.transform.UnitVector #Distance the Collider should move to (if nothing collides)
+---@return obe.collision.CollisionData
+function obe.collision._PolygonalCollider:get_distance_before_collision(offset) end
+
+--- Gets the Maximum distance before Collision with a specific Collider.
+---
+---@param collider obe.collision.PolygonalCollider #Collider to check the Collision with
+---@param offset obe.transform.UnitVector #Distance the Collider should move to (if nothing collides)
+---@param perform_aabb_filter? boolean #
+---@return obe.transform.UnitVector
+function obe.collision._PolygonalCollider:get_distance_before_collision(collider, offset, perform_aabb_filter) end
 
 --- Get the Id of the parent of the Collider (When used in a GameObject)
 ---
@@ -234,10 +262,11 @@ function obe.collision._TrajectoryNode:update(dt) end
 ---
 ---@class obe.collision.ColliderTagType
 obe.collision.ColliderTagType = {
+    ---@type obe.collision.ColliderTagType
     Tag = 0,
+    ---@type obe.collision.ColliderTagType
     Accepted = 1,
     ---@type obe.collision.ColliderTagType
     Rejected = 2,
 };
-
 return obe.collision;

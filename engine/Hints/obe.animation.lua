@@ -6,8 +6,10 @@ obe.animation._Animation = {};
 
 --- obe.animation.Animation constructor
 ---
+---@param path obe.system.Path #
+---@param resources? obe.engine.ResourceManager #
 ---@return obe.animation.Animation
-function obe.animation.Animation() end
+function obe.animation.Animation(path, resources) end
 
 --- obe.animation.Animation constructor
 ---
@@ -83,12 +85,6 @@ function obe.animation._Animation:get_texture_at_index(index) end
 ---@return boolean
 function obe.animation._Animation:is_over() end
 
---- Configure an Animation using the Animation configuration file (Vili file)
----
----@param path obe.system.Path #System::Path to the Animation config file (.ani.vili file extension)
----@param resources? obe.engine.ResourceManager #pointer to the ResourceManager that will load the textures for the Animation
-function obe.animation._Animation:load_animation(path, resources) end
-
 --- Reset the Animation (Unselect current AnimationGroup and restart AnimationCode)
 ---
 function obe.animation._Animation:reset() end
@@ -109,11 +105,6 @@ function obe.animation._Animation:is_anti_aliased() end
 
 ---@return obe.animation.AnimationState
 function obe.animation._Animation:make_state() end
-
---- Gets the validation schema of the Serializable object as a vili node.
----
----@return vili.node
-function obe.animation._Animation:schema() end
 
 --- Dumps the content of the Serializable object to a vili node.
 ---
@@ -449,8 +440,11 @@ function obe.animation.template_specialization_exists_impl(p0) end
 ---
 ---@class obe.animation.AnimationPlayMode
 obe.animation.AnimationPlayMode = {
+    ---@type obe.animation.AnimationPlayMode
     OneTime = 0,
+    ---@type obe.animation.AnimationPlayMode
     Loop = 1,
+    ---@type obe.animation.AnimationPlayMode
     Force = 2,
 };
 
@@ -458,8 +452,11 @@ obe.animation.AnimationPlayMode = {
 ---
 ---@class obe.animation.AnimationCommand
 obe.animation.AnimationCommand = {
+    ---@type obe.animation.AnimationCommand
     Wait = 0,
+    ---@type obe.animation.AnimationCommand
     PlayGroup = 1,
+    ---@type obe.animation.AnimationCommand
     SetAnimation = 2,
 };
 
@@ -467,7 +464,9 @@ obe.animation.AnimationCommand = {
 ---
 ---@class obe.animation.AnimationStatus
 obe.animation.AnimationStatus = {
+    ---@type obe.animation.AnimationStatus
     Play = 0,
+    ---@type obe.animation.AnimationStatus
     Call = 1,
 };
 
@@ -475,10 +474,15 @@ obe.animation.AnimationStatus = {
 ---
 ---@class obe.animation.AnimatorTargetScaleMode
 obe.animation.AnimatorTargetScaleMode = {
+    ---@type obe.animation.AnimatorTargetScaleMode
     Fit = 0,
+    ---@type obe.animation.AnimatorTargetScaleMode
     KeepRatio = 1,
+    ---@type obe.animation.AnimatorTargetScaleMode
     FixedWidth = 2,
+    ---@type obe.animation.AnimatorTargetScaleMode
     FixedHeight = 3,
+    ---@type obe.animation.AnimatorTargetScaleMode
     TextureSize = 4,
 };
 return obe.animation;

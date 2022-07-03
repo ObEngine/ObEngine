@@ -43,8 +43,9 @@ obe.tiles._TileLayer = {};
 ---@param width number #
 ---@param height number #
 ---@param data number[] #
+---@param visible boolean #
 ---@return obe.tiles.TileLayer
-function obe.tiles.TileLayer(scene, id, layer, x, y, width, height, data) end
+function obe.tiles.TileLayer(scene, id, layer, x, y, width, height, data, visible) end
 
 
 ---@return string

@@ -110,6 +110,16 @@ function vili._node:type() end
 ---@return string
 function vili._node:dump(root) end
 
+--- Checks if the node contains a given type.
+---
+---@return boolean
+function vili._node:is() end
+
+--- Checks if the node contains a given type.
+---
+---@return boolean
+function vili._node:is() end
+
 --- Checks whether the underlying value is a primitive (boolean, integer, number, string) or not.
 ---
 ---@return boolean
@@ -160,6 +170,24 @@ function vili._node:is_array() end
 ---@return boolean
 function vili._node:is_object() end
 
+--- Returns the node as the underlying type.
+---
+---@return T
+function vili._node:as() end
+
+--- Returns the node as the underlying type.
+---
+---@return std.enable_if_t[!std.is_floating_point_v[T >||! vili.PERMISSIVE_CAST,T]]
+function vili._node:as() end
+
+--- Returns the node as the underlying type This overload is only used when vili has to convert an integer to a floating point number and therefore can't return a const reference from the internal variant.
+---
+---@return std.enable_if_t[std.is_floating_point_v[T > && vili.PERMISSIVE_CAST,T]]
+function vili._node:as() end
+
+---@return std.enable_if_t[!std.is_floating_point_v[T >||! vili.PERMISSIVE_CAST,T]]
+function vili._node:as() end
+
 --- Returns the node as a boolean.
 ---
 ---@return vili.boolean
@@ -193,6 +221,26 @@ function vili._node:as_object() end
 ---@param value vili.node #
 function vili._node:push(value) end
 
+--- Emplace a child node at given index.
+---
+---@param index number #Index of the node to emplace
+---@param value value_type #Value of the node to emplace
+function vili._node:emplace(index, value) end
+
+--- Emplace a child node at given key.
+---
+---@param key string #Key of the node to emplace
+---@param value value_type #Value of the node to emplace
+function vili._node:emplace(key, value) end
+
+---@param index number #
+---@param value vili.node #
+function vili._node:insert(index, value) end
+
+---@param key string #
+---@param value vili.node #
+function vili._node:insert(key, value) end
+
 ---@param value vili.node #
 function vili._node:merge(value) end
 
@@ -200,11 +248,55 @@ function vili._node:merge(value) end
 ---@return boolean
 function vili._node:contains(key) end
 
+---@param index number #
+function vili._node:erase(index) end
+
+---@param begin number #
+---@param end_ number #
+function vili._node:erase(begin, end_) end
+
+---@param key string #
+function vili._node:erase(key) end
+
 ---@return vili.node
 function vili._node:front() end
 
 ---@return vili.node
 function vili._node:back() end
+
+---@return vili.node_iterator
+function vili._node:begin() end
+
+---@return vili.const_node_iterator
+function vili._node:begin() end
+
+---@return vili.node_iterator
+function vili._node:end_() end
+
+---@return vili.const_node_iterator
+function vili._node:end_() end
+
+---@return vili.object
+function vili._node:items() end
+
+---@return vili.object
+function vili._node:items() end
+
+---@param key string #
+---@return vili.node
+function vili._node:at(key) end
+
+---@param index number #
+---@return vili.node
+function vili._node:at(index) end
+
+---@param key string #
+---@return vili.node
+function vili._node:at(key) end
+
+---@param index number #
+---@return vili.node
+function vili._node:at(index) end
 
 --- Directly access underlying variant.
 ---
@@ -315,12 +407,19 @@ vili.container_typename = {};
 ---
 ---@class vili.node_type
 vili.node_type = {
+    ---@type vili.node_type
     null = 0,
+    ---@type vili.node_type
     string = 1,
+    ---@type vili.node_type
     integer = 2,
+    ---@type vili.node_type
     number = 3,
+    ---@type vili.node_type
     boolean = 4,
+    ---@type vili.node_type
     array = 5,
+    ---@type vili.node_type
     object = 6,
 };
 return vili;

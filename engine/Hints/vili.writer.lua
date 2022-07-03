@@ -56,8 +56,11 @@ function vili.writer.dump(data, options, state) end
 ---
 ---@class vili.writer.delimiter_newline_policy
 vili.writer.delimiter_newline_policy = {
+    ---@type vili.writer.delimiter_newline_policy
     never = 0,
+    ---@type vili.writer.delimiter_newline_policy
     only_if_multiline = 1,
+    ---@type vili.writer.delimiter_newline_policy
     always = 2,
 };
 
@@ -65,7 +68,9 @@ vili.writer.delimiter_newline_policy = {
 ---
 ---@class vili.writer.object_style
 vili.writer.object_style = {
+    ---@type vili.writer.object_style
     braces = 0,
+    ---@type vili.writer.object_style
     indent = 1,
 };
 return vili.writer;

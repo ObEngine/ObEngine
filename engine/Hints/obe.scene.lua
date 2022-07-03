@@ -56,6 +56,17 @@ obe.scene._Scene = {};
 function obe.scene.Scene(events, lua) end
 
 
+--- Same that load_from_file excepts the map will load at the next update.
+---
+---@param path string #Path to the Scene file
+function obe.scene._Scene:load_from_file(path) end
+
+--- Same that load_from_file excepts the map will load at the next update.
+---
+---@param path string #Path to the Scene file
+---@param callback obe.scene.OnSceneLoadCallback #Lua Function called when new map has been loaded
+function obe.scene._Scene:load_from_file(path, callback) end
+
 --- Removes all elements in the Scene.
 ---
 function obe.scene._Scene:clear() end
@@ -243,6 +254,15 @@ function obe.scene._Scene:get_scene_root_node() end
 ---
 ---@return string
 function obe.scene._Scene:get_filesystem_path() end
+
+--- Reloads the Scene from the level file.
+---
+function obe.scene._Scene:reload() end
+
+--- Reloads the Scene from the level file.
+---
+---@param callback obe.scene.OnSceneLoadCallback #Lua Function called when the map has been reloaded
+function obe.scene._Scene:reload(callback) end
 
 --- Name of the last loaded map file with load_from_file method.
 ---

@@ -93,16 +93,46 @@ function obe.event._EventGroup:set_joinable(joinable) end
 ---@return boolean
 function obe.event._EventGroup:is_joinable() end
 
+---@param event_name string #
+---@return obe.event.EventBase
+function obe.event._EventGroup:get(event_name) end
+
+--- Get a Event contained in the EventGroup.
+---
+---@param event_name string #Name of the Event to get
+---@return obe.event.Event[EventType]
+function obe.event._EventGroup:get(event_name) end
+
 --- Checks whether the EventGroup contains an Event with a given name or not.
 ---
 ---@param event_name string #Name of the Event to check the existence of
 ---@return boolean
 function obe.event._EventGroup:contains(event_name) end
 
+--- Creates a new Event in the EventGroup.
+---
+---@return std.enable_if_t[HasId[EventType >.value]]
+function obe.event._EventGroup:add() end
+
+---@param event_name string #
+function obe.event._EventGroup:add(event_name) end
+
 --- Removes a Event from the EventGroup.
 ---
 ---@param event_name string #Name of the Event to remove
 function obe.event._EventGroup:remove(event_name) end
+
+--- Triggers a Event.
+---
+---@param event EventType #event
+---@return std.enable_if_t[HasId[EventType >.value]]
+function obe.event._EventGroup:trigger(event) end
+
+--- Triggers a Event.
+---
+---@param event_name string #name of the Event to trigger
+---@param event EventType #event
+function obe.event._EventGroup:trigger(event_name, event) end
 
 --- Get the name of all Events contained in the EventGroup.
 ---
@@ -171,6 +201,15 @@ function obe.event._EventGroupView:get_name() end
 ---
 ---@return boolean
 function obe.event._EventGroupView:is_joinable() end
+
+---@param event_name string #
+---@return obe.event.EventBase
+function obe.event._EventGroupView:get(event_name) end
+
+--- Get a Event contained in the EventGroup.
+---
+---@return obe.event.Event[EventType]
+function obe.event._EventGroupView:get() end
 
 --- Checks whether the EventGroup contains an Event with a given name or not.
 ---
@@ -334,8 +373,11 @@ function obe.event.trigger(self, name, data) end
 ---
 ---@class obe.event.CallbackSchedulerState
 obe.event.CallbackSchedulerState = {
+    ---@type obe.event.CallbackSchedulerState
     Standby = 0,
+    ---@type obe.event.CallbackSchedulerState
     Ready = 1,
+    ---@type obe.event.CallbackSchedulerState
     Done = 2,
 };
 
@@ -343,7 +385,9 @@ obe.event.CallbackSchedulerState = {
 ---
 ---@class obe.event.ListenerChangeState
 obe.event.ListenerChangeState = {
+    ---@type obe.event.ListenerChangeState
     Added = 0,
+    ---@type obe.event.ListenerChangeState
     Removed = 1,
 };
 return obe.event;

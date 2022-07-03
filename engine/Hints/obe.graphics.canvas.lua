@@ -223,12 +223,19 @@ function obe.graphics.canvas._Text:refresh() end
 ---
 ---@class obe.graphics.canvas.CanvasElementType
 obe.graphics.canvas.CanvasElementType = {
+    ---@type obe.graphics.canvas.CanvasElementType
     CanvasElement = 0,
+    ---@type obe.graphics.canvas.CanvasElementType
     Line = 1,
+    ---@type obe.graphics.canvas.CanvasElementType
     Rectangle = 2,
+    ---@type obe.graphics.canvas.CanvasElementType
     Text = 3,
+    ---@type obe.graphics.canvas.CanvasElementType
     Circle = 4,
+    ---@type obe.graphics.canvas.CanvasElementType
     Polygon = 5,
+    ---@type obe.graphics.canvas.CanvasElementType
     Bezier = 6,
 };
 
@@ -236,8 +243,11 @@ obe.graphics.canvas.CanvasElementType = {
 ---
 ---@class obe.graphics.canvas.TextHorizontalAlign
 obe.graphics.canvas.TextHorizontalAlign = {
+    ---@type obe.graphics.canvas.TextHorizontalAlign
     Left = 0,
+    ---@type obe.graphics.canvas.TextHorizontalAlign
     Center = 1,
+    ---@type obe.graphics.canvas.TextHorizontalAlign
     Right = 2,
 };
 
@@ -245,8 +255,11 @@ obe.graphics.canvas.TextHorizontalAlign = {
 ---
 ---@class obe.graphics.canvas.TextVerticalAlign
 obe.graphics.canvas.TextVerticalAlign = {
+    ---@type obe.graphics.canvas.TextVerticalAlign
     Top = 0,
+    ---@type obe.graphics.canvas.TextVerticalAlign
     Center = 1,
+    ---@type obe.graphics.canvas.TextVerticalAlign
     Bottom = 2,
 };
 return obe.graphics.canvas;
