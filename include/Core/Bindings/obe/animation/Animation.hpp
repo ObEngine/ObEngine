@@ -23,4 +23,4 @@ namespace obe::animation::bindings
     void load_enum_animator_target_scale_mode(sol::state_view state);
     void load_function_template_specialization_exists_impl(sol::state_view state);
     void load_function_tween(sol::state_view state);
-}; // namespace obe::animation::bindings
+};

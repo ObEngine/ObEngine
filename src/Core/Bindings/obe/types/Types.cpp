@@ -47,6 +47,7 @@ namespace obe::types::bindings
             = types_namespace.new_usertype<obe::types::Serializable>("Serializable");
         bind_serializable["dump"] = &obe::types::Serializable::dump;
         bind_serializable["load"] = &obe::types::Serializable::load;
+        bind_serializable["load_from_file"] = &obe::types::Serializable::load_from_file;
         bind_serializable["validate_and_load"] = &obe::types::Serializable::validate_and_load;
     }
     void load_class_togglable(sol::state_view state)

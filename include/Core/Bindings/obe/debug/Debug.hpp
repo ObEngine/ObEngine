@@ -15,4 +15,4 @@ namespace obe::debug::bindings
     void load_function_error(sol::state_view state);
     void load_function_critical(sol::state_view state);
     void load_global_log(sol::state_view state);
-}; // namespace obe::debug::bindings
+};

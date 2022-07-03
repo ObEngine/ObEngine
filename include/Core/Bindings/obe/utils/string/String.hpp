@@ -25,4 +25,4 @@ namespace obe::utils::string::bindings
     void load_function_titleize(sol::state_view state);
     void load_global_alphabet(sol::state_view state);
     void load_global_numbers(sol::state_view state);
-}; // namespace obe::utils::string::bindings
+};

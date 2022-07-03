@@ -20,4 +20,4 @@ namespace vili::writer::bindings
     void load_function_dump_array(sol::state_view state);
     void load_function_dump_object(sol::state_view state);
     void load_function_dump(sol::state_view state);
-}; // namespace vili::writer::bindings
+};

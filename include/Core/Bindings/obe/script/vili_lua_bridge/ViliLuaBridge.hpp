@@ -14,4 +14,4 @@ namespace obe::script::vili_lua_bridge::bindings
     void load_function_lua_table_to_vili_object(sol::state_view state);
     void load_function_lua_value_to_vili_primitive(sol::state_view state);
     void load_function_lua_table_to_vili_array(sol::state_view state);
-}; // namespace obe::script::vili_lua_bridge::bindings
+};

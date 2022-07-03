@@ -57,6 +57,7 @@ namespace vili::parser
     /**
      * \flagsurrogate{vili::node::erase}
      * \paramrename{end,end_}
+     * \todo not handled properly (overloaded method)
      */
     class _PatchNode_erase
     {

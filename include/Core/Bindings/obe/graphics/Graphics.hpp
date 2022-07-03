@@ -28,4 +28,4 @@ namespace obe::graphics::bindings
     void load_global_parallax(sol::state_view state);
     void load_global_camera(sol::state_view state);
     void load_global_position(sol::state_view state);
-}; // namespace obe::graphics::bindings
+};

@@ -39,4 +39,4 @@ namespace obe::animation::easing::bindings
     void load_function_out_bounce(sol::state_view state);
     void load_function_in_out_bounce(sol::state_view state);
     void load_function_get(sol::state_view state);
-}; // namespace obe::animation::easing::bindings
+};

@@ -12,4 +12,4 @@ namespace obe::script::bindings
     void load_enum_environment_target(sol::state_view state);
     void load_function_sol_call_status_to_string(sol::state_view state);
     void load_function_safe_lua_call(sol::state_view state);
-}; // namespace obe::script::bindings
+};

@@ -17,4 +17,4 @@ namespace obe::utils::math::bindings
     void load_function_convert_to_degrees(sol::state_view state);
     void load_function_normalize(sol::state_view state);
     void load_global_pi(sol::state_view state);
-}; // namespace obe::utils::math::bindings
+};

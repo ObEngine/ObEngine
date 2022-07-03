@@ -10,4 +10,4 @@ namespace vili::parser::bindings
     void load_class_state(sol::state_view state);
     void load_function_from_string(sol::state_view state);
     void load_function_from_file(sol::state_view state);
-}; // namespace vili::parser::bindings
+};

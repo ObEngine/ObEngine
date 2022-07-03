@@ -17,4 +17,4 @@ namespace obe::time::bindings
     void load_global_hours(sol::state_view state);
     void load_global_days(sol::state_view state);
     void load_global_weeks(sol::state_view state);
-}; // namespace obe::time::bindings
+};

@@ -12,4 +12,4 @@ namespace obe::types::bindings
     void load_class_serializable(sol::state_view state);
     void load_class_togglable(sol::state_view state);
     void load_class_unknown_enum_entry(sol::state_view state);
-}; // namespace obe::types::bindings
+};
