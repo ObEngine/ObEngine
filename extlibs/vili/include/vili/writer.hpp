@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vili/node.hpp>
 
 namespace vili::writer

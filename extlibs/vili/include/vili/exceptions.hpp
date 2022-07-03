@@ -3,7 +3,6 @@
 #include <exception>
 #include <optional>
 #include <string>
-#include <typeinfo>
 
 #include <fmt/format.h>
 

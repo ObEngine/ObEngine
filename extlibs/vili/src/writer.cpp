@@ -1,6 +1,8 @@
 #include <array>
 #ifdef __cpp_lib_to_chars
 #include <charconv>
+#else
+#include <sstream>
 #endif
 #include <string>
 #include <string_view>
@@ -87,7 +89,16 @@ namespace vili::writer
         }
 
         const vili::number number_value = data.as<vili::number>();
-        return std::to_string(number_value);
+
+        std::stringstream ss;
+        double _intpart;
+        if (modf(number_value, &_intpart) == 0.0)
+        {
+            ss << std::showpoint;
+            ss.precision(2);
+        }
+        ss << number_value;
+        return ss.str();
     }
 #endif
 

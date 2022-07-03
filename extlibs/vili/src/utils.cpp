@@ -72,67 +72,7 @@ namespace vili::utils::string
         std::from_chars(input.data(), input.data() + input.size(), data_out);
         return data_out;
 #else
-        const char* num = input.data();
-        if (!num || !*num)
-        {
-            return 0;
-        }
-
-        int sign = 1;
-        double integerPart = 0.0;
-        double fractionPart = 0.0;
-        bool hasFraction = false;
-
-        /*Take care of +/- sign*/
-        if (*num == '-')
-        {
-            ++num;
-            sign = -1;
-        }
-        else if (*num == '+')
-        {
-            ++num;
-        }
-
-        while (*num != '\0')
-        {
-            if (*num >= '0' && *num <= '9')
-            {
-                integerPart = integerPart * 10 + (*num - '0');
-            }
-            else if (*num == '.')
-            {
-                hasFraction = true;
-                ++num;
-                break;
-            }
-            else
-            {
-                return sign * integerPart;
-            }
-            ++num;
-        }
-
-        if (hasFraction)
-        {
-            double fractionExpo = 0.1;
-
-            while (*num != '\0')
-            {
-                if (*num >= '0' && *num <= '9')
-                {
-                    fractionPart += fractionExpo * (*num - '0');
-                    fractionExpo *= 0.1;
-                }
-                else
-                {
-                    return sign * (integerPart + fractionPart);
-                }
-                ++num;
-            }
-        }
-
-        return sign * (integerPart + fractionPart);
+        return std::stod(input.data());
 #endif
     }
 
@@ -143,12 +83,7 @@ namespace vili::utils::string
         std::from_chars(input.data(), input.data() + input.size(), data_out);
         return data_out;
 #else
-        long long data_out = 0;
-        for (char current_digit : input)
-        {
-            data_out = data_out * 10 + (current_digit - '0');
-        }
-        return data_out;
+        return std::stoll(input.data());
 #endif
     }
 
@@ -215,8 +150,9 @@ namespace vili::utils::string
     {
         std::vector<std::string> strings_sorted_by_distance = words;
         std::sort(strings_sorted_by_distance.begin(), strings_sorted_by_distance.end(),
-            [source](const std::string& s1, const std::string& s2)
-            { return distance(s1, source) < distance(s2, source); });
+            [source](const std::string& s1, const std::string& s2) {
+                return utils::string::distance(s1, source) < utils::string::distance(s2, source);
+            });
         if (limit && !strings_sorted_by_distance.empty())
         {
             return std::vector<std::string>(strings_sorted_by_distance.begin(),
