@@ -16,11 +16,11 @@ int main(int argc, char** argv)
     const unsigned int surface_width = sf::VideoMode::getDesktopMode().width;
     const unsigned int surface_height = sf::VideoMode::getDesktopMode().height;
 #if defined _DEBUG
-    init_engine(surface_width, surface_height);
+    init_engine(surface_width, surface_height, true);
 #else
     try
     {
-        init_engine(surface_width, surface_height);
+        init_engine(surface_width, surface_height, true);
     }
     catch (const std::exception& e)
     {

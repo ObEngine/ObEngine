@@ -310,9 +310,7 @@ namespace obe::script
 
     void GameObject::init_from_vili(const vili::node& data)
     {
-        debug::Log->debug("<GameObject> Sending Local.Init table to "
-                          "GameObject {} ({}) (From Vili)",
-            m_id, m_type);
+        debug::Log->debug("<GameObject> Initializing GameObject {} ({}) (From Vili)", m_id, m_type);
         auto constructor_args = vili_lua_bridge::vili_to_lua(data);
         safe_lua_call(this->get_constructor(), constructor_args);
     }

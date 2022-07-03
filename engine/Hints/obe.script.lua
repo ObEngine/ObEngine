@@ -81,12 +81,12 @@ function obe.script._GameObject:destroy() end
 ---@return table
 function obe.script._GameObject:access() end
 
---- Gets a reference to the Lua function used to build the GameObject (Local.Init proxy)
+--- Gets a reference to the Lua function used to build the GameObject (GameObject:init proxy)
 ---
 ---@return function
 function obe.script._GameObject:get_constructor() end
 
---- Triggers the GameObject's Local.Init.
+--- Calls the GameObject constructor
 ---
 function obe.script._GameObject:initialize() end
 

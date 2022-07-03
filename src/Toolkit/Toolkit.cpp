@@ -74,7 +74,7 @@ void run(std::string command)
 {
     using namespace obe;
 
-    debug::init_logger();
+    debug::init_logger(false);
     debug::Log->set_level(spdlog::level::warn);
     system::MountablePath::load_mount_file(false, true);
 

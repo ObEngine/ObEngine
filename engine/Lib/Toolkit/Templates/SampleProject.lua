@@ -1,16 +1,19 @@
-HELLO_WORLD_GO_SCRIPT = [[local canvas;
+HELLO_WORLD_GO_SCRIPT = [[---@class SampleObject : GameObjectCls
+local SampleObject = GameObject();
 
-function Local.Init()
-    local screen_size = Engine.Window:getSize();
-    canvas = obe.Canvas.Canvas(screen_size.x, screen_size.y);
+local canvas;
+
+function SampleObject:init()
+    local screen_size = Engine.Window:get_size();
+    canvas = obe.canvas.Canvas(screen_size.x, screen_size.y);
 
     canvas:Text "hello" {
         text = "Hello, world!",
         size = 128,
-        color = obe.Graphics.Color.White,
+        color = obe.graphics.Color.White,
         x = 0.5,
         y = 0.5,
-        unit = obe.Transform.Units.ViewPercentage,
+        unit = obe.transform.Units.ViewPercentage,
         align = {
             horizontal = "Center",
             vertical = "Center"
@@ -19,7 +22,7 @@ function Local.Init()
 end
 
 function Event.Game.Render()
-    canvas:render(Object.Sprite);
+    canvas:render(SampleObject.components.Sprite);
 end
 ]]
 

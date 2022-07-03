@@ -1,10 +1,13 @@
 #pragma once
 
+#include <unordered_map>
+
 #include <Animation/AnimationGroup.hpp>
+#include <System/Path.hpp>
 #include <Time/TimeUtils.hpp>
 #include <Types/Serializable.hpp>
 #include <Types/SmartEnum.hpp>
-#include <unordered_map>
+
 
 namespace obe
 {
@@ -188,18 +191,21 @@ namespace obe::animation
 
         AnimationPlayMode m_play_mode = AnimationPlayMode::OneTime;
 
+        system::Path m_path;
+        engine::ResourceManager* m_resource_manager = nullptr;
+
         int m_priority = 0;
 
-        void load_meta(const vili::node& meta);
-        void load_images(
-            const vili::node& images, const system::Path& path, engine::ResourceManager* resources);
+        [[nodiscard]] vili::node schema() const override;
+
+        void load_images(const vili::node& images);
         void load_groups(const vili::node& groups);
         void load_code(const vili::node& code);
 
         friend class AnimationState;
 
     public:
-        Animation();
+        Animation(const system::Path& path, engine::ResourceManager* resources = nullptr);
         Animation(const Animation&) = delete;
         /**
          * \todo Make Animation a serializable type instead of this "apply_parameters"
@@ -300,15 +306,6 @@ namespace obe::animation
          */
         [[nodiscard]] bool is_over() const noexcept;
         /**
-         * \brief Configure an Animation using the Animation configuration file
-         *        (Vili file)
-         * \param path System::Path to the Animation config file
-         *        (.ani.vili file extension)
-         * \param resources pointer to the ResourceManager
-         *        that will load the textures for the Animation
-         */
-        void load_animation(const system::Path& path, engine::ResourceManager* resources = nullptr);
-        /**
          * \brief Reset the Animation (Unselect current AnimationGroup and
          *        restart AnimationCode)
          */
@@ -329,7 +326,6 @@ namespace obe::animation
         [[nodiscard]] bool is_anti_aliased() const noexcept;
         [[nodiscard]] AnimationState make_state() const;
 
-        [[nodiscard]] vili::node schema() const override;
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
     };

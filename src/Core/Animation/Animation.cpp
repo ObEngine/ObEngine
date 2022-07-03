@@ -101,41 +101,6 @@ namespace obe::animation
         return m_default_state.is_over();
     }
 
-    void Animation::load_animation(const system::Path& path, engine::ResourceManager* resources)
-    {
-        debug::Log->debug("<animation> Loading animation at {}", path.to_string());
-        const std::string animation_config_file = path.add(path.last() + ".ani.vili").find();
-        vili::node animation_config = vili::parser::from_file(animation_config_file);
-
-        try
-        {
-            vili::validator::validate_tree(
-                config::validators::animation_validator(), animation_config);
-
-            // Meta
-            this->load_meta(animation_config.at("Meta"));
-            debug::Log->trace("  <animation> Loading Meta block");
-
-            // Images
-            this->load_images(animation_config.at("Images"), path, resources);
-            debug::Log->trace("  <animation> Loading Images block");
-
-            // Groups
-            debug::Log->trace("  <animation> Loading Groups block");
-            this->load_groups(animation_config.at("Groups"));
-
-            // animation Code
-            debug::Log->trace("  <animation> Loading animation block");
-            this->load_code(animation_config.at("animation"));
-
-            m_default_state.load();
-        }
-        catch (const BaseException& e)
-        {
-            throw exceptions::InvalidAnimationFile(animation_config_file, EXC_INFO).nest(e);
-        }
-    }
-
     void AnimationState::execute_instruction()
     {
         const vili::node& current_command = m_parent.m_code[m_code_index];
@@ -220,73 +185,28 @@ namespace obe::animation
             m_parent.m_name, group_name, m_parent.get_all_animation_groups_names(), EXC_INFO);
     }
 
-    void Animation::load_meta(const vili::node& meta)
-    {
-        m_name = meta.at("name");
-
-        debug::Log->trace("    <animation> animation name = '{}'", m_name);
-        if (meta.contains("clock"))
-        {
-            m_delay = meta.at("clock");
-            debug::Log->trace("    <animation> animation clock = {}", m_delay);
-        }
-        if (meta.contains("mode"))
-        {
-            m_play_mode = AnimationPlayModeMeta::from_string(meta.at("mode"));
-            debug::Log->trace("    <animation> animation play-mode = '{}'",
-                AnimationPlayModeMeta::to_string(m_play_mode));
-        }
-    }
-
-    void Animation::load_images(
-        const vili::node& images, const system::Path& path, engine::ResourceManager* resources)
+    void Animation::load_images(const vili::node& images)
     {
         const vili::node& image_list = images.at("images");
-        std::string model;
-        if (images.contains("model"))
-        {
-            model = images.at("model");
-            debug::Log->trace(
-                "    <animation> Using following template to load images : {}", model);
-        }
         for (auto& image : image_list)
         {
-            std::string texture_name;
-            if (image.is<vili::integer>() && !model.empty())
-            {
-                texture_name = utils::string::replace(
-                    model, "%s", std::to_string(image.as<vili::integer>()));
-                debug::Log->trace("    <animation> Loading image '{}' (name determined "
-                                  "with template[int])",
-                    texture_name);
-            }
-            else if (image.is<vili::string>() && !model.empty())
-            {
-                texture_name = utils::string::replace(model, "%s", image);
-                debug::Log->trace("    <animation> Loading image '{}' (name determined "
-                                  "with template[str])",
-                    texture_name);
-            }
-            else if (image.is<vili::string>())
-            {
-                texture_name = image;
-                debug::Log->trace("    <animation> Loading image '{}'", texture_name);
-            }
+            std::string texture_name = image;
+            debug::Log->trace("    <animation> Loading image '{}'", texture_name);
 
-            std::string path_to_texture = path.add(texture_name).to_string();
+            std::string path_to_texture = m_path.add(texture_name).to_string();
             debug::Log->trace("    <animation> Found Texture Path at '{}'", path_to_texture);
-            if (resources)
+            if (m_resource_manager)
             {
                 debug::Log->trace(
                     "    <animation> Loading Texture {0} (using ResourceManager)", texture_name);
                 m_textures.emplace_back(
-                    resources->get_texture(path.add(texture_name), m_anti_aliasing));
+                    m_resource_manager->get_texture(m_path.add(texture_name), m_anti_aliasing));
             }
             else
             {
                 debug::Log->trace("    <animation> Loading Texture {0}", texture_name);
                 graphics::Texture new_texture;
-                new_texture.load_from_file(path.add(texture_name).find(system::PathType::File));
+                new_texture.load_from_file(m_path.add(texture_name).find(system::PathType::File));
                 // TODO: Add a way to configure anti-aliasing for textures without ResourceManager
                 m_textures.push_back(std::move(new_texture));
             }
@@ -306,7 +226,7 @@ namespace obe::animation
                 m_groups[group_name]->push_texture(m_textures[current_texture.as<vili::integer>()]);
             }
 
-            if (group.contains("clock"))
+            if (group.contains("framerate"))
             {
                 vili::number delay = group.at("clock");
                 debug::Log->trace("      <animation> Setting group delay to {}", delay);
@@ -330,8 +250,10 @@ namespace obe::animation
         }
     }
 
-    Animation::Animation()
-        : m_default_state(*this)
+    Animation::Animation(const system::Path& path, engine::ResourceManager* resources)
+        : m_path(path)
+        , m_resource_manager(resources)
+        , m_default_state(*this)
     {
     }
 
@@ -385,7 +307,7 @@ namespace obe::animation
 
     vili::node Animation::schema() const
     {
-        return vili::object {};
+        return config::validators::animation_validator();
     }
 
     vili::node Animation::dump() const
@@ -399,6 +321,72 @@ namespace obe::animation
 
     void Animation::load(const vili::node& data)
     {
+        debug::Log->debug("<animation> Loading animation at {}", m_path.to_string());
+
+        try
+        {
+            // Meta
+            debug::Log->trace("  <animation> Loading Animation base");
+            m_name = data.at("name");
+
+            debug::Log->trace("    <animation> animation name = '{}'", m_name);
+            if (data.contains("framerate"))
+            {
+                m_delay = 1.0 / data.at("framerate").as<vili::number>();
+                debug::Log->trace("    <animation> animation clock = {}", m_delay);
+            }
+            if (data.contains("mode"))
+            {
+                m_play_mode = AnimationPlayModeMeta::from_string(data.at("mode"));
+                debug::Log->trace("    <animation> animation play-mode = '{}'",
+                    AnimationPlayModeMeta::to_string(m_play_mode));
+            }
+
+            // Images
+            debug::Log->trace("  <animation> Loading Animation images");
+            if (data.contains("images"))
+            {
+                load_images(data.at("images"));
+            }
+            else
+            {
+                debug::Log->warn(
+                    "Animation '{}' (located at path '{}') does not contain any images", m_name,
+                    m_path.to_string());
+            }
+
+
+            // Groups
+            debug::Log->trace("  <animation> Loading Animation groups");
+            if (data.contains("groups"))
+            {
+                load_groups(data.at("groups"));
+            }
+            else
+            {
+                debug::Log->warn(
+                    "Animation '{}' (located at path '{}') does not contain any groups", m_name,
+                    m_path.to_string());
+            }
+
+            // animation Code
+            debug::Log->trace("  <animation> Loading Animation code");
+            if (data.contains("code"))
+            {
+                load_code(data.at("code"));
+            }
+            else
+            {
+                debug::Log->warn("Animation '{}' (located at path '{}') does not contain any code",
+                    m_name, m_path.to_string());
+            }
+
+            m_default_state.load();
+        }
+        catch (const BaseException& e)
+        {
+            throw exceptions::InvalidAnimationFile(m_path.to_string(), EXC_INFO).nest(e);
+        }
     }
 
     void AnimationState::reset() noexcept

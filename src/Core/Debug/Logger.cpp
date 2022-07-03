@@ -15,16 +15,20 @@
 namespace obe::debug
 {
     Logger Log;
-    void init_logger()
+    void init_logger(bool dump_log_to_file)
     {
         utils::file::delete_file("debug.log");
         auto dist_sink = std::make_shared<spdlog::sinks::dist_sink_st>();
 
         const auto sink1 = std::make_shared<spdlog::sinks::stdout_color_sink_st>();
-        const auto sink2 = std::make_shared<spdlog::sinks::basic_file_sink_st>("debug.log");
-
         dist_sink->add_sink(sink1);
-        dist_sink->add_sink(sink2);
+
+        if (dump_log_to_file)
+        {
+            const auto sink2 = std::make_shared<spdlog::sinks::basic_file_sink_st>("debug.log");
+            dist_sink->add_sink(sink2);
+        }
+
         Log = std::make_shared<spdlog::logger>("Log", dist_sink);
         Log->set_pattern("[%H:%M:%S.%e]<%^%l%$> : %v");
         Log->set_level(spdlog::level::info);

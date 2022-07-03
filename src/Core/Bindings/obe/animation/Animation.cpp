@@ -49,7 +49,9 @@ namespace obe::animation::bindings
         sol::table animation_namespace = state["obe"]["animation"].get<sol::table>();
         sol::usertype<obe::animation::Animation> bind_animation
             = animation_namespace.new_usertype<obe::animation::Animation>("Animation",
-                sol::call_constructor, sol::constructors<obe::animation::Animation()>(),
+                sol::call_constructor,
+                sol::constructors<obe::animation::Animation(
+                    const system::Path&, engine::ResourceManager*)>(),
                 sol::base_classes, sol::bases<obe::types::Serializable>());
         bind_animation["apply_parameters"] = &obe::animation::Animation::apply_parameters;
         bind_animation["get_all_animation_groups_names"]
@@ -66,20 +68,11 @@ namespace obe::animation::bindings
         bind_animation["get_current_texture"] = &obe::animation::Animation::get_current_texture;
         bind_animation["get_texture_at_index"] = &obe::animation::Animation::get_texture_at_index;
         bind_animation["is_over"] = &obe::animation::Animation::is_over;
-        bind_animation["load_animation"] = sol::overload(
-            [](obe::animation::Animation* self, const obe::system::Path& path) -> void {
-                return self->load_animation(path);
-            },
-            [](obe::animation::Animation* self, const obe::system::Path& path,
-                obe::engine::ResourceManager* resources) -> void {
-                return self->load_animation(path, resources);
-            });
         bind_animation["reset"] = &obe::animation::Animation::reset;
         bind_animation["update"] = &obe::animation::Animation::update;
         bind_animation["set_anti_aliasing"] = &obe::animation::Animation::set_anti_aliasing;
         bind_animation["is_anti_aliased"] = &obe::animation::Animation::is_anti_aliased;
         bind_animation["make_state"] = &obe::animation::Animation::make_state;
-        bind_animation["schema"] = &obe::animation::Animation::schema;
         bind_animation["dump"] = &obe::animation::Animation::dump;
         bind_animation["load"] = &obe::animation::Animation::load;
     }

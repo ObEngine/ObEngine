@@ -198,12 +198,12 @@ namespace obe::script
         [[nodiscard]] sol::table access() const;
         /**
          * \brief Gets a reference to the Lua function used to build the
-         *        GameObject (Local.Init proxy)
+         *        GameObject (GameObject:init proxy)
          * \return A reference to the Lua function used to build the GameObject
          */
         [[nodiscard]] sol::protected_function get_constructor() const;
         /**
-         * \brief Triggers the GameObject's Local.Init
+         * \brief Calls the GameObject constructor
          */
         void initialize();
         /**

@@ -126,7 +126,10 @@ Sure, here are some simple GameObjects :
 ### Hello-World object
 This one is really simple, it just prints "Hello World" in the console
 ```lua
-function Local.Init() -- Called when object is created
+---@class HelloWorld
+local HelloWorld = GameObject();
+
+function HelloWorld:init() -- Called when object is created
   print("Hello World");
 end
 ```
@@ -134,13 +137,16 @@ Every GameObject can have a Sprite associated (it's cooler when your object appe
 ### Rotating goat
 Let's imagine you want to create a rotating goat in your game, no problem :
 ```lua
-function Local.Init()
+---@class RotatingGoat
+local RotatingGoat = GameObject();
+
+function RotatingGoat:init()
   -- Set the animation for when the goat is flying to the right (You can imagine it already right ?)
-  This.Animator:setKey("GOAT_FLYING_LEFT");
+  self.components.Animator:set_animation("GOAT_FLYING_LEFT");
 end
 
-function Local.Update(dt) -- Local.Update is a function called every loop and dt is the DeltaTime
-  This.Sprite:rotate(dt * 45); -- Rotate of 45 degrees each second (You multiply with the DeltaTime here)
+function Event.Game.Update(evt) -- Event.Game.Update is a function called every loop and dt is the DeltaTime
+  self.components.Sprite:rotate(evt.dt * 45); -- Rotate of 45 degrees each second (You multiply with the DeltaTime here)
 end
 ```
 
@@ -148,8 +154,11 @@ end
 The engine includes a `Canvas` lib to draw stuff in real time and using it is really straightforward !
 
 ```lua
-function Local.Init()
-  local canvas = obe.Canvas.Canvas(400, 400); -- Creating a 400x400 canvas
+---@class PongScoreboard
+local PongScoreboard = GameObject();
+
+function PongScoreboard:init()
+  local canvas = obe.canvas.Canvas(400, 400); -- Creating a 400x400 canvas
 
   canvas:Rectangle("background") { -- Dark grey background
       layer = 2, x = 0, y = 0, width = 250, height = 100,
@@ -179,7 +188,7 @@ function Local.Init()
       radius = 7, x = 234, y = 5
   };
 
-  canvas:render(This.Sprite()); -- Drawing all the stuff !
+  canvas:render(self.components.Sprite); -- Drawing all the stuff !
 end
 ```
 Check the Wiki for more examples !

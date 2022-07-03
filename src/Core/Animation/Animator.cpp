@@ -174,13 +174,22 @@ namespace obe::animation
         }
         for (const auto& directory : directories)
         {
-            std::unique_ptr<Animation> temp_animation = std::make_unique<Animation>();
+            system::Path animation_path = path.add(system::Path(directory.path()).last());
+            std::unique_ptr<Animation> temp_animation = std::make_unique<Animation>(animation_path, resources);
             if (m_default_state.get_target())
             {
                 temp_animation->set_anti_aliasing(m_default_state.get_target()->is_anti_aliased());
             }
-            temp_animation->load_animation(
-                path.add(system::Path(directory.path()).last()), resources);
+            const std::string animation_config_file
+                = animation_path.add(animation_path.last() + ".animation.vili").find();
+            try
+            {
+                temp_animation->load_from_file(animation_config_file);
+            }
+            catch (const std::exception& exc)
+            {
+                throw exceptions::InvalidAnimationFile(animation_config_file, EXC_INFO).nest(exc);
+            }
             if (!animator_cfg_file.is_null())
             {
                 if (animator_cfg_file.contains("all"))

@@ -26,7 +26,7 @@ namespace obe::debug
     /**
      * \brief Initialize the Logger
      */
-    void init_logger();
+    void init_logger(bool dump_log_to_file);
 
     void trace(const std::string& content);
     void debug(const std::string& content);

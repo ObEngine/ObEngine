@@ -1,3 +1,5 @@
+#pragma once
+
 #include <vili/node.hpp>
 #include <vili/parser/parser_state.hpp>
 

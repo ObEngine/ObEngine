@@ -53,7 +53,7 @@ namespace obe::config::validators
             "MouseWheelLeft",
             "MouseWheelRight",
             "MouseWheelUp",
-            "MouseWheelDown"
+            "MouseWheelDown",
             "NumPad[0-9]",
             "F(1[0-2]|[1-9])",
             "[A-Z]",

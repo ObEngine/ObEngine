@@ -113,10 +113,11 @@ namespace obe::system
         return "";
     }
 
-    const std::string& FindResult::path() const
+    std::string FindResult::path() const
     {
         check_validity();
-        return m_path;
+        const std::string canonical_path = utils::file::canonical_path(m_path);
+        return utils::file::normalize_path(canonical_path);
     }
 
     const MountablePath& FindResult::mount() const

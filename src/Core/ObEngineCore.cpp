@@ -9,9 +9,9 @@
 
 namespace obe
 {
-    void init_engine(unsigned int surface_width, unsigned int surface_height)
+    void init_engine(unsigned int surface_width, unsigned int surface_height, bool dump_log_to_file)
     {
-        debug::init_logger();
+        debug::init_logger(dump_log_to_file);
 
         debug::Log->info("Using ObEngineCore (Version : {} ({}:{}))", config::OBENGINE_VERSION,
             config::OBENGINE_GIT_BRANCH, config::OBENGINE_GIT_HASH);

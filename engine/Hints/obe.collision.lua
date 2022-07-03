@@ -236,6 +236,8 @@ function obe.collision._TrajectoryNode:update(dt) end
 obe.collision.ColliderTagType = {
     Tag = 0,
     Accepted = 1,
+    ---@type obe.collision.ColliderTagType
     Rejected = 2,
 };
+
 return obe.collision;

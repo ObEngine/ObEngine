@@ -20,20 +20,21 @@ local SUPPORTED_IMAGE_FORMATS = {
 }
 
 function Functions.bake(path)
-    print("Creating new animation", path);
-    local animation_path = obe.system.Path(path);
-    local animation_name = animation_path:last();
-    print(("Baking animation '%s'"):format(animation_name));
-    local absolute_path_search = animation_path:find();
-    if not absolute_path_search:success() then
+    local absolute_path_lookup = obe.system.Path(path):find();
+    if not absolute_path_lookup:success() then
         Color.print({
             { text = "Invalid animation path '", color = Style.Error},
             { text = path, color = Style.Argument},
             { text = "'", color = Style.Error},
         });
+        return;
     end
-    local absolute_path = absolute_path_search:path();
-    print("Found folder", absolute_path);
+    local absolute_path = absolute_path_lookup:path();
+    local animation_path = obe.system.Path(absolute_path);
+    print(("Creating new animation at path '%s'"):format(animation_path));
+    local animation_name = animation_path:last();
+    print(("Baking animation '%s'"):format(animation_name));
+
     local directory_files = fs.get_file_list(absolute_path);
 
     local images = {};
@@ -57,7 +58,9 @@ function Functions.bake(path)
         mode = "OneTime",
         images = images,
         groups = {
-            main = image_indexes
+            main = {
+                content = image_indexes
+            }
         },
         code = {
             {command="PlayGroup", group="main"}

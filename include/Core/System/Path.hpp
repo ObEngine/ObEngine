@@ -41,7 +41,7 @@ namespace obe::system
         FindResult(PathType path_type, std::shared_ptr<MountablePath> mount,
             const std::string& path, const std::string& query, const std::string& element = "");
         [[nodiscard]] std::string hypothetical_path() const;
-        [[nodiscard]] const std::string& path() const;
+        [[nodiscard]] std::string path() const;
         [[nodiscard]] const MountablePath& mount() const;
         [[nodiscard]] const std::string& query() const;
         [[nodiscard]] const std::string& element() const;

@@ -45,7 +45,6 @@ namespace obe::types::bindings
         sol::table types_namespace = state["obe"]["types"].get<sol::table>();
         sol::usertype<obe::types::Serializable> bind_serializable
             = types_namespace.new_usertype<obe::types::Serializable>("Serializable");
-        bind_serializable["schema"] = &obe::types::Serializable::schema;
         bind_serializable["dump"] = &obe::types::Serializable::dump;
         bind_serializable["load"] = &obe::types::Serializable::load;
         bind_serializable["validate_and_load"] = &obe::types::Serializable::validate_and_load;
