@@ -37,7 +37,7 @@ namespace obe::tiles::bindings
             = tiles_namespace.new_usertype<obe::tiles::TileLayer>("TileLayer",
                 sol::call_constructor,
                 sol::constructors<obe::tiles::TileLayer(const obe::tiles::TileScene&,
-                    const std::string&, int32_t, uint32_t, uint32_t, uint32_t, uint32_t,
+                    const std::string&, int32_t, int32_t, uint32_t, uint32_t, uint32_t, uint32_t,
                     std::vector<uint32_t>, bool)>(),
                 sol::base_classes, sol::bases<obe::graphics::Renderable>());
         bind_tile_layer["get_id"] = &obe::tiles::TileLayer::get_id;

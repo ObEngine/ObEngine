@@ -82,10 +82,6 @@ namespace obe::transform
         return first.distance(second);
     }
 
-    void Polygon::reset_unit(transform::Units unit)
-    {
-    }
-
     std::size_t Polygon::get_points_amount() const
     {
         return m_points.size();
@@ -94,8 +90,6 @@ namespace obe::transform
     Polygon::Polygon(const Polygon& polygon)
         : m_angle(polygon.m_angle)
     {
-        m_position = polygon.m_position;
-        m_unit = polygon.m_unit;
         size_t index = 0;
         for (const auto& point : polygon.m_points)
         {

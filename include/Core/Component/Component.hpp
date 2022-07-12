@@ -20,10 +20,6 @@ namespace obe::component
         static void RemoveComponent(ComponentBase* component);
 
     public:
-        /**
-         * \nobind
-         */
-        static constexpr std::string_view ComponentType = "ComponentBase";
         ComponentBase(const std::string& id);
         virtual void remove() = 0;
 
@@ -43,10 +39,7 @@ namespace obe::component
     private:
     public:
         static void Register();
-        /**
-         * \nobind
-         */
-        static constexpr std::string_view ComponentType = "Component";
+
         explicit Component(const std::string& id);
         ~Component() override;
 
@@ -57,7 +50,6 @@ namespace obe::component
         [[nodiscard]] vili::node dump() const override = 0;
         void load(const vili::node& data) override = 0;
 
-        [[nodiscard]] std::string_view type() const override;
         using Ref = std::reference_wrapper<DerivedComponent>;
         using Ptr = DerivedComponent*;
     };
@@ -84,12 +76,6 @@ namespace obe::component
         Pool.erase(std::remove_if(Pool.begin(), Pool.end(),
                        [&](DerivedComponent* ptr) -> bool { return (this == ptr); }),
             Pool.end());
-    }
-
-    template <class DerivedComponent>
-    std::string_view Component<DerivedComponent>::type() const
-    {
-        return ComponentType;
     }
 
     template <class DerivedComponent>

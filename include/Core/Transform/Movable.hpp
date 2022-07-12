@@ -13,6 +13,8 @@ namespace obe::transform
         UnitVector m_position;
 
     public:
+        Movable() = default;
+        explicit Movable(const transform::UnitVector& position);
         virtual ~Movable() = default;
         /**
          * \brief Set the position of the Movable using an UnitVector

@@ -33,7 +33,7 @@ namespace obe::tiles
         static void clear_quad(sf::Vertex* quad);
 
     public:
-        TileLayer(const TileScene& scene, const std::string& id, int32_t layer, uint32_t x,
+        TileLayer(const TileScene& scene, const std::string& id, int32_t layer, int32_t sublayer, uint32_t x,
             uint32_t y, uint32_t width, uint32_t height, std::vector<uint32_t> data, bool visible);
 
         [[nodiscard]] std::string get_id() const;

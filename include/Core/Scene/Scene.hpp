@@ -51,6 +51,7 @@ namespace obe::scene
     {
     private:
         std::string m_level_name;
+        graphics::Color m_background;
         std::string m_base_folder;
         std::string m_deferred_scene_load;
         Camera m_camera;

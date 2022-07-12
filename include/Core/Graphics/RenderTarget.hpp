@@ -3,7 +3,8 @@
 #include <SFML/Graphics/RenderTarget.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
-#include "Transform/UnitVector.hpp"
+#include <Graphics/Color.hpp>
+#include <Transform/UnitVector.hpp>
 
 namespace obe::graphics
 {
@@ -16,6 +17,7 @@ namespace obe::graphics
         RenderTarget(sf::RenderTarget& target);
         RenderTarget(sf::RenderWindow& window);
 
+        void clear(Color color) const;
         void draw(const sf::Drawable& drawable,
             const sf::RenderStates& states = sf::RenderStates::Default) const;
         void draw(const sf::Vertex* vertices, std::size_t vertex_count, sf::PrimitiveType type,
@@ -35,6 +37,11 @@ namespace obe::graphics
     inline RenderTarget::RenderTarget(sf::RenderWindow& window)
         : m_target(window)
     {
+    }
+
+    inline void RenderTarget::clear(Color color) const
+    {
+        m_target.clear(color);
     }
 
     inline void RenderTarget::draw(

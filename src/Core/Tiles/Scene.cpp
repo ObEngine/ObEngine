@@ -107,8 +107,14 @@ namespace obe::tiles
             {
                 visible = layer.at("visible");
             }
+            int32_t sublayer = 1;
+            if (layer.contains("sublayer"))
+            {
+                sublayer = layer.at("sublayer").as<vili::integer>();
+            }
 
             m_layers.push_back(std::make_unique<TileLayer>(*this, layer_id, layer["layer"],
+                sublayer,
                 layer["x"], layer["y"], layer["width"], layer["height"], tiles, visible));
         }
 

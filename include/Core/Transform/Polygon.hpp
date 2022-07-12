@@ -55,14 +55,12 @@ namespace obe::transform
      * \brief Class used for all Collisions in the engine, it's a Polygon
      *        containing n points
      */
-    class Polygon : public transform::UnitBasedObject, public transform::Movable
+    class Polygon
     {
     protected:
         friend class PolygonPoint;
         PolygonPath m_points;
         float m_angle = 0;
-
-        void reset_unit(transform::Units unit) override;
 
     public:
         static constexpr double DefaultTolerance = 0.02;
@@ -117,13 +115,7 @@ namespace obe::transform
          * \return An UnitVector containing the position of the first point of
          * the Polygon
          */
-        [[nodiscard]] transform::UnitVector get_position() const override;
-        /**
-         * \brief Gets the current angle of the PolygonalCollider
-         * \return A float containing the value of the current angle of the
-         *         PolygonalCollider
-         */
-        [[nodiscard]] float get_rotation() const;
+        [[nodiscard]] transform::UnitVector get_position() const;
         /**
          * \brief Gets the segment of the Polygon at index segment
          * \param segment Index of the Segment to get
@@ -158,13 +150,33 @@ namespace obe::transform
          * \param tolerance Position tolerance, bigger number means less precise
          * \return An optional containing a PolygonPoint if found
          */
-        std::optional<PolygonPoint*> get_point_near_position(
+        [[nodiscard]] std::optional<PolygonPoint*> get_point_near_position(
             const transform::UnitVector& position, const transform::UnitVector& tolerance) const;
         /**
          * \brief Moves the Polygon (relative to the current position)
          * \param position UnitVector containing the offset to move the Polygon
          */
-        void move(const transform::UnitVector& position) override;
+        void move(const transform::UnitVector& position);
+        /**
+         * \brief Sets the new position of the Polygon (using the point at index 0)
+         * \param position UnitVector containing the new Position of the
+         *        Polygon
+         */
+        void set_position(const transform::UnitVector& position);
+
+        virtual void set_position_from_centroid(const transform::UnitVector& position);
+        PolygonPoint& operator[](point_index_t i);
+        PolygonPoint& get(point_index_t i);
+        [[nodiscard]] const PolygonPoint& get(point_index_t i) const;
+        [[nodiscard]] virtual Rect get_bounding_box() const;
+
+        /**
+         * \brief Sets the angle of the PolygonalCollider (will rotate all
+         *        points around the given origin)
+         * \param angle Angle to set to the PolygonalCollider
+         * \param origin Origin to rotate all the points around
+         */
+        virtual void set_rotation(float angle, transform::UnitVector origin);
         /**
          * \brief Adds an angle to the current angle of the PolygonalCollider
          *        (will rotate all points around the given origin)
@@ -173,22 +185,10 @@ namespace obe::transform
          */
         virtual void rotate(float angle, transform::UnitVector origin);
         /**
-         * \brief Sets the new position of the Polygon (using the point at index 0)
-         * \param position UnitVector containing the new Position of the
-         *        Polygon
+         * \brief Gets the current angle of the PolygonalCollider
+         * \return A float containing the value of the current angle of the
+         *         PolygonalCollider
          */
-        void set_position(const transform::UnitVector& position) override;
-        /**
-         * \brief Sets the angle of the PolygonalCollider (will rotate all
-         *        points around the given origin)
-         * \param angle Angle to set to the PolygonalCollider
-         * \param origin Origin to rotate all the points around
-         */
-        virtual void set_rotation(float angle, transform::UnitVector origin);
-        virtual void set_position_from_centroid(const transform::UnitVector& position);
-        PolygonPoint& operator[](point_index_t i);
-        PolygonPoint& get(point_index_t i);
-        const PolygonPoint& get(point_index_t i) const;
-        [[nodiscard]] virtual Rect get_bounding_box() const;
+        [[nodiscard]] float get_rotation() const;
     };
 } // namespace obe::transform

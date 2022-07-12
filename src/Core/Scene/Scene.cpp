@@ -303,6 +303,10 @@ namespace obe::scene
         {
             const vili::node& meta = data.at("Meta");
             m_level_name = meta.at("name");
+            if (meta.contains("background"))
+            {
+                m_background.from_string(meta.at("background").as<vili::string>());
+            }
         }
         else
             throw Exceptions::MissingSceneFileBlock(m_level_file_name, "Meta", EXC_INFO);
@@ -490,6 +494,7 @@ namespace obe::scene
     void Scene::draw(graphics::RenderTarget surface)
     {
         this->_reorganize_layers();
+        surface.clear(m_background);
         if (m_render_options.sprites)
         {
             for (const auto& renderable : m_render_cache)

@@ -2,6 +2,12 @@
 
 namespace obe::graphics
 {
+    Renderable::Renderable(int32_t layer, int32_t sublayer)
+        : m_layer(layer)
+        , m_sublayer(sublayer)
+    {
+    }
+
     int32_t Renderable::get_layer() const
     {
         return m_layer;

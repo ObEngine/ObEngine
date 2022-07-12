@@ -13,24 +13,24 @@ file(GLOB_RECURSE OBE_SOURCES CONFIGURE_DEPENDS ${ObEngine_SOURCE_DIR}/src/Core/
 
 add_library(ObEngineCore ${OBE_HEADERS} ${OBE_SOURCES})
 
-
 target_precompile_headers(ObEngineCore PRIVATE ${ObEngine_SOURCE_DIR}/include/Core/PreCompileHeader.hpp)
 
-if (${BUILD_PLAYER} OR ${BUILD_DEV})
+if(${BUILD_PLAYER} OR ${BUILD_DEV})
     target_compile_definitions(ObEngineCore PUBLIC OBE_IS_NOT_PLUGIN)
 endif()
 
 target_include_directories(ObEngineCore
     PUBLIC
-        $<INSTALL_INTERFACE:${ObEngine_SOURCE_DIR}/include/Core>
-        $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Core>
-        $<BUILD_INTERFACE:${ObEngine_BINARY_DIR}/include/Core>
+    $<INSTALL_INTERFACE:${ObEngine_SOURCE_DIR}/include/Core>
+    $<BUILD_INTERFACE:${ObEngine_SOURCE_DIR}/include/Core>
+    $<BUILD_INTERFACE:${ObEngine_BINARY_DIR}/include/Core>
 )
 
 # Git configuration
 add_dependencies(ObEngineCore ConfigureObEngineGit)
 
 target_link_libraries(ObEngineCore bezier)
+target_link_libraries(ObEngineCore cute::c2)
 target_link_libraries(ObEngineCore elzip)
 target_link_libraries(ObEngineCore lua)
 target_link_libraries(ObEngineCore magic_enum)
@@ -57,7 +57,7 @@ if(OBE_USE_VCPKG)
     target_include_directories(ObEngineCore PUBLIC
         $ENV{VCPKG_ROOT}/installed/$ENV{VCPKG_DEFAULT_TRIPLET}/include)
 
-    if (USE_FILESYSTEM_FALLBACK)
+    if(USE_FILESYSTEM_FALLBACK)
         target_include_directories(ObEngineCore ${TINYDIR_INCLUDE_DIRS})
     endif()
 
@@ -67,11 +67,11 @@ else()
     target_link_libraries(ObEngineCore lua)
 endif()
 
-if (USE_FILESYSTEM_FALLBACK)
+if(USE_FILESYSTEM_FALLBACK)
     message("Using filesystem fallback")
     target_link_libraries(ObEngineCore tinydir)
     target_compile_definitions(ObEngineCore PUBLIC _USE_FILESYSTEM_FALLBACK)
-elseif (CMAKE_COMPILER_IS_GNUCXX)
+elseif(CMAKE_COMPILER_IS_GNUCXX)
     target_link_libraries(ObEngineCore stdc++fs)
 endif()
 
@@ -85,15 +85,15 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 20)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_EXTENSIONS OFF)
 
-if (MSVC)
-    if (NOT (MSVC_VERSION LESS 1910))
+if(MSVC)
+    if(NOT(MSVC_VERSION LESS 1910))
         target_compile_options(ObEngineCore PRIVATE /permissive- /bigobj /MP)
     else()
         target_compile_options(ObEngineCore PRIVATE /MP)
     endif()
 endif()
 
-function (apply_git_variables)
+function(apply_git_variables)
     target_compile_definitions(${PROJECT_NAME} PUBLIC OBENGINE_GIT_BRANCH="${OBENGINE_GIT_BRANCH}")
     target_compile_definitions(${PROJECT_NAME} PUBLIC OBENGINE_GIT_HASH="${OBENGINE_GIT_COMMIT_HASH}")
     target_compile_definitions(${PROJECT_NAME} PUBLIC OBENGINE_VERSION="${OBENGINE_VERSION}")

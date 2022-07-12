@@ -2,6 +2,11 @@
 
 namespace obe::transform
 {
+    Movable::Movable(const transform::UnitVector& position)
+        : m_position(position)
+    {
+    }
+
     void Movable::set_position(const UnitVector& position)
     {
         m_position.set(position);

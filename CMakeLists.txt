@@ -11,6 +11,8 @@ project(ObEngine)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
 add_subdirectory(extlibs/bezier)
+add_subdirectory(extlibs/cute_c2)
+
 if(OBE_USE_VCPKG)
     find_package(fmt CONFIG REQUIRED)
     find_package(spdlog CONFIG REQUIRED)
@@ -28,10 +30,11 @@ else()
     add_subdirectory(extlibs/lua)
     add_subdirectory(extlibs/sol3)
 
-    if (APPLE OR USE_FILESYSTEM_FALLBACK)
+    if(APPLE OR USE_FILESYSTEM_FALLBACK)
         add_subdirectory(extlibs/tinydir)
     endif()
 endif()
+
 add_subdirectory(extlibs/platformfolders)
 add_subdirectory(extlibs/dynamicLinker)
 add_subdirectory(extlibs/fswrapper)
@@ -47,7 +50,7 @@ add_subdirectory(extlibs/lunasvg)
 # Magic enum
 add_subdirectory(extlibs/magic_enum)
 
-if (APPLE OR USE_FILESYSTEM_FALLBACK)
+if(APPLE OR USE_FILESYSTEM_FALLBACK)
     set(USE_FILESYSTEM_FALLBACK TRUE CACHE BOOL "Use filesystem fallback" FORCE)
 endif()
 
@@ -65,6 +68,7 @@ add_subdirectory(extlibs/whereami)
 
 # Find git installation
 find_package(Git QUIET)
+
 if(NOT Git_FOUND)
     message(WARNING "Could not find git, trying to use git from PATH")
     set(GIT_EXECUTABLE "git")
@@ -72,54 +76,54 @@ endif()
 
 add_subdirectory(src/Core)
 
-if (BUILD_ANDROID)
+if(BUILD_ANDROID)
     set(BUILD_PLAYER OFF)
     set(BUILD_DEV OFF)
     add_subdirectory(src/Android)
 endif()
 
-if (NOT DEFINED BUILD_PLAYER)
+if(NOT DEFINED BUILD_PLAYER)
     set(BUILD_PLAYER ON CACHE BOOL "Build ObEngine Player ?")
 endif()
 
-if (NOT DEFINED BUILD_TOOLKIT)
+if(NOT DEFINED BUILD_TOOLKIT)
     set(BUILD_TOOLKIT ON CACHE BOOL "Build ObEngine Toolkit ?")
 endif()
 
-if (WIN32)
+if(WIN32)
     add_compile_options($<$<CXX_COMPILER_ID:MSVC>:/MP>)
     file(GLOB OBENGINE_ICON ${CMAKE_SOURCE_DIR}/resources/resource.rc)
 else()
     set(OBENGINE_ICON "")
 endif()
 
-if (BUILD_PLAYER)
+if(BUILD_PLAYER)
     add_subdirectory(src/Player)
     set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT ObEnginePlayer)
 endif()
 
-if (BUILD_TOOLKIT)
+if(BUILD_TOOLKIT)
     add_subdirectory(extlibs/styler)
     add_subdirectory(src/Toolkit)
 endif()
 
-if (NOT DEFINED BUILD_DEV)
+if(NOT DEFINED BUILD_DEV)
     set(BUILD_DEV ON CACHE BOOL "Build ObEngine Dev ?")
 endif()
 
-if (NOT DEFINED BUILD_TESTS)
+if(NOT DEFINED BUILD_TESTS)
     set(BUILD_TESTS OFF CACHE BOOL "Build ObEngine Tests ?")
 endif()
 
-if (BUILD_TESTS)
+if(BUILD_TESTS)
     add_subdirectory(tests)
 endif()
 
-if (NOT DEFINED RUN_CI_TOOLS)
+if(NOT DEFINED RUN_CI_TOOLS)
     set(RUN_CI_TOOLS OFF CACHE BOOL "Run CI tools ?")
 endif()
 
-if (NOT DEFINED BUILD_PRODUCTION)
+if(NOT DEFINED BUILD_PRODUCTION)
     set(BUILD_PRODUCTION OFF CACHE BOOL "Build ObEngine for Production ?")
 endif()
 
@@ -131,20 +135,24 @@ configure_file(
 set(CMAKE_CXX_CLANG_TIDY "")
 set(CMAKE_CXX_CPPCHECK "")
 set(MAKE_CXX_INCLUDE_WHAT_YOU_USE "")
-if (RUN_CI_TOOLS)
+
+if(RUN_CI_TOOLS)
     find_program(CLANG_TIDY_COMMAND NAMES clang-tidy)
     find_program(CPPCHECK_COMMAND NAMES cppcheck)
     find_program(IWYU_COMMAND NAMES iwyu-tool)
 
-    if (CLANG_TIDY_COMMAND)
+    if(CLANG_TIDY_COMMAND)
         set(CMAKE_CXX_CLANG_TIDY "${CLANG_TIDY_COMMAND};-checks=*,-fuchsia-default-arguments")
     endif()
-    if (CPPCHECK_COMMAND)
+
+    if(CPPCHECK_COMMAND)
         set(CMAKE_CXX_CPPCHECK "${CPPCHECK_COMMAND};--std=c++11")
     endif()
-    if (IWYU_COMMAND)
+
+    if(IWYU_COMMAND)
         set(MAKE_CXX_INCLUDE_WHAT_YOU_USE "${IWYU_COMMAND};--transitive_includes_only")
     endif()
+
     set(CMAKE_LINK_WHAT_YOU_USE TRUE)
 
     get_property(OBENGINE_CORE_SRC TARGET ObEngineCore PROPERTY SOURCES)

@@ -19,6 +19,7 @@ namespace obe::graphics
 
     public:
         Renderable() = default;
+        Renderable(int32_t layer, int32_t sublayer);
         virtual ~Renderable() = default;
 
         /**
