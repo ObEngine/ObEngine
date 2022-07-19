@@ -10,7 +10,8 @@ namespace obe::collision
         c2Circle m_shape = {};
 
     protected:
-        [[nodiscard]] void* get_c2_shape() override;
+        [[nodiscard]] const void* get_c2_shape() const override;
+        [[nodiscard]] const c2x* get_c2_space_transform() const override;
         void update_shape();
 
     public:

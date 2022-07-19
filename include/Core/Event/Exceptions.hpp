@@ -5,7 +5,7 @@
 /**
  * \nobind
  */
-namespace obe::event::Exceptions
+namespace obe::event::exceptions
 {
     class CallbackCreationError : public Exception<CallbackCreationError>
     {
@@ -167,4 +167,4 @@ namespace obe::event::Exceptions
                        "event_namespace.set_joinable(true) from its manager");
         }
     };
-} // namespace obe::event::Exceptions
+} // namespace obe::event::exceptions

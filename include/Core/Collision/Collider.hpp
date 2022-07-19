@@ -66,10 +66,11 @@ namespace obe::collision
         std::unordered_set<std::string> m_rejected_tags;
 
     protected:
-        const std::unordered_set<std::string>& get_tag_set(ColliderTagType tag_type) const;
+        [[nodiscard]] const std::unordered_set<std::string>& get_tag_set(ColliderTagType tag_type) const;
         std::unordered_set<std::string>& get_tag_set(ColliderTagType tag_type);
 
-        [[nodiscard]] virtual void* get_c2_shape() = 0;
+        [[nodiscard]] virtual const void* get_c2_shape() const = 0;
+        [[nodiscard]] virtual const c2x* get_c2_space_transform() const = 0;
 
     public:
         /**
@@ -130,6 +131,12 @@ namespace obe::collision
          *         the chosen List
          */
         [[nodiscard]] std::unordered_set<std::string> get_all_tags(ColliderTagType tag_type) const;
+        /**
+         * \brief Check whether the collider is allowed to collide with another collider based on their tags
+         * \param collider other collider to check compatibility with
+         * \return true if the two colliders are allowed to collide, false otherwise
+         */
+        [[nodiscard]] bool can_collide_with(const Collider& collider) const;
 
         /**
          * \brief Checks if two polygons are intersecting
@@ -137,8 +144,7 @@ namespace obe::collision
          * \param offset The offset to apply to the source collider
          * \return true if the two polygons intersects, false otherwise
          */
-        [[nodiscard]] bool collides(
-            const Collider& collider, const transform::UnitVector& offset) const;
+        [[nodiscard]] bool collides(const Collider& collider) const;
         /**
          * \brief Gets the Maximum distance before Collision with a specific
          *        Collider
@@ -148,7 +154,8 @@ namespace obe::collision
          */
         [[nodiscard]] transform::UnitVector get_offset_before_collision(
             const Collider& collider,
-            const transform::UnitVector& offset) const;
+            const transform::UnitVector& self_offset = transform::UnitVector(0, 0),
+            const transform::UnitVector& other_offset = transform::UnitVector(0, 0)) const;
 
         /*
          * \brief Returns the cached bounding box. Recalculates it if necessary.

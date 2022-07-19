@@ -143,11 +143,19 @@ namespace obe::bindings
         obe::audio::bindings::load_class_sound(state);
         obe::audio::bindings::load_enum_load_policy(state);
         obe::audio::bindings::load_enum_sound_status(state);
+        obe::collision::bindings::load_class_capsule_collider(state);
+        obe::collision::bindings::load_class_circle_collider(state);
+        obe::collision::bindings::load_class_collider(state);
+        obe::collision::bindings::load_class_collider_component(state);
         obe::collision::bindings::load_class_collision_data(state);
-        obe::collision::bindings::load_class_polygonal_collider(state);
+        obe::collision::bindings::load_class_collision_space(state);
+        obe::collision::bindings::load_class_polygon_collider(state);
+        obe::collision::bindings::load_class_rectangle_collider(state);
         obe::collision::bindings::load_class_trajectory(state);
         obe::collision::bindings::load_class_trajectory_node(state);
         obe::collision::bindings::load_enum_collider_tag_type(state);
+        obe::collision::bindings::load_enum_collider_type(state);
+        obe::collision::bindings::load_function_collider_type_to_c2type(state);
         obe::component::bindings::load_class_component_base(state);
         obe::config::bindings::load_class_configuration_manager(state);
         obe::config::bindings::load_class_version(state);
@@ -286,6 +294,7 @@ namespace obe::bindings
         obe::types::bindings::load_class_selectable(state);
         obe::types::bindings::load_class_serializable(state);
         obe::types::bindings::load_class_togglable(state);
+        obe::types::bindings::load_class_unique_identifiable(state);
         obe::types::bindings::load_class_unknown_enum_entry(state);
         obe::utils::exec::bindings::load_class_run_args_parser(state);
         vili::bindings::load_class_const_node_iterator(state);

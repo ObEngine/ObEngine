@@ -17,7 +17,7 @@ namespace obe::system::package
                 .at(package_name)
                 .at("path");
         }
-        throw Exceptions::UnknownPackage(package_name, list_packages(), EXC_INFO);
+        throw exceptions::UnknownPackage(package_name, list_packages(), EXC_INFO);
     }
 
     bool package_exists(const std::string& package_name)
@@ -42,7 +42,7 @@ namespace obe::system::package
         if (!utils::vector::contains(
                 package_name + ".opaque", utils::file::get_file_list("Package")))
         {
-            throw Exceptions::PackageFileNotFound(
+            throw exceptions::PackageFileNotFound(
                 fmt::format("Package/{}.opaque", package_name), EXC_INFO);
         }
 
@@ -51,7 +51,7 @@ namespace obe::system::package
             throw std::runtime_error(
                 "Invalid feature: Package installation has been disabled for >v0.4");
         }
-        throw Exceptions::PackageAlreadyInstalled(package_name, EXC_INFO);
+        throw exceptions::PackageAlreadyInstalled(package_name, EXC_INFO);
     }
 
     bool load(
@@ -64,6 +64,6 @@ namespace obe::system::package
                 MountablePathType::Package, get_package_location(package_name), prefix, priority));
             return true;
         }
-        throw Exceptions::UnknownPackage(package_name, list_packages(), EXC_INFO);
+        throw exceptions::UnknownPackage(package_name, list_packages(), EXC_INFO);
     }
 } // namespace obe::system::package

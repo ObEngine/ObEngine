@@ -31,6 +31,16 @@ namespace obe::component
     {
     }
 
+    ComponentBase::ComponentBase(const ComponentBase& other)
+        : Identifiable(other.get_id())
+    {
+    }
+
+    ComponentBase& ComponentBase::operator=(const ComponentBase& other)
+    {
+        return *this;
+    }
+
     sol::lua_value ComponentBase::cast()
     {
         if (!ComponentCasters.count(this->type()))

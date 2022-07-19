@@ -12,7 +12,8 @@ namespace obe::component::bindings
         sol::usertype<obe::component::ComponentBase> bind_component_base
             = component_namespace.new_usertype<obe::component::ComponentBase>("ComponentBase",
                 sol::base_classes,
-                sol::bases<obe::types::Identifiable, obe::types::Serializable>());
+                sol::bases<obe::types::Identifiable, obe::types::Serializable,
+                    obe::types::UniqueIdentifiable>());
         bind_component_base["remove"] = &obe::component::ComponentBase::remove;
         bind_component_base["dump"] = &obe::component::ComponentBase::dump;
         bind_component_base["load"] = &obe::component::ComponentBase::load;

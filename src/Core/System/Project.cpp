@@ -18,7 +18,7 @@ namespace obe::system::project
             const std::string projects_file_location = "obe://projects.vili"_fs;
             return vili::parser::from_file(projects_file_location).at(project_name).at("path");
         }
-        throw Exceptions::UnknownProject(project_name, list_projects(), EXC_INFO);
+        throw exceptions::UnknownProject(project_name, list_projects(), EXC_INFO);
     }
 
     bool project_exists(const std::string& project_name)
@@ -67,7 +67,7 @@ namespace obe::system::project
             MountablePath::mount(project_cfg);
             return true;
         }
-        throw Exceptions::UnknownProject(project_name, list_projects(), EXC_INFO);
+        throw exceptions::UnknownProject(project_name, list_projects(), EXC_INFO);
     }
 
     std::vector<std::string> list_projects()
@@ -245,7 +245,7 @@ namespace obe::system::project
         }
         catch (const vili::exceptions::base_exception& e)
         {
-            throw Exceptions::InvalidProjectFile("<?>", EXC_INFO).nest(e);
+            throw exceptions::InvalidProjectFile("<?>", EXC_INFO).nest(e);
         }
     }
 
@@ -295,15 +295,15 @@ namespace obe::system::project
         {
             this->load(project);
         }
-        catch (const Exceptions::InvalidProjectFile& e)
+        catch (const exceptions::InvalidProjectFile& e)
         {
             const std::vector<std::runtime_error>& traceback = e.traceback();
             if (!traceback.empty())
             {
                 const std::runtime_error& underlying_exception = traceback.back();
-                throw Exceptions::InvalidProjectFile(path, EXC_INFO).nest(underlying_exception);
+                throw exceptions::InvalidProjectFile(path, EXC_INFO).nest(underlying_exception);
             }
-            throw Exceptions::InvalidProjectFile(path, EXC_INFO);
+            throw exceptions::InvalidProjectFile(path, EXC_INFO);
         }
     }
 

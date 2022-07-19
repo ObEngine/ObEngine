@@ -212,10 +212,11 @@ namespace obe::script
         // Collider
         if (obj.contains("Collider"))
         {
-            m_collider = &scene.create_collider(m_id, false);
-            m_object_node.add_child(*m_collider);
+            const std::string collider_id = fmt::format("{}_collider", m_id);
+            m_collider = &scene.create_collider(collider_id, false);
+            m_object_node.add_child(*m_collider->get_inner_collider());
             m_collider->load(obj.at("Collider"));
-            m_collider->set_parent_id(m_id);
+            m_component_ids.insert(collider_id);
         }
     }
 
@@ -289,7 +290,7 @@ namespace obe::script
         return m_object_node;
     }
 
-    collision::PolygonalCollider& GameObject::get_collider() const
+    collision::ColliderComponent& GameObject::get_collider() const
     {
         if (m_collider)
             return *m_collider;
@@ -426,5 +427,10 @@ namespace obe::script
             throw exceptions::InvalidScript(
                 full_path, load_result.get<sol::error>().what(), EXC_INFO);
         }
+    }
+
+    bool GameObject::is_parent_of_component(const std::string& component_id) const
+    {
+        return m_component_ids.contains(component_id);
     }
 } // namespace obe::script

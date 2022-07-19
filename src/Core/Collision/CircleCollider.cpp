@@ -2,9 +2,14 @@
 
 namespace obe::collision
 {
-    void* CircleCollider::get_c2_shape()
+    const void* CircleCollider::get_c2_shape() const
     {
-        return static_cast<void*>(&m_shape);
+        return static_cast<const void*>(&m_shape);
+    }
+
+    const c2x* CircleCollider::get_c2_space_transform() const
+    {
+        return nullptr;
     }
 
     void CircleCollider::update_shape()

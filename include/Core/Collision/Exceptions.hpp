@@ -5,7 +5,7 @@
 /**
  * \nobind
  */
-namespace obe::collision::Exceptions
+namespace obe::collision::exceptions
 {
     class InvalidTagFormat : public Exception<InvalidTagFormat>
     {
@@ -21,4 +21,19 @@ namespace obe::collision::Exceptions
                        "array of strings (for multiple tags)");
         }
     };
-} // namespace obe::collision::Exceptions
+
+    class TooManyPolygonColliderPoints : public Exception<TooManyPolygonColliderPoints>
+    {
+    public:
+        using Exception::Exception;
+        TooManyPolygonColliderPoints(std::string_view collider_id, std::string_view tag_type,
+            std::string_view data_type, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("Tried to set '{}' tags field with value of type '{}' on collider '{}'",
+                tag_type, data_type, collider_id);
+            this->hint("The field should either be a string (for a unique tag) or an "
+                       "array of strings (for multiple tags)");
+        }
+    };
+} // namespace obe::collision::exceptions

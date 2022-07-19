@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Collision/PolygonalCollider.hpp>
+#include <Collision/Collider.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Transform/Units.hpp>
 #include <Types/Togglable.hpp>
@@ -20,9 +20,9 @@ namespace obe::collision
     class PolygonalCollider;
 
     using OnCollideCallback
-        = std::function<void(Trajectory&, transform::UnitVector, collision::CollisionData)>;
+        = std::function<void(Trajectory&, transform::UnitVector, collision::Collider*)>;
     using TrajectoryCheckFunction
-        = std::function<void(Trajectory&, transform::UnitVector&, PolygonalCollider*)>;
+        = std::function<void(Trajectory&, transform::UnitVector&, collision::Collider*)>;
 
     /**
      * \brief A Trajectory makes a TrajectoryNode moves using angle, speed and

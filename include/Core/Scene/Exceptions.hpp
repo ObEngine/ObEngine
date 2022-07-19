@@ -5,7 +5,7 @@
 /**
  * \nobind
  */
-namespace obe::scene::Exceptions
+namespace obe::scene::exceptions
 {
     class ChildNotInSceneNode : public Exception<ChildNotInSceneNode>
     {
@@ -143,4 +143,4 @@ namespace obe::scene::Exceptions
             this->error("Encountered error while loading Scene from file '{}'", scene_file);
         }
     };
-} // namespace obe::scene::Exceptions
+} // namespace obe::scene::exceptions

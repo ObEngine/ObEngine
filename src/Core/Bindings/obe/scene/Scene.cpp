@@ -101,24 +101,21 @@ namespace obe::scene::bindings
         bind_scene["does_sprite_exists"] = &obe::scene::Scene::does_sprite_exists;
         bind_scene["remove_sprite"] = &obe::scene::Scene::remove_sprite;
         bind_scene["create_collider"] = sol::overload(
-            [](obe::scene::Scene* self) -> obe::collision::PolygonalCollider& {
+            [](obe::scene::Scene* self) -> obe::collision::ColliderComponent& {
                 return self->create_collider();
             },
             [](obe::scene::Scene* self, const std::string& id)
-                -> obe::collision::PolygonalCollider& { return self->create_collider(id); },
+                -> obe::collision::ColliderComponent& { return self->create_collider(id); },
             [](obe::scene::Scene* self, const std::string& id,
-                bool add_to_scene_root) -> obe::collision::PolygonalCollider& {
+                bool add_to_scene_root) -> obe::collision::ColliderComponent& {
                 return self->create_collider(id, add_to_scene_root);
             });
         bind_scene["get_collider_amount"] = &obe::scene::Scene::get_collider_amount;
         bind_scene["get_all_colliders"] = &obe::scene::Scene::get_all_colliders;
-        bind_scene["get_collider_point_by_position"]
-            = &obe::scene::Scene::get_collider_point_by_position;
-        bind_scene["get_collider_by_centroid_position"]
-            = &obe::scene::Scene::get_collider_by_centroid_position;
         bind_scene["get_collider"] = &obe::scene::Scene::get_collider;
         bind_scene["does_collider_exists"] = &obe::scene::Scene::does_collider_exists;
         bind_scene["remove_collider"] = &obe::scene::Scene::remove_collider;
+        bind_scene["get_collision_space"] = &obe::scene::Scene::get_collision_space;
         bind_scene["get_scene_root_node"] = &obe::scene::Scene::get_scene_root_node;
         bind_scene["get_filesystem_path"] = &obe::scene::Scene::get_filesystem_path;
         bind_scene["reload"]

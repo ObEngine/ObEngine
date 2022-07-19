@@ -1,5 +1,7 @@
 #pragma once
 
+#include <random>
+
 /**
  * \brief Functions to work with maths
  */
@@ -11,9 +13,18 @@ namespace obe::utils::math
      * \brief Get a random integer between the given bound
      * \param min Min bound
      * \param max Max bound
+     * \thints
+     * \thint{get_min, N=uint16_t}
+     * \thint{get_min, N=uint32_t}
+     * \thint{get_min, N=uint64_t}
+     * \thint{get_min, N=int16_t}
+     * \thint{get_min, N=int32_t}
+     * \thint{get_min, N=int64_t}
+     * \endthints
      * \return A random int between the given bound
      */
-    int randint(const int& min, const int& max);
+    template <class N>
+    N randint(N min, N max);
     /**
      * \brief Get a random double
      * \return A random double between 0.0 and 1.0
@@ -100,6 +111,22 @@ namespace obe::utils::math
      * \paramrename{end,high}
      */
     double normalize(double value, double start, double end);
+
+    /**
+     * \nobind
+     */
+    inline std::random_device rd;
+    /**
+     * \nobind
+     */
+    inline std::mt19937 rng { rd() };
+
+    template <class N>
+    N randint(N min, N max)
+    {
+        std::uniform_int_distribution<N> uni(min, max);
+        return uni(rng);
+    }
 
     template <typename N>
     N get_min(const N& min1, const N& min2)

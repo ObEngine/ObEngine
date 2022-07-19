@@ -8,7 +8,7 @@
 /**
  * \nobind
  */
-namespace obe::system::Exceptions
+namespace obe::system::exceptions
 {
     class ResourceNotFound : public Exception<ResourceNotFound>
     {
@@ -199,4 +199,4 @@ namespace obe::system::Exceptions
                 prefix);
         }
     };
-} // namespace obe::system::Exceptions
+} // namespace obe::system::exceptions

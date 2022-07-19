@@ -9,7 +9,13 @@ namespace obe::utils::math::bindings
     void load_function_randint(sol::state_view state)
     {
         sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
-        math_namespace.set_function("randint", &obe::utils::math::randint);
+        math_namespace.set_function("randint",
+            sol::overload(static_cast<uint16_t (*)(uint16_t, uint16_t)>(&obe::utils::math::randint),
+                static_cast<uint32_t (*)(uint32_t, uint32_t)>(&obe::utils::math::randint),
+                static_cast<uint64_t (*)(uint64_t, uint64_t)>(&obe::utils::math::randint),
+                static_cast<int16_t (*)(int16_t, int16_t)>(&obe::utils::math::randint),
+                static_cast<int32_t (*)(int32_t, int32_t)>(&obe::utils::math::randint),
+                static_cast<int64_t (*)(int64_t, int64_t)>(&obe::utils::math::randint)));
     }
     void load_function_randfloat(sol::state_view state)
     {

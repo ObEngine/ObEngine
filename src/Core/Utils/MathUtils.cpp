@@ -5,24 +5,15 @@
 
 namespace obe::utils::math
 {
-    std::random_device rd;
-    std::mt19937 rng { rd() };
-
-    int randint(const int& min, const int& max)
-    {
-        std::uniform_int_distribution<int> uni(min, max);
-        return uni(rng);
-    }
-
     double randfloat()
     {
-        std::uniform_real_distribution<> dis(0, 1);
+        const std::uniform_real_distribution<> dis(0, 1);
         return dis(rng);
     }
 
     bool is_double_int(const double& value)
     {
-        return (int(value) == value);
+        return (static_cast<int>(value) == value);
     }
 
     double convert_to_radian(const double value)

@@ -61,8 +61,10 @@ namespace obe::transform::bindings
     {
         sol::table transform_namespace = state["obe"]["transform"].get<sol::table>();
         sol::usertype<obe::transform::Movable> bind_movable
-            = transform_namespace.new_usertype<obe::transform::Movable>(
-                "Movable", sol::call_constructor, sol::default_constructor);
+            = transform_namespace.new_usertype<obe::transform::Movable>("Movable",
+                sol::call_constructor,
+                sol::constructors<obe::transform::Movable(),
+                    obe::transform::Movable(const obe::transform::UnitVector&)>());
         bind_movable["set_position"] = &obe::transform::Movable::set_position;
         bind_movable["move"] = &obe::transform::Movable::move;
         bind_movable["get_position"] = &obe::transform::Movable::get_position;
@@ -74,9 +76,7 @@ namespace obe::transform::bindings
             = transform_namespace.new_usertype<obe::transform::Polygon>("Polygon",
                 sol::call_constructor,
                 sol::constructors<obe::transform::Polygon(),
-                    obe::transform::Polygon(const obe::transform::Polygon&)>(),
-                sol::base_classes,
-                sol::bases<obe::transform::UnitBasedObject, obe::transform::Movable>());
+                    obe::transform::Polygon(const obe::transform::Polygon&)>());
         bind_polygon["add_point"] = sol::overload(
             [](obe::transform::Polygon* self, const obe::transform::UnitVector& position) -> void {
                 return self->add_point(position);
@@ -100,7 +100,6 @@ namespace obe::transform::bindings
         bind_polygon["get_centroid"] = &obe::transform::Polygon::get_centroid;
         bind_polygon["get_points_amount"] = &obe::transform::Polygon::get_points_amount;
         bind_polygon["get_position"] = &obe::transform::Polygon::get_position;
-        bind_polygon["get_rotation"] = &obe::transform::Polygon::get_rotation;
         bind_polygon["get_segment"] = &obe::transform::Polygon::get_segment;
         bind_polygon["get_segment_containing_point"] = sol::overload(
             [](obe::transform::Polygon* self, const obe::transform::UnitVector& position)
@@ -115,9 +114,7 @@ namespace obe::transform::bindings
             = &obe::transform::Polygon::is_centroid_near_position;
         bind_polygon["get_point_near_position"] = &obe::transform::Polygon::get_point_near_position;
         bind_polygon["move"] = &obe::transform::Polygon::move;
-        bind_polygon["rotate"] = &obe::transform::Polygon::rotate;
         bind_polygon["set_position"] = &obe::transform::Polygon::set_position;
-        bind_polygon["set_rotation"] = &obe::transform::Polygon::set_rotation;
         bind_polygon["set_position_from_centroid"]
             = &obe::transform::Polygon::set_position_from_centroid;
         bind_polygon[sol::meta_function::index] = &obe::transform::Polygon::operator[];
@@ -129,6 +126,9 @@ namespace obe::transform::bindings
                     obe::transform::Polygon::*)(obe::transform::point_index_t) const>(
                     &obe::transform::Polygon::get));
         bind_polygon["get_bounding_box"] = &obe::transform::Polygon::get_bounding_box;
+        bind_polygon["set_rotation"] = &obe::transform::Polygon::set_rotation;
+        bind_polygon["rotate"] = &obe::transform::Polygon::rotate;
+        bind_polygon["get_rotation"] = &obe::transform::Polygon::get_rotation;
         bind_polygon["DefaultTolerance"] = sol::var(&obe::transform::Polygon::DefaultTolerance);
     }
     void load_class_polygon_point(sol::state_view state)

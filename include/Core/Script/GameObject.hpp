@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Animation/Animator.hpp>
-#include <Collision/PolygonalCollider.hpp>
+#include <Collision/ColliderComponent.hpp>
 #include <Debug/Logger.hpp>
 #include <Graphics/Sprite.hpp>
 #include <Scene/SceneNode.hpp>
@@ -64,11 +64,12 @@ namespace obe::script
         bool m_permanent = false;
         std::unique_ptr<animation::Animator> m_animator;
         graphics::Sprite* m_sprite = nullptr;
-        collision::PolygonalCollider* m_collider = nullptr;
+        collision::ColliderComponent* m_collider = nullptr;
         scene::SceneNode m_object_node;
         sol::state_view m_lua;
         sol::environment m_outer_environment;
         sol::environment m_inner_environment;
+        std::unordered_set<std::string> m_component_ids;
 
         std::string m_type;
 
@@ -147,7 +148,7 @@ namespace obe::script
          *        ObEngine.Script.GameObject.NoCollider if no Collider Component)
          * \return A pointer to the Collider Component of the GameObject
          */
-        [[nodiscard]] collision::PolygonalCollider& get_collider() const;
+        [[nodiscard]] collision::ColliderComponent& get_collider() const;
         /**
          * \rename{Sprite}
          * \asproperty
@@ -226,5 +227,7 @@ namespace obe::script
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
         void load_source(const std::string& path, EnvironmentTarget env);
+
+        bool is_parent_of_component(const std::string& component_id) const;
     };
 } // namespace obe::script

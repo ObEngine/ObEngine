@@ -56,7 +56,7 @@ namespace obe::input
         {
             action_ids.push_back(action->get_id());
         }
-        throw Exceptions::UnknownInputAction(action_id, action_ids, EXC_INFO);
+        throw exceptions::UnknownInputAction(action_id, action_ids, EXC_INFO);
     }
 
     void InputManager::update()
@@ -146,7 +146,7 @@ namespace obe::input
                     }
                     catch (const BaseException& e)
                     {
-                        throw Exceptions::InvalidInputCombinationCode(action, condition, EXC_INFO)
+                        throw exceptions::InvalidInputCombinationCode(action, condition, EXC_INFO)
                             .nest(e);
                     }
 
@@ -257,7 +257,7 @@ namespace obe::input
         if (const auto& input = m_inputs.find(key_id); input != m_inputs.end())
             return *input->second;
 
-        throw Exceptions::UnknownInputButton(key_id, this->get_all_input_button_names(), EXC_INFO);
+        throw exceptions::UnknownInputButton(key_id, this->get_all_input_button_names(), EXC_INFO);
     }
 
     std::vector<InputButton*> InputManager::get_inputs()
@@ -363,7 +363,7 @@ namespace obe::input
                         }
                         else
                         {
-                            throw Exceptions::InvalidInputButtonState(button_state, EXC_INFO);
+                            throw exceptions::InvalidInputButtonState(button_state, EXC_INFO);
                         }
                     }
                     const std::string key_id = state_and_button[1];
@@ -378,11 +378,11 @@ namespace obe::input
                         }
                         catch (const std::invalid_argument& exc)
                         {
-                            throw Exceptions::InvalidGamepadButton(key_id, EXC_INFO);
+                            throw exceptions::InvalidGamepadButton(key_id, EXC_INFO);
                         }
                         catch (const std::out_of_range& exc)
                         {
-                            throw Exceptions::InvalidGamepadButton(key_id, EXC_INFO);
+                            throw exceptions::InvalidGamepadButton(key_id, EXC_INFO);
                         }
                         this->initialize_gamepad(gamepad_index);
                     }
@@ -396,13 +396,13 @@ namespace obe::input
                         }
                         else
                         {
-                            throw Exceptions::InputButtonAlreadyInCombination(
+                            throw exceptions::InputButtonAlreadyInCombination(
                                 button.get_name(), EXC_INFO);
                         }
                     }
                     else
                     {
-                        throw Exceptions::UnknownInputButton(
+                        throw exceptions::UnknownInputButton(
                             key_id, this->get_all_input_button_names(), EXC_INFO);
                     }
                 }

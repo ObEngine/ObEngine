@@ -5,18 +5,26 @@
 
 namespace obe::collision
 {
-    void* PolygonCollider::get_c2_shape()
+    const void* PolygonCollider::get_c2_shape() const
     {
-        return static_cast<void*>(&m_shape);
+        return static_cast<const void*>(&m_shape);
+    }
+
+    const c2x* PolygonCollider::get_c2_space_transform() const
+    {
+        return &m_transform;
+    }
+
+    void PolygonCollider::update_transform()
+    {
+        const c2v position = { static_cast<float>(m_position.x), static_cast<float>(m_position.y) };
+        const c2r rotation = c2Rot(utils::math::convert_to_radian(m_angle));
+        m_transform.p = position;
+        m_transform.r = rotation;
     }
 
     void PolygonCollider::update_shape()
     {
-        const float radians = utils::math::convert_to_radian(m_angle);
-        const float x = static_cast<float>(Collider::m_position.x);
-        const float y = static_cast<float>(Collider::m_position.y);
-        m_global_transform.p = c2v { x, y };
-        m_global_transform.r = c2Rot(radians);
         c2MakePoly(&m_shape);
     }
 
@@ -40,6 +48,7 @@ namespace obe::collision
 
     transform::Rect PolygonCollider::get_bounding_box() const
     {
+        // TODO: handle rotation
         const auto verts_span = std::span { m_shape.verts };
         auto [min_x, max_x] = std::minmax_element(verts_span.begin(), verts_span.begin() + m_shape.count,
             [](auto& point1, auto& point2) { return point1.x < point2.x; });
@@ -60,13 +69,13 @@ namespace obe::collision
     void PolygonCollider::set_position(const transform::UnitVector& position)
     {
         Collider::set_position(position);
-        update_shape();
+        update_transform();
     }
 
     void PolygonCollider::move(const transform::UnitVector& position)
     {
         Collider::move(position);
-        update_shape();
+        update_transform();
     }
 
     void PolygonCollider::add_point(const transform::UnitVector& position, int point_index)
@@ -88,13 +97,13 @@ namespace obe::collision
     void PolygonCollider::set_rotation(float angle)
     {
         m_angle = angle;
-        update_shape();
+        update_transform();
     }
 
     void PolygonCollider::rotate(float angle)
     {
         m_angle += angle;
-        update_shape();
+        update_transform();
     }
 
     float PolygonCollider::get_rotation() const

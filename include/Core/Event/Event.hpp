@@ -148,7 +148,7 @@ namespace obe::event
         }
         catch (const BaseException& e)
         {
-            throw Exceptions::EventExecutionError(m_identifier, listener_id, EXC_INFO).nest(e);
+            throw exceptions::EventExecutionError(m_identifier, listener_id, EXC_INFO).nest(e);
         }
     }
 

@@ -1,6 +1,12 @@
 #include <Bindings/obe/collision/Collision.hpp>
 
-#include <Collision/PolygonalCollider.hpp>
+#include <Collision/CapsuleCollider.hpp>
+#include <Collision/CircleCollider.hpp>
+#include <Collision/Collider.hpp>
+#include <Collision/ColliderComponent.hpp>
+#include <Collision/CollisionSpace.hpp>
+#include <Collision/PolygonCollider.hpp>
+#include <Collision/RectangleCollider.hpp>
 #include <Collision/Trajectory.hpp>
 #include <Collision/TrajectoryNode.hpp>
 
@@ -16,6 +22,112 @@ namespace obe::collision::bindings
                 { "Accepted", obe::collision::ColliderTagType::Accepted },
                 { "Rejected", obe::collision::ColliderTagType::Rejected } });
     }
+    void load_enum_collider_type(sol::state_view state)
+    {
+        sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
+        collision_namespace.new_enum<obe::collision::ColliderType>("ColliderType",
+            { { "Collider", obe::collision::ColliderType::Collider },
+                { "Circle", obe::collision::ColliderType::Circle },
+                { "Rectangle", obe::collision::ColliderType::Rectangle },
+                { "Capsule", obe::collision::ColliderType::Capsule },
+                { "Polygon", obe::collision::ColliderType::Polygon } });
+    }
+    void load_class_capsule_collider(sol::state_view state)
+    {
+        sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
+        sol::usertype<obe::collision::CapsuleCollider> bind_capsule_collider
+            = collision_namespace.new_usertype<obe::collision::CapsuleCollider>("CapsuleCollider",
+                sol::call_constructor, sol::constructors<obe::collision::CapsuleCollider()>(),
+                sol::base_classes, sol::bases<obe::collision::Collider, obe::transform::Movable>());
+        bind_capsule_collider["get_collider_type"]
+            = &obe::collision::CapsuleCollider::get_collider_type;
+        bind_capsule_collider["get_bounding_box"]
+            = &obe::collision::CapsuleCollider::get_bounding_box;
+        bind_capsule_collider["get_position"] = &obe::collision::CapsuleCollider::get_position;
+        bind_capsule_collider["set_position"] = &obe::collision::CapsuleCollider::set_position;
+        bind_capsule_collider["move"] = &obe::collision::CapsuleCollider::move;
+        bind_capsule_collider["get_radius"] = &obe::collision::CapsuleCollider::get_radius;
+        bind_capsule_collider["set_radius"] = &obe::collision::CapsuleCollider::set_radius;
+        bind_capsule_collider["Type"] = sol::var(&obe::collision::CapsuleCollider::Type);
+    }
+    void load_class_circle_collider(sol::state_view state)
+    {
+        sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
+        sol::usertype<obe::collision::CircleCollider> bind_circle_collider
+            = collision_namespace.new_usertype<obe::collision::CircleCollider>("CircleCollider",
+                sol::call_constructor, sol::constructors<obe::collision::CircleCollider()>(),
+                sol::base_classes, sol::bases<obe::collision::Collider, obe::transform::Movable>());
+        bind_circle_collider["get_collider_type"]
+            = &obe::collision::CircleCollider::get_collider_type;
+        bind_circle_collider["get_bounding_box"]
+            = &obe::collision::CircleCollider::get_bounding_box;
+        bind_circle_collider["get_position"] = &obe::collision::CircleCollider::get_position;
+        bind_circle_collider["set_position"] = &obe::collision::CircleCollider::set_position;
+        bind_circle_collider["move"] = &obe::collision::CircleCollider::move;
+        bind_circle_collider["get_radius"] = &obe::collision::CircleCollider::get_radius;
+        bind_circle_collider["set_radius"] = &obe::collision::CircleCollider::set_radius;
+        bind_circle_collider["Type"] = sol::var(&obe::collision::CircleCollider::Type);
+    }
+    void load_class_collider(sol::state_view state)
+    {
+        sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
+        sol::usertype<obe::collision::Collider> bind_collider
+            = collision_namespace.new_usertype<obe::collision::Collider>(
+                "Collider", sol::base_classes, sol::bases<obe::transform::Movable>());
+        bind_collider["get_collider_type"] = &obe::collision::Collider::get_collider_type;
+        bind_collider["add_tag"] = &obe::collision::Collider::add_tag;
+        bind_collider["remove_tag"] = &obe::collision::Collider::remove_tag;
+        bind_collider["clear_tags"] = &obe::collision::Collider::clear_tags;
+        bind_collider["matches_any_tag"] = &obe::collision::Collider::matches_any_tag;
+        bind_collider["contains_tag"] = &obe::collision::Collider::contains_tag;
+        bind_collider["get_all_tags"] = &obe::collision::Collider::get_all_tags;
+        bind_collider["can_collide_with"] = &obe::collision::Collider::can_collide_with;
+        bind_collider["collides"] = &obe::collision::Collider::collides;
+        bind_collider["get_offset_before_collision"] = sol::overload(
+            [](obe::collision::Collider* self,
+                const obe::collision::Collider& collider) -> obe::transform::UnitVector {
+                return self->get_offset_before_collision(collider);
+            },
+            [](obe::collision::Collider* self, const obe::collision::Collider& collider,
+                const obe::transform::UnitVector& self_offset) -> obe::transform::UnitVector {
+                return self->get_offset_before_collision(collider, self_offset);
+            },
+            [](obe::collision::Collider* self, const obe::collision::Collider& collider,
+                const obe::transform::UnitVector& self_offset,
+                const obe::transform::UnitVector& other_offset) -> obe::transform::UnitVector {
+                return self->get_offset_before_collision(collider, self_offset, other_offset);
+            });
+        bind_collider["get_bounding_box"] = &obe::collision::Collider::get_bounding_box;
+    }
+    void load_class_collider_component(sol::state_view state)
+    {
+        sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
+        sol::usertype<obe::collision::ColliderComponent> bind_collider_component
+            = collision_namespace.new_usertype<obe::collision::ColliderComponent>(
+                "ColliderComponent", sol::base_classes,
+                sol::bases<obe::component::Component<obe::collision::ColliderComponent>,
+                    obe::component::ComponentBase, obe::types::Identifiable,
+                    obe::types::Serializable, obe::types::UniqueIdentifiable>());
+        bind_collider_component["dump"] = &obe::collision::ColliderComponent::dump;
+        bind_collider_component["load"] = &obe::collision::ColliderComponent::load;
+        bind_collider_component["get_collider_type"]
+            = &obe::collision::ColliderComponent::get_collider_type;
+        bind_collider_component["type"] = &obe::collision::ColliderComponent::type;
+        bind_collider_component["get_capsule_collider"]
+            = static_cast<obe::collision::CapsuleCollider* (
+                obe::collision::ColliderComponent::*)()>(
+                &obe::collision::ColliderComponent::get_inner_collider);
+        ;
+        bind_collider_component["get_circle_collider"]
+            = static_cast<obe::collision::CircleCollider* (obe::collision::ColliderComponent::*)()>(
+                &obe::collision::ColliderComponent::get_inner_collider);
+        ;
+        bind_collider_component["get_inner_collider"]
+            = static_cast<obe::collision::Collider* (obe::collision::ColliderComponent::*)()>(
+                &obe::collision::ColliderComponent::get_inner_collider);
+
+        ColliderComponent::Register();
+    }
     void load_class_collision_data(sol::state_view state)
     {
         sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
@@ -25,72 +137,78 @@ namespace obe::collision::bindings
         bind_collision_data["colliders"] = &obe::collision::CollisionData::colliders;
         bind_collision_data["offset"] = &obe::collision::CollisionData::offset;
     }
-    void load_class_polygonal_collider(sol::state_view state)
+    void load_class_collision_space(sol::state_view state)
     {
         sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
-        sol::usertype<obe::collision::PolygonalCollider> bind_polygonal_collider
-            = collision_namespace.new_usertype<obe::collision::PolygonalCollider>(
-                "PolygonalCollider", sol::base_classes,
-                sol::bases<obe::transform::Polygon, obe::transform::UnitBasedObject,
-                    obe::transform::Movable, obe::types::Selectable,
-                    obe::component::Component<obe::collision::PolygonalCollider>,
-                    obe::component::ComponentBase, obe::types::Identifiable,
-                    obe::types::Serializable>());
-        bind_polygonal_collider["add_tag"] = &obe::collision::PolygonalCollider::add_tag;
-        bind_polygonal_collider["clear_tags"] = &obe::collision::PolygonalCollider::clear_tags;
-        bind_polygonal_collider["does_collide"] = sol::overload(
-            static_cast<obe::collision::CollisionData (obe::collision::PolygonalCollider::*)(
-                const obe::transform::UnitVector&) const>(
-                &obe::collision::PolygonalCollider::does_collide),
-            [](obe::collision::PolygonalCollider* self, obe::collision::PolygonalCollider& collider,
-                const obe::transform::UnitVector& offset) -> bool {
-                return self->does_collide(collider, offset);
+        sol::usertype<obe::collision::CollisionSpace> bind_collision_space
+            = collision_namespace.new_usertype<obe::collision::CollisionSpace>("CollisionSpace",
+                sol::call_constructor, sol::constructors<obe::collision::CollisionSpace()>());
+        bind_collision_space["add_collider"] = &obe::collision::CollisionSpace::add_collider;
+        bind_collision_space["get_collider_amount"]
+            = &obe::collision::CollisionSpace::get_collider_amount;
+        bind_collision_space["get_all_colliders"]
+            = &obe::collision::CollisionSpace::get_all_colliders;
+        bind_collision_space["remove_collider"] = &obe::collision::CollisionSpace::remove_collider;
+        bind_collision_space["collides"] = &obe::collision::CollisionSpace::collides;
+        bind_collision_space["get_offset_before_collision"] = sol::overload(
+            [](obe::collision::CollisionSpace* self,
+                const obe::collision::Collider& collider) -> obe::transform::UnitVector {
+                return self->get_offset_before_collision(collider);
             },
-            [](obe::collision::PolygonalCollider* self, obe::collision::PolygonalCollider& collider,
-                const obe::transform::UnitVector& offset, const bool perform_aabb_filter) -> bool {
-                return self->does_collide(collider, offset, perform_aabb_filter);
-            });
-        bind_polygonal_collider["matches_any_tag"]
-            = &obe::collision::PolygonalCollider::matches_any_tag;
-        bind_polygonal_collider["contains_tag"] = &obe::collision::PolygonalCollider::contains_tag;
-        bind_polygonal_collider["get_all_tags"] = &obe::collision::PolygonalCollider::get_all_tags;
-        bind_polygonal_collider["get_distance_before_collision"] = sol::overload(
-            static_cast<obe::collision::CollisionData (obe::collision::PolygonalCollider::*)(
-                const obe::transform::UnitVector&) const>(
-                &obe::collision::PolygonalCollider::get_distance_before_collision),
-            [](obe::collision::PolygonalCollider* self, obe::collision::PolygonalCollider& collider,
+            [](obe::collision::CollisionSpace* self, const obe::collision::Collider& collider,
                 const obe::transform::UnitVector& offset) -> obe::transform::UnitVector {
-                return self->get_distance_before_collision(collider, offset);
-            },
-            [](obe::collision::PolygonalCollider* self, obe::collision::PolygonalCollider& collider,
-                const obe::transform::UnitVector& offset,
-                const bool perform_aabb_filter) -> obe::transform::UnitVector {
-                return self->get_distance_before_collision(collider, offset, perform_aabb_filter);
+                return self->get_offset_before_collision(collider, offset);
             });
-        bind_polygonal_collider["get_parent_id"]
-            = &obe::collision::PolygonalCollider::get_parent_id;
-        bind_polygonal_collider["schema"] = &obe::collision::PolygonalCollider::schema;
-        bind_polygonal_collider["dump"] = &obe::collision::PolygonalCollider::dump;
-        bind_polygonal_collider["load"] = &obe::collision::PolygonalCollider::load;
-        bind_polygonal_collider["remove_tag"] = &obe::collision::PolygonalCollider::remove_tag;
-        bind_polygonal_collider["set_parent_id"]
-            = &obe::collision::PolygonalCollider::set_parent_id;
-        bind_polygonal_collider["type"] = &obe::collision::PolygonalCollider::type;
-        bind_polygonal_collider["get_bounding_box"]
-            = &obe::collision::PolygonalCollider::get_bounding_box;
-        bind_polygonal_collider["add_point"] = sol::overload(
-            [](obe::collision::PolygonalCollider* self, const obe::transform::UnitVector& position)
+    }
+    void load_class_polygon_collider(sol::state_view state)
+    {
+        sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
+        sol::usertype<obe::collision::PolygonCollider> bind_polygon_collider
+            = collision_namespace.new_usertype<obe::collision::PolygonCollider>("PolygonCollider",
+                sol::call_constructor,
+                sol::constructors<obe::collision::PolygonCollider(),
+                    obe::collision::PolygonCollider(const obe::transform::UnitVector&)>(),
+                sol::base_classes, sol::bases<obe::collision::Collider, obe::transform::Movable>());
+        bind_polygon_collider["get_collider_type"]
+            = &obe::collision::PolygonCollider::get_collider_type;
+        bind_polygon_collider["get_bounding_box"]
+            = &obe::collision::PolygonCollider::get_bounding_box;
+        bind_polygon_collider["get_position"] = &obe::collision::PolygonCollider::get_position;
+        bind_polygon_collider["set_position"] = &obe::collision::PolygonCollider::set_position;
+        bind_polygon_collider["move"] = &obe::collision::PolygonCollider::move;
+        bind_polygon_collider["add_point"] = sol::overload(
+            [](obe::collision::PolygonCollider* self, const obe::transform::UnitVector& position)
                 -> void { return self->add_point(position); },
-            [](obe::collision::PolygonalCollider* self, const obe::transform::UnitVector& position,
+            [](obe::collision::PolygonCollider* self, const obe::transform::UnitVector& position,
                 int point_index) -> void { return self->add_point(position, point_index); });
-        bind_polygonal_collider["move"] = &obe::collision::PolygonalCollider::move;
-        bind_polygonal_collider["rotate"] = &obe::collision::PolygonalCollider::rotate;
-        bind_polygonal_collider["set_position"] = &obe::collision::PolygonalCollider::set_position;
-        bind_polygonal_collider["set_rotation"] = &obe::collision::PolygonalCollider::set_rotation;
-        bind_polygonal_collider["set_position_from_centroid"]
-            = &obe::collision::PolygonalCollider::set_position_from_centroid;
-
-        PolygonalCollider::Register();
+        bind_polygon_collider["get_points_amount"]
+            = &obe::collision::PolygonCollider::get_points_amount;
+        bind_polygon_collider["set_rotation"] = &obe::collision::PolygonCollider::set_rotation;
+        bind_polygon_collider["rotate"] = &obe::collision::PolygonCollider::rotate;
+        bind_polygon_collider["get_rotation"] = &obe::collision::PolygonCollider::get_rotation;
+        bind_polygon_collider["Type"] = sol::var(&obe::collision::PolygonCollider::Type);
+    }
+    void load_class_rectangle_collider(sol::state_view state)
+    {
+        sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
+        sol::usertype<obe::collision::RectangleCollider> bind_rectangle_collider
+            = collision_namespace.new_usertype<obe::collision::RectangleCollider>(
+                "RectangleCollider", sol::call_constructor,
+                sol::constructors<obe::collision::RectangleCollider(),
+                    obe::collision::RectangleCollider(const obe::transform::UnitVector&),
+                    obe::collision::RectangleCollider(
+                        const obe::transform::UnitVector&, const obe::transform::UnitVector&)>(),
+                sol::base_classes, sol::bases<obe::collision::Collider, obe::transform::Movable>());
+        bind_rectangle_collider["get_collider_type"]
+            = &obe::collision::RectangleCollider::get_collider_type;
+        bind_rectangle_collider["get_bounding_box"]
+            = &obe::collision::RectangleCollider::get_bounding_box;
+        bind_rectangle_collider["get_position"] = &obe::collision::RectangleCollider::get_position;
+        bind_rectangle_collider["set_position"] = &obe::collision::RectangleCollider::set_position;
+        bind_rectangle_collider["move"] = &obe::collision::RectangleCollider::move;
+        bind_rectangle_collider["get_size"] = &obe::collision::RectangleCollider::get_size;
+        bind_rectangle_collider["set_size"] = &obe::collision::RectangleCollider::set_size;
+        bind_rectangle_collider["Type"] = sol::var(&obe::collision::RectangleCollider::Type);
     }
     void load_class_trajectory(sol::state_view state)
     {
@@ -139,5 +257,11 @@ namespace obe::collision::bindings
             = &obe::collision::TrajectoryNode::remove_trajectory;
         bind_trajectory_node["set_probe"] = &obe::collision::TrajectoryNode::set_probe;
         bind_trajectory_node["update"] = &obe::collision::TrajectoryNode::update;
+    }
+    void load_function_collider_type_to_c2type(sol::state_view state)
+    {
+        sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
+        collision_namespace.set_function(
+            "collider_type_to_c2type", &obe::collision::collider_type_to_c2type);
     }
 };

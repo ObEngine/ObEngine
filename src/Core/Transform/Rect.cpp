@@ -134,6 +134,7 @@ namespace obe::transform
 
     bool Rect::intersects(const Rect& rect) const
     {
+        // TODO: fix for non-AABB rectangle
         const auto r1_min_x = std::min(m_position.x, m_position.x + m_size.x);
         const auto r1_max_x = std::max(m_position.x, m_position.x + m_size.x);
         const auto r1_min_y = std::min(m_position.y, m_position.y + m_size.y);
@@ -150,20 +151,21 @@ namespace obe::transform
 
     std::optional<Rect> Rect::intersection(const Rect& rect) const
     {
-        const auto r1MinX = std::min(m_position.x, m_position.x + m_size.x);
-        const auto r1MaxX = std::max(m_position.x, m_position.x + m_size.x);
-        const auto r1MinY = std::min(m_position.y, m_position.y + m_size.y);
-        const auto r1MaxY = std::max(m_position.y, m_position.y + m_size.y);
+        // TODO: fix for non-AABB rectangle
+        const auto r1_min_x = std::min(m_position.x, m_position.x + m_size.x);
+        const auto r1_max_x = std::max(m_position.x, m_position.x + m_size.x);
+        const auto r1_min_y = std::min(m_position.y, m_position.y + m_size.y);
+        const auto r1_max_y = std::max(m_position.y, m_position.y + m_size.y);
 
-        const auto r2MinX = std::min(rect.m_position.x, rect.m_position.x + rect.m_size.x);
-        const auto r2MaxX = std::max(rect.m_position.x, rect.m_position.x + rect.m_size.x);
-        const auto r2MinY = std::min(rect.m_position.y, rect.m_position.y + rect.m_size.y);
-        const auto r2MaxY = std::max(rect.m_position.y, rect.m_position.y + rect.m_size.y);
+        const auto r2_min_x = std::min(rect.m_position.x, rect.m_position.x + rect.m_size.x);
+        const auto r2_max_x = std::max(rect.m_position.x, rect.m_position.x + rect.m_size.x);
+        const auto r2_min_y = std::min(rect.m_position.y, rect.m_position.y + rect.m_size.y);
+        const auto r2_max_y = std::max(rect.m_position.y, rect.m_position.y + rect.m_size.y);
 
-        const auto intersection_left = std::max(r1MinX, r2MinX);
-        const auto intersection_top = std::max(r1MinY, r2MinY);
-        const auto intersection_right = std::min(r1MaxX, r2MaxX);
-        const auto intersection_bottom = std::min(r1MaxY, r2MaxY);
+        const auto intersection_left = std::max(r1_min_x, r2_min_x);
+        const auto intersection_top = std::max(r1_min_y, r2_min_y);
+        const auto intersection_right = std::min(r1_max_x, r2_max_x);
+        const auto intersection_bottom = std::min(r1_max_y, r2_max_y);
 
         if ((intersection_left < intersection_right) && (intersection_top < intersection_bottom))
         {
@@ -182,12 +184,14 @@ namespace obe::transform
 
     bool Rect::contains(const Rect& rect) const
     {
+        // TODO: fix for non-AABB rectangle
         return contains(rect.get_position(Referential::TopLeft))
             && contains(rect.get_position(Referential::BottomRight));
     }
 
     bool Rect::contains(const UnitVector& position) const
     {
+        // TODO: fix for non-AABB rectangle
         const UnitVector converted_position = position.to(m_position.unit);
         const auto min_x = std::min(m_position.x, m_position.x + m_size.x);
         const auto max_x = std::max(m_position.x, m_position.x + m_size.x);

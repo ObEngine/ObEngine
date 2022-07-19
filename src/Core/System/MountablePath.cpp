@@ -43,7 +43,7 @@ namespace obe::system
 
         if (!from_cwd && !from_exe)
         {
-            throw Exceptions::MissingDefaultMountPoint(EXC_INFO);
+            throw exceptions::MissingDefaultMountPoint(EXC_INFO);
         }
 
         MountablePath root_path(MountablePathType::Path, "", prefixes::root, priorities::defaults);
@@ -117,12 +117,12 @@ namespace obe::system
         catch (const vili::exceptions::file_not_found& e)
         {
             debug::Log->critical("<MountablePath> Unable to find 'mount.vili' : \n{}", e.what());
-            throw Exceptions::MountFileMissing(utils::file::get_current_directory(), EXC_INFO);
+            throw exceptions::MountFileMissing(utils::file::get_current_directory(), EXC_INFO);
         }
         catch (const std::exception& e)
         {
             debug::Log->critical("<MountablePath> Unable to load 'mount.vili' : \n{}", e.what());
-            throw Exceptions::InvalidMountFile(mount_file_path.path(), EXC_INFO).nest(e);
+            throw exceptions::InvalidMountFile(mount_file_path.path(), EXC_INFO).nest(e);
         }
         vili::validator::validate_tree(config::validators::mount_validator(), mounted_paths);
         if (mounted_paths.contains("mounts"))
@@ -207,7 +207,7 @@ namespace obe::system
     {
         if (path.deferred_resolution)
         {
-            throw Exceptions::InvalidDeferredMountablePath(path.prefix, EXC_INFO);
+            throw exceptions::InvalidDeferredMountablePath(path.prefix, EXC_INFO);
         }
         auto path_cmp = [&path](const auto& mounted_path) { return path == *mounted_path; };
         const bool path_already_exists
@@ -289,7 +289,7 @@ namespace obe::system
                 return *mount;
             }
         }
-        throw Exceptions::UnknownPathPrefix(prefix, get_all_prefixes(), EXC_INFO);
+        throw exceptions::UnknownPathPrefix(prefix, get_all_prefixes(), EXC_INFO);
     }
 
     std::vector<std::string> MountablePath::get_all_prefixes()

@@ -214,7 +214,7 @@ namespace obe::event
         }
         else
         {
-            throw Exceptions::EventAlreadyExists(m_identifier, event_name, EXC_INFO);
+            throw exceptions::EventAlreadyExists(m_identifier, event_name, EXC_INFO);
         }
     }
 

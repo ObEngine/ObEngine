@@ -99,7 +99,7 @@ namespace obe::scene
         }
     }
 
-    collision::PolygonalCollider& Scene::create_collider(
+    collision::ColliderComponent& Scene::create_collider(
         const std::string& id, bool add_to_scene_root)
     {
         std::string create_id = id;
@@ -115,14 +115,15 @@ namespace obe::scene
         }
         if (!this->does_collider_exists(create_id))
         {
-            std::unique_ptr<collision::PolygonalCollider> new_collider
-                = std::make_unique<collision::PolygonalCollider>(create_id);
-            collision::PolygonalCollider* collider = new_collider.get();
+            std::unique_ptr<collision::ColliderComponent> new_collider
+                = std::make_unique<collision::ColliderComponent>(create_id);
+            collision::ColliderComponent* collider = new_collider.get();
             m_collider_array.push_back(std::move(new_collider));
             m_collider_ids.insert(create_id);
             m_components[create_id] = collider;
             if (add_to_scene_root)
-                m_scene_root.add_child(*m_collider_array.back());
+                m_scene_root.add_child(*m_collider_array.back()->get_inner_collider());
+            m_collision_space.add_collider(collider->get_inner_collider());
             return *collider;
         }
         else
@@ -170,7 +171,7 @@ namespace obe::scene
         }
         catch (const std::exception& e)
         {
-            throw Exceptions::InvalidSceneFile(filepath, EXC_INFO).nest(e);
+            throw exceptions::InvalidSceneFile(filepath, EXC_INFO).nest(e);
         }
         this->load(scene_file);
     }
@@ -214,12 +215,17 @@ namespace obe::scene
                 return false;
             return true;
         });
-        debug::Log->debug("<Scene> Cleaning Sprite Array");
+        debug::Log->debug("<Scene> Cleaning Collider Array");
         std::erase_if(
-            m_collider_array, [this](const std::unique_ptr<collision::PolygonalCollider>& ptr) {
-                if (!ptr->get_parent_id().empty()
-                    && this->does_game_object_exists(ptr->get_parent_id()))
-                    return false;
+            m_collider_array, [this](const std::unique_ptr<collision::ColliderComponent>& ptr) {
+                for (const auto& game_object : m_game_object_array)
+                {
+                    if (game_object->is_parent_of_component(ptr->get_unique_id()))
+                    {
+                        return false;
+                    }
+                        ;
+                }
                 return true;
             });
         debug::Log->debug("<Scene> Clearing MapScript Array");
@@ -266,7 +272,7 @@ namespace obe::scene
             result["Collisions"] = vili::object {};
         for (auto& collider : m_collider_array)
         {
-            if (collider->get_parent_id().empty())
+            if (true) // TODO: fix this
             {
                 result["Collisions"][collider->get_id()] = collider->dump();
             }
@@ -309,7 +315,7 @@ namespace obe::scene
             }
         }
         else
-            throw Exceptions::MissingSceneFileBlock(m_level_file_name, "Meta", EXC_INFO);
+            throw exceptions::MissingSceneFileBlock(m_level_file_name, "Meta", EXC_INFO);
 
         if (data.contains("View"))
         {
@@ -348,7 +354,7 @@ namespace obe::scene
             m_camera.set_position(m_camera_initial_position, m_camera_initial_referential);
         }
         else
-            throw Exceptions::MissingSceneFileBlock(m_level_file_name, "View", EXC_INFO);
+            throw exceptions::MissingSceneFileBlock(m_level_file_name, "View", EXC_INFO);
 
         if (data.contains("Sprites"))
         {
@@ -396,7 +402,7 @@ namespace obe::scene
                 }
                 else if (!this->get_game_object(game_object_id).is_permanent())
                 {
-                    throw Exceptions::GameObjectAlreadyExists(m_level_file_name,
+                    throw exceptions::GameObjectAlreadyExists(m_level_file_name,
                         this->get_game_object(game_object_id).get_type(), game_object_id, EXC_INFO);
                 }
             }
@@ -415,7 +421,7 @@ namespace obe::scene
                 {
                     const auto err_obj = result.get<sol::error>();
                     const std::string err_msg = err_obj.what();
-                    throw Exceptions::SceneScriptLoadingError(m_level_file_name, source,
+                    throw exceptions::SceneScriptLoadingError(m_level_file_name, source,
                         utils::string::replace(err_msg, "\n", "\n        "), EXC_INFO);
                 }
                 m_script_array.push_back(script.at("source"));
@@ -458,7 +464,7 @@ namespace obe::scene
                     const std::string err_msg = "\n        \""
                         + utils::string::replace(error.what(), "\n", "\n        ") + "\"";
                     // TODO: Replace with nest
-                    throw Exceptions::SceneOnLoadCallbackError(
+                    throw exceptions::SceneOnLoadCallbackError(
                         current_scene, future_load_buffer, err_msg, EXC_INFO);
                 }
             }
@@ -510,11 +516,12 @@ namespace obe::scene
 
         if (m_render_options.collisions)
         {
-            for (const auto& collider : m_collider_array)
+            // TODO: Move out of Scene
+            /* for (const auto& collider : m_collider_array)
             {
                 debug::render::draw_polygon(
-                    surface, *collider, true, true, false, false, m_camera.get_position());
-            }
+                    surface, *collider->get_inner_collider(), true, true, false, false, m_camera.get_position());
+            }*/
         }
 
         if (m_render_options.scene_nodes)
@@ -548,9 +555,9 @@ namespace obe::scene
         m_level_name = new_name;
     }
 
-    std::vector<collision::PolygonalCollider*> Scene::get_all_colliders() const
+    std::vector<collision::ColliderComponent*> Scene::get_all_colliders() const
     {
-        std::vector<collision::PolygonalCollider*> all_colliders;
+        std::vector<collision::ColliderComponent*> all_colliders;
         for (const auto& collider : m_collider_array)
             all_colliders.push_back(collider.get());
         return all_colliders;
@@ -583,7 +590,7 @@ namespace obe::scene
         {
             object_ids.push_back(object->get_id());
         }
-        throw Exceptions::UnknownGameObject(m_level_file_name, id, object_ids, EXC_INFO);
+        throw exceptions::UnknownGameObject(m_level_file_name, id, object_ids, EXC_INFO);
     }
 
     bool Scene::does_game_object_exists(const std::string& id) const
@@ -627,7 +634,7 @@ namespace obe::scene
         }
         else if (this->does_game_object_exists(use_id))
         {
-            throw Exceptions::GameObjectAlreadyExists(
+            throw exceptions::GameObjectAlreadyExists(
                 m_level_file_name, this->get_game_object(use_id).get_type(), use_id, EXC_INFO);
         }
 
@@ -644,7 +651,7 @@ namespace obe::scene
 
         if (new_game_object->does_have_collider())
         {
-            new_game_object->get_collider().set_parent_id(use_id);
+            // new_game_object->get_collider().set_parent_id(use_id);
         }
 
         m_game_object_array.push_back(move(new_game_object));
@@ -703,15 +710,7 @@ namespace obe::scene
             = -(m_camera.get_position().to<transform::Units::ScenePixels>());
         for (const auto& sprite : sprites_on_layer)
         {
-            collision::PolygonalCollider position_collider("positionCollider");
-            position_collider.add_point(
-                sprite->get_position_transformer()(position, camera, layer));
-            collision::PolygonalCollider sprite_collider("sprCollider");
-            for (transform::Referential& ref : rect_pts)
-            {
-                sprite_collider.add_point(sprite->get_position(ref));
-            }
-            if (sprite_collider.does_collide(position_collider, zero_offset, true))
+            if (sprite->contains(sprite->get_position_transformer()(position, camera, layer)))
             {
                 return sprite;
             }
@@ -732,7 +731,7 @@ namespace obe::scene
         {
             sprites_ids.push_back(sprite->get_id());
         }
-        throw Exceptions::UnknownSprite(m_level_file_name, id, sprites_ids, EXC_INFO);
+        throw exceptions::UnknownSprite(m_level_file_name, id, sprites_ids, EXC_INFO);
     }
 
     bool Scene::does_sprite_exists(const std::string& id) const
@@ -796,39 +795,7 @@ namespace obe::scene
         return m_components.at(id);
     }
 
-    std::pair<collision::PolygonalCollider*, int> Scene::get_collider_point_by_position(
-        const transform::UnitVector& position) const
-    {
-        const transform::UnitVector p_pos = position.to<transform::Units::ScenePixels>();
-        const transform::UnitVector p_tolerance
-            = transform::UnitVector(6, 6, transform::Units::ScenePixels);
-        for (const auto& collider : m_collider_array)
-        {
-            // TODO: Fix here
-            if (auto point = collider->get_point_near_position(p_pos, p_tolerance);
-                point.has_value())
-            {
-                return std::make_pair(collider.get(), point.value()->index);
-            }
-        }
-        return std::pair<collision::PolygonalCollider*, int>(nullptr, 0);
-    }
-
-    collision::PolygonalCollider* Scene::get_collider_by_centroid_position(
-        const transform::UnitVector& position) const
-    {
-        const transform::UnitVector p_pos = position.to<transform::Units::ScenePixels>();
-        const transform::UnitVector p_tolerance
-            = transform::UnitVector(6, 6, transform::Units::ScenePixels);
-        for (const auto& collider : m_collider_array)
-        {
-            if (collider->is_centroid_near_position(p_pos, p_tolerance))
-                return collider.get();
-        }
-        return nullptr;
-    }
-
-    collision::PolygonalCollider& Scene::get_collider(const std::string& id) const
+    collision::ColliderComponent& Scene::get_collider(const std::string& id) const
     {
         for (const auto& collider : m_collider_array)
         {
@@ -843,7 +810,7 @@ namespace obe::scene
         {
             colliders_ids.push_back(collider->get_id());
         }
-        throw Exceptions::UnknownCollider(m_level_file_name, id, colliders_ids, EXC_INFO);
+        throw exceptions::UnknownCollider(m_level_file_name, id, colliders_ids, EXC_INFO);
     }
 
     bool Scene::does_collider_exists(const std::string& id) const
@@ -853,11 +820,18 @@ namespace obe::scene
 
     void Scene::remove_collider(const std::string& id)
     {
-        std::erase_if(
-            m_collider_array, [&id](const std::unique_ptr<collision::PolygonalCollider>& collider) {
-                return (collider->get_id() == id);
+        const auto collider_it = std::find_if(m_collider_array.begin(), m_collider_array.end(),
+            [&id](const std::unique_ptr<collision::ColliderComponent>& collider)
+            { return (collider->get_id() == id);
             });
+        m_collision_space.remove_collider(collider_it->get()->get_inner_collider());
+        m_collider_array.erase(collider_it);
         m_collider_ids.erase(id);
+    }
+
+    const collision::CollisionSpace& Scene::get_collision_space() const
+    {
+        return m_collision_space;
     }
 
     SceneNode& Scene::get_scene_root_node()

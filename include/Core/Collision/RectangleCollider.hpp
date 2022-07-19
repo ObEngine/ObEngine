@@ -10,7 +10,8 @@ namespace obe::collision
         c2AABB m_shape = {};
         transform::UnitVector m_size;
     protected:
-        [[nodiscard]] void* get_c2_shape() override;
+        [[nodiscard]] const void* get_c2_shape() const override;
+        [[nodiscard]] const c2x* get_c2_space_transform() const override;
         void update_shape();
     public:
         static constexpr ColliderType Type = ColliderType::Rectangle;

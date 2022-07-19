@@ -5,6 +5,7 @@
 #include <Types/Serializable.hpp>
 #include <Types/SmartEnum.hpp>
 #include <Types/Togglable.hpp>
+#include <Types/UniqueIdentifiable.hpp>
 
 #include <Bindings/Config.hpp>
 
@@ -61,6 +62,14 @@ namespace obe::types::bindings
         bind_togglable["enable"] = &obe::types::Togglable::enable;
         bind_togglable["disable"] = &obe::types::Togglable::disable;
         bind_togglable["is_enabled"] = &obe::types::Togglable::is_enabled;
+    }
+    void load_class_unique_identifiable(sol::state_view state)
+    {
+        sol::table types_namespace = state["obe"]["types"].get<sol::table>();
+        sol::usertype<obe::types::UniqueIdentifiable> bind_unique_identifiable
+            = types_namespace.new_usertype<obe::types::UniqueIdentifiable>("UniqueIdentifiable",
+                sol::call_constructor, sol::constructors<obe::types::UniqueIdentifiable()>());
+        bind_unique_identifiable["get_unique_id"] = &obe::types::UniqueIdentifiable::get_unique_id;
     }
     void load_class_unknown_enum_entry(sol::state_view state)
     {

@@ -72,7 +72,7 @@ namespace obe::input
     {
         if (std::holds_alternative<sf::Keyboard::Key>(m_button))
             return std::get<sf::Keyboard::Key>(m_button);
-        throw Exceptions::InputButtonInvalidOperation(
+        throw exceptions::InputButtonInvalidOperation(
             InputTypeMeta::to_string(m_type), "GetKey", EXC_INFO);
     }
 
@@ -124,7 +124,7 @@ namespace obe::input
             return sf::Joystick::getAxisPosition(
                 m_gamepad_index, std::get<sf::Joystick::Axis>(m_button));
         else
-            throw Exceptions::InputButtonInvalidOperation(
+            throw exceptions::InputButtonInvalidOperation(
                 InputTypeMeta::to_string(m_type), "GetAxisPosition", EXC_INFO);
     }
 

@@ -10,8 +10,9 @@ namespace obe::collision
     {
     }
 
-    void TrajectoryNode::set_probe(PolygonalCollider* probe)
+    void TrajectoryNode::set_probe(CollisionSpace const* collision_space, Collider* probe)
     {
+        m_collision_space = collision_space;
         m_probe = probe;
     }
 
@@ -58,16 +59,16 @@ namespace obe::collision
                     base_offset = get_offset(*current_trajectory);
                     obe::collision::CollisionData collision_data;
                     collision_data.offset = base_offset;
-                    if (m_probe != nullptr)
+                    if (m_probe != nullptr && m_collision_space != nullptr)
                     {
-                        collision_data
-                            = m_probe->get_distance_before_collision(collision_data.offset);
+                        /* collision_data = m_collision_space->get_offset_before_collision(
+                            *m_probe, collision_data.offset);*/
                     }
                     m_scene_node.move(collision_data.offset);
                     auto on_collide_callback = trajectory.second->get_on_collide_callback();
                     if (collision_data.offset != base_offset && on_collide_callback)
                     {
-                        on_collide_callback(*trajectory.second, base_offset, collision_data);
+                        // on_collide_callback(*trajectory.second, base_offset, collision_data);
                     }
                 }
             }

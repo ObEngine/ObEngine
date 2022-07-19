@@ -60,7 +60,7 @@ namespace obe::event
         {
             return *event->second;
         }
-        throw Exceptions::UnknownEvent(
+        throw exceptions::UnknownEvent(
             m_identifier, event_name, this->get_events_names(), EXC_INFO);
     }
 
@@ -77,7 +77,7 @@ namespace obe::event
             m_events.erase(event_name);
         else
         {
-            throw Exceptions::UnknownEvent(
+            throw exceptions::UnknownEvent(
                 m_identifier, event_name, this->get_events_names(), EXC_INFO);
         }
     }

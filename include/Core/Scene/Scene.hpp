@@ -1,6 +1,7 @@
 #pragma once
 
-#include <Collision/PolygonalCollider.hpp>
+#include <Collision/ColliderComponent.hpp>
+#include <Collision/CollisionSpace.hpp>
 #include <Engine/ResourceManager.hpp>
 #include <Event/EventGroup.hpp>
 #include <Event/EventNamespace.hpp>
@@ -62,7 +63,8 @@ namespace obe::scene
         std::vector<std::unique_ptr<graphics::Sprite>> m_sprite_array;
         std::unordered_set<std::string> m_sprite_ids;
 
-        std::vector<std::unique_ptr<collision::PolygonalCollider>> m_collider_array;
+        collision::CollisionSpace m_collision_space;
+        std::vector<std::unique_ptr<collision::ColliderComponent>> m_collider_array;
         std::unordered_set<std::string> m_collider_ids;
 
         std::vector<std::unique_ptr<script::GameObject>> m_game_object_array;
@@ -260,7 +262,7 @@ namespace obe::scene
          * \param add_to_scene_root Add the Collider to the root Scene Node if true
          * \return A pointer to the newly created Collider
          */
-        collision::PolygonalCollider& create_collider(
+        collision::ColliderComponent& create_collider(
             const std::string& id = "", bool add_to_scene_root = true);
         /**
          * \brief Get how many Colliders are present in the Scene
@@ -272,30 +274,14 @@ namespace obe::scene
          * \return A std::vector containing all the pointers of the Colliders
          *         present in the Scene
          */
-        [[nodiscard]] std::vector<collision::PolygonalCollider*> get_all_colliders() const;
-        /**
-         * \brief Get the first Collider found with a point on the given
-         *        position
-         * \param position Position to get the Point of a Collider
-         * \return A std::pair containing the pointer to the Collider with a
-         *         point at the given position and the index of the point
-         */
-        std::pair<collision::PolygonalCollider*, int> get_collider_point_by_position(
-            const transform::UnitVector& position) const;
-        /**
-         * \brief Get the Collider using the centroid Position
-         * \param position Position to check
-         * \return A Pointer to the Collider if found, nullptr otherwise
-         */
-        collision::PolygonalCollider* get_collider_by_centroid_position(
-            const transform::UnitVector& position) const;
+        [[nodiscard]] std::vector<collision::ColliderComponent*> get_all_colliders() const;
         /**
          * \brief Get the Collider with the given Id (Raises an exception if not
          *        found)
          * \param id Id of the Collider to retrieve
          * \return A pointer to the Collider
          */
-        collision::PolygonalCollider& get_collider(const std::string& id) const;
+        collision::ColliderComponent& get_collider(const std::string& id) const;
         /**
          * \brief Check the existence of the Collider with given Id in the Scene
          * \param id Id of the Collider to check the existence
@@ -307,6 +293,7 @@ namespace obe::scene
          * \param id Id of the Collider to remove
          */
         void remove_collider(const std::string& id);
+        const collision::CollisionSpace& get_collision_space() const;
         SceneNode& get_scene_root_node();
 
         // Other

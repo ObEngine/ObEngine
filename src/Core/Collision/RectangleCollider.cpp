@@ -2,9 +2,14 @@
 
 namespace obe::collision
 {
-    void* RectangleCollider::get_c2_shape()
+    const void* RectangleCollider::get_c2_shape() const
     {
-        return static_cast<void*>(&m_shape);
+        return static_cast<const void*>(&m_shape);
+    }
+
+    const c2x* RectangleCollider::get_c2_space_transform() const
+    {
+        return nullptr;
     }
 
     void RectangleCollider::update_shape()
@@ -52,13 +57,12 @@ namespace obe::collision
 
     transform::UnitVector RectangleCollider::get_size() const
     {
-        return transform::UnitVector(
-            m_shape.max.x - m_shape.min.x, m_shape.max.y - m_shape.min.y);
+        return transform::UnitVector(m_shape.max.x - m_shape.min.x, m_shape.max.y - m_shape.min.y);
     }
 
     void RectangleCollider::set_size(const transform::UnitVector& size)
     {
-        m_size = size;
+        m_size.set(size);
         update_shape();
     }
 

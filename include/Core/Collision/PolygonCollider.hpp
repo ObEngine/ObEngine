@@ -9,11 +9,13 @@ namespace obe::collision
     {
     private:
         c2Poly m_shape = {};
-        c2x m_global_transform;
+        c2x m_transform;
         float m_angle = 0;
 
     protected:
-        [[nodiscard]] void* get_c2_shape() override;
+        [[nodiscard]] const void* get_c2_shape() const override;
+        [[nodiscard]] const c2x* get_c2_space_transform() const override;
+        void update_transform();
         void update_shape();
 
     public:

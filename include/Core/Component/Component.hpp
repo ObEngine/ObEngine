@@ -1,14 +1,18 @@
 #pragma once
 
+#include <algorithm>
+#include <vector>
+
+#include <sol/sol.hpp>
+
 #include <Types/Identifiable.hpp>
 #include <Types/Serializable.hpp>
-#include <algorithm>
-#include <sol/sol.hpp>
-#include <vector>
+#include <Types/UniqueIdentifiable.hpp>
+
 
 namespace obe::component
 {
-    class ComponentBase : public types::Identifiable, public types::Serializable
+    class ComponentBase : public types::Identifiable, public types::Serializable, public types::UniqueIdentifiable
     {
     public:
         using Caster = std::function<sol::lua_value(ComponentBase*)>;
@@ -20,7 +24,9 @@ namespace obe::component
         static void RemoveComponent(ComponentBase* component);
 
     public:
-        ComponentBase(const std::string& id);
+        explicit ComponentBase(const std::string& id);
+        ComponentBase(const ComponentBase& other);
+        ComponentBase& operator=(const ComponentBase& other);
         virtual void remove() = 0;
 
         [[nodiscard]] vili::node dump() const override = 0;

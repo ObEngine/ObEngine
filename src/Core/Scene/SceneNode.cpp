@@ -14,7 +14,7 @@ namespace obe::scene
     {
         const auto child_to_remove = std::remove(m_children.begin(), m_children.end(), &child);
         if (child_to_remove == m_children.end())
-            throw Exceptions::ChildNotInSceneNode(this, &child, EXC_INFO);
+            throw exceptions::ChildNotInSceneNode(this, &child, EXC_INFO);
         m_children.erase(child_to_remove, m_children.end());
     }
 

@@ -1,3 +1,4 @@
+#include <Collision/ColliderComponent.hpp>
 #include <Debug/Logger.hpp>
 #include <Scene/Scene.hpp>
 #include <Tiles/Exceptions.hpp>
@@ -76,8 +77,8 @@ namespace obe::tiles
                     const std::string collision_id
                         = std::to_string(collision.at("id").as<vili::integer>()
                             + tileset.at("firstTileId").as<vili::integer>());
-                    std::unique_ptr<collision::PolygonalCollider> model
-                        = std::make_unique<collision::PolygonalCollider>(collision_id);
+                    std::unique_ptr<collision::ColliderComponent> model
+                        = std::make_unique<collision::ColliderComponent>(collision_id);
                     model->load(collision);
                     m_collider_models.push_back(std::move(model));
                 }
@@ -203,9 +204,9 @@ namespace obe::tiles
         return result;
     }
 
-    std::vector<collision::PolygonalCollider*> TileScene::get_collider_models() const
+    std::vector<collision::ColliderComponent*> TileScene::get_collider_models() const
     {
-        std::vector<collision::PolygonalCollider*> result;
+        std::vector<collision::ColliderComponent*> result;
         for (const auto& collider : m_collider_models)
         {
             result.push_back(collider.get());

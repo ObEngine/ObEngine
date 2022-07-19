@@ -8,7 +8,7 @@
 /**
  * \nobind
  */
-namespace obe::input::Exceptions
+namespace obe::input::exceptions
 {
     class InputButtonInvalidOperation : public Exception<InputButtonInvalidOperation>
     {
@@ -124,4 +124,4 @@ namespace obe::input::Exceptions
                 gamepad_button_id);
         }
     };
-} // namespace obe::input::Exceptions
+} // namespace obe::input::exceptions

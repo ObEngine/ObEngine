@@ -61,6 +61,8 @@ namespace obe::script::bindings
         bind_game_object["dump"] = &obe::script::GameObject::dump;
         bind_game_object["load"] = &obe::script::GameObject::load;
         bind_game_object["load_source"] = &obe::script::GameObject::load_source;
+        bind_game_object["is_parent_of_component"]
+            = &obe::script::GameObject::is_parent_of_component;
         bind_game_object["deletable"] = &obe::script::GameObject::deletable;
     }
     void load_class_game_object_database(sol::state_view state)

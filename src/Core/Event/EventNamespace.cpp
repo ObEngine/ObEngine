@@ -63,7 +63,7 @@ namespace obe::event
             m_groups.emplace(group, new_group);
             return new_group;
         }
-        throw Exceptions::EventGroupAlreadyExists(m_name, group, EXC_INFO);
+        throw exceptions::EventGroupAlreadyExists(m_name, group, EXC_INFO);
     }
 
     EventGroupPtr EventNamespace::join_group(const std::string& group) const
@@ -76,10 +76,10 @@ namespace obe::event
             {
                 return EventGroupPtr(group_ptr->second.lock());
             }
-            throw Exceptions::EventGroupNotJoinable(m_name, group, EXC_INFO);
+            throw exceptions::EventGroupNotJoinable(m_name, group, EXC_INFO);
         }
 
-        throw Exceptions::UnknownEventGroup(m_name, group, this->get_all_groups_names(), EXC_INFO);
+        throw exceptions::UnknownEventGroup(m_name, group, this->get_all_groups_names(), EXC_INFO);
     }
 
     EventGroupView EventNamespace::get_group(const std::string& group) const
@@ -88,7 +88,7 @@ namespace obe::event
         {
             return group_ptr->second.lock()->get_view();
         }
-        throw Exceptions::UnknownEventGroup(m_name, group, this->get_all_groups_names(), EXC_INFO);
+        throw exceptions::UnknownEventGroup(m_name, group, this->get_all_groups_names(), EXC_INFO);
     }
 
     std::vector<std::string> EventNamespace::get_all_groups_names() const

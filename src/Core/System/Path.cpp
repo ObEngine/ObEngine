@@ -40,7 +40,7 @@ namespace obe::system
             all_prefixes.reserve(mounts.size());
             std::transform(mounts.begin(), mounts.end(), std::back_inserter(all_prefixes),
                 [](const auto& mount) { return mount->prefix; });
-            throw Exceptions::UnknownPathPrefix(prefix, all_prefixes, EXC_INFO);
+            throw exceptions::UnknownPathPrefix(prefix, all_prefixes, EXC_INFO);
         }
         return valid_mounts;
     }
@@ -65,7 +65,7 @@ namespace obe::system
             {
                 path_type = PathTypeMeta::to_string(m_type);
             }
-            throw Exceptions::ResourceNotFound(m_path, path_type, mounts_as_strings, EXC_INFO);
+            throw exceptions::ResourceNotFound(m_path, path_type, mounts_as_strings, EXC_INFO);
         }
     }
 
@@ -240,7 +240,7 @@ namespace obe::system
         {
             mount_names.push_back(mount->base_path);
         }
-        throw Exceptions::MountablePathIndexOverflow(
+        throw exceptions::MountablePathIndexOverflow(
             index, m_mounts->size(), mount_names, EXC_INFO);
     }
 
@@ -292,9 +292,9 @@ namespace obe::system
         {
             valid_mounts = filter_mountable_paths_with_prefix(*m_mounts, m_prefix);
         }
-        catch (const Exceptions::UnknownPathPrefix& exc)
+        catch (const exceptions::UnknownPathPrefix& exc)
         {
-            throw Exceptions::PathError(m_prefix, m_path, EXC_INFO).nest(exc);
+            throw exceptions::PathError(m_prefix, m_path, EXC_INFO).nest(exc);
         }
 
         for (const auto& mounted_path : valid_mounts)

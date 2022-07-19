@@ -4,7 +4,7 @@
 /**
  * \nobind
  */
-namespace obe::config::Exceptions
+namespace obe::config::exceptions
 {
     class InvalidVersionFormat : public Exception<InvalidVersionFormat>
     {
@@ -28,4 +28,4 @@ namespace obe::config::Exceptions
                 fmt::join(config_files, ", "));
         }
     };
-} // namespace obe::config::Exceptions
+} // namespace obe::config::exceptions

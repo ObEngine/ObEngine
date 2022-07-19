@@ -5,8 +5,7 @@
 namespace obe::types
 {
     /**
-     * \brief A Base class that does carry an unique identifier for a given
-     *        category (Sprites / Colliders etc..)
+     * \brief A Base class that does carry a modifiable identifier
      */
     class Identifiable
     {

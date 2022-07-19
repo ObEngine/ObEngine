@@ -243,7 +243,8 @@ namespace obe::graphics::bindings
                     obe::types::Selectable, obe::transform::Rect, obe::transform::Movable,
                     obe::graphics::Renderable, obe::component::Component<obe::graphics::Sprite>,
                     obe::component::ComponentBase, obe::types::Identifiable,
-                    obe::types::Serializable, obe::engine::ResourceManagedObject>());
+                    obe::types::Serializable, obe::types::UniqueIdentifiable,
+                    obe::engine::ResourceManagedObject>());
         bind_editor_sprite["get_handle_point"] = &obe::graphics::EditorSprite::get_handle_point;
     }
     void load_class_font(sol::state_view state)
@@ -284,6 +285,7 @@ namespace obe::graphics::bindings
                 sol::call_constructor,
                 sol::constructors<obe::graphics::RenderTarget(sf::RenderTarget&),
                     obe::graphics::RenderTarget(sf::RenderWindow&)>());
+        bind_render_target["clear"] = &obe::graphics::RenderTarget::clear;
         bind_render_target["draw"] = sol::overload(
             [](obe::graphics::RenderTarget* self, const sf::Drawable& drawable) -> void {
                 return self->draw(drawable);
@@ -357,7 +359,7 @@ namespace obe::graphics::bindings
                     obe::transform::Rect, obe::transform::Movable, obe::graphics::Renderable,
                     obe::component::Component<obe::graphics::Sprite>, obe::component::ComponentBase,
                     obe::types::Identifiable, obe::types::Serializable,
-                    obe::engine::ResourceManagedObject>());
+                    obe::types::UniqueIdentifiable, obe::engine::ResourceManagedObject>());
         bind_sprite["draw_handle"] = &obe::graphics::Sprite::draw_handle;
         bind_sprite["get_color"] = &obe::graphics::Sprite::get_color;
         bind_sprite["get_parent_id"] = &obe::graphics::Sprite::get_parent_id;
