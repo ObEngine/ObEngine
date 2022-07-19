@@ -85,7 +85,7 @@ namespace obe::collision
             point_index = m_shape.count;
             m_shape.count++;
         }
-        m_shape.verts[point_index] = c2v(position.x, position.y);
+        m_shape.verts[point_index] = c2v { static_cast<float>(position.x), static_cast<float>(position.y) };
         update_shape();
     }
 

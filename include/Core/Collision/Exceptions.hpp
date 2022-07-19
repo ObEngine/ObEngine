@@ -36,4 +36,15 @@ namespace obe::collision::exceptions
                        "array of strings (for multiple tags)");
         }
     };
+
+    class InvalidColliderComponentType : public Exception<InvalidColliderComponentType>
+    {
+    public:
+        using Exception::Exception;
+        InvalidColliderComponentType(std::string_view component_id, std::string_view collider_type, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("Tried to use incompatible ColliderType '{}' for Component '{}'", collider_type, component_id);
+        }
+    };
 } // namespace obe::collision::exceptions

@@ -1,4 +1,5 @@
 #include <Collision/ColliderComponent.hpp>
+#include <Collision/Exceptions.hpp>
 
 namespace obe::collision
 {
@@ -79,6 +80,8 @@ namespace obe::collision
         case ColliderType::Polygon:
             load_polygon(data, unit);
             break;
+        case ColliderType::Collider:
+            throw exceptions::InvalidColliderComponentType(m_id, collider_type_str, EXC_INFO);
         }
         std::visit([x, y, unit](auto&& collider)
             {
