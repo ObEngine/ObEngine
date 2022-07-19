@@ -7,7 +7,8 @@ namespace obe::utils::math
 {
     double randfloat()
     {
-        const std::uniform_real_distribution<> dis(0, 1);
+        // do not put const, might fail depending on libc++
+        std::uniform_real_distribution<> dis(0, 1);
         return dis(rng);
     }
 
