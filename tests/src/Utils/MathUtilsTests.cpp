@@ -1,6 +1,5 @@
 #include <catch/catch.hpp>
 
-#include <Collision/PolygonalCollider.hpp>
 #include <Utils/MathUtils.hpp>
 
 using namespace obe::utils::math;
