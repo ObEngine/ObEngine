@@ -293,7 +293,7 @@ namespace obe::scene
          * \param id Id of the Collider to remove
          */
         void remove_collider(const std::string& id);
-        const collision::CollisionSpace& get_collision_space() const;
+        [[nodiscard]] collision::CollisionSpace& get_collision_space();
         SceneNode& get_scene_root_node();
 
         // Other

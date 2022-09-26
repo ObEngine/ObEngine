@@ -47,4 +47,17 @@ namespace obe::collision::exceptions
             this->error("Tried to use incompatible ColliderType '{}' for Component '{}'", collider_type, component_id);
         }
     };
+
+    class TrajectoryAlreadyExists : public Exception<TrajectoryAlreadyExists>
+    {
+    public:
+        using Exception::Exception;
+        TrajectoryAlreadyExists(
+            std::string_view trajectory_name, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("Trajectory with name '{}' already exists",
+                trajectory_name);
+        }
+    };
 } // namespace obe::collision::exceptions

@@ -42,6 +42,7 @@ namespace obe::collision
          * \return The amount of points in the Polygon
          */
         [[nodiscard]] std::size_t get_points_amount() const;
+        transform::Polygon get_polygon() const;
 
 
         /**

@@ -3,32 +3,32 @@
 
 namespace obe::collision
 {
-    void ColliderComponent::load_capsule(const vili::node& data, transform::Units unit)
+    void ColliderComponent::load_capsule(const vili::node& data)
     {
     }
 
-    void ColliderComponent::load_circle(const vili::node& data, transform::Units unit)
+    void ColliderComponent::load_circle(const vili::node& data)
     {
         auto new_collider = CircleCollider();
         new_collider.set_radius(data.at("radius").as<vili::number>());
         m_collider = new_collider;
     }
 
-    void ColliderComponent::load_polygon(const vili::node& data, transform::Units unit)
+    void ColliderComponent::load_polygon(const vili::node& data)
     {
         auto new_collider = PolygonCollider();
         for (const auto& point : data.at("points").as<vili::array>())
         {
-            const transform::UnitVector point_position(point.at("x"), point.at("y"), unit);
+            const transform::UnitVector point_position(point.at("x"), point.at("y"));
             new_collider.add_point(point_position);
         }
         m_collider = new_collider;
     }
 
-    void ColliderComponent::load_rectangle(const vili::node& data, transform::Units unit)
+    void ColliderComponent::load_rectangle(const vili::node& data)
     {
         auto new_collider = RectangleCollider();
-        transform::UnitVector size(data.at("width"), data.at("height"), unit);
+        const transform::UnitVector size(data.at("width"), data.at("height"));
         new_collider.set_size(size);
         m_collider = new_collider;
     }
@@ -59,33 +59,34 @@ namespace obe::collision
     {
         const double x = data.at("x");
         const double y = data.at("y");
-        const std::string collider_type_str = data.at("type");
-        transform::Units unit = transform::Units::ScenePixels;
-        if (data.contains("unit"))
+        std::string tag;
+        if (data.contains("tag"))
         {
-            unit = transform::UnitsMeta::from_string(data.at("unit"));
+            tag = data.at("tag");
         }
+        const std::string collider_type_str = data.at("type");
             
         switch (ColliderTypeMeta::from_string(collider_type_str))
         {
         case ColliderType::Capsule:
-            load_capsule(data, unit);
+            load_capsule(data);
             break;
         case ColliderType::Circle:
-            load_circle(data, unit);
+            load_circle(data);
             break;
         case ColliderType::Rectangle:
-            load_rectangle(data, unit);
+            load_rectangle(data);
             break;
         case ColliderType::Polygon:
-            load_polygon(data, unit);
+            load_polygon(data);
             break;
         case ColliderType::Collider:
             throw exceptions::InvalidColliderComponentType(m_id, collider_type_str, EXC_INFO);
         }
-        std::visit([x, y, unit](auto&& collider)
+        std::visit([x, y, tag](auto&& collider)
             {
-                collider.set_position(transform::UnitVector(x, y, unit));
+                collider.set_position(transform::UnitVector(x, y));
+                collider.set_tag(tag);
             }
             , m_collider
         );

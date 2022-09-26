@@ -1,5 +1,6 @@
 #include <cmath>
 
+#include <Collision/Exceptions.hpp>
 #include <Collision/TrajectoryNode.hpp>
 #include <Utils/MathUtils.hpp>
 
@@ -18,6 +19,10 @@ namespace obe::collision
 
     Trajectory& TrajectoryNode::add_trajectory(const std::string& id, transform::Units unit)
     {
+        if (m_trajectories.contains(id))
+        {
+            throw exceptions::TrajectoryAlreadyExists(id, EXC_INFO);
+        }
         m_trajectories[id] = std::make_unique<Trajectory>(unit);
         return *m_trajectories[id];
     }
@@ -63,12 +68,14 @@ namespace obe::collision
                     {
                         /* collision_data = m_collision_space->get_offset_before_collision(
                             *m_probe, collision_data.offset);*/
+                        collision_data.offset = m_collision_space->get_offset_before_collision(
+                            *m_probe, collision_data.offset);
                     }
                     m_scene_node.move(collision_data.offset);
                     auto on_collide_callback = trajectory.second->get_on_collide_callback();
                     if (collision_data.offset != base_offset && on_collide_callback)
                     {
-                        // on_collide_callback(*trajectory.second, base_offset, collision_data);
+                        on_collide_callback(*trajectory.second, collision_data.offset, m_probe);
                     }
                 }
             }

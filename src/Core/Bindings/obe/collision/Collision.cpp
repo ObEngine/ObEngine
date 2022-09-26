@@ -14,14 +14,6 @@
 
 namespace obe::collision::bindings
 {
-    void load_enum_collider_tag_type(sol::state_view state)
-    {
-        sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
-        collision_namespace.new_enum<obe::collision::ColliderTagType>("ColliderTagType",
-            { { "Tag", obe::collision::ColliderTagType::Tag },
-                { "Accepted", obe::collision::ColliderTagType::Accepted },
-                { "Rejected", obe::collision::ColliderTagType::Rejected } });
-    }
     void load_enum_collider_type(sol::state_view state)
     {
         sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
@@ -75,13 +67,8 @@ namespace obe::collision::bindings
             = collision_namespace.new_usertype<obe::collision::Collider>(
                 "Collider", sol::base_classes, sol::bases<obe::transform::Movable>());
         bind_collider["get_collider_type"] = &obe::collision::Collider::get_collider_type;
-        bind_collider["add_tag"] = &obe::collision::Collider::add_tag;
-        bind_collider["remove_tag"] = &obe::collision::Collider::remove_tag;
-        bind_collider["clear_tags"] = &obe::collision::Collider::clear_tags;
-        bind_collider["matches_any_tag"] = &obe::collision::Collider::matches_any_tag;
-        bind_collider["contains_tag"] = &obe::collision::Collider::contains_tag;
-        bind_collider["get_all_tags"] = &obe::collision::Collider::get_all_tags;
-        bind_collider["can_collide_with"] = &obe::collision::Collider::can_collide_with;
+        bind_collider["get_tag"] = &obe::collision::Collider::get_tag;
+        bind_collider["set_tag"] = &obe::collision::Collider::set_tag;
         bind_collider["collides"] = &obe::collision::Collider::collides;
         bind_collider["get_offset_before_collision"] = sol::overload(
             [](obe::collision::Collider* self,
@@ -122,6 +109,14 @@ namespace obe::collision::bindings
             = static_cast<obe::collision::CircleCollider* (obe::collision::ColliderComponent::*)()>(
                 &obe::collision::ColliderComponent::get_inner_collider);
         ;
+        bind_collider_component["get_rectangle_collider"]
+            = static_cast<obe::collision::RectangleCollider* (obe::collision::ColliderComponent::*)()>(
+                &obe::collision::ColliderComponent::get_inner_collider);
+        ;
+        bind_collider_component["get_polygon_collider"]
+            = static_cast<obe::collision::PolygonCollider* (obe::collision::ColliderComponent::*)()>(
+                &obe::collision::ColliderComponent::get_inner_collider);
+        ;
         bind_collider_component["get_inner_collider"]
             = static_cast<obe::collision::Collider* (obe::collision::ColliderComponent::*)()>(
                 &obe::collision::ColliderComponent::get_inner_collider);
@@ -150,6 +145,10 @@ namespace obe::collision::bindings
             = &obe::collision::CollisionSpace::get_all_colliders;
         bind_collision_space["remove_collider"] = &obe::collision::CollisionSpace::remove_collider;
         bind_collision_space["collides"] = &obe::collision::CollisionSpace::collides;
+        bind_collision_space["add_tag_to_blacklist"] = &obe::collision::CollisionSpace::add_tag_to_blacklist;
+        bind_collision_space["remove_tag_to_blacklist"] = &obe::collision::CollisionSpace::remove_tag_to_blacklist;
+        bind_collision_space["clear_blacklist"] = &obe::collision::CollisionSpace::clear_blacklist;
+        bind_collision_space["get_blacklist"] = &obe::collision::CollisionSpace::get_blacklist;
         bind_collision_space["get_offset_before_collision"] = sol::overload(
             [](obe::collision::CollisionSpace* self,
                 const obe::collision::Collider& collider) -> obe::transform::UnitVector {
@@ -186,6 +185,7 @@ namespace obe::collision::bindings
         bind_polygon_collider["set_rotation"] = &obe::collision::PolygonCollider::set_rotation;
         bind_polygon_collider["rotate"] = &obe::collision::PolygonCollider::rotate;
         bind_polygon_collider["get_rotation"] = &obe::collision::PolygonCollider::get_rotation;
+        bind_polygon_collider["get_polygon"] = &obe::collision::PolygonCollider::get_polygon;
         bind_polygon_collider["Type"] = sol::var(&obe::collision::PolygonCollider::Type);
     }
     void load_class_rectangle_collider(sol::state_view state)

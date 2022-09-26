@@ -10,20 +10,6 @@
 namespace obe::collision
 {
     class Collider;
-    /**
-     * \brief Enum used when manipulating tags in the Collider
-     */
-    enum class ColliderTagType
-    {
-        // Tags of the Collider
-        Tag,
-        // Tags the Collider should accept (Will reject when tag is not in accepted list)
-        Accepted,
-        // Tags the Collider should reject
-        Rejected
-    };
-    using ColliderTagTypeMeta = types::SmartEnum<ColliderTagType>;
-
 
     /**
      * \brief Struct containing data of a collision applied to a collider
@@ -61,14 +47,11 @@ namespace obe::collision
     class Collider : public transform::Movable
     {
     private:
-        std::unordered_set<std::string> m_tags;
-        std::unordered_set<std::string> m_accepted_tags;
-        std::unordered_set<std::string> m_rejected_tags;
+        std::string m_tag;
+
+        friend class CollisionSpace;
 
     protected:
-        [[nodiscard]] const std::unordered_set<std::string>& get_tag_set(ColliderTagType tag_type) const;
-        std::unordered_set<std::string>& get_tag_set(ColliderTagType tag_type);
-
         [[nodiscard]] virtual const void* get_c2_shape() const = 0;
         [[nodiscard]] virtual const c2x* get_c2_space_transform() const = 0;
 
@@ -85,58 +68,16 @@ namespace obe::collision
 
         // Tags
         /**
-         * \brief Adds a Tag to the Collider
-         * \param tag_type List where you want to add the Tag (Tag / Accepted /
-         *        Rejected)
-         * \param tag Name of the Tag you want to add
+         * \brief Sets a Tag to the Collider
+         * \param tag Name of the Tag you want to set to the collider
          */
-        void add_tag(ColliderTagType tag_type, const std::string& tag);
+        void set_tag(const std::string& tag);
         /**
-         * \brief Removes a Tag from the Collider
-         * \param tag_type List where you want to add the Tag (Tag / Accepted /
-         *        Rejected)
-         * \param tag Name of the Tag you want to remove
-         */
-        void remove_tag(ColliderTagType tag_type, const std::string& tag);
-        /**
-         * \brief Clears Tags of the Collider
-         * \param tag_type List you want to clear (Tag / Accepted /Rejected)
-         */
-        void clear_tags(ColliderTagType tag_type);
-        /**
-         * \brief Check if the Collider contains one of the Tag in parameter
-         * \param tag_type List from where you want to check the Tags existence
-         *        (Tag / Accepted / Rejected)
-         * \param tags List of Tags you want to
-         *        check the existence
-         * \return true if at least one Tag has been found,
-         *         false otherwise
-         */
-        [[nodiscard]] bool matches_any_tag(
-            ColliderTagType tag_type, const std::unordered_set<std::string>& tags) const;
-        /**
-         * \brief Checks if the Collider contains a Tag
-         * \param tag_type List from where you want to check the Tag existence
-         *        (Tag / Accepted / Rejected)
-         * \param tag Name of the Tag you want to
-         *        check the existence
-         * \return true if the Tag is found, false otherwise
-         */
-        [[nodiscard]] bool contains_tag(ColliderTagType tag_type, const std::string& tag) const;
-        /**
-         * \brief Gets all the Tags from one of the Lists
-         * \param tag_type List where you want to get all the Tags from (Tag /
-         *        Accepted / Rejected)
+         * \brief Gets all the Tags from one of the Lists)
          * \return A std::vector containing all the Tags of
          *         the chosen List
          */
-        [[nodiscard]] std::unordered_set<std::string> get_all_tags(ColliderTagType tag_type) const;
-        /**
-         * \brief Check whether the collider is allowed to collide with another collider based on their tags
-         * \param collider other collider to check compatibility with
-         * \return true if the two colliders are allowed to collide, false otherwise
-         */
-        [[nodiscard]] bool can_collide_with(const Collider& collider) const;
+        [[nodiscard]] std::string get_tag() const;
 
         /**
          * \brief Checks if two polygons are intersecting

@@ -25,7 +25,10 @@ namespace obe::collision
 
     void PolygonCollider::update_shape()
     {
-        c2MakePoly(&m_shape);
+        if (m_shape.count > 2)
+        {
+            c2MakePoly(&m_shape);
+        }
     }
 
     ColliderType PolygonCollider::get_collider_type() const
@@ -92,6 +95,18 @@ namespace obe::collision
     std::size_t PolygonCollider::get_points_amount() const
     {
         return m_shape.count;
+    }
+
+    transform::Polygon PolygonCollider::get_polygon() const
+    {
+        transform::Polygon result;
+        for (uint32_t point_index = 0; point_index < m_shape.count; point_index++)
+        {
+            c2v point = m_shape.verts[point_index];
+            result.add_point(transform::UnitVector(point.x + m_position.x, point.y + m_position.y));
+        }
+        result.set_rotation(m_angle, m_position);
+        return result;
     }
 
     void PolygonCollider::set_rotation(float angle)

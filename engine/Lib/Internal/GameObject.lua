@@ -124,7 +124,12 @@ function GameObjectHandle:__newindex(key, value)
 end
 
 function GameObjectHandle:__index(key)
-    return rawget(self._storage, key) or GameObjectHandle[key];
+    local value_from_storage = rawget(self._storage, key);
+    if value_from_storage == nil then
+        return GameObjectHandle[key];
+    else
+        return value_from_storage;
+    end
 end
 
 ---Creates a new GameObjectHandle

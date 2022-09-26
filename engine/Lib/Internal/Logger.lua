@@ -15,27 +15,27 @@ function log.format(...)
 end
 
 function log.critical(...)
-    obe.Debug.critical(log.format(...));
+    obe.debug.critical(log.format(...));
 end
 
 function log.error(...)
-    obe.Debug.error(log.format(...));
+    obe.debug.error(log.format(...));
 end
 
 function log.warn(...)
-    obe.Debug.warn(log.format(...));
+    obe.debug.warn(log.format(...));
 end
 
 function log.info(...)
-    obe.Debug.info(log.format(...));
+    obe.debug.info(log.format(...));
 end
 
 function log.debug(...)
-    obe.Debug.debug(log.format(...));
+    obe.debug.debug(log.format(...));
 end
 
 function log.trace(...)
-    obe.Debug.trace(log.format(...));
+    obe.debug.trace(log.format(...));
 end
 
 -- print = log.debug;

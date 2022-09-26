@@ -34,11 +34,11 @@ int main(int argc, char** argv)
         transform::UnitVector::Screen.w, transform::UnitVector::Screen.h);
 
 #if defined _DEBUG
-    Modes::start_game();
+    modes::start_game();
 #else
     try
     {
-        Modes::start_game();
+        modes::start_game();
     }
     catch (const std::exception& e)
     {

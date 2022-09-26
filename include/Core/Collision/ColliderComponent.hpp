@@ -56,15 +56,15 @@ namespace obe::collision
     private:
         ColliderTypes m_collider;
 
-        void load_capsule(const vili::node& data, transform::Units unit);
-        void load_circle(const vili::node& data, transform::Units unit);
-        void load_polygon(const vili::node& data, transform::Units unit);
-        void load_rectangle(const vili::node&data, transform::Units unit);
+        void load_capsule(const vili::node& data);
+        void load_circle(const vili::node& data);
+        void load_polygon(const vili::node& data);
+        void load_rectangle(const vili::node& data);
     protected:
         [[nodiscard]] vili::node schema() const override;
     public:
         explicit ColliderComponent(const std::string& id);
-        ColliderComponent(const ColliderComponent& other);
+        ColliderComponent(const ColliderComponent& other) = default;
 
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;

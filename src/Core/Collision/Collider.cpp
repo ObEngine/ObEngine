@@ -24,34 +24,6 @@ namespace obe::collision
         return C2_TYPE_NONE;
     }
 
-    const std::unordered_set<std::string>& Collider::get_tag_set(ColliderTagType tag_type) const
-    {
-        switch (tag_type)
-        {
-        case ColliderTagType::Tag:
-            return m_tags;
-        case ColliderTagType::Accepted:
-            return m_accepted_tags;
-        case ColliderTagType::Rejected:
-            return m_rejected_tags;
-        }
-        return m_tags;
-    }
-
-    std::unordered_set<std::string>& Collider::get_tag_set(ColliderTagType tag_type)
-    {
-        switch (tag_type)
-        {
-        case ColliderTagType::Tag:
-            return m_tags;
-        case ColliderTagType::Accepted:
-            return m_accepted_tags;
-        case ColliderTagType::Rejected:
-            return m_rejected_tags;
-        }
-        return m_tags;
-    }
-
     ColliderType Collider::get_collider_type() const
     {
         return Collider::Type;
@@ -62,55 +34,14 @@ namespace obe::collision
     {
     }
 
-    void Collider::add_tag(ColliderTagType tag_type, const std::string& tag)
+    void Collider::set_tag(const std::string& tag)
     {
-        get_tag_set(tag_type).insert(tag);
+        m_tag = tag;
     }
 
-    void Collider::remove_tag(ColliderTagType tag_type, const std::string& tag)
+    std::string Collider::get_tag() const
     {
-        get_tag_set(tag_type).erase(tag);
-    }
-
-    void Collider::clear_tags(ColliderTagType tag_type)
-    {
-        get_tag_set(tag_type).clear();
-    }
-
-    bool Collider::matches_any_tag(
-        ColliderTagType tag_type, const std::unordered_set<std::string>& tags) const
-    {
-        const std::unordered_set<std::string> collider_tags = get_tag_set(tag_type);
-        for (const auto& tag : tags)
-        {
-            if (collider_tags.contains(tag))
-            {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    bool Collider::contains_tag(ColliderTagType tag_type, const std::string& tag) const
-    {
-        return get_tag_set(tag_type).contains(tag);
-    }
-
-    std::unordered_set<std::string> Collider::get_all_tags(ColliderTagType tag_type) const
-    {
-        return get_tag_set(tag_type);
-    }
-
-    bool Collider::can_collide_with(const Collider& collider) const
-    {
-        if (this->matches_any_tag(
-                ColliderTagType::Rejected, collider.get_all_tags(ColliderTagType::Tag)))
-            return false;
-        if (!get_tag_set(ColliderTagType::Accepted).empty()
-            && !this->matches_any_tag(
-                ColliderTagType::Accepted, collider.get_all_tags(ColliderTagType::Tag)))
-            return false;
-        return true;
+        return m_tag;
     }
 
     bool Collider::collides(const Collider& collider) const

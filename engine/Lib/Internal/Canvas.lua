@@ -333,7 +333,7 @@ obe.canvas.Bases.Line = {
                     self.p1.y = y or 0;
                 end,
                 unit = function(self, unit)
-                    self.p1.unit = unit or obe.Transform.Units.ScenePixels;
+                    self.p1.unit = unit or obe.transform.Units.ScenePixels;
                 end,
                 color = function(self, color)
                     self.p1color = obe.canvas.normalize_color(color, self.p1color);
@@ -391,7 +391,7 @@ obe.canvas.Bases.Line = {
                     self.p2.y = y or 0;
                 end,
                 unit = function(self, unit)
-                    self.p2.unit = unit or obe.Transform.Units.ScenePixels;
+                    self.p2.unit = unit or obe.transform.Units.ScenePixels;
                 end,
                 color = function(self, color)
                     self.p2color = obe.canvas.normalize_color(color, self.p2color);
@@ -441,8 +441,8 @@ obe.canvas.Bases.Line = {
     },
     setters = {
         unit = function(self, unit)
-            self.p1.unit = unit or obe.Transform.Units.ScenePixels;
-            self.p2.unit = unit or obe.Transform.Units.ScenePixels;
+            self.p1.unit = unit or obe.transform.Units.ScenePixels;
+            self.p2.unit = unit or obe.transform.Units.ScenePixels;
         end,
         thickness = function(self, thickness)
             self.thickness = thickness or 1;
@@ -463,7 +463,7 @@ obe.canvas.Bases.Line = {
                     self.p1color = obe.canvas.normalize_color(p1.color, self.p1color);
                 end
                 if p1.unit then
-                    self.p1.unit = p1.unit or obe.Transform.Units.ScenePixels;
+                    self.p1.unit = p1.unit or obe.transform.Units.ScenePixels;
                 end
             end
         end,
@@ -479,7 +479,7 @@ obe.canvas.Bases.Line = {
                     self.p2color = obe.canvas.normalize_color(p2.color, self.p2color);
                 end
                 if p2.unit then
-                    self.p2.unit = p2.unit or obe.Transform.Units.ScenePixels;
+                    self.p2.unit = p2.unit or obe.transform.Units.ScenePixels;
                 end
             end
         end
@@ -646,7 +646,7 @@ obe.canvas.Bases.Shape = {
             self.shape:set_position(self.position);
         end,
         unit = function(self, unit)
-            self.position.unit = unit or obe.Transform.Units.ScenePixels;
+            self.position.unit = unit or obe.transform.Units.ScenePixels;
         end,
         angle = function(self, angle)
             self.shape:set_rotation(angle or 0);
@@ -685,8 +685,8 @@ obe.canvas.Bases.Rectangle = {
             self.shape:set_size(self.size);
         end,
         unit = function(self, unit)
-            self.position.unit = unit or obe.Transform.Units.ScenePixels;
-            self.size.unit = unit or obe.Transform.Units.ScenePixels;
+            self.position.unit = unit or obe.transform.Units.ScenePixels;
+            self.size.unit = unit or obe.transform.Units.ScenePixels;
         end
     }
 }
@@ -714,8 +714,8 @@ function positionToUnitVector(position)
     if type(position) == "table" then
         local x = position.x or position[1];
         local y = position.y or position[2];
-        local unit = position.unit or position[3] or obe.Transform.Units.ScenePixels;
-        position = obe.Transform.UnitVector(x, y, unit);
+        local unit = position.unit or position[3] or obe.transform.Units.ScenePixels;
+        position = obe.transform.UnitVector(x, y, unit);
     end
     return position;
 end
@@ -913,8 +913,8 @@ function obe.canvas.Canvas:GenerateId(id)
         error("CanvasElement '" .. tostring(id) .. "' already exists !");
     end
     while id == nil or self.internal:get(id) ~= nil do
-        id = obe.Utils.String
-                 .getRandomKey(obe.Utils.String.Alphabet .. obe.Utils.String.Numbers, 12);
+        id = obe.utils.string
+                 .get_random_key(obe.utils.string.Alphabet .. obe.utils.string.Numbers, 12);
     end
     return id;
 end

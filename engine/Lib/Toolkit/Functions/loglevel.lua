@@ -18,7 +18,7 @@ local function _loglevel_(level)
     local log_levels = getLogLevels();
     local level_num = tonumber(level);
     if level_num ~= nil and level_num >= 0 and level_num <= 6 then
-        obe.Debug.setLevel(level_num);
+        obe.debug.setLevel(level_num);
         Color.print({
             { text = "Log level set to ", color = Style.Default},
             { text = log_levels[level_num+1], color = Style.Argument},
@@ -29,7 +29,7 @@ local function _loglevel_(level)
             {text = level, color = Style.Argument}
         }, 2);
     end
-end 
+end
 
 return {
     Commands.help("Change log level of ÖbEngine");

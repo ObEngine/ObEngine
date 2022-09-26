@@ -20,6 +20,23 @@ end
 
 function ConverterState:register_tileset(tileset)
     local tilecount = tileset.__cWid * tileset.__cHei;
+    local collisions = {};
+    for _, tileset_enum_value in pairs(tileset.enumTags) do
+        if tileset_enum_value.enumValueId == "Solid" then
+            for _, tile_id in pairs(tileset_enum_value.tileIds) do
+                local tile_collision = {
+                    id = tile_id,
+                    x = 0,
+                    y = 0,
+                    type = "Rectangle",
+                    width = tileset.tileGridSize / (1440 / 2), -- TODO: modify hardcoded value
+                    height = tileset.tileGridSize / (1440 / 2)
+                };
+                table.insert(collisions, tile_collision);
+            end
+            break;
+        end
+    end
     self.tilesets[tileset.identifier] = ordered {
         firstTileId = self.firstTileIdCounter,
         columns = tileset.__cWid,
@@ -34,8 +51,9 @@ function ConverterState:register_tileset(tileset)
             width = tileset.pxWid,
             height = tileset.pxHei,
             path = tileset.relPath
-        } {"width", "height", "path"}
-    } {"firstTileId", "columns", "tilecount", "margin", "spacing", "tile", "image"};
+        } {"width", "height", "path"},
+        collisions = collisions
+    } {"firstTileId", "columns", "tilecount", "margin", "spacing", "tile", "image", "collisions"};
     table.insert(self.tilesets_order, tileset.identifier);
     self.tilesets_uids[tileset.uid] = tileset.identifier;
     self.firstTileIdCounter = self.firstTileIdCounter + tilecount;

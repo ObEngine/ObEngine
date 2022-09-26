@@ -1,6 +1,6 @@
 #include <Engine/Engine.hpp>
 
-namespace obe::Modes
+namespace obe::modes
 {
     void start_game()
     {
@@ -8,4 +8,4 @@ namespace obe::Modes
         engine.init();
         engine.run();
     }
-} // namespace obe::Modes
+} // namespace obe::modes

@@ -378,6 +378,12 @@ namespace obe::scene
             }
         }
 
+        if (data.contains("Tiles"))
+        {
+            m_tiles = std::make_unique<tiles::TileScene>(*this);
+            m_tiles->load(data.at("Tiles"));
+        }
+
         if (data.contains("GameObjects"))
         {
             const vili::node& game_objects = data.at("GameObjects");
@@ -434,12 +440,6 @@ namespace obe::scene
                     m_script_array.push_back(script_name);
                 }
             }
-        }
-
-        if (data.contains("Tiles"))
-        {
-            m_tiles = std::make_unique<tiles::TileScene>(*this);
-            m_tiles->load(data.at("Tiles"));
         }
 
         this->reorganize_layers();
@@ -829,7 +829,7 @@ namespace obe::scene
         m_collider_ids.erase(id);
     }
 
-    const collision::CollisionSpace& Scene::get_collision_space() const
+    collision::CollisionSpace& Scene::get_collision_space()
     {
         return m_collision_space;
     }

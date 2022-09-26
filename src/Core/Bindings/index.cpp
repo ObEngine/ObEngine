@@ -153,7 +153,6 @@ namespace obe::bindings
         obe::collision::bindings::load_class_rectangle_collider(state);
         obe::collision::bindings::load_class_trajectory(state);
         obe::collision::bindings::load_class_trajectory_node(state);
-        obe::collision::bindings::load_enum_collider_tag_type(state);
         obe::collision::bindings::load_enum_collider_type(state);
         obe::collision::bindings::load_function_collider_type_to_c2type(state);
         obe::component::bindings::load_class_component_base(state);
