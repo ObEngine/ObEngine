@@ -1,23 +1,45 @@
 local function EventHook(listener_id, namespace, group, event, callback)
-    local lua_listener = obe.event.LuaEventListener(callback);
-    Engine.Events:get_namespace(namespace)
-                 :get_group(group)
-                 :get(event)
-                 :add_external_listener(listener_id, lua_listener);
     local hook_mt = {
         __call = function(object, ...)
-            object.callback(...);
+            local mt = getmetatable(object);
+            if mt.event_emit_wrapper then
+                return mt.event_emit_wrapper(object, ...);
+            end
+            return object.callback(...);
         end,
-        clean = function(object)
+        clean = function(self)
             Engine.Events:get_namespace(namespace)
                          :get_group(group)
                          :get(event)
-                         :remove_external_listener(listener_id);
+                         :remove_external_listener(self.listener_id);
         end,
+        set_event_emit_wrapper = function(self, wrapper)
+            self.event_emit_wrapper = wrapper;
+        end,
+        set_event_receive_wrapper = function(self, wrapper)
+            self.event_receive_wrapper = wrapper;
+        end,
+        event_namespace = namespace,
+        event_group = group,
+        event_name = event,
         listener_id = listener_id,
-        event_id = ("%s.%s.%s"):format(namespace, group, event)
+        event_id = ("%s.%s.%s"):format(namespace, group, event),
+        event_emit_wrapper = nil,
+        event_receive_wrapper = nil
     };
-    return setmetatable({callback = callback}, hook_mt);
+    local event_hook = setmetatable({callback = callback}, hook_mt);
+    local receive_wrapper_caller = function(...)
+        if hook_mt.event_receive_wrapper then
+            return hook_mt.event_receive_wrapper(event_hook, ...);
+        end
+        return callback(...);
+    end
+    local lua_listener = obe.event.LuaEventListener(receive_wrapper_caller);
+    Engine.Events:get_namespace(namespace)
+        :get_group(group)
+        :get(event)
+        :add_external_listener(listener_id, lua_listener);
+    return event_hook;
 end
 
 local function EventGroupHook(listener_id, namespace, group)
@@ -25,17 +47,7 @@ local function EventGroupHook(listener_id, namespace, group)
         __newindex = function(object, event, callback)
             if type(callback) == "function" then
                 local mt = getmetatable(object);
-                Engine.Events:get_namespace(namespace):get_group(group):get(event)
-                    :add_external_listener(
-                        listener_id, obe.event.LuaEventListener(callback)
-                    );
-                mt.__storage[event] = setmetatable(
-                    {}, {
-                        __call = callback,
-                        listener_id = listener_id,
-                        event_id = ("%s.%s.%s"):format(namespace, group, event)
-                    }
-                );
+                mt._storage[event] = EventHook(listener_id, namespace, group, event, callback);
             elseif type(callback) == "nil" then
                 local mt = getmetatable(object);
                 mt.__storage[event] = nil;
@@ -53,8 +65,8 @@ local function EventGroupHook(listener_id, namespace, group)
         end,
         __index = function(object, event)
             local mt = getmetatable(object);
-            if mt.__storage[event] then
-                return mt.__storage[event];
+            if mt._storage[event] then
+                return mt._storage[event];
             else
                 if Engine.Events:get_namespace(namespace):get_group(group):contains(event) then
                     return setmetatable(
@@ -75,23 +87,31 @@ local function EventGroupHook(listener_id, namespace, group)
                 end
             end
         end,
-        clean = function(object)
-            local mt = getmetatable(object);
+        clean = function(self)
             local group_exists = Engine.Events:get_namespace(namespace):does_group_exists(group);
-            for event_name, _ in pairs(mt.__storage) do
-                mt.__storage[event_name] = nil;
+            for event_name, event_hook in pairs(self._storage) do
                 if group_exists then
-                    Engine.Events:get_namespace(namespace):get_group(group):get(event_name)
-                        :remove_external_listener(
-                            listener_id
-                        );
+                    getmetatable(event_hook):clean();
                 end
+                self._storage[event_name] = nil;
+            end
+        end,
+        set_event_emit_wrapper = function(self, wrapper)
+            self.event_emit_wrapper = wrapper;
+            for event_group_name, event_hook in pairs(self._storage) do
+                getmetatable(event_hook):set_event_emit_wrapper(self.event_emit_wrapper);
+            end
+        end,
+        set_event_receive_wrapper = function(self, wrapper)
+            self.event_receive_wrapper = wrapper;
+            for event_name, event_hook in pairs(self._storage) do
+                getmetatable(event_hook):set_event_receive_wrapper(self.event_receive_wrapper);
             end
         end,
         __call = function(object)
-            return Engine.Events:get_namespace(namespace):joinGroup(group);
+            return Engine.Events:get_namespace(namespace):join_group(group);
         end,
-        __storage = {},
+        _storage = {},
         listener_id = listener_id
     };
     return setmetatable({}, hook_mt);
@@ -104,25 +124,40 @@ local function EventNamespaceHook(listener_id, namespace)
             local groups = Engine.Events:get_namespace(namespace):get_all_groups_names();
             for _, v in pairs(groups) do
                 if v == key then
-                    if mt.__storage[key] == nil then
-                        mt.__storage[key] = EventGroupHook(listener_id, namespace, key);
+                    if mt._storage[key] == nil then
+                        mt._storage[key] = EventGroupHook(listener_id, namespace, key);
                     end
-                    return mt.__storage[key];
+                    getmetatable(mt._storage[key]):set_event_emit_wrapper(mt.event_emit_wrapper);
+                    getmetatable(mt._storage[key]):set_event_receive_wrapper(mt.event_receive_wrapper);
+                    return mt._storage[key];
                 end
             end
             error("EventGroup " .. key .. " doesn't exists in namespace " .. namespace);
         end,
-        clean = function(object)
-            local mt = getmetatable(object);
-            for event_group_name, group_hook in pairs(mt.__storage) do
-                getmetatable(group_hook).clean(group_hook);
+        clean = function(self)
+            for event_group_name, group_hook in pairs(self._storage) do
+                getmetatable(group_hook):clean();
+            end
+        end,
+        set_event_emit_wrapper = function(self, wrapper)
+            self.event_emit_wrapper = wrapper;
+            for event_group_name, event_group_hook in pairs(self._storage) do
+                getmetatable(event_group_hook):set_event_emit_wrapper(self.event_emit_wrapper);
+            end
+        end,
+        set_event_receive_wrapper = function(self, wrapper)
+            self.event_receive_wrapper = wrapper;
+            for event_group_name, event_group_hook in pairs(self._storage) do
+                getmetatable(event_group_hook):set_event_receive_wrapper(self.event_receive_wrapper);
             end
         end,
         __call = function(object)
-            return Engine.Events:joinNamespace(namespace);
+            return Engine.Events:join_namespace(namespace);
         end,
-        __storage = {},
-        listener_id = listener_id
+        _storage = {},
+        listener_id = listener_id,
+        event_emit_wrapper = nil,
+        event_receive_wrapper = nil
     };
     return setmetatable({}, hook_mt);
 end
