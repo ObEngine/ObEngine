@@ -54,7 +54,7 @@ end
 
 function GameObjectHandle:unlisten(listener)
     local listener_id = getmetatable(listener).listener_id;
-    getmetatable(listener).clean(listener);
+    getmetatable(listener):clean();
     setmetatable(listener, nil);
     self._events_listeners[listener_id] = nil;
 end
@@ -85,7 +85,7 @@ function GameObjectHandle:call_init(arg_table)
         if arg_value ~= nil then
             table.insert(args_to_be_unpacked, arg_value);
         else
-            table.insert(args_to_be_unpacked, ArgMirror.__nil_table);
+            table.insert(args_to_be_unpacked, ArgMirror._nil_table);
         end
     end
     self._initialized = true;

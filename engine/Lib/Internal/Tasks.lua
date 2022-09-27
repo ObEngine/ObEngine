@@ -31,7 +31,7 @@ function TaskManagerContext:wait_for(condition, ...)
         local listener_id = "taskwaitfor." .. condition;
         local ref = {};
         task:on_clean(function()
-            getmetatable(ref.listener).clean(ref.listener);
+            getmetatable(ref.listener):clean();
         end);
         local event_callback = ...;
         ref.callback = function(evt)
@@ -39,7 +39,7 @@ function TaskManagerContext:wait_for(condition, ...)
                 return;
             end
             ctx:wake(co);
-            getmetatable(ref.listener).clean(ref.listener);
+            getmetatable(ref.listener):clean();
         end
         ref.listener = self.task_manager.listen(
             condition, ref.callback, listener_id
@@ -49,19 +49,19 @@ function TaskManagerContext:wait_for(condition, ...)
         local listener_id = "taskwaitfor.funccondition";
         local ref = {};
         task:on_clean(function()
-            getmetatable(ref.listener).clean(ref.listener);
+            getmetatable(ref.listener):clean();
         end);
         ref.listener = self.task_manager.listen(
             "Event.Game.Update", function(evt)
                 if condition(evt) then
                     ctx:wake(co);
-                    getmetatable(ref.listener).clean(ref.listener);
+                    getmetatable(ref.listener):clean();
                 end
             end, listener_id
         );
     elseif type(condition) == "table" then
         local condition_mt = getmetatable(condition);
-        if condition.__type == "Task" then
+        if condition._type == "Task" then
             -- Tasks
             condition:on_complete(function(object)
                 ctx:wake(co);
@@ -81,7 +81,7 @@ function TaskManagerContext:wait_for(condition, ...)
 end
 
 local Task = class();
-Task.__type = "Task";
+Task._type = "Task";
 
 function Task:_init(task_manager, func, name)
     self.task_manager = task_manager;
@@ -192,13 +192,13 @@ function TaskManager:make_task_hook()
                 local mt = getmetatable(object);
                 local task = self:_make_task(value);
                 task.name = key;
-                mt.__storage[key] = task;
+                mt._storage[key] = task;
                 self.task_count = self.task_count + 1;
                 self:_create_or_delete_pump();
                 return task;
             elseif type(value) == "nil" then
                 local mt = getmetatable(object);
-                local task = mt.__storage[key];
+                local task = mt._storage[key];
 
                 local do_not_resume = {};
                 for idx, task_to_resume in pairs(task_manager.tasks_to_resume) do
@@ -211,15 +211,15 @@ function TaskManager:make_task_hook()
                 end
                 coroutine.close(task.co);
                 task_manager.tasks[task.co] = nil;
-                mt.__storage[key] = nil;
+                mt._storage[key] = nil;
                 self.task_count = self.task_count - 1;
                 self:_create_or_delete_pump();
             end
         end,
         __index = function(object, key)
             local mt = getmetatable(object);
-            if mt.__storage[key] then
-                return mt.__storage[key];
+            if mt._storage[key] then
+                return mt._storage[key];
             else
                 error(("Task '%s' is not defined"):format(key));
             end
@@ -227,12 +227,12 @@ function TaskManager:make_task_hook()
         __call = function(object, func)
             local mt = getmetatable(object);
             local task = self:_make_task(func);
-            table.insert(mt.__storage, task);
+            table.insert(mt._storage, task);
             self.task_count = self.task_count + 1;
             self:_create_or_delete_pump();
             return task;
         end,
-        __storage = {}
+        _storage = {}
     };
     return setmetatable({}, hook_mt);
 end

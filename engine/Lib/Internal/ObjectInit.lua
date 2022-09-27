@@ -1,4 +1,6 @@
 local GameObjectHandle = require("obe://Lib/Internal/GameObject");
+---@ Lib.Internal.Network
+local Network = require("obe://Lib/Internal/Network");
 
 local __GAME_OBJECT = GameObjectHandle:new(This);
 
@@ -25,4 +27,13 @@ end
 
 function __WRAP_CALL_DESTROY(...)
     return __GAME_OBJECT:call_destroy(...);
+end
+
+-- Network
+function host(config)
+    Network.host(__GAME_OBJECT, config);
+end
+
+function connect(config)
+    Network.connect(__GAME_OBJECT, config);
 end
