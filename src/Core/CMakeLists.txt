@@ -39,6 +39,7 @@ target_link_libraries(ObEngineCore sfe)
 target_link_libraries(ObEngineCore vili)
 
 target_link_libraries(ObEngineCore vili-d8)
+target_link_libraries(ObEngineCore vili-msgpack)
 target_link_libraries(ObEngineCore dynamicLinker)
 target_link_libraries(ObEngineCore Soloud)
 target_link_libraries(ObEngineCore whereami)

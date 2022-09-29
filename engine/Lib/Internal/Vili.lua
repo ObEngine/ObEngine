@@ -28,16 +28,26 @@ local function realpath(path)
     return findResult:path();
 end
 
-function vili.from_file(path, state)
+function vili.from_file_as_vili(path, state)
     path = realpath(path)
     state = parser_state or vili.parser.state();
     local node = vili.parser.from_file(path, state);
+    return node;
+end
+
+function vili.from_file(path, state)
+    local node = vili.from_file_as_vili(path, state);
     return vili.to_lua(node);
 end
 
-function vili.from_string(data, parser_state)
+function vili.from_string_as_vili(data, parser_state)
     parser_state = parser_state or vili.parser.state();
     local node = vili.parser.from_string(data, parser_state);
+    return node;
+end
+
+function vili.from_string(data, parser_state)
+    local node = vili.from_string_as_vili(data, parser_state);
     return vili.to_lua(node);
 end
 

@@ -57,6 +57,8 @@ namespace obe::network
     public:
         NetworkClient(const std::string& name, std::unique_ptr<sf::TcpSocket>&& socket);
         void rename(const std::string& name);
+        [[nodiscard]] std::string name() const;
+        [[nodiscard]] std::string address() const;
         sf::TcpSocket& socket() const;
     };
 
@@ -73,6 +75,9 @@ namespace obe::network
         std::string m_client_name;
         bool m_is_host = false;
 
+        vili::node m_spec;
+
+        void _build_events_from_spec();
         void _accept_new_clients();
         void _receive_messages();
         void _handle_message(const events::Network::Message& message);
@@ -80,7 +85,8 @@ namespace obe::network
         [[nodiscard]] static std::string _build_message(const std::string& event_group_name, const std::string& event_name,
             const vili::node& data, bool check_for_forbidden_groups = true);
     public:
-        NetworkEventManager(event::EventManager& manager, const std::string& event_namespace_name);
+        NetworkEventManager(event::EventManager& manager, const std::string& event_namespace_name, const vili::node& spec);
+
         void rename_client(const std::string& current_name, const std::string& new_name);
         void host(unsigned short port);
         void connect(const std::string& address, unsigned short port);
@@ -89,5 +95,7 @@ namespace obe::network
         void emit(const std::string& recipient, const std::string& event_group_name,
             const std::string& event_name, const vili::node& data) const;
         void handle_events();
+
+        [[nodiscard]] event::EventNamespaceView get_event_namespace() const;
     };
 } // namespace obe::network

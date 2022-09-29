@@ -16,6 +16,7 @@ namespace obe::collision::bindings
     void load_class_rectangle_collider(sol::state_view state);
     void load_class_trajectory(sol::state_view state);
     void load_class_trajectory_node(sol::state_view state);
+    void load_class_collision_rejection_pair(sol::state_view state);
     void load_enum_collider_type(sol::state_view state);
     void load_function_collider_type_to_c2type(sol::state_view state);
 };

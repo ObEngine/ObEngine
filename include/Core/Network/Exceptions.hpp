@@ -36,14 +36,14 @@ namespace obe::network::exceptions
         }
     };
 
-    class ForbiddenEventGroup : public Exception<ForbiddenEventGroup>
+    class ReservedEventGroup : public Exception<ReservedEventGroup>
     {
     public:
         using Exception::Exception;
-        ForbiddenEventGroup(std::string_view event_group_name, DebugInfo info)
+        ReservedEventGroup(std::string_view event_group_name, DebugInfo info)
             : Exception(info)
         {
-            this->error("Can not use EventGroup '{}' for NetworkEvent", event_group_name);
+            this->error("Can not use reserved EventGroup '{}' for NetworkEvent", event_group_name);
         }
     };
 
@@ -66,6 +66,39 @@ namespace obe::network::exceptions
             : Exception(info)
         {
             this->error("Already connected, please disconnect before hosting or connecting to a new client");
+        }
+    };
+
+    class EventGroupNotInSpec : public Exception<EventGroupNotInSpec>
+    {
+    public:
+        using Exception::Exception;
+        EventGroupNotInSpec(std::string_view event_group_name, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("EventGroup '{}' is not in NetworkEvent spec", event_group_name);
+        }
+    };
+
+    class EventNotInSpec : public Exception<EventNotInSpec>
+    {
+    public:
+        using Exception::Exception;
+        EventNotInSpec(std::string_view event_name, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("Event '{}' is not in NetworkEvent spec", event_name);
+        }
+    };
+
+    class CannotConnectToHost : public Exception<CannotConnectToHost>
+    {
+    public:
+        using Exception::Exception;
+        CannotConnectToHost(std::string_view host, const unsigned short port, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("Impossible to connect to host at '{}:{}'", host, port);
         }
     };
 }
