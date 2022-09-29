@@ -18,7 +18,7 @@ local function make_event_emit_wrapper(network_manager, config)
         local event_hook_mt = getmetatable(event_hook);
         local serialized_msg = vili.from_lua(message);
         network_manager:emit(event_hook_mt.event_group, event_hook_mt.event_name, serialized_msg);
-        if config.call_local then
+        if config.call_local and event_hook.callback then
             return event_hook.callback(message);
         end
     end
@@ -49,8 +49,19 @@ end
 local function make_network_event_namespace_hook(game_object, config)
     local event_namespace_hook = game_object:listen(config.namespace);
     local event_emit_wrapper = make_event_emit_wrapper(game_object.components.NetworkManager, config);
-    getmetatable(event_namespace_hook):set_event_emit_wrapper(event_emit_wrapper);
-    getmetatable(event_namespace_hook):set_event_receive_wrapper(event_receive_wrapper);
+    getmetatable(event_namespace_hook):configure {
+        event_groups = {
+            ["*"] = {
+                events = {
+                    ["*"] = {
+                        event_emit_wrapper = event_emit_wrapper,
+                        event_receive_wrapper = event_receive_wrapper,
+                        allow_for_empty_calls = true
+                    }
+                }
+            }
+        }
+    };
     return event_namespace_hook;
 end
 
