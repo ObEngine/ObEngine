@@ -1,3 +1,10 @@
+local function merge_tables(t1, t2)
+    local t3 = {};
+    for k, v in pairs(t1) do t3[k] = v end
+    for k, v in pairs(t2) do t3[k] = v end
+    return t3;
+end
+
 local function EventHook(listener_id, namespace, group, event, callback)
     local hook_mt = {
         __call = function(object, ...)
@@ -13,11 +20,9 @@ local function EventHook(listener_id, namespace, group, event, callback)
                          :get(event)
                          :remove_external_listener(self.listener_id);
         end,
-        set_event_emit_wrapper = function(self, wrapper)
-            self.event_emit_wrapper = wrapper;
-        end,
-        set_event_receive_wrapper = function(self, wrapper)
-            self.event_receive_wrapper = wrapper;
+        configure = function(self, config)
+            self.event_emit_wrapper = config.event_emit_wrapper;
+            self.event_receive_wrapper = config.event_receive_wrapper;
         end,
         event_namespace = namespace,
         event_group = group,
@@ -48,6 +53,8 @@ local function EventGroupHook(listener_id, namespace, group)
             if type(callback) == "function" then
                 local mt = getmetatable(object);
                 mt._storage[event] = EventHook(listener_id, namespace, group, event, callback);
+                local event_config = merge_tables(mt.config.events["*"] or {}, mt.config.events[event] or {});
+                getmetatable(mt._storage[event]):configure(event_config);
             elseif type(callback) == "nil" then
                 local mt = getmetatable(object);
                 mt.__storage[event] = nil;
@@ -69,19 +76,30 @@ local function EventGroupHook(listener_id, namespace, group)
                 return mt._storage[event];
             else
                 if Engine.Events:get_namespace(namespace):get_group(group):contains(event) then
-                    return setmetatable(
-                        {}, {
-                            __call = function()
-                                error(
-                                    ("Callback for event %s.%s.%s is not implemented"):format(
-                                        namespace, group, event
-                                    )
-                                );
+                    local event_mock = {};
+                    setmetatable(event_mock, {
+                            __call = function(self, ...)
+                                local event_config = merge_tables(mt.config.events["*"] or {}, mt.config.events[event] or {});
+                                if not event_config.allow_for_empty_calls then
+                                    error(
+                                        ("Callback for event %s.%s.%s is not implemented"):format(
+                                            namespace, group, event
+                                        )
+                                    );
+                                else
+                                    if event_config.event_emit_wrapper then
+                                        event_config.event_emit_wrapper(self, ...);
+                                    end
+                                end
                             end,
+                            event_namespace = namespace,
+                            event_group = group,
+                            event_name = event,
                             listener_id = listener_id,
-                            event_id = ("%s.%s.%s"):format(namespace, group, event)
+                            event_id = ("%s.%s.%s"):format(namespace, group, event),
                         }
                     );
+                    return event_mock;
                 else
                     error(("Event %s.%s.%s does not exists"):format(namespace, group, event));
                 end
@@ -96,23 +114,23 @@ local function EventGroupHook(listener_id, namespace, group)
                 self._storage[event_name] = nil;
             end
         end,
-        set_event_emit_wrapper = function(self, wrapper)
-            self.event_emit_wrapper = wrapper;
-            for event_group_name, event_hook in pairs(self._storage) do
-                getmetatable(event_hook):set_event_emit_wrapper(self.event_emit_wrapper);
-            end
-        end,
-        set_event_receive_wrapper = function(self, wrapper)
-            self.event_receive_wrapper = wrapper;
+        configure = function(self, config)
+            self.config = config;
+            self.config.events = self.config.events or {};
             for event_name, event_hook in pairs(self._storage) do
-                getmetatable(event_hook):set_event_receive_wrapper(self.event_receive_wrapper);
+                local event_config = merge_tables(config.events["*"] or {}, config.events[event_name] or {});
+                getmetatable(event_hook):configure(event_config);
             end
         end,
         __call = function(object)
             return Engine.Events:get_namespace(namespace):join_group(group);
         end,
         _storage = {},
-        listener_id = listener_id
+        config = {
+            events = {}
+        },
+        listener_id = listener_id,
+        allow_for_empty_calls = false
     };
     return setmetatable({}, hook_mt);
 end
@@ -127,8 +145,8 @@ local function EventNamespaceHook(listener_id, namespace)
                     if mt._storage[key] == nil then
                         mt._storage[key] = EventGroupHook(listener_id, namespace, key);
                     end
-                    getmetatable(mt._storage[key]):set_event_emit_wrapper(mt.event_emit_wrapper);
-                    getmetatable(mt._storage[key]):set_event_receive_wrapper(mt.event_receive_wrapper);
+                    local event_group_config = merge_tables(mt.config.event_groups["*"] or {}, mt.config.event_groups[key] or {});
+                    getmetatable(mt._storage[key]):configure(event_group_config);
                     return mt._storage[key];
                 end
             end
@@ -139,25 +157,22 @@ local function EventNamespaceHook(listener_id, namespace)
                 getmetatable(group_hook):clean();
             end
         end,
-        set_event_emit_wrapper = function(self, wrapper)
-            self.event_emit_wrapper = wrapper;
+        configure = function(self, config)
+            self.config = config;
+            self.config.event_groups = self.config.event_groups or {};
             for event_group_name, event_group_hook in pairs(self._storage) do
-                getmetatable(event_group_hook):set_event_emit_wrapper(self.event_emit_wrapper);
-            end
-        end,
-        set_event_receive_wrapper = function(self, wrapper)
-            self.event_receive_wrapper = wrapper;
-            for event_group_name, event_group_hook in pairs(self._storage) do
-                getmetatable(event_group_hook):set_event_receive_wrapper(self.event_receive_wrapper);
+                local event_group_config = merge_tables(config.event_groups["*"] or {}, config.event_groups[event_group_name] or {});
+                getmetatable(event_group_hook):configure(event_group_config);
             end
         end,
         __call = function(object)
             return Engine.Events:join_namespace(namespace);
         end,
         _storage = {},
+        config = {
+            event_groups = {}
+        },
         listener_id = listener_id,
-        event_emit_wrapper = nil,
-        event_receive_wrapper = nil
     };
     return setmetatable({}, hook_mt);
 end
