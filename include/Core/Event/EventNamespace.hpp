@@ -28,6 +28,7 @@ namespace obe::event
          * \return true if the EventGroup exists, false otherwise
          */
         [[nodiscard]] bool does_group_exists(const std::string& group) const;
+        [[nodiscard]] std::string get_name() const;
     };
 
     class EventNamespace
@@ -84,5 +85,6 @@ namespace obe::event
          * \return true if the EventNamespace is joinable, false otherwise
          */
         [[nodiscard]] bool is_joinable() const;
+        [[nodiscard]] std::string get_name() const;
     };
 } // namespace obe::event

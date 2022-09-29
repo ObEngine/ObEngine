@@ -131,6 +131,7 @@ namespace obe::event::bindings
         bind_event_namespace["get_view"] = &obe::event::EventNamespace::get_view;
         bind_event_namespace["set_joinable"] = &obe::event::EventNamespace::set_joinable;
         bind_event_namespace["is_joinable"] = &obe::event::EventNamespace::is_joinable;
+        bind_event_namespace["get_name"] = &obe::event::EventNamespace::get_name;
     }
     void load_class_event_namespace_view(sol::state_view state)
     {
@@ -146,6 +147,7 @@ namespace obe::event::bindings
             = &obe::event::EventNamespaceView::get_all_groups_names;
         bind_event_namespace_view["does_group_exists"]
             = &obe::event::EventNamespaceView::does_group_exists;
+        bind_event_namespace_view["get_name"] = &obe::event::EventNamespaceView::get_name;
     }
     void load_class_lua_event_listener(sol::state_view state)
     {

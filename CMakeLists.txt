@@ -42,6 +42,7 @@ add_subdirectory(extlibs/fswrapper)
 # vili is required by vili-d8
 add_subdirectory(extlibs/vili)
 add_subdirectory(extlibs/vili-d8)
+add_subdirectory(extlibs/vili-msgpack)
 
 # Audio library
 add_subdirectory(extlibs/soloud)

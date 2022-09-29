@@ -2,6 +2,7 @@
 
 #include <fmt/core.h>
 #include <vili/parser.hpp>
+#include <vili-msgpack/msgpack.hpp>
 
 #include <Network/Exceptions.hpp>
 #include <Network/NetworkEventManager.hpp>
@@ -21,9 +22,38 @@ namespace obe::network
         m_name = name;
     }
 
+    std::string NetworkClient::name() const
+    {
+        return m_name;
+    }
+
+    std::string NetworkClient::address() const
+    {
+        return m_socket->getRemoteAddress().toString();
+    }
+
     sf::TcpSocket& NetworkClient::socket() const
     {
         return *m_socket;
+    }
+
+    void NetworkEventManager::_build_events_from_spec()
+    {
+        for (const auto& [event_group_name, event_group_spec] : m_spec.items())
+        {
+            if (!m_namespace->does_group_exists(event_group_name))
+            {
+                const event::EventGroupPtr event_group = m_namespace->create_group(event_group_name);
+                m_event_groups.emplace(event_group_name, event_group);
+                for (const auto& [event_name, event_spec] : event_group_spec.items())
+                {
+                    if (!event_group->contains(event_name))
+                    {
+                        event_group->add<events::Network::EventMessage>(event_name);
+                    }
+                }
+            }
+        }
     }
 
     void NetworkEventManager::_accept_new_clients()
@@ -65,9 +95,10 @@ namespace obe::network
                     = std::string(received_bytes.begin(), received_bytes.begin() + real_size);
 
                 vili::node message;
+                debug::Log->debug("Received NetworkEvent '{}'", content);
                 try
                 {
-                    message = vili::parser::from_string(content);
+                    message = vili::msgpack::from_string(content);
                 }
                 catch (const std::exception& e)
                 {
@@ -90,7 +121,7 @@ namespace obe::network
                     message_data = message.at("d");
                 }
                 events::Network::Message message_event
-                    = events::Network::Message { client.socket().getRemoteAddress().toString(),
+                    = events::Network::Message { client.name(),
                           event_group_name, event_name, message_data };
                 _handle_message(message_event);
             }
@@ -118,13 +149,12 @@ namespace obe::network
         e_client->trigger(message);
         if (!m_namespace->does_group_exists(message.event_group_name))
         {
-            m_event_groups.emplace(
-                message.event_group_name, m_namespace->create_group(message.event_group_name));
+            throw exceptions::EventGroupNotInSpec(message.event_group_name, EXC_INFO);
         }
         const event::EventGroupPtr event_group = m_event_groups.at(message.event_group_name);
         if (!event_group->contains(message.event_name))
         {
-            event_group->add<events::Network::EventMessage>(message.event_name);
+            throw exceptions::EventNotInSpec(message.event_name, EXC_INFO);
         }
         event_group->trigger(
             message.event_name, events::Network::EventMessage { message.sender, message.data });
@@ -151,21 +181,24 @@ namespace obe::network
     {
         if (check_for_forbidden_groups && FORBIDDEN_NETWORK_EVENT_GROUPS.contains(event_group_name))
         {
-            throw exceptions::ForbiddenEventGroup(event_group_name, EXC_INFO);
+            throw exceptions::ReservedEventGroup(event_group_name, EXC_INFO);
         }
         const vili::node message
             = vili::object { { "g", event_group_name }, { "e", event_name }, { "d", data } };
-        return message.dump(true);
+        return vili::msgpack::to_string(message);
     }
 
     NetworkEventManager::NetworkEventManager(event::EventManager& manager,
-        const std::string& event_namespace_name)
+        const std::string& event_namespace_name, const vili::node& spec) : m_spec(spec)
     {
         m_namespace = &manager.create_namespace(event_namespace_name);
         e_client = m_namespace->create_group("Client");
         e_client->add<events::Network::Connected>();
         e_client->add<events::Network::Disconnected>();
         e_client->add<events::Network::Message>();
+
+        _build_events_from_spec();
+
         m_tcp_listener.setBlocking(false);
     }
 
@@ -202,6 +235,14 @@ namespace obe::network
     void NetworkEventManager::connect(const std::string& address, unsigned short port)
     {
         m_is_host = false;
+        std::unique_ptr<sf::TcpSocket> new_socket = std::make_unique<sf::TcpSocket>();
+        const sf::Socket::Status status = new_socket->connect(address, port);
+        if (status != sf::Socket::Done)
+        {
+            throw exceptions::CannotConnectToHost(address, port, EXC_INFO);
+        }
+        new_socket->setBlocking(false);
+        m_clients.emplace("host", NetworkClient("host", std::move(new_socket)));
     }
 
     void NetworkEventManager::emit(
@@ -226,7 +267,15 @@ namespace obe::network
 
     void NetworkEventManager::handle_events()
     {
-        _accept_new_clients();
+        if (m_is_host)
+        {
+            _accept_new_clients();
+        }
         _receive_messages();
+    }
+
+    event::EventNamespaceView NetworkEventManager::get_event_namespace() const
+    {
+        return m_namespace->get_view();
     }
 }

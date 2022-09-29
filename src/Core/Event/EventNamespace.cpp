@@ -27,6 +27,11 @@ namespace obe::event
         return m_namespace.does_group_exists(group);
     }
 
+    std::string EventNamespaceView::get_name() const
+    {
+        return m_namespace.get_name();
+    }
+
     EventNamespace::EventNamespace(const std::string& name)
         : m_name(name)
     {
@@ -127,5 +132,10 @@ namespace obe::event
     bool EventNamespace::is_joinable() const
     {
         return m_joinable;
+    }
+
+    std::string EventNamespace::get_name() const
+    {
+        return m_name;
     }
 }

@@ -31,9 +31,9 @@ end
 
 -- Network
 function host(config)
-    Network.host(__GAME_OBJECT, config);
+    return Network.host(__GAME_OBJECT, config);
 end
 
 function connect(config)
-    Network.connect(__GAME_OBJECT, config);
+    return Network.connect(__GAME_OBJECT, config);
 end

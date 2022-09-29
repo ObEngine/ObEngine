@@ -153,6 +153,7 @@ namespace obe::bindings
         obe::collision::bindings::load_class_rectangle_collider(state);
         obe::collision::bindings::load_class_trajectory(state);
         obe::collision::bindings::load_class_trajectory_node(state);
+        obe::collision::bindings::load_class_collision_rejection_pair(state);
         obe::collision::bindings::load_enum_collider_type(state);
         obe::collision::bindings::load_function_collider_type_to_c2type(state);
         obe::component::bindings::load_class_component_base(state);
@@ -219,7 +220,8 @@ namespace obe::bindings
         obe::input::bindings::load_enum_input_button_state(state);
         obe::input::bindings::load_enum_input_type(state);
         obe::network::bindings::load_class_lua_packet(state);
-        obe::network::bindings::load_class_network_handler(state);
+        obe::network::bindings::load_class_network_client(state);
+        obe::network::bindings::load_class_network_event_manager(state);
         obe::network::bindings::load_class_tcp_server(state);
         obe::network::bindings::load_class_tcp_socket(state);
         obe::scene::bindings::load_class_camera(state);
@@ -329,9 +331,11 @@ namespace obe::bindings
         obe::events::Game::bindings::load_class_start(state);
         obe::events::Game::bindings::load_class_update(state);
         obe::events::Keys::bindings::load_class_state_changed(state);
+        obe::events::Network::bindings::load_class_client_rename(state);
         obe::events::Network::bindings::load_class_connected(state);
-        obe::events::Network::bindings::load_class_data_received(state);
         obe::events::Network::bindings::load_class_disconnected(state);
+        obe::events::Network::bindings::load_class_event_message(state);
+        obe::events::Network::bindings::load_class_message(state);
         obe::events::Scene::bindings::load_class_loaded(state);
         obe::graphics::utils::bindings::load_class_draw_polygon_options(state);
         obe::graphics::utils::bindings::load_function_draw_point(state);
