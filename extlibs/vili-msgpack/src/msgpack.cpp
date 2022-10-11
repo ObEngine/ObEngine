@@ -231,8 +231,8 @@ namespace vili::msgpack
     {
         if constexpr (std::numeric_limits<float>::is_iec559)
         {
-            uint32_t unsigned_repr;
-            *(float*)(unsigned_repr) = number;
+            uint32_t unsigned_repr = 0;
+            *(float*)(&unsigned_repr) = number;
             return unsigned_repr;
         }
         else
@@ -245,8 +245,8 @@ namespace vili::msgpack
     {
         if constexpr (std::numeric_limits<float>::is_iec559)
         {
-            uint64_t unsigned_repr;
-            *(double*)(unsigned_repr) = number;
+            uint64_t unsigned_repr = 0;
+            *(double*)(&unsigned_repr) = number;
             return unsigned_repr;
         }
         else
@@ -542,14 +542,14 @@ namespace vili::msgpack
         {
             uint32_t buffer = *(uint32_t*)data.data();
             buffer = from_big_endian<uint32_t>(buffer);
-            float float_repr = *(float*)buffer;
+            float float_repr = *(float*)(&buffer);
             return float_repr;
         }
         if (data.size() == 8)
         {
             uint64_t buffer = *(uint64_t*)data.data();
             buffer = from_big_endian<uint64_t>(buffer);
-            double double_repr = *(double*)buffer;
+            double double_repr = *(double*)(&buffer);
             return double_repr;
         }
         throw std::runtime_error("invalid floating point number size");
@@ -577,6 +577,7 @@ namespace vili::msgpack
         std::stack<StackFrameState> steps_before_pop;
         bool first_element = true;
         bool is_object_key = false;
+        std::vector<uint8_t> full_code(msgpack.begin(), msgpack.end());
         for (uint32_t idx = 0; idx < msgpack.size(); idx++)
         {
             const uint8_t code = msgpack[idx];
@@ -594,7 +595,7 @@ namespace vili::msgpack
             case 0xca:
             case 0xcb:
                 {
-                    const uint8_t data_length = std::pow(2, code - 0xca);
+                    const uint8_t data_length = (code == 0xca) ? 4 : 8;
                     state.push(load_float(msgpack.substr(idx + 1, data_length)));
                     idx += data_length;
                 }
@@ -682,14 +683,17 @@ namespace vili::msgpack
             };
             if (!found_code)
             {
+                // unsigned 7 bits
                 if (check_first_bits_equal_to(0b0, code))
                 {
                     state.push(code);
                 }
+                // signed 5 bits
                 else if (check_first_bits_equal_to(0b111, code))
                 {
                     state.push(static_cast<int8_t>(code));
                 }
+                // string with length <= 31 bytes
                 else if (check_first_bits_equal_to(0b101, code))
                 {
                     const uint8_t string_length = 0b10100000 ^ code;
@@ -704,6 +708,7 @@ namespace vili::msgpack
                     }
                     idx += string_length;
                 }
+                // array with up to 15 elements
                 else if (check_first_bits_equal_to(0b1001, code))
                 {
                     const uint8_t array_length = 0b10010000 ^ code;
@@ -711,6 +716,7 @@ namespace vili::msgpack
                     state.open_block();
                     steps_before_pop.push(StackFrameState(array_length + 1, false));
                 }
+                // object with up to 15 elements
                 else if (check_first_bits_equal_to(0b1000, code))
                 {
                     const auto object_length = 0b10000000 ^ code;

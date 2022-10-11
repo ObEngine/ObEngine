@@ -334,7 +334,6 @@ namespace obe::bindings
         obe::events::Network::bindings::load_class_client_rename(state);
         obe::events::Network::bindings::load_class_connected(state);
         obe::events::Network::bindings::load_class_disconnected(state);
-        obe::events::Network::bindings::load_class_event_message(state);
         obe::events::Network::bindings::load_class_message(state);
         obe::events::Scene::bindings::load_class_loaded(state);
         obe::graphics::utils::bindings::load_class_draw_polygon_options(state);

@@ -330,8 +330,10 @@ namespace obe::engine
         debug::Log->debug("Engine has been correctly cleaned");
     }
 
-    void Engine::init()
+    void Engine::init(const vili::node& arguments)
     {
+        m_arguments = arguments;
+
         this->init_config();
         this->init_logger();
         this->init_script();
@@ -454,6 +456,11 @@ namespace obe::engine
     debug::Logger Engine::get_logger() const
     {
         return m_log.lock();
+    }
+
+    const vili::node& Engine::get_arguments() const
+    {
+        return m_arguments;
     }
 
     void Engine::update() const

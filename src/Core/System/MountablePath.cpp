@@ -37,7 +37,8 @@ namespace obe::system
             && this->path_type == other.path_type && this->prefix == other.prefix);
     }
 
-    void MountablePath::load_mount_file(bool from_cwd, bool from_exe)
+    void MountablePath::load_mount_file(
+        bool from_cwd, bool from_exe, const std::string& project_override)
     {
         MountablePath::unmount_all();
 
@@ -185,9 +186,19 @@ namespace obe::system
                 }
             }
         }
-        if (mounted_paths.contains("project"))
+        std::string project_to_load;
+        if (!project_override.empty())
         {
-            project::load(mounted_paths.at("project"), prefixes::game.data(), priorities::project);
+            project_to_load = project_override;
+        }
+        else if (mounted_paths.contains("project"))
+        {
+            project_to_load = mounted_paths.at("project");
+        }
+
+        if (!project_to_load.empty())
+        {
+            project::load(project_to_load, prefixes::game.data(), priorities::project);
         }
         debug::Log->info("<MountablePath> List of mounted paths : ");
         for (const auto& current_path : MountablePath::MountedPaths)

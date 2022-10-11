@@ -19,6 +19,9 @@ local ComponentsMT = {
                 return obj.Sprite;
             end,
         };
+        if component_dispatcher[key] == nil then
+            error(("could not find component '%s'"):format(key));
+        end
         return component_dispatcher[key]();
     end
 };
@@ -65,6 +68,21 @@ function GameObjectHandle:schedule()
     return scheduler;
 end
 
+function GameObjectHandle:_initialize_traits()
+    for _, trait in pairs(self._traits) do
+        if trait._requires_initialisation and not trait._initialized then
+            error(
+                ("GameObject '%s' of type '%s' must initialize trait '%s' (with self:super.%s(...))"):format(
+                    self.id,
+                    self.type,
+                    trait.name,
+                    trait.name
+                )
+            );
+        end
+    end
+end
+
 function GameObjectHandle:call_init(arg_table)
     if self._initialized then
         return;
@@ -90,13 +108,7 @@ function GameObjectHandle:call_init(arg_table)
     end
     self._initialized = true;
     self:init(ArgMirror.unpack_with_nil(args_to_be_unpacked));
-    return self._storage;
-end
-
-function GameObjectHandle:call_init_from_lua(arg_table)
-    arg_table = arg_table or {};
-    self._constructor_arg_values = arg_table;
-    self._object:initialize();
+    self:_initialize_traits();
     return self._storage;
 end
 
@@ -149,7 +161,9 @@ function GameObjectHandle:new(object)
         -- Reference to object
         _object = object,
         -- Used to store all schedulers
-        _schedulers = {};
+        _schedulers = {},
+        -- All the object traits
+        _traits = {},
 
         --- Attributes
         components = setmetatable({_object=object}, ComponentsMT),

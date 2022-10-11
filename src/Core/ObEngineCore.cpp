@@ -9,10 +9,8 @@
 
 namespace obe
 {
-    void init_engine(unsigned int surface_width, unsigned int surface_height, bool dump_log_to_file)
+    void init_engine(unsigned int surface_width, unsigned int surface_height, const vili::node& arguments)
     {
-        debug::init_logger(dump_log_to_file);
-
         debug::Log->info("Using ObEngineCore (Version : {} ({}:{}))", config::OBENGINE_VERSION,
             config::OBENGINE_GIT_BRANCH, config::OBENGINE_GIT_HASH);
 
@@ -21,7 +19,12 @@ namespace obe
         graphics::init_position_transformers();
 
         debug::Log->debug("<ObEngine> Mounting paths");
-        system::MountablePath::load_mount_file();
+        std::string project_override;
+        if (arguments.contains("project"))
+        {
+            project_override = arguments.at("project");
+        }
+        system::MountablePath::load_mount_file(true, true, project_override);
 
         debug::Log->debug("<ObEngine> Initialising NullTexture");
         graphics::make_null_texture();

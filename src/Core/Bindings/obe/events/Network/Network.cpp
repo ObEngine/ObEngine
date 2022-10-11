@@ -35,23 +35,13 @@ namespace obe::events::Network::bindings
                 "Disconnected", sol::call_constructor, sol::default_constructor);
         bind_disconnected["id"] = sol::var(&obe::events::Network::Disconnected::id);
     }
-    void load_class_event_message(sol::state_view state)
-    {
-        sol::table Network_namespace = state["obe"]["events"]["Network"].get<sol::table>();
-        sol::usertype<obe::events::Network::EventMessage> bind_event_message
-            = Network_namespace.new_usertype<obe::events::Network::EventMessage>(
-                "EventMessage", sol::call_constructor, sol::default_constructor);
-        bind_event_message["sender"] = &obe::events::Network::EventMessage::sender;
-        bind_event_message["data"] = &obe::events::Network::EventMessage::data;
-        bind_event_message["id"] = sol::var(&obe::events::Network::EventMessage::id);
-    }
     void load_class_message(sol::state_view state)
     {
         sol::table Network_namespace = state["obe"]["events"]["Network"].get<sol::table>();
         sol::usertype<obe::events::Network::Message> bind_message
             = Network_namespace.new_usertype<obe::events::Network::Message>(
                 "Message", sol::call_constructor, sol::default_constructor);
-        bind_message["sender"] = &obe::events::Network::Message::sender;
+        bind_message["client_name"] = &obe::events::Network::Message::client_name;
         bind_message["event_group_name"] = &obe::events::Network::Message::event_group_name;
         bind_message["event_name"] = &obe::events::Network::Message::event_name;
         bind_message["data"] = &obe::events::Network::Message::data;

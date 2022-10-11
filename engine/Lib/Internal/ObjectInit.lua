@@ -5,7 +5,11 @@ local Network = require("obe://Lib/Internal/Network");
 local __GAME_OBJECT = GameObjectHandle:new(This);
 
 ---@return GameObjectCls
-function GameObject()
+function GameObject(...)
+    local traits = {...};
+    for _, trait in pairs(traits) do
+        __GAME_OBJECT:add_trait(trait);
+    end
     return __GAME_OBJECT;
 end
 

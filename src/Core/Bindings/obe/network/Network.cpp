@@ -30,7 +30,7 @@ namespace obe::network::bindings
             = network_namespace.new_usertype<obe::network::NetworkEventManager>(
                 "NetworkEventManager", sol::call_constructor,
                 sol::constructors<obe::network::NetworkEventManager(
-                    obe::event::EventManager&, const std::string&, const vili::node&)>());
+                    event::EventNamespace::Ptr, const vili::node&)>());
         bind_network_event_manager["rename_client"]
             = &obe::network::NetworkEventManager::rename_client;
         bind_network_event_manager["host"] = &obe::network::NetworkEventManager::host;

@@ -58,6 +58,9 @@ namespace obe::engine
         std::unique_ptr<system::Window> m_window;
         debug::Logger::weak_type m_log;
 
+        // Configuration
+        vili::node m_arguments;
+
         // Managers
         audio::AudioManager m_audio {};
         config::ConfigurationManager m_config {};
@@ -101,7 +104,7 @@ namespace obe::engine
 
         Engine& operator=(Engine&&) = delete;
 
-        void init();
+        void init(const vili::node& arguments);
         void run() const;
 
         /**
@@ -158,5 +161,7 @@ namespace obe::engine
          * \nobind
          */
         debug::Logger get_logger() const;
+
+        [[nodiscard]] const vili::node& get_arguments() const;
     };
 } // namespace obe::engine

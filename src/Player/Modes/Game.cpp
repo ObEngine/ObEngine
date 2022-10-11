@@ -2,10 +2,10 @@
 
 namespace obe::modes
 {
-    void start_game()
+    void start_game(const vili::node& arguments)
     {
         engine::Engine engine;
-        engine.init();
+        engine.init(arguments);
         engine.run();
     }
 } // namespace obe::modes
