@@ -32,16 +32,9 @@ namespace obe::events
         struct Message
         {
             static constexpr std::string_view id = "Message";
-            const std::string sender;
+            const std::string client_name;
             const std::string event_group_name;
             const std::string event_name;
-            const vili::node data;
-        };
-
-        struct EventMessage
-        {
-            static constexpr std::string_view id = "EventMessage";
-            const std::string sender;
             const vili::node data;
         };
     }
@@ -54,11 +47,12 @@ namespace obe::network
     private:
         std::string m_name;
         std::unique_ptr<sf::TcpSocket> m_socket;
+
     public:
         NetworkClient(const std::string& name, std::unique_ptr<sf::TcpSocket>&& socket);
         void rename(const std::string& name);
         [[nodiscard]] std::string name() const;
-        [[nodiscard]] std::string address() const;
+        [[nodiscard]] std::string host() const;
         sf::TcpSocket& socket() const;
     };
 
@@ -82,20 +76,24 @@ namespace obe::network
         void _receive_messages();
         void _handle_message(const events::Network::Message& message);
         bool _handle_special_message(const events::Network::Message& message);
-        [[nodiscard]] static std::string _build_message(const std::string& event_group_name, const std::string& event_name,
-            const vili::node& data, bool check_for_forbidden_groups = true);
+        [[nodiscard]] static std::string _build_message(const std::string& event_group_name,
+            const std::string& event_name, const vili::node& data,
+            bool check_for_forbidden_groups = true);
+
     public:
-        NetworkEventManager(event::EventManager& manager, const std::string& event_namespace_name, const vili::node& spec);
+        NetworkEventManager(event::EventNamespace::Ptr event_namespace, const vili::node& spec);
 
         void rename_client(const std::string& current_name, const std::string& new_name);
         void host(unsigned short port);
-        void connect(const std::string& address, unsigned short port);
+        void connect(const std::string& host, unsigned short port);
 
-        void emit(const std::string& event_group_name, const std::string& event_name, const vili::node& data);
+        void emit(const std::string& event_group_name, const std::string& event_name,
+            const vili::node& data);
         void emit(const std::string& recipient, const std::string& event_group_name,
             const std::string& event_name, const vili::node& data) const;
         void handle_events();
 
         [[nodiscard]] event::EventNamespaceView get_event_namespace() const;
+        [[nodiscard]] std::string get_client_name() const;
     };
 } // namespace obe::network

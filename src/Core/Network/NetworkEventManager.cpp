@@ -1,8 +1,8 @@
 #include <unordered_set>
 
 #include <fmt/core.h>
-#include <vili/parser.hpp>
 #include <vili-msgpack/msgpack.hpp>
+#include <vili/parser.hpp>
 
 #include <Network/Exceptions.hpp>
 #include <Network/NetworkEventManager.hpp>
@@ -27,7 +27,7 @@ namespace obe::network
         return m_name;
     }
 
-    std::string NetworkClient::address() const
+    std::string NetworkClient::host() const
     {
         return m_socket->getRemoteAddress().toString();
     }
@@ -43,13 +43,14 @@ namespace obe::network
         {
             if (!m_namespace->does_group_exists(event_group_name))
             {
-                const event::EventGroupPtr event_group = m_namespace->create_group(event_group_name);
+                const event::EventGroupPtr event_group
+                    = m_namespace->create_group(event_group_name);
                 m_event_groups.emplace(event_group_name, event_group);
                 for (const auto& [event_name, event_spec] : event_group_spec.items())
                 {
                     if (!event_group->contains(event_name))
                     {
-                        event_group->add<events::Network::EventMessage>(event_name);
+                        event_group->add<events::Network::Message>(event_name);
                     }
                 }
             }
@@ -67,17 +68,17 @@ namespace obe::network
             const std::string random_client_name
                 = utils::string::get_random_key(utils::string::Alphabet, 16);
             // Trigger "Connected" event
-            const auto evt = events::Network::Connected {
-                new_socket->getRemoteAddress().toString(),
-                new_socket->getLocalPort(),
-                new_socket->getRemotePort()
-            };
+            const auto evt = events::Network::Connected { new_socket->getRemoteAddress().toString(),
+                new_socket->getLocalPort(), new_socket->getRemotePort() };
             e_client->trigger(evt);
             // Trigger "ClientRename" event
             const std::string client_rename_msg = _build_message(
-                "Client", "ClientRename", vili::object { { "name", random_client_name } });
-            new_socket->send(client_rename_msg.data(), client_rename_msg.size());
-            m_clients.emplace(random_client_name, NetworkClient(random_client_name, std::move(new_socket)));
+                "Client", "ClientRename", vili::object { { "name", random_client_name } }, false);
+            sf::Packet packet;
+            packet << client_rename_msg;
+            new_socket->send(packet);
+            m_clients.emplace(
+                random_client_name, NetworkClient(random_client_name, std::move(new_socket)));
         }
     }
 
@@ -85,15 +86,12 @@ namespace obe::network
     {
         for (auto& [client_name, client] : m_clients)
         {
-            std::array<uint8_t, 2048> received_bytes = {};
-            size_t real_size = 0;
-            const sf::Socket::Status status
-                = client.socket().receive(received_bytes.data(), received_bytes.size(), real_size);
+            sf::Packet packet;
+            std::string content;
+            sf::Socket::Status status = client.socket().receive(packet);
+            packet >> content;
             if (status == sf::Socket::Done)
             {
-                const std::string content
-                    = std::string(received_bytes.begin(), received_bytes.begin() + real_size);
-
                 vili::node message;
                 debug::Log->debug("Received NetworkEvent '{}'", content);
                 try
@@ -120,9 +118,8 @@ namespace obe::network
                 {
                     message_data = message.at("d");
                 }
-                events::Network::Message message_event
-                    = events::Network::Message { client.name(),
-                          event_group_name, event_name, message_data };
+                events::Network::Message message_event = events::Network::Message { client.name(),
+                    event_group_name, event_name, message_data };
                 _handle_message(message_event);
             }
             else if (status == sf::Socket::Disconnected)
@@ -156,8 +153,7 @@ namespace obe::network
         {
             throw exceptions::EventNotInSpec(message.event_name, EXC_INFO);
         }
-        event_group->trigger(
-            message.event_name, events::Network::EventMessage { message.sender, message.data });
+        event_group->trigger(message.event_name, message);
     }
 
     bool NetworkEventManager::_handle_special_message(const events::Network::Message& message)
@@ -188,10 +184,11 @@ namespace obe::network
         return vili::msgpack::to_string(message);
     }
 
-    NetworkEventManager::NetworkEventManager(event::EventManager& manager,
-        const std::string& event_namespace_name, const vili::node& spec) : m_spec(spec)
+    NetworkEventManager::NetworkEventManager(
+        event::EventNamespace::Ptr event_namespace, const vili::node& spec)
+        : m_spec(spec)
+        , m_namespace(event_namespace)
     {
-        m_namespace = &manager.create_namespace(event_namespace_name);
         e_client = m_namespace->create_group("Client");
         e_client->add<events::Network::Connected>();
         e_client->add<events::Network::Disconnected>();
@@ -202,8 +199,8 @@ namespace obe::network
         m_tcp_listener.setBlocking(false);
     }
 
-    void NetworkEventManager::rename_client(const std::string& current_name,
-        const std::string& new_name)
+    void NetworkEventManager::rename_client(
+        const std::string& current_name, const std::string& new_name)
     {
         if (!m_clients.contains(current_name))
         {
@@ -212,9 +209,11 @@ namespace obe::network
         auto client = m_clients.extract(current_name);
         client.key() = new_name;
         client.mapped().rename(new_name);
-        const std::string client_rename_msg = _build_message(
-            "Client", "ClientRename", vili::object { { "name", new_name } });
-        client.mapped().socket().send(client_rename_msg.data(), client_rename_msg.size());
+        const std::string client_rename_msg
+            = _build_message("Client", "ClientRename", vili::object { { "name", new_name } }, false);
+        sf::Packet packet;
+        packet << client_rename_msg;
+        client.mapped().socket().send(packet);
         m_clients.insert(std::move(client));
     }
 
@@ -232,14 +231,14 @@ namespace obe::network
         m_is_host = true;
     }
 
-    void NetworkEventManager::connect(const std::string& address, unsigned short port)
+    void NetworkEventManager::connect(const std::string& host, unsigned short port)
     {
         m_is_host = false;
         std::unique_ptr<sf::TcpSocket> new_socket = std::make_unique<sf::TcpSocket>();
-        const sf::Socket::Status status = new_socket->connect(address, port);
+        const sf::Socket::Status status = new_socket->connect(host, port);
         if (status != sf::Socket::Done)
         {
-            throw exceptions::CannotConnectToHost(address, port, EXC_INFO);
+            throw exceptions::CannotConnectToHost(host, port, EXC_INFO);
         }
         new_socket->setBlocking(false);
         m_clients.emplace("host", NetworkClient("host", std::move(new_socket)));
@@ -251,18 +250,24 @@ namespace obe::network
         const std::string message_dump = _build_message(event_group_name, event_name, data);
         for (const auto& [client_name, client] : m_clients)
         {
-            client.socket().send(message_dump.data(), message_dump.size());
+            sf::Packet packet;
+            packet << message_dump;
+            client.socket().send(packet);
         }
     }
 
-    void NetworkEventManager::emit(const std::string& recipient, const std::string& event_group_name, const std::string& event_name, const vili::node& data) const
+    void NetworkEventManager::emit(const std::string& recipient,
+        const std::string& event_group_name, const std::string& event_name,
+        const vili::node& data) const
     {
         if (!m_clients.contains(recipient))
         {
             throw exceptions::ClientNotFound(recipient, EXC_INFO);
         }
         const std::string message_dump = _build_message(event_group_name, event_name, data);
-        m_clients.at(recipient).socket().send(message_dump.data(), message_dump.size());
+        sf::Packet packet;
+        packet << message_dump;
+        m_clients.at(recipient).socket().send(packet);
     }
 
     void NetworkEventManager::handle_events()
@@ -277,5 +282,10 @@ namespace obe::network
     event::EventNamespaceView NetworkEventManager::get_event_namespace() const
     {
         return m_namespace->get_view();
+    }
+
+    std::string NetworkEventManager::get_client_name() const
+    {
+        return m_client_name;
     }
 }

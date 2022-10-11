@@ -129,7 +129,8 @@ namespace obe::system
         /**
          * \brief Function called to Mount all Paths using 'mount.vili' file
          */
-        static void load_mount_file(bool from_cwd = true, bool from_exe = true);
+        static void load_mount_file(
+            bool from_cwd = true, bool from_exe = true, const std::string& project_override = "");
         /**
          * \brief Add a Path to Mounted Paths
          * \param path Path to mount

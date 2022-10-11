@@ -86,5 +86,7 @@ namespace obe::event
          */
         [[nodiscard]] bool is_joinable() const;
         [[nodiscard]] std::string get_name() const;
+
+        using Ptr = EventNamespace*;
     };
 } // namespace obe::event
