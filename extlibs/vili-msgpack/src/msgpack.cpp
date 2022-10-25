@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <array>
 #include <bit>
+#include <concepts>
 #include <cstdint>
 #include <limits>
 #include <vector>
@@ -652,7 +653,8 @@ namespace vili::msgpack
                         = load_unsigned_integer(msgpack.substr(idx + 1, size_header_length));
                     state.push(vili::array {});
                     state.open_block();
-                    steps_before_pop.push(StackFrameState(array_length + 1, false));
+                    steps_before_pop.push(
+                        StackFrameState { static_cast<uint32_t>(array_length + 1), false });
                     idx += size_header_length;
                 }
                 break;
@@ -673,7 +675,8 @@ namespace vili::msgpack
                         state.push(vili::object {});
                         state.open_block();
                     }
-                    steps_before_pop.push(StackFrameState(object_length + 1, true));
+                    steps_before_pop.push(
+                        StackFrameState { static_cast<uint32_t>(object_length + 1), true });
                     is_object_key = false;
                     idx += size_header_length;
                 }
@@ -714,7 +717,7 @@ namespace vili::msgpack
                     const uint8_t array_length = 0b10010000 ^ code;
                     state.push(vili::array {});
                     state.open_block();
-                    steps_before_pop.push(StackFrameState(array_length + 1, false));
+                    steps_before_pop.push(StackFrameState { static_cast<uint32_t>(array_length + 1), false });
                 }
                 // object with up to 15 elements
                 else if (check_first_bits_equal_to(0b1000, code))
@@ -730,7 +733,7 @@ namespace vili::msgpack
                         state.push(vili::object {});
                         state.open_block();
                     }
-                    steps_before_pop.push(StackFrameState(object_length + 1, true));
+                    steps_before_pop.push(StackFrameState { static_cast<uint32_t>(object_length + 1), true });
                     is_object_key = false;
                 }
                 else

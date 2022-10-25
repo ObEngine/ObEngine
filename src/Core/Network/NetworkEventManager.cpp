@@ -67,10 +67,9 @@ namespace obe::network
             new_socket->setBlocking(false);
             const std::string random_client_name
                 = utils::string::get_random_key(utils::string::Alphabet, 16);
-            // Trigger "Connected" event
+            // Prepare "Connected" event
             const auto evt = events::Network::Connected { new_socket->getRemoteAddress().toString(),
-                new_socket->getLocalPort(), new_socket->getRemotePort() };
-            e_client->trigger(evt);
+                new_socket->getLocalPort(), new_socket->getRemotePort(), random_client_name };
             // Trigger "ClientRename" event
             const std::string client_rename_msg = _build_message(
                 "Client", "ClientRename", vili::object { { "name", random_client_name } }, false);
@@ -79,6 +78,8 @@ namespace obe::network
             new_socket->send(packet);
             m_clients.emplace(
                 random_client_name, NetworkClient(random_client_name, std::move(new_socket)));
+            // Trigger "Connected" event
+            e_client->trigger(evt);
         }
     }
 

@@ -37,7 +37,7 @@ int main(int argc, char** argv)
 #else
     try
     {
-        init_engine(surface_width, surface_height, true, arguments);
+        init_engine(surface_width, surface_height, arguments);
     }
     catch (const std::exception& e)
     {

@@ -14,12 +14,13 @@ local function make_config_defaults(config)
 end
 
 local function make_event_emit_wrapper(network_manager, config)
-    return function(event_hook, message)
+    return function(event_hook, message, flags)
+        flags = flags or {};
         local event_hook_mt = getmetatable(event_hook);
         print("Emitting message", inspect(message));
         local serialized_msg = vili.from_lua(message);
         network_manager:emit(event_hook_mt.event_group, event_hook_mt.event_name, serialized_msg);
-        if config.call_local and event_hook.callback then
+        if config.call_local and event_hook.callback and not flags.nolocal then
             return event_hook.callback(message);
         end
     end

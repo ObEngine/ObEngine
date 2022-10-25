@@ -45,6 +45,8 @@ namespace obe::network::bindings
                 &obe::network::NetworkEventManager::emit));
         bind_network_event_manager["handle_events"]
             = &obe::network::NetworkEventManager::handle_events;
+        bind_network_event_manager["get_client_name"]
+            = &obe::network::NetworkEventManager::get_client_name;
     }
     void load_class_tcp_server(sol::state_view state)
     {

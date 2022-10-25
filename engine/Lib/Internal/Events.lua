@@ -14,6 +14,12 @@ local function EventHook(listener_id, namespace, group, event, callback)
             end
             return object.callback(...);
         end,
+        __index = function(object, flags)
+            assert(type(flags) == "table", "event flags must be a table");
+            return function(...)
+                object(..., flags);
+            end
+        end,
         clean = function(self)
             Engine.Events:get_namespace(namespace)
                          :get_group(group)
