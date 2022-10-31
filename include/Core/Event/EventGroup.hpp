@@ -193,11 +193,10 @@ namespace obe::event
         {
             name = EventType::id;
         }
-        if(!m_events.contains(event_name))
+        if (!m_events.contains(event_name))
         {
             throw Exceptions::UnknownEvent(
                 m_identifier, event_name, this->get_events_names(), EXC_INFO);
-
         }
         return *static_cast<Event<EventType>*>(m_events.at(name).get());
     }
@@ -233,11 +232,10 @@ namespace obe::event
     template <class EventType>
     void EventGroup::trigger(const std::string& event_name, EventType event)
     {
-        if(!m_events.contains(event_name))
+        if (!m_events.contains(event_name))
         {
             throw Exceptions::UnknownEvent(
                 m_identifier, event_name, this->get_events_names(), EXC_INFO);
-
         }
         debug::Log->trace(
             "<EventGroup> Triggering Event '{}' from EventGroup '{}'", event_name, m_identifier);
