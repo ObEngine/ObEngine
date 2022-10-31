@@ -43,6 +43,7 @@ target_link_libraries(ObEngineCore dynamicLinker)
 target_link_libraries(ObEngineCore Soloud)
 target_link_libraries(ObEngineCore whereami)
 target_link_libraries(ObEngineCore lunasvg)
+target_link_libraries(ObEngineCore pcg)
 
 # Internal / External dependencies
 target_link_libraries(ObEngineCore fmt::fmt)
