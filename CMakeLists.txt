@@ -62,6 +62,7 @@ add_subdirectory(extlibs/sfe)
 
 # Other libraries
 add_subdirectory(extlibs/whereami)
+add_subdirectory(extlibs/pcg)
 
 # Find git installation
 find_package(Git QUIET)

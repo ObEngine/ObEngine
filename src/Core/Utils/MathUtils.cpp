@@ -1,12 +1,12 @@
 #include <cmath>
 #include <random>
-
+#include <pcg/pcg_random.hpp>
 #include <Utils/MathUtils.hpp>
 
 namespace obe::utils::math
 {
-    std::random_device rd;
-    std::mt19937 rng { rd() };
+    pcg_extras::seed_seq_from<std::random_device> seed_source;
+    pcg32 rng(seed_source);
 
     int randint(const int& min, const int& max)
     {
