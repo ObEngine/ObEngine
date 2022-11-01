@@ -205,7 +205,7 @@ function obe.scene._Scene:remove_sprite(id) end
 ---
 ---@param id? string #Id of the new Collider
 ---@param add_to_scene_root? boolean #Add the Collider to the root Scene Node if true
----@return obe.collision.PolygonalCollider
+---@return obe.collision.ColliderComponent
 function obe.scene._Scene:create_collider(id, add_to_scene_root) end
 
 --- Get how many Colliders are present in the Scene.
@@ -215,25 +215,13 @@ function obe.scene._Scene:get_collider_amount() end
 
 --- Get all the pointers of the Colliders in the Scene.
 ---
----@return obe.collision.PolygonalCollider[]
+---@return obe.collision.ColliderComponent[]
 function obe.scene._Scene:get_all_colliders() end
-
---- Get the first Collider found with a point on the given position.
----
----@param position obe.transform.UnitVector #Position to get the Point of a Collider
----@return Tuple_ObeCollisionPolygonalCollider_Number
-function obe.scene._Scene:get_collider_point_by_position(position) end
-
---- Get the Collider using the centroid Position.
----
----@param position obe.transform.UnitVector #Position to check
----@return obe.collision.PolygonalCollider
-function obe.scene._Scene:get_collider_by_centroid_position(position) end
 
 --- Get the Collider with the given Id (Raises an exception if not found)
 ---
 ---@param id string #Id of the Collider to retrieve
----@return obe.collision.PolygonalCollider
+---@return obe.collision.ColliderComponent
 function obe.scene._Scene:get_collider(id) end
 
 --- Check the existence of the Collider with given Id in the Scene.
@@ -246,6 +234,9 @@ function obe.scene._Scene:does_collider_exists(id) end
 ---
 ---@param id string #Id of the Collider to remove
 function obe.scene._Scene:remove_collider(id) end
+
+---@return obe.collision.CollisionSpace
+function obe.scene._Scene:get_collision_space() end
 
 ---@return obe.scene.SceneNode
 function obe.scene._Scene:get_scene_root_node() end

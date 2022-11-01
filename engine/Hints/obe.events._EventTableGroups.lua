@@ -20,9 +20,10 @@ obe.events._EventTableGroups._Game = {};
 
 
 ---@class obe.events._EventTableGroups.Network
+---@field ClientRename fun(evt:obe.events.Network.ClientRename) #
 ---@field Connected fun(evt:obe.events.Network.Connected) #
----@field DataReceived fun(evt:obe.events.Network.DataReceived) #
 ---@field Disconnected fun(evt:obe.events.Network.Disconnected) #
+---@field Message fun(evt:obe.events.Network.Message) #
 obe.events._EventTableGroups._Network = {};
 
 

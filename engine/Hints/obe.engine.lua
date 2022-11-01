@@ -19,9 +19,13 @@ obe.engine._Engine = {};
 function obe.engine.Engine() end
 
 
-function obe.engine._Engine:init() end
+---@param arguments vili.node #
+function obe.engine._Engine:init(arguments) end
 
 function obe.engine._Engine:run() end
+
+---@return vili.node
+function obe.engine._Engine:get_arguments() end
 
 
 ---@class obe.engine.ResourceManagedObject

@@ -309,6 +309,9 @@ function obe.event._EventNamespace:set_joinable(joinable) end
 ---@return boolean
 function obe.event._EventNamespace:is_joinable() end
 
+---@return string
+function obe.event._EventNamespace:get_name() end
+
 
 ---@class obe.event.EventNamespaceView
 obe.event._EventNamespaceView = {};
@@ -338,6 +341,9 @@ function obe.event._EventNamespaceView:get_all_groups_names() end
 ---@param group string #Name of the EventGroup to search
 ---@return boolean
 function obe.event._EventNamespaceView:does_group_exists(group) end
+
+---@return string
+function obe.event._EventNamespaceView:get_name() end
 
 
 ---@class obe.event.LuaEventListener

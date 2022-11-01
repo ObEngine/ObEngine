@@ -1,8 +1,7 @@
 ---@meta
 
 obe.component = {};
----@class obe.component.ComponentBase : obe.types.Identifiable, obe.types.Serializable
----@field ComponentType string #
+---@class obe.component.ComponentBase : obe.types.Identifiable, obe.types.Serializable, obe.types.UniqueIdentifiable
 obe.component._ComponentBase = {};
 
 --- obe.component.ComponentBase constructor
@@ -10,6 +9,12 @@ obe.component._ComponentBase = {};
 ---@param id string #
 ---@return obe.component.ComponentBase
 function obe.component.ComponentBase(id) end
+
+--- obe.component.ComponentBase constructor
+---
+---@param other obe.component.ComponentBase #
+---@return obe.component.ComponentBase
+function obe.component.ComponentBase(other) end
 
 
 function obe.component._ComponentBase:remove() end

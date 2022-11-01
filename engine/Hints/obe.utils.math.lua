@@ -3,9 +3,9 @@
 obe.utils.math = {};
 --- Get a random integer between the given bound.
 ---
----@param min number #Min bound
----@param max number #Max bound
----@return number
+---@param min N #Min bound
+---@param max N #Max bound \thints
+---@return N
 function obe.utils.math.randint(min, max) end
 
 --- Get a random double.

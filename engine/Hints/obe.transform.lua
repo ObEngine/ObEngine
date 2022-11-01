@@ -19,6 +19,17 @@ function obe.transform._Matrix2D:product(vector) end
 ---@class obe.transform.Movable
 obe.transform._Movable = {};
 
+--- obe.transform.Movable constructor
+---
+---@return obe.transform.Movable
+function obe.transform.Movable() end
+
+--- obe.transform.Movable constructor
+---
+---@param position obe.transform.UnitVector #
+---@return obe.transform.Movable
+function obe.transform.Movable(position) end
+
 
 --- Set the position of the Movable using an UnitVector.
 ---
@@ -36,7 +47,7 @@ function obe.transform._Movable:move(position) end
 function obe.transform._Movable:get_position() end
 
 
----@class obe.transform.Polygon : obe.transform.UnitBasedObject, obe.transform.Movable
+---@class obe.transform.Polygon
 ---@field DefaultTolerance number #
 obe.transform._Polygon = {};
 
@@ -92,11 +103,6 @@ function obe.transform._Polygon:get_points_amount() end
 ---@return obe.transform.UnitVector
 function obe.transform._Polygon:get_position() end
 
---- Gets the current angle of the PolygonalCollider.
----
----@return number
-function obe.transform._Polygon:get_rotation() end
-
 --- Gets the segment of the Polygon at index segment.
 ---
 ---@param segment obe.transform.point_index_t #Index of the Segment to get
@@ -129,22 +135,10 @@ function obe.transform._Polygon:get_point_near_position(position, tolerance) end
 ---@param position obe.transform.UnitVector #UnitVector containing the offset to move the Polygon
 function obe.transform._Polygon:move(position) end
 
---- Adds an angle to the current angle of the PolygonalCollider (will rotate all points around the given origin)
----
----@param angle number #Angle to add to the PolygonalCollider
----@param origin obe.transform.UnitVector #Origin to rotate all the points around
-function obe.transform._Polygon:rotate(angle, origin) end
-
 --- Sets the new position of the Polygon (using the point at index 0)
 ---
 ---@param position obe.transform.UnitVector #UnitVector containing the new Position of the Polygon
 function obe.transform._Polygon:set_position(position) end
-
---- Sets the angle of the PolygonalCollider (will rotate all points around the given origin)
----
----@param angle number #Angle to set to the PolygonalCollider
----@param origin obe.transform.UnitVector #Origin to rotate all the points around
-function obe.transform._Polygon:set_rotation(angle, origin) end
 
 ---@param position obe.transform.UnitVector #
 function obe.transform._Polygon:set_position_from_centroid(position) end
@@ -159,6 +153,23 @@ function obe.transform._Polygon:get(i) end
 
 ---@return obe.transform.Rect
 function obe.transform._Polygon:get_bounding_box() end
+
+--- Sets the angle of the PolygonalCollider (will rotate all points around the given origin)
+---
+---@param angle number #Angle to set to the PolygonalCollider
+---@param origin obe.transform.UnitVector #Origin to rotate all the points around
+function obe.transform._Polygon:set_rotation(angle, origin) end
+
+--- Adds an angle to the current angle of the PolygonalCollider (will rotate all points around the given origin)
+---
+---@param angle number #Angle to add to the PolygonalCollider
+---@param origin obe.transform.UnitVector #Origin to rotate all the points around
+function obe.transform._Polygon:rotate(angle, origin) end
+
+--- Gets the current angle of the PolygonalCollider.
+---
+---@return number
+function obe.transform._Polygon:get_rotation() end
 
 
 ---@class obe.transform.PolygonPoint : obe.transform.UnitVector

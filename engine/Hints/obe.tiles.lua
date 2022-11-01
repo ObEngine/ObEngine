@@ -38,6 +38,7 @@ obe.tiles._TileLayer = {};
 ---@param scene obe.tiles.TileScene #
 ---@param id string #
 ---@param layer number #
+---@param sublayer number #
 ---@param x number #
 ---@param y number #
 ---@param width number #
@@ -45,7 +46,7 @@ obe.tiles._TileLayer = {};
 ---@param data number[] #
 ---@param visible boolean #
 ---@return obe.tiles.TileLayer
-function obe.tiles.TileLayer(scene, id, layer, x, y, width, height, data, visible) end
+function obe.tiles.TileLayer(scene, id, layer, sublayer, x, y, width, height, data, visible) end
 
 
 ---@return string
@@ -124,7 +125,7 @@ function obe.tiles._TileScene:get_tilesets() end
 ---@return obe.graphics.Renderable[]
 function obe.tiles._TileScene:get_renderables() end
 
----@return obe.collision.PolygonalCollider[]
+---@return obe.collision.ColliderComponent[]
 function obe.tiles._TileScene:get_collider_models() end
 
 ---@return vili.node[]

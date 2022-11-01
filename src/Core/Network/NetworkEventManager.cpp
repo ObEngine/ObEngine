@@ -230,6 +230,7 @@ namespace obe::network
         }
         m_client_name = "host";
         m_is_host = true;
+        debug::Log->debug("<NetworkEventManager> Listening on port {}", port);
     }
 
     void NetworkEventManager::connect(const std::string& host, unsigned short port)

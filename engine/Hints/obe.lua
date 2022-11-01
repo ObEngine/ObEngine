@@ -38,7 +38,7 @@ function obe.get_type_name() end
 
 ---@param surface_width number #
 ---@param surface_height number #
----@param dump_log_to_file boolean #
-function obe.init_engine(surface_width, surface_height, dump_log_to_file) end
+---@param arguments vili.node #
+function obe.init_engine(surface_width, surface_height, arguments) end
 
 return obe;

@@ -190,7 +190,8 @@ function obe.system._MountablePath:resolve_base_path() end
 ---
 ---@param from_cwd? boolean #
 ---@param from_exe? boolean #
-function obe.system._MountablePath:load_mount_file(from_cwd, from_exe) end
+---@param project_override? string #
+function obe.system._MountablePath:load_mount_file(from_cwd, from_exe, project_override) end
 
 --- Add a Path to Mounted Paths.
 ---

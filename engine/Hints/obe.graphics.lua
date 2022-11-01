@@ -335,6 +335,9 @@ function obe.graphics.RenderTarget(target) end
 function obe.graphics.RenderTarget(window) end
 
 
+---@param color obe.graphics.Color #
+function obe.graphics._RenderTarget:clear(color) end
+
 ---@param drawable sf.Drawable #
 ---@param states? sf.RenderStates #
 function obe.graphics._RenderTarget:draw(drawable, states) end
@@ -356,6 +359,13 @@ obe.graphics._Renderable = {};
 ---
 ---@return obe.graphics.Renderable
 function obe.graphics.Renderable() end
+
+--- obe.graphics.Renderable constructor
+---
+---@param layer number #
+---@param sublayer number #
+---@return obe.graphics.Renderable
+function obe.graphics.Renderable(layer, sublayer) end
 
 
 --- Get the layer of the Renderable.

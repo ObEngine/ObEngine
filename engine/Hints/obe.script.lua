@@ -4,7 +4,7 @@ obe.script = {};
 ---@class obe.script.GameObject : obe.types.Identifiable, obe.types.Serializable
 ---@field deletable boolean #Delete State of the GameObject (false = not deleted)
 ---@field Animator obe.animation.Animator #Gets the Animator Component of the GameObject (Raises ObEngine.Script.GameObject.NoAnimator if no Animator Component)
----@field Collider obe.collision.PolygonalCollider #Gets the Collider Component of the GameObject (Raises ObEngine.Script.GameObject.NoCollider if no Collider Component)
+---@field Collider obe.collision.ColliderComponent #Gets the Collider Component of the GameObject (Raises ObEngine.Script.GameObject.NoCollider if no Collider Component)
 ---@field Sprite obe.graphics.Sprite #Gets the Sprite Component of the GameObject (Raises ObEngine.Script.GameObject.NoSprite if no Sprite Component)
 ---@field SceneNode obe.scene.SceneNode #Gets the Scene Node of the GameObject (SceneNode that can manipulate the position of all Scene Components)
 obe.script._GameObject = {};
@@ -124,6 +124,10 @@ function obe.script._GameObject:load(data) end
 ---@param path string #
 ---@param env obe.script.EnvironmentTarget #
 function obe.script._GameObject:load_source(path, env) end
+
+---@param component_id string #
+---@return boolean
+function obe.script._GameObject:is_parent_of_component(component_id) end
 
 
 ---@class obe.script.GameObjectDatabase

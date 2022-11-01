@@ -114,6 +114,33 @@ function obe.types._Togglable:disable() end
 function obe.types._Togglable:is_enabled() end
 
 
+---@class obe.types.UniqueIdentifiable
+obe.types._UniqueIdentifiable = {};
+
+--- Creates a new UniqueIdentifiable.
+---
+---@return obe.types.UniqueIdentifiable
+function obe.types.UniqueIdentifiable() end
+
+--- obe.types.UniqueIdentifiable constructor
+---
+---@param p0 obe.types.UniqueIdentifiable #
+---@return obe.types.UniqueIdentifiable
+function obe.types.UniqueIdentifiable(p0) end
+
+--- obe.types.UniqueIdentifiable constructor
+---
+---@param other obe.types.UniqueIdentifiable #
+---@return obe.types.UniqueIdentifiable
+function obe.types.UniqueIdentifiable(other) end
+
+
+--- Get the unique id of the UniqueIdentifiable.
+---
+---@return string
+function obe.types._UniqueIdentifiable:get_unique_id() end
+
+
 ---@class obe.types.UnknownEnumEntry : obe.Exception[obe.types.UnknownEnumEntry]
 obe.types._UnknownEnumEntry = {};
 
