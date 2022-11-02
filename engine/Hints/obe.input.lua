@@ -60,8 +60,8 @@ function obe.input._InputAction:set_repeat(delay) end
 ---
 function obe.input._InputAction:update() end
 
----@return obe.input.InputButton[]
-function obe.input._InputAction:get_involved_buttons() end
+---@return obe.input.InputSource[]
+function obe.input._InputAction:get_involved_input_sources() end
 
 ---@param monitors obe.input.InputButtonMonitorPtr[] #
 function obe.input._InputAction:enable(monitors) end
@@ -72,117 +72,24 @@ function obe.input._InputAction:disable() end
 function obe.input._InputAction:is_enabled() end
 
 
----@class obe.input.InputButton
-obe.input._InputButton = {};
-
---- Creates a new InputButton representing a Keyboard key.
----
----@param key sf.Keyboard.Key #SFML Keyboard Key
----@param name string #Name of the Key
----@param return_char string #The character printed when the key is pressed
----@param type obe.input.InputType #Type of the Key (Arrows, Alpha, Numeric, NumericNP, Functions, Others)
----@return obe.input.InputButton
-function obe.input.InputButton(key, name, return_char, type) end
-
---- Creates a new InputButton representing a Mouse Button.
----
----@param key sf.Mouse.Button #SFML Mouse Button
----@param name string #Name of the Mouse Button
----@return obe.input.InputButton
-function obe.input.InputButton(key, name) end
-
---- Creates a new InputButton representing a Gamepad Button.
----
----@param gamepad_index number #Index of the gamepad
----@param button_index number #Index of the button of the gamepad
----@param name string #Name of the gamepad Button
----@return obe.input.InputButton
-function obe.input.InputButton(gamepad_index, button_index, name) end
-
---- Creates a new InputButton representing a gamepad Axis.
----
----@param gamepad_index number #Index of the gamepad
----@param gamepad_axis sf.Joystick.Axis #Enum value of the Gamepad Axis
----@param detect Tuple_ObeInputAxisThresholdDirection_Number #Pair containing the check type (More / Less) and the threshold before axis activation detection
----@param name string #Name of the gamepad Axis
----@return obe.input.InputButton
-function obe.input.InputButton(gamepad_index, gamepad_axis, detect, name) end
-
---- obe.input.InputButton constructor
----
----@param direction obe.input.MouseWheelScrollDirection #
----@param name string #
----@return obe.input.InputButton
-function obe.input.InputButton(direction, name) end
-
---- obe.input.InputButton constructor
----
----@param other obe.input.InputButton #
----@return obe.input.InputButton
-function obe.input.InputButton(other) end
-
-
----@param other obe.input.InputButton #
-function obe.input._InputButton:reload(other) end
-
---- Get Axis Position value if InputButton is an axis (throws error otherwise)
----
----@return number
-function obe.input._InputButton:get_axis_position() end
-
----@return number
-function obe.input._InputButton:get_wheel_delta() end
-
---- Get the SFML Keyboard Key.
----
----@return sf.Keyboard.Key
-function obe.input._InputButton:get_key() end
-
---- Get the name of the Key.
----
----@return string
-function obe.input._InputButton:get_name() end
-
---- Get the type of the Key (Arrows, Alpha, Numeric, NumericNP, Functions, Others)
----
----@return obe.input.InputType
-function obe.input._InputButton:get_type() end
-
---- Equivalent to InputButton::get_type() == input_type.
----
----@param input_type obe.input.InputType #Type to test the equivalence
----@return boolean
-function obe.input._InputButton:is(input_type) end
-
---- Get if the key is pressed.
----
----@return boolean
-function obe.input._InputButton:is_pressed() end
-
---- Get if the key prints a writable character.
----
----@return boolean
-function obe.input._InputButton:is_writable() end
-
-
 ---@class obe.input.InputButtonMonitor
 obe.input._InputButtonMonitor = {};
 
 --- Constructor of InputButtonMonition.
 ---
----@param button obe.input.InputButton #Pointer to the InputButton to monitor
+---@param button obe.input.InputSource #Pointer to the InputButton to monitor
 ---@return obe.input.InputButtonMonitor
 function obe.input.InputButtonMonitor(button) end
 
 
 --- Gets a pointer to the monitored InputButton.
 ---
----@return obe.input.InputButton
-function obe.input._InputButtonMonitor:get_button() end
+---@return obe.input.InputSource
+function obe.input._InputButtonMonitor:get_input_source() end
 
 --- Gets the state of the InputButton (InputButtonState)
 ---
----@return obe.input.InputButtonState
+---@return obe.input.InputSourceState
 function obe.input._InputButtonMonitor:get_state() end
 
 --- Updates the InputButtonMonitor (needed to modify the linked InputButtonState)
@@ -290,30 +197,30 @@ function obe.input._InputManager:update() end
 --- Get an InputButton from the given key.
 ---
 ---@param key string #Name of the InputButton you want to get
----@return obe.input.InputButton
-function obe.input._InputManager:get_input(key) end
+---@return obe.input.InputSource
+function obe.input._InputManager:get_input_source(key) end
 
 --- Get a list of all InputButtons.
 ---
----@return obe.input.InputButton[]
-function obe.input._InputManager:get_inputs() end
+---@return obe.input.InputSource[]
+function obe.input._InputManager:get_all_input_sources() end
 
 --- Get a list of all InputButtons with a given type.
 ---
----@param filter obe.input.InputType #Type the InputButtons you want to get
----@return obe.input.InputButton[]
-function obe.input._InputManager:get_inputs(filter) end
+---@param input_type string #
+---@return obe.input.InputSource[]
+function obe.input._InputManager:get_all_input_sources(input_type) end
 
 --- Get a list of all InputButtons which are pressed.
 ---
----@return obe.input.InputButton[]
-function obe.input._InputManager:get_pressed_inputs() end
+---@return obe.input.InputSource[]
+function obe.input._InputManager:get_pressed_input_sources() end
 
 ---@param name string #
 ---@return obe.input.InputButtonMonitorPtr
 function obe.input._InputManager:monitor(name) end
 
----@param input obe.input.InputButton #
+---@param input obe.input.InputSource #
 ---@return obe.input.InputButtonMonitorPtr
 function obe.input._InputManager:monitor(input) end
 
@@ -325,18 +232,194 @@ function obe.input._InputManager:initialize_gamepads() end
 function obe.input._InputManager:initialize_gamepad(gamepad_index) end
 
 
+---@class obe.input.InputSource
+obe.input._InputSource = {};
 
----@alias obe.input.AxisThresholdDirectionMeta obe.types.SmartEnum[obe.input.AxisThresholdDirection]
+--- obe.input.InputSource constructor
+---
+---@param input_type string #
+---@param name string #
+---@param printable_char string #
+---@return obe.input.InputSource
+function obe.input.InputSource(input_type, name, printable_char) end
+
+--- obe.input.InputSource constructor
+---
+---@param other obe.input.InputSource #
+---@return obe.input.InputSource
+function obe.input.InputSource(other) end
+
+
+--- Get the name of the Input source.
+---
+---@return string
+function obe.input._InputSource:get_name() end
+
+--- Get the type of the Input source.
+---
+---@return string
+function obe.input._InputSource:get_input_type() end
+
+---@return string
+function obe.input._InputSource:get_printable_char() end
+
+--- Get if the key is pressed.
+---
+---@return boolean
+function obe.input._InputSource:is_pressed() end
+
+--- Get if the key prints a writable character.
+---
+---@return boolean
+function obe.input._InputSource:is_printable() end
+
+
+---@class obe.input.InputSourceGamepadAxis : obe.input.InputSource
+obe.input._InputSourceGamepadAxis = {};
+
+--- Creates a new InputSource representing a gamepad Axis.
+---
+---@param gamepad_index number #Index of the gamepad
+---@param gamepad_axis sf.Joystick.Axis #Enum value of the Gamepad Axis
+---@param axis_threshold Tuple_ObeInputAxisThresholdDirection_Number #
+---@param name string #Name of the gamepad Axis
+---@return obe.input.InputSourceGamepadAxis
+function obe.input.InputSourceGamepadAxis(gamepad_index, gamepad_axis, axis_threshold, name) end
+
+
+---@return number
+function obe.input._InputSourceGamepadAxis:get_gamepad_index() end
+
+--- Get Axis Position value.
+---
+---@return number
+function obe.input._InputSourceGamepadAxis:get_axis_position() end
+
+--- Get if the key is pressed.
+---
+---@return boolean
+function obe.input._InputSourceGamepadAxis:is_pressed() end
+
+
+---@class obe.input.InputSourceGamepadButton : obe.input.InputSource
+obe.input._InputSourceGamepadButton = {};
+
+--- Creates a new InputSource representing a Gamepad Button.
+---
+---@param gamepad_index number #Index of the gamepad
+---@param button_index number #Index of the button of the gamepad
+---@param name string #Name of the gamepad Button
+---@return obe.input.InputSourceGamepadButton
+function obe.input.InputSourceGamepadButton(gamepad_index, button_index, name) end
+
+
+---@return number
+function obe.input._InputSourceGamepadButton:get_gamepad_index() end
+
+---@return number
+function obe.input._InputSourceGamepadButton:get_button_index() end
+
+--- Get if the key is pressed.
+---
+---@return boolean
+function obe.input._InputSourceGamepadButton:is_pressed() end
+
+
+---@class obe.input.InputSourceKeyboardKey : obe.input.InputSource
+obe.input._InputSourceKeyboardKey = {};
+
+--- Creates a new InputSource representing a Keyboard key.
+---
+---@param key sf.Keyboard.Key #SFML Keyboard Key
+---@param printable_char string #The character printed when the key is pressed
+---@return obe.input.InputSourceKeyboardKey
+function obe.input.InputSourceKeyboardKey(key, printable_char) end
+
+--- Creates a new InputSource representing a Keyboard key.
+---
+---@param key sf.Keyboard.Key #SFML Keyboard Key
+---@param name string #Name of the Key
+---@param printable_char string #The character printed when the key is pressed
+---@return obe.input.InputSourceKeyboardKey
+function obe.input.InputSourceKeyboardKey(key, name, printable_char) end
+
+
+--- Get the SFML Keyboard Key.
+---
+---@return sf.Keyboard.Key
+function obe.input._InputSourceKeyboardKey:get_key() end
+
+--- Get if the key is pressed.
+---
+---@return boolean
+function obe.input._InputSourceKeyboardKey:is_pressed() end
+
+
+---@class obe.input.InputSourceMouseButton : obe.input.InputSource
+obe.input._InputSourceMouseButton = {};
+
+--- Creates a new InputSource representing a Mouse Button.
+---
+---@param button sf.Mouse.Button #SFML Mouse Button
+---@return obe.input.InputSourceMouseButton
+function obe.input.InputSourceMouseButton(button) end
+
+
+--- Get the SFML Mouse Button.
+---
+---@return sf.Mouse.Button
+function obe.input._InputSourceMouseButton:get_mouse_button() end
+
+--- Get if the key is pressed.
+---
+---@return boolean
+function obe.input._InputSourceMouseButton:is_pressed() end
+
+
+---@class obe.input.InputSourceMouseWheelScroll : obe.input.InputSource
+obe.input._InputSourceMouseWheelScroll = {};
+
+--- Creates a new InputSource representing a Mouse Wheel Scroll.
+---
+---@param direction obe.input.MouseWheelScrollDirection #MouseWheel scroll direction
+---@param threshold? number #scroll detection threshold
+---@return obe.input.InputSourceMouseWheelScroll
+function obe.input.InputSourceMouseWheelScroll(direction, threshold) end
+
+
+--- Get the MouseWheel scroll direction.
+---
+---@return obe.input.MouseWheelScrollDirection
+function obe.input._InputSourceMouseWheelScroll:get_scroll_wheel_direction() end
+
+--- Get if the key is pressed.
+---
+---@return boolean
+function obe.input._InputSourceMouseWheelScroll:is_pressed() end
+
+
 
 ---@alias obe.input.InputButtonMonitorPtr obe.input.InputButtonMonitor
 
----@alias obe.input.InputButtonStateMeta obe.types.SmartEnum[obe.input.InputButtonState]
-
----@alias obe.input.InputCombinationElement Tuple_ObeInputInputButton_ObeTypesFlagSetObeInputInputButtonState
+---@alias obe.input.InputCombinationElement Tuple_ObeInputInputSource_ObeTypesFlagSetObeInputInputSourceState
 
 ---@alias obe.input.InputCombination obe.input.InputCombinationElement[]
 
+---@alias obe.input.AxisThresholdDirectionMeta obe.types.SmartEnum[obe.input.AxisThresholdDirection]
+
+---@alias obe.input.InputButtonStateMeta obe.types.SmartEnum[obe.input.InputSourceState]
+
 ---@alias obe.input.InputTypeMeta obe.types.SmartEnum[obe.input.InputType]
+
+--- Trigger condition on an AxisButton input.
+---
+---@class obe.input.AxisThresholdDirection
+obe.input.AxisThresholdDirection = {
+    ---@type obe.input.AxisThresholdDirection
+    Less = 0,
+    ---@type obe.input.AxisThresholdDirection
+    More = 1,
+};
 
 --- 
 ---
@@ -352,30 +435,18 @@ obe.input.MouseWheelScrollDirection = {
     Right = 3,
 };
 
---- Trigger condition on an AxisButton input.
+--- Possible states of InputSource.
 ---
----@class obe.input.AxisThresholdDirection
-obe.input.AxisThresholdDirection = {
-    ---@type obe.input.AxisThresholdDirection
-    Less = 0,
-    ---@type obe.input.AxisThresholdDirection
-    More = 1,
-};
-
---- Possible states of InputButton.
----
----@class obe.input.InputButtonState
-obe.input.InputButtonState = {
-    ---@type obe.input.InputButtonState
+---@class obe.input.InputSourceState
+obe.input.InputSourceState = {
+    ---@type obe.input.InputSourceState
     Idle = 0,
-    ---@type obe.input.InputButtonState
+    ---@type obe.input.InputSourceState
     Hold = 1,
-    ---@type obe.input.InputButtonState
+    ---@type obe.input.InputSourceState
     Pressed = 2,
-    ---@type obe.input.InputButtonState
+    ---@type obe.input.InputSourceState
     Released = 3,
-    ---@type obe.input.InputButtonState
-    LAST__ = 4,
 };
 
 --- The type of Input.

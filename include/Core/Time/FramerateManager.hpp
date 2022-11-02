@@ -25,6 +25,7 @@ namespace obe::time
         int m_frame_progression = 0;
         bool m_need_to_render = false;
         bool m_sync_update_render = true;
+        double m_max_delta_time = 0.1;
 
     public:
         /**
@@ -52,12 +53,12 @@ namespace obe::time
          * \brief Get the DeltaTime
          * \return A double containing the DeltaTime
          */
-        [[nodiscard]] TimeUnit get_delta_time() const;
+        [[nodiscard]] TimeUnit get_raw_delta_time() const;
         /**
          * \brief Get the GameSpeed (DeltaTime * SpeedCoefficient)
          * \return A double containing the GameSpeed
          */
-        [[nodiscard]] double get_game_speed() const;
+        [[nodiscard]] double get_delta_time() const;
         /**
          * \brief Get the SpeedCoefficient
          * \return A double containing the SpeedCoefficient
@@ -94,5 +95,7 @@ namespace obe::time
          *        (true = enabled)
          */
         void set_vsync_enabled(bool vsync);
+
+        void set_max_delta_time(double max_delta_time);
     };
 } // namespace obe::time

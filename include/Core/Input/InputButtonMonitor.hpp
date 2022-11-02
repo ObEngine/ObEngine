@@ -1,22 +1,25 @@
 #pragma once
 
 #include <Event/EventGroup.hpp>
-#include <Input/InputButton.hpp>
-#include <Input/InputButtonState.hpp>
+#include <Input/InputSourceState.hpp>
+#include <Input/InputSource.hpp>
 #include <memory>
 
 namespace obe::events
 {
     namespace Keys
     {
+        struct Pressed
+        {
+        };
         /**
         * \brief Event triggered when the state of an InputButton changes
         * \noconstructor
         */
         struct StateChanged
         {
-            const input::InputButtonState state;
-            const input::InputButtonState previous_state;
+            const input::InputSourceState state;
+            const input::InputSourceState previous_state;
         };
     } // namespace Keys
 } // namespace obe::events
@@ -32,8 +35,8 @@ namespace obe::input
     class InputButtonMonitor
     {
     private:
-        InputButton& m_button;
-        InputButtonState m_button_state = InputButtonState::Idle;
+        InputSource& m_button;
+        InputSourceState m_button_state = InputSourceState::Idle;
         bool m_should_refresh = false;
 
     public:
@@ -41,19 +44,19 @@ namespace obe::input
          * \brief Constructor of InputButtonMonition
          * \param button Pointer to the InputButton to monitor
          */
-        explicit InputButtonMonitor(InputButton& button);
+        explicit InputButtonMonitor(InputSource& button);
         ~InputButtonMonitor();
         /**
          * \brief Gets a pointer to the monitored InputButton
          * \return A pointer to the monitored InputButton
          */
-        [[nodiscard]] InputButton& get_button() const;
+        [[nodiscard]] InputSource& get_input_source() const;
         /**
          * \brief Gets the state of the InputButton (InputButtonState)
          * \return The enum of value from InputButtonState corresponding to the
          *         state of the monitored InputButton
          */
-        [[nodiscard]] InputButtonState get_state() const;
+        [[nodiscard]] InputSourceState get_state() const;
         /**
          * \brief Updates the InputButtonMonitor (needed to modify the linked
          *        InputButtonState)

@@ -1,3 +1,4 @@
+#include <Input/Exceptions.hpp>
 #include <Input/InputCondition.hpp>
 
 namespace obe::input
@@ -8,19 +9,16 @@ namespace obe::input
         return m_combination;
     }
 
-    InputButtonState InputCondition::get_button_state(InputButton* button) const
+    InputSourceState InputCondition::get_button_state(InputSource* input_source) const
     {
         for (const InputButtonMonitorPtr& monitor : m_monitors)
         {
-            if (&monitor->get_button() == button)
+            if (&monitor->get_input_source() == input_source)
             {
                 return monitor->get_state();
             }
         }
-    }
-
-    InputCondition::InputCondition()
-    {
+        throw exceptions::InputSourceNotInCombination(input_source->get_name(), EXC_INFO);
     }
 
     void InputCondition::add_combination_element(const InputCombinationElement combination_element)
@@ -42,7 +40,7 @@ namespace obe::input
         {
             for (const InputCombinationElement& combination : m_combination)
             {
-                if (&monitor->get_button() == combination.first)
+                if (&monitor->get_input_source() == combination.first)
                 {
                     m_monitors.push_back(monitor);
                 }

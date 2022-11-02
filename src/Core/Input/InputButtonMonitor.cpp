@@ -3,23 +3,23 @@
 
 namespace obe::input
 {
-    InputButtonMonitor::InputButtonMonitor(InputButton& button)
+    InputButtonMonitor::InputButtonMonitor(InputSource& button)
         : m_button(button)
     {
-        debug::Log->debug("Started monitoring InputButton '{}'", m_button.get_name());
+        debug::Log->debug("Started monitoring InputSource '{}'", m_button.get_name());
     }
 
     InputButtonMonitor::~InputButtonMonitor()
     {
-        debug::Log->debug("Stopped monitoring InputButton '{}'", m_button.get_name());
+        debug::Log->debug("Stopped monitoring InputSource '{}'", m_button.get_name());
     }
 
-    InputButton& InputButtonMonitor::get_button() const
+    InputSource& InputButtonMonitor::get_input_source() const
     {
         return m_button;
     }
 
-    InputButtonState InputButtonMonitor::get_state() const
+    InputSourceState InputButtonMonitor::get_state() const
     {
         return m_button_state;
     }
@@ -28,27 +28,27 @@ namespace obe::input
     {
         debug::Log->trace("Updating InputMonitor of {}", m_button.get_name());
         const bool key_pressed = m_button.is_pressed();
-        const InputButtonState old_state = m_button_state;
+        const InputSourceState old_state = m_button_state;
         m_should_refresh = false;
         if (key_pressed
-            && (m_button_state == InputButtonState::Idle
-                || m_button_state == InputButtonState::Released))
+            && (m_button_state == InputSourceState::Idle
+                || m_button_state == InputSourceState::Released))
         {
-            m_button_state = InputButtonState::Pressed;
+            m_button_state = InputSourceState::Pressed;
         }
-        else if (key_pressed && m_button_state == InputButtonState::Pressed)
+        else if (key_pressed && m_button_state == InputSourceState::Pressed)
         {
-            m_button_state = InputButtonState::Hold;
+            m_button_state = InputSourceState::Hold;
         }
         else if (!key_pressed
-            && (m_button_state == InputButtonState::Pressed
-                || m_button_state == InputButtonState::Hold))
+            && (m_button_state == InputSourceState::Pressed
+                || m_button_state == InputSourceState::Hold))
         {
-            m_button_state = InputButtonState::Released;
+            m_button_state = InputSourceState::Released;
         }
-        else if (!key_pressed && m_button_state == InputButtonState::Released)
+        else if (!key_pressed && m_button_state == InputSourceState::Released)
         {
-            m_button_state = InputButtonState::Idle;
+            m_button_state = InputSourceState::Idle;
         }
         if (old_state != m_button_state)
         {

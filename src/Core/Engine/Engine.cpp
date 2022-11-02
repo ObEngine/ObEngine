@@ -1,10 +1,11 @@
-#include "Script/LuaHelpers.hpp"
-
 #include <fstream>
 
 #include <Engine/Engine.hpp>
 #include <Engine/Exceptions.hpp>
+#include <Input/InputSourceMouse.hpp>
+#include <Script/LuaHelpers.hpp>
 #include <Utils/FileUtils.hpp>
+
 
 int lua_exception_handler(lua_State* L, sol::optional<const std::exception&> maybe_exception,
     sol::string_view description)
@@ -238,10 +239,24 @@ namespace obe::engine
     void Engine::handle_window_events() const
     {
         sf::Event event;
-        m_input->get_input("MouseWheelUp").set_mouse_wheel_delta(0);
-        m_input->get_input("MouseWheelDown").set_mouse_wheel_delta(0);
-        m_input->get_input("MouseWheelLeft").set_mouse_wheel_delta(0);
-        m_input->get_input("MouseWheelRight").set_mouse_wheel_delta(0);
+        input::InputSourceMouseWheelScroll* mouse_wheel_scroll_down
+            = static_cast<input::InputSourceMouseWheelScroll*>(
+                &m_input->get_input_source("MouseWheelScrollDown"));
+        input::InputSourceMouseWheelScroll* mouse_wheel_scroll_up
+            = static_cast<input::InputSourceMouseWheelScroll*>(
+                &m_input->get_input_source("MouseWheelScrollUp"));
+        input::InputSourceMouseWheelScroll* mouse_wheel_scroll_left
+            = static_cast<input::InputSourceMouseWheelScroll*>(
+                &m_input->get_input_source("MouseWheelScrollLeft"));
+        input::InputSourceMouseWheelScroll* mouse_wheel_scroll_right
+            = static_cast<input::InputSourceMouseWheelScroll*>(
+                &m_input->get_input_source("MouseWheelScrollRight"));
+
+        mouse_wheel_scroll_down->m_delta = 0;
+        mouse_wheel_scroll_up->m_delta = 0;
+        mouse_wheel_scroll_left->m_delta = 0;
+        mouse_wheel_scroll_right->m_delta = 0;
+
         while (m_window->poll_event(event))
         {
             if (event.type == sf::Event::MouseWheelScrolled)
@@ -250,26 +265,22 @@ namespace obe::engine
                 {
                     if (event.mouseWheelScroll.delta < 0)
                     {
-                        m_input->get_input("MouseWheelUp")
-                            .set_mouse_wheel_delta(event.mouseWheelScroll.delta);
+                        mouse_wheel_scroll_up->m_delta = event.mouseWheelScroll.delta;
                     }
                     else if (event.mouseWheelScroll.delta > 0)
                     {
-                        m_input->get_input("MouseWheelDown")
-                            .set_mouse_wheel_delta(event.mouseWheelScroll.delta);
+                        mouse_wheel_scroll_down->m_delta = event.mouseWheelScroll.delta;
                     }
                 }
                 else if (event.mouseWheelScroll.wheel == sf::Mouse::HorizontalWheel)
                 {
                     if (event.mouseWheelScroll.delta < 0)
                     {
-                        m_input->get_input("MouseWheelLeft")
-                            .set_mouse_wheel_delta(event.mouseWheelScroll.delta);
+                        mouse_wheel_scroll_left->m_delta = event.mouseWheelScroll.delta;
                     }
                     else if (event.mouseWheelScroll.delta > 0)
                     {
-                        m_input->get_input("MouseWheelRight")
-                            .set_mouse_wheel_delta(event.mouseWheelScroll.delta);
+                        mouse_wheel_scroll_right->m_delta = event.mouseWheelScroll.delta;
                     }
                 }
             }
@@ -303,6 +314,14 @@ namespace obe::engine
                 m_input->require_refresh();
                 if (event.key.code == sf::Keyboard::Escape)
                     m_window->close();
+                break;
+            case sf::Event::GainedFocus:
+                debug::Log->debug("<Engine> Gaining focus");
+                m_input->set_enabled(true);
+                break;
+            case sf::Event::LostFocus:
+                debug::Log->debug("<Engine> Losing focus");
+                m_input->set_enabled(false);
                 break;
             default:
                 break;
@@ -376,14 +395,14 @@ namespace obe::engine
         }
 
         m_framerate->start();
-        time::TimeUnit start = time::epoch();
+        const time::TimeUnit start = time::epoch();
         while (m_window->is_open())
         {
             m_framerate->update();
 
             if (m_framerate->should_update())
             {
-                e_game->trigger(events::Game::Update { m_framerate->get_game_speed() });
+                e_game->trigger(events::Game::Update { m_framerate->get_delta_time() });
                 this->update();
             }
 

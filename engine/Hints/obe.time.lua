@@ -92,12 +92,12 @@ function obe.time._FramerateManager:reset() end
 --- Get the DeltaTime.
 ---
 ---@return obe.time.TimeUnit
-function obe.time._FramerateManager:get_delta_time() end
+function obe.time._FramerateManager:get_raw_delta_time() end
 
 --- Get the GameSpeed (DeltaTime * SpeedCoefficient)
 ---
 ---@return number
-function obe.time._FramerateManager:get_game_speed() end
+function obe.time._FramerateManager:get_delta_time() end
 
 --- Get the SpeedCoefficient.
 ---
@@ -133,6 +133,9 @@ function obe.time._FramerateManager:set_framerate_target(limit) end
 ---
 ---@param vsync boolean #A boolean containing if the v-sync should be enabled (true = enabled)
 function obe.time._FramerateManager:set_vsync_enabled(vsync) end
+
+---@param max_delta_time number #
+function obe.time._FramerateManager:set_max_delta_time(max_delta_time) end
 
 
 

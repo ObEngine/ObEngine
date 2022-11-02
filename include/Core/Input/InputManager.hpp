@@ -2,6 +2,7 @@
 
 #include <Event/EventNamespace.hpp>
 #include <Input/InputAction.hpp>
+#include <Input/InputSource.hpp>
 #include <Types/Togglable.hpp>
 #include <memory>
 #include <vili/node.hpp>
@@ -15,14 +16,14 @@ namespace obe::input
     {
     private:
         bool m_refresh = true;
-        std::unordered_map<std::string, std::unique_ptr<InputButton>> m_inputs;
+        std::unordered_map<std::string, std::unique_ptr<InputSource>> m_inputs;
         std::vector<std::weak_ptr<InputButtonMonitor>> m_monitors;
         std::vector<std::shared_ptr<InputButtonMonitor>> m_key_monitors;
         event::EventGroupPtr e_actions;
         event::EventGroupPtr e_inputs;
         std::vector<std::shared_ptr<InputAction>> m_all_actions {};
         std::vector<InputAction*> m_current_actions {};
-        bool is_action_currently_in_use(const std::string& action_id);
+        bool is_action_currently_in_use(const std::string& action_id) const;
         void create_input_map();
         void create_events();
         [[nodiscard]] std::vector<std::string> get_all_input_button_names() const;
@@ -91,26 +92,27 @@ namespace obe::input
          * \param key Name of the InputButton you want to get
          * \return A reference to the InputButton with the given name
          */
-        InputButton& get_input(const std::string& key);
+        [[nodiscard]] InputSource& get_input_source(const std::string& key);
         /**
          * \brief Get a list of all InputButtons
          * \return A list of pointers to all InputButtons
          */
-        std::vector<InputButton*> get_inputs();
+        [[nodiscard]] std::vector<InputSource*> get_all_input_sources() const;
         /**
          * \brief Get a list of all InputButtons with a given type
          * \param filter Type the InputButtons you want to get
          * \return A list of pointers to all InputButtons with given type
          */
-        std::vector<InputButton*> get_inputs(InputType filter);
+        [[nodiscard]] std::vector<InputSource*> get_all_input_sources(
+            const std::string& input_type) const;
         /**
          * \brief Get a list of all InputButtons which are pressed
          * \return A list of pointers to all InputButtons which are pressed
          */
-        std::vector<InputButton*> get_pressed_inputs() const;
+        [[nodiscard]] std::vector<InputSource*> get_pressed_input_sources() const;
 
         InputButtonMonitorPtr monitor(const std::string& name);
-        InputButtonMonitorPtr monitor(InputButton& input);
+        InputButtonMonitorPtr monitor(InputSource& input);
         void require_refresh();
         /**
          * TODO: Fix this nobind

@@ -178,6 +178,10 @@ namespace obe::system::bindings
                 },
                 [](bool from_cwd, bool from_exe) -> void {
                     return obe::system::MountablePath::load_mount_file(from_cwd, from_exe);
+                },
+                [](bool from_cwd, bool from_exe, const std::string& project_override) -> void {
+                    return obe::system::MountablePath::load_mount_file(
+                        from_cwd, from_exe, project_override);
                 });
         bind_mountable_path["mount"] = sol::overload(
             [](obe::system::MountablePath path) -> void {
@@ -259,6 +263,7 @@ namespace obe::system::bindings
         bind_window["get_window_size"] = &obe::system::Window::get_window_size;
         bind_window["get_size"] = &obe::system::Window::get_size;
         bind_window["is_open"] = &obe::system::Window::is_open;
+        bind_window["is_focused"] = &obe::system::Window::is_focused;
         bind_window["poll_event"] = &obe::system::Window::poll_event;
         bind_window["set_size"] = &obe::system::Window::set_size;
         bind_window["set_window_size"] = &obe::system::Window::set_window_size;

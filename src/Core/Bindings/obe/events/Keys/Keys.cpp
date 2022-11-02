@@ -6,6 +6,13 @@
 
 namespace obe::events::Keys::bindings
 {
+    void load_class_pressed(sol::state_view state)
+    {
+        sol::table Keys_namespace = state["obe"]["events"]["Keys"].get<sol::table>();
+        sol::usertype<obe::events::Keys::Pressed> bind_pressed
+            = Keys_namespace.new_usertype<obe::events::Keys::Pressed>(
+                "Pressed", sol::call_constructor, sol::default_constructor);
+    }
     void load_class_state_changed(sol::state_view state)
     {
         sol::table Keys_namespace = state["obe"]["events"]["Keys"].get<sol::table>();

@@ -7,10 +7,10 @@ _Tuple_ObeInputAxisThresholdDirection_Number = {};
 
 
 
----@class Tuple_ObeInputInputButton_ObeTypesFlagSetObeInputInputButtonState
----@field [0] obe.input.InputButton #
----@field [1] obe.types.FlagSet[obe.input.InputButtonState] #
-_Tuple_ObeInputInputButton_ObeTypesFlagSetObeInputInputButtonState = {};
+---@class Tuple_ObeInputInputSource_ObeTypesFlagSetObeInputInputSourceState
+---@field [0] obe.input.InputSource #
+---@field [1] obe.types.FlagSet[obe.input.InputSourceState] #
+_Tuple_ObeInputInputSource_ObeTypesFlagSetObeInputInputSourceState = {};
 
 
 

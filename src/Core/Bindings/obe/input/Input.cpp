@@ -1,17 +1,27 @@
 #include <Bindings/obe/input/Input.hpp>
 
 #include <Input/InputAction.hpp>
-#include <Input/InputButton.hpp>
 #include <Input/InputButtonMonitor.hpp>
-#include <Input/InputButtonState.hpp>
 #include <Input/InputCondition.hpp>
 #include <Input/InputManager.hpp>
+#include <Input/InputSource.hpp>
+#include <Input/InputSourceGamepad.hpp>
+#include <Input/InputSourceKeyboard.hpp>
+#include <Input/InputSourceMouse.hpp>
+#include <Input/InputSourceState.hpp>
 #include <Input/InputType.hpp>
 
 #include <Bindings/Config.hpp>
 
 namespace obe::input::bindings
 {
+    void load_enum_axis_threshold_direction(sol::state_view state)
+    {
+        sol::table input_namespace = state["obe"]["input"].get<sol::table>();
+        input_namespace.new_enum<obe::input::AxisThresholdDirection>("AxisThresholdDirection",
+            { { "Less", obe::input::AxisThresholdDirection::Less },
+                { "More", obe::input::AxisThresholdDirection::More } });
+    }
     void load_enum_mouse_wheel_scroll_direction(sol::state_view state)
     {
         sol::table input_namespace = state["obe"]["input"].get<sol::table>();
@@ -21,22 +31,14 @@ namespace obe::input::bindings
                 { "Left", obe::input::MouseWheelScrollDirection::Left },
                 { "Right", obe::input::MouseWheelScrollDirection::Right } });
     }
-    void load_enum_axis_threshold_direction(sol::state_view state)
+    void load_enum_input_source_state(sol::state_view state)
     {
         sol::table input_namespace = state["obe"]["input"].get<sol::table>();
-        input_namespace.new_enum<obe::input::AxisThresholdDirection>("AxisThresholdDirection",
-            { { "Less", obe::input::AxisThresholdDirection::Less },
-                { "More", obe::input::AxisThresholdDirection::More } });
-    }
-    void load_enum_input_button_state(sol::state_view state)
-    {
-        sol::table input_namespace = state["obe"]["input"].get<sol::table>();
-        input_namespace.new_enum<obe::input::InputButtonState>("InputButtonState",
-            { { "Idle", obe::input::InputButtonState::Idle },
-                { "Hold", obe::input::InputButtonState::Hold },
-                { "Pressed", obe::input::InputButtonState::Pressed },
-                { "Released", obe::input::InputButtonState::Released },
-                { "LAST__", obe::input::InputButtonState::LAST__ } });
+        input_namespace.new_enum<obe::input::InputSourceState>("InputSourceState",
+            { { "Idle", obe::input::InputSourceState::Idle },
+                { "Hold", obe::input::InputSourceState::Hold },
+                { "Pressed", obe::input::InputSourceState::Pressed },
+                { "Released", obe::input::InputSourceState::Released } });
     }
     void load_enum_input_type(sol::state_view state)
     {
@@ -72,42 +74,19 @@ namespace obe::input::bindings
         bind_input_action["set_interval"] = &obe::input::InputAction::set_interval;
         bind_input_action["set_repeat"] = &obe::input::InputAction::set_repeat;
         bind_input_action["update"] = &obe::input::InputAction::update;
-        bind_input_action["get_involved_buttons"] = &obe::input::InputAction::get_involved_buttons;
+        bind_input_action["get_involved_input_sources"]
+            = &obe::input::InputAction::get_involved_input_sources;
         bind_input_action["enable"] = &obe::input::InputAction::enable;
         bind_input_action["disable"] = &obe::input::InputAction::disable;
         bind_input_action["is_enabled"] = &obe::input::InputAction::is_enabled;
-    }
-    void load_class_input_button(sol::state_view state)
-    {
-        sol::table input_namespace = state["obe"]["input"].get<sol::table>();
-        sol::usertype<obe::input::InputButton> bind_input_button = input_namespace.new_usertype<
-            obe::input::InputButton>("InputButton", sol::call_constructor,
-            sol::constructors<obe::input::InputButton(sf::Keyboard::Key, const std::string&,
-                                  const std::string&, obe::input::InputType),
-                obe::input::InputButton(sf::Mouse::Button, const std::string&),
-                obe::input::InputButton(unsigned int, unsigned int, const std::string&),
-                obe::input::InputButton(unsigned int, sf::Joystick::Axis,
-                    std::pair<obe::input::AxisThresholdDirection, float>, const std::string&),
-                obe::input::InputButton(obe::input::MouseWheelScrollDirection, const std::string&),
-                obe::input::InputButton(const obe::input::InputButton&)>());
-        bind_input_button["reload"] = &obe::input::InputButton::reload;
-        bind_input_button["get_axis_position"] = &obe::input::InputButton::get_axis_position;
-        bind_input_button["get_wheel_delta"] = &obe::input::InputButton::get_wheel_delta;
-        bind_input_button["get_key"] = &obe::input::InputButton::get_key;
-        bind_input_button["get_name"] = &obe::input::InputButton::get_name;
-        bind_input_button["get_type"] = &obe::input::InputButton::get_type;
-        bind_input_button["is"] = &obe::input::InputButton::is;
-        bind_input_button["is_pressed"] = &obe::input::InputButton::is_pressed;
-        bind_input_button["is_writable"] = &obe::input::InputButton::is_writable;
     }
     void load_class_input_button_monitor(sol::state_view state)
     {
         sol::table input_namespace = state["obe"]["input"].get<sol::table>();
         sol::usertype<obe::input::InputButtonMonitor> bind_input_button_monitor
-            = input_namespace.new_usertype<obe::input::InputButtonMonitor>("InputButtonMonitor",
-                sol::call_constructor,
-                sol::constructors<obe::input::InputButtonMonitor(obe::input::InputButton&)>());
-        bind_input_button_monitor["get_button"] = &obe::input::InputButtonMonitor::get_button;
+            = input_namespace.new_usertype<obe::input::InputButtonMonitor>("InputButtonMonitor");
+        bind_input_button_monitor["get_input_source"]
+            = &obe::input::InputButtonMonitor::get_input_source;
         bind_input_button_monitor["get_state"] = &obe::input::InputButtonMonitor::get_state;
         bind_input_button_monitor["update"] = &obe::input::InputButtonMonitor::update;
         bind_input_button_monitor["check_for_refresh"]
@@ -145,20 +124,109 @@ namespace obe::input::bindings
         bind_input_manager["remove_context"] = &obe::input::InputManager::remove_context;
         bind_input_manager["set_context"] = &obe::input::InputManager::set_context;
         bind_input_manager["update"] = &obe::input::InputManager::update;
-        bind_input_manager["get_input"] = &obe::input::InputManager::get_input;
-        bind_input_manager["get_inputs"] = sol::overload(
-            static_cast<std::vector<obe::input::InputButton*> (obe::input::InputManager::*)()>(
-                &obe::input::InputManager::get_inputs),
-            static_cast<std::vector<obe::input::InputButton*> (obe::input::InputManager::*)(
-                obe::input::InputType)>(&obe::input::InputManager::get_inputs));
-        bind_input_manager["get_pressed_inputs"] = &obe::input::InputManager::get_pressed_inputs;
+        bind_input_manager["get_input_source"] = &obe::input::InputManager::get_input_source;
+        bind_input_manager["get_all_input_sources"] = sol::overload(
+            static_cast<std::vector<obe::input::InputSource*> (obe::input::InputManager::*)()
+                    const>(&obe::input::InputManager::get_all_input_sources),
+            static_cast<std::vector<obe::input::InputSource*> (obe::input::InputManager::*)(
+                const std::string&) const>(&obe::input::InputManager::get_all_input_sources));
+        bind_input_manager["get_pressed_input_sources"]
+            = &obe::input::InputManager::get_pressed_input_sources;
         bind_input_manager["monitor"] = sol::overload(
             static_cast<obe::input::InputButtonMonitorPtr (obe::input::InputManager::*)(
                 const std::string&)>(&obe::input::InputManager::monitor),
             static_cast<obe::input::InputButtonMonitorPtr (obe::input::InputManager::*)(
-                obe::input::InputButton&)>(&obe::input::InputManager::monitor));
+                obe::input::InputSource&)>(&obe::input::InputManager::monitor));
         bind_input_manager["require_refresh"] = &obe::input::InputManager::require_refresh;
         bind_input_manager["initialize_gamepads"] = &obe::input::InputManager::initialize_gamepads;
         bind_input_manager["initialize_gamepad"] = &obe::input::InputManager::initialize_gamepad;
+    }
+    void load_class_input_source(sol::state_view state)
+    {
+        sol::table input_namespace = state["obe"]["input"].get<sol::table>();
+        sol::usertype<obe::input::InputSource> bind_input_source
+            = input_namespace.new_usertype<obe::input::InputSource>("InputSource");
+        bind_input_source["get_name"] = &obe::input::InputSource::get_name;
+        bind_input_source["get_input_type"] = &obe::input::InputSource::get_input_type;
+        bind_input_source["get_printable_char"] = &obe::input::InputSource::get_printable_char;
+        bind_input_source["is_pressed"] = &obe::input::InputSource::is_pressed;
+        bind_input_source["is_printable"] = &obe::input::InputSource::is_printable;
+    }
+    void load_class_input_source_gamepad_axis(sol::state_view state)
+    {
+        sol::table input_namespace = state["obe"]["input"].get<sol::table>();
+        sol::usertype<obe::input::InputSourceGamepadAxis> bind_input_source_gamepad_axis
+            = input_namespace.new_usertype<obe::input::InputSourceGamepadAxis>(
+                "InputSourceGamepadAxis", sol::call_constructor,
+                sol::constructors<obe::input::InputSourceGamepadAxis(unsigned int,
+                    sf::Joystick::Axis, std::pair<obe::input::AxisThresholdDirection, float>,
+                    const std::string&)>(),
+                sol::base_classes, sol::bases<obe::input::InputSource>());
+        bind_input_source_gamepad_axis["get_gamepad_index"]
+            = &obe::input::InputSourceGamepadAxis::get_gamepad_index;
+        bind_input_source_gamepad_axis["get_axis_position"]
+            = &obe::input::InputSourceGamepadAxis::get_axis_position;
+        bind_input_source_gamepad_axis["is_pressed"]
+            = &obe::input::InputSourceGamepadAxis::is_pressed;
+    }
+    void load_class_input_source_gamepad_button(sol::state_view state)
+    {
+        sol::table input_namespace = state["obe"]["input"].get<sol::table>();
+        sol::usertype<obe::input::InputSourceGamepadButton> bind_input_source_gamepad_button
+            = input_namespace.new_usertype<obe::input::InputSourceGamepadButton>(
+                "InputSourceGamepadButton", sol::call_constructor,
+                sol::constructors<obe::input::InputSourceGamepadButton(
+                    unsigned int, unsigned int, const std::string&)>(),
+                sol::base_classes, sol::bases<obe::input::InputSource>());
+        bind_input_source_gamepad_button["get_gamepad_index"]
+            = &obe::input::InputSourceGamepadButton::get_gamepad_index;
+        bind_input_source_gamepad_button["get_button_index"]
+            = &obe::input::InputSourceGamepadButton::get_button_index;
+        bind_input_source_gamepad_button["is_pressed"]
+            = &obe::input::InputSourceGamepadButton::is_pressed;
+    }
+    void load_class_input_source_keyboard_key(sol::state_view state)
+    {
+        sol::table input_namespace = state["obe"]["input"].get<sol::table>();
+        sol::usertype<obe::input::InputSourceKeyboardKey> bind_input_source_keyboard_key
+            = input_namespace.new_usertype<obe::input::InputSourceKeyboardKey>(
+                "InputSourceKeyboardKey", sol::call_constructor,
+                sol::constructors<obe::input::InputSourceKeyboardKey(
+                                      sf::Keyboard::Key, const std::string&),
+                    obe::input::InputSourceKeyboardKey(
+                        sf::Keyboard::Key, const std::string&, const std::string&)>(),
+                sol::base_classes, sol::bases<obe::input::InputSource>());
+        bind_input_source_keyboard_key["get_key"] = &obe::input::InputSourceKeyboardKey::get_key;
+        bind_input_source_keyboard_key["is_pressed"]
+            = &obe::input::InputSourceKeyboardKey::is_pressed;
+    }
+    void load_class_input_source_mouse_button(sol::state_view state)
+    {
+        sol::table input_namespace = state["obe"]["input"].get<sol::table>();
+        sol::usertype<obe::input::InputSourceMouseButton> bind_input_source_mouse_button
+            = input_namespace.new_usertype<obe::input::InputSourceMouseButton>(
+                "InputSourceMouseButton", sol::call_constructor,
+                sol::constructors<obe::input::InputSourceMouseButton(sf::Mouse::Button)>(),
+                sol::base_classes, sol::bases<obe::input::InputSource>());
+        bind_input_source_mouse_button["get_mouse_button"]
+            = &obe::input::InputSourceMouseButton::get_mouse_button;
+        bind_input_source_mouse_button["is_pressed"]
+            = &obe::input::InputSourceMouseButton::is_pressed;
+    }
+    void load_class_input_source_mouse_wheel_scroll(sol::state_view state)
+    {
+        sol::table input_namespace = state["obe"]["input"].get<sol::table>();
+        sol::usertype<obe::input::InputSourceMouseWheelScroll> bind_input_source_mouse_wheel_scroll
+            = input_namespace.new_usertype<obe::input::InputSourceMouseWheelScroll>(
+                "InputSourceMouseWheelScroll", sol::call_constructor,
+                sol::constructors<obe::input::InputSourceMouseWheelScroll(
+                                      obe::input::MouseWheelScrollDirection),
+                    obe::input::InputSourceMouseWheelScroll(
+                        obe::input::MouseWheelScrollDirection, float)>(),
+                sol::base_classes, sol::bases<obe::input::InputSource>());
+        bind_input_source_mouse_wheel_scroll["get_scroll_wheel_direction"]
+            = &obe::input::InputSourceMouseWheelScroll::get_scroll_wheel_direction;
+        bind_input_source_mouse_wheel_scroll["is_pressed"]
+            = &obe::input::InputSourceMouseWheelScroll::is_pressed;
     }
 };

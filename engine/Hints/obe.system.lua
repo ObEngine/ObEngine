@@ -366,6 +366,9 @@ function obe.system._Window:get_size() end
 ---@return boolean
 function obe.system._Window:is_open() end
 
+---@return boolean
+function obe.system._Window:is_focused() end
+
 ---@param event sf.Event #
 ---@return boolean
 function obe.system._Window:poll_event(event) end

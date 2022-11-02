@@ -25,6 +25,7 @@ namespace obe::engine::bindings
         bind_engine["Scene"] = sol::property(&obe::engine::Engine::get_scene);
         bind_engine["Cursor"] = sol::property(&obe::engine::Engine::get_cursor);
         bind_engine["Window"] = sol::property(&obe::engine::Engine::get_window);
+        bind_engine["get_arguments"] = &obe::engine::Engine::get_arguments;
     }
     void load_class_resource_managed_object(sol::state_view state)
     {

@@ -44,6 +44,8 @@
 #include <Bindings/obe/transform/Transform.hpp>
 #include <Bindings/obe/types/Types.hpp>
 #include <Bindings/obe/utils/Utils.hpp>
+#include <Bindings/obe/utils/argparser/Argparser.hpp>
+#include <Bindings/obe/utils/argparser/exceptions/Exceptions.hpp>
 #include <Bindings/obe/utils/exec/Exec.hpp>
 #include <Bindings/obe/utils/file/File.hpp>
 #include <Bindings/obe/utils/math/Math.hpp>
@@ -104,6 +106,7 @@ namespace obe::bindings
         state["obe"]["script"]["Helpers"].get_or_create<sol::table>();
         state["obe"]["script"]["vili_lua_bridge"].get_or_create<sol::table>();
         state["obe"]["system"]["package"].get_or_create<sol::table>();
+        state["obe"]["utils"]["argparser"].get_or_create<sol::table>();
         state["obe"]["utils"]["file"].get_or_create<sol::table>();
         state["obe"]["utils"]["math"].get_or_create<sol::table>();
         state["obe"]["utils"]["string"].get_or_create<sol::table>();
@@ -113,6 +116,7 @@ namespace obe::bindings
         state["obe"]["system"]["constraints"].get_or_create<sol::table>();
         state["obe"]["system"]["prefixes"].get_or_create<sol::table>();
         state["obe"]["system"]["priorities"].get_or_create<sol::table>();
+        state["obe"]["utils"]["argparser"]["exceptions"].get_or_create<sol::table>();
         state["obe"]["system"]["project"]["Prefixes"].get_or_create<sol::table>();
 
         obe::system::bindings::load_class_mountable_path(state);
@@ -211,13 +215,18 @@ namespace obe::bindings
         obe::graphics::shapes::bindings::load_class_rectangle(state);
         obe::graphics::shapes::bindings::load_class_text(state);
         obe::input::bindings::load_class_input_action(state);
-        obe::input::bindings::load_class_input_button(state);
         obe::input::bindings::load_class_input_button_monitor(state);
         obe::input::bindings::load_class_input_condition(state);
         obe::input::bindings::load_class_input_manager(state);
-        obe::input::bindings::load_enum_mouse_wheel_scroll_direction(state);
+        obe::input::bindings::load_class_input_source(state);
+        obe::input::bindings::load_class_input_source_gamepad_axis(state);
+        obe::input::bindings::load_class_input_source_gamepad_button(state);
+        obe::input::bindings::load_class_input_source_keyboard_key(state);
+        obe::input::bindings::load_class_input_source_mouse_button(state);
+        obe::input::bindings::load_class_input_source_mouse_wheel_scroll(state);
         obe::input::bindings::load_enum_axis_threshold_direction(state);
-        obe::input::bindings::load_enum_input_button_state(state);
+        obe::input::bindings::load_enum_mouse_wheel_scroll_direction(state);
+        obe::input::bindings::load_enum_input_source_state(state);
         obe::input::bindings::load_enum_input_type(state);
         obe::network::bindings::load_class_lua_packet(state);
         obe::network::bindings::load_class_network_client(state);
@@ -297,6 +306,7 @@ namespace obe::bindings
         obe::types::bindings::load_class_togglable(state);
         obe::types::bindings::load_class_unique_identifiable(state);
         obe::types::bindings::load_class_unknown_enum_entry(state);
+        obe::utils::argparser::exceptions::bindings::load_class_invalid_argument_format(state);
         obe::utils::exec::bindings::load_class_run_args_parser(state);
         vili::bindings::load_class_const_node_iterator(state);
         vili::bindings::load_class_node(state);
@@ -330,6 +340,7 @@ namespace obe::bindings
         obe::events::Game::bindings::load_class_render(state);
         obe::events::Game::bindings::load_class_start(state);
         obe::events::Game::bindings::load_class_update(state);
+        obe::events::Keys::bindings::load_class_pressed(state);
         obe::events::Keys::bindings::load_class_state_changed(state);
         obe::events::Network::bindings::load_class_client_rename(state);
         obe::events::Network::bindings::load_class_connected(state);
@@ -469,6 +480,7 @@ namespace obe::bindings
         obe::system::package::bindings::load_function_list_packages(state);
         obe::system::package::bindings::load_function_install(state);
         obe::system::package::bindings::load_function_load(state);
+        obe::utils::argparser::bindings::load_function_parse_args(state);
         obe::utils::file::bindings::load_function_get_directory_list(state);
         obe::utils::file::bindings::load_function_get_file_list(state);
         obe::utils::file::bindings::load_function_file_exists(state);

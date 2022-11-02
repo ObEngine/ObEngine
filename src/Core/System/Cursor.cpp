@@ -124,6 +124,10 @@ namespace obe::system
 
     void Cursor::update()
     {
+        if (!m_window.is_focused())
+        {
+            return;
+        }
         const sf::Vector2i mouse_pos = sf::Mouse::getPosition(m_window.get_window());
         m_x = mouse_pos.x;
         m_y = mouse_pos.y;

@@ -259,6 +259,11 @@ namespace obe::system
         return m_window.isOpen();
     }
 
+    bool Window::is_focused() const
+    {
+        return m_window.hasFocus();
+    }
+
     bool Window::poll_event(sf::Event& event)
     {
         return m_window.pollEvent(event);

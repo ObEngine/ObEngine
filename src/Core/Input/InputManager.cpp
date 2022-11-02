@@ -20,7 +20,7 @@ namespace obe::input
         }
     }
 
-    bool InputManager::is_action_currently_in_use(const std::string& action_id)
+    bool InputManager::is_action_currently_in_use(const std::string& action_id) const
     {
         for (const auto& action : m_current_actions)
         {
@@ -195,9 +195,9 @@ namespace obe::input
                     "<InputManager> Add Action '{0}' in Context '{1}'", action->get_id(), context);
                 m_current_actions.push_back(action.get());
                 std::vector<InputButtonMonitorPtr> monitors;
-                for (InputButton* button : action->get_involved_buttons())
+                for (InputSource* input_source : action->get_involved_input_sources())
                 {
-                    monitors.push_back(this->monitor(*button));
+                    monitors.push_back(this->monitor(*input_source));
                 }
                 action->enable(monitors);
             }
@@ -252,17 +252,17 @@ namespace obe::input
         return std::vector<std::string>(all_contexts.begin(), all_contexts.end());
     }
 
-    InputButton& InputManager::get_input(const std::string& key_id)
+    InputSource& InputManager::get_input_source(const std::string& key_id)
     {
         if (const auto& input = m_inputs.find(key_id); input != m_inputs.end())
             return *input->second;
 
-        throw exceptions::UnknownInputButton(key_id, this->get_all_input_button_names(), EXC_INFO);
+        throw exceptions::UnknownInputSource(key_id, this->get_all_input_button_names(), EXC_INFO);
     }
 
-    std::vector<InputButton*> InputManager::get_inputs()
+    std::vector<InputSource*> InputManager::get_all_input_sources() const
     {
-        std::vector<InputButton*> inputs;
+        std::vector<InputSource*> inputs;
         inputs.reserve(m_inputs.size());
         for (auto& [_, input] : m_inputs)
         {
@@ -271,12 +271,12 @@ namespace obe::input
         return inputs;
     }
 
-    std::vector<InputButton*> InputManager::get_inputs(InputType filter)
+    std::vector<InputSource*> InputManager::get_all_input_sources(const std::string& input_type) const
     {
-        std::vector<InputButton*> inputs;
+        std::vector<InputSource*> inputs;
         for (auto& key_iterator : m_inputs)
         {
-            if (key_iterator.second->is(filter))
+            if (key_iterator.second->get_input_type() == input_type)
             {
                 inputs.push_back(key_iterator.second.get());
             }
@@ -284,9 +284,9 @@ namespace obe::input
         return inputs;
     }
 
-    std::vector<InputButton*> InputManager::get_pressed_inputs() const
+    std::vector<InputSource*> InputManager::get_pressed_input_sources() const
     {
-        std::vector<InputButton*> all_pressed_buttons;
+        std::vector<InputSource*> all_pressed_buttons;
         for (auto& key_iterator : m_inputs)
         {
             if (key_iterator.second->is_pressed())
@@ -299,16 +299,16 @@ namespace obe::input
 
     InputButtonMonitorPtr InputManager::monitor(const std::string& name)
     {
-        return this->monitor(this->get_input(name));
+        return this->monitor(this->get_input_source(name));
     }
 
-    InputButtonMonitorPtr InputManager::monitor(InputButton& input)
+    InputButtonMonitorPtr InputManager::monitor(InputSource& input)
     {
         for (auto& monitor : m_monitors)
         {
             if (const auto shared_monitor = monitor.lock())
             {
-                if (&shared_monitor->get_button() == &input)
+                if (&shared_monitor->get_input_source() == &input)
                     return InputButtonMonitorPtr(shared_monitor);
             }
         }
@@ -322,7 +322,7 @@ namespace obe::input
         m_refresh = true;
     }
 
-    bool is_key_already_in_combination(InputCombination& combination, InputButton* button)
+    bool is_key_already_in_combination(InputCombination& combination, InputSource* button)
     {
         for (auto& [monitored_button, _] : combination)
         {
@@ -353,7 +353,7 @@ namespace obe::input
 
                     std::vector<std::string> state_list
                         = utils::string::split(state_and_button[0], ",");
-                    types::FlagSet<InputButtonState> button_states;
+                    types::FlagSet<InputSourceState> button_states;
                     for (std::string& button_state : state_list)
                     {
                         if (utils::vector::contains(
@@ -363,7 +363,7 @@ namespace obe::input
                         }
                         else
                         {
-                            throw exceptions::InvalidInputButtonState(button_state, EXC_INFO);
+                            throw exceptions::InvalidInputSourceState(button_state, EXC_INFO);
                         }
                     }
                     const std::string key_id = state_and_button[1];
@@ -388,21 +388,21 @@ namespace obe::input
                     }
                     if (m_inputs.contains(key_id))
                     {
-                        InputButton& button = this->get_input(key_id);
+                        InputSource& input_source = this->get_input_source(key_id);
 
-                        if (!is_key_already_in_combination(combination, &button))
+                        if (!is_key_already_in_combination(combination, &input_source))
                         {
-                            combination.emplace_back(&button, button_states);
+                            combination.emplace_back(&input_source, button_states);
                         }
                         else
                         {
-                            throw exceptions::InputButtonAlreadyInCombination(
-                                button.get_name(), EXC_INFO);
+                            throw exceptions::InputSourceAlreadyInCombination(
+                                input_source.get_name(), EXC_INFO);
                         }
                     }
                     else
                     {
-                        throw exceptions::UnknownInputButton(
+                        throw exceptions::UnknownInputSource(
                             key_id, this->get_all_input_button_names(), EXC_INFO);
                     }
                 }

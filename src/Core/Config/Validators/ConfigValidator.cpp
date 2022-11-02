@@ -7,69 +7,6 @@ namespace obe::config::validators
     vili::node config_validator()
     {
         // clang-format off
-        std::vector<std::string> input_list = {
-            "Add",
-            "Backslash",
-            "Backspace",
-            "Comma",
-            "Dash",
-            "Delete",
-            "Divide",
-            "End",
-            "Equal",
-            "Escape",
-            "Home",
-            "Insert",
-            "LAlt",
-            "LBracket",
-            "LControl",
-            "LShift",
-            "Menu",
-            "Multiply",
-            "PageDown",
-            "PageUp",
-            "Pause",
-            "Period",
-            "Quote",
-            "RAlt",
-            "RBracket",
-            "RControl",
-            "Return",
-            "RShift",
-            "RSystem",
-            "Semicolon",
-            "Slash",
-            "Space",
-            "Subtract",
-            "Tab",
-            "Tilde",
-            "Left",
-            "Right",
-            "Up",
-            "Down",
-            "LMB",
-            "MMB",
-            "RMB",
-            "MouseWheelLeft",
-            "MouseWheelRight",
-            "MouseWheelUp",
-            "MouseWheelDown",
-            "NumPad[0-9]",
-            "F(1[0-2]|[1-9])",
-            "[A-Z]",
-            "[0-9]",
-            "GP_[0-9]+_BTN_[0-9]+",
-            "GP_[0-9]+_AXIS_(X|Y|Z|R|U|PovX|PovY)_(LEFT|UP|RIGHT|DOWN)"
-        };
-        std::string all_inputs = utils::vector::join(input_list, "|");
-        // clang-format on
-        std::string action_re = fmt::format("((Idle|Hold|Pressed|Released)"
-                                            "\\s*:\\s*({0}))(\\s*\\+\\s*"
-                                            "(Idle|Hold|Pressed|Released)"
-                                            "\\s*:\\s*({0}))*",
-            all_inputs);
-
-        // clang-format off
         vili::node resolution_dimension_validator = vili::object {
             {"type", "union"},
             {
@@ -163,7 +100,6 @@ namespace obe::config::validators
 
         vili::object input_action_validator = vili::object {
             {"type", vili::string_typename},
-            {"regex", action_re}
         };
 
         return vili::object {

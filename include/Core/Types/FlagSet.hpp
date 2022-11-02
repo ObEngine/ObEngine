@@ -7,6 +7,8 @@
  */
 #include <bitset>
 
+#include <magic_enum/magic_enum.hpp>
+
 #pragma once
 
 namespace obe::types
@@ -274,7 +276,7 @@ namespace obe::types
 
     private:
         using utype = typename std::underlying_type<T>::type;
-        using bitset_type = std::bitset<static_cast<utype>(T::LAST__)>;
+        using bitset_type = std::bitset<static_cast<utype>(magic_enum::enum_count<T>())>;
         bitset_type bitset;
 
     public:

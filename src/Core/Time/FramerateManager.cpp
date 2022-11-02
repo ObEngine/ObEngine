@@ -54,14 +54,14 @@ namespace obe::time
         }
     }
 
-    TimeUnit FramerateManager::get_delta_time() const
+    TimeUnit FramerateManager::get_raw_delta_time() const
     {
         return m_delta_time;
     }
 
-    double FramerateManager::get_game_speed() const
+    double FramerateManager::get_delta_time() const
     {
-        return m_delta_time * m_speed_coefficient;
+        return std::min(m_delta_time * m_speed_coefficient, m_max_delta_time);
     }
 
     double FramerateManager::get_speed_coefficient() const
@@ -103,6 +103,11 @@ namespace obe::time
     {
         m_vsync_enabled = vsync;
         m_window.set_vertical_sync_enabled(vsync);
+    }
+
+    void FramerateManager::set_max_delta_time(double max_delta_time)
+    {
+        m_max_delta_time = max_delta_time;
     }
 
     bool FramerateManager::should_render() const

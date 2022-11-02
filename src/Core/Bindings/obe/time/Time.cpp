@@ -47,8 +47,9 @@ namespace obe::time::bindings
         bind_framerate_manager["should_update"] = &obe::time::FramerateManager::should_update;
         bind_framerate_manager["start"] = &obe::time::FramerateManager::start;
         bind_framerate_manager["reset"] = &obe::time::FramerateManager::reset;
+        bind_framerate_manager["get_raw_delta_time"]
+            = &obe::time::FramerateManager::get_raw_delta_time;
         bind_framerate_manager["get_delta_time"] = &obe::time::FramerateManager::get_delta_time;
-        bind_framerate_manager["get_game_speed"] = &obe::time::FramerateManager::get_game_speed;
         bind_framerate_manager["get_speed_coefficient"]
             = &obe::time::FramerateManager::get_speed_coefficient;
         bind_framerate_manager["is_framerate_limited"]
@@ -62,6 +63,8 @@ namespace obe::time::bindings
             = &obe::time::FramerateManager::set_framerate_target;
         bind_framerate_manager["set_vsync_enabled"]
             = &obe::time::FramerateManager::set_vsync_enabled;
+        bind_framerate_manager["set_max_delta_time"]
+            = &obe::time::FramerateManager::set_max_delta_time;
     }
     void load_function_epoch(sol::state_view state)
     {

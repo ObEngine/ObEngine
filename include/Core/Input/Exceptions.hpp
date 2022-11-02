@@ -10,28 +10,14 @@
  */
 namespace obe::input::exceptions
 {
-    class InputButtonInvalidOperation : public Exception<InputButtonInvalidOperation>
+    class InvalidInputSourceState : public Exception<InvalidInputSourceState>
     {
     public:
         using Exception::Exception;
-        InputButtonInvalidOperation(
-            std::string_view input_button_type, std::string_view operation_type, DebugInfo info)
+        InvalidInputSourceState(std::string_view state, DebugInfo info)
             : Exception(info)
         {
-            this->error("Tried to do a '{}' operation on an InputButton of type '{}' "
-                        "which is incompatible",
-                operation_type, input_button_type);
-        }
-    };
-
-    class InvalidInputButtonState : public Exception<InvalidInputButtonState>
-    {
-    public:
-        using Exception::Exception;
-        InvalidInputButtonState(std::string_view state, DebugInfo info)
-            : Exception(info)
-        {
-            this->error("'{}' is not a valid InputButtonState value", state);
+            this->error("'{}' is not a valid InputSourceState value", state);
             this->hint("Try one of the following values : (Idle, Hold, Pressed, Released)");
         }
     };
@@ -54,21 +40,21 @@ namespace obe::input::exceptions
         }
     };
 
-    class UnknownInputButton : public Exception<UnknownInputButton>
+    class UnknownInputSource : public Exception<UnknownInputSource>
     {
     public:
         using Exception::Exception;
-        UnknownInputButton(std::string_view button_name,
+        UnknownInputSource(std::string_view button_name,
             const std::vector<std::string>& existing_buttons, DebugInfo info)
             : Exception(info)
         {
-            this->error("InputButton named '{}' does not exists", button_name);
+            this->error("InputSource named '{}' does not exists", button_name);
             std::vector<std::string> suggestions
                 = utils::string::sort_by_distance(button_name.data(), existing_buttons, 5);
             std::transform(
                 suggestions.begin(), suggestions.end(), suggestions.begin(), utils::string::quote);
             this->hint(
-                "Try one of the following InputButton : ({}...)", fmt::join(suggestions, ", "));
+                "Try one of the following InputSources : ({}...)", fmt::join(suggestions, ", "));
         }
     };
 
@@ -85,18 +71,29 @@ namespace obe::input::exceptions
         }
     };
 
-    class InputButtonAlreadyInCombination : public Exception<InputButtonAlreadyInCombination>
+    class InputSourceAlreadyInCombination : public Exception<InputSourceAlreadyInCombination>
     {
     public:
         using Exception::Exception;
-        InputButtonAlreadyInCombination(std::string_view button, DebugInfo info)
+        InputSourceAlreadyInCombination(std::string_view input_source, DebugInfo info)
             : Exception(info)
         {
-            this->error("The same InputButton '{}' can't appear twice in the same "
+            this->error("The same InputSource '{}' can't appear twice in the same "
                         "InputCondition",
-                button);
+                input_source);
             this->hint("If you want to handle more that one state for the same "
-                       "InputButton, create a separate combination");
+                       "InputSource, create a separate combination");
+        }
+    };
+
+    class InputSourceNotInCombination : public Exception<InputSourceNotInCombination>
+    {
+    public:
+        using Exception::Exception;
+        InputSourceNotInCombination(std::string_view input_source, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("The InputSource '{}' does not appear in InputCondition", input_source);
         }
     };
 

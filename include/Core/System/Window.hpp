@@ -81,6 +81,7 @@ namespace obe::system
         [[nodiscard]] static transform::UnitVector get_screen_size();
         [[nodiscard]] transform::UnitVector get_size() const;
         [[nodiscard]] bool is_open() const;
+        [[nodiscard]] bool is_focused() const;
         bool poll_event(sf::Event& event);
         void set_size(unsigned int width, unsigned int height);
         void set_window_size(unsigned int width, unsigned int height);

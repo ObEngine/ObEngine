@@ -1,15 +1,15 @@
 #pragma once
 
-#include <Input/InputButton.hpp>
 #include <Input/InputButtonMonitor.hpp>
-#include <Input/InputButtonState.hpp>
+#include <Input/InputSourceState.hpp>
+#include <Input/InputSource.hpp>
 #include <Types/FlagSet.hpp>
 #include <Types/Togglable.hpp>
 #include <vector>
 
 namespace obe::input
 {
-    using InputCombinationElement = std::pair<InputButton*, types::FlagSet<InputButtonState>>;
+    using InputCombinationElement = std::pair<InputSource*, types::FlagSet<InputSourceState>>;
     using InputCombination = std::vector<InputCombinationElement>;
 
     /**
@@ -24,10 +24,10 @@ namespace obe::input
         bool m_enabled = false;
 
     protected:
-        InputButtonState get_button_state(InputButton* button) const;
+        [[nodiscard]] InputSourceState get_button_state(InputSource* input_source) const;
 
     public:
-        InputCondition();
+        InputCondition() = default;
         /**
          * \brief Adds a new InputCombinationElement to the InputCondition
          * \param combination_element The InputCombinationElement to add to the
@@ -60,6 +60,6 @@ namespace obe::input
 
         void enable(const std::vector<InputButtonMonitorPtr>& monitors);
         void disable();
-        bool is_enabled() const;
+        [[nodiscard]] bool is_enabled() const;
     };
 } // namespace obe::input
