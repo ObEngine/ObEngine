@@ -37,7 +37,7 @@ namespace obe::component
     };
 
     /**
-     * \hook{Inherit, Register}
+     * \hook{Inherit, %childclass%::Register();}
      */
     template <class DerivedComponent>
     class Component : public ComponentBase

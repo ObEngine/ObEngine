@@ -10,6 +10,7 @@
 #include <Input/InputSourceMouse.hpp>
 #include <Input/InputSourceState.hpp>
 #include <Input/InputType.hpp>
+#include <Script/AutoCastManager.hpp>
 
 #include <Bindings/Config.hpp>
 
@@ -147,10 +148,10 @@ namespace obe::input::bindings
         sol::usertype<obe::input::InputSource> bind_input_source
             = input_namespace.new_usertype<obe::input::InputSource>("InputSource");
         bind_input_source["get_name"] = &obe::input::InputSource::get_name;
-        bind_input_source["get_input_type"] = &obe::input::InputSource::get_input_type;
         bind_input_source["get_printable_char"] = &obe::input::InputSource::get_printable_char;
         bind_input_source["is_pressed"] = &obe::input::InputSource::is_pressed;
         bind_input_source["is_printable"] = &obe::input::InputSource::is_printable;
+        bind_input_source["type"] = &obe::input::InputSource::type;
     }
     void load_class_input_source_gamepad_axis(sol::state_view state)
     {
@@ -168,6 +169,11 @@ namespace obe::input::bindings
             = &obe::input::InputSourceGamepadAxis::get_axis_position;
         bind_input_source_gamepad_axis["is_pressed"]
             = &obe::input::InputSourceGamepadAxis::is_pressed;
+        bind_input_source_gamepad_axis["type"] = &obe::input::InputSourceGamepadAxis::type;
+        bind_input_source_gamepad_axis["Type"]
+            = sol::var(&obe::input::InputSourceGamepadAxis::Type);
+
+        script::AutoCastManager<input::InputSource>::Register<obe::input::InputSourceGamepadAxis>();
     }
     void load_class_input_source_gamepad_button(sol::state_view state)
     {
@@ -184,6 +190,12 @@ namespace obe::input::bindings
             = &obe::input::InputSourceGamepadButton::get_button_index;
         bind_input_source_gamepad_button["is_pressed"]
             = &obe::input::InputSourceGamepadButton::is_pressed;
+        bind_input_source_gamepad_button["type"] = &obe::input::InputSourceGamepadButton::type;
+        bind_input_source_gamepad_button["Type"]
+            = sol::var(&obe::input::InputSourceGamepadButton::Type);
+
+        script::AutoCastManager<input::InputSource>::Register<
+            obe::input::InputSourceGamepadButton>();
     }
     void load_class_input_source_keyboard_key(sol::state_view state)
     {
@@ -199,6 +211,11 @@ namespace obe::input::bindings
         bind_input_source_keyboard_key["get_key"] = &obe::input::InputSourceKeyboardKey::get_key;
         bind_input_source_keyboard_key["is_pressed"]
             = &obe::input::InputSourceKeyboardKey::is_pressed;
+        bind_input_source_keyboard_key["type"] = &obe::input::InputSourceKeyboardKey::type;
+        bind_input_source_keyboard_key["Type"]
+            = sol::var(&obe::input::InputSourceKeyboardKey::Type);
+
+        script::AutoCastManager<input::InputSource>::Register<obe::input::InputSourceKeyboardKey>();
     }
     void load_class_input_source_mouse_button(sol::state_view state)
     {
@@ -212,6 +229,11 @@ namespace obe::input::bindings
             = &obe::input::InputSourceMouseButton::get_mouse_button;
         bind_input_source_mouse_button["is_pressed"]
             = &obe::input::InputSourceMouseButton::is_pressed;
+        bind_input_source_mouse_button["type"] = &obe::input::InputSourceMouseButton::type;
+        bind_input_source_mouse_button["Type"]
+            = sol::var(&obe::input::InputSourceMouseButton::Type);
+
+        script::AutoCastManager<input::InputSource>::Register<obe::input::InputSourceMouseButton>();
     }
     void load_class_input_source_mouse_wheel_scroll(sol::state_view state)
     {
@@ -228,5 +250,12 @@ namespace obe::input::bindings
             = &obe::input::InputSourceMouseWheelScroll::get_scroll_wheel_direction;
         bind_input_source_mouse_wheel_scroll["is_pressed"]
             = &obe::input::InputSourceMouseWheelScroll::is_pressed;
+        bind_input_source_mouse_wheel_scroll["type"]
+            = &obe::input::InputSourceMouseWheelScroll::type;
+        bind_input_source_mouse_wheel_scroll["Type"]
+            = sol::var(&obe::input::InputSourceMouseWheelScroll::Type);
+
+        script::AutoCastManager<input::InputSource>::Register<
+            obe::input::InputSourceMouseWheelScroll>();
     }
 };

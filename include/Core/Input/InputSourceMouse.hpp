@@ -18,6 +18,7 @@ namespace obe::input
         sf::Mouse::Button m_button;
 
     public:
+        static constexpr std::string_view Type = "MouseButton";
         /**
          * \brief Creates a new InputSource representing a Mouse Button
          * \param button SFML Mouse Button
@@ -29,6 +30,7 @@ namespace obe::input
          */
         [[nodiscard]] sf::Mouse::Button get_mouse_button() const;
         [[nodiscard]] bool is_pressed() const override;
+        [[nodiscard]] std::string_view type() const override;
     };
 
     enum class MouseWheelScrollDirection
@@ -49,6 +51,7 @@ namespace obe::input
         friend obe::engine::Engine;
 
     public:
+        static constexpr std::string_view Type = "MouseWheelScroll";
         /**
          * \brief Creates a new InputSource representing a Mouse Wheel Scroll
          * \param direction MouseWheel scroll direction
@@ -61,5 +64,6 @@ namespace obe::input
          */
         [[nodiscard]] MouseWheelScrollDirection get_scroll_wheel_direction() const;
         [[nodiscard]] bool is_pressed() const override;
+        [[nodiscard]] std::string_view type() const override;
     };
 }

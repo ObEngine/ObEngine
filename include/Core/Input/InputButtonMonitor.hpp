@@ -12,6 +12,7 @@ namespace obe::events
         struct Pressed
         {
         };
+
         /**
         * \brief Event triggered when the state of an InputButton changes
         * \noconstructor
@@ -20,6 +21,7 @@ namespace obe::events
         {
             const input::InputSourceState state;
             const input::InputSourceState previous_state;
+            const input::InputSource& input_source;
         };
     } // namespace Keys
 } // namespace obe::events
@@ -35,7 +37,7 @@ namespace obe::input
     class InputButtonMonitor
     {
     private:
-        InputSource& m_button;
+        InputSource& m_input_source;
         InputSourceState m_button_state = InputSourceState::Idle;
         bool m_should_refresh = false;
 

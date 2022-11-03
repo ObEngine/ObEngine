@@ -400,7 +400,7 @@ namespace obe::graphics::bindings
         bind_sprite["attach_resource_manager"] = &obe::graphics::Sprite::attach_resource_manager;
         bind_sprite["type"] = &obe::graphics::Sprite::type;
 
-        Sprite::Register();
+        obe::graphics::Sprite::Register();
     }
     void load_class_sprite_handle_point(sol::state_view state)
     {

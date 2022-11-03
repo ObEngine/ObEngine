@@ -4,19 +4,19 @@
 namespace obe::input
 {
     InputButtonMonitor::InputButtonMonitor(InputSource& button)
-        : m_button(button)
+        : m_input_source(button)
     {
-        debug::Log->debug("Started monitoring InputSource '{}'", m_button.get_name());
+        debug::Log->debug("Started monitoring InputSource '{}'", m_input_source.get_name());
     }
 
     InputButtonMonitor::~InputButtonMonitor()
     {
-        debug::Log->debug("Stopped monitoring InputSource '{}'", m_button.get_name());
+        debug::Log->debug("Stopped monitoring InputSource '{}'", m_input_source.get_name());
     }
 
     InputSource& InputButtonMonitor::get_input_source() const
     {
-        return m_button;
+        return m_input_source;
     }
 
     InputSourceState InputButtonMonitor::get_state() const
@@ -26,8 +26,8 @@ namespace obe::input
 
     void InputButtonMonitor::update(event::EventGroupPtr events)
     {
-        debug::Log->trace("Updating InputMonitor of {}", m_button.get_name());
-        const bool key_pressed = m_button.is_pressed();
+        debug::Log->trace("Updating InputMonitor of {}", m_input_source.get_name());
+        const bool key_pressed = m_input_source.is_pressed();
         const InputSourceState old_state = m_button_state;
         m_should_refresh = false;
         if (key_pressed
@@ -54,7 +54,7 @@ namespace obe::input
         {
             m_should_refresh = true;
             events->trigger(
-                m_button.get_name(), events::Keys::StateChanged { m_button_state, old_state });
+                m_input_source.get_name(), events::Keys::StateChanged { m_button_state, old_state, m_input_source });
         }
     }
 

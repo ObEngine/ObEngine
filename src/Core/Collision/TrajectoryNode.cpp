@@ -4,6 +4,8 @@
 #include <Collision/TrajectoryNode.hpp>
 #include <Utils/MathUtils.hpp>
 
+#include <Debug/Logger.hpp> // TODO: Remove logs
+
 namespace obe::collision
 {
     TrajectoryNode::TrajectoryNode(scene::SceneNode& scene_node)
@@ -37,6 +39,21 @@ namespace obe::collision
         m_trajectories.erase(id);
     }
 
+    transform::UnitVector make_offset_normal(const transform::UnitVector& offset)
+    {
+        static double base_offset_normal_scale = 0.0005;
+        if (abs(offset.x) >= abs(offset.y))
+        {
+            return transform::UnitVector(base_offset_normal_scale,
+                (offset.y != 0) ? offset.y / offset.x * base_offset_normal_scale : 0, offset.unit);
+        }
+        else
+        {
+            return transform::UnitVector(
+                (offset.x != 0) ? offset.x / offset.y * base_offset_normal_scale : 0, base_offset_normal_scale, offset.unit);
+        }
+    }
+
     void TrajectoryNode::update(const double dt) const
     {
         auto get_offset = [&dt](const Trajectory& trajectory) {
@@ -66,11 +83,18 @@ namespace obe::collision
                     collision_data.offset = base_offset;
                     if (m_probe != nullptr && m_collision_space != nullptr)
                     {
-                        /* collision_data = m_collision_space->get_offset_before_collision(
-                            *m_probe, collision_data.offset);*/
+                        const transform::UnitVector offset_normal = make_offset_normal(base_offset);
+                        // Slightly push towards offset to avoid getting stuck inside of it
+                        m_probe->move(offset_normal);
                         collision_data.offset = m_collision_space->get_offset_before_collision(
                             *m_probe, collision_data.offset);
+                        // Moving away from the normal offset
+                        m_probe->move(-offset_normal);
+                        debug::Log->debug(
+                            "<TrajectoryNode> Trajectory '{}' Offset {}, Normal {}",
+                            trajectory.first, collision_data.offset, offset_normal);
                     }
+
                     m_scene_node.move(collision_data.offset);
                     auto on_collide_callback = trajectory.second->get_on_collide_callback();
                     if (collision_data.offset != base_offset && on_collide_callback)

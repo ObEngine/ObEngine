@@ -123,7 +123,7 @@ namespace obe::collision::bindings
             = static_cast<obe::collision::Collider* (obe::collision::ColliderComponent::*)()>(
                 &obe::collision::ColliderComponent::get_inner_collider);
 
-        ColliderComponent::Register();
+        obe::collision::ColliderComponent::Register();
     }
     void load_class_collision_data(sol::state_view state)
     {

@@ -10,6 +10,7 @@ namespace obe::input
         sf::Keyboard::Key m_key;
 
     public:
+        static constexpr std::string_view Type = "KeyboardKey";
         /**
          * \brief Creates a new InputSource representing a Keyboard key
          * \param key SFML Keyboard Key
@@ -32,5 +33,6 @@ namespace obe::input
          */
         [[nodiscard]] sf::Keyboard::Key get_key() const;
         [[nodiscard]] bool is_pressed() const override;
+        [[nodiscard]] std::string_view type() const override;
     };
 }

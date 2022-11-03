@@ -5,7 +5,7 @@
 namespace obe::input
 {
     InputSourceMouseButton::InputSourceMouseButton(sf::Mouse::Button button)
-        : InputSource("MouseButton", fmt::format("MouseButton{}", magic_enum::enum_name(button).data()), "")
+        : InputSource(fmt::format("MouseButton{}", magic_enum::enum_name(button).data()), "")
         , m_button(button)
     {
         
@@ -21,9 +21,14 @@ namespace obe::input
         return sf::Mouse::isButtonPressed(m_button);
     }
 
+    std::string_view InputSourceMouseButton::type() const
+    {
+        return InputSourceMouseButton::Type;
+    }
+
     InputSourceMouseWheelScroll::InputSourceMouseWheelScroll(
         MouseWheelScrollDirection direction, float threshold)
-        : InputSource("MouseWheelScroll", fmt::format("MouseWheelScroll{}", magic_enum::enum_name(direction).data()), "")
+        : InputSource(fmt::format("MouseWheelScroll{}", magic_enum::enum_name(direction).data()), "")
         , m_direction(direction)
         , m_threshold(threshold)
     {
@@ -37,5 +42,10 @@ namespace obe::input
     bool InputSourceMouseWheelScroll::is_pressed() const
     {
         return m_delta >= m_threshold;
+    }
+
+    std::string_view InputSourceMouseWheelScroll::type() const
+    {
+        return InputSourceMouseWheelScroll::Type;
     }
 }

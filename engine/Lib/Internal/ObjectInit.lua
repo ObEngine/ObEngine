@@ -1,4 +1,5 @@
 local GameObjectHandle = require("obe://Lib/Internal/GameObject");
+local wrap_events = require("obe://Lib/Internal/EventsWrappers").wrap_events;
 ---@ Lib.Internal.Network
 local Network = require("obe://Lib/Internal/Network");
 
@@ -16,6 +17,9 @@ end
 -- Engine Events
 Event = __GAME_OBJECT:listen("Event");
 UserEvent = __GAME_OBJECT:listen("UserEvent");
+
+-- Events Wrappers
+wrap_events(Event);
 
 -- Task hooks
 Task = __GAME_OBJECT._task_manager:make_task_hook();

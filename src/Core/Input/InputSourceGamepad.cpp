@@ -4,7 +4,7 @@ namespace obe::input
 {
     InputSourceGamepadButton::InputSourceGamepadButton(
         unsigned gamepad_index, unsigned button_index, const std::string& name)
-        : InputSource("GamepadButton", name, "")
+        : InputSource(name, "")
         , m_gamepad_index(gamepad_index)
         , m_button_index(button_index)
     {
@@ -25,10 +25,15 @@ namespace obe::input
         return sf::Joystick::isButtonPressed(m_gamepad_index, m_button_index);
     }
 
+    std::string_view InputSourceGamepadButton::type() const
+    {
+        return InputSourceGamepadButton::Type;
+    }
+
     InputSourceGamepadAxis::InputSourceGamepadAxis(unsigned gamepad_index,
         sf::Joystick::Axis gamepad_axis, std::pair<AxisThresholdDirection, float> axis_threshold,
         const std::string& name)
-        : InputSource("GamepadAxis", name, "")
+        : InputSource(name, "")
         , m_gamepad_index(gamepad_index)
         , m_axis(gamepad_axis)
         , m_axis_threshold(std::move(axis_threshold))
@@ -51,5 +56,10 @@ namespace obe::input
         return (m_axis_threshold.first == AxisThresholdDirection::Less)
             ? axis_value < m_axis_threshold.second
             : axis_value > m_axis_threshold.second;
+    }
+
+    std::string_view InputSourceGamepadAxis::type() const
+    {
+        return InputSourceGamepadAxis::Type;
     }
 }

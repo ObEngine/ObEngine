@@ -11,6 +11,7 @@ namespace obe::input
         uint32_t m_button_index = 0;
 
     public:
+        static constexpr std::string_view Type = "GamepadButton";
         /**
          * \brief Creates a new InputSource representing a Gamepad Button
          * \param gamepad_index Index of the gamepad
@@ -22,6 +23,7 @@ namespace obe::input
         [[nodiscard]] uint32_t get_gamepad_index() const;
         [[nodiscard]] uint32_t get_button_index() const;
         [[nodiscard]] bool is_pressed() const override;
+        [[nodiscard]] std::string_view type() const override;
     };
 
     /**
@@ -52,6 +54,7 @@ namespace obe::input
         ;
 
     public:
+        static constexpr std::string_view Type = "GamepadAxis";
         /**
          * \brief Creates a new InputSource representing a gamepad Axis
          * \param gamepad_index Index of the gamepad
@@ -68,5 +71,6 @@ namespace obe::input
          */
         [[nodiscard]] float get_axis_position() const;
         [[nodiscard]] bool is_pressed() const override;
+        [[nodiscard]] std::string_view type() const override;
     };
 }

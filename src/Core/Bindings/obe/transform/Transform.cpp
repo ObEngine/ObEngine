@@ -150,8 +150,8 @@ namespace obe::transform::bindings
             = &obe::transform::PolygonPoint::set_relative_position;
         bind_polygon_point["move"] = &obe::transform::PolygonPoint::move;
         bind_polygon_point["index"] = sol::property(
-            [](obe::transform::PolygonPoint* self) -> const obe::transform::point_index_t& {
-                return self->index;
+            [](obe::transform::PolygonPoint* self) -> const obe::transform::point_index_t* {
+                return &self->index;
             });
     }
     void load_class_polygon_segment(sol::state_view state)
@@ -165,12 +165,12 @@ namespace obe::transform::bindings
         bind_polygon_segment["get_angle"] = &obe::transform::PolygonSegment::get_angle;
         bind_polygon_segment["get_length"] = &obe::transform::PolygonSegment::get_length;
         bind_polygon_segment["first"] = sol::property(
-            [](obe::transform::PolygonSegment* self) -> const obe::transform::PolygonPoint& {
-                return self->first;
+            [](obe::transform::PolygonSegment* self) -> const obe::transform::PolygonPoint* {
+                return &self->first;
             });
         bind_polygon_segment["second"] = sol::property(
-            [](obe::transform::PolygonSegment* self) -> const obe::transform::PolygonPoint& {
-                return self->second;
+            [](obe::transform::PolygonSegment* self) -> const obe::transform::PolygonPoint* {
+                return &self->second;
             });
     }
     void load_class_rect(sol::state_view state)

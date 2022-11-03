@@ -43,7 +43,7 @@ namespace obe::component
 
     sol::lua_value ComponentBase::cast()
     {
-        if (!ComponentCasters.count(this->type()))
+        if (!ComponentCasters.contains(this->type()))
         {
             throw exceptions::UnknownComponentType(this->type(), EXC_INFO);
         }

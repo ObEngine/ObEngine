@@ -237,10 +237,12 @@ namespace obe::bindings
         obe::scene::bindings::load_class_scene(state);
         obe::scene::bindings::load_class_scene_node(state);
         obe::scene::bindings::load_class_scene_render_options(state);
+        obe::script::bindings::load_class_dummy_cast(state);
         obe::script::bindings::load_class_game_object(state);
         obe::script::bindings::load_class_game_object_database(state);
         obe::script::bindings::load_class_lua_state(state);
         obe::script::bindings::load_enum_environment_target(state);
+        obe::script::bindings::load_function_cast(state);
         obe::script::bindings::load_function_sol_call_status_to_string(state);
         obe::script::bindings::load_function_safe_lua_call(state);
         obe::system::bindings::load_class_contextual_path_factory(state);

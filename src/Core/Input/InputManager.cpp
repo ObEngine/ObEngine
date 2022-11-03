@@ -276,7 +276,7 @@ namespace obe::input
         std::vector<InputSource*> inputs;
         for (auto& key_iterator : m_inputs)
         {
-            if (key_iterator.second->get_input_type() == input_type)
+            if (key_iterator.second->type() == input_type)
             {
                 inputs.push_back(key_iterator.second.get());
             }

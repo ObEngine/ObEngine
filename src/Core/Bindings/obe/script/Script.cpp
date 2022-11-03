@@ -1,6 +1,8 @@
 #include <Bindings/obe/script/Script.hpp>
 
 #include <Scene/Scene.hpp>
+#include <Script/Casters/Base.hpp>
+#include <Script/Casters/InputSource.hpp>
 #include <Script/GameObject.hpp>
 #include <Script/LuaState.hpp>
 #include <Script/Scripting.hpp>
@@ -15,6 +17,13 @@ namespace obe::script::bindings
         script_namespace.new_enum<obe::script::EnvironmentTarget>("EnvironmentTarget",
             { { "Outer", obe::script::EnvironmentTarget::Outer },
                 { "Inner", obe::script::EnvironmentTarget::Inner } });
+    }
+    void load_class_dummy_cast(sol::state_view state)
+    {
+        sol::table script_namespace = state["obe"]["script"].get<sol::table>();
+        sol::usertype<obe::script::DummyCast> bind_dummy_cast
+            = script_namespace.new_usertype<obe::script::DummyCast>(
+                "DummyCast", sol::call_constructor, sol::default_constructor);
     }
     void load_class_game_object(sol::state_view state)
     {
@@ -84,6 +93,15 @@ namespace obe::script::bindings
             = script_namespace.new_usertype<obe::script::LuaState>(
                 "LuaState", sol::call_constructor, sol::default_constructor);
         bind_lua_state["load_config"] = &obe::script::LuaState::load_config;
+    }
+    void load_function_cast(sol::state_view state)
+    {
+        sol::table script_namespace = state["obe"]["script"].get<sol::table>();
+        script_namespace.set_function("cast",
+            sol::overload(
+                static_cast<sol::lua_value (*)(obe::script::DummyCast*)>(&obe::script::cast),
+                static_cast<sol::lua_value (*)(obe::input::InputSource*)>(&obe::script::cast)));
+        state.script_file("obe://Lib/Internal/Cast.lua"_fs);
     }
     void load_function_sol_call_status_to_string(sol::state_view state)
     {
