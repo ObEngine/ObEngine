@@ -64,6 +64,11 @@ namespace vili::parser
         m_stack.top().indent = static_cast<int>(m_indent_current) + 1;
     }
 
+    std::string state::get_active_identifier() const
+    {
+        return m_identifier;
+    }
+
     void state::set_active_identifier(std::string&& identifier)
     {
         m_identifier = identifier;
@@ -111,5 +116,15 @@ namespace vili::parser
         {
             throw std::runtime_error("Should not happen");
         }
+    }
+
+    const node& state::top() const
+    {
+      return *m_stack.top().item;
+    }
+
+    size_t state::depth() const
+    {
+      return m_stack.size();
     }
 }

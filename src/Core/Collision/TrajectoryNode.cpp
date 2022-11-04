@@ -90,9 +90,9 @@ namespace obe::collision
                             *m_probe, collision_data.offset);
                         // Moving away from the normal offset
                         m_probe->move(-offset_normal);
-                        debug::Log->debug(
-                            "<TrajectoryNode> Trajectory '{}' Offset {}, Normal {}",
-                            trajectory.first, collision_data.offset, offset_normal);
+                        /* debug::Log->debug(
+                            "<TrajectoryNode> Trajectory '{}'\tBase Offset {}\tOffset {}\tNormal {}\tTOI {}\tDT {}",
+                            trajectory.first, base_offset, collision_data.offset, offset_normal, collision_data.offset.x / base_offset.x, dt);*/
                     }
 
                     m_scene_node.move(collision_data.offset);

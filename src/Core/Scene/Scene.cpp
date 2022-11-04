@@ -447,6 +447,11 @@ namespace obe::scene
         e_scene->trigger(events::Scene::Loaded { m_level_file_name });
     }
 
+    void Scene::set_future_load(const vili::node& data)
+    {
+        m_deferred_scene_load_node = data;
+    }
+
     void Scene::update()
     {
         if (!m_deferred_scene_load.empty())
@@ -468,6 +473,13 @@ namespace obe::scene
                         current_scene, future_load_buffer, err_msg, EXC_INFO);
                 }
             }
+        }
+        if (m_deferred_scene_load_node)
+        {
+            const vili::node& scene_data = m_deferred_scene_load_node.value();
+            this->clear();
+            this->load(scene_data);
+            m_deferred_scene_load_node.reset();
         }
         if (m_update_state)
         {

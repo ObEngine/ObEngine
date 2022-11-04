@@ -6,6 +6,7 @@
 
 #include <Network/Exceptions.hpp>
 #include <Network/NetworkEventManager.hpp>
+#include <Utils/Encoding.hpp>
 
 namespace obe::network
 {
@@ -94,7 +95,7 @@ namespace obe::network
             if (status == sf::Socket::Done)
             {
                 vili::node message;
-                debug::Log->debug("Received NetworkEvent '{}'", content);
+                debug::Log->trace("Received NetworkEvent content (base64) '{}'", utils::base64::encode(content));
                 try
                 {
                     message = vili::msgpack::from_string(content);

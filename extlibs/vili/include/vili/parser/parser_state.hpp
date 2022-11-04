@@ -35,9 +35,12 @@ namespace vili::parser
         state(state&& state);
         void set_indent(int64_t indent);
         void use_indent();
+        [[nodiscard]] std::string get_active_identifier() const;
         void set_active_identifier(std::string&& identifier);
         void open_block();
         void close_block();
         void push(node&& data);
+        const node& top() const;
+        [[nodiscard]] size_t depth() const;
     };
 }

@@ -55,6 +55,7 @@ namespace obe::scene
         graphics::Color m_background;
         std::string m_base_folder;
         std::string m_deferred_scene_load;
+        std::optional<vili::node> m_deferred_scene_load_node;
         Camera m_camera;
         transform::UnitVector m_camera_initial_position;
         transform::Referential m_camera_initial_referential;
@@ -128,6 +129,7 @@ namespace obe::scene
          */
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
+        void set_future_load(const vili::node& data);
         /**
          * \brief Updates all elements in the Scene
          */

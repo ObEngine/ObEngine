@@ -131,6 +131,7 @@ namespace obe::scene::bindings
         bind_scene["get_render_options"] = &obe::scene::Scene::get_render_options;
         bind_scene["set_render_options"] = &obe::scene::Scene::set_render_options;
         bind_scene["get_component"] = &obe::scene::Scene::get_component;
+        bind_scene["set_future_load"] = &obe::scene::Scene::set_future_load;
     }
     void load_class_scene_node(sol::state_view state)
     {

@@ -46,12 +46,15 @@
 #include <Bindings/obe/utils/Utils.hpp>
 #include <Bindings/obe/utils/argparser/Argparser.hpp>
 #include <Bindings/obe/utils/argparser/exceptions/Exceptions.hpp>
+#include <Bindings/obe/utils/base64/Base64.hpp>
 #include <Bindings/obe/utils/exec/Exec.hpp>
 #include <Bindings/obe/utils/file/File.hpp>
 #include <Bindings/obe/utils/math/Math.hpp>
 #include <Bindings/obe/utils/string/String.hpp>
 #include <Bindings/obe/utils/vector/Vector.hpp>
 #include <Bindings/vili/Vili.hpp>
+#include <Bindings/vili/msgpack/Msgpack.hpp>
+#include <Bindings/vili/msgpack/exceptions/Exceptions.hpp>
 #include <Bindings/vili/parser/Parser.hpp>
 #include <Bindings/vili/parser/rules/Rules.hpp>
 #include <Bindings/vili/utils/Utils.hpp>
@@ -86,12 +89,14 @@ namespace obe::bindings
         state["vili"]["writer"].get_or_create<sol::table>();
         state["obe"]["debug"].get_or_create<sol::table>();
         state["obe"]["bindings"].get_or_create<sol::table>();
+        state["vili"]["msgpack"].get_or_create<sol::table>();
         state["obe"]["events"].get_or_create<sol::table>();
         state["vili"]["utils"].get_or_create<sol::table>();
         state["obe"]["graphics"]["canvas"].get_or_create<sol::table>();
         state["obe"]["graphics"]["shapes"].get_or_create<sol::table>();
         state["obe"]["system"]["project"].get_or_create<sol::table>();
         state["obe"]["utils"]["exec"].get_or_create<sol::table>();
+        state["vili"]["msgpack"]["exceptions"].get_or_create<sol::table>();
         state["obe"]["events"]["Actions"].get_or_create<sol::table>();
         state["obe"]["events"]["Cursor"].get_or_create<sol::table>();
         state["obe"]["events"]["Game"].get_or_create<sol::table>();
@@ -107,6 +112,7 @@ namespace obe::bindings
         state["obe"]["script"]["vili_lua_bridge"].get_or_create<sol::table>();
         state["obe"]["system"]["package"].get_or_create<sol::table>();
         state["obe"]["utils"]["argparser"].get_or_create<sol::table>();
+        state["obe"]["utils"]["base64"].get_or_create<sol::table>();
         state["obe"]["utils"]["file"].get_or_create<sol::table>();
         state["obe"]["utils"]["math"].get_or_create<sol::table>();
         state["obe"]["utils"]["string"].get_or_create<sol::table>();
@@ -483,6 +489,9 @@ namespace obe::bindings
         obe::system::package::bindings::load_function_install(state);
         obe::system::package::bindings::load_function_load(state);
         obe::utils::argparser::bindings::load_function_parse_args(state);
+        obe::utils::base64::bindings::load_function_encode(state);
+        obe::utils::base64::bindings::load_function_decode(state);
+        obe::utils::base64::bindings::load_global_base64_chars(state);
         obe::utils::file::bindings::load_function_get_directory_list(state);
         obe::utils::file::bindings::load_function_get_file_list(state);
         obe::utils::file::bindings::load_function_file_exists(state);
@@ -531,6 +540,9 @@ namespace obe::bindings
         obe::utils::string::bindings::load_global_numbers(state);
         obe::utils::vector::bindings::load_function_contains(state);
         obe::utils::vector::bindings::load_function_join(state);
+        vili::msgpack::bindings::load_function_from_string(state);
+        vili::msgpack::bindings::load_function_to_string(state);
+        vili::msgpack::bindings::load_function_dump_element(state);
         vili::utils::string::bindings::load_function_replace(state);
         vili::utils::string::bindings::load_function_is_int(state);
         vili::utils::string::bindings::load_function_is_float(state);

@@ -9,6 +9,7 @@
 
 #include <vili/parser.hpp>
 #include <vili/writer.hpp>
+#include <vili-msgpack/msgpack.hpp>
 
 using namespace obe;
 

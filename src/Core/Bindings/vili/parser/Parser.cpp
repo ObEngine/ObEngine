@@ -27,10 +27,13 @@ namespace vili::parser::bindings
                     vili::parser::state(const vili::parser::state&)>());
         bind_state["set_indent"] = &vili::parser::state::set_indent;
         bind_state["use_indent"] = &vili::parser::state::use_indent;
+        bind_state["get_active_identifier"] = &vili::parser::state::get_active_identifier;
         bind_state["set_active_identifier"] = &vili::parser::state::set_active_identifier;
         bind_state["open_block"] = &vili::parser::state::open_block;
         bind_state["close_block"] = &vili::parser::state::close_block;
         bind_state["push"] = &vili::parser::state_push_proxy;
+        bind_state["top"] = &vili::parser::state::top;
+        bind_state["depth"] = &vili::parser::state::depth;
         bind_state["root"] = &vili::parser::state::root;
     }
     void load_function_from_string(sol::state_view state)

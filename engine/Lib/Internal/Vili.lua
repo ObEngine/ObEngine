@@ -64,3 +64,18 @@ function vili.to_file(path, tbl, dump_options)
     local dumpfile<close> = io.open(path, "w");
     dumpfile:write(dump);
 end
+
+function vili.to_msgpack(data)
+    if type(data) ~= "userdata" then
+        data = vili.from_lua(data);
+    end
+    return vili.msgpack.to_string(data);
+end
+
+function vili.from_msgpack(data)
+    return vili.to_lua(vili.msgpack.from_string(data));
+end
+
+function vili.from_msgpack_as_vili(data)
+    return vili.msgpack.from_string(data);
+end

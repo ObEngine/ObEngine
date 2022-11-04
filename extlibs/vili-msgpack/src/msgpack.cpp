@@ -25,7 +25,7 @@ namespace vili::msgpack
      */
     void dump_boolean(MsgPackBuffer& buffer, const bool boolean)
     {
-        if (boolean)
+        if (!boolean)
         {
             buffer.push_back(0xc2);
         }
@@ -392,7 +392,7 @@ namespace vili::msgpack
         }
         else if (array.size() < std::numeric_limits<uint32_t>::max())
         {
-            buffer.push_back(0xdc);
+            buffer.push_back(0xdd);
             const auto big_endian_array_size = to_big_endian<uint32_t>(array.size());
             const auto size_header = to_bytearray(big_endian_array_size);
             buffer.insert(buffer.end(), size_header.cbegin(), size_header.cend());
@@ -558,8 +558,8 @@ namespace vili::msgpack
 
     struct StackFrameState
     {
-        uint32_t pop_counter = 0;
-        bool is_object = false;
+        const uint32_t pop_counter = 0;
+        const bool is_object = false;
     };
 
     bool check_first_bits_equal_to(uint8_t check, uint8_t value)
@@ -574,10 +574,15 @@ namespace vili::msgpack
     vili::node from_string(const std::string& msgpack)
     {
         vili::parser::state state;
+        auto logger = [&state]<class... Args>(fmt::format_string<Args...> str, Args&&... args)
+        {
+            /* const auto indent = std::string(state.depth(), ' ');
+            const auto fmtstring = fmt::format(str, std::forward<Args>(args)...);
+            // std::cout << indent << fmtstring << std::endl;*/
+        };
         state.set_active_identifier("default");
-        std::stack<StackFrameState> steps_before_pop;
+        std::vector<StackFrameState> stack_states;
         bool first_element = true;
-        bool is_object_key = false;
         std::vector<uint8_t> full_code(msgpack.begin(), msgpack.end());
         for (uint32_t idx = 0; idx < msgpack.size(); idx++)
         {
@@ -587,9 +592,11 @@ namespace vili::msgpack
             {
             // boolean
             case 0xc2:
+                logger("Push false");
                 state.push(false);
                 break;
             case 0xc3:
+                logger("Push true");
                 state.push(true);
                 break;
             // float
@@ -597,7 +604,9 @@ namespace vili::msgpack
             case 0xcb:
                 {
                     const uint8_t data_length = (code == 0xca) ? 4 : 8;
-                    state.push(load_float(msgpack.substr(idx + 1, data_length)));
+                    auto value = load_float(msgpack.substr(idx + 1, data_length));
+                    logger("Push float {}", value);
+                    state.push(value);
                     idx += data_length;
                 }
                 break;
@@ -608,7 +617,9 @@ namespace vili::msgpack
             case 0xcf:
                 {
                     const uint8_t data_length = std::pow(2, code - 0xcc);
-                    state.push(load_unsigned_integer(msgpack.substr(idx + 1, data_length)));
+                    auto value = load_unsigned_integer(msgpack.substr(idx + 1, data_length));
+                    logger("Push unsigned integer {}", value);
+                    state.push(value);
                     idx += data_length;
                 }
                 break;
@@ -619,7 +630,9 @@ namespace vili::msgpack
             case 0xd3:
                 {
                     const uint8_t data_length = std::pow(2, code - 0xd0);
-                    state.push(load_signed_integer(msgpack.substr(idx + 1, data_length)));
+                    auto value = load_signed_integer(msgpack.substr(idx + 1, data_length));
+                    logger("Push signed integer {}", value);
+                    state.push(value);
                     idx += data_length;
                 }
                 break;
@@ -633,12 +646,14 @@ namespace vili::msgpack
                         = load_unsigned_integer(msgpack.substr(idx + 1, size_header_length));
                     std::string string_data
                         = msgpack.substr(idx + 1 + size_header_length, string_length);
-                    if (is_object_key)
+                    if (state.get_active_identifier().empty())
                     {
+                        logger("=> Push string (as identifier) '{}'", string_data);
                         state.set_active_identifier(std::move(string_data));
                     }
                     else
                     {
+                        logger("Push string (as data) '{}'", string_data);
                         state.push(string_data);
                     }
                     idx += size_header_length + string_length;
@@ -648,13 +663,14 @@ namespace vili::msgpack
             case 0xdc:
             case 0xdd:
                 {
-                    const uint8_t size_header_length = std::pow(2, code - 0xdc);
+                    const uint8_t size_header_length = std::pow(2, code - 0xdb); // starts at 2 bytes min
                     const auto array_length
                         = load_unsigned_integer(msgpack.substr(idx + 1, size_header_length));
+                    logger("Push new array");
                     state.push(vili::array {});
                     state.open_block();
-                    steps_before_pop.push(
-                        StackFrameState { static_cast<uint32_t>(array_length + 1), false });
+                    stack_states.push_back(
+                        StackFrameState { static_cast<uint32_t>(array_length), false });
                     idx += size_header_length;
                 }
                 break;
@@ -662,22 +678,23 @@ namespace vili::msgpack
             case 0xde:
             case 0xdf:
                 {
-                    const uint8_t size_header_length = std::pow(2, code - 0xde);
+                    const uint8_t size_header_length = std::pow(2, code - 0xdd); // starts at 2 bytes min
                     const auto object_length
                         = load_unsigned_integer(msgpack.substr(idx + 1, size_header_length));
                     if (first_element)
                     {
                         first_element = false;
+                        logger("Push root object");
                         state.set_active_identifier("");
                     }
                     else
                     {
+                        logger("Push new object");
                         state.push(vili::object {});
                         state.open_block();
                     }
-                    steps_before_pop.push(
-                        StackFrameState { static_cast<uint32_t>(object_length + 1), true });
-                    is_object_key = false;
+                    stack_states.push_back(
+                        StackFrameState { static_cast<uint32_t>(object_length), true });
                     idx += size_header_length;
                 }
             default:
@@ -689,11 +706,13 @@ namespace vili::msgpack
                 // unsigned 7 bits
                 if (check_first_bits_equal_to(0b0, code))
                 {
+                    logger("Push unsigned integer (SC) {}", code);
                     state.push(code);
                 }
                 // signed 5 bits
                 else if (check_first_bits_equal_to(0b111, code))
                 {
+                    logger("Push signed integer (SC) {}", code);
                     state.push(static_cast<int8_t>(code));
                 }
                 // string with length <= 31 bytes
@@ -701,12 +720,14 @@ namespace vili::msgpack
                 {
                     const uint8_t string_length = 0b10100000 ^ code;
                     std::string string_data = msgpack.substr(idx + 1, string_length);
-                    if (is_object_key)
+                    if (state.get_active_identifier().empty())
                     {
+                        logger("=> Push string (SC) (as identifier) '{}'", string_data);
                         state.set_active_identifier(std::move(string_data));
                     }
                     else
                     {
+                        logger("Push string (SC) (as data) '{}'", string_data);
                         state.push(string_data);
                     }
                     idx += string_length;
@@ -715,9 +736,10 @@ namespace vili::msgpack
                 else if (check_first_bits_equal_to(0b1001, code))
                 {
                     const uint8_t array_length = 0b10010000 ^ code;
+                    logger("Push new array (SC)");
                     state.push(vili::array {});
                     state.open_block();
-                    steps_before_pop.push(StackFrameState { static_cast<uint32_t>(array_length + 1), false });
+                    stack_states.push_back(StackFrameState { static_cast<uint32_t>(array_length), false });
                 }
                 // object with up to 15 elements
                 else if (check_first_bits_equal_to(0b1000, code))
@@ -726,15 +748,16 @@ namespace vili::msgpack
                     if (first_element)
                     {
                         first_element = false;
+                        logger("Push root object (SC)");
                         state.set_active_identifier("");
                     }
                     else
                     {
                         state.push(vili::object {});
+                        logger("Push new object (SC)");
                         state.open_block();
                     }
-                    steps_before_pop.push(StackFrameState { static_cast<uint32_t>(object_length + 1), true });
-                    is_object_key = false;
+                    stack_states.push_back(StackFrameState { static_cast<uint32_t>(object_length), true });
                 }
                 else
                 {
@@ -749,20 +772,12 @@ namespace vili::msgpack
                     return state.root.at("default");
                 }
             }
-            if (!steps_before_pop.empty())
+            while (!stack_states.empty() && stack_states.back().pop_counter == state.top().size())
             {
-                // for objects, only decrease every 2 elements (key-value pair)
-                if (!steps_before_pop.top().is_object || !is_object_key)
-                {
-                    steps_before_pop.top().pop_counter--;
-                }
-                if (steps_before_pop.top().pop_counter == 0)
-                {
-                    steps_before_pop.pop();
-                    state.close_block();
-                }
+                logger("Closing block");
+                stack_states.pop_back();
+                state.close_block();
             }
-            is_object_key = !is_object_key;
         }
         return state.root;
     }
