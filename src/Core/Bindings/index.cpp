@@ -151,6 +151,7 @@ namespace obe::bindings
         obe::animation::bindings::load_function_tween(state);
         obe::audio::bindings::load_class_audio_manager(state);
         obe::audio::bindings::load_class_sound(state);
+        obe::audio::bindings::load_class_sound_handle(state);
         obe::audio::bindings::load_enum_load_policy(state);
         obe::audio::bindings::load_enum_sound_status(state);
         obe::collision::bindings::load_class_capsule_collider(state);

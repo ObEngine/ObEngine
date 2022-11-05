@@ -59,6 +59,7 @@ namespace obe::scene::bindings
         bind_scene["schema"] = &obe::scene::Scene::schema;
         bind_scene["dump"] = &obe::scene::Scene::dump;
         bind_scene["load"] = &obe::scene::Scene::load;
+        bind_scene["set_future_load"] = &obe::scene::Scene::set_future_load;
         bind_scene["update"] = &obe::scene::Scene::update;
         bind_scene["draw"] = &obe::scene::Scene::draw;
         bind_scene["get_level_name"] = &obe::scene::Scene::get_level_name;
@@ -131,7 +132,6 @@ namespace obe::scene::bindings
         bind_scene["get_render_options"] = &obe::scene::Scene::get_render_options;
         bind_scene["set_render_options"] = &obe::scene::Scene::set_render_options;
         bind_scene["get_component"] = &obe::scene::Scene::get_component;
-        bind_scene["set_future_load"] = &obe::scene::Scene::set_future_load;
     }
     void load_class_scene_node(sol::state_view state)
     {

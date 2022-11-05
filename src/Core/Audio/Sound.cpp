@@ -6,17 +6,10 @@
 
 namespace obe::audio
 {
-    void Sound::apply_changes()
-    {
-        this->set_pitch(m_pitch);
-        this->set_volume(m_volume);
-        this->set_looping(m_looping);
-    }
-
     Sound::Sound(SoLoud::Soloud& manager, std::shared_ptr<SoLoud::AudioSource> source)
         : m_manager(manager)
         , m_source(std::move(source))
-        , m_handle(m_manager.play(*m_source, m_source->mVolume, 0, true))
+        , m_base_handle(*this)
         , m_base_samplerate(m_source->mBaseSamplerate)
     {
     }
@@ -33,51 +26,143 @@ namespace obe::audio
     }
     void Sound::play()
     {
-        if (m_manager.isValidVoiceHandle(m_handle))
-        {
-            m_manager.setPause(m_handle, false);
-        }
-        else
-        {
-            m_handle = m_manager.play(*m_source, m_source->mVolume, 0);
-            this->apply_changes();
-        }
+        m_base_handle.play();
     }
     void Sound::pause() const
     {
-        m_manager.setPause(m_handle, true);
+        m_base_handle.pause();
     }
     void Sound::stop() const
     {
-        m_manager.stop(m_handle);
+        m_base_handle.stop();
     }
+
+    SoundHandle Sound::make_handle() const
+    {
+        return SoundHandle(*this);
+    }
+
     void Sound::set_pitch(float pitch)
     {
-        m_pitch = pitch;
-        m_manager.setSamplerate(m_handle, m_base_samplerate * m_pitch);
+        m_base_handle.set_pitch(pitch);
     }
     float Sound::get_pitch() const
     {
-        return m_pitch;
+        return m_base_handle.get_pitch();
     }
 
-    void Sound::set_speed(float speed) const
+    void Sound::set_speed(float speed)
     {
-        m_manager.setRelativePlaySpeed(m_handle, speed);
+        m_base_handle.set_speed(speed);
     }
 
     float Sound::get_speed() const
     {
-        return m_manager.getRelativePlaySpeed(m_handle);
+        return m_base_handle.get_speed();
     }
 
     SoundStatus Sound::get_status() const
     {
-        if (!m_manager.isValidVoiceHandle(m_handle))
+        return m_base_handle.get_status();
+    }
+    void Sound::set_offset(double offset) const
+    {
+        m_base_handle.set_offset(offset);
+    }
+    float Sound::get_volume() const
+    {
+        return m_base_handle.get_volume();
+    }
+    void Sound::set_volume(float volume)
+    {
+        m_base_handle.set_volume(volume);
+    }
+    void Sound::set_looping(bool looping)
+    {
+        m_base_handle.set_looping(looping);
+    }
+    bool Sound::is_looping() const
+    {
+        return m_base_handle.is_looping();
+    }
+
+    double Sound::get_offset() const
+    {
+        return m_base_handle.get_offset();
+    }
+
+    void SoundHandle::apply_changes()
+    {
+        this->set_pitch(m_pitch);
+        this->set_speed(m_speed);
+        this->set_volume(m_volume);
+        this->set_looping(m_looping);
+    }
+
+    SoundHandle::SoundHandle(const Sound& sound)
+        : m_sound(sound)
+        , m_handle(sound.m_manager.play(*sound.m_source, sound.m_source->mVolume, 0, true))
+    {
+    }
+
+    const Sound& SoundHandle::get_sound() const
+    {
+        return m_sound;
+    }
+
+    void SoundHandle::play()
+    {
+        if (m_sound.m_manager.isValidVoiceHandle(m_handle))
+        {
+            m_sound.m_manager.setPause(m_handle, false);
+        }
+        else
+        {
+            m_handle = m_sound.m_manager.play(*m_sound.m_source, m_sound.m_source->mVolume, 0, true);
+            this->apply_changes();
+            m_sound.m_manager.setPause(m_handle, false);
+        }
+    }
+
+    void SoundHandle::pause() const
+    {
+        m_sound.m_manager.setPause(m_handle, true);
+    }
+
+    void SoundHandle::stop() const
+    {
+        m_sound.m_manager.stop(m_handle);
+    }
+
+    void SoundHandle::set_pitch(float pitch)
+    {
+        m_pitch = pitch;
+        m_sound.m_manager.setSamplerate(m_handle, m_sound.m_base_samplerate * m_pitch);
+    }
+
+    float SoundHandle::get_pitch() const
+    {
+        return m_pitch;
+    }
+
+    void SoundHandle::set_speed(float speed)
+    {
+        m_speed = speed;
+        m_sound.m_manager.setRelativePlaySpeed(m_handle, speed);
+    }
+
+    float SoundHandle::get_speed() const
+    {
+        return m_sound.m_manager.getRelativePlaySpeed(m_handle);
+    }
+
+    SoundStatus SoundHandle::get_status() const
+    {
+        if (!m_sound.m_manager.isValidVoiceHandle(m_handle))
         {
             return SoundStatus::Stopped;
         }
-        else if (m_manager.getPause(m_handle))
+        else if (m_sound.m_manager.getPause(m_handle))
         {
             return SoundStatus::Paused;
         }
@@ -86,30 +171,36 @@ namespace obe::audio
             return SoundStatus::Playing;
         }
     }
-    void Sound::set_offset(double offset) const
+
+    double SoundHandle::get_offset() const
     {
-        m_manager.seek(m_handle, offset);
+        return m_sound.m_manager.getStreamPosition(m_handle);
     }
-    float Sound::get_volume() const
+
+    void SoundHandle::set_offset(double offset) const
     {
-        return m_manager.getVolume(m_handle);
+        m_sound.m_manager.seek(m_handle, offset);
     }
-    void Sound::set_volume(float volume)
+
+    float SoundHandle::get_volume() const
+    {
+        return m_sound.m_manager.getVolume(m_handle);
+    }
+
+    void SoundHandle::set_volume(float volume)
     {
         m_volume = volume;
-        m_manager.setVolume(m_handle, volume);
+        m_sound.m_manager.setVolume(m_handle, volume);
     }
-    void Sound::set_looping(bool looping)
+
+    void SoundHandle::set_looping(bool looping)
     {
         m_looping = looping;
-        m_manager.setLooping(m_handle, looping);
+        m_sound.m_manager.setLooping(m_handle, looping);
     }
-    bool Sound::is_looping() const
+
+    bool SoundHandle::is_looping() const
     {
-        return m_manager.getLooping(m_handle);
-    }
-    double Sound::get_offset() const
-    {
-        return m_manager.getStreamPosition(m_handle);
+        return m_looping;
     }
 }

@@ -1,3 +1,5 @@
+local fifo = require "extlibs://fifo";
+
 local TaskManagerContext = class();
 
 function TaskManagerContext:_init(task_manager)
@@ -6,8 +8,8 @@ end
 
 function TaskManagerContext:wake(co)
     co = co or coroutine.running();
-    local task = self.task_manager.tasks[co];
-    table.insert(self.task_manager.tasks_to_resume, task);
+    local task_instance = self.task_manager.tasks[co];
+    self.task_manager.tasks_to_resume:push(task_instance);
 end
 
 function TaskManagerContext:wait_for(condition, ...)
@@ -62,11 +64,13 @@ function TaskManagerContext:wait_for(condition, ...)
     elseif type(condition) == "table" then
         local condition_mt = getmetatable(condition);
         if condition._type == "Task" then
+            local tskmgr = self.task_manager;
             -- Tasks
-            condition:on_complete(function(object)
+            local task_instance = condition:make_task_instance();
+            task_instance:on_complete(function(object)
                 ctx:wake(co);
             end);
-            condition(...);
+            task_instance(...);
         elseif condition_mt and condition_mt.event_id then
             -- Events in hook form
             return self:wait_for(condition_mt.event_id, ...);
@@ -80,37 +84,63 @@ function TaskManagerContext:wait_for(condition, ...)
     return coroutine.yield(co)
 end
 
-local Task = class();
-Task._type = "Task";
+-- TaskInstance
+local TaskInstance = class();
+TaskInstance._type = "TaskInstance";
 
-function Task:_init(task_manager, func, name)
-    self.task_manager = task_manager;
-    self.func = func;
-    self.co = nil;
-    self.name = name or "anonymous_task";
+function TaskInstance:_init(task)
+    self.task = task;
+    self.name = ("%s.%s"):format(task.name, task.task_instance_counter);
+    task.task_instance_counter = task.task_instance_counter + 1;
+    self.co = coroutine.create(self.task.func);
     self.on_complete_callbacks = {};
     self.on_clean_callbacks = {};
+    self.task.task_manager.tasks[self.co] = self;
 end
 
-function Task:__call(...)
-    local co = coroutine.create(self.func);
-    self.task_manager.tasks[co] = self;
-    self.co = co;
-    return self.task_manager:_resume(self, ...);
+function TaskInstance:__call(...)
+    return self.task.task_manager:_resume(self, ...)
 end
 
-function Task:on_complete(callback)
+function TaskInstance:on_complete(callback)
     if type(callback) ~= "function" then
         error(("argument #1: callback must be a function (got %s)"):format(type(callback)));
     end
     table.insert(self.on_complete_callbacks, callback);
 end
 
-function Task:on_clean(callback)
+function TaskInstance:on_clean(callback)
     if type(callback) ~= "function" then
         error(("argument #1: callback must be a function (got %s)"):format(type(callback)));
     end
     table.insert(self.on_clean_callbacks, callback);
+end
+
+function TaskInstance:complete()
+    for _, on_complete_func in pairs(self.on_complete_callbacks) do
+        on_complete_func(self);
+    end
+end
+
+-- Task
+local Task = class();
+Task._type = "Task";
+
+function Task:_init(task_manager, func, name)
+    self.task_manager = task_manager;
+    self.func = func;
+    self.name = name or "anonymous_task";
+    self.instances = {};
+    self.task_instance_counter = 1;
+end
+
+function Task:__call(...)
+    local task_instance = TaskInstance(self);
+    return task_instance(...);
+end
+
+function Task:make_task_instance()
+    return TaskInstance(self);
 end
 
 function Task:clean()
@@ -122,12 +152,7 @@ function Task:clean()
     end
 end
 
-function Task:complete()
-    for _, on_complete_func in pairs(self.on_complete_callbacks) do
-        on_complete_func(self);
-    end
-end
-
+-- TaskManager
 local TaskManager = class();
 
 function TaskManager:_init(event_functions)
@@ -136,7 +161,7 @@ function TaskManager:_init(event_functions)
     self.schedule = event_functions.schedule;
     self.task_count = 0;
     self.listener_pump = nil;
-    self.tasks_to_resume = {};
+    self.tasks_to_resume = fifo();
     self.tasks = {};
     self.ctx = TaskManagerContext(self);
 end
@@ -152,10 +177,10 @@ function TaskManager:_create_or_delete_pump()
     if self.listener_pump == nil and self.task_count >= 1 then
         self.listener_pump = self.listen(
             "Event.Game.Update", function()
-                for _, task in pairs(task_manager.tasks_to_resume) do
-                    task_manager:_resume(task);
+                while #task_manager.tasks_to_resume > 0 do
+                    local task_to_resume = task_manager.tasks_to_resume:pop();
+                    task_manager:_resume(task_to_resume);
                 end
-                task_manager.tasks_to_resume = {};
             end, "TaskManagerPump"
         );
     elseif self.listener_pump and self.task_count < 1 then
@@ -207,7 +232,7 @@ function TaskManager:make_task_hook()
                     end
                 end
                 for _, idx in pairs(do_not_resume) do
-                    table.remove(self.tasks_to_resume, idx);
+                    self.tasks_to_resume:remove(idx);
                 end
                 coroutine.close(task.co);
                 task_manager.tasks[task.co] = nil;
