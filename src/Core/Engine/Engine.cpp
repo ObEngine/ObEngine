@@ -217,6 +217,8 @@ namespace obe::engine
         e_custom.reset();
         debug::Log->debug("Cleaning InputManager");
         m_input.reset();
+        debug::Log->debug("Cleaning Lua State");
+        m_lua.reset();
         debug::Log->debug("Cleaning Events");
         if (m_events)
         {
@@ -224,8 +226,6 @@ namespace obe::engine
             m_events->update();
         }
         m_events.reset();
-        debug::Log->debug("Cleaning Lua State");
-        m_lua.reset();
     }
 
     void Engine::deinit_plugins()

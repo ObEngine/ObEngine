@@ -77,6 +77,7 @@ namespace obe::collision
         [[nodiscard]] std::string_view type() const override;
 
         [[nodiscard]] Collider* get_inner_collider();
+        [[nodiscard]] const Collider* get_inner_collider() const;
 
         /**
          * \brief Retrieves casted collider

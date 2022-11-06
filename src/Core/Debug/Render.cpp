@@ -1,5 +1,6 @@
 #include <SFML/Graphics/CircleShape.hpp>
 
+#include <Debug/Render.hpp>
 #include <Graphics/DrawUtils.hpp>
 #include <Transform/Polygon.hpp>
 
@@ -57,6 +58,64 @@ namespace obe::debug::render
                 }
             }
             graphics::utils::draw_polygon(target, draw_points, draw_options);
+        }
+    }
+
+    void draw_circle_collider(const graphics::RenderTarget target,
+        const collision::CircleCollider& collider, const ColliderRenderOptions& render_options)
+    {
+    }
+
+    void draw_rectangle_collider(const graphics::RenderTarget target,
+        const collision::RectangleCollider& collider, const ColliderRenderOptions& render_options)
+    {
+        const transform::UnitVector px_position
+            = collider.get_position().to<transform::Units::ScenePixels>();
+        const transform::UnitVector px_size
+            = collider.get_size().to<transform::Units::ScenePixels>();
+        sf::RectangleShape shape(sf::Vector2f(px_size.x, px_size.y));
+        shape.setPosition(px_position.x, px_position.y);
+        shape.setFillColor(render_options.color);
+        target.draw(shape);
+    }
+
+    void draw_capsule_collider(const graphics::RenderTarget target,
+        const collision::CapsuleCollider& collider, const ColliderRenderOptions& render_options)
+    {
+    }
+
+    void draw_polygon_collider(const graphics::RenderTarget target,
+        const collision::PolygonCollider& collider, const ColliderRenderOptions& render_options)
+    {
+    }
+
+    void draw_collider(const graphics::RenderTarget target, const collision::ColliderComponent& collider,
+        const ColliderRenderOptions& render_options)
+    {
+        switch (collider.get_collider_type())
+        {
+        case collision::ColliderType::Collider:
+            break;
+        case collision::ColliderType::Circle:
+            draw_circle_collider(target,
+                *static_cast<const collision::CircleCollider*>(collider.get_inner_collider()), render_options);
+            break;
+        case collision::ColliderType::Rectangle:
+            draw_rectangle_collider(target,
+                *static_cast<const collision::RectangleCollider*>(collider.get_inner_collider()),
+                render_options);
+            break;
+        case collision::ColliderType::Capsule:
+            draw_capsule_collider(target,
+                *static_cast<const collision::CapsuleCollider*>(collider.get_inner_collider()),
+                render_options);
+            break;
+        case collision::ColliderType::Polygon:
+            draw_polygon_collider(target,
+                *static_cast<const collision::PolygonCollider*>(collider.get_inner_collider()),
+                render_options);
+            break;
+        default: ;
         }
     }
 }

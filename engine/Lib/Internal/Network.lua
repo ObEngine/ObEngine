@@ -19,7 +19,11 @@ local function make_event_emit_wrapper(network_manager, config)
         local event_hook_mt = getmetatable(event_hook);
         -- print("Emitting message", inspect(message));
         local serialized_msg = vili.from_lua(message);
-        network_manager:emit(event_hook_mt.event_group, event_hook_mt.event_name, serialized_msg);
+        if flags.target then
+            network_manager:emit(flags.target, event_hook_mt.event_group, event_hook_mt.event_name, serialized_msg);
+        else
+            network_manager:emit(event_hook_mt.event_group, event_hook_mt.event_name, serialized_msg);
+        end
         if config.call_local and event_hook.callback and not flags.nolocal then
             return event_hook.callback(message);
         end
@@ -27,7 +31,6 @@ local function make_event_emit_wrapper(network_manager, config)
 end
 
 local function event_receive_wrapper(event_hook, message)
-    -- print("INSPECT MESSAGE", inspect(message), "DATA", message.data, "CLIENT_NAME", message.client_name);
     local as_lua_data = vili.to_lua(message.data);
     return event_hook.callback(as_lua_data, message);
 end

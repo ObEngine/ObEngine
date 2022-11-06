@@ -529,6 +529,11 @@ namespace obe::scene
         if (m_render_options.collisions)
         {
             // TODO: Move out of Scene
+            for (const auto& collider : m_collider_array)
+            {
+                debug::render::draw_collider(
+                    surface, *collider, debug::render::ColliderRenderOptions {});
+            }
             /* for (const auto& collider : m_collider_array)
             {
                 debug::render::draw_polygon(

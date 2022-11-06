@@ -125,4 +125,12 @@ namespace obe::collision
             m_collider);
         return collider;
     }
+
+    const Collider* ColliderComponent::get_inner_collider() const
+    {
+        const Collider* collider = std::visit([](auto& collider_variant) -> const Collider*
+            { return &collider_variant; },
+            m_collider);
+        return collider;
+    }
 }

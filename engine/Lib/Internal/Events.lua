@@ -82,8 +82,8 @@ local function EventGroupHook(listener_id, namespace, group)
                 return mt._storage[event];
             else
                 if Engine.Events:get_namespace(namespace):get_group(group):contains(event) then
-                    local event_mock = {};
-                    setmetatable(event_mock, {
+                    local event_mock = {callback=false};
+                    setmetatable(event_mock, { -- TODO: merge mock and real EventHook
                             __call = function(self, ...)
                                 local event_config = merge_tables(mt.config.events["*"] or {}, mt.config.events[event] or {});
                                 if not event_config.allow_for_empty_calls then
@@ -96,6 +96,12 @@ local function EventGroupHook(listener_id, namespace, group)
                                     if event_config.event_emit_wrapper then
                                         event_config.event_emit_wrapper(self, ...);
                                     end
+                                end
+                            end,
+                            __index = function(object, flags)
+                                assert(type(flags) == "table", "event flags must be a table");
+                                return function(...)
+                                    object(..., flags);
                                 end
                             end,
                             event_namespace = namespace,
