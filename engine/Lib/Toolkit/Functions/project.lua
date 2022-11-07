@@ -6,7 +6,7 @@ local SampleProjectTemplate = require("Lib/Toolkit/Templates/SampleProject");
 local fs = obe.utils.file;
 
 local function is_in_engine_directory()
-    return fs.fileExists("projects.vili");
+    return fs.file_exists("projects.vili");
 end
 
 local function contains(t, item)
@@ -43,7 +43,7 @@ local function get_non_indexed_projects()
     local non_indexed_projects = {};
     for _, directory_name in pairs(all_directories) do
         if not contains(indexed_projects, directory_name) then
-            if fs.fileExists(directory_name .. "/mount.vili") then
+            if fs.file_exists(directory_name .. "/mount.vili") then
                 table.insert(non_indexed_projects, directory_name);
             end
         end
@@ -131,12 +131,12 @@ local function _create_(project_name)
     end
 
     -- Creating the whole project default file structure
-    fs.createDirectory(path);
-    fs.createDirectory(path .. "/Data");
-    fs.createDirectory(path .. "/Data/GameObjects");
-    fs.createDirectory(path .. "/Data/GameObjects/SampleObject");
-    fs.createDirectory(path .. "/Scenes");
-    fs.createDirectory(path .. "/Sprites");
+    fs.create_directory(path);
+    fs.create_directory(path .. "/Data");
+    fs.create_directory(path .. "/Data/GameObjects");
+    fs.create_directory(path .. "/Data/GameObjects/SampleObject");
+    fs.create_directory(path .. "/Scenes");
+    fs.create_directory(path .. "/Sprites");
     write_to_file(
         path .. "/Data/GameObjects/SampleObject/SampleObject.lua",
             SampleProjectTemplate.HELLO_WORLD_GO_SCRIPT
@@ -149,7 +149,7 @@ local function _create_(project_name)
     write_to_file(path .. "/boot.lua", SampleProjectTemplate.HELLO_WORLD_BOOT);
 
     -- Updating projects.vili file
-    projects[project_name] = {path = fs.getCurrentDirectory() .. "/" .. path};
+    projects[project_name] = {path = fs.get_current_directory() .. "/" .. path};
     local projects_export = vili.writer.dump(vili.from_lua(projects), vili.writer.dump_options());
     write_to_file(project_definition_filepath:path(), projects_export);
 
@@ -199,7 +199,7 @@ local function _index_(project_name)
                            .from_file(project_definition_filepath:path(), vili.parser.state());
         local projects = vili.to_lua(parser);
 
-        local path = fs.getCurrentDirectory();
+        local path = fs.get_current_directory();
         if is_in_engine_directory() then
             path = path .. "/Projects/" .. project_name;
         else
