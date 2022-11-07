@@ -48,6 +48,19 @@ namespace obe::collision::exceptions
         }
     };
 
+    class InvalidColliderType : public Exception<InvalidColliderType>
+    {
+    public:
+        using Exception::Exception;
+        InvalidColliderType(
+            std::string_view collider_type, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("Tried to use incompatible ColliderType '{}'",
+                collider_type);
+        }
+    };
+
     class TrajectoryAlreadyExists : public Exception<TrajectoryAlreadyExists>
     {
     public:

@@ -236,6 +236,7 @@ namespace obe::collision::bindings
         bind_trajectory["is_static"] = &obe::collision::Trajectory::is_static;
         bind_trajectory["get_unit"] = &obe::collision::Trajectory::get_unit;
         bind_trajectory["on_collide"] = &obe::collision::Trajectory::on_collide;
+        bind_trajectory["on_change"] = &obe::collision::Trajectory::on_change;
         bind_trajectory["set_acceleration"] = &obe::collision::Trajectory::set_acceleration;
         bind_trajectory["set_angle"] = &obe::collision::Trajectory::set_angle;
         bind_trajectory["set_speed"] = &obe::collision::Trajectory::set_speed;

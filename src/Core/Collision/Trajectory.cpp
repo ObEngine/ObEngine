@@ -11,42 +11,70 @@ namespace obe::collision
     Trajectory& Trajectory::set_angle(const double angle)
     {
         m_angle = angle;
+        if (m_on_change_callback)
+        {
+            m_on_change_callback(*this, "angle");
+        }
         return *this;
     }
 
     Trajectory& Trajectory::set_speed(const double speed)
     {
         m_speed = speed;
+        if (m_on_change_callback)
+        {
+            m_on_change_callback(*this, "speed");
+        }
         return *this;
     }
 
     Trajectory& Trajectory::set_acceleration(const double acceleration)
     {
         m_acceleration = acceleration;
+        if (m_on_change_callback)
+        {
+            m_on_change_callback(*this, "acceleration");
+        }
         return *this;
     }
 
     Trajectory& Trajectory::add_angle(const double angle)
     {
         m_angle += angle;
+        if (m_on_change_callback)
+        {
+            m_on_change_callback(*this, "angle");
+        }
         return *this;
     }
 
     Trajectory& Trajectory::add_speed(const double speed)
     {
         m_speed += speed;
+        if (m_on_change_callback)
+        {
+            m_on_change_callback(*this, "speed");
+        }
         return *this;
     }
 
     Trajectory& Trajectory::add_acceleration(const double acceleration)
     {
         m_acceleration = acceleration;
+        if (m_on_change_callback)
+        {
+            m_on_change_callback(*this, "acceleration");
+        }
         return *this;
     }
 
     Trajectory& Trajectory::set_static(const bool static_)
     {
         m_static = static_;
+        if (m_on_change_callback)
+        {
+            m_on_change_callback(*this, "static");
+        }
         return *this;
     }
 
@@ -88,6 +116,11 @@ namespace obe::collision
     void Trajectory::on_collide(const OnCollideCallback& callback)
     {
         m_on_collide_callback = callback;
+    }
+
+    void Trajectory::on_change(const OnChangeCallback& callback)
+    {
+        m_on_change_callback = callback;
     }
 
     OnCollideCallback& Trajectory::get_on_collide_callback()

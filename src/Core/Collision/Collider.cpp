@@ -2,7 +2,12 @@
 
 #include <cute/cute_c2.h>
 
+#include <Collision/CapsuleCollider.hpp>
+#include <Collision/CircleCollider.hpp>
 #include <Collision/Collider.hpp>
+#include <Collision/Exceptions.hpp>
+#include <Collision/PolygonCollider.hpp>
+#include <Collision/RectangleCollider.hpp>
 
 namespace obe::collision
 {
@@ -81,5 +86,31 @@ namespace obe::collision
             return transform::UnitVector(0, 0);
         }
         return final_offset;
+    }
+
+    std::unique_ptr<Collider> Collider::copy() const
+    {
+        switch (this->get_collider_type())
+        {
+        case ColliderType::Collider:
+            throw exceptions::InvalidColliderType(
+                ColliderTypeMeta::to_string(ColliderType::Collider), EXC_INFO);
+            break;
+        case ColliderType::Circle:
+            return std::make_unique<CircleCollider>(static_cast<const CircleCollider&>(*this));
+            break;
+        case ColliderType::Rectangle:
+            return std::make_unique<RectangleCollider>(
+                static_cast<const RectangleCollider&>(*this));
+            break;
+        case ColliderType::Capsule:
+            return std::make_unique<CapsuleCollider>(static_cast<const CapsuleCollider&>(*this));
+            break;
+        case ColliderType::Polygon:
+            return std::make_unique<PolygonCollider>(static_cast<const PolygonCollider&>(*this));
+            break;
+        default:;
+            throw exceptions::InvalidColliderType("?", EXC_INFO);
+        }
     }
 }

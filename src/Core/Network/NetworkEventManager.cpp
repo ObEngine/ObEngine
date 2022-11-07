@@ -86,6 +86,7 @@ namespace obe::network
 
     void NetworkEventManager::_receive_messages()
     {
+        std::vector<std::string> clients_to_remove;
         for (auto& [client_name, client] : m_clients)
         {
             sf::Packet packet;
@@ -104,6 +105,8 @@ namespace obe::network
                 {
                     throw exceptions::InvalidNetworkMessage(content, EXC_INFO).nest(e);
                 }
+                debug::Log->debug(
+                    "Received NetworkEvent content '{}'", message.dump());
 
                 std::string event_group_name;
                 std::string event_name;
@@ -126,8 +129,14 @@ namespace obe::network
             }
             else if (status == sf::Socket::Disconnected)
             {
-                e_client->trigger(events::Network::Disconnected {});
+                e_client->trigger(events::Network::Disconnected { client.name() });
+                clients_to_remove.push_back(client_name);
+                client.socket().disconnect();
             }
+        }
+        for (const std::string& client_to_remove : clients_to_remove)
+        {
+            m_clients.erase(client_to_remove);
         }
     }
 

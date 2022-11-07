@@ -102,5 +102,7 @@ namespace obe::collision
          * \brief Returns the cached bounding box. Recalculates it if necessary.
          */
         [[nodiscard]] virtual transform::Rect get_bounding_box() const = 0;
+
+        [[nodiscard]] std::unique_ptr<Collider> copy() const;
     };
 }

@@ -21,6 +21,7 @@ namespace obe::events
         struct Disconnected
         {
             static constexpr std::string_view id = "Disconnected";
+            const std::string client_name;
         };
 
         struct ClientRename

@@ -34,6 +34,8 @@ namespace obe::events::Network::bindings
             = Network_namespace.new_usertype<obe::events::Network::Disconnected>(
                 "Disconnected", sol::call_constructor, sol::default_constructor);
         bind_disconnected["id"] = sol::var(&obe::events::Network::Disconnected::id);
+        bind_disconnected["client_name"]
+            = &obe::events::Network::Disconnected::client_name;
     }
     void load_class_message(sol::state_view state)
     {

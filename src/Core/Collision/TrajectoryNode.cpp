@@ -76,8 +76,7 @@ namespace obe::collision
                 }
                 if (!current_trajectory->is_static())
                 {
-                    current_trajectory->set_speed(
-                        current_trajectory->m_speed + current_trajectory->m_acceleration * dt);
+                    current_trajectory->m_speed = current_trajectory->m_speed + current_trajectory->m_acceleration * dt;
                     base_offset = get_offset(*current_trajectory);
                     obe::collision::CollisionData collision_data;
                     collision_data.offset = base_offset;
