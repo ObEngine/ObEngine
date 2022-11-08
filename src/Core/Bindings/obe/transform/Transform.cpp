@@ -1,5 +1,6 @@
 #include <Bindings/obe/transform/Transform.hpp>
 
+#include <Transform/AABB.hpp>
 #include <Transform/Matrix2D.hpp>
 #include <Transform/Movable.hpp>
 #include <Transform/Polygon.hpp>
@@ -47,6 +48,73 @@ namespace obe::transform::bindings
             "RelativePositionFrom",
             { { "Point0", obe::transform::PolygonPoint::RelativePositionFrom::Point0 },
                 { "Centroid", obe::transform::PolygonPoint::RelativePositionFrom::Centroid } });
+    }
+    void load_class_aabb(sol::state_view state)
+    {
+        sol::table transform_namespace = state["obe"]["transform"].get<sol::table>();
+        sol::usertype<obe::transform::AABB> bind_aabb
+            = transform_namespace.new_usertype<obe::transform::AABB>("AABB", sol::call_constructor,
+                sol::constructors<obe::transform::AABB(),
+                    obe::transform::AABB(
+                        const obe::transform::UnitVector&, const obe::transform::UnitVector&)>(),
+                sol::base_classes, sol::bases<obe::transform::Movable>());
+        bind_aabb["set_position"] = sol::overload(
+            static_cast<void (obe::transform::AABB::*)(const obe::transform::UnitVector&,
+                const obe::transform::Referential&)>(&obe::transform::AABB::set_position),
+            static_cast<void (obe::transform::AABB::*)(const obe::transform::UnitVector&)>(
+                &obe::transform::AABB::set_position));
+        bind_aabb["move"] = sol::overload(
+            static_cast<void (obe::transform::AABB::*)(const obe::transform::UnitVector&)>(
+                &obe::transform::AABB::move),
+            static_cast<void (obe::transform::AABB::*)(const obe::transform::UnitVector&)>(
+                &obe::transform::AABB::move));
+        bind_aabb["get_position"] = sol::overload(
+            static_cast<obe::transform::UnitVector (obe::transform::AABB::*)(
+                const obe::transform::Referential&) const>(&obe::transform::AABB::get_position),
+            static_cast<obe::transform::UnitVector (obe::transform::AABB::*)() const>(
+                &obe::transform::AABB::get_position));
+        bind_aabb["set_point_position"] = sol::overload(
+            [](obe::transform::AABB* self, const obe::transform::UnitVector& position) -> void {
+                return self->set_point_position(position);
+            },
+            [](obe::transform::AABB* self, const obe::transform::UnitVector& position,
+                const obe::transform::Referential& ref) -> void {
+                return self->set_point_position(position, ref);
+            });
+        bind_aabb["move_point"] = sol::overload(
+            [](obe::transform::AABB* self, const obe::transform::UnitVector& position) -> void {
+                return self->move_point(position);
+            },
+            [](obe::transform::AABB* self, const obe::transform::UnitVector& position,
+                const obe::transform::Referential& ref) -> void {
+                return self->move_point(position, ref);
+            });
+        bind_aabb["set_size"] = sol::overload(
+            [](obe::transform::AABB* self, const obe::transform::UnitVector& size) -> void {
+                return self->set_size(size);
+            },
+            [](obe::transform::AABB* self, const obe::transform::UnitVector& size,
+                const obe::transform::Referential& ref) -> void {
+                return self->set_size(size, ref);
+            });
+        bind_aabb["scale"] = sol::overload(
+            [](obe::transform::AABB* self, const obe::transform::UnitVector& size) -> void {
+                return self->scale(size);
+            },
+            [](obe::transform::AABB* self, const obe::transform::UnitVector& size,
+                const obe::transform::Referential& ref) -> void { return self->scale(size, ref); });
+        bind_aabb["get_size"] = &obe::transform::AABB::get_size;
+        bind_aabb["x"] = sol::property(&obe::transform::AABB::x);
+        bind_aabb["y"] = sol::property(&obe::transform::AABB::y);
+        bind_aabb["width"] = sol::property(&obe::transform::AABB::width);
+        bind_aabb["height"] = sol::property(&obe::transform::AABB::height);
+        bind_aabb["intersects"] = &obe::transform::AABB::intersects;
+        bind_aabb["intersection"] = &obe::transform::AABB::intersection;
+        bind_aabb["contains"] = sol::overload(
+            static_cast<bool (obe::transform::AABB::*)(const obe::transform::AABB&) const>(
+                &obe::transform::AABB::contains),
+            static_cast<bool (obe::transform::AABB::*)(const obe::transform::UnitVector&) const>(
+                &obe::transform::AABB::contains));
     }
     void load_class_matrix2_d(sol::state_view state)
     {
@@ -184,16 +252,15 @@ namespace obe::transform::bindings
                 sol::base_classes, sol::bases<obe::transform::Movable>());
         bind_rect["transform_referential"] = &obe::transform::Rect::transform_referential;
         bind_rect["set_position"] = sol::overload(
-            static_cast<void (obe::transform::Rect::*)(const obe::transform::UnitVector&)>(
-                &obe::transform::Rect::set_position),
             static_cast<void (obe::transform::Rect::*)(const obe::transform::UnitVector&,
-                const obe::transform::Referential&)>(&obe::transform::Rect::set_position));
+                const obe::transform::Referential&)>(&obe::transform::Rect::set_position),
+            static_cast<void (obe::transform::Rect::*)(const obe::transform::UnitVector&)>(
+                &obe::transform::Rect::set_position));
         bind_rect["get_position"] = sol::overload(
-            static_cast<obe::transform::UnitVector (obe::transform::Rect::*)() const>(
-                &obe::transform::Rect::get_position),
             static_cast<obe::transform::UnitVector (obe::transform::Rect::*)(
-                const obe::transform::Referential&) const>(&obe::transform::Rect::get_position));
-        bind_rect["move"] = &obe::transform::Rect::move;
+                const obe::transform::Referential&) const>(&obe::transform::Rect::get_position),
+            static_cast<obe::transform::UnitVector (obe::transform::Rect::*)() const>(
+                &obe::transform::Rect::get_position));
         bind_rect["set_point_position"] = sol::overload(
             [](obe::transform::Rect* self, const obe::transform::UnitVector& position) -> void {
                 return self->set_point_position(position);
@@ -241,6 +308,7 @@ namespace obe::transform::bindings
                 &obe::transform::Rect::contains),
             static_cast<bool (obe::transform::Rect::*)(const obe::transform::UnitVector&) const>(
                 &obe::transform::Rect::contains));
+        bind_rect["move"] = &obe::transform::Rect::move;
     }
     void load_class_referential(sol::state_view state)
     {

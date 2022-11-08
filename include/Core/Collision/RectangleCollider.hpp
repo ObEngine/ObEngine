@@ -9,10 +9,12 @@ namespace obe::collision
     private:
         c2AABB m_shape = {};
         transform::UnitVector m_size;
+
     protected:
         [[nodiscard]] const void* get_c2_shape() const override;
         [[nodiscard]] const c2x* get_c2_space_transform() const override;
         void update_shape();
+
     public:
         static constexpr ColliderType Type = ColliderType::Rectangle;
         [[nodiscard]] ColliderType get_collider_type() const override;
@@ -21,7 +23,7 @@ namespace obe::collision
         explicit RectangleCollider(const transform::UnitVector& size);
         RectangleCollider(const transform::UnitVector& position, const transform::UnitVector& size);
 
-        [[nodiscard]] transform::Rect get_bounding_box() const override;
+        [[nodiscard]] transform::AABB get_bounding_box() const override;
         [[nodiscard]] transform::UnitVector get_position() const override;
         void set_position(const transform::UnitVector& position) override;
         void move(const transform::UnitVector& position) override;

@@ -25,7 +25,7 @@ namespace obe::collision
         PolygonCollider();
         explicit PolygonCollider(const transform::UnitVector& position);
 
-        [[nodiscard]] transform::Rect get_bounding_box() const override;
+        [[nodiscard]] transform::AABB get_bounding_box() const override;
         [[nodiscard]] transform::UnitVector get_position() const override;
         void set_position(const transform::UnitVector& position) override;
         void move(const transform::UnitVector& position) override;
@@ -43,7 +43,6 @@ namespace obe::collision
          */
         [[nodiscard]] std::size_t get_points_amount() const;
         transform::Polygon get_polygon() const;
-
 
         /**
          * \brief Sets the angle of the PolygonalCollider (will rotate all
@@ -64,6 +63,5 @@ namespace obe::collision
          */
         [[nodiscard]] float get_rotation() const;
     };
-
 
 }

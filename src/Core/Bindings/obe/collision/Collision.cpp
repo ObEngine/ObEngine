@@ -6,6 +6,7 @@
 #include <Collision/ColliderComponent.hpp>
 #include <Collision/CollisionSpace.hpp>
 #include <Collision/PolygonCollider.hpp>
+#include <Collision/Quadtree.hpp>
 #include <Collision/RectangleCollider.hpp>
 #include <Collision/Trajectory.hpp>
 #include <Collision/TrajectoryNode.hpp>
@@ -85,6 +86,7 @@ namespace obe::collision::bindings
                 return self->get_offset_before_collision(collider, self_offset, other_offset);
             });
         bind_collider["get_bounding_box"] = &obe::collision::Collider::get_bounding_box;
+        bind_collider["copy"] = &obe::collision::Collider::copy;
     }
     void load_class_collider_component(sol::state_view state)
     {
@@ -119,9 +121,11 @@ namespace obe::collision::bindings
                 obe::collision::ColliderComponent::*)()>(
                 &obe::collision::ColliderComponent::get_inner_collider);
         ;
-        bind_collider_component["get_inner_collider"]
-            = static_cast<obe::collision::Collider* (obe::collision::ColliderComponent::*)()>(
-                &obe::collision::ColliderComponent::get_inner_collider);
+        bind_collider_component["get_inner_collider"] = sol::overload(
+            static_cast<obe::collision::Collider* (obe::collision::ColliderComponent::*)()>(
+                &obe::collision::ColliderComponent::get_inner_collider),
+            static_cast<const obe::collision::Collider* (obe::collision::ColliderComponent::*)()
+                    const>(&obe::collision::ColliderComponent::get_inner_collider));
 
         obe::collision::ColliderComponent::Register();
     }
@@ -191,6 +195,18 @@ namespace obe::collision::bindings
         bind_polygon_collider["rotate"] = &obe::collision::PolygonCollider::rotate;
         bind_polygon_collider["get_rotation"] = &obe::collision::PolygonCollider::get_rotation;
         bind_polygon_collider["Type"] = sol::var(&obe::collision::PolygonCollider::Type);
+    }
+    void load_class_quadtree(sol::state_view state)
+    {
+        sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
+        sol::usertype<obe::collision::Quadtree> bind_quadtree
+            = collision_namespace.new_usertype<obe::collision::Quadtree>("Quadtree",
+                sol::call_constructor,
+                sol::constructors<obe::collision::Quadtree(const obe::transform::AABB&)>());
+        bind_quadtree["add"] = &obe::collision::Quadtree::add;
+        bind_quadtree["remove"] = &obe::collision::Quadtree::remove;
+        bind_quadtree["query"] = &obe::collision::Quadtree::query;
+        bind_quadtree["find_all_intersections"] = &obe::collision::Quadtree::find_all_intersections;
     }
     void load_class_rectangle_collider(sol::state_view state)
     {

@@ -462,7 +462,7 @@ namespace obe::graphics::bindings
             = sol::overload(static_cast<bool (obe::graphics::Texture::*)(const std::string&)>(
                                 &obe::graphics::Texture::load_from_file),
                 static_cast<bool (obe::graphics::Texture::*)(const std::string&,
-                    const obe::transform::Rect&)>(&obe::graphics::Texture::load_from_file));
+                    const obe::transform::AABB&)>(&obe::graphics::Texture::load_from_file));
         bind_texture["load_from_image"] = &obe::graphics::Texture::load_from_image;
         bind_texture["get_size"] = &obe::graphics::Texture::get_size;
         bind_texture["set_size_hint"] = &obe::graphics::Texture::set_size_hint;

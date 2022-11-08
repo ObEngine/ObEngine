@@ -37,17 +37,17 @@ namespace obe::collision
         update_shape();
     }
 
-    RectangleCollider::RectangleCollider(const transform::UnitVector& position,
-        const transform::UnitVector& size)
-            : Collider(position)
-            , m_size(size)
+    RectangleCollider::RectangleCollider(
+        const transform::UnitVector& position, const transform::UnitVector& size)
+        : Collider(position)
+        , m_size(size)
     {
         update_shape();
     }
 
-    transform::Rect RectangleCollider::get_bounding_box() const
+    transform::AABB RectangleCollider::get_bounding_box() const
     {
-        return transform::Rect(this->get_position(), this->get_size());
+        return transform::AABB(this->get_position(), this->get_size());
     }
 
     transform::UnitVector RectangleCollider::get_position() const

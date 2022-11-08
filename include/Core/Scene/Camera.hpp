@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics/View.hpp>
-#include <Transform/Rect.hpp>
+#include <Transform/AABB.hpp>
 #include <Transform/Referential.hpp>
 #include <Transform/UnitVector.hpp>
 
@@ -10,7 +10,7 @@ namespace obe::scene
     /**
      * \brief The Camera that views the Scene
      */
-    class Camera : public transform::Rect
+    class Camera : public transform::AABB
     {
     private:
         transform::ViewStruct* m_camera {};
@@ -21,24 +21,10 @@ namespace obe::scene
     public:
         Camera();
         /**
-         * \brief Gets the Position of the Camera
-         * \param ref Referential used to get the Position of the Camera
-         * \return The Position of the Camera
-         */
-        transform::UnitVector get_position(
-            const transform::Referential& ref = transform::Referential::TopLeft) const override;
-        /**
-         * \brief Gets an UnitVector containing the size of the Camera (Width
-         *        and Height)
-         * \return An UnitVector containing the size of the Camera (Width and Height)
-         */
-        transform::UnitVector get_size() const override;
-        /**
          * \brief Moves the Camera
          * \param position Position to add to the Camera
          */
-        void move(const transform::UnitVector& position) override;
-        // void rotate(double angle);
+        void move(const transform::UnitVector& position);
         /**
          * \brief Scales the Camera
          * \param scale_ Factor used to multiply the current size
@@ -53,7 +39,7 @@ namespace obe::scene
          * \param ref Referential used to position the Camera
          */
         void set_position(const transform::UnitVector& position,
-            const transform::Referential& ref = transform::Referential::TopLeft) override;
+            const transform::Referential& ref = transform::Referential::TopLeft);
         /**
          * \brief Sets the size of the Camera
          * \param size Size of the Camera (1 = Normal Size meaning Screen

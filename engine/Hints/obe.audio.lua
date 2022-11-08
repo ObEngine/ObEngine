@@ -38,6 +38,9 @@ function obe.audio._Sound:pause() end
 
 function obe.audio._Sound:stop() end
 
+---@return obe.audio.SoundHandle
+function obe.audio._Sound:make_handle() end
+
 ---@param pitch number #
 function obe.audio._Sound:set_pitch(pitch) end
 
@@ -70,6 +73,59 @@ function obe.audio._Sound:set_looping(looping) end
 
 ---@return boolean
 function obe.audio._Sound:is_looping() end
+
+
+---@class obe.audio.SoundHandle
+obe.audio._SoundHandle = {};
+
+--- obe.audio.SoundHandle constructor
+---
+---@param sound obe.audio.Sound #
+---@return obe.audio.SoundHandle
+function obe.audio.SoundHandle(sound) end
+
+
+---@return obe.audio.Sound
+function obe.audio._SoundHandle:get_sound() end
+
+function obe.audio._SoundHandle:play() end
+
+function obe.audio._SoundHandle:pause() end
+
+function obe.audio._SoundHandle:stop() end
+
+---@param pitch number #
+function obe.audio._SoundHandle:set_pitch(pitch) end
+
+---@return number
+function obe.audio._SoundHandle:get_pitch() end
+
+---@param speed number #
+function obe.audio._SoundHandle:set_speed(speed) end
+
+---@return number
+function obe.audio._SoundHandle:get_speed() end
+
+---@return obe.audio.SoundStatus
+function obe.audio._SoundHandle:get_status() end
+
+---@return number
+function obe.audio._SoundHandle:get_offset() end
+
+---@param offset number #
+function obe.audio._SoundHandle:set_offset(offset) end
+
+---@return number
+function obe.audio._SoundHandle:get_volume() end
+
+---@param volume number #
+function obe.audio._SoundHandle:set_volume(volume) end
+
+---@param looping boolean #
+function obe.audio._SoundHandle:set_looping(looping) end
+
+---@return boolean
+function obe.audio._SoundHandle:is_looping() end
 
 
 

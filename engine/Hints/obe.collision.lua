@@ -14,7 +14,7 @@ function obe.collision.CapsuleCollider() end
 ---@return obe.collision.ColliderType
 function obe.collision._CapsuleCollider:get_collider_type() end
 
----@return obe.transform.Rect
+---@return obe.transform.AABB
 function obe.collision._CapsuleCollider:get_bounding_box() end
 
 --- Get the Position of the Movable.
@@ -52,7 +52,7 @@ function obe.collision.CircleCollider() end
 ---@return obe.collision.ColliderType
 function obe.collision._CircleCollider:get_collider_type() end
 
----@return obe.transform.Rect
+---@return obe.transform.AABB
 function obe.collision._CircleCollider:get_bounding_box() end
 
 --- Get the Position of the Movable.
@@ -120,8 +120,11 @@ function obe.collision._Collider:collides(collider) end
 ---@return obe.transform.UnitVector
 function obe.collision._Collider:get_offset_before_collision(collider, self_offset, other_offset) end
 
----@return obe.transform.Rect
+---@return obe.transform.AABB
 function obe.collision._Collider:get_bounding_box() end
+
+---@return obe.collision.Collider
+function obe.collision._Collider:copy() end
 
 
 ---@class obe.collision.ColliderComponent : obe.component.Component[obe.collision.ColliderComponent]
@@ -156,6 +159,9 @@ function obe.collision._ColliderComponent:get_collider_type() end
 
 ---@return string
 function obe.collision._ColliderComponent:type() end
+
+---@return obe.collision.Collider
+function obe.collision._ColliderComponent:get_inner_collider() end
 
 ---@return obe.collision.Collider
 function obe.collision._ColliderComponent:get_inner_collider() end
@@ -246,7 +252,7 @@ function obe.collision.PolygonCollider(position) end
 ---@return obe.collision.ColliderType
 function obe.collision._PolygonCollider:get_collider_type() end
 
----@return obe.transform.Rect
+---@return obe.transform.AABB
 function obe.collision._PolygonCollider:get_bounding_box() end
 
 --- Get the Position of the Movable.
@@ -294,6 +300,30 @@ function obe.collision._PolygonCollider:rotate(angle) end
 function obe.collision._PolygonCollider:get_rotation() end
 
 
+---@class obe.collision.Quadtree
+obe.collision._Quadtree = {};
+
+--- obe.collision.Quadtree constructor
+---
+---@param box obe.transform.AABB #
+---@return obe.collision.Quadtree
+function obe.collision.Quadtree(box) end
+
+
+---@param value obe.collision.Collider #
+function obe.collision._Quadtree:add(value) end
+
+---@param value obe.collision.Collider #
+function obe.collision._Quadtree:remove(value) end
+
+---@param box obe.transform.AABB #
+---@return obe.collision.Collider[]
+function obe.collision._Quadtree:query(box) end
+
+---@return Tuple_ObeCollisionCollider_ConstobeCollisionCollider[]
+function obe.collision._Quadtree:find_all_intersections() end
+
+
 ---@class obe.collision.RectangleCollider : obe.collision.Collider
 ---@field Type obe.collision.ColliderType #
 obe.collision._RectangleCollider = {};
@@ -320,7 +350,7 @@ function obe.collision.RectangleCollider(position, size) end
 ---@return obe.collision.ColliderType
 function obe.collision._RectangleCollider:get_collider_type() end
 
----@return obe.transform.Rect
+---@return obe.transform.AABB
 function obe.collision._RectangleCollider:get_bounding_box() end
 
 --- Get the Position of the Movable.
@@ -394,6 +424,9 @@ function obe.collision._Trajectory:get_unit() end
 ---@param callback obe.collision.OnCollideCallback #
 function obe.collision._Trajectory:on_collide(callback) end
 
+---@param callback obe.collision.OnChangeCallback #
+function obe.collision._Trajectory:on_change(callback) end
+
 ---@param acceleration number #
 ---@return obe.collision.Trajectory
 function obe.collision._Trajectory:set_acceleration(acceleration) end
@@ -459,6 +492,8 @@ obe.collision._CollisionRejectionPair = {};
 ---@alias obe.collision.OnCollideCallback fun(p0:obe.collision.Trajectory, p1:obe.transform.UnitVector, p2:obe.collision.Collider)
 
 ---@alias obe.collision.TrajectoryCheckFunction fun(p0:obe.collision.Trajectory, p1:obe.transform.UnitVector, p2:obe.collision.Collider)
+
+---@alias obe.collision.OnChangeCallback fun(p0:obe.collision.Trajectory, p1:string)
 ---@param collider_type obe.collision.ColliderType #
 ---@return C2_TYPE
 function obe.collision.collider_type_to_c2type(collider_type) end

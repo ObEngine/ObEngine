@@ -29,11 +29,11 @@ namespace obe::collision
         m_shape.r = 1;
     }
 
-    transform::Rect CircleCollider::get_bounding_box() const
+    transform::AABB CircleCollider::get_bounding_box() const
     {
         const transform::UnitVector position(m_position.x - m_shape.r, m_position.y - m_shape.r);
         const transform::UnitVector size(m_shape.r * 2, m_shape.r * 2);
-        return transform::Rect(position, size);
+        return transform::AABB(position, size);
     }
 
     transform::UnitVector CircleCollider::get_position() const

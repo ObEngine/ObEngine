@@ -1,9 +1,10 @@
 #pragma once
 
-#include <Graphics/RenderTarget.hpp>
+#include <optional>
+
 #include <Transform/Movable.hpp>
 #include <Transform/Referential.hpp>
-#include <optional>
+#include <Transform/UnitVector.hpp>
 
 namespace obe::animation
 {
@@ -14,54 +15,24 @@ namespace obe::animation
 namespace obe::transform
 {
     /**
-     * \brief Conversion Type for Referential Usage
-     */
-    enum class ReferentialConversionType
-    {
-        /**
-            * \brief Factor x1 (GetPosition)
-            */
-        From,
-        /**
-            * \brief Factor x-1 (SetPosition)
-            */
-        To
-    };
-
-    /**
-     * \brief A Class that does represent a Rectangle with various methods to
+     * \brief A Class that does represent a Axis-Aligned Bounding Box (AABB) with various methods to
      *        manipulate it
      */
-    class Rect : public Movable
+    class AABB : public Movable
     {
-        friend class animation::TweenImpl<Rect>;
+        friend class animation::TweenImpl<AABB>;
 
     protected:
-        /**
-         * \brief Size of the Rect
-         */
         UnitVector m_size;
-        double m_angle = 0;
 
     public:
         using Movable::get_position;
         using Movable::move;
         using Movable::set_position;
+        
+        AABB() = default;
+        AABB(const transform::UnitVector& position, const transform::UnitVector& size);
 
-        /**
-         * \brief Transform the UnitVector passed by reference using the given
-         * Referential
-         * \param vec The UnitVector you want to transform
-         * \param ref The chosen Rect::Referential
-         * \param type The way you want to transform your UnitVector
-         *          - From : Referential::TopLeft to ref
-         *          - To : ref to Referential::TopLeft
-         */
-        void transform_referential(
-            UnitVector& vec, const Referential& ref, ReferentialConversionType type) const;
-
-        Rect() = default;
-        Rect(const transform::UnitVector& position, const transform::UnitVector& size);
         /**
          * \brief Set the position of the Rect using an UnitVector
          * \param position Position to affect to the Rect
@@ -112,22 +83,6 @@ namespace obe::transform
          *         is SceneUnits)
          */
         [[nodiscard]] UnitVector get_size() const;
-        /**
-         * \brief Get the Scale Factor of the Rect
-         * \return An UnitVector containing the Scale Factors of the Rect.
-         *          - x attribute will be equal to -1 if the Rect is flipped
-         *            horizontally, 1 otherwise.
-         *          - y attribute will be equal to -1 if the
-         *            Rect is flipped vertically, 1 otherwise.
-         */
-        [[nodiscard]] UnitVector get_scale_factor() const;
-        [[nodiscard]] double get_rotation() const;
-        void set_rotation(double angle, transform::UnitVector origin);
-        void rotate(double angle, transform::UnitVector origin);
-        /**
-         * \brief Draws the Rect for debug purposes <REMOVE>
-         */
-        void draw(graphics::RenderTarget surface, int x, int y) const;
 
         /**
          * \asproperty
@@ -150,9 +105,9 @@ namespace obe::transform
         * \param rect The other Rect to check
         * \return true if the Rect intersects the other Rect, false otherwise
         */
-        [[nodiscard]] bool intersects(const Rect& rect) const;
-        [[nodiscard]] std::optional<Rect> intersection(const Rect& rect) const;
-        [[nodiscard]] bool contains(const Rect& rect) const;
+        [[nodiscard]] bool intersects(const AABB& rect) const;
+        [[nodiscard]] std::optional<AABB> intersection(const AABB& rect) const;
+        [[nodiscard]] bool contains(const AABB& rect) const;
         [[nodiscard]] bool contains(const UnitVector& position) const;
     };
 } // namespace obe::transform

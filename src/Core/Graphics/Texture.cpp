@@ -9,7 +9,7 @@ namespace obe::graphics
 {
     namespace
     {
-        sf::IntRect to_sfml_rect(const transform::Rect& rect)
+        sf::IntRect to_sfml_rect(const transform::AABB& rect)
         {
             const transform::UnitVector position
                 = rect.get_position().to<transform::Units::ScenePixels>();
@@ -183,7 +183,7 @@ namespace obe::graphics
         return get_mutable_texture().loadFromFile(filename);
     }
 
-    bool Texture::load_from_file(const std::string& filename, const transform::Rect& rect)
+    bool Texture::load_from_file(const std::string& filename, const transform::AABB& rect)
     {
         const sf::IntRect sf_rect = to_sfml_rect(rect);
         if (utils::string::ends_with(filename, ".svg"))

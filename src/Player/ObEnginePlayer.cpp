@@ -11,6 +11,8 @@
 #include <vili/writer.hpp>
 #include <vili-msgpack/msgpack.hpp>
 
+#include <Transform/AABB.hpp>
+
 using namespace obe;
 
 int main(int argc, char** argv)

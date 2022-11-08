@@ -95,21 +95,15 @@ namespace obe::collision
         case ColliderType::Collider:
             throw exceptions::InvalidColliderType(
                 ColliderTypeMeta::to_string(ColliderType::Collider), EXC_INFO);
-            break;
         case ColliderType::Circle:
             return std::make_unique<CircleCollider>(static_cast<const CircleCollider&>(*this));
-            break;
         case ColliderType::Rectangle:
-            return std::make_unique<RectangleCollider>(
-                static_cast<const RectangleCollider&>(*this));
-            break;
+            return std::make_unique<RectangleCollider>(static_cast<const RectangleCollider&>(*this));
         case ColliderType::Capsule:
             return std::make_unique<CapsuleCollider>(static_cast<const CapsuleCollider&>(*this));
-            break;
         case ColliderType::Polygon:
             return std::make_unique<PolygonCollider>(static_cast<const PolygonCollider&>(*this));
-            break;
-        default:;
+        default:
             throw exceptions::InvalidColliderType("?", EXC_INFO);
         }
     }

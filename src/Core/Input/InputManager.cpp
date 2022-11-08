@@ -35,7 +35,8 @@ namespace obe::input
     InputManager::InputManager(event::EventNamespace& event_namespace)
         : Togglable(true)
         , e_actions(event_namespace.create_group("Actions"))
-        , e_inputs(event_namespace.create_group("Keys"))
+        , e_keys(event_namespace.create_group("Keys"))
+        , e_input(event_namespace.create_group("Input"))
     {
         this->create_input_map();
         this->create_events();
@@ -65,7 +66,6 @@ namespace obe::input
         {
             for (const auto action_buffer = m_current_actions; const auto action : action_buffer)
             {
-
                 action->update();
             }
             if (m_refresh)
@@ -82,7 +82,7 @@ namespace obe::input
                     }
                 }
                 std::erase_if(m_monitors, [this](const std::weak_ptr<InputButtonMonitor>& element) {
-                    return update_or_clean_monitor(e_inputs, element);
+                    return update_or_clean_monitor(e_keys, element);
                 });
                 for (const auto& monitor_ptr : m_monitors)
                 {
@@ -409,5 +409,48 @@ namespace obe::input
             }
         }
         return combination;
+    }
+
+    void InputManager::create_events()
+    {
+        for (auto const& [key, val] : m_inputs)
+        {
+            input::InputSource* input_source = val.get();
+
+            if (!e_keys->contains(input_source->get_name()))
+            {
+                e_keys->add<events::Keys::StateChanged>(input_source->get_name());
+                e_keys->on_add_listener(input_source->get_name(),
+                    [input_source, this](event::ListenerChangeState, const std::string&)
+                    { m_key_monitors.push_back(this->monitor(*input_source)); });
+                e_keys->on_remove_listener(input_source->get_name(),
+                    [input_source, this](event::ListenerChangeState, const std::string&)
+                    {
+                        const auto position
+                            = std::find_if(m_key_monitors.begin(), m_key_monitors.end(),
+                                [input_source](const auto& monitor)
+                                { return &monitor->get_input_source() == input_source; });
+                        if (position != m_key_monitors.end())
+                            m_key_monitors.erase(position);
+                    });
+            }
+        }
+        e_input->add<events::Input::TextEntered>();
+    }
+
+    std::vector<std::string> InputManager::get_all_input_button_names() const
+    {
+        std::vector<std::string> buttons_names;
+        buttons_names.reserve(m_inputs.size());
+        for (const auto& button : m_inputs)
+        {
+            buttons_names.push_back(button.second->get_name());
+        }
+        return buttons_names;
+    }
+
+    void InputManager::text_entered(const std::string& text, uint32_t unicode) const
+    {
+        e_input->trigger(events::Input::TextEntered { text, unicode });
     }
 } // namespace obe::input

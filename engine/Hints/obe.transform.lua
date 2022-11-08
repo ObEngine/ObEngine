@@ -1,6 +1,106 @@
 ---@meta
 
 obe.transform = {};
+---@class obe.transform.AABB : obe.transform.Movable
+---@field x number #
+---@field y number #
+---@field width number #
+---@field height number #
+obe.transform._AABB = {};
+
+--- obe.transform.AABB constructor
+---
+---@return obe.transform.AABB
+function obe.transform.AABB() end
+
+--- obe.transform.AABB constructor
+---
+---@param position obe.transform.UnitVector #
+---@param size obe.transform.UnitVector #
+---@return obe.transform.AABB
+function obe.transform.AABB(position, size) end
+
+
+--- Set the position of the Rect using an UnitVector.
+---
+---@param position obe.transform.UnitVector #Position to affect to the Rect
+---@param ref obe.transform.Referential #Referential used to set the Position
+function obe.transform._AABB:set_position(position, ref) end
+
+--- Set the position of the Movable using an UnitVector.
+---
+---@param position obe.transform.UnitVector #Position to affect to the Movable
+function obe.transform._AABB:set_position(position) end
+
+--- Moves the Rectangle (Adds the given position to the current one)
+---
+---@param position obe.transform.UnitVector #Position to add to the current Position
+function obe.transform._AABB:move(position) end
+
+--- Moves the Movable (Adds the given position to the current one)
+---
+---@param position obe.transform.UnitVector #Position to add to the current Position
+function obe.transform._AABB:move(position) end
+
+--- Get the Position of the Rect.
+---
+---@param ref obe.transform.Referential #Referential of the Rect you want to use to get the Position
+---@return obe.transform.UnitVector
+function obe.transform._AABB:get_position(ref) end
+
+--- Get the Position of the Movable.
+---
+---@return obe.transform.UnitVector
+function obe.transform._AABB:get_position() end
+
+--- Set the Position of a specific Referential of the Rect (The opposite Point won't move)
+---
+---@param position obe.transform.UnitVector #Position to affect to the specific Referential
+---@param ref? obe.transform.Referential #Referential you want to move
+function obe.transform._AABB:set_point_position(position, ref) end
+
+--- Move a specific Referential of the Rect (The opposite Point won't move)
+---
+---@param position obe.transform.UnitVector #Position to add to the specific Referential
+---@param ref? obe.transform.Referential #Referential you want to move
+function obe.transform._AABB:move_point(position, ref) end
+
+--- Set the size of the Rect.
+---
+---@param size obe.transform.UnitVector #New size of the Rect
+---@param ref? obe.transform.Referential #Referential used to resize the Rect (Referential that won't move)
+function obe.transform._AABB:set_size(size, ref) end
+
+--- Scales the Rect (Relative to the current size)
+---
+---@param size obe.transform.UnitVector #Size to multiply to the current size
+---@param ref? obe.transform.Referential #Referential used to scale the Rect (Referential that won't move)
+function obe.transform._AABB:scale(size, ref) end
+
+--- Get the Size of the Rect.
+---
+---@return obe.transform.UnitVector
+function obe.transform._AABB:get_size() end
+
+--- Checks if the Rect intersects a specified Rect.
+---
+---@param rect obe.transform.AABB #The other Rect to check
+---@return boolean
+function obe.transform._AABB:intersects(rect) end
+
+---@param rect obe.transform.AABB #
+---@return obe.transform.AABB?
+function obe.transform._AABB:intersection(rect) end
+
+---@param rect obe.transform.AABB #
+---@return boolean
+function obe.transform._AABB:contains(rect) end
+
+---@param position obe.transform.UnitVector #
+---@return boolean
+function obe.transform._AABB:contains(position) end
+
+
 ---@class obe.transform.Matrix2D
 obe.transform._Matrix2D = {};
 
@@ -257,21 +357,16 @@ function obe.transform.Rect(position, size) end
 ---@param type obe.transform.ReferentialConversionType #The way you want to transform your UnitVector From : Referential::TopLeft to ref To : ref to Referential::TopLeft
 function obe.transform._Rect:transform_referential(vec, ref, type) end
 
---- Set the position of the Rect (Movable override) using an UnitVector.
----
----@param position obe.transform.UnitVector #Position to affect to the Rect (Movable override)
-function obe.transform._Rect:set_position(position) end
-
 --- Set the position of the Rect using an UnitVector.
 ---
 ---@param position obe.transform.UnitVector #Position to affect to the Rect
 ---@param ref obe.transform.Referential #Referential used to set the Position
 function obe.transform._Rect:set_position(position, ref) end
 
---- Get the Position of the Rect (Movable Override)
+--- Set the position of the Movable using an UnitVector.
 ---
----@return obe.transform.UnitVector
-function obe.transform._Rect:get_position() end
+---@param position obe.transform.UnitVector #Position to affect to the Movable
+function obe.transform._Rect:set_position(position) end
 
 --- Get the Position of the Rect.
 ---
@@ -279,10 +374,10 @@ function obe.transform._Rect:get_position() end
 ---@return obe.transform.UnitVector
 function obe.transform._Rect:get_position(ref) end
 
---- Moves the Rectangle (Adds the given position to the current one)
+--- Get the Position of the Movable.
 ---
----@param position obe.transform.UnitVector #Position to add to the current Position
-function obe.transform._Rect:move(position) end
+---@return obe.transform.UnitVector
+function obe.transform._Rect:get_position() end
 
 --- Set the Position of a specific Referential of the Rect (The opposite Point won't move)
 ---
@@ -353,6 +448,11 @@ function obe.transform._Rect:contains(rect) end
 ---@param position obe.transform.UnitVector #
 ---@return boolean
 function obe.transform._Rect:contains(position) end
+
+--- Moves the Movable (Adds the given position to the current one)
+---
+---@param position obe.transform.UnitVector #Position to add to the current Position
+function obe.transform._Rect:move(position) end
 
 
 ---@class obe.transform.Referential

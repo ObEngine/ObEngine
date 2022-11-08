@@ -254,44 +254,5 @@ namespace obe::input
                 this->initialize_gamepad(gamepad_index);
             }
         }
-        this->create_events();
-    }
-
-    void InputManager::create_events()
-    {
-        for (auto const& [key, val] : m_inputs)
-        {
-            input::InputSource* input_source = val.get();
-
-            if (!e_inputs->contains(input_source->get_name()))
-            {
-                e_inputs->add<events::Keys::StateChanged>(input_source->get_name());
-                e_inputs->on_add_listener(input_source->get_name(),
-                    [input_source, this](event::ListenerChangeState, const std::string&)
-                    { m_key_monitors.push_back(this->monitor(*input_source));
-                    });
-                e_inputs->on_remove_listener(input_source->get_name(),
-                    [input_source, this](event::ListenerChangeState, const std::string&)
-                    {
-                        const auto position = std::find_if(m_key_monitors.begin(), m_key_monitors.end(),
-                                [input_source](const auto& monitor)
-                                { return &monitor->get_input_source() == input_source;
-                            });
-                        if (position != m_key_monitors.end())
-                            m_key_monitors.erase(position);
-                    });
-            }
-        }
-    }
-
-    std::vector<std::string> InputManager::get_all_input_button_names() const
-    {
-        std::vector<std::string> buttons_names;
-        buttons_names.reserve(m_inputs.size());
-        for (const auto& button : m_inputs)
-        {
-            buttons_names.push_back(button.second->get_name());
-        }
-        return buttons_names;
     }
 } // namespace obe::input

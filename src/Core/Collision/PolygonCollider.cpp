@@ -49,19 +49,20 @@ namespace obe::collision
         update_shape();
     }
 
-    transform::Rect PolygonCollider::get_bounding_box() const
+    transform::AABB PolygonCollider::get_bounding_box() const
     {
         // TODO: handle rotation
         const auto verts_span = std::span { m_shape.verts };
-        auto [min_x, max_x] = std::minmax_element(verts_span.begin(), verts_span.begin() + m_shape.count,
-            [](auto& point1, auto& point2) { return point1.x < point2.x; });
+        auto [min_x, max_x]
+            = std::minmax_element(verts_span.begin(), verts_span.begin() + m_shape.count,
+                [](auto& point1, auto& point2) { return point1.x < point2.x; });
         auto [min_y, max_y]
             = std::minmax_element(verts_span.begin(), verts_span.begin() + m_shape.count,
-            [](auto& point1, auto& point2) { return point1.y < point2.y; });
+                [](auto& point1, auto& point2) { return point1.y < point2.y; });
         const double width = max_x->x - min_x->x;
         const double height = max_y->y - min_y->y;
-        return transform::Rect(transform::UnitVector(min_x->x, min_y->y),
-            transform::UnitVector(width, height));
+        return transform::AABB(
+            transform::UnitVector(min_x->x, min_y->y), transform::UnitVector(width, height));
     }
 
     transform::UnitVector PolygonCollider::get_position() const
@@ -88,7 +89,8 @@ namespace obe::collision
             point_index = m_shape.count;
             m_shape.count++;
         }
-        m_shape.verts[point_index] = c2v { static_cast<float>(position.x), static_cast<float>(position.y) };
+        m_shape.verts[point_index]
+            = c2v { static_cast<float>(position.x), static_cast<float>(position.y) };
         update_shape();
     }
 

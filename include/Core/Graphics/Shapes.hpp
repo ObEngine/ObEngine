@@ -6,7 +6,7 @@
 #include <SFML/Graphics/CircleShape.hpp>
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
-#include <Transform/Rect.hpp>
+#include <Transform/AABB.hpp>
 #include <Transform/UnitVector.hpp>
 
 namespace obe::graphics::shapes
@@ -16,8 +16,8 @@ namespace obe::graphics::shapes
     {
     public:
         void set_position(transform::UnitVector position);
-        [[nodiscard]] transform::Rect get_local_bounds() const;
-        [[nodiscard]] transform::Rect get_global_bounds() const;
+        [[nodiscard]] transform::AABB get_local_bounds() const;
+        [[nodiscard]] transform::AABB get_global_bounds() const;
         void set_rotation(float angle);
         void set_scale(const transform::UnitVector& factors);
         void set_origin(const transform::UnitVector& origin);
@@ -36,7 +36,7 @@ namespace obe::graphics::shapes
     {
     public:
         void set_texture(const Texture& texture);
-        void set_texture_rect(const transform::Rect& rect);
+        void set_texture_rect(const transform::AABB& rect);
         void set_position(transform::UnitVector position);
         void set_fill_color(const Color& color);
         void set_outline_color(const Color& color);
@@ -46,8 +46,8 @@ namespace obe::graphics::shapes
         [[nodiscard]] float get_outline_thickness() const;
         [[nodiscard]] std::size_t get_point_count() const;
         [[nodiscard]] transform::UnitVector get_point(std::size_t index) const;
-        [[nodiscard]] transform::Rect get_local_bounds() const;
-        [[nodiscard]] transform::Rect get_global_bounds() const;
+        [[nodiscard]] transform::AABB get_local_bounds() const;
+        [[nodiscard]] transform::AABB get_global_bounds() const;
         void set_rotation(float angle);
         void set_scale(const transform::UnitVector& factors);
         void set_origin(const transform::UnitVector& origin);
@@ -70,25 +70,25 @@ namespace obe::graphics::shapes
     }
 
     template <class T>
-    transform::Rect BaseShape<T>::get_local_bounds() const
+    transform::AABB BaseShape<T>::get_local_bounds() const
     {
         const sf::FloatRect bounds = static_cast<const T&>(*this).shape.getLocalBounds();
         const auto position
             = transform::UnitVector(bounds.left, bounds.top, transform::Units::ScenePixels);
         const auto size
             = transform::UnitVector(bounds.width, bounds.height, transform::Units::ScenePixels);
-        return transform::Rect(position, size);
+        return transform::AABB(position, size);
     }
 
     template <class T>
-    transform::Rect BaseShape<T>::get_global_bounds() const
+    transform::AABB BaseShape<T>::get_global_bounds() const
     {
         const sf::FloatRect bounds = static_cast<const T&>(*this).shape.getGlobalBounds();
         const auto position
             = transform::UnitVector(bounds.left, bounds.top, transform::Units::ScenePixels);
         const auto size
             = transform::UnitVector(bounds.width, bounds.height, transform::Units::ScenePixels);
-        return transform::Rect(position, size);
+        return transform::AABB(position, size);
     }
 
     template <class T>
@@ -165,7 +165,7 @@ namespace obe::graphics::shapes
     }
 
     template <class T>
-    void Shape<T>::set_texture_rect(const transform::Rect& rect)
+    void Shape<T>::set_texture_rect(const transform::AABB& rect)
     {
         const transform::UnitVector pixel_position
             = rect.get_position().to<transform::Units::ScenePixels>();
@@ -234,25 +234,25 @@ namespace obe::graphics::shapes
     }
 
     template <class T>
-    transform::Rect Shape<T>::get_local_bounds() const
+    transform::AABB Shape<T>::get_local_bounds() const
     {
         const sf::FloatRect bounds = static_cast<const T&>(*this).shape.getLocalBounds();
         const auto position
             = transform::UnitVector(bounds.left, bounds.top, transform::Units::ScenePixels);
         const auto size
             = transform::UnitVector(bounds.width, bounds.height, transform::Units::ScenePixels);
-        return transform::Rect(position, size);
+        return transform::AABB(position, size);
     }
 
     template <class T>
-    transform::Rect Shape<T>::get_global_bounds() const
+    transform::AABB Shape<T>::get_global_bounds() const
     {
         const sf::FloatRect bounds = static_cast<const T&>(*this).shape.getGlobalBounds();
         const auto position
             = transform::UnitVector(bounds.left, bounds.top, transform::Units::ScenePixels);
         const auto size
             = transform::UnitVector(bounds.width, bounds.height, transform::Units::ScenePixels);
-        return transform::Rect(position, size);
+        return transform::AABB(position, size);
     }
 
     template <class T>

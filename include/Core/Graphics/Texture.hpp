@@ -1,10 +1,13 @@
 #pragma once
-#include <lunasvg.h>
 
-#include <SFML/Graphics/Texture.hpp>
 #include <memory>
 #include <string>
 #include <variant>
+
+#include <lunasvg.h>
+#include <SFML/Graphics/Texture.hpp>
+
+#include <Transform/AABB.hpp>
 
 namespace obe
 {
@@ -72,7 +75,7 @@ namespace obe::graphics
 
         bool create(unsigned int width, unsigned int height);
         bool load_from_file(const std::string& filename);
-        bool load_from_file(const std::string& filename, const transform::Rect& rect);
+        bool load_from_file(const std::string& filename, const transform::AABB& rect);
         bool load_from_image(const sf::Image& image);
 
         [[nodiscard]] transform::UnitVector get_size() const;

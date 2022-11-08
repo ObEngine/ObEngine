@@ -1,6 +1,11 @@
 ---@meta
 
 obe.script = {};
+---@class obe.script.DummyCast
+obe.script._DummyCast = {};
+
+
+
 ---@class obe.script.GameObject : obe.types.Identifiable, obe.types.Serializable
 ---@field deletable boolean #Delete State of the GameObject (false = not deleted)
 ---@field Animator obe.animation.Animator #Gets the Animator Component of the GameObject (Raises ObEngine.Script.GameObject.NoAnimator if no Animator Component)

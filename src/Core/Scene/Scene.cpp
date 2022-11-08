@@ -550,10 +550,7 @@ namespace obe::scene
                 const transform::UnitVector scene_node_position
                     = scene_node.get_position().to<transform::Units::ViewPixels>();
                 scene_node_shape.setPosition(scene_node_position.x - 3, scene_node_position.y - 3);
-                if (scene_node.is_selected())
-                    scene_node_shape.setFillColor(sf::Color::Green);
-                else
-                    scene_node_shape.setFillColor(sf::Color::Red);
+                scene_node_shape.setFillColor(sf::Color::Red);
                 scene_node_shape.setOutlineColor(sf::Color::Black);
                 scene_node_shape.setOutlineThickness(2);
                 scene_node_shape.setRadius(6);

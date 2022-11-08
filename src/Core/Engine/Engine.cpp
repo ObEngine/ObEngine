@@ -315,6 +315,13 @@ namespace obe::engine
                 if (event.key.code == sf::Keyboard::Escape)
                     m_window->close();
                 break;
+            case sf::Event::TextEntered:
+                {
+                    auto utf8_char = sf::String(event.text.unicode).toUtf8();
+                    m_input->text_entered(
+                        std::string(utf8_char.begin(), utf8_char.end()), event.text.unicode);
+                }
+                break;
             case sf::Event::GainedFocus:
                 debug::Log->debug("<Engine> Gaining focus");
                 m_input->set_enabled(true);

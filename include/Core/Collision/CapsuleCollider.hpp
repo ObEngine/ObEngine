@@ -20,7 +20,7 @@ namespace obe::collision
 
         CapsuleCollider();
 
-        [[nodiscard]] transform::Rect get_bounding_box() const override;
+        [[nodiscard]] transform::AABB get_bounding_box() const override;
         [[nodiscard]] transform::UnitVector get_position() const override;
         void set_position(const transform::UnitVector& position) override;
         void move(const transform::UnitVector& position) override;

@@ -7,6 +7,25 @@
 #include <memory>
 #include <vili/node.hpp>
 
+namespace obe::engine
+{
+    class Engine;
+}
+
+namespace obe::events::Input
+{
+    /**
+     * \brief Event triggered whenever there is text entered using an InputSource
+     * \noconstructor
+     */
+    struct TextEntered
+    {
+        static constexpr std::string_view id = "TextEntered";
+        const std::string text;
+        const uint32_t unicode;
+    };
+}
+
 namespace obe::input
 {
     /**
@@ -20,13 +39,17 @@ namespace obe::input
         std::vector<std::weak_ptr<InputButtonMonitor>> m_monitors;
         std::vector<std::shared_ptr<InputButtonMonitor>> m_key_monitors;
         event::EventGroupPtr e_actions;
-        event::EventGroupPtr e_inputs;
+        event::EventGroupPtr e_keys;
+        event::EventGroupPtr e_input;
         std::vector<std::shared_ptr<InputAction>> m_all_actions {};
         std::vector<InputAction*> m_current_actions {};
         bool is_action_currently_in_use(const std::string& action_id) const;
         void create_input_map();
         void create_events();
         [[nodiscard]] std::vector<std::string> get_all_input_button_names() const;
+
+        friend class obe::engine::Engine;
+        void text_entered(const std::string& text, uint32_t unicode) const;
 
     public:
         /**

@@ -6,6 +6,7 @@ namespace sol
 };
 namespace obe::transform::bindings
 {
+    void load_class_aabb(sol::state_view state);
     void load_class_matrix2_d(sol::state_view state);
     void load_class_movable(sol::state_view state);
     void load_class_polygon(sol::state_view state);

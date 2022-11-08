@@ -42,6 +42,9 @@ function vili.parser._state:set_indent(indent) end
 
 function vili.parser._state:use_indent() end
 
+---@return string
+function vili.parser._state:get_active_identifier() end
+
 ---@param identifier string #
 function vili.parser._state:set_active_identifier(identifier) end
 
@@ -51,6 +54,12 @@ function vili.parser._state:close_block() end
 
 ---@param data vili.node #
 function vili.parser._state:push(data) end
+
+---@return vili.node
+function vili.parser._state:top() end
+
+---@return number
+function vili.parser._state:depth() end
 
 
 ---@param data string #

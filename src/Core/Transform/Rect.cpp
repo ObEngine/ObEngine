@@ -268,21 +268,6 @@ namespace obe::transform
         this->set_position(save_position, ref);
     }
 
-    void Rect::set_position(const UnitVector& position)
-    {
-        this->set_position(position, Referential::TopLeft);
-    }
-
-    UnitVector Rect::get_position() const
-    {
-        return this->get_position(Referential::TopLeft);
-    }
-
-    void Rect::move(const UnitVector& position)
-    {
-        m_position += position;
-    }
-
     void Rect::scale(const UnitVector& size, const Referential& ref)
     {
         const UnitVector save_position = this->get_position(ref);

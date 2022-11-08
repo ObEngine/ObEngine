@@ -237,11 +237,10 @@ obe.input._InputSource = {};
 
 --- obe.input.InputSource constructor
 ---
----@param input_type string #
 ---@param name string #
 ---@param printable_char string #
 ---@return obe.input.InputSource
-function obe.input.InputSource(input_type, name, printable_char) end
+function obe.input.InputSource(name, printable_char) end
 
 --- obe.input.InputSource constructor
 ---
@@ -254,11 +253,6 @@ function obe.input.InputSource(other) end
 ---
 ---@return string
 function obe.input._InputSource:get_name() end
-
---- Get the type of the Input source.
----
----@return string
-function obe.input._InputSource:get_input_type() end
 
 ---@return string
 function obe.input._InputSource:get_printable_char() end
@@ -273,8 +267,12 @@ function obe.input._InputSource:is_pressed() end
 ---@return boolean
 function obe.input._InputSource:is_printable() end
 
+---@return string
+function obe.input._InputSource:type() end
+
 
 ---@class obe.input.InputSourceGamepadAxis : obe.input.InputSource
+---@field Type string #
 obe.input._InputSourceGamepadAxis = {};
 
 --- Creates a new InputSource representing a gamepad Axis.
@@ -300,8 +298,12 @@ function obe.input._InputSourceGamepadAxis:get_axis_position() end
 ---@return boolean
 function obe.input._InputSourceGamepadAxis:is_pressed() end
 
+---@return string
+function obe.input._InputSourceGamepadAxis:type() end
+
 
 ---@class obe.input.InputSourceGamepadButton : obe.input.InputSource
+---@field Type string #
 obe.input._InputSourceGamepadButton = {};
 
 --- Creates a new InputSource representing a Gamepad Button.
@@ -324,8 +326,12 @@ function obe.input._InputSourceGamepadButton:get_button_index() end
 ---@return boolean
 function obe.input._InputSourceGamepadButton:is_pressed() end
 
+---@return string
+function obe.input._InputSourceGamepadButton:type() end
+
 
 ---@class obe.input.InputSourceKeyboardKey : obe.input.InputSource
+---@field Type string #
 obe.input._InputSourceKeyboardKey = {};
 
 --- Creates a new InputSource representing a Keyboard key.
@@ -354,8 +360,12 @@ function obe.input._InputSourceKeyboardKey:get_key() end
 ---@return boolean
 function obe.input._InputSourceKeyboardKey:is_pressed() end
 
+---@return string
+function obe.input._InputSourceKeyboardKey:type() end
+
 
 ---@class obe.input.InputSourceMouseButton : obe.input.InputSource
+---@field Type string #
 obe.input._InputSourceMouseButton = {};
 
 --- Creates a new InputSource representing a Mouse Button.
@@ -375,8 +385,12 @@ function obe.input._InputSourceMouseButton:get_mouse_button() end
 ---@return boolean
 function obe.input._InputSourceMouseButton:is_pressed() end
 
+---@return string
+function obe.input._InputSourceMouseButton:type() end
+
 
 ---@class obe.input.InputSourceMouseWheelScroll : obe.input.InputSource
+---@field Type string #
 obe.input._InputSourceMouseWheelScroll = {};
 
 --- Creates a new InputSource representing a Mouse Wheel Scroll.
@@ -396,6 +410,9 @@ function obe.input._InputSourceMouseWheelScroll:get_scroll_wheel_direction() end
 ---
 ---@return boolean
 function obe.input._InputSourceMouseWheelScroll:is_pressed() end
+
+---@return string
+function obe.input._InputSourceMouseWheelScroll:type() end
 
 
 

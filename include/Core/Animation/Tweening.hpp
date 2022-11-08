@@ -5,6 +5,7 @@
 #include <Collision/Trajectory.hpp>
 #include <Graphics/Color.hpp>
 #include <Time/TimeUtils.hpp>
+#include <Transform/AABB.hpp>
 #include <Transform/Rect.hpp>
 #include <Transform/UnitVector.hpp>
 
@@ -48,6 +49,19 @@ namespace obe::animation
         }
     };
     template <>
+    class TweenImpl<transform::AABB>
+    {
+    public:
+        static transform::AABB step(
+            double progression, const transform::AABB& from, const transform::AABB& to)
+        {
+            transform::AABB step = from;
+            step.m_position = TweenImpl<transform::UnitVector>::step(progression, from.get_position(), to.get_position());
+            step.m_size = TweenImpl<transform::UnitVector>::step(progression, from.get_size(), to.get_size());
+            return step;
+        }
+    };
+    template <>
     class TweenImpl<transform::Rect>
     {
     public:
@@ -55,8 +69,10 @@ namespace obe::animation
             double progression, const transform::Rect& from, const transform::Rect& to)
         {
             transform::Rect step = from;
-            step.m_size.x = (progression * (to.m_size.x - from.m_size.x)) + from.m_size.x;
-            step.m_size.y = (progression * (to.m_size.y - from.m_size.y)) + from.m_size.y;
+            step.m_position = TweenImpl<transform::UnitVector>::step(
+                progression, from.get_position(), to.get_position());
+            step.m_size = TweenImpl<transform::UnitVector>::step(
+                progression, from.get_size(), to.get_size());
             step.m_angle = (progression * (to.m_angle - from.m_angle)) + from.m_angle;
             return step;
         }

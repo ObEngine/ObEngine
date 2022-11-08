@@ -1,7 +1,7 @@
 ---@meta
 
 obe.scene = {};
----@class obe.scene.Camera : obe.transform.Rect
+---@class obe.scene.Camera : obe.transform.AABB
 obe.scene._Camera = {};
 
 --- obe.scene.Camera constructor
@@ -9,17 +9,6 @@ obe.scene._Camera = {};
 ---@return obe.scene.Camera
 function obe.scene.Camera() end
 
-
---- Gets the Position of the Camera.
----
----@param ref? obe.transform.Referential #Referential used to get the Position of the Camera
----@return obe.transform.UnitVector
-function obe.scene._Camera:get_position(ref) end
-
---- Gets an UnitVector containing the size of the Camera (Width and Height)
----
----@return obe.transform.UnitVector
-function obe.scene._Camera:get_size() end
 
 --- Moves the Camera.
 ---
@@ -85,6 +74,9 @@ function obe.scene._Scene:dump() end
 ---
 ---@param data vili.node #vili node containing the data of the object
 function obe.scene._Scene:load(data) end
+
+---@param data vili.node #
+function obe.scene._Scene:set_future_load(data) end
 
 --- Updates all elements in the Scene.
 ---
@@ -281,7 +273,7 @@ function obe.scene._Scene:set_render_options(options) end
 function obe.scene._Scene:get_component(id) end
 
 
----@class obe.scene.SceneNode : obe.transform.Movable, obe.types.Selectable
+---@class obe.scene.SceneNode : obe.transform.Movable
 obe.scene._SceneNode = {};
 
 

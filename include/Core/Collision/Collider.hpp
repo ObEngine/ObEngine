@@ -4,7 +4,7 @@
 
 #include <cute/cute_c2.h>
 
-#include <Transform/Rect.hpp>
+#include <Transform/AABB.hpp>
 #include <Types/SmartEnum.hpp>
 
 namespace obe::collision
@@ -34,7 +34,6 @@ namespace obe::collision
         Rectangle,
         Capsule,
         Polygon,
-        
     };
     using ColliderTypeMeta = types::SmartEnum<ColliderType>;
 
@@ -93,15 +92,14 @@ namespace obe::collision
          * \param offset Distance the Collider should move to (if nothing collides)
          * \return The maximum distance the Collider can travel before colliding
          */
-        [[nodiscard]] transform::UnitVector get_offset_before_collision(
-            const Collider& collider,
+        [[nodiscard]] transform::UnitVector get_offset_before_collision(const Collider& collider,
             const transform::UnitVector& self_offset = transform::UnitVector(0, 0),
             const transform::UnitVector& other_offset = transform::UnitVector(0, 0)) const;
 
         /*
          * \brief Returns the cached bounding box. Recalculates it if necessary.
          */
-        [[nodiscard]] virtual transform::Rect get_bounding_box() const = 0;
+        [[nodiscard]] virtual transform::AABB get_bounding_box() const = 0;
 
         [[nodiscard]] std::unique_ptr<Collider> copy() const;
     };

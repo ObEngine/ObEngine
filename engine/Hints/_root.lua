@@ -1,5 +1,12 @@
 ---@meta
 
+---@class Tuple_ObeCollisionCollider_ConstobeCollisionCollider
+---@field [0] obe.collision.Collider #
+---@field [1] constobe.collision.Collider #
+_Tuple_ObeCollisionCollider_ConstobeCollisionCollider = {};
+
+
+
 ---@class Tuple_ObeInputAxisThresholdDirection_Number
 ---@field [0] obe.input.AxisThresholdDirection #
 ---@field [1] number #

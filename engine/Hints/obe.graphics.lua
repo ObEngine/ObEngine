@@ -800,7 +800,7 @@ function obe.graphics._Texture:create(width, height) end
 function obe.graphics._Texture:load_from_file(filename) end
 
 ---@param filename string #
----@param rect obe.transform.Rect #
+---@param rect obe.transform.AABB #
 ---@return boolean
 function obe.graphics._Texture:load_from_file(filename, rect) end
 

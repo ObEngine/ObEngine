@@ -19,6 +19,7 @@
 #include <Bindings/obe/events/Cursor/Cursor.hpp>
 #include <Bindings/obe/events/Events.hpp>
 #include <Bindings/obe/events/Game/Game.hpp>
+#include <Bindings/obe/events/Input/Input.hpp>
 #include <Bindings/obe/events/Keys/Keys.hpp>
 #include <Bindings/obe/events/Network/Network.hpp>
 #include <Bindings/obe/events/Scene/Scene.hpp>
@@ -97,9 +98,11 @@ namespace obe::bindings
         state["obe"]["system"]["project"].get_or_create<sol::table>();
         state["obe"]["utils"]["exec"].get_or_create<sol::table>();
         state["vili"]["msgpack"]["exceptions"].get_or_create<sol::table>();
+        state["obe"]["debug"]["render"].get_or_create<sol::table>();
         state["obe"]["events"]["Actions"].get_or_create<sol::table>();
         state["obe"]["events"]["Cursor"].get_or_create<sol::table>();
         state["obe"]["events"]["Game"].get_or_create<sol::table>();
+        state["obe"]["events"]["Input"].get_or_create<sol::table>();
         state["obe"]["events"]["Keys"].get_or_create<sol::table>();
         state["obe"]["events"]["Network"].get_or_create<sol::table>();
         state["obe"]["events"]["Scene"].get_or_create<sol::table>();
@@ -107,7 +110,6 @@ namespace obe::bindings
         state["vili"]["parser"]["rules"].get_or_create<sol::table>();
         state["obe"]["animation"]["easing"].get_or_create<sol::table>();
         state["obe"]["config"]["validators"].get_or_create<sol::table>();
-        state["obe"]["debug"]["render"].get_or_create<sol::table>();
         state["obe"]["script"]["Helpers"].get_or_create<sol::table>();
         state["obe"]["script"]["vili_lua_bridge"].get_or_create<sol::table>();
         state["obe"]["system"]["package"].get_or_create<sol::table>();
@@ -161,6 +163,7 @@ namespace obe::bindings
         obe::collision::bindings::load_class_collision_data(state);
         obe::collision::bindings::load_class_collision_space(state);
         obe::collision::bindings::load_class_polygon_collider(state);
+        obe::collision::bindings::load_class_quadtree(state);
         obe::collision::bindings::load_class_rectangle_collider(state);
         obe::collision::bindings::load_class_trajectory(state);
         obe::collision::bindings::load_class_trajectory_node(state);
@@ -293,6 +296,7 @@ namespace obe::bindings
         obe::time::bindings::load_global_hours(state);
         obe::time::bindings::load_global_days(state);
         obe::time::bindings::load_global_weeks(state);
+        obe::transform::bindings::load_class_aabb(state);
         obe::transform::bindings::load_class_matrix2_d(state);
         obe::transform::bindings::load_class_movable(state);
         obe::transform::bindings::load_class_polygon(state);
@@ -340,6 +344,9 @@ namespace obe::bindings
         vili::parser::bindings::load_class_state(state);
         vili::parser::bindings::load_function_from_string(state);
         vili::parser::bindings::load_function_from_file(state);
+        obe::debug::render::bindings::load_class_collider_render_options(state);
+        obe::debug::render::bindings::load_function_draw_polygon(state);
+        obe::debug::render::bindings::load_function_draw_collider(state);
         obe::events::Actions::bindings::load_class_action(state);
         obe::events::Cursor::bindings::load_class_hold(state);
         obe::events::Cursor::bindings::load_class_move(state);
@@ -349,6 +356,7 @@ namespace obe::bindings
         obe::events::Game::bindings::load_class_render(state);
         obe::events::Game::bindings::load_class_start(state);
         obe::events::Game::bindings::load_class_update(state);
+        obe::events::Input::bindings::load_class_text_entered(state);
         obe::events::Keys::bindings::load_class_pressed(state);
         obe::events::Keys::bindings::load_class_state_changed(state);
         obe::events::Network::bindings::load_class_client_rename(state);
@@ -470,7 +478,6 @@ namespace obe::bindings
         obe::config::validators::bindings::load_function_config_validator(state);
         obe::config::validators::bindings::load_function_mount_validator(state);
         obe::config::validators::bindings::load_function_project_validator(state);
-        obe::debug::render::bindings::load_function_draw_polygon(state);
         obe::script::Helpers::bindings::load_function_make_all_helpers(state);
         obe::script::Helpers::bindings::load_function_fetch_from_one_of(state);
         obe::script::Helpers::bindings::load_function_rawget_from(state);

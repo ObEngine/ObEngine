@@ -27,9 +27,9 @@ namespace obe::collision
         update_shape();
     }
 
-    transform::Rect CapsuleCollider::get_bounding_box() const
+    transform::AABB CapsuleCollider::get_bounding_box() const
     {
-        return transform::Rect();
+        return transform::AABB();
     }
 
     transform::UnitVector CapsuleCollider::get_position() const

@@ -14,14 +14,7 @@ namespace obe::scene::bindings
         sol::usertype<obe::scene::Camera> bind_camera
             = scene_namespace.new_usertype<obe::scene::Camera>("Camera", sol::call_constructor,
                 sol::constructors<obe::scene::Camera()>(), sol::base_classes,
-                sol::bases<obe::transform::Rect, obe::transform::Movable>());
-        bind_camera["get_position"] = sol::overload(
-            [](obe::scene::Camera* self) -> obe::transform::UnitVector {
-                return self->get_position();
-            },
-            [](obe::scene::Camera* self, const obe::transform::Referential& ref)
-                -> obe::transform::UnitVector { return self->get_position(ref); });
-        bind_camera["get_size"] = &obe::scene::Camera::get_size;
+                sol::bases<obe::transform::AABB, obe::transform::Movable>());
         bind_camera["move"] = &obe::scene::Camera::move;
         bind_camera["scale"] = sol::overload(
             [](obe::scene::Camera* self, double scale_) -> void { return self->scale(scale_); },
@@ -139,7 +132,7 @@ namespace obe::scene::bindings
         sol::usertype<obe::scene::SceneNode> bind_scene_node
             = scene_namespace.new_usertype<obe::scene::SceneNode>("SceneNode",
                 sol::call_constructor, sol::default_constructor, sol::base_classes,
-                sol::bases<obe::transform::Movable, obe::types::Selectable>());
+                sol::bases<obe::transform::Movable>());
         bind_scene_node["add_child"] = &obe::scene::SceneNode::add_child;
         bind_scene_node["remove_child"] = &obe::scene::SceneNode::remove_child;
         bind_scene_node["set_position"] = &obe::scene::SceneNode::set_position;

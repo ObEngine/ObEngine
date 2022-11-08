@@ -57,14 +57,16 @@ namespace obe::tiles
                 m_colliders[tile_index] = &m_scene.get_scene().create_collider();
                 (*m_colliders[tile_index]) = *collider;
                 // m_colliders[tile_index]->set_parent_id("tile_" + std::to_string(tile_info.tile_id));
-                const transform::Rect bounding_box = m_colliders.at(tile_index)->get_inner_collider()->get_bounding_box();
+                const transform::AABB bounding_box
+                    = m_colliders.at(tile_index)->get_inner_collider()->get_bounding_box();
                 // TODO: Fix this horrible code
                 // TODO: I mean, really, fix this
                 auto camera_size_backup = m_scene.get_scene().get_camera().get_size().y / 2;
                 m_scene.get_scene().get_camera().set_size(1);
                 m_colliders.at(tile_index)
-                    ->get_inner_collider()->set_position(transform::UnitVector(x * tileset.get_tile_width(),
-                                       y * tileset.get_tile_height(), transform::Units::ScenePixels));
+                    ->get_inner_collider()
+                    ->set_position(transform::UnitVector(x * tileset.get_tile_width(),
+                        y * tileset.get_tile_height(), transform::Units::ScenePixels));
                 m_scene.get_scene().get_camera().set_size(camera_size_backup);
             }
         }
@@ -173,8 +175,9 @@ namespace obe::tiles
         }
     }
 
-    TileLayer::TileLayer(const TileScene& scene, const std::string& id, int32_t layer, int32_t sublayer, uint32_t x,
-        uint32_t y, uint32_t width, uint32_t height, std::vector<uint32_t> data, bool visible)
+    TileLayer::TileLayer(const TileScene& scene, const std::string& id, int32_t layer,
+        int32_t sublayer, uint32_t x, uint32_t y, uint32_t width, uint32_t height,
+        std::vector<uint32_t> data, bool visible)
         : Renderable(layer, sublayer)
         , m_scene(scene)
         , m_id(id)

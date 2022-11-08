@@ -19,6 +19,7 @@ obe.events.Network._Connected = {};
 
 
 ---@class obe.events.Network.Disconnected
+---@field client_name string #
 ---@field id string #
 obe.events.Network._Disconnected = {};
 

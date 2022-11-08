@@ -19,6 +19,12 @@ obe.events._EventTableGroups._Game = {};
 
 
 
+---@class obe.events._EventTableGroups.Input
+---@field TextEntered fun(evt:obe.events.Input.TextEntered) #
+obe.events._EventTableGroups._Input = {};
+
+
+
 ---@class obe.events._EventTableGroups.Network
 ---@field ClientRename fun(evt:obe.events.Network.ClientRename) #
 ---@field Connected fun(evt:obe.events.Network.Connected) #
