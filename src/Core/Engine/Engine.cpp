@@ -292,36 +292,6 @@ namespace obe::engine
             case sf::Event::Resized:
                 m_window->set_window_size(event.size.width, event.size.height);
                 break;
-            case sf::Event::JoystickConnected:
-                [[fallthrough]];
-            case sf::Event::JoystickDisconnected:
-                m_input->initialize_gamepads();
-            case sf::Event::MouseWheelScrolled:
-                [[fallthrough]];
-            case sf::Event::MouseButtonPressed:
-                [[fallthrough]];
-            case sf::Event::MouseButtonReleased:
-                [[fallthrough]];
-            case sf::Event::JoystickButtonPressed:
-                [[fallthrough]];
-            case sf::Event::JoystickButtonReleased:
-                [[fallthrough]];
-            case sf::Event::JoystickMoved:
-                [[fallthrough]];
-            case sf::Event::KeyReleased:
-                [[fallthrough]];
-            case sf::Event::KeyPressed:
-                m_input->require_refresh();
-                if (event.key.code == sf::Keyboard::Escape)
-                    m_window->close();
-                break;
-            case sf::Event::TextEntered:
-                {
-                    auto utf8_char = sf::String(event.text.unicode).toUtf8();
-                    m_input->text_entered(
-                        std::string(utf8_char.begin(), utf8_char.end()), event.text.unicode);
-                }
-                break;
             case sf::Event::GainedFocus:
                 debug::Log->debug("<Engine> Gaining focus");
                 m_input->set_enabled(true);
@@ -329,6 +299,10 @@ namespace obe::engine
             case sf::Event::LostFocus:
                 debug::Log->debug("<Engine> Losing focus");
                 m_input->set_enabled(false);
+                break;
+            case sf::Event::KeyPressed:
+                if (event.key.code == sf::Keyboard::Escape)
+                    m_window->close();
                 break;
             default:
                 break;

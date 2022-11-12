@@ -48,7 +48,7 @@ namespace obe::input
         float m_threshold = 1;
         float m_delta = 0;
 
-        friend obe::engine::Engine;
+        friend obe::input::InputManager;
 
     public:
         static constexpr std::string_view Type = "MouseWheelScroll";

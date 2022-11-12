@@ -2,6 +2,7 @@
 
 #include <Input/Exceptions.hpp>
 #include <Input/InputManager.hpp>
+#include <Input/InputSourceMouse.hpp>
 #include <Utils/VectorUtils.hpp>
 
 namespace obe::input
@@ -452,5 +453,84 @@ namespace obe::input
     void InputManager::text_entered(const std::string& text, uint32_t unicode) const
     {
         e_input->trigger(events::Input::TextEntered { text, unicode });
+    }
+
+    void InputManager::process_events(sf::Event event)
+    {
+        input::InputSourceMouseWheelScroll* mouse_wheel_scroll_down
+            = static_cast<input::InputSourceMouseWheelScroll*>(
+                &this->get_input_source("MouseWheelScrollDown"));
+        input::InputSourceMouseWheelScroll* mouse_wheel_scroll_up
+            = static_cast<input::InputSourceMouseWheelScroll*>(
+                &this->get_input_source("MouseWheelScrollUp"));
+        input::InputSourceMouseWheelScroll* mouse_wheel_scroll_left
+            = static_cast<input::InputSourceMouseWheelScroll*>(
+                &this->get_input_source("MouseWheelScrollLeft"));
+        input::InputSourceMouseWheelScroll* mouse_wheel_scroll_right
+            = static_cast<input::InputSourceMouseWheelScroll*>(
+                &this->get_input_source("MouseWheelScrollRight"));
+
+        mouse_wheel_scroll_down->m_delta = 0;
+        mouse_wheel_scroll_up->m_delta = 0;
+        mouse_wheel_scroll_left->m_delta = 0;
+        mouse_wheel_scroll_right->m_delta = 0;
+
+        if (event.type == sf::Event::MouseWheelScrolled)
+        {
+            if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
+            {
+                if (event.mouseWheelScroll.delta > 0)
+                {
+                    mouse_wheel_scroll_up->m_delta = event.mouseWheelScroll.delta;
+                }
+                else if (event.mouseWheelScroll.delta < 0)
+                {
+                    mouse_wheel_scroll_down->m_delta = std::abs(event.mouseWheelScroll.delta);
+                }
+            }
+            else if (event.mouseWheelScroll.wheel == sf::Mouse::HorizontalWheel)
+            {
+                if (event.mouseWheelScroll.delta < 0)
+                {
+                    mouse_wheel_scroll_left->m_delta = std::abs(event.mouseWheelScroll.delta);
+                }
+                else if (event.mouseWheelScroll.delta > 0)
+                {
+                    mouse_wheel_scroll_right->m_delta = event.mouseWheelScroll.delta;
+                }
+            }
+        }
+        switch (event.type)
+        {
+        case sf::Event::JoystickConnected:
+            [[fallthrough]];
+        case sf::Event::JoystickDisconnected:
+            this->initialize_gamepads();
+            break;
+        case sf::Event::MouseWheelScrolled:
+            [[fallthrough]];
+        case sf::Event::MouseButtonPressed:
+            [[fallthrough]];
+        case sf::Event::MouseButtonReleased:
+            [[fallthrough]];
+        case sf::Event::JoystickButtonPressed:
+            [[fallthrough]];
+        case sf::Event::JoystickButtonReleased:
+            [[fallthrough]];
+        case sf::Event::JoystickMoved:
+            [[fallthrough]];
+        case sf::Event::KeyReleased:
+            [[fallthrough]];
+        case sf::Event::KeyPressed:
+            this->require_refresh();
+            break;
+        case sf::Event::TextEntered:
+        {
+            auto utf8_char = sf::String(event.text.unicode).toUtf8();
+            this->text_entered(
+                std::string(utf8_char.begin(), utf8_char.end()), event.text.unicode);
+        }
+        break;
+        }
     }
 } // namespace obe::input

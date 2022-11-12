@@ -145,5 +145,7 @@ namespace obe::input
 
         void initialize_gamepads();
         void initialize_gamepad(unsigned int gamepad_index);
+
+        void process_events(sf::Event event);
     };
 } // namespace obe::input
