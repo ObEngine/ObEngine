@@ -47,7 +47,8 @@ namespace obe::collision
     {
     };
 
-    using ColliderTypes = std::variant<CapsuleCollider, CircleCollider, PolygonCollider, RectangleCollider>;
+    using ColliderTypes
+        = std::variant<CapsuleCollider, CircleCollider, PolygonCollider, RectangleCollider>;
     template <typename ColliderClass>
     concept IsValidColliderClass = is_variant_member<ColliderClass, ColliderTypes>::value;
 
@@ -60,8 +61,15 @@ namespace obe::collision
         void load_circle(const vili::node& data);
         void load_polygon(const vili::node& data);
         void load_rectangle(const vili::node& data);
+
+        [[nodiscard]] vili::node dump_capsule();
+        [[nodiscard]] vili::node dump_circle();
+        [[nodiscard]] vili::node dump_polygon();
+        [[nodiscard]] vili::node dump_rectangle();
+
     protected:
         [[nodiscard]] vili::node schema() const override;
+
     public:
         explicit ColliderComponent(const std::string& id);
         ColliderComponent(const ColliderComponent& other) = default;
