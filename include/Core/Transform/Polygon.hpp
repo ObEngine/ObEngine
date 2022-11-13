@@ -28,8 +28,10 @@ namespace obe::transform
         };
 
         explicit PolygonPoint(Polygon& parent, point_index_t index);
-        explicit PolygonPoint(
-            Polygon& parent, point_index_t index, const transform::UnitVector& position);
+        explicit PolygonPoint(Polygon& parent, point_index_t index, const transform::UnitVector& position);
+
+        PolygonPoint& operator=(const PolygonPoint& point);
+
         const point_index_t& index = rw_index;
         void remove() const;
         [[nodiscard]] double distance(const transform::UnitVector& position) const;
@@ -49,7 +51,7 @@ namespace obe::transform
         PolygonSegment(const PolygonPoint& first, const PolygonPoint& second);
     };
 
-    using PolygonPath = std::vector<std::unique_ptr<PolygonPoint>>;
+    using PolygonPath = std::vector<PolygonPoint>;
 
     /**
      * \brief Class used for all Collisions in the engine, it's a Polygon
@@ -99,6 +101,11 @@ namespace obe::transform
          * \return A Path containing all the Points of the Polygon
          */
         PolygonPath& get_all_points();
+        /**
+         * \brief Get all the Points of the Polygon
+         * \return A Path containing all the Points of the Polygon
+         */
+        const PolygonPath& get_all_points() const;
         /**
          * \brief Get the position of the Master Point (centroid) of the Polygon
          * \return An UnitVector containing the position of the Master Point
@@ -150,7 +157,7 @@ namespace obe::transform
          * \param tolerance Position tolerance, bigger number means less precise
          * \return An optional containing a PolygonPoint if found
          */
-        [[nodiscard]] std::optional<PolygonPoint*> get_point_near_position(
+        [[nodiscard]] std::optional<const PolygonPoint*> get_point_near_position(
             const transform::UnitVector& position, const transform::UnitVector& tolerance) const;
         /**
          * \brief Moves the Polygon (relative to the current position)

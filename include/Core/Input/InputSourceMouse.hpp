@@ -2,16 +2,10 @@
 
 #include <Input/InputSource.hpp>
 
-namespace obe
-{
-    namespace engine
-    {
-        class Engine;
-    }
-} // namespace obe
-
 namespace obe::input
 {
+    class InputManager;
+
     class InputSourceMouseButton : public InputSource
     {
     private:

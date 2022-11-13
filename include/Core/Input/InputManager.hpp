@@ -1,11 +1,14 @@
 #pragma once
 
+#include <memory>
+
+#include <SFML/Window/Event.hpp>
+#include <vili/node.hpp>
+
 #include <Event/EventNamespace.hpp>
 #include <Input/InputAction.hpp>
 #include <Input/InputSource.hpp>
 #include <Types/Togglable.hpp>
-#include <memory>
-#include <vili/node.hpp>
 
 namespace obe::engine
 {

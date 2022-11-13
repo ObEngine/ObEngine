@@ -239,51 +239,9 @@ namespace obe::engine
     void Engine::handle_window_events() const
     {
         sf::Event event;
-        input::InputSourceMouseWheelScroll* mouse_wheel_scroll_down
-            = static_cast<input::InputSourceMouseWheelScroll*>(
-                &m_input->get_input_source("MouseWheelScrollDown"));
-        input::InputSourceMouseWheelScroll* mouse_wheel_scroll_up
-            = static_cast<input::InputSourceMouseWheelScroll*>(
-                &m_input->get_input_source("MouseWheelScrollUp"));
-        input::InputSourceMouseWheelScroll* mouse_wheel_scroll_left
-            = static_cast<input::InputSourceMouseWheelScroll*>(
-                &m_input->get_input_source("MouseWheelScrollLeft"));
-        input::InputSourceMouseWheelScroll* mouse_wheel_scroll_right
-            = static_cast<input::InputSourceMouseWheelScroll*>(
-                &m_input->get_input_source("MouseWheelScrollRight"));
-
-        mouse_wheel_scroll_down->m_delta = 0;
-        mouse_wheel_scroll_up->m_delta = 0;
-        mouse_wheel_scroll_left->m_delta = 0;
-        mouse_wheel_scroll_right->m_delta = 0;
 
         while (m_window->poll_event(event))
         {
-            if (event.type == sf::Event::MouseWheelScrolled)
-            {
-                if (event.mouseWheelScroll.wheel == sf::Mouse::VerticalWheel)
-                {
-                    if (event.mouseWheelScroll.delta < 0)
-                    {
-                        mouse_wheel_scroll_up->m_delta = event.mouseWheelScroll.delta;
-                    }
-                    else if (event.mouseWheelScroll.delta > 0)
-                    {
-                        mouse_wheel_scroll_down->m_delta = event.mouseWheelScroll.delta;
-                    }
-                }
-                else if (event.mouseWheelScroll.wheel == sf::Mouse::HorizontalWheel)
-                {
-                    if (event.mouseWheelScroll.delta < 0)
-                    {
-                        mouse_wheel_scroll_left->m_delta = event.mouseWheelScroll.delta;
-                    }
-                    else if (event.mouseWheelScroll.delta > 0)
-                    {
-                        mouse_wheel_scroll_right->m_delta = event.mouseWheelScroll.delta;
-                    }
-                }
-            }
             switch (event.type)
             {
             case sf::Event::Closed:
@@ -307,6 +265,7 @@ namespace obe::engine
             default:
                 break;
             }
+            m_input->process_events(event);
         }
     }
 

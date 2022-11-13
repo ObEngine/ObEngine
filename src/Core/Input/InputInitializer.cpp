@@ -41,16 +41,16 @@ namespace obe::input
         m_inputs["N"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::N, "N");
 
         // Numeric
-        m_inputs["0"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num0, "0");
-        m_inputs["1"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num1, "1");
-        m_inputs["2"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num2, "2");
-        m_inputs["3"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num3, "3");
-        m_inputs["4"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num4, "4");
-        m_inputs["5"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num5, "5");
-        m_inputs["6"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num6, "6");
-        m_inputs["7"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num7, "7");
-        m_inputs["8"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num8, "8");
-        m_inputs["9"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num9, "9");
+        m_inputs["0"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num0, "0", "0");
+        m_inputs["1"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num1, "1", "1");
+        m_inputs["2"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num2, "2", "2");
+        m_inputs["3"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num3, "3", "3");
+        m_inputs["4"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num4, "4", "4");
+        m_inputs["5"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num5, "5", "5");
+        m_inputs["6"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num6, "6", "6");
+        m_inputs["7"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num7, "7", "7");
+        m_inputs["8"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num8, "8", "8");
+        m_inputs["9"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Num9, "9", "9");
 
         // Numeric pad
         m_inputs["NumPad0"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Numpad0, "0");

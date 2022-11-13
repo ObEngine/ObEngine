@@ -26,6 +26,7 @@ namespace obe::script
         case sol::call_status::file:
             return "file_error";
         }
+        return "?";
     }
 
     template <class ReturnType = void, class... Args>

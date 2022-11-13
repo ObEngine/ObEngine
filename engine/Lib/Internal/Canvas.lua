@@ -297,30 +297,30 @@ obe.canvas.Bases.Line = {
                 color = {
                     getters = {
                         r = function(self)
-                            return self.p1color.r;
+                            return self.p1_color.r;
                         end,
                         g = function(self)
-                            return self.p1color.g;
+                            return self.p1_color.g;
                         end,
                         b = function(self)
-                            return self.p1color.b;
+                            return self.p1_color.b;
                         end,
                         a = function(self)
-                            return self.p1color.a;
+                            return self.p1_color.a;
                         end
                     },
                     setters = {
                         r = function(self, r)
-                            self.p1color.r = r or 0;
+                            self.p1_color.r = r or 0;
                         end,
                         g = function(self, g)
-                            self.p1color.g = g or 0;
+                            self.p1_color.g = g or 0;
                         end,
                         b = function(self, b)
-                            self.p1color.b = b or 0;
+                            self.p1_color.b = b or 0;
                         end,
                         a = function(self, a)
-                            self.p1color.a = a or 255;
+                            self.p1_color.a = a or 255;
                         end
                     }
                 }
@@ -336,7 +336,7 @@ obe.canvas.Bases.Line = {
                     self.p1.unit = unit or obe.transform.Units.ScenePixels;
                 end,
                 color = function(self, color)
-                    self.p1color = obe.canvas.normalize_color(color, self.p1color);
+                    self.p1_color = obe.canvas.normalize_color(color, self.p1_color);
                 end
             }
         },
@@ -355,30 +355,30 @@ obe.canvas.Bases.Line = {
                 color = {
                     getters = {
                         r = function(self)
-                            return self.p2color.r;
+                            return self.p2_color.r;
                         end,
                         g = function(self)
-                            return self.p2color.g;
+                            return self.p2_color.g;
                         end,
                         b = function(self)
-                            return self.p2color.b;
+                            return self.p2_color.b;
                         end,
                         a = function(self)
-                            return self.p2color.a;
+                            return self.p2_color.a;
                         end
                     },
                     setters = {
                         r = function(self, r)
-                            self.p2color.r = r or 0;
+                            self.p2_color.r = r or 0;
                         end,
                         g = function(self, g)
-                            self.p2color.g = g or 0;
+                            self.p2_color.g = g or 0;
                         end,
                         b = function(self, b)
-                            self.p2color.b = b or 0;
+                            self.p2_color.b = b or 0;
                         end,
                         a = function(self, a)
-                            self.p2color.a = a or 255;
+                            self.p2_color.a = a or 255;
                         end
                     }
                 }
@@ -394,7 +394,7 @@ obe.canvas.Bases.Line = {
                     self.p2.unit = unit or obe.transform.Units.ScenePixels;
                 end,
                 color = function(self, color)
-                    self.p2color = obe.canvas.normalize_color(color, self.p2color);
+                    self.p2_color = obe.canvas.normalize_color(color, self.p2_color);
                 end
             }
         },
@@ -407,34 +407,34 @@ obe.canvas.Bases.Line = {
         color = {
             getters = {
                 r = function(self)
-                    return self.p1color.r;
+                    return self.p1_color.r;
                 end,
                 g = function(self)
-                    return self.p1color.g;
+                    return self.p1_color.g;
                 end,
                 b = function(self)
-                    return self.p1color.b;
+                    return self.p1_color.b;
                 end,
                 a = function(self)
-                    return self.p1color.a;
+                    return self.p1_color.a;
                 end
             },
             setters = {
                 r = function(self, r)
-                    self.p1color.r = r or 0;
-                    self.p2color.r = r or 0;
+                    self.p1_color.r = r or 0;
+                    self.p2_color.r = r or 0;
                 end,
                 g = function(self, g)
-                    self.p1color.g = g or 0;
-                    self.p2color.g = g or 0;
+                    self.p1_color.g = g or 0;
+                    self.p2_color.g = g or 0;
                 end,
                 b = function(self, b)
-                    self.p1color.b = b or 0;
-                    self.p2color.b = b or 0;
+                    self.p1_color.b = b or 0;
+                    self.p2_color.b = b or 0;
                 end,
                 a = function(self, a)
-                    self.p1color.a = a or 255;
-                    self.p2color.a = a or 255;
+                    self.p1_color.a = a or 255;
+                    self.p2_color.a = a or 255;
                 end
             }
         }
@@ -448,8 +448,8 @@ obe.canvas.Bases.Line = {
             self.thickness = thickness or 1;
         end,
         color = function(self, color)
-            self.p1color = obe.canvas.normalize_color(color, self.p1color);
-            self.p2color = obe.canvas.normalize_color(color, self.p2color);
+            self.p1_color = obe.canvas.normalize_color(color, self.p1_color);
+            self.p2_color = obe.canvas.normalize_color(color, self.p2_color);
         end,
         p1 = function(self, p1)
             if type(p1) == "table" then
@@ -460,7 +460,7 @@ obe.canvas.Bases.Line = {
                     self.p1.y = p1.y;
                 end
                 if p1.color then
-                    self.p1color = obe.canvas.normalize_color(p1.color, self.p1color);
+                    self.p1_color = obe.canvas.normalize_color(p1.color, self.p1_color);
                 end
                 if p1.unit then
                     self.p1.unit = p1.unit or obe.transform.Units.ScenePixels;
@@ -476,7 +476,7 @@ obe.canvas.Bases.Line = {
                     self.p2.y = p2.y;
                 end
                 if p2.color then
-                    self.p2color = obe.canvas.normalize_color(p2.color, self.p2color);
+                    self.p2_color = obe.canvas.normalize_color(p2.color, self.p2_color);
                 end
                 if p2.unit then
                     self.p2.unit = p2.unit or obe.transform.Units.ScenePixels;

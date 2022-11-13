@@ -10,8 +10,7 @@ namespace obe::events::Input::bindings
     {
         sol::table Input_namespace = state["obe"]["events"]["Input"].get<sol::table>();
         sol::usertype<obe::events::Input::TextEntered> bind_text_entered
-            = Input_namespace.new_usertype<obe::events::Input::TextEntered>(
-                "TextEntered");
+            = Input_namespace.new_usertype<obe::events::Input::TextEntered>("TextEntered");
         bind_text_entered["text"] = &obe::events::Input::TextEntered::text;
         bind_text_entered["unicode"] = &obe::events::Input::TextEntered::unicode;
         bind_text_entered["id"] = sol::var(&obe::events::Input::TextEntered::id);

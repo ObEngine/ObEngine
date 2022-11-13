@@ -19,17 +19,19 @@ namespace obe::transform
         this->y = position.y;
     }
 
+    PolygonPoint& PolygonPoint::operator=(const PolygonPoint& point)
+    {
+        this->x = point.x;
+        this->y = point.y;
+        this->rw_index = point.rw_index;
+        return *this;
+    }
+
     void PolygonPoint::remove() const
     {
-        std::unique_ptr<PolygonPoint> tmp_container;
-        for (auto& point : m_parent.m_points)
-        {
-            if (point.get() == this)
-                point.swap(tmp_container);
-        }
         m_parent.m_points.erase(m_parent.m_points.begin() + index);
         for (point_index_t i = index; i < m_parent.m_points.size(); i++)
-            m_parent.m_points[i]->rw_index = i;
+            m_parent.m_points[i].rw_index = i;
     }
 
     double PolygonPoint::distance(const transform::UnitVector& position) const
@@ -93,8 +95,8 @@ namespace obe::transform
         size_t index = 0;
         for (const auto& point : polygon.m_points)
         {
-            m_points.push_back(std::make_unique<transform::PolygonPoint>(
-                *this, index++, transform::UnitVector(point->x, point->y, point->unit)));
+            m_points.push_back(transform::PolygonPoint(
+                *this, index++, transform::UnitVector(point.x, point.y, point.unit)));
         }
     }
 
@@ -102,13 +104,13 @@ namespace obe::transform
     {
         const transform::UnitVector p_vec = position.to<transform::Units::SceneUnits>();
         if (point_index == -1 || point_index == m_points.size())
-            m_points.push_back(std::make_unique<PolygonPoint>(*this, m_points.size(), p_vec));
+            m_points.push_back(PolygonPoint(*this, m_points.size(), p_vec));
         else if (point_index >= 0 && point_index < m_points.size())
         {
             m_points.insert(m_points.begin() + point_index,
-                std::make_unique<PolygonPoint>(*this, point_index, p_vec));
+                PolygonPoint(*this, point_index, p_vec));
             for (point_index_t i = point_index; i < m_points.size(); i++)
-                m_points[i]->rw_index = i;
+                m_points[i].rw_index = i;
         }
     }
 
@@ -122,7 +124,7 @@ namespace obe::transform
             double shortest_distance = -1;
             for (std::size_t i = 0; i < m_points.size(); i++)
             {
-                const double current_point_distance = m_points[i]->distance(p_vec);
+                const double current_point_distance = m_points[i].distance(p_vec);
                 if ((shortest_distance == -1 || shortest_distance > current_point_distance)
                     && !utils::vector::contains(i, excluded_points))
                 {
@@ -138,8 +140,8 @@ namespace obe::transform
                     left_neighbor = m_points.size() - 1;
                 if (right_neighbor >= m_points.size())
                     right_neighbor = 0;
-                const int left_neighbor_distance = m_points[left_neighbor]->distance(position);
-                const int right_neighbor_distance = m_points[right_neighbor]->distance(position);
+                const int left_neighbor_distance = m_points[left_neighbor].distance(position);
+                const int right_neighbor_distance = m_points[right_neighbor].distance(position);
                 if (left_neighbor_distance > right_neighbor_distance)
                 {
                     closest_point++;
@@ -147,9 +149,14 @@ namespace obe::transform
                         closest_point = 0;
                 }
             }
-            return *m_points[closest_point];
+            return m_points[closest_point];
         }
         throw exceptions::PolygonNotEnoughPoints(this, m_points.size(), EXC_INFO);
+    }
+
+    PolygonPath& Polygon::get_all_points()
+    {
+        return m_points;
     }
 
     PolygonSegment Polygon::find_closest_segment(const transform::UnitVector& position)
@@ -211,9 +218,9 @@ namespace obe::transform
         for (point_index_t i = 0; i < m_points.size(); i++)
         {
             const point_index_t next_node = (i != m_points.size() - 1) ? i + 1 : 0;
-            const double line_length = m_points[i]->distance(this->get(next_node));
-            const double first_length = m_points[i]->distance(position);
-            const double second_length = m_points[next_node]->distance(position);
+            const double line_length = m_points[i].distance(this->get(next_node));
+            const double first_length = m_points[i].distance(position);
+            const double second_length = m_points[next_node].distance(position);
             if (utils::math::is_between(line_length, first_length + second_length - tolerance,
                     first_length + second_length + tolerance))
                 return std::make_optional(this->get_segment(i));
@@ -221,7 +228,7 @@ namespace obe::transform
         return std::nullopt;
     }
 
-    PolygonPath& Polygon::get_all_points()
+    const PolygonPath& Polygon::get_all_points() const
     {
         return m_points;
     }
@@ -235,20 +242,20 @@ namespace obe::transform
         std::size_t i;
         for (i = 0; i < m_points.size() - 1; ++i)
         {
-            x0 = m_points[i]->x;
-            y0 = m_points[i]->y;
-            x1 = m_points[i + 1]->x;
-            y1 = m_points[i + 1]->y;
+            x0 = m_points[i].x;
+            y0 = m_points[i].y;
+            x1 = m_points[i + 1].x;
+            y1 = m_points[i + 1].y;
             a = x0 * y1 - x1 * y0;
             signed_area += a;
             centroid.x += (x0 + x1) * a;
             centroid.y += (y0 + y1) * a;
         }
 
-        x0 = m_points[i]->x;
-        y0 = m_points[i]->y;
-        x1 = m_points[0]->x;
-        y1 = m_points[0]->y;
+        x0 = m_points[i].x;
+        y0 = m_points[i].y;
+        x1 = m_points[0].x;
+        y1 = m_points[0].y;
         a = x0 * y1 - x1 * y0;
         signed_area += a;
         centroid.x += (x0 + x1) * a;
@@ -261,20 +268,20 @@ namespace obe::transform
         return centroid;
     }
 
-    std::optional<PolygonPoint*> Polygon::get_point_near_position(
+    std::optional<const PolygonPoint*> Polygon::get_point_near_position(
         const transform::UnitVector& position, const transform::UnitVector& tolerance) const
     {
         const transform::UnitVector p_vec = position.to<transform::Units::SceneUnits>();
         const transform::UnitVector p_tolerance = tolerance.to<transform::Units::SceneUnits>();
         point_index_t i = 0;
-        for (auto& m_point : m_points)
+        for (auto& point : m_points)
         {
             if (utils::math::is_between(
-                    p_vec.x, m_point->x - p_tolerance.x, m_point->x + p_tolerance.x))
+                    p_vec.x, point.x - p_tolerance.x, point.x + p_tolerance.x))
             {
                 if (utils::math::is_between(
-                        p_vec.y, m_point->y - p_tolerance.y, m_point->y + p_tolerance.y))
-                    return std::optional<PolygonPoint*>(m_point.get());
+                        p_vec.y, point.y - p_tolerance.y, point.y + p_tolerance.y))
+                    return std::optional<const PolygonPoint*>(&point);
             }
             i++;
         }
@@ -307,7 +314,7 @@ namespace obe::transform
 
     UnitVector Polygon::get_position() const
     {
-        return static_cast<UnitVector>(*m_points[0]);
+        return static_cast<UnitVector>(m_points[0]);
     }
 
     void Polygon::set_rotation(const float angle, const transform::UnitVector origin)
@@ -325,12 +332,12 @@ namespace obe::transform
         m_angle += angle;
 
         const double rad_angle = (utils::math::pi / 180.0) * -angle;
-        for (const auto& point : m_points)
+        for (auto& point : m_points)
         {
-            point->set(std::cos(rad_angle) * (point->x - origin.x)
-                    - std::sin(rad_angle) * (point->y - origin.y) + origin.x,
-                std::sin(rad_angle) * (point->x - origin.x)
-                    + std::cos(rad_angle) * (point->y - origin.y) + origin.y);
+            point.set(std::cos(rad_angle) * (point.x - origin.x)
+                    - std::sin(rad_angle) * (point.y - origin.y) + origin.x,
+                std::sin(rad_angle) * (point.x - origin.x)
+                    + std::cos(rad_angle) * (point.y - origin.y) + origin.y);
         }
     }
 
@@ -339,7 +346,7 @@ namespace obe::transform
         if (!m_points.empty())
         {
             for (auto& point : m_points)
-                *point += position;
+                point += position;
         }
     }
 
@@ -348,11 +355,11 @@ namespace obe::transform
         if (!m_points.empty())
         {
             const transform::UnitVector p_vec = position.to<transform::Units::SceneUnits>();
-            const transform::UnitVector offset = p_vec - *m_points[0];
+            const transform::UnitVector offset = p_vec - m_points[0];
 
             for (auto& point : m_points)
             {
-                *point += offset;
+                point += offset;
             }
         }
     }
@@ -367,7 +374,7 @@ namespace obe::transform
 
             for (auto& point : m_points)
             {
-                *point += offset;
+                point += offset;
             }
         }
     }
@@ -380,7 +387,7 @@ namespace obe::transform
     PolygonPoint& Polygon::get(point_index_t i)
     {
         if (i < m_points.size())
-            return *m_points[i];
+            return m_points[i];
         else
             throw exceptions::PolygonPointIndexOverflow(this, i, m_points.size(), EXC_INFO);
     }
@@ -388,7 +395,7 @@ namespace obe::transform
     const PolygonPoint& Polygon::get(point_index_t i) const
     {
         if (i < m_points.size())
-            return *m_points[i];
+            return m_points[i];
         else
             throw exceptions::PolygonPointIndexOverflow(this, i, m_points.size(), EXC_INFO);
     }
@@ -396,12 +403,12 @@ namespace obe::transform
     Rect Polygon::get_bounding_box() const
     {
         auto [min_x, max_x] = std::minmax_element(m_points.begin(), m_points.end(),
-            [](auto& point1, auto& point2) { return point1->x < point2->x; });
+            [](auto& point1, auto& point2) { return point1.x < point2.x; });
         auto [min_y, max_y] = std::minmax_element(m_points.begin(), m_points.end(),
-            [](auto& point1, auto& point2) { return point1->y < point2->y; });
-        const double width = max_x->get()->x - min_x->get()->x;
-        const double height = max_y->get()->y - min_y->get()->y;
-        return Rect(transform::UnitVector(min_x->get()->x, min_y->get()->y),
+            [](auto& point1, auto& point2) { return point1.y < point2.y; });
+        const double width = max_x->x - min_x->x;
+        const double height = max_y->y - min_y->y;
+        return Rect(transform::UnitVector(min_x->x, min_y->y),
             transform::UnitVector(width, height));
     }
 } // namespace obe::transform

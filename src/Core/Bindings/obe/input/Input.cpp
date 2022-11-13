@@ -141,6 +141,7 @@ namespace obe::input::bindings
         bind_input_manager["require_refresh"] = &obe::input::InputManager::require_refresh;
         bind_input_manager["initialize_gamepads"] = &obe::input::InputManager::initialize_gamepads;
         bind_input_manager["initialize_gamepad"] = &obe::input::InputManager::initialize_gamepad;
+        bind_input_manager["process_events"] = &obe::input::InputManager::process_events;
     }
     void load_class_input_source(sol::state_view state)
     {

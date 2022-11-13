@@ -29,7 +29,7 @@ namespace obe::debug::render
 
             std::transform(polygon_points.begin(), polygon_points.end(),
                 std::back_inserter(pixel_points),
-                [](const auto& point) { return point->to(transform::Units::ScenePixels); });
+                [](const auto& point) { return point.to(transform::Units::ScenePixels); });
 
             for (const transform::UnitVector& point : pixel_points)
             {
@@ -64,6 +64,14 @@ namespace obe::debug::render
     void draw_circle_collider(const graphics::RenderTarget target,
         const collision::CircleCollider& collider, const ColliderRenderOptions& render_options)
     {
+        const transform::UnitVector px_position
+            = collider.get_position().to<transform::Units::ScenePixels>();
+        const double px_radius
+            = transform::UnitVector(collider.get_radius(), 0).to<transform::Units::ScenePixels>().x;
+        sf::CircleShape shape(px_radius);
+        shape.setPosition(px_position.x - px_radius, px_position.y - px_radius);
+        shape.setFillColor(render_options.color);
+        target.draw(shape);
     }
 
     void draw_rectangle_collider(const graphics::RenderTarget target,
@@ -87,6 +95,19 @@ namespace obe::debug::render
     void draw_polygon_collider(const graphics::RenderTarget target,
         const collision::PolygonCollider& collider, const ColliderRenderOptions& render_options)
     {
+        const transform::UnitVector px_position
+            = collider.get_position().to<transform::Units::ScenePixels>();
+        sf::ConvexShape shape(collider.get_points_amount());
+        size_t idx = 0;
+        transform::Polygon polygon = collider.get_polygon();
+        const auto& points = polygon.get_all_points();
+        for (const auto& point : points)
+        {
+            auto point_pos_px = point.to<transform::Units::ScenePixels>();
+            shape.setPoint(idx++, sf::Vector2f(point_pos_px.x, point_pos_px.y));
+        }
+        shape.setFillColor(render_options.color);
+        target.draw(shape);
     }
 
     void draw_collider(const graphics::RenderTarget target, const collision::ColliderComponent& collider,

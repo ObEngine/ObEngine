@@ -63,11 +63,6 @@ namespace obe::transform::bindings
                 const obe::transform::Referential&)>(&obe::transform::AABB::set_position),
             static_cast<void (obe::transform::AABB::*)(const obe::transform::UnitVector&)>(
                 &obe::transform::AABB::set_position));
-        bind_aabb["move"] = sol::overload(
-            static_cast<void (obe::transform::AABB::*)(const obe::transform::UnitVector&)>(
-                &obe::transform::AABB::move),
-            static_cast<void (obe::transform::AABB::*)(const obe::transform::UnitVector&)>(
-                &obe::transform::AABB::move));
         bind_aabb["get_position"] = sol::overload(
             static_cast<obe::transform::UnitVector (obe::transform::AABB::*)(
                 const obe::transform::Referential&) const>(&obe::transform::AABB::get_position),
@@ -115,6 +110,7 @@ namespace obe::transform::bindings
                 &obe::transform::AABB::contains),
             static_cast<bool (obe::transform::AABB::*)(const obe::transform::UnitVector&) const>(
                 &obe::transform::AABB::contains));
+        bind_aabb["move"] = &obe::transform::AABB::move;
     }
     void load_class_matrix2_d(sol::state_view state)
     {
@@ -164,7 +160,11 @@ namespace obe::transform::bindings
                 -> obe::transform::PolygonPoint& {
                 return self->find_closest_point(position, neighbor, excluded_points);
             });
-        bind_polygon["get_all_points"] = &obe::transform::Polygon::get_all_points;
+        bind_polygon["get_all_points"] = sol::overload(
+            static_cast<obe::transform::PolygonPath& (obe::transform::Polygon::*)()>(
+                &obe::transform::Polygon::get_all_points),
+            static_cast<const obe::transform::PolygonPath& (obe::transform::Polygon::*)() const>(
+                &obe::transform::Polygon::get_all_points));
         bind_polygon["get_centroid"] = &obe::transform::Polygon::get_centroid;
         bind_polygon["get_points_amount"] = &obe::transform::Polygon::get_points_amount;
         bind_polygon["get_position"] = &obe::transform::Polygon::get_position;
