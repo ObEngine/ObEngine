@@ -33,17 +33,18 @@ namespace obe::collision
         m_collider = new_collider;
     }
 
-    vili::node ColliderComponent::dump_capsule()
+    vili::node ColliderComponent::dump_capsule() const
     {
+        return vili::object {};
     }
 
-    vili::node ColliderComponent::dump_circle()
+    vili::node ColliderComponent::dump_circle() const
     {
         const float radius = std::get<CircleCollider>(m_collider).get_radius();
         return vili::object { { "type", "Circle" }, { "radius", radius } };
     }
 
-    vili::node ColliderComponent::dump_polygon()
+    vili::node ColliderComponent::dump_polygon() const
     {
         const transform::Polygon polygon = std::get<PolygonCollider>(m_collider).get_polygon();
         const auto points = polygon.get_all_points();
@@ -55,10 +56,10 @@ namespace obe::collision
         return vili::object { { "type", "Polygon" }, { "points", points_dump } };
     }
 
-    vili::node ColliderComponent::dump_rectangle()
+    vili::node ColliderComponent::dump_rectangle() const
     {
         const transform::UnitVector size = std::get<RectangleCollider>(m_collider).get_size();
-        return vili::object { { "type", "Rectangle" } { "width", size.x }, { "height", size.y } };
+        return vili::object { { "type", "Rectangle" }, { "width", size.x }, { "height", size.y } };
     }
 
     vili::node ColliderComponent::schema() const

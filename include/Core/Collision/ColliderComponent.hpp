@@ -62,10 +62,10 @@ namespace obe::collision
         void load_polygon(const vili::node& data);
         void load_rectangle(const vili::node& data);
 
-        [[nodiscard]] vili::node dump_capsule();
-        [[nodiscard]] vili::node dump_circle();
-        [[nodiscard]] vili::node dump_polygon();
-        [[nodiscard]] vili::node dump_rectangle();
+        [[nodiscard]] vili::node dump_capsule() const;
+        [[nodiscard]] vili::node dump_circle() const;
+        [[nodiscard]] vili::node dump_polygon() const;
+        [[nodiscard]] vili::node dump_rectangle() const;
 
     protected:
         [[nodiscard]] vili::node schema() const override;
