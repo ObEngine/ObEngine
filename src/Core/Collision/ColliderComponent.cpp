@@ -45,10 +45,20 @@ namespace obe::collision
 
     vili::node ColliderComponent::dump_polygon()
     {
+        const transform::Polygon polygon = std::get<PolygonCollider>(m_collider).get_polygon();
+        const auto points = polygon.get_all_points();
+        vili::array points_dump = {};
+        for (const auto& point : points)
+        {
+            points_dump.push_back(vili::object {{"x", point.x}, {"y", point.y}});
+        }
+        return vili::object { {"points", points_dump } };
     }
 
     vili::node ColliderComponent::dump_rectangle()
     {
+        const transform::UnitVector size = std::get<RectangleCollider>(m_collider).get_size();
+        return vili::object { { "width", size.x }, { "height", size.y } };
     }
 
     vili::node ColliderComponent::schema() const
@@ -68,22 +78,25 @@ namespace obe::collision
     vili::node ColliderComponent::dump() const
     {
         vili::node collider_dump;
-        switch (ColliderTypeMeta::from_string(collider_type_str))
+        if (std::holds_alternative<CapsuleCollider>(m_collider))
         {
-        case ColliderType::Capsule:
             collider_dump = dump_capsule();
-            break;
-        case ColliderType::Circle:
+        }
+        else if (std::holds_alternative<CircleCollider>(m_collider))
+        {
             collider_dump = dump_circle();
-            break;
-        case ColliderType::Rectangle:
-            collider_dump = dump_rectangle();
-            break;
-        case ColliderType::Polygon:
+        }
+        else if (std::holds_alternative<PolygonCollider>(m_collider))
+        {
             collider_dump = dump_polygon();
-            break;
-        case ColliderType::Collider:
-            throw exceptions::InvalidColliderComponentType(m_id, collider_type_str, EXC_INFO);
+        }
+        else if (std::holds_alternative<RectangleCollider>(m_collider))
+        {
+            collider_dump = dump_rectangle();
+        }
+        else
+        {
+            throw exceptions::InvalidColliderComponentType(m_id, "?", EXC_INFO);
         }
 
         std::visit(
