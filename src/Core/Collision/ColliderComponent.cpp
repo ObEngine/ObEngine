@@ -40,7 +40,7 @@ namespace obe::collision
     vili::node ColliderComponent::dump_circle()
     {
         const float radius = std::get<CircleCollider>(m_collider).get_radius();
-        return vili::object { { "radius", radius } };
+        return vili::object { { "type", "Circle" }, { "radius", radius } };
     }
 
     vili::node ColliderComponent::dump_polygon()
@@ -50,15 +50,15 @@ namespace obe::collision
         vili::array points_dump = {};
         for (const auto& point : points)
         {
-            points_dump.push_back(vili::object {{"x", point.x}, {"y", point.y}});
+            points_dump.push_back(vili::object { { "x", point.x }, { "y", point.y } });
         }
-        return vili::object { {"points", points_dump } };
+        return vili::object { { "type", "Polygon" }, { "points", points_dump } };
     }
 
     vili::node ColliderComponent::dump_rectangle()
     {
         const transform::UnitVector size = std::get<RectangleCollider>(m_collider).get_size();
-        return vili::object { { "width", size.x }, { "height", size.y } };
+        return vili::object { { "type", "Rectangle" } { "width", size.x }, { "height", size.y } };
     }
 
     vili::node ColliderComponent::schema() const
