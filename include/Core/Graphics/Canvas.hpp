@@ -292,9 +292,9 @@ namespace obe::graphics::canvas
         CanvasElement* get(const std::string& id) const;
 
         /**
-         * \brief Render all the Canvas content to the Sprite target
+         * \brief Render all the Canvas content
          */
-        void render(Sprite& target);
+        void render();
         /**
          * \brief Clear all CanvasElement from the Canvas
          */

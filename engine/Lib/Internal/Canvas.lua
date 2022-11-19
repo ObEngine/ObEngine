@@ -1,38 +1,15 @@
 local class = require("extlibs://pl.class"); -- NOTE: we are not using the global class() since it is not loaded yet
-local tablex = require("extlibs://pl.tablex");
+local make_reactive = require("obe://Lib/Internal/Reactive").make_reactive;
 
 obe.canvas = {};
 
 obe.canvas.Canvas = class();
-function obe.canvas.Canvas:_init(width, height, usecache)
+function obe.canvas.Canvas:_init(width, height)
     self.internal = obe.graphics.canvas.Canvas(math.floor(width), math.floor(height));
     self.elements = {};
-    self.useCache = usecache or false;
-    self.bases = {
-        Line = obe.canvas.MakeMT({obe.canvas.Bases.Drawable, obe.canvas.Bases.Line}, self.useCache),
-        Rectangle = obe.canvas.MakeMT(
-            {obe.canvas.Bases.Drawable, obe.canvas.Bases.Shape, obe.canvas.Bases.Rectangle},
-                self.useCache
-        ),
-        Text = obe.canvas.MakeMT(
-            {obe.canvas.Bases.Drawable, obe.canvas.Bases.Shape, obe.canvas.Bases.Text},
-                self.useCache
-        ),
-        Circle = obe.canvas.MakeMT(
-            {obe.canvas.Bases.Drawable, obe.canvas.Bases.Shape, obe.canvas.Bases.Circle},
-                self.useCache
-        ),
-        Polygon = obe.canvas.MakeMT(
-            {obe.canvas.Bases.Drawable, obe.canvas.Bases.Shape, obe.canvas.Bases.Polygon},
-                self.useCache
-        ),
-        Bezier = obe.canvas.MakeMT(
-            {obe.canvas.Bases.Drawable, obe.canvas.Bases.Bezier}, self.useCache
-        )
-    };
 end
 
-function obe.canvas.normalize_color(color, base)
+local function normalize_color(color, base)
     if type(color) == "table" then
         local ncolor = obe.graphics.Color();
         base = base or {r = 0, g = 0, b = 0, a = 255};
@@ -46,15 +23,15 @@ function obe.canvas.normalize_color(color, base)
         color = math.floor(color);
         return obe.graphics.Color(color, color, color, dalpha);
     elseif type(color) == "string" then
-        local newColor = obe.graphics.Color();
-        newColor:from_string(color);
-        return newColor;
+        local new_color = obe.graphics.Color();
+        new_color:from_string(color);
+        return new_color;
     elseif type(color) == "userdata" then
         return color;
     end
 end
 
-function obe.canvas.ConvertHAlign(align)
+local function convert_horizontal_align(align)
     if type(align) == "string" then
         if align == "Left" then
             return obe.graphics.canvas.TextHorizontalAlign.Left;
@@ -63,10 +40,7 @@ function obe.canvas.ConvertHAlign(align)
         elseif align == "Right" then
             return obe.graphics.canvas.TextHorizontalAlign.Right;
         else
-            error(
-                "Horizontal Alignment", align,
-                    "does not exists, use one of those [Left, Center, Right]"
-            )
+            error(("Horizontal Alignment '%s' does not exists, use one of those [Left, Center, Right]"):format(align));
         end
     else
         if align == obe.graphics.canvas.TextHorizontalAlign.Left then
@@ -79,7 +53,7 @@ function obe.canvas.ConvertHAlign(align)
     end
 end
 
-function obe.canvas.ConvertVAlign(align)
+local function convert_vertical_align(align)
     if type(align) == "string" then
         if align == "Top" then
             return obe.graphics.canvas.TextVerticalAlign.Top;
@@ -88,10 +62,7 @@ function obe.canvas.ConvertVAlign(align)
         elseif align == "Bottom" then
             return obe.graphics.canvas.TextVerticalAlign.Bottom;
         else
-            error(
-                "Vertical Alignment", align,
-                    "does not exists, use one of those [Top, Center, Botton]"
-            )
+            error(("Vertical Alignment '%s' does not exists, use one of those [Top, Center, Bottom]"):format(align));
         end
     else
         if align == obe.graphics.canvas.TextVerticalAlign.Top then
@@ -104,161 +75,10 @@ function obe.canvas.ConvertVAlign(align)
     end
 end
 
-obe.canvas.Bases = {};
+local SHAPE_SCHEMAS = {};
 
-function obe.canvas.ApplyCache(element)
-    local mt = getmetatable(element);
-    -- print("Cache :", inspect(mt.__cache));
-    if #mt.__priority > 0 then
-        for k, v in pairs(mt.__priority) do
-            if mt.__cache[v] then
-                obe.canvas.__set(element, v, mt.__cache[v]);
-                mt.__cache[v] = nil;
-            end
-        end
-    end
-    for k, v in pairs(mt.__cache) do
-        obe.canvas.__set(element, k, v);
-    end
-    for k, v in pairs(mt.__getters) do
-        if type(v) == "table" then
-            obe.canvas.ApplyCache(v);
-        end
-    end
-    mt.__cache = {};
-end
-
-function obe.canvas.__set_cached(tbl, key, value)
-    local k = getmetatable(tbl);
-    if type(value) == "table" then
-        k.__getters[key](value);
-    else
-        k.__cache[key] = value;
-        k.__rcache[key] = value;
-    end
-end
-
-function obe.canvas.__get_cached(tbl, key)
-    local k = getmetatable(tbl);
-    if k.__rcache[key] and type(k.__rcache[key]) ~= "table" then
-        return k.__rcache[key];
-    else
-        if type(k.__getters[key]) == "function" then
-            return k.__getters[key](tbl.ref);
-        elseif type(key) == "number" and not k.__getters[key] and k.__getters.__number then
-            return setmetatable(tbl, k.__getters.__number(tbl.ref, key));
-        elseif type(k.__getters[key]) == "table" then
-            -- print("Found table", inspect(k.__getters[key]));
-            return setmetatable(tbl, k.__getters[key]);
-        end
-    end
-end
-
-function obe.canvas.__set(tbl, key, value)
-    local k = getmetatable(tbl);
-    if type(key) == "number" and not k.__setters[key] and k.__setters.__number then
-        k.__setters.__number(tbl.ref, key, value);
-    else
-        if k.__setters[key] then
-            k.__setters[key](tbl.ref, value);
-        else
-            error("Can't find obe.canvas.Canvas attribute : " .. tostring(key));
-        end
-    end
-end
-
-function obe.canvas.__get(tbl, key)
-    local k = getmetatable(tbl);
-    if type(k.__getters[key]) == "function" then
-        return k.__getters[key](tbl.ref);
-    elseif type(key) == "number" and not k.__getters[key] and k.__getters.__number then
-        k.__getters.__number(tbl.ref)
-    elseif type(k.__getters[key]) == "table" then
-        if rawget(tbl, key) == nil then
-            rawset(tbl, key, setmetatable({ref = rawget(tbl, "ref")}, k.__getters[key]));
-        end
-        return rawget(tbl, key);
-    end
-end
-
-function obe.canvas.__call(tbl, values, usecache)
-    values = values or {};
-    local mt = getmetatable(tbl);
-    if usecache then
-        for k, v in pairs(values) do
-            mt.__cache[k] = v;
-        end
-    else
-        if #mt.__priority > 0 then
-            for k, v in pairs(mt.__priority) do
-                if values[v] then
-                    obe.canvas.__set(tbl, v, values[v]);
-                    values[v] = nil;
-                end
-            end
-        end
-        for k, v in pairs(values) do
-            obe.canvas.__set(tbl, k, v);
-        end
-    end
-    return tbl;
-end
-
-function obe.canvas.MakeMT(bases, usecache)
-    usecache = usecache or false;
-    local getters = {};
-    local setters = {};
-    local priority = {};
-
-    for _, base in pairs(bases) do
-        if base.priority then
-            for _, priorityName in pairs(base.priority) do
-                if not tablex.find(priority, priorityName) then
-                    table.insert(priority, priorityName);
-                end
-            end
-        end
-        for getterName, getterValue in pairs(base.getters) do
-            getters[getterName] = getterValue;
-        end
-        for setterName, setterValue in pairs(base.setters) do
-            setters[setterName] = setterValue;
-        end
-    end
-    for key, getter in pairs(getters) do
-        if type(getter) == "table" then
-            getters[key] = obe.canvas.MakeMT({getter}, usecache);
-        end
-    end
-    for key, setter in pairs(setters) do
-        if type(setter) == "table" then
-            setters[key] = obe.canvas.MakeMT({setter}, usecache);
-        end
-    end
-    local getfunc = usecache and obe.canvas.__get_cached or obe.canvas.__get;
-    local setfunc = usecache and obe.canvas.__set_cached or obe.canvas.__set;
-    local mt = {
-        __getters = getters,
-        __setters = setters,
-        __priority = priority,
-        __index = getfunc,
-        __newindex = setfunc,
-        __call = function(t, v)
-            return obe.canvas.__call(t, v, usecache)
-        end,
-        __cache = {},
-        __rcache = {}
-    };
-
-    return mt;
-end
-
-function obe.canvas.Canvas:InstanciateMT(type, internal)
-    local mt = self.bases[type];
-    return setmetatable({type = type, ref = internal}, mt);
-end
-
-obe.canvas.Bases.Drawable = {
+SHAPE_SCHEMAS.Drawable = make_reactive {
+    type = "Drawable",
     getters = {
         layer = function(self)
             return self.layer;
@@ -280,7 +100,9 @@ obe.canvas.Bases.Drawable = {
     }
 }
 
-obe.canvas.Bases.Line = {
+SHAPE_SCHEMAS.Line = make_reactive {
+    type = "Line",
+    bases = {SHAPE_SCHEMAS.Drawable},
     getters = {
         p1 = {
             priority = {"unit"},
@@ -336,7 +158,7 @@ obe.canvas.Bases.Line = {
                     self.p1.unit = unit or obe.transform.Units.ScenePixels;
                 end,
                 color = function(self, color)
-                    self.p1_color = obe.canvas.normalize_color(color, self.p1_color);
+                    self.p1_color = normalize_color(color, self.p1_color);
                 end
             }
         },
@@ -394,7 +216,7 @@ obe.canvas.Bases.Line = {
                     self.p2.unit = unit or obe.transform.Units.ScenePixels;
                 end,
                 color = function(self, color)
-                    self.p2_color = obe.canvas.normalize_color(color, self.p2_color);
+                    self.p2_color = normalize_color(color, self.p2_color);
                 end
             }
         },
@@ -448,8 +270,8 @@ obe.canvas.Bases.Line = {
             self.thickness = thickness or 1;
         end,
         color = function(self, color)
-            self.p1_color = obe.canvas.normalize_color(color, self.p1_color);
-            self.p2_color = obe.canvas.normalize_color(color, self.p2_color);
+            self.p1_color = normalize_color(color, self.p1_color);
+            self.p2_color = normalize_color(color, self.p2_color);
         end,
         p1 = function(self, p1)
             if type(p1) == "table" then
@@ -460,7 +282,7 @@ obe.canvas.Bases.Line = {
                     self.p1.y = p1.y;
                 end
                 if p1.color then
-                    self.p1_color = obe.canvas.normalize_color(p1.color, self.p1_color);
+                    self.p1_color = normalize_color(p1.color, self.p1_color);
                 end
                 if p1.unit then
                     self.p1.unit = p1.unit or obe.transform.Units.ScenePixels;
@@ -476,7 +298,7 @@ obe.canvas.Bases.Line = {
                     self.p2.y = p2.y;
                 end
                 if p2.color then
-                    self.p2_color = obe.canvas.normalize_color(p2.color, self.p2_color);
+                    self.p2_color = normalize_color(p2.color, self.p2_color);
                 end
                 if p2.unit then
                     self.p2.unit = p2.unit or obe.transform.Units.ScenePixels;
@@ -486,7 +308,9 @@ obe.canvas.Bases.Line = {
     }
 };
 
-obe.canvas.Bases.Shape = {
+SHAPE_SCHEMAS.Shape = make_reactive {
+    type = "Shape",
+    bases = {SHAPE_SCHEMAS.Drawable},
     priority = {"unit"},
     getters = {
         x = function(self)
@@ -568,7 +392,7 @@ obe.canvas.Bases.Shape = {
             setters = {
                 color = function(self, color)
                     self.shape:set_outline_color(
-                        obe.canvas.normalize_color(
+                        normalize_color(
                             color, self.shape:get_outline_color()
                         )
                     );
@@ -595,24 +419,24 @@ obe.canvas.Bases.Shape = {
             },
             setters = {
                 r = function(self, r)
-                    local colorBuffer = self.shape:get_fill_color();
-                    colorBuffer.r = r or 0;
-                    self.shape:set_fill_color(colorBuffer);
+                    local fill_color = self.shape:get_fill_color();
+                    fill_color.r = r or 0;
+                    self.shape:set_fill_color(fill_color);
                 end,
                 g = function(self, g)
-                    local colorBuffer = self.shape:get_fill_color();
-                    colorBuffer.g = g or 0;
-                    self.shape:set_fill_color(colorBuffer);
+                    local fill_color = self.shape:get_fill_color();
+                    fill_color.g = g or 0;
+                    self.shape:set_fill_color(fill_color);
                 end,
                 b = function(self, b)
-                    local colorBuffer = self.shape:get_fill_color();
-                    colorBuffer.b = b or 0;
-                    self.shape:set_fill_color(colorBuffer);
+                    local fill_color = self.shape:get_fill_color();
+                    fill_color.b = b or 0;
+                    self.shape:set_fill_color(fill_color);
                 end,
                 a = function(self, a)
-                    local colorBuffer = self.shape:get_fill_color();
-                    colorBuffer.a = a or 255;
-                    self.shape:set_fill_color(colorBuffer);
+                    local fill_color = self.shape:get_fill_color();
+                    fill_color.a = a or 255;
+                    self.shape:set_fill_color(fill_color);
                 end
             }
         }
@@ -622,7 +446,7 @@ obe.canvas.Bases.Shape = {
             if type(outline) == "table" then
                 if outline.color then
                     self.shape:set_outline_color(
-                        obe.canvas.normalize_color(
+                        normalize_color(
                             outline.color, self.shape:get_outline_color()
                         )
                     );
@@ -634,7 +458,7 @@ obe.canvas.Bases.Shape = {
         end,
         color = function(self, color)
             self.shape:set_fill_color(
-                obe.canvas.normalize_color(color, self.shape:get_fill_color())
+                normalize_color(color, self.shape:get_fill_color())
             );
         end,
         x = function(self, x)
@@ -665,7 +489,9 @@ obe.canvas.Bases.Shape = {
     }
 }
 
-obe.canvas.Bases.Rectangle = {
+SHAPE_SCHEMAS.Rectangle = make_reactive {
+    type = "Rectangle",
+    bases = {SHAPE_SCHEMAS.Shape},
     priority = {"unit"},
     getters = {
         width = function(self)
@@ -691,7 +517,9 @@ obe.canvas.Bases.Rectangle = {
     }
 }
 
-obe.canvas.Bases.Circle = {
+SHAPE_SCHEMAS.Circle = make_reactive {
+    type = "Circle",
+    bases = {SHAPE_SCHEMAS.Shape},
     getters = {
         radius = function(self)
             return self.shape:get_radius();
@@ -710,7 +538,7 @@ obe.canvas.Bases.Circle = {
     }
 }
 
-function positionToUnitVector(position)
+local function position_to_unit_vector(position)
     if type(position) == "table" then
         local x = position.x or position[1];
         local y = position.y or position[2];
@@ -719,7 +547,10 @@ function positionToUnitVector(position)
     end
     return position;
 end
-obe.canvas.Bases.Polygon = {
+
+SHAPE_SCHEMAS.Polygon = make_reactive {
+    type = "Polygon",
+    bases = {SHAPE_SCHEMAS.Shape},
     getters = {
         points = {
             getters = {
@@ -729,7 +560,7 @@ obe.canvas.Bases.Polygon = {
             },
             setters = {
                 __number = function(self, index, position)
-                    position = positionToUnitVector(position);
+                    position = position_to_unit_vector(position);
                     self.shape:set_point_position(index - 1, position);
                 end
             }
@@ -738,14 +569,16 @@ obe.canvas.Bases.Polygon = {
     setters = {
         points = function(self, points)
             for k, v in pairs(points) do
-                local position = positionToUnitVector(v);
+                local position = position_to_unit_vector(v);
                 self.shape:set_point_position(k - 1, position);
             end
         end
     }
 }
 
-obe.canvas.Bases.Bezier = {
+SHAPE_SCHEMAS.Bezier = make_reactive {
+    type = "Bezier",
+    bases = {SHAPE_SCHEMAS.Drawable},
     getters = {
         points = {
             getters = {
@@ -755,7 +588,7 @@ obe.canvas.Bases.Bezier = {
             },
             setters = {
                 __number = function(self, index, position)
-                    self.points[index - 1] = positionToUnitVector(position);
+                    self.points[index - 1] = position_to_unit_vector(position);
                 end
             }
         },
@@ -767,10 +600,10 @@ obe.canvas.Bases.Bezier = {
         points = function(self, points)
             for k, v in pairs(points) do
                 local color = v.color or self.colors[k - 1] or obe.graphics.Color(255, 255, 255);
-                color = obe.canvas.normalize_color(color);
-                table.insert(self.points, positionToUnitVector(v));
+                color = normalize_color(color);
+                table.insert(self.points, position_to_unit_vector(v));
                 table.insert(self.colors, color);
-                -- self.points[k - 1] = positionToUnitVector(v);
+                -- self.points[k - 1] = position_to_unit_vector(v);
             end
         end,
         precision = function(self, precision)
@@ -779,15 +612,17 @@ obe.canvas.Bases.Bezier = {
     }
 }
 
-obe.canvas.Bases.Text = {
+SHAPE_SCHEMAS.Text = make_reactive {
+    type = "Text",
+    bases = {SHAPE_SCHEMAS.Shape},
     priority = {"font", "size", "color", "outline", "align"},
     getters = {
         text = function(self)
-            local fullText = "";
+            local full_text = "";
             for _, text in pairs(self.texts) do
-                fullText = fullText .. text.string;
+                full_text = full_text .. text.string;
             end
-            return fullText;
+            return full_text;
         end,
         size = function(self)
             return self.shape:get_character_size();
@@ -804,30 +639,30 @@ obe.canvas.Bases.Text = {
         align = {
             getters = {
                 h = function(self)
-                    return obe.canvas.ConvertHAlign(self.h_align);
+                    return convert_horizontal_align(self.h_align);
                 end,
                 horizontal = function(self)
-                    return obe.canvas.ConvertHAlign(self.h_align);
+                    return convert_horizontal_align(self.h_align);
                 end,
                 v = function(self)
-                    return obe.canvas.ConvertVAlign(self.v_align);
+                    return convert_vertical_align(self.v_align);
                 end,
                 vertical = function(self)
-                    return obe.canvas.ConvertVAlign(self.v_align);
+                    return convert_vertical_align(self.v_align);
                 end
             },
             setters = {
                 h = function(self, h)
-                    self.h_align = obe.canvas.ConvertHAlign(h);
+                    self.h_align = convert_horizontal_align(h);
                 end,
                 horizontal = function(self, h)
-                    self.h_align = obe.canvas.ConvertHAlign(h);
+                    self.h_align = convert_horizontal_align(h);
                 end,
                 v = function(self, v)
-                    self.v_align = obe.canvas.ConvertVAlign(v);
+                    self.v_align = convert_vertical_align(v);
                 end,
                 vertical = function(self, v)
-                    self.v_align = obe.canvas.ConvertVAlign(v);
+                    self.v_align = convert_vertical_align(v);
                 end
             }
         },
@@ -882,13 +717,13 @@ obe.canvas.Bases.Text = {
             self.shape:set_font(Engine.Resources:get_font(font));
         end,
         color = function(self, color)
-            self.text.color = obe.canvas.normalize_color(color);
+            self.text.color = normalize_color(color);
             self:refresh();
         end,
         outline = function(self, outline)
             if type(outline) == "table" then
                 if outline.color then
-                    self.text.outline = obe.canvas.normalize_color(outline.color);
+                    self.text.outline = normalize_color(outline.color);
                     self:refresh();
                 end
                 if type(outline.thickness) == "number" then
@@ -899,18 +734,18 @@ obe.canvas.Bases.Text = {
         end,
         align = function(self, al)
             if al.h or al.horizontal then
-                self.h_align = obe.canvas.ConvertHAlign(al.h or al.horizontal);
+                self.h_align = convert_horizontal_align(al.h or al.horizontal);
             end
             if al.v or al.vertical then
-                self.v_align = obe.canvas.ConvertVAlign(al.v or al.vertical);
+                self.v_align = convert_vertical_align(al.v or al.vertical);
             end
         end
     }
 }
 
-function obe.canvas.Canvas:GenerateId(id)
+function obe.canvas.Canvas:_generate_id(id)
     if type(id) == "string" and self.internal:get(id) ~= nil then
-        error("CanvasElement '" .. tostring(id) .. "' already exists !");
+        error(("CanvasElement '%s' already exists !"):format(id));
     end
     while id == nil or self.internal:get(id) ~= nil do
         id = obe.utils.string
@@ -920,56 +755,52 @@ function obe.canvas.Canvas:GenerateId(id)
 end
 
 function obe.canvas.Canvas:Line(id)
-    id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Line", self.internal:Line(id));
-    -- print(inspect(self.elements[id]));
+    id = self:_generate_id(id);
+    self.elements[id] = SHAPE_SCHEMAS.Line(self.internal:Line(id));
     return self.elements[id];
 end
 
 function obe.canvas.Canvas:Rectangle(id)
-    id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Rectangle", self.internal:Rectangle(id));
+    id = self:_generate_id(id);
+    self.elements[id] = SHAPE_SCHEMAS.Rectangle(self.internal:Rectangle(id));
     return self.elements[id];
 end
 
 function obe.canvas.Canvas:Text(id)
-    id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Text", self.internal:Text(id));
+    id = self:_generate_id(id);
+    self.elements[id] = SHAPE_SCHEMAS.Text(self.internal:Text(id));
     self.elements[id].font = "Data/Fonts/NotoSans.ttf";
     return self.elements[id];
 end
 
 function obe.canvas.Canvas:Circle(id)
-    id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Circle", self.internal:Circle(id));
+    id = self:_generate_id(id);
+    self.elements[id] = SHAPE_SCHEMAS.Circle(self.internal:Circle(id));
     return self.elements[id];
 end
 
 function obe.canvas.Canvas:Polygon(id)
-    id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Polygon", self.internal:Polygon(id));
+    id = self:_generate_id(id);
+    self.elements[id] = SHAPE_SCHEMAS.Polygon(self.internal:Polygon(id));
     return self.elements[id];
 end
 
 function obe.canvas.Canvas:Bezier(id)
-    id = self:GenerateId(id);
-    self.elements[id] = self:InstanciateMT("Bezier", self.internal:Bezier(id));
+    id = self:_generate_id(id);
+    self.elements[id] = SHAPE_SCHEMAS.Bezier(self.internal:Bezier(id));
     return self.elements[id];
 end
 
 function obe.canvas.Canvas:Sprite(id)
-    id = self:GenerateId(id);
-    self.elements[id] = {ref = self.internal:Sprite(id)};
-    return self.elements[id];
+    id = self:_generate_id(id);
+    error("not implemented yet");
+    -- self.elements[id] = SHAPE_SCHEMAS.Sprite(self.internal:Sprite(id));
+    -- return self.elements[id];
 end
 
-function obe.canvas.Canvas:render(target)
-    if self.useCache then
-        for id, element in pairs(self.elements) do
-            obe.canvas.ApplyCache(element);
-        end
-    end
-    self.internal:render(target);
+function obe.canvas.Canvas:render()
+    self.internal:render();
+    return self.internal:get_texture();
 end
 
 function obe.canvas.Canvas:clear()

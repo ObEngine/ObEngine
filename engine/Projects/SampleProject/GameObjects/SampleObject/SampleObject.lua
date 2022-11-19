@@ -22,5 +22,5 @@ function SampleObject:init()
 end
 
 function Event.Game.Render()
-    _canvas:render(SampleObject.components.Sprite);
+    SampleObject.components.Sprite:set_texture(_canvas:render());
 end

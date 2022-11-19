@@ -195,7 +195,7 @@ namespace obe::graphics::canvas
         return nullptr;
     }
 
-    void Canvas::render(Sprite& target)
+    void Canvas::render()
     {
         m_canvas.clear(sf::Color(0, 0, 0, 0));
 
@@ -211,7 +211,6 @@ namespace obe::graphics::canvas
                 element->draw(m_canvas);
         }
         m_canvas.display();
-        target.set_texture(m_canvas.getTexture());
     }
 
     void Canvas::clear()

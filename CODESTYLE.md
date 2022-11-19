@@ -174,6 +174,10 @@ end
 
 local MyClass = class(); -- classes are PascalCase
 
+function MyClass:init() -- class constructor
+  self.things = {};
+end
+
 -- methods are defined using colon
 -- methods are snake_case
 function MyClass:get_thing(thing_name)
@@ -233,35 +237,51 @@ Global.total_lives = 3;
 GameObject structure is the following one
 
 ```lua
-local _private_object_attribute = 3; -- private attributes are snake_case
-                                    -- private attributes are defined as module-local variable
-                                    -- it is recommanded to prefix private attributes with _
-public_objet_attribute = 10; -- public attributes are snake case
-                             -- public attributes are defined as global variables
-                                -- note that they are not "true" global variables
-                                -- they are scoped to the GameObject Lua environment
+-- ALWAYS annotate GameObjects like this so you can reference the type everywhere in your project
+---@class SampleObject : GameObjectCls
+local SampleObject = GameObject();
 
--- public and private attributes MUST be defined on top of the file, even if they have no default value
-  -- use nil when there is no default value
-public_attribute_without_default_value = nil;
-a = nil
-b = nil
+local my_local_variable = 3;  -- local variables are snake_case
+                              -- local variables are defined as module-local variable
+                              -- local variables are useful for GameObject internal stuff you do not want to expose
+                              -- try to keep them either on the top of the file / top of the function where they are used
 
--- constructor must be public
--- if there is a collision between constructor parameters and public attributes, use _G to disambiguate
-function _init(a, b)
-  _private_object_attribute = a + b;
-  _G.a = a;
-  _G.b = b;
-end
+public_variable = 10;         -- global variables are NOT recommended
+                              -- they will not be shared across GameObjects (scoped to the GameObject environment)
+                              -- if you want other GameObjects to access a value, either :
+                                  -- make it a GameObject attribute / public method
+                                  -- put it in the Global object (recommended for debugging purpose only)
+                                  -- create a GameObject dedicated to value sharing
+                                  -- do you really need to share the value in the first place ? (see events)
 
--- private method is snake_case
+local my_variable_used_only_in_do_something_function = 0;
+
+-- private function is snake_case
+-- used for GameObject mechanisms you do not want to expose
+-- try to keep them on top of the file / close to the place where they are useful
 local function do_something()
-  return _private_object_attribute + a;
+  my_variable_used_only_in_do_something_function = my_variable_used_only_in_do_something_function + 1;
+  -- if you need to access a GameObject attribute in a function that is not a method, just use the GameObject handle (here SampleObject)
+  return my_local_variable + SampleObject.a;
 end
 
--- public method is snake_case
+function SampleObject:init(a, b)
+  -- internal variable, won't be able to be read from outside
+  my_local_variable = a + b;
+  -- public attribute, will be accessible as SampleObject.a
+  self.a = a;
+  -- private attribute, still accessible as SampleObject._b but private "by convention"
+  self._b = b;
+end
+
+-- public functions are NOT recommended
+-- see global variables comments above for more details
 function do_something_in_public()
   return a + b;
+end
+
+function Event.Game.Update(evt)
+  -- Like in non-method functions, to access SampleObject attributes, just use its handle
+  SampleObject._b = SampleObject._b + evt.dt;
 end
 ```

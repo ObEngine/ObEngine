@@ -2,8 +2,8 @@ local function realpath(path)
     return obe.system.Path(path):find():hypothetical_path();
 end
 
--- UPL stands for Unpatched Lua Functions
-UPL = {
+-- ULF stands for Unpatched Lua Functions
+__ULF = {
     io = {
         open = io.open,
         popen = io.popen,
