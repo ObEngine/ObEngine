@@ -33,16 +33,42 @@ namespace obe::collision
         m_collider = new_collider;
     }
 
+    vili::node ColliderComponent::dump_capsule() const
+    {
+        return vili::object {};
+    }
+
+    vili::node ColliderComponent::dump_circle() const
+    {
+        const float radius = std::get<CircleCollider>(m_collider).get_radius();
+        return vili::object { { "type", "Circle" }, { "radius", radius } };
+    }
+
+    vili::node ColliderComponent::dump_polygon() const
+    {
+        const transform::Polygon polygon = std::get<PolygonCollider>(m_collider).get_polygon();
+        const auto points = polygon.get_all_points();
+        vili::array points_dump = {};
+        for (const auto& point : points)
+        {
+            points_dump.push_back(vili::object { { "x", point.x }, { "y", point.y } });
+        }
+        return vili::object { { "type", "Polygon" }, { "points", points_dump } };
+    }
+
+    vili::node ColliderComponent::dump_rectangle() const
+    {
+        const transform::UnitVector size = std::get<RectangleCollider>(m_collider).get_size();
+        return vili::object { { "type", "Rectangle" }, { "width", size.x }, { "height", size.y } };
+    }
+
     vili::node ColliderComponent::schema() const
     {
-        return vili::object {
-            { "x", vili::object { { "type", vili::number_typename } } },
+        return vili::object { { "x", vili::object { { "type", vili::number_typename } } },
             { "y", vili::object { { "type", vili::number_typename } } },
-            { "type", vili::object {
-                { "type", vili::string_typename },
-                { "values", vili::array { "Capsule", "Circle", "Polygon", "Rectangle" } }
-            } }
-        };
+            { "type",
+                vili::object { { "type", vili::string_typename },
+                    { "values", vili::array { "Capsule", "Circle", "Polygon", "Rectangle" } } } } };
     }
 
     ColliderComponent::ColliderComponent(const std::string& id)
@@ -52,7 +78,40 @@ namespace obe::collision
 
     vili::node ColliderComponent::dump() const
     {
-        return vili::node {};
+        vili::node collider_dump;
+        if (std::holds_alternative<CapsuleCollider>(m_collider))
+        {
+            collider_dump = dump_capsule();
+        }
+        else if (std::holds_alternative<CircleCollider>(m_collider))
+        {
+            collider_dump = dump_circle();
+        }
+        else if (std::holds_alternative<PolygonCollider>(m_collider))
+        {
+            collider_dump = dump_polygon();
+        }
+        else if (std::holds_alternative<RectangleCollider>(m_collider))
+        {
+            collider_dump = dump_rectangle();
+        }
+        else
+        {
+            throw exceptions::InvalidColliderComponentType(m_id, "?", EXC_INFO);
+        }
+
+        std::visit(
+            [&collider_dump](auto&& collider)
+            {
+                const auto& position = collider.get_position();
+                const std::string& tag = collider.get_tag();
+                collider_dump.insert("x", position.x);
+                collider_dump.insert("y", position.y);
+                collider_dump.insert("tag", tag);
+            },
+            m_collider);
+
+        return collider_dump;
     }
 
     void ColliderComponent::load(const vili::node& data)
@@ -65,7 +124,7 @@ namespace obe::collision
             tag = data.at("tag");
         }
         const std::string collider_type_str = data.at("type");
-            
+
         switch (ColliderTypeMeta::from_string(collider_type_str))
         {
         case ColliderType::Capsule:
@@ -83,13 +142,13 @@ namespace obe::collision
         case ColliderType::Collider:
             throw exceptions::InvalidColliderComponentType(m_id, collider_type_str, EXC_INFO);
         }
-        std::visit([x, y, tag](auto&& collider)
+        std::visit(
+            [x, y, tag](auto&& collider)
             {
                 collider.set_position(transform::UnitVector(x, y));
                 collider.set_tag(tag);
-            }
-            , m_collider
-        );
+            },
+            m_collider);
     }
 
     ColliderType ColliderComponent::get_collider_type() const
@@ -120,9 +179,8 @@ namespace obe::collision
 
     Collider* ColliderComponent::get_inner_collider()
     {
-        Collider* collider = std::visit([](auto& collider_variant) -> Collider*
-            { return &collider_variant; },
-            m_collider);
+        Collider* collider = std::visit(
+            [](auto& collider_variant) -> Collider* { return &collider_variant; }, m_collider);
         return collider;
     }
 
