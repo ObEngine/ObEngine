@@ -187,7 +187,7 @@ function Functions.import(path)
     local absolute_path = absolute_path_lookup:path();
     local tilemap_path = obe.system.Path(absolute_path);
     print(("Converting LDtk map at path '%s'"):format(tilemap_path:to_string()));
-    local tilemap_fd = io.open(tilemap_path:to_string(), "r");
+    local tilemap_fd <close> = io.open(tilemap_path:to_string(), "r");
     if not tilemap_fd then
         Color.print({
             { text = "Could not open LDtk map at path '", color = Style.Error},

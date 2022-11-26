@@ -26,7 +26,8 @@ namespace obe::graphics::canvas
         Text,
         Circle,
         Polygon,
-        Bezier
+        Bezier,
+        NinePatch
     };
 
     using CanvasElementTypeMeta = types::SmartEnum<CanvasElementType>;
@@ -244,6 +245,24 @@ namespace obe::graphics::canvas
     };
 
     /**
+     * \brief A NinePatch sprite
+     */
+    class NinePatch : public CanvasPositionable
+    {
+    public:
+        static constexpr CanvasElementType Type = CanvasElementType::NinePatch;
+
+        shapes::NinePatch shape;
+
+        explicit NinePatch(Canvas& parent, const std::string& id);
+        /**
+         * \brief Draw the NinePatch sprite
+         * \param target Target where to draw the Sprite to
+         */
+        void draw(RenderTarget target) override;
+    };
+
+    /**
      * \brief A Canvas where you can draw CanvasElements
      * \helper{obe://Lib/Internal/Canvas.lua}
      */
@@ -278,6 +297,7 @@ namespace obe::graphics::canvas
          * \thint{Circle, T=obe::graphics::canvas::Circle}
          * \thint{Polygon, T=obe::graphics::canvas::Polygon}
          * \thint{Bezier, T=obe::graphics::canvas::Bezier}
+         * \thint{NinePatch, T=obe::graphics::canvas::NinePatch}
          * \endthints
          *
          */

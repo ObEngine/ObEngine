@@ -190,6 +190,7 @@ namespace obe::graphics
         void set_texture(const Texture& texture);
         void set_texture_rect(
             unsigned int x, unsigned int y, unsigned int width, unsigned int height);
+        void set_texture(const TexturePart& texture);
         /**
          * \brief Set the translation origin of the Sprite
          * \param x x Coordinate of the new translation origin of the Sprite

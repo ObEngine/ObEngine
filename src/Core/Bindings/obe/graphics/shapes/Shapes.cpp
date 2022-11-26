@@ -47,6 +47,35 @@ namespace obe::graphics::shapes::bindings
         bind_circle["get_radius"] = &obe::graphics::shapes::Circle::get_radius;
         bind_circle["shape"] = &obe::graphics::shapes::Circle::shape;
     }
+    void load_class_nine_patch(sol::state_view state)
+    {
+        sol::table shapes_namespace = state["obe"]["graphics"]["shapes"].get<sol::table>();
+        sol::usertype<obe::graphics::shapes::NinePatch> bind_nine_patch
+            = shapes_namespace.new_usertype<obe::graphics::shapes::NinePatch>("NinePatch",
+                sol::call_constructor, sol::constructors<obe::graphics::shapes::NinePatch()>(),
+                sol::base_classes,
+                sol::bases<obe::graphics::shapes::BaseShape<obe::graphics::shapes::NinePatch>>());
+        bind_nine_patch["set_position"] = &obe::graphics::shapes::NinePatch::set_position;
+        bind_nine_patch["get_local_bounds"] = &obe::graphics::shapes::NinePatch::get_local_bounds;
+        bind_nine_patch["get_global_bounds"] = &obe::graphics::shapes::NinePatch::get_global_bounds;
+        bind_nine_patch["set_rotation"] = &obe::graphics::shapes::NinePatch::set_rotation;
+        bind_nine_patch["set_scale"] = &obe::graphics::shapes::NinePatch::set_scale;
+        bind_nine_patch["set_origin"] = &obe::graphics::shapes::NinePatch::set_origin;
+        bind_nine_patch["get_position"] = &obe::graphics::shapes::NinePatch::get_position;
+        bind_nine_patch["get_rotation"] = &obe::graphics::shapes::NinePatch::get_rotation;
+        bind_nine_patch["get_scale"] = &obe::graphics::shapes::NinePatch::get_scale;
+        bind_nine_patch["get_origin"] = &obe::graphics::shapes::NinePatch::get_origin;
+        bind_nine_patch["move"] = &obe::graphics::shapes::NinePatch::move;
+        bind_nine_patch["rotate"] = &obe::graphics::shapes::NinePatch::rotate;
+        bind_nine_patch["scale"] = &obe::graphics::shapes::NinePatch::scale;
+        bind_nine_patch["draw"] = &obe::graphics::shapes::NinePatch::draw;
+        bind_nine_patch["set_texture"] = &obe::graphics::shapes::NinePatch::set_texture;
+        bind_nine_patch["get_size"] = &obe::graphics::shapes::NinePatch::get_size;
+        bind_nine_patch["set_size"] = &obe::graphics::shapes::NinePatch::set_size;
+        bind_nine_patch["set_fill_color"] = &obe::graphics::shapes::NinePatch::set_fill_color;
+        bind_nine_patch["get_fill_color"] = &obe::graphics::shapes::NinePatch::get_fill_color;
+        bind_nine_patch["shape"] = &obe::graphics::shapes::NinePatch::shape;
+    }
     void load_class_polygon(sol::state_view state)
     {
         sol::table shapes_namespace = state["obe"]["graphics"]["shapes"].get<sol::table>();

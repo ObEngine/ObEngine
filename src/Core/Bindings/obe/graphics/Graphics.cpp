@@ -2,11 +2,13 @@
 
 #include <Graphics/Color.hpp>
 #include <Graphics/Font.hpp>
+#include <Graphics/NinePatch.hpp>
 #include <Graphics/PositionTransformers.hpp>
 #include <Graphics/RenderTarget.hpp>
 #include <Graphics/Renderable.hpp>
 #include <Graphics/Shader.hpp>
 #include <Graphics/Sprite.hpp>
+#include <Graphics/Spritesheet.hpp>
 #include <Graphics/Text.hpp>
 #include <Graphics/Texture.hpp>
 
@@ -258,6 +260,44 @@ namespace obe::graphics::bindings
         bind_font["load_from_file"] = &obe::graphics::Font::load_from_file;
         bind_font[sol::meta_function::equal_to] = &obe::graphics::Font::operator==;
     }
+    void load_class_nine_patch(sol::state_view state)
+    {
+        sol::table graphics_namespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::NinePatch> bind_nine_patch
+            = graphics_namespace.new_usertype<obe::graphics::NinePatch>("NinePatch",
+                sol::call_constructor, sol::constructors<obe::graphics::NinePatch()>());
+        bind_nine_patch["set_texture"] = sol::overload(
+            [](obe::graphics::NinePatch* self, const sf::Texture& texture) -> void {
+                return self->set_texture(texture);
+            },
+            [](obe::graphics::NinePatch* self, const sf::Texture& texture,
+                bool reset_size) -> void { return self->set_texture(texture, reset_size); },
+            [](obe::graphics::NinePatch* self, const sf::Texture& texture, bool reset_size,
+                bool reset_rect) -> void {
+                return self->set_texture(texture, reset_size, reset_rect);
+            },
+            static_cast<void (obe::graphics::NinePatch::*)()>(
+                &obe::graphics::NinePatch::set_texture));
+        bind_nine_patch["get_size"] = &obe::graphics::NinePatch::get_size;
+        bind_nine_patch["set_size"] = &obe::graphics::NinePatch::set_size;
+        bind_nine_patch["reset_size"] = &obe::graphics::NinePatch::reset_size;
+        bind_nine_patch["set_texture_rect"] = sol::overload(
+            [](obe::graphics::NinePatch* self, sf::IntRect texture_rectangle) -> void {
+                return self->set_texture_rect(texture_rectangle);
+            },
+            [](obe::graphics::NinePatch* self, sf::IntRect texture_rectangle, bool reset_size)
+                -> void { return self->set_texture_rect(texture_rectangle, reset_size); });
+        bind_nine_patch["set_color"] = &obe::graphics::NinePatch::set_color;
+        bind_nine_patch["get_color"] = &obe::graphics::NinePatch::get_color;
+        bind_nine_patch["getLocalBounds"] = &obe::graphics::NinePatch::getLocalBounds;
+        bind_nine_patch["getGlobalBounds"] = &obe::graphics::NinePatch::getGlobalBounds;
+        bind_nine_patch["get_local_content_area"]
+            = &obe::graphics::NinePatch::get_local_content_area;
+        bind_nine_patch["get_global_content_area"]
+            = &obe::graphics::NinePatch::get_global_content_area;
+        bind_nine_patch["is_point_inside_transformed_content_area"]
+            = &obe::graphics::NinePatch::is_point_inside_transformed_content_area;
+    }
     void load_class_position_transformer(sol::state_view state)
     {
         sol::table graphics_namespace = state["obe"]["graphics"].get<sol::table>();
@@ -391,7 +431,11 @@ namespace obe::graphics::bindings
         bind_sprite["set_rotation_origin"] = &obe::graphics::Sprite::set_rotation_origin;
         bind_sprite["set_scaling_origin"] = &obe::graphics::Sprite::set_scaling_origin;
         bind_sprite["set_shader"] = &obe::graphics::Sprite::set_shader;
-        bind_sprite["set_texture"] = &obe::graphics::Sprite::set_texture;
+        bind_sprite["set_texture"] = sol::overload(
+            static_cast<void (obe::graphics::Sprite::*)(const obe::graphics::Texture&)>(
+                &obe::graphics::Sprite::set_texture),
+            static_cast<void (obe::graphics::Sprite::*)(const obe::graphics::TexturePart&)>(
+                &obe::graphics::Sprite::set_texture));
         bind_sprite["set_texture_rect"] = &obe::graphics::Sprite::set_texture_rect;
         bind_sprite["set_translation_origin"] = &obe::graphics::Sprite::set_translation_origin;
         bind_sprite["set_anti_aliasing"] = &obe::graphics::Sprite::set_anti_aliasing;
@@ -415,6 +459,18 @@ namespace obe::graphics::bindings
         bind_sprite_handle_point["set_position"] = &obe::graphics::SpriteHandlePoint::set_position;
         bind_sprite_handle_point["m_dp"] = &obe::graphics::SpriteHandlePoint::m_dp;
         bind_sprite_handle_point["radius"] = sol::var(&obe::graphics::SpriteHandlePoint::radius);
+    }
+    void load_class_spritesheet(sol::state_view state)
+    {
+        sol::table graphics_namespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::Spritesheet> bind_spritesheet
+            = graphics_namespace.new_usertype<obe::graphics::Spritesheet>("Spritesheet",
+                sol::call_constructor, sol::default_constructor, sol::base_classes,
+                sol::bases<obe::types::Serializable>());
+        bind_spritesheet["schema"] = &obe::graphics::Spritesheet::schema;
+        bind_spritesheet["dump"] = &obe::graphics::Spritesheet::dump;
+        bind_spritesheet["load"] = &obe::graphics::Spritesheet::load;
+        bind_spritesheet["get_texture"] = &obe::graphics::Spritesheet::get_texture;
     }
     void load_class_svg_texture(sol::state_view state)
     {
@@ -476,7 +532,20 @@ namespace obe::graphics::bindings
         bind_texture["use_count"] = &obe::graphics::Texture::use_count;
         bind_texture["is_vector"] = &obe::graphics::Texture::is_vector;
         bind_texture["is_bitmap"] = &obe::graphics::Texture::is_bitmap;
+        bind_texture["make_texture_part"] = &obe::graphics::Texture::make_texture_part;
         bind_texture["make_shared_texture"] = &obe::graphics::Texture::make_shared_texture;
+    }
+    void load_class_texture_part(sol::state_view state)
+    {
+        sol::table graphics_namespace = state["obe"]["graphics"].get<sol::table>();
+        sol::usertype<obe::graphics::TexturePart> bind_texture_part
+            = graphics_namespace.new_usertype<obe::graphics::TexturePart>("TexturePart",
+                sol::call_constructor,
+                sol::constructors<obe::graphics::TexturePart(
+                    const obe::graphics::Texture&, obe::transform::AABB)>());
+        bind_texture_part["get_texture"] = &obe::graphics::TexturePart::get_texture;
+        bind_texture_part["get_texture_rect"] = &obe::graphics::TexturePart::get_texture_rect;
+        bind_texture_part["get_size"] = &obe::graphics::TexturePart::get_size;
     }
     void load_class_hsv(sol::state_view state)
     {

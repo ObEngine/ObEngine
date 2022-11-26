@@ -172,6 +172,16 @@ namespace obe::graphics::canvas
         target.draw(vertices.data(), maximum, sf::LineStrip);
     }
 
+    NinePatch::NinePatch(Canvas& parent, const std::string& id)
+        : CanvasPositionable(parent, id)
+    {
+    }
+
+    void NinePatch::draw(RenderTarget target)
+    {
+        target.draw(shape);
+    }
+
     void Canvas::sort_elements()
     {
         std::sort(m_elements.begin(), m_elements.end(),

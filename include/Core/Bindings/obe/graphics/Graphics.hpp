@@ -9,6 +9,7 @@ namespace obe::graphics::bindings
     void load_class_color(sol::state_view state);
     void load_class_editor_sprite(sol::state_view state);
     void load_class_font(sol::state_view state);
+    void load_class_nine_patch(sol::state_view state);
     void load_class_position_transformer(sol::state_view state);
     void load_class_render_target(sol::state_view state);
     void load_class_renderable(sol::state_view state);
@@ -16,9 +17,11 @@ namespace obe::graphics::bindings
     void load_class_shader(sol::state_view state);
     void load_class_sprite(sol::state_view state);
     void load_class_sprite_handle_point(sol::state_view state);
+    void load_class_spritesheet(sol::state_view state);
     void load_class_svg_texture(sol::state_view state);
     void load_class_text(sol::state_view state);
     void load_class_texture(sol::state_view state);
+    void load_class_texture_part(sol::state_view state);
     void load_class_hsv(sol::state_view state);
     void load_enum_color_type(sol::state_view state);
     void load_enum_sprite_handle_point_type(sol::state_view state);

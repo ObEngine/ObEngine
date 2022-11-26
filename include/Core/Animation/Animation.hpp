@@ -152,7 +152,7 @@ namespace obe::animation
          * \brief Get the current Texture displayed by the Animation
          * \return A reference to the currently displayed Texture
          */
-        const graphics::Texture& get_texture() const;
+        const graphics::TexturePart& get_texture() const;
         /**
          * \brief Return whether the Animation is over or not
          * \return true if the Animation is over, false otherwise
@@ -188,6 +188,7 @@ namespace obe::animation
         std::vector<vili::node> m_code;
 
         std::vector<graphics::Texture> m_textures;
+        std::vector<graphics::TexturePart> m_frames;
 
         AnimationPlayMode m_play_mode = AnimationPlayMode::OneTime;
 
@@ -196,11 +197,11 @@ namespace obe::animation
 
         int m_priority = 0;
 
-        [[nodiscard]] vili::node schema() const override;
-
-        void load_images(const vili::node& images);
+        void load_source(const vili::node& source);
         void load_groups(const vili::node& groups);
         void load_code(const vili::node& code);
+
+        [[nodiscard]] const graphics::Texture& load_texture(const std::string& local_path);
 
         friend class AnimationState;
 
@@ -293,13 +294,13 @@ namespace obe::animation
          * \brief Get the current Texture displayed by the Animation
          * \return A reference to the currently displayed Texture
          */
-        [[nodiscard]] const graphics::Texture& get_current_texture() const;
+        [[nodiscard]] const graphics::TexturePart& get_current_texture() const;
         /**
          * \brief Get the texture used in the Animation at the specified index
          * \param index Index of the texture to return.
          * \return A reference to the Texture at the given index
          */
-        [[nodiscard]] const graphics::Texture& get_texture_at_index(int index);
+        [[nodiscard]] const graphics::TexturePart& get_texture_at_index(int index);
         /**
          * \brief Return whether the Animation is over or not
          * \return true if the Animation is over, false otherwise
@@ -328,5 +329,6 @@ namespace obe::animation
 
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;
+        [[nodiscard]] vili::node schema() const override;
     };
 } // namespace obe::animation

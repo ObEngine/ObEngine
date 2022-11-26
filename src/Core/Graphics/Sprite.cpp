@@ -182,6 +182,13 @@ namespace obe::graphics
         m_sprite.setTextureRect(sf::IntRect(x, y, width, height));
     }
 
+    void Sprite::set_texture(const TexturePart& texture)
+    {
+        this->set_texture(texture.get_texture());
+        const transform::AABB& rect = texture.get_texture_rect();
+        this->set_texture_rect(rect.x(), rect.y(), rect.width(), rect.height());
+    }
+
     const graphics::Texture& Sprite::get_texture() const
     {
         return m_texture;

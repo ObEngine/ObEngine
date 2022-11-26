@@ -17,7 +17,8 @@ namespace obe::graphics::canvas::bindings
                 { "Text", obe::graphics::canvas::CanvasElementType::Text },
                 { "Circle", obe::graphics::canvas::CanvasElementType::Circle },
                 { "Polygon", obe::graphics::canvas::CanvasElementType::Polygon },
-                { "Bezier", obe::graphics::canvas::CanvasElementType::Bezier } });
+                { "Bezier", obe::graphics::canvas::CanvasElementType::Bezier },
+                { "NinePatch", obe::graphics::canvas::CanvasElementType::NinePatch } });
     }
     void load_enum_text_horizontal_align(sol::state_view state)
     {
@@ -80,6 +81,10 @@ namespace obe::graphics::canvas::bindings
             &obe::graphics::canvas::Canvas::add);
         ;
         bind_canvas["Bezier"] = static_cast<obe::graphics::canvas::Bezier& (
+            obe::graphics::canvas::Canvas::*)(const std::string&)>(
+            &obe::graphics::canvas::Canvas::add);
+        ;
+        bind_canvas["NinePatch"] = static_cast<obe::graphics::canvas::NinePatch& (
             obe::graphics::canvas::Canvas::*)(const std::string&)>(
             &obe::graphics::canvas::Canvas::add);
         ;
@@ -149,6 +154,22 @@ namespace obe::graphics::canvas::bindings
         bind_line["p1_color"] = &obe::graphics::canvas::Line::p1_color;
         bind_line["p2_color"] = &obe::graphics::canvas::Line::p2_color;
         bind_line["Type"] = sol::var(&obe::graphics::canvas::Line::Type);
+    }
+    void load_class_nine_patch(sol::state_view state)
+    {
+        sol::table canvas_namespace = state["obe"]["graphics"]["canvas"].get<sol::table>();
+        sol::usertype<obe::graphics::canvas::NinePatch> bind_nine_patch
+            = canvas_namespace.new_usertype<obe::graphics::canvas::NinePatch>("NinePatch",
+                sol::call_constructor,
+                sol::constructors<obe::graphics::canvas::NinePatch(
+                    obe::graphics::canvas::Canvas&, const std::string&)>(),
+                sol::base_classes,
+                sol::bases<obe::graphics::canvas::CanvasPositionable,
+                    obe::graphics::canvas::CanvasElement, obe::types::ProtectedIdentifiable,
+                    obe::types::Identifiable>());
+        bind_nine_patch["draw"] = &obe::graphics::canvas::NinePatch::draw;
+        bind_nine_patch["shape"] = &obe::graphics::canvas::NinePatch::shape;
+        bind_nine_patch["Type"] = sol::var(&obe::graphics::canvas::NinePatch::Type);
     }
     void load_class_polygon(sol::state_view state)
     {

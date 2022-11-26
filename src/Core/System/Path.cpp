@@ -1,6 +1,7 @@
 #include <Debug/Logger.hpp>
 #include <System/Path.hpp>
 #include <Utils/FileUtils.hpp>
+#include <Utils/VectorUtils.hpp>
 
 namespace obe::system
 {
@@ -228,6 +229,12 @@ namespace obe::system
     {
         std::vector<std::string> split_path = utils::string::split(m_path, "/");
         return split_path.back();
+    }
+
+    Path Path::parent() const
+    {
+        std::vector<std::string> split_path = utils::string::split(m_path, "/");
+        return Path(utils::vector::join(split_path, "/", 0, 1));
     }
 
     Path Path::get_path(const std::size_t index) const

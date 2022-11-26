@@ -189,6 +189,7 @@ namespace obe::bindings
         obe::graphics::bindings::load_class_color(state);
         obe::graphics::bindings::load_class_editor_sprite(state);
         obe::graphics::bindings::load_class_font(state);
+        obe::graphics::bindings::load_class_nine_patch(state);
         obe::graphics::bindings::load_class_position_transformer(state);
         obe::graphics::bindings::load_class_render_target(state);
         obe::graphics::bindings::load_class_renderable(state);
@@ -196,9 +197,11 @@ namespace obe::bindings
         obe::graphics::bindings::load_class_shader(state);
         obe::graphics::bindings::load_class_sprite(state);
         obe::graphics::bindings::load_class_sprite_handle_point(state);
+        obe::graphics::bindings::load_class_spritesheet(state);
         obe::graphics::bindings::load_class_svg_texture(state);
         obe::graphics::bindings::load_class_text(state);
         obe::graphics::bindings::load_class_texture(state);
+        obe::graphics::bindings::load_class_texture_part(state);
         obe::graphics::bindings::load_class_hsv(state);
         obe::graphics::bindings::load_enum_color_type(state);
         obe::graphics::bindings::load_enum_sprite_handle_point_type(state);
@@ -214,6 +217,7 @@ namespace obe::bindings
         obe::graphics::canvas::bindings::load_class_canvas_positionable(state);
         obe::graphics::canvas::bindings::load_class_circle(state);
         obe::graphics::canvas::bindings::load_class_line(state);
+        obe::graphics::canvas::bindings::load_class_nine_patch(state);
         obe::graphics::canvas::bindings::load_class_polygon(state);
         obe::graphics::canvas::bindings::load_class_rectangle(state);
         obe::graphics::canvas::bindings::load_class_text(state);
@@ -221,6 +225,7 @@ namespace obe::bindings
         obe::graphics::canvas::bindings::load_enum_text_horizontal_align(state);
         obe::graphics::canvas::bindings::load_enum_text_vertical_align(state);
         obe::graphics::shapes::bindings::load_class_circle(state);
+        obe::graphics::shapes::bindings::load_class_nine_patch(state);
         obe::graphics::shapes::bindings::load_class_polygon(state);
         obe::graphics::shapes::bindings::load_class_rectangle(state);
         obe::graphics::shapes::bindings::load_class_text(state);

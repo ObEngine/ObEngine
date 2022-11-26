@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <string>
+#include <tuple>
 #include <variant>
 
 #include <lunasvg.h>
@@ -57,6 +58,8 @@ namespace obe::graphics
     using TextureWrapper
         = std::variant<sf::Texture, std::shared_ptr<sf::Texture>, const sf::Texture*, SvgTexture>;
 
+    class TexturePart;
+
     class Texture
     {
     private:
@@ -103,5 +106,22 @@ namespace obe::graphics
         Texture& operator=(const Texture& copy);
         Texture& operator=(const sf::Texture& texture);
         Texture& operator=(std::shared_ptr<sf::Texture> texture);
+
+        TexturePart make_texture_part() const;
+    };
+
+    class TexturePart
+    {
+    private:
+        const Texture& m_texture;
+        transform::AABB m_rect;
+
+    public:
+        TexturePart(const Texture& texture, transform::AABB rect);
+
+        [[nodiscard]] const Texture& get_texture() const;
+        [[nodiscard]] const transform::AABB& get_texture_rect() const;
+
+        [[nodiscard]] transform::UnitVector get_size() const;
     };
 } // namespace obe::graphics

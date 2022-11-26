@@ -170,4 +170,36 @@ namespace obe::graphics::shapes
     {
         target.draw(shape, states);
     }
+
+    void NinePatch::set_texture(const Texture& texture)
+    {
+        shape.set_texture(texture);
+    }
+
+    transform::UnitVector NinePatch::get_size() const
+    {
+        const sf::Vector2f pixel_size = shape.get_size();
+        return transform::UnitVector(pixel_size.x, pixel_size.y, transform::Units::ScenePixels);
+    }
+
+    void NinePatch::set_size(const transform::UnitVector& size)
+    {
+        auto px_size = size.to<transform::Units::ScenePixels>();
+        shape.set_size(sf::Vector2f(px_size.x, px_size.y));
+    }
+
+    void NinePatch::set_fill_color(const Color& color)
+    {
+        shape.set_color(color);
+    }
+
+    [[nodiscard]] Color NinePatch::get_fill_color() const
+    {
+        return shape.get_color();
+    }
+
+    void NinePatch::draw(sf::RenderTarget& target, sf::RenderStates states) const
+    {
+        target.draw(shape, states);
+    }
 }

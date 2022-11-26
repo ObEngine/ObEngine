@@ -62,7 +62,11 @@ function vili.to_file(path, tbl, dump_options)
     local node = vili.from_lua(tbl);
     local dump = vili.writer.dump(node, dump_options);
     local dumpfile<close> = io.open(path, "w");
-    dumpfile:write(dump);
+    if dumpfile then
+        dumpfile:write(dump);
+    else
+        error(("error while attempting to write file '%s'"):format(path));
+    end
 end
 
 function vili.to_msgpack(data)

@@ -317,4 +317,31 @@ namespace obe::graphics
         m_texture = texture;
         return *this;
     }
+
+    TexturePart Texture::make_texture_part() const
+    {
+        auto size = this->get_size();
+        return TexturePart(*this, transform::AABB(transform::UnitVector(0, 0), size));
+    }
+
+    TexturePart::TexturePart(const Texture& texture, transform::AABB rect)
+        : m_texture(texture)
+        , m_rect(rect)
+    {
+    }
+
+    const Texture& TexturePart::get_texture() const
+    {
+        return m_texture;
+    }
+
+    const transform::AABB& TexturePart::get_texture_rect() const
+    {
+        return m_rect;
+    }
+
+    transform::UnitVector TexturePart::get_size() const
+    {
+        return m_rect.get_size();
+    }
 } //namespace obe::graphics

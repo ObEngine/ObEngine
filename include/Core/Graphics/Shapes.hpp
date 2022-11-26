@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Graphics/Color.hpp>
+#include <Graphics/NinePatch.hpp>
 #include <Graphics/Text.hpp>
 #include <Graphics/Texture.hpp>
 #include <SFML/Graphics/CircleShape.hpp>
@@ -412,6 +413,28 @@ namespace obe::graphics::shapes
 
         unsigned int get_character_size() const;
         void set_character_size(unsigned int size);
+
+        void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
+    };
+
+    /**
+     * \brief NinePatch Shape
+     * \copyparentitems
+     */
+    class NinePatch : public BaseShape<NinePatch>
+    {
+    public:
+        obe::graphics::NinePatch shape;
+
+        NinePatch() = default;
+
+        void set_texture(const Texture& texture);
+
+        [[nodiscard]] transform::UnitVector get_size() const;
+        void set_size(const transform::UnitVector& size);
+
+        void set_fill_color(const Color& color);
+        [[nodiscard]] Color get_fill_color() const;
 
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     };

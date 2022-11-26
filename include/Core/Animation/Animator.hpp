@@ -82,7 +82,7 @@ namespace obe::animation
         void reset();
         [[nodiscard]] graphics::Sprite* get_target() const;
         [[nodiscard]] AnimationState* get_current_animation() const;
-        [[nodiscard]] const graphics::Texture& get_current_texture() const;
+        [[nodiscard]] const graphics::TexturePart& get_current_texture() const;
         [[nodiscard]] const Animator& get_animator() const;
     };
 
@@ -131,7 +131,7 @@ namespace obe::animation
          * \return A reference to the texture currently played by the current
          *         Animation
          */
-        [[nodiscard]] const graphics::Texture& get_current_texture() const;
+        [[nodiscard]] const graphics::TexturePart& get_current_texture() const;
         /**
          * \brief Loads the Animator
          *        It will also load all the Animation contained in the Animator.

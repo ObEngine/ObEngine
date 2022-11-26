@@ -115,6 +115,7 @@ namespace obe::system
          * \return The last part of the Path (terminal directory)
          */
         [[nodiscard]] std::string last() const;
+        [[nodiscard]] Path parent() const;
         /**
          * \brief Build a path using the current path and the BasePath at given
          *        index

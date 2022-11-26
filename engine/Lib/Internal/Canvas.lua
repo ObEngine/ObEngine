@@ -454,6 +454,8 @@ SHAPE_SCHEMAS.Shape = make_reactive {
                 if type(outline.thickness) == "number" then
                     self.shape:set_outline_thickness(outline.thickness);
                 end
+            else
+                error("Invalid argument #1 to 'outline' (table expected, got " .. type(outline) .. ")");
             end
         end,
         color = function(self, color)
@@ -743,6 +745,39 @@ SHAPE_SCHEMAS.Text = make_reactive {
     }
 }
 
+SHAPE_SCHEMAS.NinePatch = make_reactive {
+    type = "NinePatch",
+    bases = {SHAPE_SCHEMAS.Shape},
+    priority = {"unit"},
+    getters = {
+        width = function(self)
+            return self.shape:get_size():to(self.position.unit).x;
+        end,
+        height = function(self)
+            return self.shape:get_size():to(self.position.unit).y;
+        end,
+    },
+    setters = {
+        width = function(self, width)
+            local size = self.shape:get_size():to(self.position.unit);
+            size.x = width;
+            self.shape:set_size(size);
+        end,
+        height = function(self, height)
+            local size = self.shape:get_size():to(self.position.unit);
+            size.y = height;
+            self.shape:set_size(size);
+        end,
+        texture = function(self, texture)
+            if type(texture) == "string" then
+                self.shape:set_texture(Engine.Resources:get_texture(obe.system.Path(texture)));
+            else
+                error("not implemented");
+            end
+        end
+    }
+}
+
 function obe.canvas.Canvas:_generate_id(id)
     if type(id) == "string" and self.internal:get(id) ~= nil then
         error(("CanvasElement '%s' already exists !"):format(id));
@@ -788,6 +823,12 @@ end
 function obe.canvas.Canvas:Bezier(id)
     id = self:_generate_id(id);
     self.elements[id] = SHAPE_SCHEMAS.Bezier(self.internal:Bezier(id));
+    return self.elements[id];
+end
+
+function obe.canvas.Canvas:NinePatch(id)
+    id = self:_generate_id(id);
+    self.elements[id] = SHAPE_SCHEMAS.NinePatch(self.internal:NinePatch(id));
     return self.elements[id];
 end
 

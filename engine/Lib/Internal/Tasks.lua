@@ -75,10 +75,10 @@ function TaskManagerContext:wait_for(condition, ...)
             -- Events in hook form
             return self:wait_for(condition_mt.event_id, ...);
         else
-            error("unsupported wait_for condition");
+            error(("unsupported arbitrary table for wait_for condition (%s)"):format(condition));
         end
     else
-        error("unsupported wait_for condition");
+        error(("unsupported type for wait_for condition (%s)"):format(type(condition)));
     end
 
     return coroutine.yield(co)
@@ -95,11 +95,19 @@ function TaskInstance:_init(task)
     self.co = coroutine.create(self.task.func);
     self.on_complete_callbacks = {};
     self.on_clean_callbacks = {};
+    self.on_resume_behaviour = nil;
     self.task.task_manager.tasks[self.co] = self;
 end
 
 function TaskInstance:__call(...)
     return self.task.task_manager:_resume(self, ...)
+end
+
+function TaskInstance:set_resume_behaviour(behaviour)
+    if type(behaviour) ~= "function" then
+        error(("argument #1: behaviour must be a function (got %s)"):format(type(behaviour)));
+    end
+    self.on_resume_behaviour = behaviour;
 end
 
 function TaskInstance:on_complete(callback)
@@ -120,6 +128,13 @@ function TaskInstance:complete()
     for _, on_complete_func in pairs(self.on_complete_callbacks) do
         on_complete_func(self);
     end
+end
+
+function TaskInstance:resume(...)
+    if self.on_resume_behaviour then
+        return self.on_resume_behaviour(self, ...);
+    end
+    return coroutine.resume(self.co, self.task.task_manager.ctx, ...)
 end
 
 -- Task
@@ -191,7 +206,7 @@ function TaskManager:_create_or_delete_pump()
 end
 
 function TaskManager:_resume(task, ...)
-    local results = {coroutine.resume(task.co, self.ctx, ...)};
+    local results = {task:resume(...)};
     local ok = results[1];
     if not ok then
         local err = results[2];

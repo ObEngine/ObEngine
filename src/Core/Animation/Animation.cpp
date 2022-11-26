@@ -190,30 +190,31 @@ namespace obe::animation
             m_parent.m_name, group_name, m_parent.get_all_animation_groups_names(), EXC_INFO);
     }
 
-    void Animation::load_images(const vili::node& images)
+    void Animation::load_source(const vili::node& source)
     {
-        for (auto& image : images)
+        if (source.contains("images"))
         {
-            std::string texture_name = image;
-            debug::Log->trace("    <animation> Loading image '{}'", texture_name);
-
-            std::string path_to_texture = m_path.add(texture_name).to_string();
-            debug::Log->trace("    <animation> Found Texture Path at '{}'", path_to_texture);
-            if (m_resource_manager)
+            for (auto& image : source.at("images"))
             {
-                debug::Log->trace(
-                    "    <animation> Loading Texture {0} (using ResourceManager)", texture_name);
-                m_textures.emplace_back(
-                    m_resource_manager->get_texture(m_path.add(texture_name), m_anti_aliasing));
+                const graphics::Texture& texture = this->load_texture(image);
+                m_frames.push_back(texture.make_texture_part());
             }
-            else
+        }
+        else if (source.contains("spritesheet"))
+        {
+            const vili::node& spritesheet = source.at("spritesheet");
+            const graphics::Texture& texture = this->load_texture(spritesheet.at("image"));
+            for (const vili::node& frame : spritesheet.at("frames"))
             {
-                debug::Log->trace("    <animation> Loading Texture {0}", texture_name);
-                graphics::Texture new_texture;
-                new_texture.load_from_file(m_path.add(texture_name).find(system::PathType::File));
-                // TODO: Add a way to configure anti-aliasing for textures without ResourceManager
-                m_textures.push_back(std::move(new_texture));
+                transform::UnitVector frame_texture_rect_position(frame.at("x"), frame.at("y"));
+                transform::UnitVector frame_texture_rect_size(frame.at("width"), frame.at("height"));
+                m_frames.emplace_back(
+                    texture, transform::AABB(frame_texture_rect_position, frame_texture_rect_size));
             }
+        }
+        else
+        {
+            throw exceptions::UnknownAnimationSource(EXC_INFO);
         }
     }
 
@@ -225,21 +226,21 @@ namespace obe::animation
             m_groups.emplace(group_name, std::make_unique<AnimationGroup>(group_name));
             for (vili::node& current_texture : group.at("content"))
             {
-                debug::Log->trace("      <animation> Pushing Texture {} into group",
-                    current_texture.as<vili::integer>());
-                m_groups[group_name]->push_texture(m_textures[current_texture.as<vili::integer>()]);
+                uint32_t frame_index = current_texture.as<vili::integer>();
+                debug::Log->trace("      <animation> Pushing Texture {} into group", frame_index);
+                m_groups[group_name]->push_frame_index(frame_index);
             }
 
             if (group.contains("framerate"))
             {
-                vili::number delay = group.at("clock");
-                debug::Log->trace("      <animation> Setting group delay to {}", delay);
+                vili::number delay = group.at("framerate");
+                debug::Log->trace("      <animation> Setting group framerate to {}", delay);
                 m_groups[group_name]->set_delay(delay);
             }
             else
             {
                 debug::Log->trace(
-                    "      <animation> No delay specified, using parent delay : {}", m_delay);
+                    "      <animation> No framerate specified, using parent delay : {}", m_delay);
                 m_groups[group_name]->set_delay(m_delay);
             }
         }
@@ -251,6 +252,32 @@ namespace obe::animation
         {
             debug::Log->trace("    <animation> Parsing animation command '{}'", command);
             m_code.push_back(command);
+        }
+    }
+
+    const graphics::Texture& Animation::load_texture(const std::string& local_path)
+    {
+        std::string texture_name = local_path;
+        debug::Log->trace("    <animation> Loading image '{}'", texture_name);
+
+        std::string path_to_texture = m_path.add(texture_name).to_string();
+        debug::Log->trace("    <animation> Found Texture Path at '{}'", path_to_texture);
+        if (m_resource_manager)
+        {
+            debug::Log->trace(
+                "    <animation> Loading Texture {0} (using ResourceManager)", texture_name);
+            m_textures.emplace_back(
+                m_resource_manager->get_texture(m_path.add(texture_name), m_anti_aliasing));
+            return m_textures.back();
+        }
+        else
+        {
+            debug::Log->trace("    <animation> Loading Texture {0}", texture_name);
+            graphics::Texture new_texture;
+            new_texture.load_from_file(m_path.add(texture_name).find(system::PathType::File));
+            // TODO: Add a way to configure anti-aliasing for textures without ResourceManager
+            m_textures.push_back(std::move(new_texture));
+            return m_textures.back();
         }
     }
 
@@ -348,14 +375,14 @@ namespace obe::animation
 
             // Images
             debug::Log->trace("  <animation> Loading Animation images");
-            if (data.contains("images"))
+            if (data.contains("source"))
             {
-                load_images(data.at("images"));
+                load_source(data.at("source"));
             }
             else
             {
                 debug::Log->warn(
-                    "Animation '{}' (located at path '{}') does not contain any images", m_name,
+                    "Animation '{}' (located at path '{}') does not contain any source", m_name,
                     m_path.to_string());
             }
 
@@ -414,21 +441,21 @@ namespace obe::animation
         m_default_state.update();
     }
 
-    const graphics::Texture& Animation::get_texture_at_index(int index)
+    const graphics::TexturePart& Animation::get_texture_at_index(int index)
     {
-        if (index < m_textures.size())
-            return m_textures[index];
-        throw exceptions::AnimationTextureIndexOverflow(m_name, index, m_textures.size(), EXC_INFO);
+        if (index < m_frames.size())
+            return m_frames[index];
+        throw exceptions::AnimationFrameIndexOverflow(m_name, index, m_textures.size(), EXC_INFO);
     }
 
-    const graphics::Texture& AnimationState::get_texture() const
+    const graphics::TexturePart& AnimationState::get_texture() const
     {
         if (m_current_group != nullptr)
-            return m_current_group->get_current_texture();
+            return m_parent.m_frames[m_current_group->get_frame_index()];
         throw exceptions::NoSelectedAnimationGroup(m_parent.m_name, EXC_INFO);
     }
 
-    const graphics::Texture& Animation::get_current_texture() const
+    const graphics::TexturePart& Animation::get_current_texture() const
     {
         return m_default_state.get_texture();
     }

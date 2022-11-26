@@ -215,6 +215,7 @@ namespace obe::system::bindings
         bind_path["set"] = &obe::system::Path::set;
         bind_path["add"] = &obe::system::Path::add;
         bind_path["last"] = &obe::system::Path::last;
+        bind_path["parent"] = &obe::system::Path::parent;
         bind_path["get_path"] = &obe::system::Path::get_path;
         bind_path["list"] = sol::overload(
             [](obe::system::Path* self) -> std::vector<obe::system::FindResult> {

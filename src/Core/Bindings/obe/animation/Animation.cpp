@@ -76,6 +76,7 @@ namespace obe::animation::bindings
         bind_animation["make_state"] = &obe::animation::Animation::make_state;
         bind_animation["dump"] = &obe::animation::Animation::dump;
         bind_animation["load"] = &obe::animation::Animation::load;
+        bind_animation["schema"] = &obe::animation::Animation::schema;
     }
     void load_class_animation_group(sol::state_view state)
     {
@@ -83,16 +84,13 @@ namespace obe::animation::bindings
         sol::usertype<obe::animation::AnimationGroup> bind_animation_group
             = animation_namespace.new_usertype<obe::animation::AnimationGroup>("AnimationGroup",
                 sol::call_constructor,
-                sol::constructors<obe::animation::AnimationGroup(std::string),
+                sol::constructors<obe::animation::AnimationGroup(const std::string&),
                     obe::animation::AnimationGroup(const obe::animation::AnimationGroup&)>());
         bind_animation_group["get_delay"] = &obe::animation::AnimationGroup::get_delay;
-        bind_animation_group["get_current_index"]
-            = &obe::animation::AnimationGroup::get_current_index;
+        bind_animation_group["get_group_index"] = &obe::animation::AnimationGroup::get_group_index;
+        bind_animation_group["get_frame_index"] = &obe::animation::AnimationGroup::get_frame_index;
         bind_animation_group["get_name"] = &obe::animation::AnimationGroup::get_name;
-        bind_animation_group["get_textures_amount"]
-            = &obe::animation::AnimationGroup::get_textures_amount;
-        bind_animation_group["get_current_texture"]
-            = &obe::animation::AnimationGroup::get_current_texture;
+        bind_animation_group["get_size"] = &obe::animation::AnimationGroup::get_size;
         bind_animation_group["is_over"] = &obe::animation::AnimationGroup::is_over;
         bind_animation_group["next"] = sol::overload(
             [](obe::animation::AnimationGroup* self) -> void { return self->next(); },
@@ -104,9 +102,8 @@ namespace obe::animation::bindings
             [](obe::animation::AnimationGroup* self, bool force) -> void {
                 return self->previous(force);
             });
-        bind_animation_group["push_texture"] = &obe::animation::AnimationGroup::push_texture;
-        bind_animation_group["remove_texture_by_index"]
-            = &obe::animation::AnimationGroup::remove_texture_by_index;
+        bind_animation_group["push_frame_index"]
+            = &obe::animation::AnimationGroup::push_frame_index;
         bind_animation_group["reset"] = &obe::animation::AnimationGroup::reset;
         bind_animation_group["set_delay"] = &obe::animation::AnimationGroup::set_delay;
         bind_animation_group["set_loops"] = &obe::animation::AnimationGroup::set_loops;

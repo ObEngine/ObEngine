@@ -11,7 +11,7 @@ namespace obe::animation
 {
     void AnimatorState::apply_texture() const
     {
-        const graphics::Texture& texture = this->get_current_texture();
+        const graphics::TexturePart& texture = this->get_current_texture();
         m_target->set_texture(texture);
 
         if (m_target_scale_mode == AnimatorTargetScaleMode::KeepRatio)
@@ -262,12 +262,12 @@ namespace obe::animation
         return state;
     }
 
-    const graphics::Texture& Animator::get_current_texture() const
+    const graphics::TexturePart& Animator::get_current_texture() const
     {
         return m_default_state.get_current_texture();
     }
 
-    const graphics::Texture& AnimatorState::get_current_texture() const
+    const graphics::TexturePart& AnimatorState::get_current_texture() const
     {
         if (m_current_animation)
             return m_current_animation->get_texture();

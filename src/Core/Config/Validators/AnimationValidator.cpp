@@ -30,14 +30,46 @@ namespace obe::config::validators
                 }
             },
             {
-                "images", vili::object {
-                    {"type", vili::array_typename},
-                    {
-                        "items", vili::object {
-                            {"type", vili::string_typename}
+                "source", vili::object {
+                    {"type", "union"},
+                    {"types", vili::array {
+                        vili::object {
+                            {"type", vili::object_typename},
+                            {"properties", vili::object {
+                                {"spritesheet", vili::object {
+                                    {"type", vili::object_typename},
+                                    {"properties", vili::object {
+                                        {"image", vili::object {
+                                            {"type", vili::string_typename}
+                                        }},
+                                        {"frames", vili::object {
+                                            {"type", vili::array_typename},
+                                            {"items", vili::object {
+                                                {"type", vili::object_typename},
+                                                {"properties", vili::object {
+                                                    {"x", vili::object {{"type", vili::integer_typename}}},
+                                                    {"y", vili::object {{"type", vili::integer_typename}}},
+                                                    {"width", vili::object {{"type", vili::integer_typename}}},
+                                                    {"height", vili::object {{"type", vili::integer_typename}}},
+                                                }}
+                                            }}
+                                        }}
+                                    }}
+                                }}
+                            }}
+                        },
+                        vili::object {
+                            {"type", vili::object_typename},
+                            {"properties", vili::object {
+                                {"images", vili::object {
+                                    {"type", vili::array_typename},
+                                    {"items", vili::object {
+                                        {"type", vili::string_typename}
+                                    }}
+                                }}
+                            }}
                         }
-                    },
-                    {"min_size", 1}
+                    }},
                 }
             },
             {

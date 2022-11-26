@@ -21,31 +21,17 @@ namespace obe::animation::exceptions
         }
     };
 
-    class AnimationTextureIndexOverflow : public Exception<AnimationTextureIndexOverflow>
+    class AnimationFrameIndexOverflow : public Exception<AnimationFrameIndexOverflow>
     {
     public:
         using Exception::Exception;
-        AnimationTextureIndexOverflow(
+        AnimationFrameIndexOverflow(
             std::string_view animation, std::size_t index, std::size_t maximum, DebugInfo info)
             : Exception(info)
         {
-            this->error("Tried to access Texture of animation '{}' at index {} when it "
-                        "only contains {} textures",
-                animation, index, maximum);
-        }
-    };
-
-    class AnimationGroupTextureIndexOverflow : public Exception<AnimationGroupTextureIndexOverflow>
-    {
-    public:
-        using Exception::Exception;
-        AnimationGroupTextureIndexOverflow(
-            std::string_view group_name, std::size_t index, std::size_t maximum, DebugInfo info)
-            : Exception(info)
-        {
-            this->error("Tried to access Texture of AnimationGroup '{}' at index {} when it "
-                        "only contains {} textures",
-                group_name, index, maximum);
+            this->error("Tried to access frame {} of animation '{}' when it "
+                        "only contains {} frames",
+                index, animation, maximum);
         }
     };
 
@@ -136,6 +122,17 @@ namespace obe::animation::exceptions
             : Exception(info)
         {
             this->error("Invalid easing function");
+        }
+    };
+
+    class UnknownAnimationSource : public Exception<UnknownAnimationSource>
+    {
+    public:
+        using Exception::Exception;
+        UnknownAnimationSource(DebugInfo info)
+            : Exception(info)
+        {
+            this->error("Unknown Animation source");
         }
     };
 } // namespace obe::animation::exceptions

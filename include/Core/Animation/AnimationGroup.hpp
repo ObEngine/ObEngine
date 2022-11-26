@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstdint>
+
 #include <Graphics/Texture.hpp>
 #include <Time/TimeUtils.hpp>
 
@@ -27,7 +29,7 @@ namespace obe::animation
          * \brief The list that contains pointers to all textures in the
          *        AnimationGroup
          */
-        std::vector<graphics::Texture> m_textures;
+        std::vector<uint32_t> m_frame_indexes;
         /**
          * \brief The name of the AnimationGroup
          */
@@ -52,7 +54,7 @@ namespace obe::animation
          * \brief AnimationGroup constructor
          * \param name Name of the AnimationGroup
          */
-        explicit AnimationGroup(std::string name);
+        explicit AnimationGroup(const std::string& name);
         AnimationGroup(const AnimationGroup& group);
         /**
          * \brief Get the delay between each frame of the AnimationGroup
@@ -64,7 +66,9 @@ namespace obe::animation
          * \return The index of the texture in the AnimationGroup currently
          *         displayed
          */
-        [[nodiscard]] std::size_t get_current_index() const noexcept;
+        [[nodiscard]] std::size_t get_group_index() const noexcept;
+
+        [[nodiscard]] std::size_t get_frame_index() const noexcept;
         /**
          * \brief Get the name of the AnimationGroup
          * \return A std::string containing the AnimationGroup's name
@@ -72,15 +76,9 @@ namespace obe::animation
         [[nodiscard]] std::string get_name() const noexcept;
         /**
          * \brief Get the AnimationGroup size
-         * \return The number of textures in the AnimationGroup
+         * \return The number of frames in the AnimationGroup
          */
-        [[nodiscard]] std::size_t get_textures_amount() const noexcept;
-        /**
-         * \brief Get the current Sprite of the AnimationGroup
-         * \return A reference to the Texture currently played by the
-         *         AnimationGroup
-         */
-        [[nodiscard]] const graphics::Texture& get_current_texture() const;
+        [[nodiscard]] std::size_t get_size() const noexcept;
         /**
          * \brief Get if the AnimationGroup is done playing
          * \return A boolean which is true if the AnimationGroup's Animation is
@@ -107,18 +105,8 @@ namespace obe::animation
          *        for the delay if force is true
          */
         void previous(bool force = false);
-        /**
-         * \todo Add a way to specify the index of the texture
-         * \brief Add a new texture to the AnimationGroup
-         * \param texture A pointer of a Texture to add to the
-         *        AnimationGroup
-         */
-        void push_texture(const graphics::Texture& texture);
-        /**
-         * \brief Remove the texture at the given index in the AnimationGroup
-         * \param index Removes the texture at index
-         */
-        void remove_texture_by_index(std::size_t index);
+
+        void push_frame_index(uint32_t frame_index);
         /**
          * \brief Reset the AnimationGroup (Index to 0, Loops to 0, Delay to 0)
          */
