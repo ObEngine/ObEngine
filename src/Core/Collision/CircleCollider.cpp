@@ -31,23 +31,23 @@ namespace obe::collision
 
     transform::AABB CircleCollider::get_bounding_box() const
     {
-        const transform::UnitVector position(m_position.x - m_shape.r, m_position.y - m_shape.r);
-        const transform::UnitVector size(m_shape.r * 2, m_shape.r * 2);
+        const transform::Vector2 position(m_position.x - m_shape.r, m_position.y - m_shape.r);
+        const transform::Vector2 size(m_shape.r * 2, m_shape.r * 2);
         return transform::AABB(position, size);
     }
 
-    transform::UnitVector CircleCollider::get_position() const
+    transform::Vector2 CircleCollider::get_position() const
     {
         return m_position;
     }
 
-    void CircleCollider::set_position(const transform::UnitVector& position)
+    void CircleCollider::set_position(const transform::Vector2& position)
     {
         Movable::set_position(position);
         update_shape();
     }
 
-    void CircleCollider::move(const transform::UnitVector& position)
+    void CircleCollider::move(const transform::Vector2& position)
     {
         Movable::move(position);
         update_shape();

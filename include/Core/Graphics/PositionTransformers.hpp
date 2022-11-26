@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Transform/UnitVector.hpp>
+#include <Transform/Vector2.hpp>
 #include <functional>
 #include <map>
 
@@ -82,7 +82,7 @@ namespace obe::graphics
          * \param layer Layer of the element
          * \return The new transformer position
          */
-        transform::UnitVector operator()(const transform::UnitVector& position,
-            const transform::UnitVector& camera, int layer) const;
+        transform::Vector2 operator()(
+            const transform::Vector2& position, const transform::Vector2& camera, int layer) const;
     };
 } // namespace obe::graphics

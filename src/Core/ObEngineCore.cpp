@@ -14,7 +14,7 @@ namespace obe
         debug::Log->info("Using ObEngineCore (Version : {} ({}:{}))", config::OBENGINE_VERSION,
             config::OBENGINE_GIT_BRANCH, config::OBENGINE_GIT_HASH);
 
-        transform::UnitVector::init(surface_width, surface_height);
+        transform::Vector2::init(surface_width, surface_height);
         debug::Log->debug("<ObEngine> Initialising Position Transformers");
         graphics::init_position_transformers();
 

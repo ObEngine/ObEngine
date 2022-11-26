@@ -23,12 +23,12 @@ namespace obe::collision
         [[nodiscard]] ColliderType get_collider_type() const override;
 
         PolygonCollider();
-        explicit PolygonCollider(const transform::UnitVector& position);
+        explicit PolygonCollider(const transform::Vector2& position);
 
         [[nodiscard]] transform::AABB get_bounding_box() const override;
-        [[nodiscard]] transform::UnitVector get_position() const override;
-        void set_position(const transform::UnitVector& position) override;
-        void move(const transform::UnitVector& position) override;
+        [[nodiscard]] transform::Vector2 get_position() const override;
+        void set_position(const transform::Vector2& position) override;
+        void move(const transform::Vector2& position) override;
 
         /**
          * \brief Adds a new Point to the Polygon at Position (x, y)
@@ -36,7 +36,7 @@ namespace obe::collision
          * \param point_index Index where to insert the new Point, Use point_index
          *        = -1 <DefaultArg> to insert at the end (between last and first Point)
          */
-        virtual void add_point(const transform::UnitVector& position, int point_index = -1);
+        virtual void add_point(const transform::Vector2& position, int point_index = -1);
         /**
          * \brief Get the number of points in the Polygon
          * \return The amount of points in the Polygon

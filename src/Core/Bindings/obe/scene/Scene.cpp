@@ -21,10 +21,10 @@ namespace obe::scene::bindings
             [](obe::scene::Camera* self, double scale_, const obe::transform::Referential& ref)
                 -> void { return self->scale(scale_, ref); });
         bind_camera["set_position"] = sol::overload(
-            [](obe::scene::Camera* self, const obe::transform::UnitVector& position) -> void {
+            [](obe::scene::Camera* self, const obe::transform::Vector2& position) -> void {
                 return self->set_position(position);
             },
-            [](obe::scene::Camera* self, const obe::transform::UnitVector& position,
+            [](obe::scene::Camera* self, const obe::transform::Vector2& position,
                 const obe::transform::Referential& ref) -> void {
                 return self->set_position(position, ref);
             });

@@ -5,7 +5,7 @@
 
 namespace obe::transform
 {
-    AABB::AABB(const transform::UnitVector& position, const transform::UnitVector& size)
+    AABB::AABB(const transform::Vector2& position, const transform::Vector2& size)
         : Movable(position)
         , m_size(size)
     {
@@ -68,9 +68,9 @@ namespace obe::transform
         {
             AABB intersection;
             intersection.set_position(
-                UnitVector(intersection_left, intersection_top, m_position.unit));
-            intersection.set_size(UnitVector(intersection_right - intersection_left,
-                intersection_bottom - intersection_top, m_size.unit));
+                Vector2(intersection_left, intersection_top));
+            intersection.set_size(Vector2(intersection_right - intersection_left,
+                intersection_bottom - intersection_top));
             return std::make_optional(intersection);
         }
         else
@@ -85,58 +85,57 @@ namespace obe::transform
             && contains(rect.get_position(Referential::BottomRight));
     }
 
-    bool AABB::contains(const UnitVector& position) const
+    bool AABB::contains(const Vector2& position) const
     {
-        const UnitVector converted_position = position.to(m_position.unit);
         const auto min_x = std::min(m_position.x, m_position.x + m_size.x);
         const auto max_x = std::max(m_position.x, m_position.x + m_size.x);
         const auto min_y = std::min(m_position.y, m_position.y + m_size.y);
         const auto max_y = std::max(m_position.y, m_position.y + m_size.y);
 
-        return (converted_position.x >= min_x) && (converted_position.x < max_x)
-            && (converted_position.y >= min_y) && (converted_position.y < max_y);
+        return (position.x >= min_x) && (position.x < max_x) && (position.y >= min_y)
+            && (position.y < max_y);
     }
 
-    void AABB::set_point_position(const UnitVector& position, const Referential& ref)
+    void AABB::set_point_position(const Vector2& position, const Referential& ref)
     {
-        const UnitVector opposite_point_position = this->get_position(ref.flip());
-        transform::UnitVector size = opposite_point_position - position;
-        size.set(std::abs(size.x), std::abs(size.y));
+        const Vector2 opposite_point_position = this->get_position(ref.flip());
+        transform::Vector2 size = opposite_point_position - position;
+        size = Vector2(std::abs(size.x), std::abs(size.y));
         this->set_size(size);
         this->set_position(position, ref);
     }
 
-    UnitVector AABB::get_position(const Referential& ref) const
+    Vector2 AABB::get_position(const Referential& ref) const
     {
         return m_position + (m_size * ref.get_offset());
     }
 
-    void AABB::set_position(const UnitVector& position, const Referential& ref)
+    void AABB::set_position(const Vector2& position, const Referential& ref)
     {
-        transform::UnitVector p_vec = position.to<transform::Units::SceneUnits>();
+        transform::Vector2 p_vec = position.to<transform::Units::SceneUnits>();
         m_position = p_vec - (m_size * ref.get_offset());
     }
 
-    void AABB::set_size(const UnitVector& size, const Referential& ref)
+    void AABB::set_size(const Vector2& size, const Referential& ref)
     {
-        const UnitVector save_position = this->get_position(ref);
+        const Vector2 save_position = this->get_position(ref);
         m_size.set(size);
         this->set_position(save_position, ref);
     }
 
-    void AABB::scale(const UnitVector& size, const Referential& ref)
+    void AABB::scale(const Vector2& size, const Referential& ref)
     {
-        const UnitVector save_position = this->get_position(ref);
+        const Vector2 save_position = this->get_position(ref);
         m_size *= size;
         this->set_position(save_position, ref);
     }
 
-    UnitVector AABB::get_size() const
+    Vector2 AABB::get_size() const
     {
         return m_size;
     }
 
-    void AABB::move_point(const UnitVector& position, const Referential& ref)
+    void AABB::move_point(const Vector2& position, const Referential& ref)
     {
         this->set_point_position(position - this->get_position(ref), ref);
     }

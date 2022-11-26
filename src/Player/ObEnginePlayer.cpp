@@ -4,12 +4,13 @@
 #include <Input/InputButtonMonitor.hpp>
 #include <Modes/Game.hpp>
 #include <ObEngineCore.hpp>
-#include <Transform/UnitVector.hpp>
+#include <Transform/Vector2.hpp>
 #include <Utils/ArgParser.hpp>
 
+#include <vili-msgpack/msgpack.hpp>
 #include <vili/parser.hpp>
 #include <vili/writer.hpp>
-#include <vili-msgpack/msgpack.hpp>
+
 
 #include <Transform/AABB.hpp>
 
@@ -26,7 +27,7 @@ int main(int argc, char** argv)
     vili::node arguments;
     try
     {
-       arguments = utils::argparser::parse_args(argvector);
+        arguments = utils::argparser::parse_args(argvector);
     }
     catch (const std::exception& e)
     {
@@ -50,8 +51,8 @@ int main(int argc, char** argv)
     }
 #endif
 
-    debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}",
-        transform::UnitVector::Screen.w, transform::UnitVector::Screen.h);
+    debug::Log->info("<ObEngine> Screen surface resolution {0}x{1}", transform::Vector2::Screen.w,
+        transform::Vector2::Screen.h);
 
 #if defined _DEBUG
     modes::start_game(arguments);

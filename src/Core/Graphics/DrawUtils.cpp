@@ -2,7 +2,7 @@
 
 #include <Graphics/DrawUtils.hpp>
 #include <Graphics/RenderTarget.hpp>
-#include <Transform/UnitVector.hpp>
+#include <Transform/Vector2.hpp>
 
 namespace obe::graphics::utils // <REVISION> Move to utils/ ?
 {
@@ -35,7 +35,7 @@ namespace obe::graphics::utils // <REVISION> Move to utils/ ?
         surface.draw(line, thickness, sf::Lines);
     }
 
-    void draw_polygon(RenderTarget surface, const std::vector<transform::UnitVector>& points,
+    void draw_polygon(RenderTarget surface, const std::vector<transform::Vector2>& points,
         const DrawPolygonOptions& options)
     {
         sf::CircleShape point_shape;
@@ -44,9 +44,9 @@ namespace obe::graphics::utils // <REVISION> Move to utils/ ?
         point_shape.setFillColor(sf::Color::White);
         for (std::size_t i = 0; i < points.size(); i++)
         {
-            const transform::UnitVector& point1 = points[i].to<transform::Units::ScenePixels>();
-            const transform::UnitVector& point2
-                = points[(i == points.size() - 1) ? 0 : i + 1].to<transform::Units::ScenePixels>();
+            const transform::Vector2& point1 = points[i];
+            const transform::Vector2& point2
+                = points[(i == points.size() - 1) ? 0 : i + 1];
             if (options.lines)
             {
                 const Color current_line_color = get_key_or(
@@ -56,7 +56,7 @@ namespace obe::graphics::utils // <REVISION> Move to utils/ ?
         }
         for (std::size_t i = 0; i < points.size(); i++)
         {
-            const transform::UnitVector& point1 = points[i].to<transform::Units::ScenePixels>();
+            const transform::Vector2& point1 = points[i];
             if (options.points)
             {
                 const Color current_point_color = get_key_or(options.specific_point_color,

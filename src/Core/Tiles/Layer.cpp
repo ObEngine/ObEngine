@@ -65,7 +65,7 @@ namespace obe::tiles
                 m_scene.get_scene().get_camera().set_size(1);
                 m_colliders.at(tile_index)
                     ->get_inner_collider()
-                    ->set_position(transform::UnitVector(x * tileset.get_tile_width(),
+                    ->set_position(transform::Vector2(x * tileset.get_tile_width(),
                         y * tileset.get_tile_height(), transform::Units::ScenePixels));
                 m_scene.get_scene().get_camera().set_size(camera_size_backup);
             }
@@ -77,7 +77,7 @@ namespace obe::tiles
                 std::string game_object_id = utils::string::replace(game_object.at("id"), "{index}",
                     std::to_string(m_scene.get_scene().get_game_object_amount()));
                 vili::node requirements = game_object.at("Requires");
-                transform::UnitVector game_object_position(x * tileset.get_tile_width(),
+                transform::Vector2 game_object_position(x * tileset.get_tile_width(),
                     y * tileset.get_tile_height(), transform::Units::ScenePixels);
                 requirements["x"] = requirements["x"].as_number() + game_object_position.x;
                 requirements["y"] = requirements["y"].as_number() + game_object_position.y;
@@ -227,19 +227,19 @@ namespace obe::tiles
             sf::RenderStates states;
             states.transform = sf::Transform::Identity;
 
-            const transform::UnitVector middle_camera
+            const transform::Vector2 middle_camera
                 = camera.get_position(transform::Referential::Center)
                       .to<transform::Units::SceneUnits>();
-            const transform::UnitVector camera_size = camera.get_size();
-            const float middle_x = transform::UnitVector::Screen.w / 2.0;
-            const float middle_y = transform::UnitVector::Screen.h / 2.0;
+            const transform::Vector2 camera_size = camera.get_size();
+            const float middle_x = transform::Vector2::Screen.w / 2.0;
+            const float middle_y = transform::Vector2::Screen.h / 2.0;
             const double camera_scale = 1.0 / (camera_size.y / 2.0);
 
             states.transform.scale(camera_scale, camera_scale, middle_x, middle_y);
-            float translate_x = -(middle_camera.x * (transform::UnitVector::Screen.h / 2.f))
-                + (transform::UnitVector::Screen.w / 2);
-            float translate_y = -(middle_camera.y * (transform::UnitVector::Screen.h / 2.f))
-                + (transform::UnitVector::Screen.h / 2);
+            float translate_x = -(middle_camera.x * (transform::Vector2::Screen.h / 2.f))
+                + (transform::Vector2::Screen.w / 2);
+            float translate_y = -(middle_camera.y * (transform::Vector2::Screen.h / 2.f))
+                + (transform::Vector2::Screen.h / 2);
 
             if (!m_scene.is_anti_aliased())
             {

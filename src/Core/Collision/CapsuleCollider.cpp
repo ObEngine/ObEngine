@@ -32,17 +32,17 @@ namespace obe::collision
         return transform::AABB();
     }
 
-    transform::UnitVector CapsuleCollider::get_position() const
+    transform::Vector2 CapsuleCollider::get_position() const
     {
         return Collider::get_position();
     }
 
-    void CapsuleCollider::set_position(const transform::UnitVector& position)
+    void CapsuleCollider::set_position(const transform::Vector2& position)
     {
         Collider::set_position(position);
     }
 
-    void CapsuleCollider::move(const transform::UnitVector& position)
+    void CapsuleCollider::move(const transform::Vector2& position)
     {
         Collider::move(position);
     }

@@ -73,16 +73,16 @@ namespace obe::collision::bindings
         bind_collider["collides"] = &obe::collision::Collider::collides;
         bind_collider["get_offset_before_collision"] = sol::overload(
             [](obe::collision::Collider* self,
-                const obe::collision::Collider& collider) -> obe::transform::UnitVector {
+                const obe::collision::Collider& collider) -> obe::transform::Vector2 {
                 return self->get_offset_before_collision(collider);
             },
             [](obe::collision::Collider* self, const obe::collision::Collider& collider,
-                const obe::transform::UnitVector& self_offset) -> obe::transform::UnitVector {
+                const obe::transform::Vector2& self_offset) -> obe::transform::Vector2 {
                 return self->get_offset_before_collision(collider, self_offset);
             },
             [](obe::collision::Collider* self, const obe::collision::Collider& collider,
-                const obe::transform::UnitVector& self_offset,
-                const obe::transform::UnitVector& other_offset) -> obe::transform::UnitVector {
+                const obe::transform::Vector2& self_offset,
+                const obe::transform::Vector2& other_offset) -> obe::transform::Vector2 {
                 return self->get_offset_before_collision(collider, self_offset, other_offset);
             });
         bind_collider["get_bounding_box"] = &obe::collision::Collider::get_bounding_box;
@@ -153,11 +153,11 @@ namespace obe::collision::bindings
         bind_collision_space["collides"] = &obe::collision::CollisionSpace::collides;
         bind_collision_space["get_offset_before_collision"] = sol::overload(
             [](obe::collision::CollisionSpace* self,
-                const obe::collision::Collider& collider) -> obe::transform::UnitVector {
+                const obe::collision::Collider& collider) -> obe::transform::Vector2 {
                 return self->get_offset_before_collision(collider);
             },
             [](obe::collision::CollisionSpace* self, const obe::collision::Collider& collider,
-                const obe::transform::UnitVector& offset) -> obe::transform::UnitVector {
+                const obe::transform::Vector2& offset) -> obe::transform::Vector2 {
                 return self->get_offset_before_collision(collider, offset);
             });
         bind_collision_space["add_tag_to_blacklist"]
@@ -174,7 +174,7 @@ namespace obe::collision::bindings
             = collision_namespace.new_usertype<obe::collision::PolygonCollider>("PolygonCollider",
                 sol::call_constructor,
                 sol::constructors<obe::collision::PolygonCollider(),
-                    obe::collision::PolygonCollider(const obe::transform::UnitVector&)>(),
+                    obe::collision::PolygonCollider(const obe::transform::Vector2&)>(),
                 sol::base_classes, sol::bases<obe::collision::Collider, obe::transform::Movable>());
         bind_polygon_collider["get_collider_type"]
             = &obe::collision::PolygonCollider::get_collider_type;
@@ -184,9 +184,9 @@ namespace obe::collision::bindings
         bind_polygon_collider["set_position"] = &obe::collision::PolygonCollider::set_position;
         bind_polygon_collider["move"] = &obe::collision::PolygonCollider::move;
         bind_polygon_collider["add_point"] = sol::overload(
-            [](obe::collision::PolygonCollider* self, const obe::transform::UnitVector& position)
+            [](obe::collision::PolygonCollider* self, const obe::transform::Vector2& position)
                 -> void { return self->add_point(position); },
-            [](obe::collision::PolygonCollider* self, const obe::transform::UnitVector& position,
+            [](obe::collision::PolygonCollider* self, const obe::transform::Vector2& position,
                 int point_index) -> void { return self->add_point(position, point_index); });
         bind_polygon_collider["get_points_amount"]
             = &obe::collision::PolygonCollider::get_points_amount;
@@ -215,9 +215,9 @@ namespace obe::collision::bindings
             = collision_namespace.new_usertype<obe::collision::RectangleCollider>(
                 "RectangleCollider", sol::call_constructor,
                 sol::constructors<obe::collision::RectangleCollider(),
-                    obe::collision::RectangleCollider(const obe::transform::UnitVector&),
+                    obe::collision::RectangleCollider(const obe::transform::Vector2&),
                     obe::collision::RectangleCollider(
-                        const obe::transform::UnitVector&, const obe::transform::UnitVector&)>(),
+                        const obe::transform::Vector2&, const obe::transform::Vector2&)>(),
                 sol::base_classes, sol::bases<obe::collision::Collider, obe::transform::Movable>());
         bind_rectangle_collider["get_collider_type"]
             = &obe::collision::RectangleCollider::get_collider_type;

@@ -11,9 +11,9 @@ namespace obe::graphics
     {
         sf::IntRect to_sfml_rect(const transform::AABB& rect)
         {
-            const transform::UnitVector position
+            const transform::Vector2 position
                 = rect.get_position().to<transform::Units::ScenePixels>();
-            const transform::UnitVector size
+            const transform::Vector2 size
                 = rect.get_position().to<transform::Units::ScenePixels>();
             const sf::IntRect sf_rect(position.x, position.y, size.x, size.y);
             return sf_rect;
@@ -200,10 +200,10 @@ namespace obe::graphics
         return get_mutable_texture().loadFromImage(image);
     }
 
-    transform::UnitVector Texture::get_size() const
+    transform::Vector2 Texture::get_size() const
     {
         const sf::Vector2u texture_size = get_texture().getSize();
-        return transform::UnitVector(texture_size.x, texture_size.y, transform::Units::ScenePixels);
+        return transform::Vector2(texture_size.x, texture_size.y, transform::Units::ScenePixels);
     }
 
     void Texture::set_size_hint(unsigned width, unsigned height)
@@ -321,7 +321,7 @@ namespace obe::graphics
     TexturePart Texture::make_texture_part() const
     {
         auto size = this->get_size();
-        return TexturePart(*this, transform::AABB(transform::UnitVector(0, 0), size));
+        return TexturePart(*this, transform::AABB(transform::Vector2(0, 0), size));
     }
 
     TexturePart::TexturePart(const Texture& texture, transform::AABB rect)
@@ -340,7 +340,7 @@ namespace obe::graphics
         return m_rect;
     }
 
-    transform::UnitVector TexturePart::get_size() const
+    transform::Vector2 TexturePart::get_size() const
     {
         return m_rect.get_size();
     }

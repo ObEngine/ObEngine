@@ -12,15 +12,15 @@ namespace obe::graphics::shapes
     {
     }
 
-    transform::UnitVector Rectangle::get_size() const
+    transform::Vector2 Rectangle::get_size() const
     {
         const sf::Vector2f pixel_size = shape.getSize();
-        return transform::UnitVector(pixel_size.x, pixel_size.y, transform::Units::ScenePixels);
+        return transform::Vector2(pixel_size.x, pixel_size.y, transform::Units::ScenePixels);
     }
 
-    void Rectangle::set_size(transform::UnitVector size)
+    void Rectangle::set_size(transform::Vector2 size)
     {
-        const transform::UnitVector pixel_size = size.to<transform::Units::ScenePixels>();
+        const transform::Vector2 pixel_size = size.to<transform::Units::ScenePixels>();
         shape.setSize(sf::Vector2f(pixel_size.x, pixel_size.y));
     }
 
@@ -94,9 +94,9 @@ namespace obe::graphics::shapes
         return shape;
     }
 
-    void Polygon::set_point_position(std::size_t index, const transform::UnitVector& position)
+    void Polygon::set_point_position(std::size_t index, const transform::Vector2& position)
     {
-        const transform::UnitVector pixel_position = position.to<transform::Units::ScenePixels>();
+        const transform::Vector2 pixel_position = position.to<transform::Units::ScenePixels>();
         if (shape.getPointCount() <= index)
         {
             shape.setPointCount(index + 1);
@@ -104,10 +104,10 @@ namespace obe::graphics::shapes
         shape.setPoint(index, sf::Vector2f(pixel_position.x, pixel_position.y));
     }
 
-    transform::UnitVector Polygon::get_point_position(std::size_t index) const
+    transform::Vector2 Polygon::get_point_position(std::size_t index) const
     {
         const sf::Vector2f pixel_position = shape.getPoint(index);
-        return transform::UnitVector(
+        return transform::Vector2(
             pixel_position.x, pixel_position.y, transform::Units::ScenePixels);
     }
 
@@ -176,13 +176,13 @@ namespace obe::graphics::shapes
         shape.set_texture(texture);
     }
 
-    transform::UnitVector NinePatch::get_size() const
+    transform::Vector2 NinePatch::get_size() const
     {
         const sf::Vector2f pixel_size = shape.get_size();
-        return transform::UnitVector(pixel_size.x, pixel_size.y, transform::Units::ScenePixels);
+        return transform::Vector2(pixel_size.x, pixel_size.y, transform::Units::ScenePixels);
     }
 
-    void NinePatch::set_size(const transform::UnitVector& size)
+    void NinePatch::set_size(const transform::Vector2& size)
     {
         auto px_size = size.to<transform::Units::ScenePixels>();
         shape.set_size(sf::Vector2f(px_size.x, px_size.y));

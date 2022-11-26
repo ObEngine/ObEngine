@@ -8,9 +8,9 @@ namespace obe::transform
         m_elements = elements;
     }
 
-    UnitVector Matrix2D::product(UnitVector vector)
+    Vector2 Matrix2D::product(Vector2 vector)
     {
-        UnitVector result;
+        Vector2 result;
         result.x = m_elements[0] * vector.x + m_elements[1] * vector.y;
         result.y = m_elements[2] * vector.x + m_elements[3] * vector.y;
         return result;

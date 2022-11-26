@@ -34,7 +34,7 @@ namespace obe::collision
         return Collider::Type;
     }
 
-    Collider::Collider(const transform::UnitVector& position)
+    Collider::Collider(const transform::Vector2& position)
         : Movable(position)
     {
     }
@@ -60,9 +60,9 @@ namespace obe::collision
         return c2Collided(a_c2_shape, a_transform, a_type, b_c2_shape, b_transform, b_type);
     }
 
-    transform::UnitVector Collider::get_offset_before_collision(const Collider& collider,
-        const transform::UnitVector& self_offset,
-        const transform::UnitVector& other_offset) const
+    transform::Vector2 Collider::get_offset_before_collision(const Collider& collider,
+        const transform::Vector2& self_offset,
+        const transform::Vector2& other_offset) const
     {
         const void* a_c2_shape = this->get_c2_shape();
         const void* b_c2_shape = collider.get_c2_shape();
@@ -83,7 +83,7 @@ namespace obe::collision
         }
         if (final_offset == self_offset && this->collides(collider))
         {
-            return transform::UnitVector(0, 0);
+            return transform::Vector2(0, 0);
         }
         return final_offset;
     }

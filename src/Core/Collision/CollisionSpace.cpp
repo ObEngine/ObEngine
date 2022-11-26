@@ -69,18 +69,18 @@ namespace obe::collision
         return false;
     }
 
-    transform::UnitVector CollisionSpace::get_offset_before_collision(const Collider& collider,
-        const transform::UnitVector& offset) const
+    transform::Vector2 CollisionSpace::get_offset_before_collision(const Collider& collider,
+        const transform::Vector2& offset) const
     {
-        std::vector<std::pair<Collider*, transform::UnitVector>> reachable_colliders;
+        std::vector<std::pair<Collider*, transform::Vector2>> reachable_colliders;
 
-        transform::UnitVector max_offset = offset;
+        transform::Vector2 max_offset = offset;
 
         for (auto& space_collider : m_colliders)
         {
             if (&collider != space_collider && can_collide_with(collider, *space_collider))
             {
-                const transform::UnitVector max_distance
+                const transform::Vector2 max_distance
                     = collider.get_offset_before_collision(*space_collider, offset);
                 if (max_distance != offset)
                     reachable_colliders.emplace_back(space_collider, max_distance);

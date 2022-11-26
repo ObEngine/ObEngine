@@ -1,14 +1,17 @@
 #pragma once
 
-#include <Graphics/Color.hpp>
-#include <Graphics/RenderTarget.hpp>
+#include <string>
+
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Event.hpp>
-#include <Transform/UnitVector.hpp>
-#include <string>
 #include <vili/node.hpp>
+
+#include <Graphics/Color.hpp>
+#include <Graphics/RenderTarget.hpp>
+#include <Transform/Vector2.hpp>
+#include <Types/SmartEnum.hpp>
 
 namespace obe::system
 {
@@ -76,10 +79,10 @@ namespace obe::system
          */
         void draw(const sf::Vertex* vertices, std::size_t vertex_count, sf::PrimitiveType type,
             const sf::RenderStates& states = sf::RenderStates::Default);
-        [[nodiscard]] transform::UnitVector get_render_size() const;
-        [[nodiscard]] transform::UnitVector get_window_size() const;
-        [[nodiscard]] static transform::UnitVector get_screen_size();
-        [[nodiscard]] transform::UnitVector get_size() const;
+        [[nodiscard]] transform::Vector2 get_render_size() const;
+        [[nodiscard]] transform::Vector2 get_window_size() const;
+        [[nodiscard]] static transform::Vector2 get_screen_size();
+        [[nodiscard]] transform::Vector2 get_size() const;
         [[nodiscard]] bool is_open() const;
         [[nodiscard]] bool is_focused() const;
         bool poll_event(sf::Event& event);

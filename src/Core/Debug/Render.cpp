@@ -8,11 +8,11 @@ namespace obe::debug::render
 {
     void draw_polygon(const graphics::RenderTarget target, transform::Polygon& polygon,
         bool draw_lines, bool draw_points, bool draw_centroid, bool draw_skeleton,
-        transform::UnitVector offset)
+        transform::Vector2 offset)
     {
         if (polygon.get_points_amount() >= 3)
         {
-            const transform::UnitVector centroid
+            const transform::Vector2 centroid
                 = polygon.get_centroid().to<transform::Units::ScenePixels>();
 
             const float r = 6.f;
@@ -21,8 +21,8 @@ namespace obe::debug::render
                 .lines = draw_lines, .points = draw_points, .radius = r
             };
 
-            std::vector<transform::UnitVector> draw_points;
-            std::vector<transform::UnitVector> pixel_points;
+            std::vector<transform::Vector2> draw_points;
+            std::vector<transform::Vector2> pixel_points;
             const transform::PolygonPath& polygon_points = polygon.get_all_points();
             pixel_points.reserve(polygon_points.size());
             draw_points.reserve(polygon_points.size());
@@ -31,7 +31,7 @@ namespace obe::debug::render
                 std::back_inserter(pixel_points),
                 [](const auto& point) { return point.to(transform::Units::ScenePixels); });
 
-            for (const transform::UnitVector& point : pixel_points)
+            for (const transform::Vector2& point : pixel_points)
             {
                 draw_points.emplace_back(point - offset);
             }
@@ -49,7 +49,7 @@ namespace obe::debug::render
                 target.draw(point_shape);
                 if (draw_skeleton)
                 {
-                    for (const transform::UnitVector& point : pixel_points)
+                    for (const transform::Vector2& point : pixel_points)
                     {
 
                         graphics::utils::draw_line(target, point.x - offset.x, point.y - offset.y,
@@ -64,10 +64,10 @@ namespace obe::debug::render
     void draw_circle_collider(const graphics::RenderTarget target,
         const collision::CircleCollider& collider, const ColliderRenderOptions& render_options)
     {
-        const transform::UnitVector px_position
+        const transform::Vector2 px_position
             = collider.get_position().to<transform::Units::ScenePixels>();
         const double px_radius
-            = transform::UnitVector(collider.get_radius(), 0).to<transform::Units::ScenePixels>().x;
+            = transform::Vector2(collider.get_radius(), 0).to<transform::Units::ScenePixels>().x;
         sf::CircleShape shape(px_radius);
         shape.setPosition(px_position.x - px_radius, px_position.y - px_radius);
         shape.setFillColor(render_options.color);
@@ -77,9 +77,9 @@ namespace obe::debug::render
     void draw_rectangle_collider(const graphics::RenderTarget target,
         const collision::RectangleCollider& collider, const ColliderRenderOptions& render_options)
     {
-        const transform::UnitVector px_position
+        const transform::Vector2 px_position
             = collider.get_position().to<transform::Units::ScenePixels>();
-        const transform::UnitVector px_size
+        const transform::Vector2 px_size
             = collider.get_size().to<transform::Units::ScenePixels>();
         sf::RectangleShape shape(sf::Vector2f(px_size.x, px_size.y));
         shape.setPosition(px_position.x, px_position.y);
@@ -95,7 +95,7 @@ namespace obe::debug::render
     void draw_polygon_collider(const graphics::RenderTarget target,
         const collision::PolygonCollider& collider, const ColliderRenderOptions& render_options)
     {
-        const transform::UnitVector px_position
+        const transform::Vector2 px_position
             = collider.get_position().to<transform::Units::ScenePixels>();
         sf::ConvexShape shape(collider.get_points_amount());
         size_t idx = 0;

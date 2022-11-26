@@ -2,22 +2,22 @@
 
 namespace obe::transform
 {
-    Movable::Movable(const transform::UnitVector& position)
+    Movable::Movable(const transform::Vector2& position)
         : m_position(position)
     {
     }
 
-    void Movable::set_position(const UnitVector& position)
+    void Movable::set_position(const Vector2& position)
     {
-        m_position.set(position);
+        m_position = position;
     }
 
-    void Movable::move(const UnitVector& position)
+    void Movable::move(const Vector2& position)
     {
-        m_position.add(position);
+        m_position += position;
     }
 
-    UnitVector Movable::get_position() const
+    Vector2 Movable::get_position() const
     {
         return m_position;
     }

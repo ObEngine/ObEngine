@@ -52,8 +52,8 @@ namespace obe::collision
         void remove_collider(Collider* collider);
 
         [[nodiscard]] bool collides(const Collider& collider) const;
-        [[nodiscard]] transform::UnitVector get_offset_before_collision(const Collider& collider,
-            const transform::UnitVector& offset = transform::UnitVector(0, 0)) const;
+        [[nodiscard]] transform::Vector2 get_offset_before_collision(const Collider& collider,
+            const transform::Vector2& offset = transform::Vector2(0, 0)) const;
 
         void add_tag_to_blacklist(const std::string& source_tag, const std::string& rejected_tag);
         void remove_tag_to_blacklist(

@@ -27,8 +27,8 @@ namespace obe::graphics::canvas
 
     void Line::draw(RenderTarget target)
     {
-        const transform::UnitVector p1px = p1.to<transform::Units::ScenePixels>();
-        const transform::UnitVector p2px = p2.to<transform::Units::ScenePixels>();
+        const transform::Vector2 p1px = p1.to<transform::Units::ScenePixels>();
+        const transform::Vector2 p2px = p2.to<transform::Units::ScenePixels>();
         if (thickness == 1)
         {
             const sf::Vertex first_vertex(sf::Vector2f(p1px.x, p1px.y), p1_color);
@@ -77,7 +77,7 @@ namespace obe::graphics::canvas
 
     void Text::draw(RenderTarget target)
     {
-        transform::UnitVector offset(transform::Units::ScenePixels);
+        transform::Vector2 offset(transform::Units::ScenePixels);
         if (h_align == TextHorizontalAlign::Center)
             offset.x -= shape.get_global_bounds().get_size().x / 2;
         else if (h_align == TextHorizontalAlign::Right)
@@ -137,9 +137,9 @@ namespace obe::graphics::canvas
     {
         std::vector<::Bezier::Point> control_points;
         control_points.reserve(points.size());
-        for (transform::UnitVector& point : points)
+        for (transform::Vector2& point : points)
         {
-            const transform::UnitVector pixel_position = point.to<transform::Units::ScenePixels>();
+            const transform::Vector2 pixel_position = point.to<transform::Units::ScenePixels>();
             control_points.emplace_back(pixel_position.x, pixel_position.y);
         }
         std::vector<::Bezier::Bezier<3>> bezier_curves;

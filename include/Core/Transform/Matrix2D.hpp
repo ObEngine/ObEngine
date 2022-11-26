@@ -1,7 +1,8 @@
 #pragma once
 
-#include <Transform/UnitVector.hpp>
 #include <array>
+
+#include <Transform/Vector2.hpp>
 
 namespace obe::transform
 {
@@ -12,6 +13,6 @@ namespace obe::transform
 
     public:
         Matrix2D(std::array<double, 4> elements);
-        UnitVector product(UnitVector vector);
+        Vector2 product(Vector2 vector);
     };
 } // namespace obe::transform

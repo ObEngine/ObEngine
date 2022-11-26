@@ -8,7 +8,7 @@ namespace obe::collision
     {
     private:
         c2AABB m_shape = {};
-        transform::UnitVector m_size;
+        transform::Vector2 m_size;
 
     protected:
         [[nodiscard]] const void* get_c2_shape() const override;
@@ -20,15 +20,15 @@ namespace obe::collision
         [[nodiscard]] ColliderType get_collider_type() const override;
 
         RectangleCollider();
-        explicit RectangleCollider(const transform::UnitVector& size);
-        RectangleCollider(const transform::UnitVector& position, const transform::UnitVector& size);
+        explicit RectangleCollider(const transform::Vector2& size);
+        RectangleCollider(const transform::Vector2& position, const transform::Vector2& size);
 
         [[nodiscard]] transform::AABB get_bounding_box() const override;
-        [[nodiscard]] transform::UnitVector get_position() const override;
-        void set_position(const transform::UnitVector& position) override;
-        void move(const transform::UnitVector& position) override;
+        [[nodiscard]] transform::Vector2 get_position() const override;
+        void set_position(const transform::Vector2& position) override;
+        void move(const transform::Vector2& position) override;
 
-        [[nodiscard]] transform::UnitVector get_size() const;
-        void set_size(const transform::UnitVector& size);
+        [[nodiscard]] transform::Vector2 get_size() const;
+        void set_size(const transform::Vector2& size);
     };
 }

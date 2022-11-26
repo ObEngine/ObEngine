@@ -24,7 +24,7 @@ namespace obe::collision
         /**
      * \brief Maximum distance that can be traveled before collision
      */
-        transform::UnitVector offset;
+        transform::Vector2 offset;
     };
 
     enum class ColliderType
@@ -62,7 +62,7 @@ namespace obe::collision
         [[nodiscard]] virtual ColliderType get_collider_type() const;
 
         Collider() = default;
-        explicit Collider(const transform::UnitVector& position);
+        explicit Collider(const transform::Vector2& position);
         ~Collider() override = default;
 
         // Tags
@@ -92,9 +92,9 @@ namespace obe::collision
          * \param offset Distance the Collider should move to (if nothing collides)
          * \return The maximum distance the Collider can travel before colliding
          */
-        [[nodiscard]] transform::UnitVector get_offset_before_collision(const Collider& collider,
-            const transform::UnitVector& self_offset = transform::UnitVector(0, 0),
-            const transform::UnitVector& other_offset = transform::UnitVector(0, 0)) const;
+        [[nodiscard]] transform::Vector2 get_offset_before_collision(const Collider& collider,
+            const transform::Vector2& self_offset = transform::Vector2(0, 0),
+            const transform::Vector2& other_offset = transform::Vector2(0, 0)) const;
 
         /*
          * \brief Returns the cached bounding box. Recalculates it if necessary.

@@ -206,8 +206,8 @@ namespace obe::animation
             const graphics::Texture& texture = this->load_texture(spritesheet.at("image"));
             for (const vili::node& frame : spritesheet.at("frames"))
             {
-                transform::UnitVector frame_texture_rect_position(frame.at("x"), frame.at("y"));
-                transform::UnitVector frame_texture_rect_size(frame.at("width"), frame.at("height"));
+                transform::Vector2 frame_texture_rect_position(frame.at("x"), frame.at("y"));
+                transform::Vector2 frame_texture_rect_size(frame.at("width"), frame.at("height"));
                 m_frames.emplace_back(
                     texture, transform::AABB(frame_texture_rect_position, frame_texture_rect_size));
             }

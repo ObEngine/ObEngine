@@ -340,7 +340,7 @@ namespace obe::scene
                     unit = transform::UnitsMeta::from_string(position.at("unit"));
                 }
             }
-            m_camera_initial_position = transform::UnitVector(x, y, unit);
+            m_camera_initial_position = transform::Vector2(x, y, unit);
             m_camera_initial_referential = transform::Referential::TopLeft;
             if (view.contains("referential"))
             {
@@ -547,7 +547,7 @@ namespace obe::scene
             {
                 sf::CircleShape scene_node_shape;
                 SceneNode& scene_node = game_object->get_scene_node();
-                const transform::UnitVector scene_node_position
+                const transform::Vector2 scene_node_position
                     = scene_node.get_position().to<transform::Units::ViewPixels>();
                 scene_node_shape.setPosition(scene_node_position.x - 3, scene_node_position.y - 3);
                 scene_node_shape.setFillColor(sf::Color::Red);
@@ -712,15 +712,15 @@ namespace obe::scene
     }
 
     graphics::Sprite* Scene::get_sprite_by_position(
-        const transform::UnitVector& position, const int layer) const
+        const transform::Vector2& position, const int layer) const
     {
         std::vector<transform::Referential> rect_pts
             = { transform::Referential::TopLeft, transform::Referential::TopRight,
                   transform::Referential::BottomRight, transform::Referential::BottomLeft };
-        const transform::UnitVector zero_offset(0, 0);
+        const transform::Vector2 zero_offset(0, 0);
 
         const std::vector<graphics::Sprite*> sprites_on_layer = this->get_sprites_by_layer(layer);
-        const transform::UnitVector camera
+        const transform::Vector2 camera
             = -(m_camera.get_position().to<transform::Units::ScenePixels>());
         for (const auto& sprite : sprites_on_layer)
         {
@@ -762,15 +762,15 @@ namespace obe::scene
         m_sprite_ids.erase(id);
     }
 
-    SceneNode* Scene::get_scene_node_by_position(const transform::UnitVector& position) const
+    SceneNode* Scene::get_scene_node_by_position(const transform::Vector2& position) const
     {
         for (auto& game_object : m_game_object_array)
         {
-            const transform::UnitVector scene_node_position
+            const transform::Vector2 scene_node_position
                 = game_object->get_scene_node().get_position();
-            const transform::UnitVector p_vec = position.to<transform::Units::SceneUnits>();
-            const transform::UnitVector p_tolerance
-                = transform::UnitVector(6, 6, transform::Units::ScenePixels)
+            const transform::Vector2 p_vec = position.to<transform::Units::SceneUnits>();
+            const transform::Vector2 p_tolerance
+                = transform::Vector2(6, 6, transform::Units::ScenePixels)
                       .to<transform::Units::SceneUnits>();
 
             if (utils::math::is_between(p_vec.x, scene_node_position.x - p_tolerance.x,

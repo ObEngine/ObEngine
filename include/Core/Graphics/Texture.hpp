@@ -15,7 +15,7 @@ namespace obe
     namespace transform
     {
         class Rect;
-        class UnitVector;
+        class Vector2;
     } // namespace transform
 } // namespace obe
 
@@ -81,7 +81,7 @@ namespace obe::graphics
         bool load_from_file(const std::string& filename, const transform::AABB& rect);
         bool load_from_image(const sf::Image& image);
 
-        [[nodiscard]] transform::UnitVector get_size() const;
+        [[nodiscard]] transform::Vector2 get_size() const;
 
         void set_size_hint(unsigned int width, unsigned int height);
         [[nodiscard]] bool is_autoscaled() const;
@@ -122,6 +122,6 @@ namespace obe::graphics
         [[nodiscard]] const Texture& get_texture() const;
         [[nodiscard]] const transform::AABB& get_texture_rect() const;
 
-        [[nodiscard]] transform::UnitVector get_size() const;
+        [[nodiscard]] transform::Vector2 get_size() const;
     };
 } // namespace obe::graphics

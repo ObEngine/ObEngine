@@ -10,7 +10,7 @@ namespace obe::graphics
 
 namespace obe::transform
 {
-    class UnitVector;
+    class Vector2;
 }
 
 /**
@@ -69,6 +69,6 @@ namespace obe::graphics::utils
      *        - <point_color_x> Color : Color of a specific point of the Polygon
      *          where x is the index of the point
      */
-    void draw_polygon(RenderTarget surface, const std::vector<transform::UnitVector>& points,
+    void draw_polygon(RenderTarget surface, const std::vector<transform::Vector2>& points,
         const DrawPolygonOptions& options);
 } // namespace obe::graphics::utils

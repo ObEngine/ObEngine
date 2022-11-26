@@ -8,7 +8,7 @@
 #include <SFML/Graphics/ConvexShape.hpp>
 #include <SFML/Graphics/RectangleShape.hpp>
 #include <Transform/AABB.hpp>
-#include <Transform/UnitVector.hpp>
+#include <Transform/Vector2.hpp>
 
 namespace obe::graphics::shapes
 {
@@ -16,19 +16,19 @@ namespace obe::graphics::shapes
     class BaseShape : public sf::Drawable
     {
     public:
-        void set_position(transform::UnitVector position);
+        void set_position(transform::Vector2 position);
         [[nodiscard]] transform::AABB get_local_bounds() const;
         [[nodiscard]] transform::AABB get_global_bounds() const;
         void set_rotation(float angle);
-        void set_scale(const transform::UnitVector& factors);
-        void set_origin(const transform::UnitVector& origin);
-        [[nodiscard]] transform::UnitVector get_position() const;
+        void set_scale(const transform::Vector2& factors);
+        void set_origin(const transform::Vector2& origin);
+        [[nodiscard]] transform::Vector2 get_position() const;
         [[nodiscard]] float get_rotation() const;
-        [[nodiscard]] transform::UnitVector get_scale() const;
-        [[nodiscard]] transform::UnitVector get_origin() const;
-        void move(const transform::UnitVector& offset);
+        [[nodiscard]] transform::Vector2 get_scale() const;
+        [[nodiscard]] transform::Vector2 get_origin() const;
+        void move(const transform::Vector2& offset);
         void rotate(float angle);
-        void scale(const transform::UnitVector& factor);
+        void scale(const transform::Vector2& factor);
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
     };
 
@@ -38,7 +38,7 @@ namespace obe::graphics::shapes
     public:
         void set_texture(const Texture& texture);
         void set_texture_rect(const transform::AABB& rect);
-        void set_position(transform::UnitVector position);
+        void set_position(transform::Vector2 position);
         void set_fill_color(const Color& color);
         void set_outline_color(const Color& color);
         void set_outline_thickness(float thickness);
@@ -46,27 +46,27 @@ namespace obe::graphics::shapes
         [[nodiscard]] Color get_outline_color() const;
         [[nodiscard]] float get_outline_thickness() const;
         [[nodiscard]] std::size_t get_point_count() const;
-        [[nodiscard]] transform::UnitVector get_point(std::size_t index) const;
+        [[nodiscard]] transform::Vector2 get_point(std::size_t index) const;
         [[nodiscard]] transform::AABB get_local_bounds() const;
         [[nodiscard]] transform::AABB get_global_bounds() const;
         void set_rotation(float angle);
-        void set_scale(const transform::UnitVector& factors);
-        void set_origin(const transform::UnitVector& origin);
-        [[nodiscard]] transform::UnitVector get_position() const;
+        void set_scale(const transform::Vector2& factors);
+        void set_origin(const transform::Vector2& origin);
+        [[nodiscard]] transform::Vector2 get_position() const;
         [[nodiscard]] float get_rotation() const;
-        [[nodiscard]] transform::UnitVector get_scale() const;
-        [[nodiscard]] transform::UnitVector get_origin() const;
-        void move(const transform::UnitVector& offset);
+        [[nodiscard]] transform::Vector2 get_scale() const;
+        [[nodiscard]] transform::Vector2 get_origin() const;
+        void move(const transform::Vector2& offset);
         void rotate(float angle);
-        void scale(const transform::UnitVector& factor);
+        void scale(const transform::Vector2& factor);
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override = 0;
     };
 
     // BaseShape methods
     template <class T>
-    void BaseShape<T>::set_position(transform::UnitVector position)
+    void BaseShape<T>::set_position(transform::Vector2 position)
     {
-        const transform::UnitVector pixel_position = position.to<transform::Units::ScenePixels>();
+        const transform::Vector2 pixel_position = position.to<transform::Units::ScenePixels>();
         static_cast<T&>(*this).shape.setPosition(sf::Vector2f(pixel_position.x, pixel_position.y));
     }
 
@@ -75,9 +75,9 @@ namespace obe::graphics::shapes
     {
         const sf::FloatRect bounds = static_cast<const T&>(*this).shape.getLocalBounds();
         const auto position
-            = transform::UnitVector(bounds.left, bounds.top, transform::Units::ScenePixels);
+            = transform::Vector2(bounds.left, bounds.top, transform::Units::ScenePixels);
         const auto size
-            = transform::UnitVector(bounds.width, bounds.height, transform::Units::ScenePixels);
+            = transform::Vector2(bounds.width, bounds.height, transform::Units::ScenePixels);
         return transform::AABB(position, size);
     }
 
@@ -86,9 +86,9 @@ namespace obe::graphics::shapes
     {
         const sf::FloatRect bounds = static_cast<const T&>(*this).shape.getGlobalBounds();
         const auto position
-            = transform::UnitVector(bounds.left, bounds.top, transform::Units::ScenePixels);
+            = transform::Vector2(bounds.left, bounds.top, transform::Units::ScenePixels);
         const auto size
-            = transform::UnitVector(bounds.width, bounds.height, transform::Units::ScenePixels);
+            = transform::Vector2(bounds.width, bounds.height, transform::Units::ScenePixels);
         return transform::AABB(position, size);
     }
 
@@ -99,24 +99,24 @@ namespace obe::graphics::shapes
     }
 
     template <class T>
-    void BaseShape<T>::set_scale(const transform::UnitVector& factors)
+    void BaseShape<T>::set_scale(const transform::Vector2& factors)
     {
         const auto pixel_scale = factors.to<transform::Units::ScenePixels>();
         static_cast<T&>(*this).shape.setScale(sf::Vector2f(pixel_scale.x, pixel_scale.y));
     }
 
     template <class T>
-    void BaseShape<T>::set_origin(const transform::UnitVector& origin)
+    void BaseShape<T>::set_origin(const transform::Vector2& origin)
     {
-        const transform::UnitVector pixel_origin = origin.to<transform::Units::ScenePixels>();
+        const transform::Vector2 pixel_origin = origin.to<transform::Units::ScenePixels>();
         static_cast<T&>(*this).shape.setOrigin(sf::Vector2f(pixel_origin.x, pixel_origin.y));
     }
 
     template <class T>
-    transform::UnitVector BaseShape<T>::get_position() const
+    transform::Vector2 BaseShape<T>::get_position() const
     {
         const sf::Vector2f position = static_cast<const T&>(*this).shape.getPosition();
-        return transform::UnitVector(position.x, position.y, transform::Units::ScenePixels);
+        return transform::Vector2(position.x, position.y, transform::Units::ScenePixels);
     }
 
     template <class T>
@@ -126,23 +126,23 @@ namespace obe::graphics::shapes
     }
 
     template <class T>
-    transform::UnitVector BaseShape<T>::get_scale() const
+    transform::Vector2 BaseShape<T>::get_scale() const
     {
         const sf::Vector2f scale = static_cast<const T&>(*this).shape.getScale();
-        return transform::UnitVector(scale.x, scale.y, transform::Units::ScenePixels);
+        return transform::Vector2(scale.x, scale.y, transform::Units::ScenePixels);
     }
 
     template <class T>
-    transform::UnitVector BaseShape<T>::get_origin() const
+    transform::Vector2 BaseShape<T>::get_origin() const
     {
         const sf::Vector2f origin = static_cast<const T&>(*this).shape.getOrigin();
-        return transform::UnitVector(origin.x, origin.y, transform::Units::ScenePixels);
+        return transform::Vector2(origin.x, origin.y, transform::Units::ScenePixels);
     }
 
     template <class T>
-    void BaseShape<T>::move(const transform::UnitVector& offset)
+    void BaseShape<T>::move(const transform::Vector2& offset)
     {
-        const transform::UnitVector pixel_offset = offset.to<transform::Units::ScenePixels>();
+        const transform::Vector2 pixel_offset = offset.to<transform::Units::ScenePixels>();
         static_cast<T&>(*this).shape.move(sf::Vector2f(pixel_offset.x, pixel_offset.y));
     }
 
@@ -153,7 +153,7 @@ namespace obe::graphics::shapes
     }
 
     template <class T>
-    void BaseShape<T>::scale(const transform::UnitVector& factor)
+    void BaseShape<T>::scale(const transform::Vector2& factor)
     {
         static_cast<T&>(*this).shape.scale(sf::Vector2f(factor.x, factor.y));
     }
@@ -168,19 +168,18 @@ namespace obe::graphics::shapes
     template <class T>
     void Shape<T>::set_texture_rect(const transform::AABB& rect)
     {
-        const transform::UnitVector pixel_position
+        const transform::Vector2 pixel_position
             = rect.get_position().to<transform::Units::ScenePixels>();
-        const transform::UnitVector pixel_size
-            = rect.get_size().to<transform::Units::ScenePixels>();
+        const transform::Vector2 pixel_size = rect.get_size().to<transform::Units::ScenePixels>();
         const sf::IntRect pixel_rect(
             pixel_position.x, pixel_position.y, pixel_size.x, pixel_size.y);
         static_cast<T&>(*this).shape.setTextureRect(pixel_rect);
     }
 
     template <class T>
-    void Shape<T>::set_position(transform::UnitVector position)
+    void Shape<T>::set_position(transform::Vector2 position)
     {
-        const transform::UnitVector pixel_position = position.to<transform::Units::ScenePixels>();
+        const transform::Vector2 pixel_position = position.to<transform::Units::ScenePixels>();
         static_cast<T&>(*this).shape.setPosition(sf::Vector2f(pixel_position.x, pixel_position.y));
     }
 
@@ -227,10 +226,10 @@ namespace obe::graphics::shapes
     }
 
     template <class T>
-    transform::UnitVector Shape<T>::get_point(std::size_t index) const
+    transform::Vector2 Shape<T>::get_point(std::size_t index) const
     {
         const sf::Vector2f point_position = static_cast<const T&>(*this).shape.getPoint(index);
-        return transform::UnitVector(
+        return transform::Vector2(
             point_position.x, point_position.y, transform::Units::ScenePixels);
     }
 
@@ -239,9 +238,9 @@ namespace obe::graphics::shapes
     {
         const sf::FloatRect bounds = static_cast<const T&>(*this).shape.getLocalBounds();
         const auto position
-            = transform::UnitVector(bounds.left, bounds.top, transform::Units::ScenePixels);
+            = transform::Vector2(bounds.left, bounds.top, transform::Units::ScenePixels);
         const auto size
-            = transform::UnitVector(bounds.width, bounds.height, transform::Units::ScenePixels);
+            = transform::Vector2(bounds.width, bounds.height, transform::Units::ScenePixels);
         return transform::AABB(position, size);
     }
 
@@ -250,9 +249,9 @@ namespace obe::graphics::shapes
     {
         const sf::FloatRect bounds = static_cast<const T&>(*this).shape.getGlobalBounds();
         const auto position
-            = transform::UnitVector(bounds.left, bounds.top, transform::Units::ScenePixels);
+            = transform::Vector2(bounds.left, bounds.top, transform::Units::ScenePixels);
         const auto size
-            = transform::UnitVector(bounds.width, bounds.height, transform::Units::ScenePixels);
+            = transform::Vector2(bounds.width, bounds.height, transform::Units::ScenePixels);
         return transform::AABB(position, size);
     }
 
@@ -263,24 +262,24 @@ namespace obe::graphics::shapes
     }
 
     template <class T>
-    void Shape<T>::set_scale(const transform::UnitVector& factors)
+    void Shape<T>::set_scale(const transform::Vector2& factors)
     {
         const auto pixel_scale = factors.to<transform::Units::ScenePixels>();
         static_cast<T&>(*this).shape.setScale(sf::Vector2f(pixel_scale.x, pixel_scale.y));
     }
 
     template <class T>
-    void Shape<T>::set_origin(const transform::UnitVector& origin)
+    void Shape<T>::set_origin(const transform::Vector2& origin)
     {
-        const transform::UnitVector pixel_origin = origin.to<transform::Units::ScenePixels>();
+        const transform::Vector2 pixel_origin = origin.to<transform::Units::ScenePixels>();
         static_cast<T&>(*this).shape.setOrigin(sf::Vector2f(pixel_origin.x, pixel_origin.y));
     }
 
     template <class T>
-    transform::UnitVector Shape<T>::get_position() const
+    transform::Vector2 Shape<T>::get_position() const
     {
         const sf::Vector2f position = static_cast<const T&>(*this).shape.getPosition();
-        return transform::UnitVector(position.x, position.y, transform::Units::ScenePixels);
+        return transform::Vector2(position.x, position.y, transform::Units::ScenePixels);
     }
 
     template <class T>
@@ -290,23 +289,23 @@ namespace obe::graphics::shapes
     }
 
     template <class T>
-    transform::UnitVector Shape<T>::get_scale() const
+    transform::Vector2 Shape<T>::get_scale() const
     {
         const sf::Vector2f scale = static_cast<const T&>(*this).shape.getScale();
-        return transform::UnitVector(scale.x, scale.y, transform::Units::ScenePixels);
+        return transform::Vector2(scale.x, scale.y, transform::Units::ScenePixels);
     }
 
     template <class T>
-    transform::UnitVector Shape<T>::get_origin() const
+    transform::Vector2 Shape<T>::get_origin() const
     {
         const sf::Vector2f origin = static_cast<const T&>(*this).shape.getOrigin();
-        return transform::UnitVector(origin.x, origin.y, transform::Units::ScenePixels);
+        return transform::Vector2(origin.x, origin.y, transform::Units::ScenePixels);
     }
 
     template <class T>
-    void Shape<T>::move(const transform::UnitVector& offset)
+    void Shape<T>::move(const transform::Vector2& offset)
     {
-        const transform::UnitVector pixel_offset = offset.to<transform::Units::ScenePixels>();
+        const transform::Vector2 pixel_offset = offset.to<transform::Units::ScenePixels>();
         static_cast<T&>(*this).shape.move(sf::Vector2f(pixel_offset.x, pixel_offset.y));
     }
 
@@ -317,7 +316,7 @@ namespace obe::graphics::shapes
     }
 
     template <class T>
-    void Shape<T>::scale(const transform::UnitVector& factor)
+    void Shape<T>::scale(const transform::Vector2& factor)
     {
         static_cast<T&>(*this).shape.scale(sf::Vector2f(factor.x, factor.y));
     }
@@ -335,8 +334,8 @@ namespace obe::graphics::shapes
         Rectangle(const sf::RectangleShape& shape);
         Rectangle(const Rectangle& rectangle);
 
-        [[nodiscard]] transform::UnitVector get_size() const;
-        void set_size(transform::UnitVector size);
+        [[nodiscard]] transform::Vector2 get_size() const;
+        void set_size(transform::Vector2 size);
 
         operator sf::RectangleShape&();
         operator const sf::RectangleShape&() const;
@@ -382,8 +381,8 @@ namespace obe::graphics::shapes
         operator sf::ConvexShape&();
         operator const sf::ConvexShape&() const;
 
-        void set_point_position(std::size_t index, const transform::UnitVector& position);
-        transform::UnitVector get_point_position(std::size_t index) const;
+        void set_point_position(std::size_t index, const transform::Vector2& position);
+        transform::Vector2 get_point_position(std::size_t index) const;
 
         void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
     };
@@ -430,8 +429,8 @@ namespace obe::graphics::shapes
 
         void set_texture(const Texture& texture);
 
-        [[nodiscard]] transform::UnitVector get_size() const;
-        void set_size(const transform::UnitVector& size);
+        [[nodiscard]] transform::Vector2 get_size() const;
+        void set_size(const transform::Vector2& size);
 
         void set_fill_color(const Color& color);
         [[nodiscard]] Color get_fill_color() const;

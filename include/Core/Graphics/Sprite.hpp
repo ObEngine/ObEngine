@@ -38,7 +38,7 @@ namespace obe::graphics
 
         void reset_unit(transform::Units unit) override;
         void refresh_vector_texture(
-            const transform::UnitVector& surface_size, const std::array<sf::Vertex, 4>& vertices);
+            const transform::Vector2& surface_size, const std::array<sf::Vertex, 4>& vertices);
 
     public:
         /**
@@ -240,7 +240,7 @@ namespace obe::graphics
         SpriteHandlePointType m_type;
 
     public:
-        transform::UnitVector m_dp;
+        transform::Vector2 m_dp;
         /**
          * \brief The radius of a HandlePoint
          */
@@ -278,7 +278,7 @@ namespace obe::graphics
          * \param camera Camera used to manipulate PositionTransformers
          */
         void set_position(
-            const transform::UnitVector& position, const transform::UnitVector& camera);
+            const transform::Vector2& position, const transform::Vector2& camera);
     };
 
     /**
@@ -303,6 +303,6 @@ namespace obe::graphics
          *         is correct, nullptr otherwise
          */
         SpriteHandlePoint* get_handle_point(
-            const transform::UnitVector& camera_position, int x, int y);
+            const transform::Vector2& camera_position, int x, int y);
     };
 } // namespace obe::graphics

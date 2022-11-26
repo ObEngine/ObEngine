@@ -3,7 +3,7 @@
 #include <SFML/Graphics/View.hpp>
 #include <Transform/AABB.hpp>
 #include <Transform/Referential.hpp>
-#include <Transform/UnitVector.hpp>
+#include <Transform/Vector2.hpp>
 
 namespace obe::scene
 {
@@ -13,10 +13,7 @@ namespace obe::scene
     class Camera : public transform::AABB
     {
     private:
-        transform::ViewStruct* m_camera {};
         sf::View m_view;
-
-        void apply() const;
 
     public:
         Camera();
@@ -24,7 +21,7 @@ namespace obe::scene
          * \brief Moves the Camera
          * \param position Position to add to the Camera
          */
-        void move(const transform::UnitVector& position);
+        void move(const transform::Vector2& position);
         /**
          * \brief Scales the Camera
          * \param scale_ Factor used to multiply the current size
@@ -38,7 +35,7 @@ namespace obe::scene
          * \param position New Position of the Camera
          * \param ref Referential used to position the Camera
          */
-        void set_position(const transform::UnitVector& position,
+        void set_position(const transform::Vector2& position,
             const transform::Referential& ref = transform::Referential::TopLeft);
         /**
          * \brief Sets the size of the Camera

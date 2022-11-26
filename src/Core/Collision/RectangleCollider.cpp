@@ -31,14 +31,14 @@ namespace obe::collision
         update_shape();
     }
 
-    RectangleCollider::RectangleCollider(const transform::UnitVector& size)
+    RectangleCollider::RectangleCollider(const transform::Vector2& size)
         : m_size(size)
     {
         update_shape();
     }
 
     RectangleCollider::RectangleCollider(
-        const transform::UnitVector& position, const transform::UnitVector& size)
+        const transform::Vector2& position, const transform::Vector2& size)
         : Collider(position)
         , m_size(size)
     {
@@ -50,29 +50,29 @@ namespace obe::collision
         return transform::AABB(this->get_position(), this->get_size());
     }
 
-    transform::UnitVector RectangleCollider::get_position() const
+    transform::Vector2 RectangleCollider::get_position() const
     {
-        return transform::UnitVector(m_shape.min.x, m_shape.min.y);
+        return transform::Vector2(m_shape.min.x, m_shape.min.y);
     }
 
-    transform::UnitVector RectangleCollider::get_size() const
+    transform::Vector2 RectangleCollider::get_size() const
     {
-        return transform::UnitVector(m_shape.max.x - m_shape.min.x, m_shape.max.y - m_shape.min.y);
+        return transform::Vector2(m_shape.max.x - m_shape.min.x, m_shape.max.y - m_shape.min.y);
     }
 
-    void RectangleCollider::set_size(const transform::UnitVector& size)
+    void RectangleCollider::set_size(const transform::Vector2& size)
     {
         m_size.set(size);
         update_shape();
     }
 
-    void RectangleCollider::set_position(const transform::UnitVector& position)
+    void RectangleCollider::set_position(const transform::Vector2& position)
     {
         Movable::set_position(position);
         update_shape();
     }
 
-    void RectangleCollider::move(const transform::UnitVector& position)
+    void RectangleCollider::move(const transform::Vector2& position)
     {
         Movable::move(position);
         update_shape();

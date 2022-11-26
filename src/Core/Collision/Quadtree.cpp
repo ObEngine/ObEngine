@@ -27,10 +27,10 @@ namespace obe::collision
             return transform::AABB(origin, child_size);
         // Norst East
         case 1:
-            return transform::AABB(origin + transform::UnitVector(child_size.x, 0), child_size);
+            return transform::AABB(origin + transform::Vector2(child_size.x, 0), child_size);
         // South West
         case 2:
-            return transform::AABB(origin + transform::UnitVector(0, child_size.y), child_size);
+            return transform::AABB(origin + transform::Vector2(0, child_size.y), child_size);
         // South East
         case 3:
             return transform::AABB(origin + child_size, child_size);

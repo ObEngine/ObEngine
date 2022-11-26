@@ -230,41 +230,39 @@ namespace obe::animation::bindings
     void load_class_unit_vector_tweening(sol::state_view state)
     {
         sol::table animation_namespace = state["obe"]["animation"].get<sol::table>();
-        sol::usertype<obe::animation::ValueTweening<obe::transform::UnitVector>>
-            bind_unit_vector_tweening
-            = animation_namespace
-                  .new_usertype<obe::animation::ValueTweening<obe::transform::UnitVector>>(
-                      "UnitVectorTweening", sol::call_constructor,
-                      sol::constructors<obe::animation::ValueTweening<obe::transform::UnitVector>(
-                                            obe::time::TimeUnit),
-                          obe::animation::ValueTweening<obe::transform::UnitVector>(
-                              obe::time::TimeUnit, obe::animation::easing::EasingFunction),
-                          obe::animation::ValueTweening<obe::transform::UnitVector>(
-                              obe::transform::UnitVector, obe::transform::UnitVector,
-                              obe::time::TimeUnit),
-                          obe::animation::ValueTweening<obe::transform::UnitVector>(
-                              obe::transform::UnitVector, obe::transform::UnitVector,
-                              obe::time::TimeUnit, obe::animation::easing::EasingFunction)>());
+        sol::usertype<obe::animation::ValueTweening<obe::transform::Vector2>>
+            bind_unit_vector_tweening = animation_namespace.new_usertype<
+                obe::animation::ValueTweening<obe::transform::Vector2>>("Vector2Tweening",
+                sol::call_constructor,
+                sol::constructors<obe::animation::ValueTweening<obe::transform::Vector2>(
+                                      obe::time::TimeUnit),
+                    obe::animation::ValueTweening<obe::transform::Vector2>(
+                        obe::time::TimeUnit, obe::animation::easing::EasingFunction),
+                    obe::animation::ValueTweening<obe::transform::Vector2>(
+                        obe::transform::Vector2, obe::transform::Vector2, obe::time::TimeUnit),
+                    obe::animation::ValueTweening<obe::transform::Vector2>(obe::transform::Vector2,
+                        obe::transform::Vector2, obe::time::TimeUnit,
+                        obe::animation::easing::EasingFunction)>());
         bind_unit_vector_tweening["from"]
-            = &obe::animation::ValueTweening<obe::transform::UnitVector>::from;
+            = &obe::animation::ValueTweening<obe::transform::Vector2>::from;
         bind_unit_vector_tweening["to"]
-            = &obe::animation::ValueTweening<obe::transform::UnitVector>::to;
+            = &obe::animation::ValueTweening<obe::transform::Vector2>::to;
         bind_unit_vector_tweening["ease"]
-            = &obe::animation::ValueTweening<obe::transform::UnitVector>::ease;
+            = &obe::animation::ValueTweening<obe::transform::Vector2>::ease;
         bind_unit_vector_tweening["start"]
-            = &obe::animation::ValueTweening<obe::transform::UnitVector>::start;
+            = &obe::animation::ValueTweening<obe::transform::Vector2>::start;
         bind_unit_vector_tweening["stop"]
-            = &obe::animation::ValueTweening<obe::transform::UnitVector>::stop;
+            = &obe::animation::ValueTweening<obe::transform::Vector2>::stop;
         bind_unit_vector_tweening["seek"]
-            = &obe::animation::ValueTweening<obe::transform::UnitVector>::seek;
+            = &obe::animation::ValueTweening<obe::transform::Vector2>::seek;
         bind_unit_vector_tweening["reset"]
-            = &obe::animation::ValueTweening<obe::transform::UnitVector>::reset;
+            = &obe::animation::ValueTweening<obe::transform::Vector2>::reset;
         bind_unit_vector_tweening["resume"]
-            = &obe::animation::ValueTweening<obe::transform::UnitVector>::resume;
+            = &obe::animation::ValueTweening<obe::transform::Vector2>::resume;
         bind_unit_vector_tweening["done"]
-            = &obe::animation::ValueTweening<obe::transform::UnitVector>::done;
+            = &obe::animation::ValueTweening<obe::transform::Vector2>::done;
         bind_unit_vector_tweening["step"]
-            = &obe::animation::ValueTweening<obe::transform::UnitVector>::step;
+            = &obe::animation::ValueTweening<obe::transform::Vector2>::step;
     }
     void load_class_rect_tweening(sol::state_view state)
     {
@@ -395,15 +393,14 @@ namespace obe::animation::bindings
                 return obe::animation::ValueTweening<obe::graphics::Color>(
                     from, to, duration, easing);
             },
-            [](obe::transform::UnitVector from, obe::transform::UnitVector to,
-                obe::time::TimeUnit duration) -> ValueTweening<obe::transform::UnitVector> {
-                return obe::animation::ValueTweening<obe::transform::UnitVector>(
-                    from, to, duration);
+            [](obe::transform::Vector2 from, obe::transform::Vector2 to,
+                obe::time::TimeUnit duration) -> ValueTweening<obe::transform::Vector2> {
+                return obe::animation::ValueTweening<obe::transform::Vector2>(from, to, duration);
             },
-            [](obe::transform::UnitVector from, obe::transform::UnitVector to,
+            [](obe::transform::Vector2 from, obe::transform::Vector2 to,
                 obe::time::TimeUnit duration, obe::animation::easing::EasingFunction easing)
-                -> ValueTweening<obe::transform::UnitVector> {
-                return obe::animation::ValueTweening<obe::transform::UnitVector>(
+                -> ValueTweening<obe::transform::Vector2> {
+                return obe::animation::ValueTweening<obe::transform::Vector2>(
                     from, to, duration, easing);
             },
             [](obe::transform::Rect from, obe::transform::Rect to,

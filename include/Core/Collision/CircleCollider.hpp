@@ -21,9 +21,9 @@ namespace obe::collision
         CircleCollider();
 
         [[nodiscard]] transform::AABB get_bounding_box() const override;
-        [[nodiscard]] transform::UnitVector get_position() const override;
-        void set_position(const transform::UnitVector& position) override;
-        void move(const transform::UnitVector& position) override;
+        [[nodiscard]] transform::Vector2 get_position() const override;
+        void set_position(const transform::Vector2& position) override;
+        void move(const transform::Vector2& position) override;
 
         [[nodiscard]] float get_radius() const;
         void set_radius(float radius);

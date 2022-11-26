@@ -3,7 +3,7 @@
 #include <Animation/Animator.hpp>
 #include <Animation/Exceptions.hpp>
 #include <Graphics/Sprite.hpp>
-#include <Transform/UnitVector.hpp>
+#include <Transform/Vector2.hpp>
 
 using namespace std::string_literals;
 
@@ -18,26 +18,26 @@ namespace obe::animation
         {
             if (m_target->get_size().x >= m_target->get_size().y)
             {
-                m_target->set_size(transform::UnitVector(m_target->get_size().x,
+                m_target->set_size(transform::Vector2(m_target->get_size().x,
                     static_cast<float>(texture.get_size().y)
                         / static_cast<float>(texture.get_size().x) * m_target->get_size().x));
             }
             else
             {
-                m_target->set_size(transform::UnitVector(static_cast<float>(texture.get_size().x)
+                m_target->set_size(transform::Vector2(static_cast<float>(texture.get_size().x)
                         / static_cast<float>(texture.get_size().y) * m_target->get_size().y,
                     m_target->get_size().y));
             }
         }
         else if (m_target_scale_mode == AnimatorTargetScaleMode::FixedWidth)
         {
-            m_target->set_size(transform::UnitVector(m_target->get_size().x,
+            m_target->set_size(transform::Vector2(m_target->get_size().x,
                 static_cast<float>(texture.get_size().y) / static_cast<float>(texture.get_size().x)
                     * m_target->get_size().x));
         }
         else if (m_target_scale_mode == AnimatorTargetScaleMode::FixedHeight)
         {
-            m_target->set_size(transform::UnitVector(static_cast<float>(texture.get_size().x)
+            m_target->set_size(transform::Vector2(static_cast<float>(texture.get_size().x)
                     / static_cast<float>(texture.get_size().y) * m_target->get_size().y,
                 m_target->get_size().y));
         }
@@ -175,7 +175,8 @@ namespace obe::animation
         for (const auto& directory : directories)
         {
             system::Path animation_path = path.add(system::Path(directory.path()).last());
-            std::unique_ptr<Animation> temp_animation = std::make_unique<Animation>(animation_path, resources);
+            std::unique_ptr<Animation> temp_animation
+                = std::make_unique<Animation>(animation_path, resources);
             if (m_default_state.get_target())
             {
                 temp_animation->set_anti_aliasing(m_default_state.get_target()->is_anti_aliased());

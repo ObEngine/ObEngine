@@ -57,7 +57,7 @@ namespace obe::scene
         std::string m_deferred_scene_load;
         std::optional<vili::node> m_deferred_scene_load_node;
         Camera m_camera;
-        transform::UnitVector m_camera_initial_position;
+        transform::Vector2 m_camera_initial_position;
         transform::Referential m_camera_initial_referential;
         bool m_update_state = true;
 
@@ -238,7 +238,7 @@ namespace obe::scene
          * \return The pointer to a Sprite if found, nullptr otherwise
          */
         graphics::Sprite* get_sprite_by_position(
-            const transform::UnitVector& position, int layer) const;
+            const transform::Vector2& position, int layer) const;
         /**
          * \brief Get a Sprite by Id (Raises an exception if not found)
          * \param id Id of the Sprite to get
@@ -321,7 +321,7 @@ namespace obe::scene
          */
         [[nodiscard]] std::string get_level_file() const;
         [[nodiscard]] SceneNode* get_scene_node_by_position(
-            const transform::UnitVector& position) const;
+            const transform::Vector2& position) const;
         bool has_tiles() const;
         const tiles::TileScene& get_tiles() const;
         SceneRenderOptions get_render_options() const;

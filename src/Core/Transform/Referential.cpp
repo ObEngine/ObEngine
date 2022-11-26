@@ -88,9 +88,9 @@ namespace obe::transform
             && (m_ref_y == 0 || m_ref_y == 0.5 || m_ref_y == 1);
     }
 
-    UnitVector Referential::get_offset() const
+    Vector2 Referential::get_offset() const
     {
-        return UnitVector(m_ref_x, m_ref_y);
+        return Vector2(m_ref_x, m_ref_y);
     }
 
     std::string Referential::to_string() const

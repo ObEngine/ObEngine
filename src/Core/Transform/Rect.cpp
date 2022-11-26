@@ -6,14 +6,14 @@
 
 namespace obe::transform
 {
-    UnitVector rotate_point_around_center(
-        const UnitVector& center, const UnitVector& around, double angle)
+    Vector2 rotate_point_around_center(
+        const Vector2& center, const Vector2& around, double angle)
     {
         const double c_y = std::cos(angle);
         const double s_y = std::sin(angle);
 
-        UnitVector moved;
-        const UnitVector delta = around - center;
+        Vector2 moved;
+        const Vector2 delta = around - center;
         moved.x = (delta.x * c_y - delta.y * s_y) + center.x;
         moved.y = (delta.x * s_y + delta.y * c_y) + center.y;
 
@@ -25,12 +25,12 @@ namespace obe::transform
         return m_angle;
     }
 
-    void Rect::set_rotation(double angle, transform::UnitVector origin)
+    void Rect::set_rotation(double angle, transform::Vector2 origin)
     {
         this->rotate(angle - m_angle, origin);
     }
 
-    void Rect::rotate(double angle, transform::UnitVector origin)
+    void Rect::rotate(double angle, transform::Vector2 origin)
     {
         const double rad_angle = utils::math::convert_to_radian(-angle);
 
@@ -41,7 +41,7 @@ namespace obe::transform
     }
 
     void Rect::transform_referential(
-        UnitVector& vec, const Referential& ref, ReferentialConversionType type) const
+        Vector2& vec, const Referential& ref, ReferentialConversionType type) const
     {
         const double factor = (type == ReferentialConversionType::From) ? 1.0 : -1.0;
         const double rad_angle = utils::math::convert_to_radian(-m_angle);
@@ -50,11 +50,11 @@ namespace obe::transform
 
         const auto delta = (ref.get_offset() * m_size);
 
-        vec.add(UnitVector((delta.x * cos_angle - delta.y * sin_angle) * factor,
+        vec.add(Vector2((delta.x * cos_angle - delta.y * sin_angle) * factor,
             (delta.x * sin_angle + delta.y * cos_angle) * factor));
     }
 
-    Rect::Rect(const transform::UnitVector& position, const transform::UnitVector& size)
+    Rect::Rect(const transform::Vector2& position, const transform::Vector2& size)
         : m_size(size)
     {
         m_position = position;
@@ -64,8 +64,8 @@ namespace obe::transform
     {
         float radius = 6.f;
 
-        std::vector<transform::UnitVector> draw_points;
-        const UnitVector d_pos(x, y, transform::Units::ScenePixels);
+        std::vector<transform::Vector2> draw_points;
+        const Vector2 d_pos(x, y, transform::Units::ScenePixels);
 
         const std::vector<Referential> fix_display_order = { Referential::TopLeft, Referential::Top,
             Referential::TopRight, Referential::Right, Referential::BottomRight,
@@ -73,22 +73,22 @@ namespace obe::transform
 
         for (uint8_t i = 0; i < 8; ++i)
         {
-            UnitVector pt;
+            Vector2 pt;
             this->transform_referential(pt, fix_display_order[i], ReferentialConversionType::From);
 
-            UnitVector world = (pt + d_pos).to<Units::ScenePixels>();
+            Vector2 world = (pt + d_pos).to<Units::ScenePixels>();
             draw_points.push_back(world);
         }
 
         const double rad_angle = utils::math::convert_to_radian(-m_angle);
         const double cos_angle = std::cos(rad_angle);
         const double sin_angle = std::sin(rad_angle);
-        UnitVector top_pos;
+        Vector2 top_pos;
         this->transform_referential(top_pos, Referential::Top, ReferentialConversionType::From);
         top_pos = top_pos.to<Units::ScenePixels>();
         top_pos += d_pos;
-        UnitVector vec = top_pos;
-        UnitVector result;
+        Vector2 vec = top_pos;
+        Vector2 result;
         const double dy = m_size.y / 4;
         result.x = (-dy * sin_angle) * -1;
         result.y = (dy * cos_angle) * -1;
@@ -171,8 +171,8 @@ namespace obe::transform
         {
             Rect intersection;
             intersection.set_position(
-                UnitVector(intersection_left, intersection_top, m_position.unit));
-            intersection.set_size(UnitVector(intersection_right - intersection_left,
+                Vector2(intersection_left, intersection_top, m_position.unit));
+            intersection.set_size(Vector2(intersection_right - intersection_left,
                 intersection_bottom - intersection_top, m_size.unit));
             return std::make_optional(intersection);
         }
@@ -189,10 +189,10 @@ namespace obe::transform
             && contains(rect.get_position(Referential::BottomRight));
     }
 
-    bool Rect::contains(const UnitVector& position) const
+    bool Rect::contains(const Vector2& position) const
     {
         // TODO: fix for non-AABB rectangle
-        const UnitVector converted_position = position.to(m_position.unit);
+        const Vector2 converted_position = position.to(m_position.unit);
         const auto min_x = std::min(m_position.x, m_position.x + m_size.x);
         const auto max_x = std::max(m_position.x, m_position.x + m_size.x);
         const auto min_y = std::min(m_position.y, m_position.y + m_size.y);
@@ -202,11 +202,11 @@ namespace obe::transform
             && (converted_position.y >= min_y) && (converted_position.y < max_y);
     }
 
-    void Rect::set_point_position(const UnitVector& position, const Referential& ref)
+    void Rect::set_point_position(const Vector2& position, const Referential& ref)
     {
-        const UnitVector opposite_point_position = this->get_position(ref.flip());
+        const Vector2 opposite_point_position = this->get_position(ref.flip());
         const double rad_angle = utils::math::convert_to_radian(-m_angle);
-        const UnitVector moved_point
+        const Vector2 moved_point
             = rotate_point_around_center(position, opposite_point_position, -rad_angle);
 
         this->set_position(position, ref);
@@ -247,46 +247,46 @@ namespace obe::transform
         }
     }
 
-    UnitVector Rect::get_position(const Referential& ref) const
+    Vector2 Rect::get_position(const Referential& ref) const
     {
-        UnitVector pos_vec = m_position;
+        Vector2 pos_vec = m_position;
         this->transform_referential(pos_vec, ref, ReferentialConversionType::From);
         return pos_vec;
     }
 
-    void Rect::set_position(const UnitVector& position, const Referential& ref)
+    void Rect::set_position(const Vector2& position, const Referential& ref)
     {
-        UnitVector p_vec = position.to<Units::SceneUnits>();
+        Vector2 p_vec = position.to<Units::SceneUnits>();
         this->transform_referential(p_vec, ref, ReferentialConversionType::To);
         m_position.set(p_vec);
     }
 
-    void Rect::set_size(const UnitVector& size, const Referential& ref)
+    void Rect::set_size(const Vector2& size, const Referential& ref)
     {
-        const UnitVector save_position = this->get_position(ref);
+        const Vector2 save_position = this->get_position(ref);
         m_size.set(size);
         this->set_position(save_position, ref);
     }
 
-    void Rect::scale(const UnitVector& size, const Referential& ref)
+    void Rect::scale(const Vector2& size, const Referential& ref)
     {
-        const UnitVector save_position = this->get_position(ref);
+        const Vector2 save_position = this->get_position(ref);
         m_size *= size;
         this->set_position(save_position, ref);
     }
 
-    UnitVector Rect::get_size() const
+    Vector2 Rect::get_size() const
     {
         return m_size;
     }
 
-    void Rect::move_point(const UnitVector& position, const Referential& ref)
+    void Rect::move_point(const Vector2& position, const Referential& ref)
     {
         this->set_point_position(position - this->get_position(ref), ref);
     }
 
-    UnitVector Rect::get_scale_factor() const
+    Vector2 Rect::get_scale_factor() const
     {
-        return UnitVector(utils::math::sign(m_size.x), utils::math::sign(m_size.y));
+        return Vector2(utils::math::sign(m_size.x), utils::math::sign(m_size.y));
     }
 } // namespace obe::transform

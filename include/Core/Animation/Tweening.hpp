@@ -7,7 +7,7 @@
 #include <Time/TimeUtils.hpp>
 #include <Transform/AABB.hpp>
 #include <Transform/Rect.hpp>
-#include <Transform/UnitVector.hpp>
+#include <Transform/Vector2.hpp>
 
 namespace obe::animation
 {
@@ -36,13 +36,13 @@ namespace obe::animation
         }
     };
     template <>
-    class TweenImpl<transform::UnitVector>
+    class TweenImpl<transform::Vector2>
     {
     public:
-        static transform::UnitVector step(
-            double progression, const transform::UnitVector& from, const transform::UnitVector& to)
+        static transform::Vector2 step(
+            double progression, const transform::Vector2& from, const transform::Vector2& to)
         {
-            transform::UnitVector step = from;
+            transform::Vector2 step = from;
             step.x = (progression * (to.x - from.x)) + from.x;
             step.y = (progression * (to.y - from.y)) + from.y;
             return step;
@@ -56,8 +56,10 @@ namespace obe::animation
             double progression, const transform::AABB& from, const transform::AABB& to)
         {
             transform::AABB step = from;
-            step.m_position = TweenImpl<transform::UnitVector>::step(progression, from.get_position(), to.get_position());
-            step.m_size = TweenImpl<transform::UnitVector>::step(progression, from.get_size(), to.get_size());
+            step.m_position = TweenImpl<transform::Vector2>::step(
+                progression, from.get_position(), to.get_position());
+            step.m_size
+                = TweenImpl<transform::Vector2>::step(progression, from.get_size(), to.get_size());
             return step;
         }
     };
@@ -69,10 +71,10 @@ namespace obe::animation
             double progression, const transform::Rect& from, const transform::Rect& to)
         {
             transform::Rect step = from;
-            step.m_position = TweenImpl<transform::UnitVector>::step(
+            step.m_position = TweenImpl<transform::Vector2>::step(
                 progression, from.get_position(), to.get_position());
-            step.m_size = TweenImpl<transform::UnitVector>::step(
-                progression, from.get_size(), to.get_size());
+            step.m_size
+                = TweenImpl<transform::Vector2>::step(progression, from.get_size(), to.get_size());
             step.m_angle = (progression * (to.m_angle - from.m_angle)) + from.m_angle;
             return step;
         }
@@ -130,7 +132,7 @@ namespace obe::animation
     /**
      * \thints
      * \thint{ColorTweening     , TweenableClass=obe::graphics::Color}
-     * \thint{UnitVectorTweening, TweenableClass=obe::transform::UnitVector}
+     * \thint{Vector2Tweening   , TweenableClass=obe::transform::Vector2}
      * \thint{RectTweening      , TweenableClass=obe::transform::Rect}
      * \thint{TrajectoryTweening, TweenableClass=obe::collision::Trajectory}
      * \thint{IntTweening       , TweenableClass=int}

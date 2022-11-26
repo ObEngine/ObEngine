@@ -79,8 +79,8 @@ namespace obe::graphics::canvas
     class Line : public CanvasElement
     {
     public:
-        transform::UnitVector p1;
-        transform::UnitVector p2;
+        transform::Vector2 p1;
+        transform::Vector2 p2;
         unsigned int thickness = 1;
         Color p1_color;
         Color p2_color;
@@ -105,7 +105,7 @@ namespace obe::graphics::canvas
     class CanvasPositionable : public CanvasElement
     {
     public:
-        transform::UnitVector position;
+        transform::Vector2 position;
         CanvasPositionable(Canvas& parent, const std::string& id);
     };
 
@@ -118,7 +118,7 @@ namespace obe::graphics::canvas
         static constexpr CanvasElementType Type = CanvasElementType::Rectangle;
 
         shapes::Rectangle shape;
-        transform::UnitVector size;
+        transform::Vector2 size;
         /**
          * \brief Create a new Rectangle
          * \param parent Reference to the Canvas
@@ -232,7 +232,7 @@ namespace obe::graphics::canvas
     {
     public:
         static constexpr CanvasElementType Type = CanvasElementType::Bezier;
-        std::vector<transform::UnitVector> points;
+        std::vector<transform::Vector2> points;
         std::vector<graphics::Color> colors;
         unsigned int precision = 10;
 

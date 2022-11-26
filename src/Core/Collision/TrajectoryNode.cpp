@@ -39,17 +39,17 @@ namespace obe::collision
         m_trajectories.erase(id);
     }
 
-    transform::UnitVector make_offset_normal(const transform::UnitVector& offset)
+    transform::Vector2 make_offset_normal(const transform::Vector2& offset)
     {
         static double base_offset_normal_scale = 0.0005;
         if (abs(offset.x) >= abs(offset.y))
         {
-            return transform::UnitVector(base_offset_normal_scale,
+            return transform::Vector2(base_offset_normal_scale,
                 (offset.y != 0) ? offset.y / offset.x * base_offset_normal_scale : 0, offset.unit);
         }
         else
         {
-            return transform::UnitVector(
+            return transform::Vector2(
                 (offset.x != 0) ? offset.x / offset.y * base_offset_normal_scale : 0, base_offset_normal_scale, offset.unit);
         }
     }
@@ -61,7 +61,7 @@ namespace obe::collision
             const double rad_angle = (utils::math::pi / 180.0) * -trajectory.get_angle();
             const double x_offset = std::cos(rad_angle) * (speed * dt);
             const double y_offset = std::sin(rad_angle) * (speed * dt);
-            return transform::UnitVector(x_offset, y_offset, trajectory.get_unit());
+            return transform::Vector2(x_offset, y_offset, trajectory.get_unit());
         };
         for (auto& trajectory : m_trajectories)
         {
@@ -82,7 +82,7 @@ namespace obe::collision
                     collision_data.offset = base_offset;
                     if (m_probe != nullptr && m_collision_space != nullptr)
                     {
-                        const transform::UnitVector offset_normal = make_offset_normal(base_offset);
+                        const transform::Vector2 offset_normal = make_offset_normal(base_offset);
                         // Slightly push towards offset to avoid getting stuck inside of it
                         m_probe->move(offset_normal);
                         collision_data.offset = m_collision_space->get_offset_before_collision(

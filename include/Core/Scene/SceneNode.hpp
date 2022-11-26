@@ -28,26 +28,26 @@ namespace obe::scene
         void remove_child(transform::Movable& child);
         /**
          * \brief Set the position of the SceneNode and all of its children
-         *        using an UnitVector
+         *        using an Vector2
          * \param position Position to affect to the
          *        SceneNode and all of its children
          */
-        void set_position(const transform::UnitVector& position) override;
+        void set_position(const transform::Vector2& position) override;
         /**
          * \brief Moves the SceneNode (Adds the given position to the current
          *        one) and all of its children
          * \param position Position to add to the current Position
          */
-        void move(const transform::UnitVector& position) override;
+        void move(const transform::Vector2& position) override;
         /**
-         * \brief Set the position of the SceneNode using an UnitVector
+         * \brief Set the position of the SceneNode using an Vector2
          * \param position Position to affect to the SceneNode
          */
-        void set_position_without_children(const transform::UnitVector& position);
+        void set_position_without_children(const transform::Vector2& position);
         /**
          * \brief Moves the SceneNode (Adds the given position to the current one)
          * \param position Position to add to the current Position
          */
-        void move_without_children(const transform::UnitVector& position);
+        void move_without_children(const transform::Vector2& position);
     };
 } // namespace obe::scene

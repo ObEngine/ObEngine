@@ -1,7 +1,8 @@
 #pragma once
 
-#include <Transform/UnitVector.hpp>
 #include <string>
+
+#include <Transform/Vector2.hpp>
 
 namespace obe::transform
 {
@@ -84,7 +85,7 @@ namespace obe::transform
          *        (-1 : Left / Top, 0 = Center, 1 = Right / Bottom)
          * \return The normalized position of a Referential in a Rect
          */
-        [[nodiscard]] UnitVector get_offset() const;
+        [[nodiscard]] Vector2 get_offset() const;
 
         /**
          * \brief Get the name of a Referential in std::string form

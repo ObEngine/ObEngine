@@ -42,7 +42,7 @@ namespace obe::collision
         update_shape();
     }
 
-    PolygonCollider::PolygonCollider(const transform::UnitVector& position)
+    PolygonCollider::PolygonCollider(const transform::Vector2& position)
         : Collider(position)
     {
         m_shape.count = 0;
@@ -62,27 +62,27 @@ namespace obe::collision
         const double width = max_x->x - min_x->x;
         const double height = max_y->y - min_y->y;
         return transform::AABB(
-            transform::UnitVector(min_x->x, min_y->y), transform::UnitVector(width, height));
+            transform::Vector2(min_x->x, min_y->y), transform::Vector2(width, height));
     }
 
-    transform::UnitVector PolygonCollider::get_position() const
+    transform::Vector2 PolygonCollider::get_position() const
     {
         return Collider::get_position();
     }
 
-    void PolygonCollider::set_position(const transform::UnitVector& position)
+    void PolygonCollider::set_position(const transform::Vector2& position)
     {
         Collider::set_position(position);
         update_transform();
     }
 
-    void PolygonCollider::move(const transform::UnitVector& position)
+    void PolygonCollider::move(const transform::Vector2& position)
     {
         Collider::move(position);
         update_transform();
     }
 
-    void PolygonCollider::add_point(const transform::UnitVector& position, int point_index)
+    void PolygonCollider::add_point(const transform::Vector2& position, int point_index)
     {
         if (point_index < 0)
         {
@@ -105,7 +105,7 @@ namespace obe::collision
         for (uint32_t point_index = 0; point_index < m_shape.count; point_index++)
         {
             c2v point = m_shape.verts[point_index];
-            result.add_point(transform::UnitVector(point.x + m_position.x, point.y + m_position.y));
+            result.add_point(transform::Vector2(point.x + m_position.x, point.y + m_position.y));
         }
         result.set_rotation(m_angle, m_position);
         return result;

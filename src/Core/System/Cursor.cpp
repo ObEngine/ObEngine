@@ -107,19 +107,19 @@ namespace obe::system
         return m_visible;
     }
 
-    transform::UnitVector Cursor::get_position() const
+    transform::Vector2 Cursor::get_position() const
     {
-        return transform::UnitVector(
+        return transform::Vector2(
             m_constrained_x, m_constrained_y, transform::Units::ScenePixels);
     }
 
-    transform::UnitVector Cursor::get_scene_position() const
+    transform::Vector2 Cursor::get_scene_position() const
     {
         const sf::Vector2i pixel_pos(m_constrained_x, m_constrained_y);
 
         // TODO: Is it suitable behaviour ?
         const sf::Vector2f world_pos = m_window.get_window().mapPixelToCoords(pixel_pos);
-        return transform::UnitVector(world_pos.x, world_pos.y, transform::Units::ScenePixels);
+        return transform::Vector2(world_pos.x, world_pos.y, transform::Units::ScenePixels);
     }
 
     void Cursor::update()

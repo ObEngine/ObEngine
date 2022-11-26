@@ -19,7 +19,7 @@ namespace obe::collision
         auto new_collider = PolygonCollider();
         for (const auto& point : data.at("points").as<vili::array>())
         {
-            const transform::UnitVector point_position(point.at("x"), point.at("y"));
+            const transform::Vector2 point_position(point.at("x"), point.at("y"));
             new_collider.add_point(point_position);
         }
         m_collider = new_collider;
@@ -28,7 +28,7 @@ namespace obe::collision
     void ColliderComponent::load_rectangle(const vili::node& data)
     {
         auto new_collider = RectangleCollider();
-        const transform::UnitVector size(data.at("width"), data.at("height"));
+        const transform::Vector2 size(data.at("width"), data.at("height"));
         new_collider.set_size(size);
         m_collider = new_collider;
     }
@@ -58,7 +58,7 @@ namespace obe::collision
 
     vili::node ColliderComponent::dump_rectangle() const
     {
-        const transform::UnitVector size = std::get<RectangleCollider>(m_collider).get_size();
+        const transform::Vector2 size = std::get<RectangleCollider>(m_collider).get_size();
         return vili::object { { "type", "Rectangle" }, { "width", size.x }, { "height", size.y } };
     }
 
@@ -145,7 +145,7 @@ namespace obe::collision
         std::visit(
             [x, y, tag](auto&& collider)
             {
-                collider.set_position(transform::UnitVector(x, y));
+                collider.set_position(transform::Vector2(x, y));
                 collider.set_tag(tag);
             },
             m_collider);

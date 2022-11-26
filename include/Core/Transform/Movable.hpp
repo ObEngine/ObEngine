@@ -1,6 +1,6 @@
 #pragma once
 
-#include <Transform/UnitVector.hpp>
+#include <Transform/Vector2.hpp>
 
 namespace obe::transform
 {
@@ -10,27 +10,27 @@ namespace obe::transform
     class Movable
     {
     protected:
-        UnitVector m_position;
+        Vector2 m_position;
 
     public:
         Movable() = default;
-        explicit Movable(const transform::UnitVector& position);
+        explicit Movable(const transform::Vector2& position);
         virtual ~Movable() = default;
         /**
-         * \brief Set the position of the Movable using an UnitVector
+         * \brief Set the position of the Movable using an Vector2
          * \param position Position to affect to the Movable
          */
-        virtual void set_position(const UnitVector& position);
+        virtual void set_position(const Vector2& position);
         /**
          * \brief Moves the Movable (Adds the given position to the current one)
          * \param position Position to add to the current Position
          */
-        virtual void move(const UnitVector& position);
+        virtual void move(const Vector2& position);
         /**
          * \brief Get the Position of the Movable
          * \return The Position of the given Referential of the Movable
          */
-        [[nodiscard]] virtual UnitVector get_position() const;
+        [[nodiscard]] virtual Vector2 get_position() const;
         /**
          * \brief Gets the type of the Movable object
          * \return An enum value from MovableType

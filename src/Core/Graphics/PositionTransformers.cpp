@@ -27,12 +27,12 @@ namespace obe::graphics
         m_y_transformer = Transformers[m_y_transformer_name];
     }
 
-    transform::UnitVector PositionTransformer::operator()(
-        const transform::UnitVector& position, const transform::UnitVector& camera, int layer) const
+    transform::Vector2 PositionTransformer::operator()(
+        const transform::Vector2& position, const transform::Vector2& camera, int layer) const
     {
-        transform::UnitVector transformed_position(position.unit);
-        transformed_position.x = m_x_transformer(position.x, camera.to(position.unit).x, layer);
-        transformed_position.y = m_y_transformer(position.y, camera.to(position.unit).y, layer);
+        transform::Vector2 transformed_position;
+        transformed_position.x = m_x_transformer(position.x, camera.x, layer);
+        transformed_position.y = m_y_transformer(position.y, camera.y, layer);
         return transformed_position;
     }
 

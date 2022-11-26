@@ -4,7 +4,7 @@
 #include <SFML/Graphics/RenderWindow.hpp>
 
 #include <Graphics/Color.hpp>
-#include <Transform/UnitVector.hpp>
+#include <Transform/Vector2.hpp>
 
 namespace obe::graphics
 {
@@ -23,7 +23,7 @@ namespace obe::graphics
         void draw(const sf::Vertex* vertices, std::size_t vertex_count, sf::PrimitiveType type,
             const sf::RenderStates& states = sf::RenderStates::Default) const;
 
-        [[nodiscard]] transform::UnitVector get_size() const;
+        [[nodiscard]] transform::Vector2 get_size() const;
 
         operator sf::RenderTarget&() const;
         operator const sf::RenderTarget&() const;
@@ -56,10 +56,10 @@ namespace obe::graphics
         m_target.draw(vertices, vertex_count, type, states);
     }
 
-    inline transform::UnitVector RenderTarget::get_size() const
+    inline transform::Vector2 RenderTarget::get_size() const
     {
         const sf::Vector2u size = m_target.getSize();
-        return transform::UnitVector(size.x, size.y, transform::Units::ScenePixels);
+        return transform::Vector2(size.x, size.y);
     }
 
     inline RenderTarget::operator sf::RenderTarget&() const

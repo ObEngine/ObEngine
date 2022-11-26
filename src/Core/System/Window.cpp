@@ -197,7 +197,7 @@ namespace obe::system
 
     void Window::create()
     {
-        transform::UnitVector::init(m_render_width, m_render_height);
+        transform::Vector2::init(m_render_width, m_render_height);
         m_window.create(sf::VideoMode(m_width, m_height), m_title, m_style);
         m_window.setKeyRepeatEnabled(false);
 
@@ -230,26 +230,26 @@ namespace obe::system
         m_window.draw(vertices, vertex_count, type, states);
     }
 
-    transform::UnitVector Window::get_render_size() const
+    transform::Vector2 Window::get_render_size() const
     {
-        return transform::UnitVector(
+        return transform::Vector2(
             m_render_width, m_render_height, transform::Units::ScenePixels);
     }
 
-    transform::UnitVector Window::get_window_size() const
+    transform::Vector2 Window::get_window_size() const
     {
         const sf::Vector2u window_size = m_window.getSize();
-        return transform::UnitVector(window_size.x, window_size.y, transform::Units::ScenePixels);
+        return transform::Vector2(window_size.x, window_size.y, transform::Units::ScenePixels);
     }
 
-    transform::UnitVector Window::get_screen_size()
+    transform::Vector2 Window::get_screen_size()
     {
         const auto screen_size = sf::VideoMode::getDesktopMode();
-        return transform::UnitVector(
+        return transform::Vector2(
             screen_size.width, screen_size.height, transform::Units::ScenePixels);
     }
 
-    transform::UnitVector Window::get_size() const
+    transform::Vector2 Window::get_size() const
     {
         return this->get_render_size();
     }
@@ -337,8 +337,8 @@ namespace obe::system
 
     void Window::set_render_size(unsigned width, unsigned height)
     {
-        transform::UnitVector::Screen.w = width;
-        transform::UnitVector::Screen.h = height;
+        transform::Vector2::Screen.w = width;
+        transform::Vector2::Screen.h = height;
         m_render_width = width;
         m_render_height = height;
         this->apply_view();

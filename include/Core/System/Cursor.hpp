@@ -1,14 +1,16 @@
 #pragma once
 
-#include <Animation/Animator.hpp>
-#include <Event/EventGroup.hpp>
-#include <Event/EventNamespace.hpp>
+#include <map>
+
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Window/Cursor.hpp>
 #include <SFML/Window/Mouse.hpp>
+
+#include <Animation/Animator.hpp>
+#include <Event/EventGroup.hpp>
+#include <Event/EventNamespace.hpp>
 #include <System/Window.hpp>
-#include <Transform/UnitVector.hpp>
-#include <map>
+#include <Transform/Vector2.hpp>
 
 namespace obe::events
 {
@@ -181,8 +183,8 @@ namespace obe::system
         void set_visible(bool visible);
         [[nodiscard]] bool is_visible() const;
 
-        [[nodiscard]] transform::UnitVector get_position() const;
-        [[nodiscard]] transform::UnitVector get_scene_position() const;
+        [[nodiscard]] transform::Vector2 get_position() const;
+        [[nodiscard]] transform::Vector2 get_scene_position() const;
         /**
          * \brief Updates the Cursor
          */
