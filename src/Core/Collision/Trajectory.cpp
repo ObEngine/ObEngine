@@ -10,8 +10,9 @@ namespace obe::collision
 
     Trajectory& Trajectory::set_angle(const double angle)
     {
+        const bool trigger_change = (m_angle != angle);
         m_angle = angle;
-        if (m_on_change_callback)
+        if (m_on_change_callback && trigger_change)
         {
             m_on_change_callback(*this, "angle");
         }
@@ -20,8 +21,9 @@ namespace obe::collision
 
     Trajectory& Trajectory::set_speed(const double speed)
     {
+        const bool trigger_change = (m_speed != speed);
         m_speed = speed;
-        if (m_on_change_callback)
+        if (m_on_change_callback && trigger_change)
         {
             m_on_change_callback(*this, "speed");
         }
@@ -30,8 +32,9 @@ namespace obe::collision
 
     Trajectory& Trajectory::set_acceleration(const double acceleration)
     {
+        const bool trigger_change = (m_acceleration != acceleration);
         m_acceleration = acceleration;
-        if (m_on_change_callback)
+        if (m_on_change_callback && trigger_change)
         {
             m_on_change_callback(*this, "acceleration");
         }
@@ -40,8 +43,9 @@ namespace obe::collision
 
     Trajectory& Trajectory::add_angle(const double angle)
     {
+        const bool trigger_change = (angle != 0);
         m_angle += angle;
-        if (m_on_change_callback)
+        if (m_on_change_callback && trigger_change)
         {
             m_on_change_callback(*this, "angle");
         }
@@ -50,8 +54,9 @@ namespace obe::collision
 
     Trajectory& Trajectory::add_speed(const double speed)
     {
+        const bool trigger_change = (speed != 0);
         m_speed += speed;
-        if (m_on_change_callback)
+        if (m_on_change_callback && trigger_change)
         {
             m_on_change_callback(*this, "speed");
         }
@@ -60,8 +65,9 @@ namespace obe::collision
 
     Trajectory& Trajectory::add_acceleration(const double acceleration)
     {
+        const bool trigger_change = (acceleration != 0);
         m_acceleration = acceleration;
-        if (m_on_change_callback)
+        if (m_on_change_callback && trigger_change)
         {
             m_on_change_callback(*this, "acceleration");
         }
@@ -70,12 +76,23 @@ namespace obe::collision
 
     Trajectory& Trajectory::set_static(const bool static_)
     {
+        const bool trigger_change = (m_static != static_);
         m_static = static_;
-        if (m_on_change_callback)
+        if (m_on_change_callback && trigger_change)
         {
             m_on_change_callback(*this, "static");
         }
         return *this;
+    }
+
+    std::optional<std::string> Trajectory::get_tag() const
+    {
+        return m_tag;
+    }
+
+    void Trajectory::set_tag(const std::string& tag)
+    {
+        m_tag = tag;
     }
 
     double Trajectory::get_angle() const

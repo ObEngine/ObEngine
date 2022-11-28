@@ -82,8 +82,15 @@ namespace obe::collision
                     collision_data.offset = base_offset;
                     if (m_probe != nullptr && m_collision_space != nullptr)
                     {
+                        const std::string probe_tag = m_probe->get_tag();
+                        const std::optional<std::string> trajectory_tag = trajectory.second->get_tag();
+                        if (trajectory_tag)
+                        {
+                            m_probe->set_tag(trajectory_tag.value());
+                        }
                         collision_data.offset = m_collision_space->get_offset_before_collision(
                             *m_probe, collision_data.offset);
+                        m_probe->set_tag(probe_tag);
                         /* debug::Log->debug(
                             "<TrajectoryNode> Trajectory '{}'\tBase Offset {}\tOffset {}\tNormal {}\tTOI {}\tDT {}",
                             trajectory.first, base_offset, collision_data.offset, offset_normal, collision_data.offset.x / base_offset.x, dt);*/

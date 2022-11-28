@@ -1,11 +1,13 @@
 #pragma once
 
+#include <functional>
+#include <optional>
+#include <vector>
+
 #include <Collision/Collider.hpp>
 #include <Transform/UnitVector.hpp>
 #include <Transform/Units.hpp>
 #include <Types/Togglable.hpp>
-#include <functional>
-#include <vector>
 
 namespace obe::animation
 {
@@ -42,6 +44,7 @@ namespace obe::collision
         double m_speed = 0;
         bool m_static = false;
         transform::Units m_unit;
+        std::optional<std::string> m_tag;
         friend class TrajectoryNode;
 
     public:
@@ -63,5 +66,8 @@ namespace obe::collision
         Trajectory& set_angle(double angle);
         Trajectory& set_speed(double speed);
         Trajectory& set_static(bool static_);
+
+        [[nodiscard]] std::optional<std::string> get_tag() const;
+        void set_tag(const std::string& tag);
     };
 } // namespace obe::collision

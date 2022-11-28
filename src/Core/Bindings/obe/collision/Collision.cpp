@@ -262,6 +262,8 @@ namespace obe::collision::bindings
         bind_trajectory["set_angle"] = &obe::collision::Trajectory::set_angle;
         bind_trajectory["set_speed"] = &obe::collision::Trajectory::set_speed;
         bind_trajectory["set_static"] = &obe::collision::Trajectory::set_static;
+        bind_trajectory["get_tag"] = &obe::collision::Trajectory::get_tag;
+        bind_trajectory["set_tag"] = &obe::collision::Trajectory::set_tag;
     }
     void load_class_trajectory_node(sol::state_view state)
     {
