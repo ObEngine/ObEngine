@@ -105,4 +105,15 @@ namespace obe::graphics::exceptions
                 type, value);
         }
     };
+
+    class InvalidTexturePixelCoord : public Exception<InvalidTexturePixelCoord>
+    {
+    public:
+        using Exception::Exception;
+        InvalidTexturePixelCoord(uint32_t x, uint32_t y, uint32_t width, uint32_t height, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("Could not access pixel at coordinates (x: {}, y: {}) due to the texture size (width: {}, height: {})", x, y, width, height);
+        }
+    };
 } // namespace obe::graphics::exceptions

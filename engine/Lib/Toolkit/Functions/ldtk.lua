@@ -9,51 +9,71 @@ local Functions = {};
 
 local fs = obe.utils.file;
 
+local function get_level_field_instance_values(field_instances)
+    local values = {};
+    for _, field_instance in pairs(field_instances) do
+        values[field_instance.__identifier] = field_instance.__value;
+    end
+    return values;
+end
+
+local function get_meta_infos(data)
+    for _, level in pairs(data.levels) do
+        if level.identifier == "Meta" then
+            return get_level_field_instance_values(level.fieldInstances or {});
+        end
+    end
+    return {};
+end
+
 local ConverterState = class();
 
-function ConverterState:_init()
+function ConverterState:_init(directory)
+    self.directory = directory;
     self.tilesets = {};
     self.tilesets_uids = {};
     self.tilesets_order = {};
     self.firstTileIdCounter = 1;
+    self.converter_script = nil;
+end
+
+function ConverterState:set_converter_script(script_path)
+    -- check if script path ends with .lua
+    if not string.match(script_path, "%.lua$") then
+        error("converter_script extension must be .lua");
+    end
+    -- remove .lua suffix
+    local converter_script_path = obe.system.Path(self.directory):add(script_path):to_string();
+    print(("Using converter script: '%s'"):format(converter_script_path));
+    self.converter_script = dofile(converter_script_path);
 end
 
 function ConverterState:register_tileset(tileset)
     local tilecount = tileset.__cWid * tileset.__cHei;
-    local collisions = {};
-    for _, tileset_enum_value in pairs(tileset.enumTags) do
-        if tileset_enum_value.enumValueId == "Solid" then
-            for _, tile_id in pairs(tileset_enum_value.tileIds) do
-                local tile_collision = {
-                    id = tile_id,
-                    x = 0,
-                    y = 0,
-                    type = "Rectangle",
-                    width = tileset.tileGridSize / (1440 / 2), -- TODO: modify hardcoded value
-                    height = tileset.tileGridSize / (1440 / 2)
-                };
-                table.insert(collisions, tile_collision);
-            end
-            break;
-        end
+
+    local tileset_ext = {};
+    if self.converter_script and self.converter_script.on_register_tileset then
+        tileset_ext = self.converter_script.on_register_tileset(self, tileset) or {};
     end
+
     self.tilesets[tileset.identifier] = ordered {
-        firstTileId = self.firstTileIdCounter,
-        columns = tileset.__cWid,
-        tilecount = tilecount,
-        margin = tileset.padding,
-        spacing = tileset.spacing,
+        firstTileId = tileset_ext.firstTileId or self.firstTileIdCounter,
+        columns = tileset_ext.columns or tileset.__cWid,
+        tilecount = tileset_ext.tilecount or tilecount,
+        margin = tileset_ext.margin or tileset.padding,
+        spacing = tileset_ext.spacing or tileset.spacing,
         tile = ordered {
-            width = tileset.tileGridSize,
-            height = tileset.tileGridSize
+            width = (tileset_ext.tile or {}).width or tileset.tileGridSize,
+            height = (tileset_ext.tile or {}).height or tileset.tileGridSize
         } {"width", "height"},
         image = ordered {
-            width = tileset.pxWid,
-            height = tileset.pxHei,
-            path = tileset.relPath
+            width = (tileset_ext.image or {}).width or tileset.pxWid,
+            height = (tileset_ext.image or {}).height or tileset.pxHei,
+            path = (tileset_ext.image or {}).path or tileset.relPath
         } {"width", "height", "path"},
-        collisions = collisions
-    } {"firstTileId", "columns", "tilecount", "margin", "spacing", "tile", "image", "collisions"};
+        animations = tileset_ext.animations or {},
+        collisions = tileset_ext.collisions or {}
+    } {"firstTileId", "columns", "tilecount", "margin", "spacing", "tile", "image", "animations", "collisions"};
     table.insert(self.tilesets_order, tileset.identifier);
     self.tilesets_uids[tileset.uid] = tileset.identifier;
     self.firstTileIdCounter = self.firstTileIdCounter + tilecount;
@@ -208,72 +228,87 @@ function Functions.import(path)
         return;
     end
 
-    local state = ConverterState();
+    local meta = get_meta_infos(data);
+
+    local state = ConverterState(tilemap_path:parent():to_string());
+
+    if meta.converter_script then
+        state:set_converter_script(meta.converter_script);
+    end
 
     for _, tileset in pairs(data.defs.tilesets) do
         state:register_tileset(tileset);
     end
 
     for _, level in pairs(data.levels) do
-        print(("  - Exporting level '%s'"):format(level.identifier));
-        local layers_export = {};
-        local layer_names_order = {};
-        -- Table used to check if tileset is used in the current level
-        local tilesets_usage = {};
-        for _, tileset_name in pairs(state.tilesets_order) do
-            tilesets_usage[tileset_name] = false;
-        end
-        local base_layer = nil;
-        for layer_idx, layer in pairs(level.layerInstances) do
-            tilesets_usage[state.tilesets_uids[layer.__tilesetDefUid]] = true;
-            print(("    - Exporting layer '%s' at layer (%s)"):format(layer.__identifier, layer_idx));
-            local exported_sub_layers, sub_layer_names_order = LayerConverters.convert_layer(state, layer, layer_idx);
-            for _, sub_layer_name in pairs(sub_layer_names_order) do
-                table.insert(layer_names_order, sub_layer_name);
+        if level.identifier ~= "Meta" then
+            print(("  - Exporting level '%s'"):format(level.identifier));
+            local layers_export = {};
+            local layer_names_order = {};
+            -- Table used to check if tileset is used in the current level
+            local tilesets_usage = {};
+            for _, tileset_name in pairs(state.tilesets_order) do
+                tilesets_usage[tileset_name] = false;
             end
-            for exported_sub_layer_name, exported_sub_layer in pairs(exported_sub_layers) do
-                if base_layer == nil then
-                    base_layer = exported_sub_layer;
+            local base_layer = nil;
+            for layer_idx, layer in pairs(level.layerInstances) do
+                if layer.__tilesetDefUid then
+                    tilesets_usage[state.tilesets_uids[layer.__tilesetDefUid]] = true;
+                    print(("    - Exporting layer '%s' at layer (%s)"):format(layer.__identifier, layer_idx));
+
+                    local exported_sub_layers, sub_layer_names_order = LayerConverters.convert_layer(state, layer, layer_idx);
+                    for _, sub_layer_name in pairs(sub_layer_names_order) do
+                        table.insert(layer_names_order, sub_layer_name);
+                    end
+                    for exported_sub_layer_name, exported_sub_layer in pairs(exported_sub_layers) do
+                        if base_layer == nil then
+                            base_layer = exported_sub_layer;
+                        end
+                        layers_export[exported_sub_layer_name] = exported_sub_layer;
+                    end
+                else
+                    print(("    - Skipping unused layer '%s'"):format(layer.__identifier));
                 end
-                layers_export[exported_sub_layer_name] = exported_sub_layer;
             end
-        end
-        local base_layer_dimensions = (base_layer or {tileWidth = 16, tileHeight = 16, width = 10, height = 10});
+            local base_layer_dimensions = (base_layer or {tileWidth = 16, tileHeight = 16, width = 10, height = 10});
 
-        local used_tilesets_names = {};
-        for _, tileset_name in pairs(state.tilesets_order) do
-            if tilesets_usage[tileset_name] then
-                table.insert(used_tilesets_names, tileset_name);
+            local used_tilesets_names = {};
+            for _, tileset_name in pairs(state.tilesets_order) do
+                if tilesets_usage[tileset_name] then
+                    table.insert(used_tilesets_names, tileset_name);
+                end
             end
-        end
-        local export = ordered {
-            Meta = ordered {
-                name = level.identifier,
-                background = level.bgColor or "#000000",
-            } {"name", "background"},
-            View = ordered {
-                size = 1.0,
-                position = ordered {
-                    x = 0.0,
-                    y = 0.0,
-                    unit = "SceneUnits",
-                } {"x", "y", "unit"},
-                referential = "TopLeft"
-            } {"size", "position", "referential"},
-            Tiles = ordered {
-                tileWidth = base_layer_dimensions.tileWidth,
-                tileHeight = base_layer_dimensions.tileHeight,
-                width = base_layer_dimensions.width,
-                height = base_layer_dimensions.height,
+            local export = ordered {
+                Meta = ordered {
+                    name = level.identifier,
+                    background = level.bgColor or "#000000",
+                } {"name", "background"},
+                View = ordered {
+                    size = 1.0,
+                    position = ordered {
+                        x = 0.0,
+                        y = 0.0,
+                        unit = "SceneUnits",
+                    } {"x", "y", "unit"},
+                    referential = "TopLeft"
+                } {"size", "position", "referential"},
+                Tiles = ordered {
+                    tileWidth = base_layer_dimensions.tileWidth,
+                    tileHeight = base_layer_dimensions.tileHeight,
+                    width = base_layer_dimensions.width,
+                    height = base_layer_dimensions.height,
 
-                layers = ordered(layers_export)(layer_names_order),
-                sources = ordered(state.tilesets)(used_tilesets_names)
-            } {"tileWidth", "tileHeight", "width", "height", "layers", "sources"},
-        } {"Meta", "View", "Tiles"};
-        local dump_options = vili.writer.dump_options();
-        dump_options.array.items_per_line.any = base_layer_dimensions.width;
-        dump_options.array.max_line_length = 1000;
-        vili.to_file(("%s.vili"):format(level.identifier), export, dump_options);
+                    layers = ordered(layers_export)(layer_names_order),
+                    sources = ordered(state.tilesets)(used_tilesets_names)
+                } {"tileWidth", "tileHeight", "width", "height", "layers", "sources"},
+            } {"Meta", "View", "Tiles"};
+            local dump_options = vili.writer.dump_options();
+            dump_options.array.items_per_line.any = base_layer_dimensions.width;
+            dump_options.array.max_line_length = 1000;
+            local scene_file_path = ("%s.vili"):format(level.identifier);
+            print(("    - Writing scene file at path '%s'"):format(scene_file_path));
+            vili.to_file(scene_file_path, export, dump_options);
+        end
     end
 end
 

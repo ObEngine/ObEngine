@@ -12,6 +12,7 @@ namespace obe::collision::bindings
     void load_class_collider_component(sol::state_view state);
     void load_class_collision_data(sol::state_view state);
     void load_class_collision_space(sol::state_view state);
+    void load_class_complex_polygon_collider(sol::state_view state);
     void load_class_polygon_collider(sol::state_view state);
     void load_class_quadtree(sol::state_view state);
     void load_class_rectangle_collider(sol::state_view state);

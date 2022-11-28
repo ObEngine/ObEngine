@@ -2,6 +2,7 @@
 #include <vili/node.hpp>
 
 #include <Animation/Animation.hpp>
+#include <Graphics/Spritesheet.hpp>
 
 namespace obe::config::validators
 {
@@ -36,26 +37,7 @@ namespace obe::config::validators
                         vili::object {
                             {"type", vili::object_typename},
                             {"properties", vili::object {
-                                {"spritesheet", vili::object {
-                                    {"type", vili::object_typename},
-                                    {"properties", vili::object {
-                                        {"image", vili::object {
-                                            {"type", vili::string_typename}
-                                        }},
-                                        {"frames", vili::object {
-                                            {"type", vili::array_typename},
-                                            {"items", vili::object {
-                                                {"type", vili::object_typename},
-                                                {"properties", vili::object {
-                                                    {"x", vili::object {{"type", vili::integer_typename}}},
-                                                    {"y", vili::object {{"type", vili::integer_typename}}},
-                                                    {"width", vili::object {{"type", vili::integer_typename}}},
-                                                    {"height", vili::object {{"type", vili::integer_typename}}},
-                                                }}
-                                            }}
-                                        }}
-                                    }}
-                                }}
+                                {"spritesheet", graphics::Spritesheet::Schema() }
                             }}
                         },
                         vili::object {

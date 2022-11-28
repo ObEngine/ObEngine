@@ -1,4 +1,8 @@
+#pragma once
+
 #include <Collision/ColliderComponent.hpp>
+#include <Graphics/Color.hpp>
+#include <Graphics/RenderTarget.hpp>
 #include <Transform/Polygon.hpp>
 #include <Transform/UnitVector.hpp>
 

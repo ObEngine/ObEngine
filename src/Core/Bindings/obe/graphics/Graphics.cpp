@@ -533,6 +533,7 @@ namespace obe::graphics::bindings
         bind_texture["is_vector"] = &obe::graphics::Texture::is_vector;
         bind_texture["is_bitmap"] = &obe::graphics::Texture::is_bitmap;
         bind_texture["make_texture_part"] = &obe::graphics::Texture::make_texture_part;
+        bind_texture["get_pixel"] = &obe::graphics::Texture::get_pixel;
         bind_texture["make_shared_texture"] = &obe::graphics::Texture::make_shared_texture;
     }
     void load_class_texture_part(sol::state_view state)

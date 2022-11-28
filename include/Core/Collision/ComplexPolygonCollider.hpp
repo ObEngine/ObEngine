@@ -2,30 +2,24 @@
 
 #include <Collision/Collider.hpp>
 #include <Transform/Polygon.hpp>
+#include <Transform/UnitVector.hpp>
 
 namespace obe::collision
 {
     class ComplexPolygonCollider : public Collider
     {
     private:
-        c2Poly m_shape = {};
-        c2x m_transform;
-        float m_angle = 0;
-
+        std::vector<transform::UnitVector> m_points;
     protected:
         [[nodiscard]] const void* get_c2_shape() const override;
         [[nodiscard]] const c2x* get_c2_space_transform() const override;
-        void update_transform();
-        void update_shape();
 
     public:
-        static constexpr ColliderType Type = ColliderType::Polygon;
+        static constexpr ColliderType Type = ColliderType::ComplexPolygon;
         [[nodiscard]] ColliderType get_collider_type() const override;
 
-        ComplexPolygonCollider();
-        explicit ComplexPolygonCollider(const transform::UnitVector& position);
+        ComplexPolygonCollider() = default;
 
-        [[nodiscard]] transform::AABB get_bounding_box() const override;
         [[nodiscard]] transform::UnitVector get_position() const override;
         void set_position(const transform::UnitVector& position) override;
         void move(const transform::UnitVector& position) override;
@@ -42,26 +36,28 @@ namespace obe::collision
          * \return The amount of points in the Polygon
          */
         [[nodiscard]] std::size_t get_points_amount() const;
-        transform::Polygon get_polygon() const;
 
         /**
-         * \brief Sets the angle of the PolygonalCollider (will rotate all
-         *        points around the given origin)
-         * \param angle Angle to set to the PolygonalCollider
+         * \brief Checks if two polygons are intersecting
+         * \param collider The other collider to test
+         * \param offset The offset to apply to the source collider
+         * \return true if the two polygons intersects, false otherwise
          */
-        virtual void set_rotation(float angle);
+        [[nodiscard]] bool collides(const Collider& collider) const override;
         /**
-         * \brief Adds an angle to the current angle of the PolygonalCollider
-         *        (will rotate all points around the given origin)
-         * \param angle Angle to add to the PolygonalCollider
+         * \brief Gets the Maximum distance before Collision with a specific
+         *        Collider
+         * \param collider Collider to check the Collision with
+         * \param offset Distance the Collider should move to (if nothing collides)
+         * \return The maximum distance the Collider can travel before colliding
          */
-        virtual void rotate(float angle);
-        /**
-         * \brief Gets the current angle of the PolygonalCollider
-         * \return A float containing the value of the current angle of the
-         *         PolygonalCollider
-         */
-        [[nodiscard]] float get_rotation() const;
+        [[nodiscard]] transform::UnitVector get_offset_before_collision(
+            const Collider& collider,
+            const transform::UnitVector& self_offset = transform::UnitVector(0, 0),
+            const transform::UnitVector& other_offset = transform::UnitVector(0, 0)) const override;
+
+        // Inherited via Collider
+        virtual transform::AABB get_bounding_box() const override;
     };
 
 }

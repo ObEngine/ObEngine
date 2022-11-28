@@ -1,12 +1,14 @@
 #pragma once
 
-#include <Transform/Movable.hpp>
-#include <Transform/Rect.hpp>
-#include <Transform/UnitBasedObject.hpp>
-#include <Transform/UnitVector.hpp>
 #include <memory>
 #include <optional>
 #include <vector>
+
+#include <Transform/AABB.hpp>
+#include <Transform/Movable.hpp>
+#include <Transform/UnitBasedObject.hpp>
+#include <Transform/UnitVector.hpp>
+
 
 namespace obe::transform
 {
@@ -175,7 +177,7 @@ namespace obe::transform
         PolygonPoint& operator[](point_index_t i);
         PolygonPoint& get(point_index_t i);
         [[nodiscard]] const PolygonPoint& get(point_index_t i) const;
-        [[nodiscard]] virtual Rect get_bounding_box() const;
+        [[nodiscard]] virtual AABB get_bounding_box() const;
 
         /**
          * \brief Sets the angle of the PolygonalCollider (will rotate all

@@ -40,6 +40,7 @@ namespace obe::collision
 
     public:
         Quadtree(const transform::AABB& box);
+        void clear();
         void add(const Collider* value);
         void remove(const Collider* value);
         std::vector<const Collider*> query(const transform::AABB& box) const;

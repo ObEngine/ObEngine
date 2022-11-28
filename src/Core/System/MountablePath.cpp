@@ -16,6 +16,15 @@ namespace obe::system
 {
     MountList MountablePath::MountedPaths;
 
+    void MountablePath::mount_additional_prefixes()
+    {
+        // If obe prefix has been redefined, extlibs will change accordingly
+        std::string obe_path = MountablePath::from_prefix(prefixes::obe.data()).base_path;
+        MountablePath extlibs_path(MountablePathType::Path, obe_path + "/Lib/Extlibs",
+            prefixes::extlibs, priorities::defaults, false);
+        MountablePath::mount(extlibs_path);
+    }
+
     MountablePath::MountablePath(MountablePathType path_type, std::string_view base_path,
         std::string_view prefix, unsigned int priority, bool implicit, bool defer_resolution)
         : path_type(path_type)
@@ -104,6 +113,7 @@ namespace obe::system
 
             debug::Log->info("No 'mount.vili' file found in the following directories ({})",
                 fmt::join(string_paths.begin(), string_paths.end(), ", "));
+            mount_additional_prefixes();
             return;
         }
 
@@ -207,11 +217,7 @@ namespace obe::system
                 current_path->base_path, current_path->prefix);
         }
 
-        // If obe prefix has been redefined, extlibs will change accordingly
-        std::string obe_path = MountablePath::from_prefix(prefixes::obe.data()).base_path;
-        MountablePath extlibs_path(MountablePathType::Path, obe_path + "/Lib/Extlibs",
-            prefixes::extlibs, priorities::defaults, false);
-        MountablePath::mount(extlibs_path);
+        mount_additional_prefixes();
     }
 
     void MountablePath::mount(const MountablePath path, SamePrefixPolicy same_prefix_policy)

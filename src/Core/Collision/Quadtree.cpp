@@ -11,6 +11,12 @@ namespace obe::collision
     {
     }
 
+    void Quadtree::clear()
+    {
+        m_root.reset();
+        m_root = std::make_unique<Node>();
+    }
+
     bool Quadtree::is_leaf(const Node* node) const
     {
         return !static_cast<bool>(node->children[0]);

@@ -5,6 +5,7 @@
 #include <Collision/Collider.hpp>
 #include <Collision/ColliderComponent.hpp>
 #include <Collision/CollisionSpace.hpp>
+#include <Collision/ComplexPolygonCollider.hpp>
 #include <Collision/PolygonCollider.hpp>
 #include <Collision/Quadtree.hpp>
 #include <Collision/RectangleCollider.hpp>
@@ -166,6 +167,10 @@ namespace obe::collision::bindings
             = &obe::collision::CollisionSpace::remove_tag_to_blacklist;
         bind_collision_space["clear_blacklist"] = &obe::collision::CollisionSpace::clear_blacklist;
         bind_collision_space["get_blacklist"] = &obe::collision::CollisionSpace::get_blacklist;
+    }
+    void load_class_complex_polygon_collider(sol::state_view state)
+    {
+        sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
     }
     void load_class_polygon_collider(sol::state_view state)
     {

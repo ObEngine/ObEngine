@@ -8,6 +8,7 @@
 #include <lunasvg.h>
 #include <SFML/Graphics/Texture.hpp>
 
+#include <Graphics/Color.hpp>
 #include <Transform/AABB.hpp>
 
 namespace obe
@@ -64,6 +65,7 @@ namespace obe::graphics
     {
     private:
         TextureWrapper m_texture;
+        mutable std::optional<sf::Image> m_pixels;
 
         sf::Texture& get_mutable_texture();
         const sf::Texture& get_texture() const;
@@ -108,6 +110,7 @@ namespace obe::graphics
         Texture& operator=(std::shared_ptr<sf::Texture> texture);
 
         TexturePart make_texture_part() const;
+        [[nodiscard]] Color get_pixel(uint32_t x, uint32_t y) const;
     };
 
     class TexturePart

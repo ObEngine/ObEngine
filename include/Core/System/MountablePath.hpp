@@ -83,6 +83,8 @@ namespace obe::system
     private:
         static MountList MountedPaths;
 
+        static void mount_additional_prefixes();
+
     public:
         /**
          * \brief Constructor of MountablePath

@@ -162,6 +162,7 @@ namespace obe::bindings
         obe::collision::bindings::load_class_collider_component(state);
         obe::collision::bindings::load_class_collision_data(state);
         obe::collision::bindings::load_class_collision_space(state);
+        obe::collision::bindings::load_class_complex_polygon_collider(state);
         obe::collision::bindings::load_class_polygon_collider(state);
         obe::collision::bindings::load_class_quadtree(state);
         obe::collision::bindings::load_class_rectangle_collider(state);

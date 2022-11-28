@@ -400,7 +400,7 @@ namespace obe::transform
             throw exceptions::PolygonPointIndexOverflow(this, i, m_points.size(), EXC_INFO);
     }
 
-    Rect Polygon::get_bounding_box() const
+    AABB Polygon::get_bounding_box() const
     {
         auto [min_x, max_x] = std::minmax_element(m_points.begin(), m_points.end(),
             [](auto& point1, auto& point2) { return point1.x < point2.x; });
@@ -408,7 +408,7 @@ namespace obe::transform
             [](auto& point1, auto& point2) { return point1.y < point2.y; });
         const double width = max_x->x - min_x->x;
         const double height = max_y->y - min_y->y;
-        return Rect(transform::UnitVector(min_x->x, min_y->y),
+        return AABB(transform::UnitVector(min_x->x, min_y->y),
             transform::UnitVector(width, height));
     }
 } // namespace obe::transform

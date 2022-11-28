@@ -19,7 +19,7 @@ namespace obe::collision
         auto new_collider = PolygonCollider();
         for (const auto& point : data.at("points").as<vili::array>())
         {
-            const transform::UnitVector point_position(point.at("x"), point.at("y"));
+            const transform::UnitVector point_position(point.at("x"), point.at("y"), m_unit);
             new_collider.add_point(point_position);
         }
         m_collider = new_collider;
@@ -27,9 +27,28 @@ namespace obe::collision
 
     void ColliderComponent::load_rectangle(const vili::node& data)
     {
-        auto new_collider = RectangleCollider();
-        const transform::UnitVector size(data.at("width"), data.at("height"));
+        /* auto new_collider = RectangleCollider();
+        const transform::UnitVector size(data.at("width"), data.at("height"), m_unit);
         new_collider.set_size(size);
+        m_collider = new_collider;*/
+        const double width = data.at("width");
+        const double height = data.at("height");
+        auto new_collider = ComplexPolygonCollider();
+        new_collider.add_point(transform::UnitVector(0, 0, m_unit));
+        new_collider.add_point(transform::UnitVector(width, 0, m_unit));
+        new_collider.add_point(transform::UnitVector(width, height, m_unit));
+        new_collider.add_point(transform::UnitVector(0, height, m_unit));
+        m_collider = new_collider;
+    }
+
+    void ColliderComponent::load_complex_polygon(const vili::node& data)
+    {
+        auto new_collider = ComplexPolygonCollider();
+        for (const auto& point : data.at("points").as<vili::array>())
+        {
+            const transform::UnitVector point_position(point.at("x"), point.at("y"), m_unit);
+            new_collider.add_point(point_position);
+        }
         m_collider = new_collider;
     }
 
@@ -62,13 +81,33 @@ namespace obe::collision
         return vili::object { { "type", "Rectangle" }, { "width", size.x }, { "height", size.y } };
     }
 
+    vili::node ColliderComponent::dump_complex_polygon() const
+    {
+        const transform::Polygon polygon = std::get<PolygonCollider>(m_collider).get_polygon();
+        const auto points = polygon.get_all_points();
+        vili::array points_dump = {};
+        for (const auto& point : points)
+        {
+            points_dump.push_back(vili::object { { "x", point.x }, { "y", point.y } });
+        }
+        return vili::object { { "type", "ComplexPolygon" }, { "points", points_dump } };
+    }
+
     vili::node ColliderComponent::schema() const
     {
-        return vili::object { { "x", vili::object { { "type", vili::number_typename } } },
+        return vili::object {
+            { "x", vili::object { { "type", vili::number_typename } } },
             { "y", vili::object { { "type", vili::number_typename } } },
-            { "type",
-                vili::object { { "type", vili::string_typename },
-                    { "values", vili::array { "Capsule", "Circle", "Polygon", "Rectangle" } } } } };
+            { "unit", vili::object {
+                { "type", vili::number_typename },
+                { "values", vili::array { "SceneUnits", "ScenePixels" } } 
+            }},
+            { "type", vili::object {
+                { "type", vili::string_typename },
+                    { "values",
+                        vili::array { "Capsule", "Circle", "Polygon", "Rectangle", "ComplexPolygon" } } 
+            }}
+        };
     }
 
     ColliderComponent::ColliderComponent(const std::string& id)
@@ -118,6 +157,11 @@ namespace obe::collision
     {
         const double x = data.at("x");
         const double y = data.at("y");
+        transform::Units unit;
+        if (data.contains("unit"))
+        {
+            m_unit = transform::UnitsMeta::from_string(data.at("unit"));
+        }
         std::string tag;
         if (data.contains("tag"))
         {
@@ -143,9 +187,9 @@ namespace obe::collision
             throw exceptions::InvalidColliderComponentType(m_id, collider_type_str, EXC_INFO);
         }
         std::visit(
-            [x, y, tag](auto&& collider)
+            [this, x, y, tag](auto&& collider)
             {
-                collider.set_position(transform::UnitVector(x, y));
+                collider.set_position(transform::UnitVector(x, y, m_unit));
                 collider.set_tag(tag);
             },
             m_collider);

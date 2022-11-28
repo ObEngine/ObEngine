@@ -82,13 +82,8 @@ namespace obe::collision
                     collision_data.offset = base_offset;
                     if (m_probe != nullptr && m_collision_space != nullptr)
                     {
-                        const transform::UnitVector offset_normal = make_offset_normal(base_offset);
-                        // Slightly push towards offset to avoid getting stuck inside of it
-                        m_probe->move(offset_normal);
                         collision_data.offset = m_collision_space->get_offset_before_collision(
                             *m_probe, collision_data.offset);
-                        // Moving away from the normal offset
-                        m_probe->move(-offset_normal);
                         /* debug::Log->debug(
                             "<TrajectoryNode> Trajectory '{}'\tBase Offset {}\tOffset {}\tNormal {}\tTOI {}\tDT {}",
                             trajectory.first, base_offset, collision_data.offset, offset_normal, collision_data.offset.x / base_offset.x, dt);*/

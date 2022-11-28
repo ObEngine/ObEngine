@@ -58,9 +58,8 @@ namespace obe::tiles
                     std::vector<uint32_t> tile_ids;
                     for (const vili::node& frame : animation.at("frames"))
                     {
-                        const uint32_t sleep_milliseconds = frame.at("clock");
-                        sleeps.push_back(
-                            static_cast<double>(sleep_milliseconds) * time::milliseconds);
+                        const double sleep_seconds = frame.at("duration");
+                        sleeps.push_back(sleep_seconds);
                         uint32_t full_tile_id
                             = static_cast<uint32_t>(frame.at("tileid").as<vili::integer>()
                                 + tileset.at("firstTileId").as<vili::integer>());

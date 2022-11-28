@@ -34,6 +34,7 @@ namespace obe::collision
         Rectangle,
         Capsule,
         Polygon,
+        ComplexPolygon
     };
     using ColliderTypeMeta = types::SmartEnum<ColliderType>;
 
@@ -84,7 +85,7 @@ namespace obe::collision
          * \param offset The offset to apply to the source collider
          * \return true if the two polygons intersects, false otherwise
          */
-        [[nodiscard]] bool collides(const Collider& collider) const;
+        [[nodiscard]] virtual bool collides(const Collider& collider) const;
         /**
          * \brief Gets the Maximum distance before Collision with a specific
          *        Collider
@@ -92,7 +93,7 @@ namespace obe::collision
          * \param offset Distance the Collider should move to (if nothing collides)
          * \return The maximum distance the Collider can travel before colliding
          */
-        [[nodiscard]] transform::UnitVector get_offset_before_collision(const Collider& collider,
+        [[nodiscard]] virtual transform::UnitVector get_offset_before_collision(const Collider& collider,
             const transform::UnitVector& self_offset = transform::UnitVector(0, 0),
             const transform::UnitVector& other_offset = transform::UnitVector(0, 0)) const;
 

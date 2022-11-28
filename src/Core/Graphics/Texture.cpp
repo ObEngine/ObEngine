@@ -144,16 +144,19 @@ namespace obe::graphics
     {
         m_texture = sf::Texture {};
         static_assert(std::is_same_v<decltype(m_texture), TextureWrapper>, "");
+        m_pixels.reset();
     }
 
     Texture::Texture(std::shared_ptr<sf::Texture> texture)
         : m_texture(texture)
     {
+        m_pixels.reset();
     }
 
     Texture::Texture(const sf::Texture& texture)
     {
         m_texture = &texture;
+        m_pixels.reset();
     }
 
     Texture::Texture(const Texture& copy)
@@ -166,10 +169,12 @@ namespace obe::graphics
         {
             m_texture = copy.m_texture;
         }
+        m_pixels.reset();
     }
 
-    bool Texture::create(unsigned width, unsigned height)
+    bool Texture::create(unsigned int width, unsigned int height)
     {
+        m_pixels.reset();
         return get_mutable_texture().create(width, height);
     }
 
@@ -180,6 +185,7 @@ namespace obe::graphics
             m_texture = SvgTexture(filename);
             return std::get<SvgTexture>(m_texture).success();
         }
+        m_pixels.reset();
         return get_mutable_texture().loadFromFile(filename);
     }
 
@@ -192,11 +198,13 @@ namespace obe::graphics
             // TODO: Implement load_from_file(path, rect)
             return std::get<SvgTexture>(m_texture).success();
         }
+        m_pixels.reset();
         return get_mutable_texture().loadFromFile(filename, sf_rect);
     }
 
     bool Texture::load_from_image(const sf::Image& image)
     {
+        m_pixels.reset();
         return get_mutable_texture().loadFromImage(image);
     }
 
@@ -206,10 +214,11 @@ namespace obe::graphics
         return transform::UnitVector(texture_size.x, texture_size.y, transform::Units::ScenePixels);
     }
 
-    void Texture::set_size_hint(unsigned width, unsigned height)
+    void Texture::set_size_hint(unsigned int width, unsigned int height)
     {
         if (std::holds_alternative<SvgTexture>(m_texture))
         {
+            m_pixels.reset();
             std::get<SvgTexture>(m_texture).set_size_hint(width, height);
         }
     }
@@ -227,6 +236,7 @@ namespace obe::graphics
     {
         if (std::holds_alternative<SvgTexture>(m_texture))
         {
+            m_pixels.reset();
             return std::get<SvgTexture>(m_texture).set_autoscaling(autoscaling);
         }
     }
@@ -234,6 +244,7 @@ namespace obe::graphics
     void Texture::set_anti_aliasing(bool anti_aliasing)
     {
         get_mutable_texture().setSmooth(anti_aliasing);
+        m_pixels.reset();
     }
 
     bool Texture::is_anti_aliased() const
@@ -254,6 +265,7 @@ namespace obe::graphics
     void Texture::reset()
     {
         m_texture = sf::Texture {};
+        m_pixels.reset();
     }
 
     unsigned int Texture::use_count() const
@@ -303,6 +315,7 @@ namespace obe::graphics
         {
             m_texture = copy.m_texture;
         }
+        m_pixels.reset();
         return *this;
     }
 
@@ -322,6 +335,21 @@ namespace obe::graphics
     {
         auto size = this->get_size();
         return TexturePart(*this, transform::AABB(transform::UnitVector(0, 0), size));
+    }
+
+    Color Texture::get_pixel(uint32_t x, uint32_t y) const
+    {
+        if (!m_pixels)
+        {
+            m_pixels = get_texture().copyToImage();
+        }
+        const auto image_size = m_pixels->getSize();
+        if (x >= image_size.x || y >= image_size.y)
+        {
+            throw exceptions::InvalidTexturePixelCoord(x, y, image_size.x, image_size.y, EXC_INFO);
+        }
+        sf::Color pixel = m_pixels.value().getPixel(x, y);
+        return Color(pixel);
     }
 
     TexturePart::TexturePart(const Texture& texture, transform::AABB rect)
