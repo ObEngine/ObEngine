@@ -35,6 +35,8 @@ namespace obe::graphics
         sfe::ComplexSprite m_sprite;
         graphics::Texture m_texture;
         bool m_antiAliasing = true;
+        bool m_horizontal_flip = false;
+        bool m_vertical_flip = false;
 
         void reset_unit(transform::Units unit) override;
         void refresh_vector_texture(
@@ -207,6 +209,8 @@ namespace obe::graphics
         void draw(RenderTarget& surface, const scene::Camera& camera) override;
         void attach_resource_manager(engine::ResourceManager& resources) override;
         [[nodiscard]] std::string_view type() const override;
+
+        void flip(bool horizontally, bool vertically);
     };
 
     /**

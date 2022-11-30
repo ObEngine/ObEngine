@@ -143,6 +143,28 @@ namespace obe::graphics
         return ComponentType;
     }
 
+    void Sprite::flip(bool horizontally, bool vertically)
+    {
+        if (horizontally || vertically)
+        {
+            m_texture.set_repeated(true);
+        }
+        else
+        {
+            m_texture.set_repeated(false);
+        }
+        m_horizontal_flip = horizontally;
+        m_vertical_flip = vertically;
+        sf::IntRect texture_rect = m_sprite.getTextureRect();
+        sf::IntRect normalized_texture_rect(
+            texture_rect.width < 0 ? texture_rect.left - std::abs(texture_rect.width) : texture_rect.left,
+            texture_rect.height < 0 ? texture_rect.top - std::abs(texture_rect.height) : texture_rect.top,
+            std::abs(texture_rect.width), std::abs(texture_rect.height)
+        );
+        this->set_texture_rect(normalized_texture_rect.left, normalized_texture_rect.top,
+            normalized_texture_rect.width, normalized_texture_rect.height);
+    }
+
     void Sprite::load_texture(const std::string& path)
     {
         if (!path.empty() and path != m_path)
@@ -173,13 +195,21 @@ namespace obe::graphics
     {
         // m_texture = std::shared_ptr<Texture>(std::shared_ptr<Texture>(), texture);
         m_sprite.setTexture(texture);
-        m_sprite.setTextureRect(sf::IntRect(0, 0, texture.get_size().x, texture.get_size().y));
+        const transform::UnitVector texture_size = texture.get_size();
+        this->set_texture_rect(0, 0, texture_size.x, texture_size.y);
     }
 
     void Sprite::set_texture_rect(
         unsigned int x, unsigned int y, unsigned int width, unsigned int height)
     {
-        m_sprite.setTextureRect(sf::IntRect(x, y, width, height));
+        m_sprite.setTextureRect(
+            sf::IntRect(
+                m_horizontal_flip ? x + width : x,
+                m_vertical_flip ? y + height : y,
+                m_horizontal_flip ? -width : width,
+                m_vertical_flip ? -height : height
+            )
+        );
     }
 
     void Sprite::set_texture(const TexturePart& texture)

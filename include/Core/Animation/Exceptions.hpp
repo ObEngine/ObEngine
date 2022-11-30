@@ -135,4 +135,16 @@ namespace obe::animation::exceptions
             this->error("Unknown Animation source");
         }
     };
+
+    class InvalidFrameMetadataId : public Exception<InvalidFrameMetadataId>
+    {
+    public:
+        using Exception::Exception;
+        InvalidFrameMetadataId(std::string_view frame_id, DebugInfo info)
+            : Exception(info)
+        {
+            this->error("Invalid frame metadata id '{}'", frame_id);
+            this->hint("ID should follow the 'frame_X' format, X being the frame 0-based index (eg: 'frame_7' for the eigth frame of the animation)");
+        }
+    };
 } // namespace obe::animation::exceptions

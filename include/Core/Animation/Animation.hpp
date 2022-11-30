@@ -152,7 +152,7 @@ namespace obe::animation
          * \brief Get the current Texture displayed by the Animation
          * \return A reference to the currently displayed Texture
          */
-        const graphics::TexturePart& get_texture() const;
+        const graphics::TexturePart& get_current_texture() const;
         /**
          * \brief Return whether the Animation is over or not
          * \return true if the Animation is over, false otherwise
@@ -169,6 +169,8 @@ namespace obe::animation
          */
         void update();
         const Animation& get_animation() const;
+
+        [[nodiscard]] uint32_t get_current_frame_index() const;
     };
 
     /**
@@ -189,6 +191,7 @@ namespace obe::animation
 
         std::vector<graphics::Texture> m_textures;
         std::vector<graphics::TexturePart> m_frames;
+        std::unordered_map<uint32_t, vili::node> m_frames_metadata;
 
         AnimationPlayMode m_play_mode = AnimationPlayMode::OneTime;
 
@@ -198,6 +201,7 @@ namespace obe::animation
         int m_priority = 0;
 
         void load_source(const vili::node& source);
+        void load_frames_metadata(const vili::node& metadata);
         void load_groups(const vili::node& groups);
         void load_code(const vili::node& code);
 
@@ -326,6 +330,10 @@ namespace obe::animation
          */
         [[nodiscard]] bool is_anti_aliased() const noexcept;
         [[nodiscard]] AnimationState make_state() const;
+
+        [[nodiscard]] vili::node get_frame_metadata(uint32_t frame_index) const; 
+        [[nodiscard]] uint32_t get_frames_amount() const;
+        [[nodiscard]] uint32_t get_current_frame_index() const;
 
         [[nodiscard]] vili::node dump() const override;
         void load(const vili::node& data) override;

@@ -24,7 +24,8 @@ namespace obe::collision::bindings
                 { "Circle", obe::collision::ColliderType::Circle },
                 { "Rectangle", obe::collision::ColliderType::Rectangle },
                 { "Capsule", obe::collision::ColliderType::Capsule },
-                { "Polygon", obe::collision::ColliderType::Polygon } });
+                { "Polygon", obe::collision::ColliderType::Polygon },
+                { "ComplexPolygon", obe::collision::ColliderType::ComplexPolygon } });
     }
     void load_class_capsule_collider(sol::state_view state)
     {
@@ -122,6 +123,11 @@ namespace obe::collision::bindings
                 obe::collision::ColliderComponent::*)()>(
                 &obe::collision::ColliderComponent::get_inner_collider);
         ;
+        bind_collider_component["get_complex_polygon_collider"]
+            = static_cast<obe::collision::ComplexPolygonCollider* (
+                obe::collision::ColliderComponent::*)()>(
+                &obe::collision::ColliderComponent::get_inner_collider);
+        ;
         bind_collider_component["get_inner_collider"] = sol::overload(
             static_cast<obe::collision::Collider* (obe::collision::ColliderComponent::*)()>(
                 &obe::collision::ColliderComponent::get_inner_collider),
@@ -151,6 +157,10 @@ namespace obe::collision::bindings
         bind_collision_space["get_all_colliders"]
             = &obe::collision::CollisionSpace::get_all_colliders;
         bind_collision_space["remove_collider"] = &obe::collision::CollisionSpace::remove_collider;
+        bind_collision_space["refresh_collider"]
+            = &obe::collision::CollisionSpace::refresh_collider;
+        bind_collision_space["refresh_quadtree"]
+            = &obe::collision::CollisionSpace::refresh_quadtree;
         bind_collision_space["collides"] = &obe::collision::CollisionSpace::collides;
         bind_collision_space["get_offset_before_collision"] = sol::overload(
             [](obe::collision::CollisionSpace* self,
@@ -171,6 +181,50 @@ namespace obe::collision::bindings
     void load_class_complex_polygon_collider(sol::state_view state)
     {
         sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
+        sol::usertype<obe::collision::ComplexPolygonCollider> bind_complex_polygon_collider
+            = collision_namespace.new_usertype<obe::collision::ComplexPolygonCollider>(
+                "ComplexPolygonCollider", sol::call_constructor,
+                sol::constructors<obe::collision::ComplexPolygonCollider()>(), sol::base_classes,
+                sol::bases<obe::collision::Collider, obe::transform::Movable>());
+        bind_complex_polygon_collider["get_collider_type"]
+            = &obe::collision::ComplexPolygonCollider::get_collider_type;
+        bind_complex_polygon_collider["get_position"]
+            = &obe::collision::ComplexPolygonCollider::get_position;
+        bind_complex_polygon_collider["set_position"]
+            = &obe::collision::ComplexPolygonCollider::set_position;
+        bind_complex_polygon_collider["move"] = &obe::collision::ComplexPolygonCollider::move;
+        bind_complex_polygon_collider["add_point"] = sol::overload(
+            [](obe::collision::ComplexPolygonCollider* self,
+                const obe::transform::UnitVector& position) -> void {
+                return self->add_point(position);
+            },
+            [](obe::collision::ComplexPolygonCollider* self,
+                const obe::transform::UnitVector& position,
+                int point_index) -> void { return self->add_point(position, point_index); });
+        bind_complex_polygon_collider["get_points_amount"]
+            = &obe::collision::ComplexPolygonCollider::get_points_amount;
+        bind_complex_polygon_collider["collides"]
+            = &obe::collision::ComplexPolygonCollider::collides;
+        bind_complex_polygon_collider["get_offset_before_collision"] = sol::overload(
+            [](obe::collision::ComplexPolygonCollider* self,
+                const obe::collision::Collider& collider) -> obe::transform::UnitVector {
+                return self->get_offset_before_collision(collider);
+            },
+            [](obe::collision::ComplexPolygonCollider* self,
+                const obe::collision::Collider& collider,
+                const obe::transform::UnitVector& self_offset) -> obe::transform::UnitVector {
+                return self->get_offset_before_collision(collider, self_offset);
+            },
+            [](obe::collision::ComplexPolygonCollider* self,
+                const obe::collision::Collider& collider,
+                const obe::transform::UnitVector& self_offset,
+                const obe::transform::UnitVector& other_offset) -> obe::transform::UnitVector {
+                return self->get_offset_before_collision(collider, self_offset, other_offset);
+            });
+        bind_complex_polygon_collider["get_bounding_box"]
+            = &obe::collision::ComplexPolygonCollider::get_bounding_box;
+        bind_complex_polygon_collider["Type"]
+            = sol::var(&obe::collision::ComplexPolygonCollider::Type);
     }
     void load_class_polygon_collider(sol::state_view state)
     {
@@ -208,6 +262,7 @@ namespace obe::collision::bindings
             = collision_namespace.new_usertype<obe::collision::Quadtree>("Quadtree",
                 sol::call_constructor,
                 sol::constructors<obe::collision::Quadtree(const obe::transform::AABB&)>());
+        bind_quadtree["clear"] = &obe::collision::Quadtree::clear;
         bind_quadtree["add"] = &obe::collision::Quadtree::add;
         bind_quadtree["remove"] = &obe::collision::Quadtree::remove;
         bind_quadtree["query"] = &obe::collision::Quadtree::query;

@@ -126,6 +126,7 @@ namespace obe::animation
          *         Animation
          */
         [[nodiscard]] std::string get_current_animation_name() const noexcept;
+        [[nodiscard]] AnimationState& get_current_animation() const;
         /**
          * \brief Get the current texture of the current Animation
          * \return A reference to the texture currently played by the current

@@ -36,6 +36,8 @@ function Functions.import_aseprite_animation(path)
 
     local frames = {};
     local frame_indexes = {};
+    local frames_metadata = {};
+    local frames_metadata_order = {};
     for i, frame_data in pairs(animation_data.frames) do
         table.insert(frames, ordered {
             x = frame_data.frame.x,
@@ -44,6 +46,11 @@ function Functions.import_aseprite_animation(path)
             height = frame_data.frame.h
         } {"x", "y", "width", "height"});
         table.insert(frame_indexes, i - 1);
+        if frame_data.meta then
+            local frame_key = ("frame_%s"):format(i - 1);
+            frames_metadata[frame_key] = frame_data.meta;
+            table.insert(frames_metadata_order, frame_key);
+        end
     end
 
     local animation_content = ordered {
@@ -56,6 +63,7 @@ function Functions.import_aseprite_animation(path)
                 frames = frames
             } {"image", "frames"}
         },
+        frames_metadata = ordered(frames_metadata)(frames_metadata_order),
         groups = {
             main = {
                 content = frame_indexes
@@ -64,7 +72,7 @@ function Functions.import_aseprite_animation(path)
         code = {
             {command="PlayGroup", group="main"}
         }
-    } { "name", "framerate", "mode", "source", "groups", "code" };
+    } { "name", "framerate", "mode", "source", "frames_metadata", "groups", "code" };
     local export_filename = ("%s.animation.vili"):format(animation_name);
     print("Parent", animation_path)
     local export_path = animation_path:parent():add(export_filename):to_string();

@@ -74,6 +74,10 @@ namespace obe::animation::bindings
         bind_animation["set_anti_aliasing"] = &obe::animation::Animation::set_anti_aliasing;
         bind_animation["is_anti_aliased"] = &obe::animation::Animation::is_anti_aliased;
         bind_animation["make_state"] = &obe::animation::Animation::make_state;
+        bind_animation["get_frame_metadata"] = &obe::animation::Animation::get_frame_metadata;
+        bind_animation["get_frames_amount"] = &obe::animation::Animation::get_frames_amount;
+        bind_animation["get_current_frame_index"]
+            = &obe::animation::Animation::get_current_frame_index;
         bind_animation["dump"] = &obe::animation::Animation::dump;
         bind_animation["load"] = &obe::animation::Animation::load;
         bind_animation["schema"] = &obe::animation::Animation::schema;
@@ -124,7 +128,7 @@ namespace obe::animation::bindings
             = &obe::animation::AnimationState::get_animation_group;
         bind_animation_state["get_current_animation_group"]
             = &obe::animation::AnimationState::get_current_animation_group;
-        bind_animation_state["get_texture"] = &obe::animation::AnimationState::get_texture;
+        bind_animation_state["get_current_texture"] = &obe::animation::AnimationState::get_current_texture;
         bind_animation_state["is_over"] = &obe::animation::AnimationState::is_over;
         bind_animation_state["reset"] = &obe::animation::AnimationState::reset;
         bind_animation_state["update"] = &obe::animation::AnimationState::update;
@@ -132,6 +136,8 @@ namespace obe::animation::bindings
             = [](obe::animation::AnimationState* self) -> const obe::animation::Animation* {
             return &self->get_animation();
         };
+        bind_animation_state["get_current_frame_index"]
+            = &obe::animation::AnimationState::get_current_frame_index;
     }
     void load_class_animator(sol::state_view state)
     {
@@ -145,6 +151,8 @@ namespace obe::animation::bindings
         bind_animator["get_animation"] = &obe::animation::Animator::get_animation;
         bind_animator["get_current_animation_name"]
             = &obe::animation::Animator::get_current_animation_name;
+        bind_animator["get_current_animation"]
+            = &obe::animation::Animator::get_current_animation;
         bind_animator["get_current_texture"] = &obe::animation::Animator::get_current_texture;
         bind_animator["load"]
             = sol::overload([](obe::animation::Animator* self,

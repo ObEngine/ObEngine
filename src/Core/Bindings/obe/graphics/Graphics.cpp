@@ -443,6 +443,7 @@ namespace obe::graphics::bindings
         bind_sprite["draw"] = &obe::graphics::Sprite::draw;
         bind_sprite["attach_resource_manager"] = &obe::graphics::Sprite::attach_resource_manager;
         bind_sprite["type"] = &obe::graphics::Sprite::type;
+        bind_sprite["flip"] = &obe::graphics::Sprite::flip;
 
         obe::graphics::Sprite::Register();
     }
@@ -465,12 +466,15 @@ namespace obe::graphics::bindings
         sol::table graphics_namespace = state["obe"]["graphics"].get<sol::table>();
         sol::usertype<obe::graphics::Spritesheet> bind_spritesheet
             = graphics_namespace.new_usertype<obe::graphics::Spritesheet>("Spritesheet",
-                sol::call_constructor, sol::default_constructor, sol::base_classes,
-                sol::bases<obe::types::Serializable>());
+                sol::call_constructor,
+                sol::constructors<obe::graphics::Spritesheet(),
+                    obe::graphics::Spritesheet(obe::engine::ResourceManager*)>(),
+                sol::base_classes, sol::bases<obe::types::Serializable>());
         bind_spritesheet["schema"] = &obe::graphics::Spritesheet::schema;
         bind_spritesheet["dump"] = &obe::graphics::Spritesheet::dump;
         bind_spritesheet["load"] = &obe::graphics::Spritesheet::load;
         bind_spritesheet["get_texture"] = &obe::graphics::Spritesheet::get_texture;
+        bind_spritesheet["Schema"] = &obe::graphics::Spritesheet::Schema;
     }
     void load_class_svg_texture(sol::state_view state)
     {

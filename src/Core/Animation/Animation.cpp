@@ -218,6 +218,24 @@ namespace obe::animation
         }
     }
 
+    void Animation::load_frames_metadata(const vili::node& metadata)
+    {
+        for (const auto [frame_name, frame_metadata] : metadata.items())
+        {
+            if (!frame_name.starts_with("frame_"))
+            {
+                throw exceptions::InvalidFrameMetadataId(frame_name, EXC_INFO);
+            }
+            const std::string frame_index_str = frame_name.substr(6);
+            if (!utils::string::is_string_int(frame_index_str))
+            {
+                throw exceptions::InvalidFrameMetadataId(frame_name, EXC_INFO);
+            }
+            uint32_t frame_index = std::stoi(frame_index_str);
+            m_frames_metadata[frame_index] = frame_metadata;
+        }
+    }
+
     void Animation::load_groups(const vili::node& groups)
     {
         for (auto [group_name, group] : groups.items())
@@ -321,6 +339,15 @@ namespace obe::animation
         return m_parent;
     }
 
+    uint32_t AnimationState::get_current_frame_index() const
+    {
+        if (m_current_group)
+        {
+            return m_current_group->get_frame_index();
+        }
+        return 0;
+    }
+
     void Animation::set_anti_aliasing(bool anti_aliasing) noexcept
     {
         m_anti_aliasing = anti_aliasing;
@@ -334,6 +361,21 @@ namespace obe::animation
     AnimationState Animation::make_state() const
     {
         return AnimationState(*this);
+    }
+
+    vili::node Animation::get_frame_metadata(uint32_t frame_index) const
+    {
+        return m_frames_metadata.at(frame_index);
+    }
+
+    uint32_t Animation::get_frames_amount() const
+    {
+        return m_frames.size();
+    }
+
+    uint32_t Animation::get_current_frame_index() const
+    {
+        return m_default_state.get_current_frame_index();
     }
 
     vili::node Animation::schema() const
@@ -373,7 +415,7 @@ namespace obe::animation
                     AnimationPlayModeMeta::to_string(m_play_mode));
             }
 
-            // Images
+            // Sources
             debug::Log->trace("  <animation> Loading Animation images");
             if (data.contains("source"))
             {
@@ -386,6 +428,17 @@ namespace obe::animation
                     m_path.to_string());
             }
 
+            debug::Log->trace("  <animation> Loading Animation frames metadata");
+            if (data.contains("frames_metadata"))
+            {
+                load_frames_metadata(data.at("frames_metadata"));
+            }
+            else
+            {
+                debug::Log->warn(
+                    "Animation '{}' (located at path '{}') does not contain any source", m_name,
+                    m_path.to_string());
+            }
 
             // Groups
             debug::Log->trace("  <animation> Loading Animation groups");
@@ -448,7 +501,7 @@ namespace obe::animation
         throw exceptions::AnimationFrameIndexOverflow(m_name, index, m_textures.size(), EXC_INFO);
     }
 
-    const graphics::TexturePart& AnimationState::get_texture() const
+    const graphics::TexturePart& AnimationState::get_current_texture() const
     {
         if (m_current_group != nullptr)
             return m_parent.m_frames[m_current_group->get_frame_index()];
@@ -457,7 +510,7 @@ namespace obe::animation
 
     const graphics::TexturePart& Animation::get_current_texture() const
     {
-        return m_default_state.get_texture();
+        return m_default_state.get_current_texture();
     }
 
     int Animation::get_priority() const noexcept

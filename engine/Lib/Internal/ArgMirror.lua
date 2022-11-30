@@ -7,12 +7,12 @@ local function get_args(func)
     return args;
 end
 
-local __nil_table = {__NIL = true};
+local _nil_table = {__NIL = true};
 
 local function unpack_with_nil(tbl, from_index)
     local i = from_index or 1;
     if tbl[i] ~= nil then
-        if tbl[i] == __nil_table then
+        if tbl[i] == _nil_table then
             return nil, unpack_with_nil(tbl, i + 1);
         else
             return tbl[i], unpack_with_nil(tbl, i + 1);
@@ -21,7 +21,7 @@ local function unpack_with_nil(tbl, from_index)
 end
 
 return {
-    __nil_table = __nil_table,
+    _nil_table = _nil_table,
     get_args = get_args,
     unpack_with_nil = unpack_with_nil
 };

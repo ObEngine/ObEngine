@@ -116,6 +116,11 @@ namespace obe::animation
         return m_default_state.get_current_animation_name();
     }
 
+    AnimationState& Animator::get_current_animation() const
+    {
+        return *m_default_state.get_current_animation();
+    }
+
     void AnimatorState::set_animation(const std::string& key)
     {
         if (m_parent.m_animations.find(key) == m_parent.m_animations.end())
@@ -270,7 +275,7 @@ namespace obe::animation
     const graphics::TexturePart& AnimatorState::get_current_texture() const
     {
         if (m_current_animation)
-            return m_current_animation->get_texture();
+            return m_current_animation->get_current_texture();
         throw exceptions::NoSelectedAnimation(m_parent.get_filesystem_path().to_string(), EXC_INFO);
     }
 
