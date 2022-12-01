@@ -170,7 +170,27 @@ namespace obe::collision::bindings
             [](obe::collision::CollisionSpace* self, const obe::collision::Collider& collider,
                 const obe::transform::UnitVector& offset) -> obe::transform::UnitVector {
                 return self->get_offset_before_collision(collider, offset);
+            },
+            [](obe::collision::CollisionSpace* self, const obe::collision::Collider& collider,
+                const std::vector<obe::collision::ReachableCollider>& reachable_colliders)
+                -> obe::transform::UnitVector {
+                return self->get_offset_before_collision(collider, reachable_colliders);
+            },
+            [](obe::collision::CollisionSpace* self, const obe::collision::Collider& collider,
+                const std::vector<obe::collision::ReachableCollider>& reachable_colliders,
+                const obe::transform::UnitVector& offset) -> obe::transform::UnitVector {
+                return self->get_offset_before_collision(collider, reachable_colliders, offset);
             });
+        /* bind_collision_space["get_reachable_colliders"] = sol::overload(
+            [](obe::collision::CollisionSpace* self, const obe::collision::Collider& collider)
+                -> std::vector<obe::collision::ReachableCollider> {
+                return self->get_reachable_colliders(collider);
+            },
+            [](obe::collision::CollisionSpace* self, const obe::collision::Collider& collider,
+                const obe::transform::UnitVector& offset)
+                -> std::vector<obe::collision::ReachableCollider> {
+                return self->get_reachable_colliders(collider, offset);
+            });*/
         bind_collision_space["add_tag_to_blacklist"]
             = &obe::collision::CollisionSpace::add_tag_to_blacklist;
         bind_collision_space["remove_tag_to_blacklist"]
@@ -317,8 +337,10 @@ namespace obe::collision::bindings
         bind_trajectory["set_angle"] = &obe::collision::Trajectory::set_angle;
         bind_trajectory["set_speed"] = &obe::collision::Trajectory::set_speed;
         bind_trajectory["set_static"] = &obe::collision::Trajectory::set_static;
-        bind_trajectory["get_tag"] = &obe::collision::Trajectory::get_tag;
-        bind_trajectory["set_tag"] = &obe::collision::Trajectory::set_tag;
+        bind_trajectory["get_reachable_collider_acceptor"]
+            = &obe::collision::Trajectory::get_reachable_collider_acceptor;
+        bind_trajectory["set_reachable_collider_acceptor"]
+            = &obe::collision::Trajectory::set_reachable_collider_acceptor;
     }
     void load_class_trajectory_node(sol::state_view state)
     {

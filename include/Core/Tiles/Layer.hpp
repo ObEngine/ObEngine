@@ -3,6 +3,7 @@
 #include <Collision/ColliderComponent.hpp>
 #include <Graphics/Renderable.hpp>
 #include <SFML/Graphics/VertexArray.hpp>
+#include <sfe/SpannableVertexArray.hpp>
 #include <string>
 #include <vector>
 
@@ -13,8 +14,14 @@ namespace obe::tiles
     class TileLayer : public graphics::Renderable
     {
     private:
+        // instead of using x + y * m_width flat index system
+        // m_positions and m_sublayers_by_tileset are using the
+        // y + x * m_height index system
+        // since layers are often more wide than high, this allows us
+        // to gain more performance by applying a span on the VertexArray
         std::unordered_map<uint32_t, sf::Vertex*> m_positions;
-        std::unordered_map<uint32_t, sf::VertexArray> m_cache;
+        std::unordered_map<uint32_t, sfe::SpannableVertexArray> m_sublayers_by_tileset;
+
         const TileScene& m_scene;
         std::unordered_map<uint32_t, collision::ColliderComponent*> m_colliders;
 

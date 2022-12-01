@@ -19,13 +19,13 @@ namespace obe::collision
 {
     class TrajectoryNode;
     class Trajectory;
-    class PolygonalCollider;
 
     using OnCollideCallback
-        = std::function<void(Trajectory&, transform::UnitVector, collision::Collider*)>;
+        = std::function<void(Trajectory&, transform::UnitVector, const Collider*)>;
     using TrajectoryCheckFunction
-        = std::function<void(Trajectory&, transform::UnitVector&, collision::Collider*)>;
+        = std::function<void(Trajectory&, transform::UnitVector&, const Collider*)>;
     using OnChangeCallback = std::function<void(Trajectory&, std::string)>;
+    using ReachableColliderAcceptor = std::function<bool(Trajectory&, const Collider*)>;
 
     /**
      * \brief A Trajectory makes a TrajectoryNode moves using angle, speed and
@@ -41,10 +41,10 @@ namespace obe::collision
         std::vector<TrajectoryCheckFunction> m_checks {};
         OnCollideCallback m_on_collide_callback;
         OnChangeCallback m_on_change_callback;
+        ReachableColliderAcceptor m_reachable_collider_acceptor;
         double m_speed = 0;
         bool m_static = false;
         transform::Units m_unit;
-        std::optional<std::string> m_tag;
         friend class TrajectoryNode;
 
     public:
@@ -67,7 +67,7 @@ namespace obe::collision
         Trajectory& set_speed(double speed);
         Trajectory& set_static(bool static_);
 
-        [[nodiscard]] std::optional<std::string> get_tag() const;
-        void set_tag(const std::string& tag);
+        const ReachableColliderAcceptor& get_reachable_collider_acceptor() const;
+        void set_reachable_collider_acceptor(const ReachableColliderAcceptor& acceptor);
     };
 } // namespace obe::collision

@@ -82,15 +82,22 @@ namespace obe::collision
                     collision_data.offset = base_offset;
                     if (m_probe != nullptr && m_collision_space != nullptr)
                     {
-                        const std::string probe_tag = m_probe->get_tag();
-                        const std::optional<std::string> trajectory_tag = trajectory.second->get_tag();
-                        if (trajectory_tag)
+                        std::vector<ReachableCollider> reachable_colliders
+                            = m_collision_space->get_reachable_colliders(
+                                *m_probe, collision_data.offset);
+                        std::vector<ReachableCollider> reachable_and_validated_colliders;
+                        auto trajectory_reachable_collider_acceptor
+                            = trajectory.second->get_reachable_collider_acceptor();
+                        for (const ReachableCollider& reachable_collider : reachable_colliders)
                         {
-                            m_probe->set_tag(trajectory_tag.value());
+                            if (!trajectory_reachable_collider_acceptor
+                                || trajectory_reachable_collider_acceptor(*trajectory.second, reachable_collider.first))
+                            {
+                                reachable_and_validated_colliders.push_back(reachable_collider);
+                            }
                         }
                         collision_data.offset = m_collision_space->get_offset_before_collision(
-                            *m_probe, collision_data.offset);
-                        m_probe->set_tag(probe_tag);
+                            *m_probe, reachable_and_validated_colliders, collision_data.offset);
                         /* debug::Log->debug(
                             "<TrajectoryNode> Trajectory '{}'\tBase Offset {}\tOffset {}\tNormal {}\tTOI {}\tDT {}",
                             trajectory.first, base_offset, collision_data.offset, offset_normal, collision_data.offset.x / base_offset.x, dt);*/

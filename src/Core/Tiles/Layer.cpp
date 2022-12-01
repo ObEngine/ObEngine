@@ -34,14 +34,15 @@ namespace obe::tiles
         if (!tile_id)
             return;
 
-        const uint32_t tile_index = x + y * m_width;
+        const uint32_t tile_index = y + x * m_height;
+        const uint32_t tile_data_index = x + y * m_width;
 
         const TileInfo tile_info = get_tile_info(tile_id);
 
         const Tileset& tileset = m_scene.get_tilesets().tileset_from_tile_id(tile_info.tile_id);
         const uint32_t first_tile_id = tileset.get_first_tile_id();
-        sf::VertexArray& vertices = m_cache[tileset.get_first_tile_id()];
-        sf::Vertex* quad = &vertices[(x + y * m_width) * 4];
+        sfe::SpannableVertexArray& vertices = m_sublayers_by_tileset[tileset.get_first_tile_id()];
+        sf::Vertex* quad = &vertices[tile_index * 4];
         for (auto& animation : m_scene.get_animated_tiles())
         {
             if (animation->get_id() == tile_info.tile_id)
@@ -54,16 +55,16 @@ namespace obe::tiles
         {
             if (collider->get_id() == std::to_string(tile_info.tile_id))
             {
-                m_colliders[tile_index] = &m_scene.get_scene().create_collider();
-                (*m_colliders[tile_index]) = *collider;
-                // m_colliders[tile_index]->set_parent_id("tile_" + std::to_string(tile_info.tile_id));
+                m_colliders[tile_data_index] = &m_scene.get_scene().create_collider();
+                (*m_colliders[tile_data_index]) = *collider;
+                // m_colliders[tile_data_index]->set_parent_id("tile_" + std::to_string(tile_info.tile_id));
                 // TODO: Fix this horrible code
                 // TODO: I mean, really, fix this
                 auto camera_size_backup = m_scene.get_scene().get_camera().get_size().y / 2;
                 m_scene.get_scene().get_camera().set_size(1);
                 transform::UnitVector collider_offset
                     = collider->get_inner_collider()->get_position().to<transform::Units::ScenePixels>();
-                m_colliders.at(tile_index)
+                m_colliders.at(tile_data_index)
                     ->get_inner_collider()
                     ->set_position(
                         transform::UnitVector(x * tileset.get_tile_width() + collider_offset.x,
@@ -118,9 +119,10 @@ namespace obe::tiles
 
     void TileLayer::clear_tile(uint32_t x, uint32_t y)
     {
-        const uint32_t tile_index = x + y * m_width;
+        const uint32_t tile_index = y + x * m_height;
+        const uint32_t tile_data_index = x + y * m_width;
         sf::Vertex* quad = m_positions[tile_index];
-        const uint32_t old_tile_id = m_data[tile_index];
+        const uint32_t old_tile_id = m_data[tile_data_index];
         for (const auto& animation : m_scene.get_animated_tiles())
         {
             if (animation->get_id() == old_tile_id)
@@ -129,7 +131,7 @@ namespace obe::tiles
                 break;
             }
         }
-        if (const auto tile_collision = m_colliders.find(tile_index);
+        if (const auto tile_collision = m_colliders.find(tile_data_index);
             tile_collision != m_colliders.end())
         {
             m_scene.get_scene().remove_collider(tile_collision->second->get_id());
@@ -200,20 +202,20 @@ namespace obe::tiles
 
     void TileLayer::build()
     {
-        m_cache.clear();
+        m_sublayers_by_tileset.clear();
         for (const uint32_t first_tile_id : m_scene.get_tilesets().get_tilesets_first_tiles_ids())
         {
-            m_cache[first_tile_id] = sf::VertexArray {};
-            m_cache[first_tile_id].setPrimitiveType(sf::Quads);
-            m_cache[first_tile_id].resize(m_width * m_height * 4);
+            m_sublayers_by_tileset[first_tile_id] = sfe::SpannableVertexArray {};
+            m_sublayers_by_tileset[first_tile_id].setPrimitiveType(sf::Quads);
+            m_sublayers_by_tileset[first_tile_id].resize(m_width * m_height * 4);
         }
 
         for (unsigned int x = 0; x < m_width; ++x)
         {
             for (unsigned int y = 0; y < m_height; ++y)
             {
-                const uint32_t tile_index = x + y * m_width;
-                const uint32_t tile_id = m_data[tile_index];
+                const uint32_t tile_data_index = x + y * m_width;
+                const uint32_t tile_id = m_data[tile_data_index];
                 build_tile(x, y, tile_id);
             }
         }
@@ -225,36 +227,56 @@ namespace obe::tiles
         {
             return;
         }
-        for (const auto& [first_tile_id, layer] : m_cache)
+
+        sf::RenderStates states;
+        states.transform = sf::Transform::Identity;
+
+        const transform::UnitVector middle_camera
+            = camera.get_position(transform::Referential::Center)
+                  .to<transform::Units::SceneUnits>();
+        const transform::UnitVector camera_size = camera.get_size();
+
+        const float middle_x = transform::UnitVector::Screen.w / 2.0;
+        const float middle_y = transform::UnitVector::Screen.h / 2.0;
+
+        // Scale layers based on camera size
+        const double camera_scale = 1.0 / (camera_size.y / 2.0);
+        states.transform.scale(camera_scale, camera_scale, middle_x, middle_y);
+
+        float translate_x = -(middle_camera.x * (transform::UnitVector::Screen.h / 2.f))
+            + (transform::UnitVector::Screen.w / 2);
+        float translate_y = -(middle_camera.y * (transform::UnitVector::Screen.h / 2.f))
+            + (transform::UnitVector::Screen.h / 2);
+
+        // Translate layers based on camera position
+        if (!m_scene.is_anti_aliased())
         {
-            sf::RenderStates states;
-            states.transform = sf::Transform::Identity;
+            translate_x = std::round(translate_x);
+            translate_y = std::round(translate_y);
+        }
+        states.transform.translate(translate_x, translate_y);
 
-            const transform::UnitVector middle_camera
-                = camera.get_position(transform::Referential::Center)
-                      .to<transform::Units::SceneUnits>();
-            const transform::UnitVector camera_size = camera.get_size();
-            const float middle_x = transform::UnitVector::Screen.w / 2.0;
-            const float middle_y = transform::UnitVector::Screen.h / 2.0;
-            const double camera_scale = 1.0 / (camera_size.y / 2.0);
+        const transform::UnitVector camera_position = camera.get_position();
+        const int64_t camera_x = (camera_position.x * transform::UnitVector::Screen.h / 2.f);
+        const int64_t camera_width = std::ceil(camera_size.y * transform::UnitVector::Screen.w / 2);
 
-            states.transform.scale(camera_scale, camera_scale, middle_x, middle_y);
-            float translate_x = -(middle_camera.x * (transform::UnitVector::Screen.h / 2.f))
-                + (transform::UnitVector::Screen.w / 2);
-            float translate_y = -(middle_camera.y * (transform::UnitVector::Screen.h / 2.f))
-                + (transform::UnitVector::Screen.h / 2);
+        uint32_t vertex_count = 0;
 
-            if (!m_scene.is_anti_aliased())
-            {
-                translate_x = std::round(translate_x);
-                translate_y = std::round(translate_y);
-            }
-
-            states.transform.translate(translate_x, translate_y);
-
+        for (auto& [first_tile_id, layer] : m_sublayers_by_tileset)
+        {
             const Tileset& tileset = m_scene.get_tilesets().tileset_from_tile_id(first_tile_id);
             states.texture = &tileset.get_texture().operator const sf::Texture&();
 
+            // Finding out VertexArray rendering span based on camera size and position
+            const uint32_t tileset_tile_width = tileset.get_tile_width();
+            const uint32_t tileset_tile_height = tileset.get_tile_width();
+            const size_t span_start
+                = std::max(0ll, ((camera_x / tileset_tile_width)) * 4 * m_height);
+            const size_t span_end = std::min(layer.getVertexCount(),
+                static_cast<size_t>((((camera_x + camera_width) / tileset_tile_width) + 1) * 4 * m_height));
+            layer.setSpan(span_start, span_end);
+
+            // Rendering entire VertexArray
             surface.draw(layer, states);
         }
     }
@@ -265,13 +287,13 @@ namespace obe::tiles
         {
             throw exceptions::TilePositionOutsideLayer(x, y, m_width, m_height, EXC_INFO);
         }
-        const uint32_t tile_index = x + y * m_width;
-        const uint32_t old_tile_id = m_data[tile_index];
+        const uint32_t tile_data_index = x + y * m_width;
+        const uint32_t old_tile_id = m_data[tile_data_index];
         if (old_tile_id)
         {
             this->clear_tile(x, y);
         }
-        m_data[tile_index] = tile_id;
+        m_data[tile_data_index] = tile_id;
         this->build_tile(x, y, tile_id);
     }
 
@@ -281,6 +303,7 @@ namespace obe::tiles
         {
             throw exceptions::TilePositionOutsideLayer(x, y, m_width, m_height, EXC_INFO);
         }
-        return m_data[x + y * m_width];
+        const uint32_t tile_data_index = x + y * m_width;
+        return m_data[tile_data_index];
     }
 }

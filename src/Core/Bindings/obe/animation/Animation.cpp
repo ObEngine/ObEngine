@@ -128,7 +128,8 @@ namespace obe::animation::bindings
             = &obe::animation::AnimationState::get_animation_group;
         bind_animation_state["get_current_animation_group"]
             = &obe::animation::AnimationState::get_current_animation_group;
-        bind_animation_state["get_current_texture"] = &obe::animation::AnimationState::get_current_texture;
+        bind_animation_state["get_current_texture"]
+            = &obe::animation::AnimationState::get_current_texture;
         bind_animation_state["is_over"] = &obe::animation::AnimationState::is_over;
         bind_animation_state["reset"] = &obe::animation::AnimationState::reset;
         bind_animation_state["update"] = &obe::animation::AnimationState::update;
@@ -151,8 +152,7 @@ namespace obe::animation::bindings
         bind_animator["get_animation"] = &obe::animation::Animator::get_animation;
         bind_animator["get_current_animation_name"]
             = &obe::animation::Animator::get_current_animation_name;
-        bind_animator["get_current_animation"]
-            = &obe::animation::Animator::get_current_animation;
+        bind_animator["get_current_animation"] = &obe::animation::Animator::get_current_animation;
         bind_animator["get_current_texture"] = &obe::animation::Animator::get_current_texture;
         bind_animator["load"]
             = sol::overload([](obe::animation::Animator* self,

@@ -18,6 +18,8 @@ namespace obe::collision
         }
     };
 
+    using ReachableCollider = std::pair<const Collider*, transform::UnitVector>;
+
     class CollisionSpace
     {
     private:
@@ -58,6 +60,12 @@ namespace obe::collision
 
         [[nodiscard]] bool collides(const Collider& collider) const;
         [[nodiscard]] transform::UnitVector get_offset_before_collision(const Collider& collider,
+            const transform::UnitVector& offset = transform::UnitVector(0, 0)) const;
+        [[nodiscard]] transform::UnitVector get_offset_before_collision(const Collider& collider,
+            const std::vector<ReachableCollider>& reachable_colliders,
+            const transform::UnitVector& offset
+            = transform::UnitVector(0, 0)) const;
+        std::vector<ReachableCollider> get_reachable_colliders(const Collider& collider,
             const transform::UnitVector& offset = transform::UnitVector(0, 0)) const;
 
         void add_tag_to_blacklist(const std::string& source_tag, const std::string& rejected_tag);

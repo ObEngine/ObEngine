@@ -85,14 +85,14 @@ namespace obe::collision
         return *this;
     }
 
-    std::optional<std::string> Trajectory::get_tag() const
+    const ReachableColliderAcceptor& Trajectory::get_reachable_collider_acceptor() const
     {
-        return m_tag;
+        return m_reachable_collider_acceptor;
     }
 
-    void Trajectory::set_tag(const std::string& tag)
+    void Trajectory::set_reachable_collider_acceptor(const ReachableColliderAcceptor& acceptor)
     {
-        m_tag = tag;
+        m_reachable_collider_acceptor = acceptor;
     }
 
     double Trajectory::get_angle() const

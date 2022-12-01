@@ -7,8 +7,8 @@ add_library(sfe ${SFE_HEADERS} ${SFE_SOURCES})
 target_link_libraries(sfe sfml-graphics)
 
 target_include_directories(sfe
-    PUBLIC 
-        $<INSTALL_INTERFACE:include>    
+    PUBLIC
+        $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     PRIVATE
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/sfe>
