@@ -119,7 +119,7 @@ Each major release will have a name based on a translation of the word "Eggplant
 
 ## Do you have a roadmap I can check ?
 
-Sure ! For now we use GitHub Project system as a planning / roadmap tool which is available [here](https://github.com/ObEngine/ObEngine/projects).
+Sure ! For now we use GitHub Project system as a planning / roadmap tool which is available [here](https://github.com/ObEngine/ObEngine/projects?type=classic).
 
 ## Right, can I see how does scripting looks ?
 Sure, here are some simple GameObjects :
