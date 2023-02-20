@@ -197,7 +197,7 @@ namespace obe::event
         }
         if (!m_events.contains(event_name))
         {
-            throw Exceptions::UnknownEvent(
+            throw exceptions::UnknownEvent(
                 m_identifier, event_name, this->get_events_names(), EXC_INFO);
         }
         return *static_cast<Event<EventType>*>(m_events.at(name).get());
@@ -236,7 +236,7 @@ namespace obe::event
     {
         if (!m_events.contains(event_name))
         {
-            throw Exceptions::UnknownEvent(
+            throw exceptions::UnknownEvent(
                 m_identifier, event_name, this->get_events_names(), EXC_INFO);
         }
         debug::Log->trace(
