@@ -271,7 +271,7 @@ namespace obe::tiles
             const uint32_t tileset_tile_width = tileset.get_tile_width();
             const uint32_t tileset_tile_height = tileset.get_tile_width();
             const size_t span_start
-                = std::max(0l, ((camera_x / tileset_tile_width)) * 4 * m_height);
+                = std::max(0ll, static_cast<long long int>(((camera_x / tileset_tile_width)) * 4 * m_height));
             const size_t span_end = std::min(layer.getVertexCount(),
                 static_cast<size_t>((((camera_x + camera_width) / tileset_tile_width) + 1) * 4 * m_height));
             layer.setSpan(span_start, span_end);
