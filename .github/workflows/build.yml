@@ -21,8 +21,13 @@ jobs:
         run: sudo apt-get update
       - name: Install CMake
         run: sudo apt-get install -y cmake
-      - name: Install G++ and build-essential
-        run: sudo apt-get install -y build-essential g++-10
+      - name: Install build-essential
+        run: sudo apt-get install -y build-essential
+      - name: Set up GCC
+        uses: egor-tensin/setup-gcc@v1
+        with:
+          version: latest
+          platform: x64
       - name: Install git
         run: sudo apt-get install -y git
       - name: Install ALSA
