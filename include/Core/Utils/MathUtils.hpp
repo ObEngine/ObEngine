@@ -2,6 +2,8 @@
 
 #include <random>
 
+#include <pcg/pcg_random.hpp>
+
 /**
  * \brief Functions to work with maths
  */
@@ -112,14 +114,8 @@ namespace obe::utils::math
      */
     double normalize(double value, double start, double end);
 
-    /**
-     * \nobind
-     */
-    inline std::random_device rd;
-    /**
-     * \nobind
-     */
-    inline std::mt19937 rng { rd() };
+    extern pcg_extras::seed_seq_from<std::random_device> seed_source;
+    extern pcg64 rng;
 
     template <class N>
     N randint(N min, N max)
