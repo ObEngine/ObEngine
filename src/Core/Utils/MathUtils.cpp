@@ -1,10 +1,21 @@
 #include <cmath>
 #include <random>
 
+#include <pcg/pcg_random.hpp>
+
 #include <Utils/MathUtils.hpp>
 
 namespace obe::utils::math
 {
+    pcg_extras::seed_seq_from<std::random_device> seed_source;
+    pcg32 rng(seed_source);
+
+    int randint(const int& min, const int& max)
+    {
+        std::uniform_int_distribution<int> uni(min, max);
+        return uni(rng);
+    }
+
     double randfloat()
     {
         // do not put const, might fail depending on libc++

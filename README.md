@@ -18,7 +18,7 @@
 - :link: [ÖbEngine's Website](https://www.obengine.io)
 - :page_facing_up: [ÖbEngine's Documentation](https://www.obengine.io/doc.html)
 - :speech_balloon: [ÖbEngine's Discord](https://discord.gg/HkM6zdT)
-- :hammer_and_wrench: [ÖbEngine's Development Boards](https://github.com/ObEngine/ObEngine/projects)
+- :hammer_and_wrench: [ÖbEngine's Development Boards](https://github.com/ObEngine/ObEngine/projects?type=classic)
 - :video_game: [ÖbEngine's Examples](https://github.com/ObEngine/Examples)
 
 ## What is ÖbEngine ?
@@ -119,7 +119,7 @@ Each major release will have a name based on a translation of the word "Eggplant
 
 ## Do you have a roadmap I can check ?
 
-Sure ! For now we use GitHub Project system as a planning / roadmap tool which is available [here](https://github.com/ObEngine/ObEngine/projects).
+Sure ! For now we use GitHub Project system as a planning / roadmap tool which is available [here](https://github.com/ObEngine/ObEngine/projects?type=classic).
 
 ## Right, can I see how does scripting looks ?
 Sure, here are some simple GameObjects :

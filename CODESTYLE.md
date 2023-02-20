@@ -184,6 +184,12 @@ function MyClass:get_thing(thing_name)
   return self.things[thing_name];
 end
 
+-- private methods / implementation details are prefixed with underscore
+function MyClass:_set_private_thing_name(private_thing_name)
+  -- private attributes are prefixed with underscore
+  self._private_thing_name = private_thing_name;
+end
+
 -- use dot notation for module paths
 -- always use parenthesis for requires
 local canvas_module = require("obe://lib.internal.canvas");
