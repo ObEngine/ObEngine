@@ -20,8 +20,13 @@ jobs:
         run: sudo apt-get update
       - name: Install CMake
         run: sudo apt-get install -y cmake
-      - name: Install G++ and build-essential
-        run: sudo apt-get install -y build-essential g++-10
+      - name: Install build-essential
+        run: sudo apt-get install -y build-essential
+      - name: Set up GCC
+        uses: egor-tensin/setup-gcc@v1
+        with:
+          version: latest
+          platform: x64
       - name: Install git
         run: sudo apt-get install -y git
       - name: Install ALSA
@@ -38,8 +43,8 @@ jobs:
       - name: Compile ObEngine
         run: cd build; cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON -DCMAKE_BUILD_TYPE=Release -DBUILD_PRODUCTION=ON ..; make -j8
         env:
-          CC: gcc-10
-          CXX: g++-10
+          CC: gcc-11
+          CXX: g++-11
       - name: Run tests
         run: export LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/usr/local/lib"; ./build/tests/ObEngineTests
       - name: Create package
