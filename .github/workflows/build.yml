@@ -39,7 +39,7 @@ jobs:
       - name: Compile and install SFML
         run: cd SFML; cmake .; make -j8; sudo make install
       - name: Compile ObEngine
-        run: cd build; CC=/usr/bin/gcc-10 CXX=/usr/bin/g++-10 cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..; make -j8
+        run: cd build; CC=/usr/bin/gcc-11 CXX=/usr/bin/g++-11 cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON ..; make -j8
       - name: Run tests
         run: LD_LIBRARY_PATH="$LD_LIBRARY_PATH;/usr/local/lib" ./build/tests/ObEngineTests
 
