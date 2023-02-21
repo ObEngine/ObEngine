@@ -1,4 +1,4 @@
-#include <catch/catch.hpp>
+#include <catch_amalgamated.hpp>
 
 #include <Config/Version.hpp>
 

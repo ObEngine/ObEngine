@@ -1,12 +1,13 @@
 project(catch)
 
-file(GLOB CATCH_HEADERS include/catch/catch.hpp)
+file(GLOB CATCH_HEADERS include/catch_amalgamated.hpp)
+file(GLOB CATCH_SOURCES src/catch_amalgamated.cpp)
 
-add_library(catch INTERFACE)
+add_library(catch ${CATCH_HEADERS} ${CATCH_SOURCES})
 add_library(Catch2::Catch2 ALIAS catch)
 
 target_include_directories(catch
-    INTERFACE
+    PUBLIC
         $<INSTALL_INTERFACE:include>
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
 )

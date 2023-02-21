@@ -1,4 +1,4 @@
-#include <catch/catch.hpp>
+#include <catch_amalgamated.hpp>
 
 #include <Graphics/Color.hpp>
 #include <vili/node.hpp>
@@ -7,6 +7,7 @@
 
 
 using namespace obe::graphics;
+using Catch::Approx;
 
 std::string expectedHsv(std::string_view H, std::string_view S, std::string_view V)
 {

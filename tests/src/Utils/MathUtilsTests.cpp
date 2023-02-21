@@ -1,8 +1,9 @@
-#include <catch/catch.hpp>
+#include <catch_amalgamated.hpp>
 
 #include <Utils/MathUtils.hpp>
 
 using namespace obe::utils::math;
+using Catch::Approx;
 
 TEST_CASE("A double should be truncated to an int without data loss"
           " (including floating point precision)",
