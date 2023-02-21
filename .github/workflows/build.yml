@@ -82,7 +82,7 @@ jobs:
       - name: Create build directory
         run: mkdir build
       - name: Compile ObEngine
-        run: cd build && cmake -DCMAKE_C_COMPILER=$(which gcc) -DCMAKE_CXX_COMPILER=$(which g++) -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON .. && make -j8
+        run: cd build && cmake -DCMAKE_C_COMPILER=$(which gcc) -DCMAKE_CXX_COMPILER=$(which g++) -DCMAKE_C_COMPILER_ID="GNU" -DCMAKE_CXX_COMPILER_ID="GNU" -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON .. && make -j8
         env:
           CC: gcc
           CXX: g++
