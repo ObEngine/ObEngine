@@ -76,7 +76,7 @@ jobs:
         with:
           fetch-depth: 0
       - name: Install LLVM & Clang
-        run: brew install llvm
+        run: brew install gcc
       - name: Install SFML
         run: brew install sfml
       - name: Create build directory
@@ -84,7 +84,7 @@ jobs:
       - name: Compile ObEngine
         run: cd build && cmake -DBUILD_TESTS=ON -DBUILD_TOOLKIT=ON .. && make -j8
         env:
-          CC: /usr/local/opt/llvm/bin/clang
-          CXX: /usr/local/opt/llvm/bin/clang++
+          CC: gcc
+          CXX: g++
       - name: Run tests
         run: cd build && ./tests/ObEngineTests
