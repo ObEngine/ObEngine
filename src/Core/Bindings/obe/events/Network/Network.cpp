@@ -41,7 +41,7 @@ namespace obe::events::Network::bindings
         sol::table Network_namespace = state["obe"]["events"]["Network"].get<sol::table>();
         sol::usertype<obe::events::Network::Message> bind_message
             = Network_namespace.new_usertype<obe::events::Network::Message>(
-                "Message", sol::call_constructor, sol::default_constructor);
+                "Message");
         bind_message["client_name"] = &obe::events::Network::Message::client_name;
         bind_message["event_group_name"] = &obe::events::Network::Message::event_group_name;
         bind_message["event_name"] = &obe::events::Network::Message::event_name;
