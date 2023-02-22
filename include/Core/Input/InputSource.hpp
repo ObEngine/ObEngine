@@ -1,12 +1,14 @@
 #pragma once
 
-#include <Input/InputType.hpp>
+#include <string>
+#include <variant>
+
 #include <SFML/Window/Joystick.hpp>
 #include <SFML/Window/Keyboard.hpp>
 #include <SFML/Window/Mouse.hpp>
+
+#include <Input/InputType.hpp>
 #include <Types/SmartEnum.hpp>
-#include <string>
-#include <variant>
 
 /**
  * \additionalinclude{Script/AutoCastManager.hpp}

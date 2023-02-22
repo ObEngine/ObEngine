@@ -22,12 +22,16 @@ namespace obe::script
         };
     }
 
+#ifdef __clang__
+#define VirtuallyTyped class // clang 15 and below does not support concepts on abstract classes
+#else
     template <class T>
     concept VirtuallyTyped = requires(T x)
     {
         { x.type() } -> std::same_as<std::string_view>;
         { std::has_virtual_destructor_v<T> };
     };
+#endif
 
     template <class T, class CastableBase>
     concept VirtuallyTypedChildClass = 
