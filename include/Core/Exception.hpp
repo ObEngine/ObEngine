@@ -1,7 +1,6 @@
 #pragma once
 
 #include <exception>
-#include <source_location>
 #include <string>
 
 #include <fmt/core.h>
@@ -78,7 +77,8 @@ namespace obe
     template <class ExceptionType>
     Exception<ExceptionType>::Exception(std::source_location location)
     {
-        m_message = fmt::format("Exception [{}] occured\n", obe::utils::types::get_type_name<ExceptionType>());
+        m_message = fmt::format(
+            "Exception [{}] occured\n", obe::utils::types::get_type_name<ExceptionType>());
 #if defined _DEBUG
         m_message
             += fmt::format("  In file: '{}' (line {})\n", location.file_name(), location.line());
