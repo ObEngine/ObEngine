@@ -16,16 +16,6 @@ namespace obe::bindings
         bind_base_exception["what"] = &obe::BaseException::what;
         bind_base_exception["traceback"] = &obe::BaseException::traceback;
     }
-    void load_class_debug_info(sol::state_view state)
-    {
-        sol::table obe_namespace = state["obe"].get<sol::table>();
-        sol::usertype<obe::DebugInfo> bind_debug_info
-            = obe_namespace.new_usertype<obe::DebugInfo>("DebugInfo", sol::call_constructor,
-                sol::constructors<obe::DebugInfo(std::string_view, int, std::string_view)>());
-        bind_debug_info["file"] = &obe::DebugInfo::file;
-        bind_debug_info["line"] = &obe::DebugInfo::line;
-        bind_debug_info["function"] = &obe::DebugInfo::function;
-    }
     void load_function_get_type_name(sol::state_view state)
     {
         sol::table obe_namespace = state["obe"].get<sol::table>();

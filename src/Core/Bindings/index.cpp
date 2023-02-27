@@ -131,7 +131,6 @@ namespace obe::bindings
         obe::system::bindings::load_class_find_result(state);
         obe::system::bindings::load_class_path(state);
         obe::bindings::load_class_base_exception(state);
-        obe::bindings::load_class_debug_info(state);
         obe::bindings::load_function_get_type_name(state);
         obe::bindings::load_function_init_engine(state);
         obe::animation::bindings::load_class_animation(state);

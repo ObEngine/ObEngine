@@ -60,8 +60,7 @@ namespace obe::event
         {
             return *event->second;
         }
-        throw exceptions::UnknownEvent(
-            m_identifier, event_name, this->get_events_names(), EXC_INFO);
+        throw exceptions::UnknownEvent(m_identifier, event_name, this->get_events_names());
     }
 
     bool EventGroup::contains(const std::string& event_name) const
@@ -77,8 +76,7 @@ namespace obe::event
             m_events.erase(event_name);
         else
         {
-            throw exceptions::UnknownEvent(
-                m_identifier, event_name, this->get_events_names(), EXC_INFO);
+            throw exceptions::UnknownEvent(m_identifier, event_name, this->get_events_names());
         }
     }
 

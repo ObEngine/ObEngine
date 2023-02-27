@@ -12,9 +12,9 @@ namespace obe::audio::exceptions
     {
     public:
         using Exception::Exception;
-        AudioFileNotFound(
-            std::string_view path, std::vector<std::string> mounted_paths, DebugInfo info)
-            : Exception(info)
+        AudioFileNotFound(std::string_view path, std::vector<std::string> mounted_paths,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to find audio file at the following path : '{}'", path);
             this->hint("The file was supposed to be in one of the following paths : ({})",

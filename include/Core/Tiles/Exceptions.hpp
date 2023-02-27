@@ -14,8 +14,9 @@ namespace obe::tiles::exceptions
     public:
         using Exception::Exception;
         UnknownTileId(uint32_t tile_id, uint32_t max_tile_id,
-            std::map<std::string, std::pair<uint32_t, uint32_t>> tilesets, DebugInfo info)
-            : Exception(info)
+            std::map<std::string, std::pair<uint32_t, uint32_t>> tilesets,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to load tile with id '{}' when maximum tile id is '{}'",
                 tile_id, max_tile_id);
@@ -36,8 +37,8 @@ namespace obe::tiles::exceptions
     public:
         using Exception::Exception;
         UnknownTileset(const std::string& tileset_id, const std::vector<std::string>& tilesets_ids,
-            DebugInfo info)
-            : Exception(info)
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to find Tileset with id '{}'", tileset_id);
             std::vector<std::string> suggestions
@@ -53,9 +54,9 @@ namespace obe::tiles::exceptions
     {
     public:
         using Exception::Exception;
-        TilePositionOutsideLayer(
-            uint32_t x, uint32_t y, uint32_t width, uint32_t height, DebugInfo info)
-            : Exception(info)
+        TilePositionOutsideLayer(uint32_t x, uint32_t y, uint32_t width, uint32_t height,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to access Tile with position [x={}, y={}] which is "
                         "outside of Layer with size [width={}, height={}]",
@@ -67,9 +68,9 @@ namespace obe::tiles::exceptions
     {
     public:
         using Exception::Exception;
-        UnknownTileLayer(
-            const std::string& layer_id, const std::vector<std::string>& layer_ids, DebugInfo info)
-            : Exception(info)
+        UnknownTileLayer(const std::string& layer_id, const std::vector<std::string>& layer_ids,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to find Tile Layer with id '{}'", layer_id);
             std::vector<std::string> suggestions

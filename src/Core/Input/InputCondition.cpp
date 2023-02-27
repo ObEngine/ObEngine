@@ -18,7 +18,7 @@ namespace obe::input
                 return monitor->get_state();
             }
         }
-        throw exceptions::InputSourceNotInCombination(input_source->get_name(), EXC_INFO);
+        throw exceptions::InputSourceNotInCombination(input_source->get_name());
     }
 
     void InputCondition::add_combination_element(const InputCombinationElement combination_element)

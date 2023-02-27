@@ -197,8 +197,7 @@ namespace obe::event
         }
         if (!m_events.contains(event_name))
         {
-            throw exceptions::UnknownEvent(
-                m_identifier, event_name, this->get_events_names(), EXC_INFO);
+            throw exceptions::UnknownEvent(m_identifier, event_name, this->get_events_names());
         }
         return *static_cast<Event<EventType>*>(m_events.at(name).get());
     }
@@ -221,7 +220,7 @@ namespace obe::event
         }
         else
         {
-            throw exceptions::EventAlreadyExists(m_identifier, event_name, EXC_INFO);
+            throw exceptions::EventAlreadyExists(m_identifier, event_name);
         }
     }
 
@@ -236,8 +235,7 @@ namespace obe::event
     {
         if (!m_events.contains(event_name))
         {
-            throw exceptions::UnknownEvent(
-                m_identifier, event_name, this->get_events_names(), EXC_INFO);
+            throw exceptions::UnknownEvent(m_identifier, event_name, this->get_events_names());
         }
         debug::Log->trace(
             "<EventGroup> Triggering Event '{}' from EventGroup '{}'", event_name, m_identifier);

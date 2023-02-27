@@ -14,8 +14,9 @@ namespace obe::script
         {
         public:
             using Exception::Exception;
-            UnknownCaster(std::string_view castable_type, DebugInfo info)
-                : Exception(info)
+            UnknownCaster(std::string_view castable_type,
+                std::source_location location = std::source_location::current())
+                : Exception(location)
             {
                 this->error("Could not find caster for type '{}'", castable_type);
             }
@@ -28,19 +29,24 @@ namespace obe::script
     template <class T>
     concept VirtuallyTyped = requires(T x)
     {
-        { x.type() } -> std::same_as<std::string_view>;
+        {
+            x.type()
+        }
+        ->std::same_as<std::string_view>;
         { std::has_virtual_destructor_v<T> };
     };
 #endif
 
     template <class T, class CastableBase>
-    concept VirtuallyTypedChildClass = 
-        std::derived_from<T, CastableBase> && 
-        std::same_as<std::remove_cvref_t<decltype(T::Type)>, std::string_view> &&
-        !std::is_abstract_v<T> &&
-        requires(T x) {
-            { x.type() } -> std::same_as<std::string_view>;
-        };
+    concept VirtuallyTypedChildClass
+        = std::derived_from<T, CastableBase>&& std::same_as<std::remove_cvref_t<decltype(T::Type)>,
+              std::string_view> && !std::is_abstract_v<T> && requires(T x)
+    {
+        {
+            x.type()
+        }
+        ->std::same_as<std::string_view>;
+    };
 
     template <VirtuallyTyped CastableBase>
     class AutoCastManager
@@ -64,8 +70,9 @@ namespace obe::script
     template <VirtuallyTypedChildClass<CastableBase> CastableSubClass>
     void AutoCastManager<CastableBase>::Register()
     {
-        CastersMap[CastableSubClass::Type] = [](CastableBase* ptr) -> sol::lua_value
-        { return static_cast<CastableSubClass*>(ptr); };
+        CastersMap[CastableSubClass::Type] = [](CastableBase* ptr) -> sol::lua_value {
+            return static_cast<CastableSubClass*>(ptr);
+        };
     }
 
     template <VirtuallyTyped CastableBase>
@@ -73,9 +80,8 @@ namespace obe::script
     {
         if (!CastersMap.contains(ptr->type()))
         {
-            throw exceptions::UnknownCaster(ptr->type(), EXC_INFO);
+            throw exceptions::UnknownCaster(ptr->type());
         }
         return CastersMap.at(ptr->type())(ptr);
     }
 }
-

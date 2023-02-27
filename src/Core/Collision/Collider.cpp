@@ -61,8 +61,7 @@ namespace obe::collision
     }
 
     transform::UnitVector Collider::get_offset_before_collision(const Collider& collider,
-        const transform::UnitVector& self_offset,
-        const transform::UnitVector& other_offset) const
+        const transform::UnitVector& self_offset, const transform::UnitVector& other_offset) const
     {
         const void* a_c2_shape = this->get_c2_shape();
         const void* b_c2_shape = collider.get_c2_shape();
@@ -94,17 +93,18 @@ namespace obe::collision
         {
         case ColliderType::Collider:
             throw exceptions::InvalidColliderType(
-                ColliderTypeMeta::to_string(ColliderType::Collider), EXC_INFO);
+                ColliderTypeMeta::to_string(ColliderType::Collider));
         case ColliderType::Circle:
             return std::make_unique<CircleCollider>(static_cast<const CircleCollider&>(*this));
         case ColliderType::Rectangle:
-            return std::make_unique<RectangleCollider>(static_cast<const RectangleCollider&>(*this));
+            return std::make_unique<RectangleCollider>(
+                static_cast<const RectangleCollider&>(*this));
         case ColliderType::Capsule:
             return std::make_unique<CapsuleCollider>(static_cast<const CapsuleCollider&>(*this));
         case ColliderType::Polygon:
             return std::make_unique<PolygonCollider>(static_cast<const PolygonCollider&>(*this));
         default:
-            throw exceptions::InvalidColliderType("?", EXC_INFO);
+            throw exceptions::InvalidColliderType("?");
         }
     }
 }

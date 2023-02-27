@@ -171,7 +171,7 @@ namespace obe::scene
         }
         catch (const std::exception& e)
         {
-            throw exceptions::InvalidSceneFile(filepath, EXC_INFO).nest(e);
+            throw exceptions::InvalidSceneFile(filepath).nest(e);
         }
         this->load(scene_file);
     }
@@ -223,8 +223,7 @@ namespace obe::scene
                     if (game_object->is_parent_of_component(ptr->get_unique_id()))
                     {
                         return false;
-                    }
-                        ;
+                    };
                 }
                 return true;
             });
@@ -315,7 +314,7 @@ namespace obe::scene
             }
         }
         else
-            throw exceptions::MissingSceneFileBlock(m_level_file_name, "Meta", EXC_INFO);
+            throw exceptions::MissingSceneFileBlock(m_level_file_name, "Meta");
 
         if (data.contains("View"))
         {
@@ -354,7 +353,7 @@ namespace obe::scene
             m_camera.set_position(m_camera_initial_position, m_camera_initial_referential);
         }
         else
-            throw exceptions::MissingSceneFileBlock(m_level_file_name, "View", EXC_INFO);
+            throw exceptions::MissingSceneFileBlock(m_level_file_name, "View");
 
         if (data.contains("Sprites"))
         {
@@ -409,7 +408,7 @@ namespace obe::scene
                 else if (!this->get_game_object(game_object_id).is_permanent())
                 {
                     throw exceptions::GameObjectAlreadyExists(m_level_file_name,
-                        this->get_game_object(game_object_id).get_type(), game_object_id, EXC_INFO);
+                        this->get_game_object(game_object_id).get_type(), game_object_id);
                 }
             }
         }
@@ -428,7 +427,7 @@ namespace obe::scene
                     const auto err_obj = result.get<sol::error>();
                     const std::string err_msg = err_obj.what();
                     throw exceptions::SceneScriptLoadingError(m_level_file_name, source,
-                        utils::string::replace(err_msg, "\n", "\n        "), EXC_INFO);
+                        utils::string::replace(err_msg, "\n", "\n        "));
                 }
                 m_script_array.push_back(script.at("source"));
             }
@@ -470,7 +469,7 @@ namespace obe::scene
                         + utils::string::replace(error.what(), "\n", "\n        ") + "\"";
                     // TODO: Replace with nest
                     throw exceptions::SceneOnLoadCallbackError(
-                        current_scene, future_load_buffer, err_msg, EXC_INFO);
+                        current_scene, future_load_buffer, err_msg);
                 }
             }
         }
@@ -604,7 +603,7 @@ namespace obe::scene
         {
             object_ids.push_back(object->get_id());
         }
-        throw exceptions::UnknownGameObject(m_level_file_name, id, object_ids, EXC_INFO);
+        throw exceptions::UnknownGameObject(m_level_file_name, id, object_ids);
     }
 
     bool Scene::does_game_object_exists(const std::string& id) const
@@ -649,7 +648,7 @@ namespace obe::scene
         else if (this->does_game_object_exists(use_id))
         {
             throw exceptions::GameObjectAlreadyExists(
-                m_level_file_name, this->get_game_object(use_id).get_type(), use_id, EXC_INFO);
+                m_level_file_name, this->get_game_object(use_id).get_type(), use_id);
         }
 
         std::unique_ptr<script::GameObject> new_game_object
@@ -745,7 +744,7 @@ namespace obe::scene
         {
             sprites_ids.push_back(sprite->get_id());
         }
-        throw exceptions::UnknownSprite(m_level_file_name, id, sprites_ids, EXC_INFO);
+        throw exceptions::UnknownSprite(m_level_file_name, id, sprites_ids);
     }
 
     bool Scene::does_sprite_exists(const std::string& id) const
@@ -824,7 +823,7 @@ namespace obe::scene
         {
             colliders_ids.push_back(collider->get_id());
         }
-        throw exceptions::UnknownCollider(m_level_file_name, id, colliders_ids, EXC_INFO);
+        throw exceptions::UnknownCollider(m_level_file_name, id, colliders_ids);
     }
 
     bool Scene::does_collider_exists(const std::string& id) const
@@ -835,8 +834,8 @@ namespace obe::scene
     void Scene::remove_collider(const std::string& id)
     {
         const auto collider_it = std::find_if(m_collider_array.begin(), m_collider_array.end(),
-            [&id](const std::unique_ptr<collision::ColliderComponent>& collider)
-            { return (collider->get_id() == id);
+            [&id](const std::unique_ptr<collision::ColliderComponent>& collider) {
+                return (collider->get_id() == id);
             });
         m_collision_space.remove_collider(collider_it->get()->get_inner_collider());
         m_collider_array.erase(collider_it);

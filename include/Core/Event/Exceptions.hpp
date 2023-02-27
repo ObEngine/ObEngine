@@ -12,8 +12,9 @@ namespace obe::event::exceptions
     public:
         using Exception::Exception;
         CallbackCreationError(std::string_view event_name, std::string_view environment_id,
-            std::string_view callback, std::string_view error, DebugInfo info)
-            : Exception(info)
+            std::string_view callback, std::string_view error,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Error while creating an Event callback"
                         "\n     Event '{}'"
@@ -28,9 +29,9 @@ namespace obe::event::exceptions
     {
     public:
         using Exception::Exception;
-        EventExecutionError(
-            std::string_view event_name, std::string_view listener_id, DebugInfo info)
-            : Exception(info)
+        EventExecutionError(std::string_view event_name, std::string_view listener_id,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Error while executing an Event callback"
                         "\n     Event '{}'"
@@ -44,8 +45,9 @@ namespace obe::event::exceptions
     public:
         using Exception::Exception;
         UnknownEvent(std::string_view event_group, std::string_view event_name,
-            const std::vector<std::string>& existing_events, DebugInfo info)
-            : Exception(info)
+            const std::vector<std::string>& existing_events,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Unable to find a Event named '{}' inside EventGroup '{}'", event_name,
                 event_group);
@@ -62,8 +64,9 @@ namespace obe::event::exceptions
     public:
         using Exception::Exception;
         UnknownEventNamespace(std::string_view event_namespace,
-            const std::vector<std::string>& existing_namespaces, DebugInfo info)
-            : Exception(info)
+            const std::vector<std::string>& existing_namespaces,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Unable to find a EventNamespace named '{}'", event_namespace);
             std::vector<std::string> suggestions
@@ -80,8 +83,9 @@ namespace obe::event::exceptions
     public:
         using Exception::Exception;
         UnknownEventGroup(std::string_view event_namespace, std::string_view event_group,
-            const std::vector<std::string>& existing_groups, DebugInfo info)
-            : Exception(info)
+            const std::vector<std::string>& existing_groups,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Unable to find an EventGroup named '{}' inside EventNamespace '{}'",
                 event_group, event_namespace);
@@ -98,8 +102,9 @@ namespace obe::event::exceptions
     {
     public:
         using Exception::Exception;
-        EventNamespaceAlreadyExists(std::string_view event_namespace, DebugInfo info)
-            : Exception(info)
+        EventNamespaceAlreadyExists(std::string_view event_namespace,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("An EventNamespace named '{}' already exists", event_namespace);
             this->hint("Try creating a EventNamespace with a different name that is "
@@ -111,9 +116,9 @@ namespace obe::event::exceptions
     {
     public:
         using Exception::Exception;
-        EventGroupAlreadyExists(
-            std::string_view event_namespace, std::string_view event_group, DebugInfo info)
-            : Exception(info)
+        EventGroupAlreadyExists(std::string_view event_namespace, std::string_view event_group,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("An EventGroup named '{}' already exists inside EventNamespace '{}'",
                 event_group, event_namespace);
@@ -126,9 +131,9 @@ namespace obe::event::exceptions
     {
     public:
         using Exception::Exception;
-        EventAlreadyExists(
-            std::string_view event_group_identifier, std::string_view event_name, DebugInfo info)
-            : Exception(info)
+        EventAlreadyExists(std::string_view event_group_identifier, std::string_view event_name,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("An Event named '{}' already exists inside EventGroup '{}'", event_name,
                 event_group_identifier);
@@ -141,9 +146,9 @@ namespace obe::event::exceptions
     {
     public:
         using Exception::Exception;
-        EventGroupNotJoinable(
-            std::string_view event_namespace, std::string_view event_group, DebugInfo info)
-            : Exception(info)
+        EventGroupNotJoinable(std::string_view event_namespace, std::string_view event_group,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to join EventGroup '{}' inside EventNamespace "
                         "'{}' as it is defined as non-joinable",
@@ -157,8 +162,9 @@ namespace obe::event::exceptions
     {
     public:
         using Exception::Exception;
-        EventNamespaceNotJoinable(std::string_view event_namespace, DebugInfo info)
-            : Exception(info)
+        EventNamespaceNotJoinable(std::string_view event_namespace,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to join EventNamespace "
                         "'{}' as it is defined as non-joinable",

@@ -56,8 +56,10 @@ namespace obe::animation
             double progression, const transform::AABB& from, const transform::AABB& to)
         {
             transform::AABB step = from;
-            step.m_position = TweenImpl<transform::UnitVector>::step(progression, from.get_position(), to.get_position());
-            step.m_size = TweenImpl<transform::UnitVector>::step(progression, from.get_size(), to.get_size());
+            step.m_position = TweenImpl<transform::UnitVector>::step(
+                progression, from.get_position(), to.get_position());
+            step.m_size = TweenImpl<transform::UnitVector>::step(
+                progression, from.get_size(), to.get_size());
             return step;
         }
     };
@@ -159,7 +161,7 @@ namespace obe::animation
             static_assert(template_specialization_exists<TweenImpl<TweenableClass>>());
             if (!m_easing)
             {
-                throw exceptions::InvalidEasingFunction(EXC_INFO);
+                throw exceptions::InvalidEasingFunction();
             }
         }
 
@@ -176,7 +178,7 @@ namespace obe::animation
             static_assert(template_specialization_exists<TweenImpl<TweenableClass>>());
             if (!m_easing)
             {
-                throw exceptions::InvalidEasingFunction(EXC_INFO);
+                throw exceptions::InvalidEasingFunction();
             }
         }
 

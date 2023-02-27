@@ -92,7 +92,7 @@ namespace obe::animation
         if (m_animations.find(animation_name) != m_animations.end())
             return *m_animations.at(animation_name).get();
         throw exceptions::UnknownAnimation(
-            m_path.to_string(), animation_name, this->get_all_animations_names(), EXC_INFO);
+            m_path.to_string(), animation_name, this->get_all_animations_names());
     }
 
     std::vector<std::string> Animator::get_all_animations_names() const
@@ -126,7 +126,7 @@ namespace obe::animation
         if (m_parent.m_animations.find(key) == m_parent.m_animations.end())
         {
             throw exceptions::UnknownAnimation(
-                m_parent.m_path.to_string(), key, m_parent.get_all_animations_names(), EXC_INFO);
+                m_parent.m_path.to_string(), key, m_parent.get_all_animations_names());
         }
         if (key != this->get_current_animation_name())
         {
@@ -180,7 +180,8 @@ namespace obe::animation
         for (const auto& directory : directories)
         {
             system::Path animation_path = path.add(system::Path(directory.path()).last());
-            std::unique_ptr<Animation> temp_animation = std::make_unique<Animation>(animation_path, resources);
+            std::unique_ptr<Animation> temp_animation
+                = std::make_unique<Animation>(animation_path, resources);
             if (m_default_state.get_target())
             {
                 temp_animation->set_anti_aliasing(m_default_state.get_target()->is_anti_aliased());
@@ -193,7 +194,7 @@ namespace obe::animation
             }
             catch (const std::exception& exc)
             {
-                throw exceptions::InvalidAnimationFile(animation_config_file, EXC_INFO).nest(exc);
+                throw exceptions::InvalidAnimationFile(animation_config_file).nest(exc);
             }
             if (!animator_cfg_file.is_null())
             {
@@ -207,7 +208,7 @@ namespace obe::animation
                 }
             }
 
-            m_animations[temp_animation->get_name()] = move(temp_animation);
+            m_animations[temp_animation->get_name()] = std::move(temp_animation);
         }
         m_default_state.load();
     }
@@ -218,14 +219,14 @@ namespace obe::animation
         {
             debug::Log->trace("<Animator> Updating Animator at {0}", m_parent.m_path.to_string());
             if (m_current_animation == nullptr)
-                throw exceptions::NoSelectedAnimation(m_parent.m_path.to_string(), EXC_INFO);
+                throw exceptions::NoSelectedAnimation(m_parent.m_path.to_string());
             if (m_current_animation->get_status() == AnimationStatus::Call)
             {
                 m_current_animation->reset();
                 const std::string next_animation = m_current_animation->get_next_animation();
                 if (m_parent.m_animations.find(next_animation) == m_parent.m_animations.end())
                     throw exceptions::UnknownAnimation(m_parent.m_path.to_string(), next_animation,
-                        m_parent.get_all_animations_names(), EXC_INFO);
+                        m_parent.get_all_animations_names());
                 m_current_animation = m_states.at(next_animation).get();
             }
             if (m_current_animation->get_status() == AnimationStatus::Play)
@@ -276,7 +277,7 @@ namespace obe::animation
     {
         if (m_current_animation)
             return m_current_animation->get_current_texture();
-        throw exceptions::NoSelectedAnimation(m_parent.get_filesystem_path().to_string(), EXC_INFO);
+        throw exceptions::NoSelectedAnimation(m_parent.get_filesystem_path().to_string());
     }
 
     const Animator& AnimatorState::get_animator() const

@@ -62,8 +62,9 @@ namespace obe::tiles
                 // TODO: I mean, really, fix this
                 auto camera_size_backup = m_scene.get_scene().get_camera().get_size().y / 2;
                 m_scene.get_scene().get_camera().set_size(1);
-                transform::UnitVector collider_offset
-                    = collider->get_inner_collider()->get_position().to<transform::Units::ScenePixels>();
+                transform::UnitVector collider_offset = collider->get_inner_collider()
+                                                            ->get_position()
+                                                            .to<transform::Units::ScenePixels>();
                 m_colliders.at(tile_data_index)
                     ->get_inner_collider()
                     ->set_position(
@@ -270,10 +271,11 @@ namespace obe::tiles
             // Finding out VertexArray rendering span based on camera size and position
             const uint32_t tileset_tile_width = tileset.get_tile_width();
             const uint32_t tileset_tile_height = tileset.get_tile_width();
-            const size_t span_start
-                = std::max(0ll, static_cast<long long int>(((camera_x / tileset_tile_width)) * 4 * m_height));
+            const size_t span_start = std::max(
+                0ll, static_cast<long long int>(((camera_x / tileset_tile_width)) * 4 * m_height));
             const size_t span_end = std::min(layer.getVertexCount(),
-                static_cast<size_t>((((camera_x + camera_width) / tileset_tile_width) + 1) * 4 * m_height));
+                static_cast<size_t>(
+                    (((camera_x + camera_width) / tileset_tile_width) + 1) * 4 * m_height));
             layer.setSpan(span_start, span_end);
 
             // Rendering entire VertexArray
@@ -285,7 +287,7 @@ namespace obe::tiles
     {
         if (x >= m_width || y >= m_height || x < 0 || y < 0)
         {
-            throw exceptions::TilePositionOutsideLayer(x, y, m_width, m_height, EXC_INFO);
+            throw exceptions::TilePositionOutsideLayer(x, y, m_width, m_height);
         }
         const uint32_t tile_data_index = x + y * m_width;
         const uint32_t old_tile_id = m_data[tile_data_index];
@@ -301,7 +303,7 @@ namespace obe::tiles
     {
         if (x >= m_width || y >= m_height || x < 0 || y < 0)
         {
-            throw exceptions::TilePositionOutsideLayer(x, y, m_width, m_height, EXC_INFO);
+            throw exceptions::TilePositionOutsideLayer(x, y, m_width, m_height);
         }
         const uint32_t tile_data_index = x + y * m_width;
         return m_data[tile_data_index];

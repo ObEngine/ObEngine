@@ -10,8 +10,7 @@ namespace obe::config
         {
             throw exceptions::InvalidVersionFormat(
                 "Wrong number of components for version string. Expecting version "
-                "string of the form v?MAJOR.MINOR.PATCH",
-                EXC_INFO);
+                "string of the form v?MAJOR.MINOR.PATCH");
         }
         // Skip first letter from version string ( 'v' )
         if (!utils::string::is_string_numeric(parts[0]) && parts[0].size() >= 2)
@@ -19,7 +18,7 @@ namespace obe::config
             if (parts[0][0] != 'v')
             {
                 throw exceptions::InvalidVersionFormat(
-                    "Wrong prefix for version string, only \"v0.1.1\" is allowed.", EXC_INFO);
+                    "Wrong prefix for version string, only \"v0.1.1\" is allowed.");
             }
             parts[0] = parts[0].substr(1);
         }

@@ -14,8 +14,9 @@ namespace obe::input::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidInputSourceState(std::string_view state, DebugInfo info)
-            : Exception(info)
+        InvalidInputSourceState(
+            std::string_view state, std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("'{}' is not a valid InputSourceState value", state);
             this->hint("Try one of the following values : (Idle, Hold, Pressed, Released)");
@@ -27,8 +28,9 @@ namespace obe::input::exceptions
     public:
         using Exception::Exception;
         UnknownInputAction(std::string_view action_name,
-            const std::vector<std::string>& existing_actions, DebugInfo info)
-            : Exception(info)
+            const std::vector<std::string>& existing_actions,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("InputAction named '{}' does not exists", action_name);
             std::vector<std::string> suggestions
@@ -45,8 +47,9 @@ namespace obe::input::exceptions
     public:
         using Exception::Exception;
         UnknownInputSource(std::string_view button_name,
-            const std::vector<std::string>& existing_buttons, DebugInfo info)
-            : Exception(info)
+            const std::vector<std::string>& existing_buttons,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("InputSource named '{}' does not exists", button_name);
             std::vector<std::string> suggestions
@@ -62,9 +65,9 @@ namespace obe::input::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidInputCombinationCode(
-            std::string_view action, std::string_view combination_code, DebugInfo info)
-            : Exception(info)
+        InvalidInputCombinationCode(std::string_view action, std::string_view combination_code,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("The following InputCombinationCode '{}' for InputAction '{}' is invalid",
                 combination_code, action);
@@ -75,8 +78,9 @@ namespace obe::input::exceptions
     {
     public:
         using Exception::Exception;
-        InputSourceAlreadyInCombination(std::string_view input_source, DebugInfo info)
-            : Exception(info)
+        InputSourceAlreadyInCombination(std::string_view input_source,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("The same InputSource '{}' can't appear twice in the same "
                         "InputCondition",
@@ -90,8 +94,9 @@ namespace obe::input::exceptions
     {
     public:
         using Exception::Exception;
-        InputSourceNotInCombination(std::string_view input_source, DebugInfo info)
-            : Exception(info)
+        InputSourceNotInCombination(std::string_view input_source,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("The InputSource '{}' does not appear in InputCondition", input_source);
         }
@@ -101,8 +106,9 @@ namespace obe::input::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidInputTypeEnumValue(int enum_value, DebugInfo info)
-            : Exception(info)
+        InvalidInputTypeEnumValue(
+            int enum_value, std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Enum InputType can't have invalid value ({})", enum_value);
         }
@@ -112,8 +118,9 @@ namespace obe::input::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidGamepadButton(std::string_view gamepad_button_id, DebugInfo info)
-            : Exception(info)
+        InvalidGamepadButton(std::string_view gamepad_button_id,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Gamepad input '{}' is not a valid identifier", gamepad_button_id);
             this->hint("Gamepad input should look like this : 'GP_<GAMEPAD_ID>_BTN_<BUTTON_ID>' or "

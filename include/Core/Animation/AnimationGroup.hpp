@@ -24,7 +24,7 @@ namespace obe::animation
         /**
          * \brief The current frame index of the AnimationGroup
          */
-        std::size_t m_index = -1;
+        std::size_t m_index = -1; // TODO: fix this overflow trick
         /**
          * \brief The list that contains pointers to all textures in the
          *        AnimationGroup

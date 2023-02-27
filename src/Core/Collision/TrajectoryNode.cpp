@@ -23,7 +23,7 @@ namespace obe::collision
     {
         if (m_trajectories.contains(id))
         {
-            throw exceptions::TrajectoryAlreadyExists(id, EXC_INFO);
+            throw exceptions::TrajectoryAlreadyExists(id);
         }
         m_trajectories[id] = std::make_unique<Trajectory>(unit);
         return *m_trajectories[id];
@@ -50,7 +50,8 @@ namespace obe::collision
         else
         {
             return transform::UnitVector(
-                (offset.x != 0) ? offset.x / offset.y * base_offset_normal_scale : 0, base_offset_normal_scale, offset.unit);
+                (offset.x != 0) ? offset.x / offset.y * base_offset_normal_scale : 0,
+                base_offset_normal_scale, offset.unit);
         }
     }
 
@@ -76,7 +77,8 @@ namespace obe::collision
                 }
                 if (!current_trajectory->is_static())
                 {
-                    current_trajectory->m_speed = current_trajectory->m_speed + current_trajectory->m_acceleration * dt;
+                    current_trajectory->m_speed
+                        = current_trajectory->m_speed + current_trajectory->m_acceleration * dt;
                     base_offset = get_offset(*current_trajectory);
                     obe::collision::CollisionData collision_data;
                     collision_data.offset = base_offset;
@@ -91,7 +93,8 @@ namespace obe::collision
                         for (const ReachableCollider& reachable_collider : reachable_colliders)
                         {
                             if (!trajectory_reachable_collider_acceptor
-                                || trajectory_reachable_collider_acceptor(*trajectory.second, reachable_collider.first))
+                                || trajectory_reachable_collider_acceptor(
+                                    *trajectory.second, reachable_collider.first))
                             {
                                 reachable_and_validated_colliders.push_back(reachable_collider);
                             }

@@ -10,8 +10,9 @@ namespace obe::config::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidVersionFormat(std::string_view detail, DebugInfo info)
-            : Exception(info)
+        InvalidVersionFormat(std::string_view detail,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("There is a problem with your version number : {}", detail);
         }
@@ -21,8 +22,9 @@ namespace obe::config::exceptions
     {
     public:
         using Exception::Exception;
-        ConfigError(std::vector<std::string> config_files, DebugInfo info)
-            : Exception(info)
+        ConfigError(std::vector<std::string> config_files,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("config.vili built from the following files ({}) is malformed",
                 fmt::join(config_files, ", "));

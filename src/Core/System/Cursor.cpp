@@ -20,7 +20,7 @@ namespace obe::system
         if (button == sf::Mouse::Button::Right)
             return "right";
         const int enum_value = static_cast<std::underlying_type_t<sf::Mouse::Button>>(button);
-        throw exceptions::InvalidMouseButtonEnumValue(enum_value, EXC_INFO);
+        throw exceptions::InvalidMouseButtonEnumValue(enum_value);
     }
 
     Cursor::Cursor(system::Window& window, event::EventNamespace& event_namespace)

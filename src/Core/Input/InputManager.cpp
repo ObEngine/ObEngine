@@ -58,7 +58,7 @@ namespace obe::input
         {
             action_ids.push_back(action->get_id());
         }
-        throw exceptions::UnknownInputAction(action_id, action_ids, EXC_INFO);
+        throw exceptions::UnknownInputAction(action_id, action_ids);
     }
 
     void InputManager::update()
@@ -147,8 +147,7 @@ namespace obe::input
                     }
                     catch (const BaseException& e)
                     {
-                        throw exceptions::InvalidInputCombinationCode(action, condition, EXC_INFO)
-                            .nest(e);
+                        throw exceptions::InvalidInputCombinationCode(action, condition).nest(e);
                     }
 
                     action_condition.set_combination(combination);
@@ -258,7 +257,7 @@ namespace obe::input
         if (const auto& input = m_inputs.find(key_id); input != m_inputs.end())
             return *input->second;
 
-        throw exceptions::UnknownInputSource(key_id, this->get_all_input_button_names(), EXC_INFO);
+        throw exceptions::UnknownInputSource(key_id, this->get_all_input_button_names());
     }
 
     std::vector<InputSource*> InputManager::get_all_input_sources() const
@@ -272,7 +271,8 @@ namespace obe::input
         return inputs;
     }
 
-    std::vector<InputSource*> InputManager::get_all_input_sources(const std::string& input_type) const
+    std::vector<InputSource*> InputManager::get_all_input_sources(
+        const std::string& input_type) const
     {
         std::vector<InputSource*> inputs;
         for (auto& key_iterator : m_inputs)
@@ -364,7 +364,7 @@ namespace obe::input
                         }
                         else
                         {
-                            throw exceptions::InvalidInputSourceState(button_state, EXC_INFO);
+                            throw exceptions::InvalidInputSourceState(button_state);
                         }
                     }
                     const std::string key_id = state_and_button[1];
@@ -379,11 +379,11 @@ namespace obe::input
                         }
                         catch (const std::invalid_argument& exc)
                         {
-                            throw exceptions::InvalidGamepadButton(key_id, EXC_INFO);
+                            throw exceptions::InvalidGamepadButton(key_id);
                         }
                         catch (const std::out_of_range& exc)
                         {
-                            throw exceptions::InvalidGamepadButton(key_id, EXC_INFO);
+                            throw exceptions::InvalidGamepadButton(key_id);
                         }
                         this->initialize_gamepad(gamepad_index);
                     }
@@ -398,13 +398,13 @@ namespace obe::input
                         else
                         {
                             throw exceptions::InputSourceAlreadyInCombination(
-                                input_source.get_name(), EXC_INFO);
+                                input_source.get_name());
                         }
                     }
                     else
                     {
                         throw exceptions::UnknownInputSource(
-                            key_id, this->get_all_input_button_names(), EXC_INFO);
+                            key_id, this->get_all_input_button_names());
                     }
                 }
             }
@@ -422,15 +422,15 @@ namespace obe::input
             {
                 e_keys->add<events::Keys::StateChanged>(input_source->get_name());
                 e_keys->on_add_listener(input_source->get_name(),
-                    [input_source, this](event::ListenerChangeState, const std::string&)
-                    { m_key_monitors.push_back(this->monitor(*input_source)); });
+                    [input_source, this](event::ListenerChangeState, const std::string&) {
+                        m_key_monitors.push_back(this->monitor(*input_source));
+                    });
                 e_keys->on_remove_listener(input_source->get_name(),
-                    [input_source, this](event::ListenerChangeState, const std::string&)
-                    {
-                        const auto position
-                            = std::find_if(m_key_monitors.begin(), m_key_monitors.end(),
-                                [input_source](const auto& monitor)
-                                { return &monitor->get_input_source() == input_source; });
+                    [input_source, this](event::ListenerChangeState, const std::string&) {
+                        const auto position = std::find_if(m_key_monitors.begin(),
+                            m_key_monitors.end(), [input_source](const auto& monitor) {
+                                return &monitor->get_input_source() == input_source;
+                            });
                         if (position != m_key_monitors.end())
                             m_key_monitors.erase(position);
                     });
@@ -527,8 +527,7 @@ namespace obe::input
         case sf::Event::TextEntered:
         {
             auto utf8_char = sf::String(event.text.unicode).toUtf8();
-            this->text_entered(
-                std::string(utf8_char.begin(), utf8_char.end()), event.text.unicode);
+            this->text_entered(std::string(utf8_char.begin(), utf8_char.end()), event.text.unicode);
         }
         break;
         }

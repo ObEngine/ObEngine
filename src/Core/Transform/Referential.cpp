@@ -144,7 +144,7 @@ namespace obe::transform
         {
             return Referential(std::stod(reg_match[1]), std::stod(reg_match[3]));
         }
-        throw exceptions::UnknownReferential(ref, EXC_INFO);
+        throw exceptions::UnknownReferential(ref);
     }
 
     std::ostream& operator<<(std::ostream& os, Referential m)

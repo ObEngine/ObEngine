@@ -29,7 +29,7 @@ namespace obe::audio
         if (file_path.empty())
         {
             throw exceptions::AudioFileNotFound(
-                path.to_string(), system::MountablePath::string_paths(), EXC_INFO);
+                path.to_string(), system::MountablePath::string_paths());
         }
 
         if (load_policy == LoadPolicy::Cache && !m_cache.contains(file_path))

@@ -11,8 +11,9 @@ namespace obe::graphics::exceptions
     {
     public:
         using Exception::Exception;
-        ReadOnlyTexture(std::string_view method, DebugInfo info)
-            : Exception(info)
+        ReadOnlyTexture(std::string_view method,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error(
                 "Impossible to call method Texture::{} when Texture is in readonly-mode", method);
@@ -23,8 +24,9 @@ namespace obe::graphics::exceptions
     {
     public:
         using Exception::Exception;
-        ImageFileNotFound(std::string_view path, DebugInfo info)
-            : Exception(info)
+        ImageFileNotFound(
+            std::string_view path, std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Image at path '{}' not found", path);
         }
@@ -34,8 +36,9 @@ namespace obe::graphics::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidColorName(std::string_view color, DebugInfo info)
-            : Exception(info)
+        InvalidColorName(
+            std::string_view color, std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to find a color with the following name : '{}'", color);
         }
@@ -45,9 +48,9 @@ namespace obe::graphics::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidRgbFormat(
-            const double r, const double g, const double b, const double a, DebugInfo info)
-            : Exception(info)
+        InvalidRgbFormat(const double r, const double g, const double b, const double a,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Invalid RGB format, values should be between 0 and 255, got "
                         "[r={}, g={}, b={}, a={}]",
@@ -59,8 +62,9 @@ namespace obe::graphics::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidHsvFormat(const int H, const double S, const double V, DebugInfo info)
-            : Exception(info)
+        InvalidHsvFormat(const int H, const double S, const double V,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Invalid HSV format, values should be between 0 and 365 for Hue and 0.0 "
                         "and 1.0 for Saturation and Value, got [H={}, S={}, V={}]",
@@ -72,8 +76,9 @@ namespace obe::graphics::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidHexFormat(std::string_view hex_code, DebugInfo info)
-            : Exception(info)
+        InvalidHexFormat(std::string_view hex_code,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Invalid Color hex code : '{}'", hex_code);
         }
@@ -84,8 +89,9 @@ namespace obe::graphics::exceptions
     public:
         using Exception::Exception;
         CanvasElementAlreadyExists(std::string_view id, std::string_view new_element_type,
-            std::string_view existing_element_type, DebugInfo info)
-            : Exception(info)
+            std::string_view existing_element_type,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to create a Canvas::{} with id '{}' as there is "
                         "already a Canvas::{} with the same id",
@@ -97,8 +103,9 @@ namespace obe::graphics::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidSpriteColorType(std::string_view type, std::string_view value, DebugInfo info)
-            : Exception(info)
+        InvalidSpriteColorType(std::string_view type, std::string_view value,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Invalid value for 'color' attribute, expected 'object' or "
                         "'string' and got '{}' (value: {})",
@@ -110,10 +117,13 @@ namespace obe::graphics::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidTexturePixelCoord(uint32_t x, uint32_t y, uint32_t width, uint32_t height, DebugInfo info)
-            : Exception(info)
+        InvalidTexturePixelCoord(uint32_t x, uint32_t y, uint32_t width, uint32_t height,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
-            this->error("Could not access pixel at coordinates (x: {}, y: {}) due to the texture size (width: {}, height: {})", x, y, width, height);
+            this->error("Could not access pixel at coordinates (x: {}, y: {}) due to the texture "
+                        "size (width: {}, height: {})",
+                x, y, width, height);
         }
     };
 } // namespace obe::graphics::exceptions

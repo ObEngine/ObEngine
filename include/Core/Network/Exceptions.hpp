@@ -11,8 +11,9 @@ namespace obe::network::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidNetworkMessage(std::string_view message_content, DebugInfo info)
-            : Exception(info)
+        InvalidNetworkMessage(std::string_view message_content,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Message is not valid vili / msgpack"
                         "\n"
@@ -25,14 +26,15 @@ namespace obe::network::exceptions
     {
     public:
         using Exception::Exception;
-        NetworkMessageMissingEventFields(
-            std::string_view message_content, DebugInfo info)
-            : Exception(info)
+        NetworkMessageMissingEventFields(std::string_view message_content,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
-            this->error("Message should both contain 'e' field (event) and 'g' field (event group) but is missing one or both"
+            this->error("Message should both contain 'e' field (event) and 'g' field (event group) "
+                        "but is missing one or both"
                         "\n"
                         "Message content :\n",
-                        "{}", message_content);
+                "{}", message_content);
         }
     };
 
@@ -40,8 +42,9 @@ namespace obe::network::exceptions
     {
     public:
         using Exception::Exception;
-        ReservedEventGroup(std::string_view event_group_name, DebugInfo info)
-            : Exception(info)
+        ReservedEventGroup(std::string_view event_group_name,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Can not use reserved EventGroup '{}' for NetworkEvent", event_group_name);
         }
@@ -51,8 +54,9 @@ namespace obe::network::exceptions
     {
     public:
         using Exception::Exception;
-        ClientNotFound(std::string_view client_name, DebugInfo info)
-            : Exception(info)
+        ClientNotFound(std::string_view client_name,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Could not find client with name '{}'", client_name);
         }
@@ -62,10 +66,11 @@ namespace obe::network::exceptions
     {
     public:
         using Exception::Exception;
-        AlreadyConnected(DebugInfo info)
-            : Exception(info)
+        AlreadyConnected(std::source_location location = std::source_location::current())
+            : Exception(location)
         {
-            this->error("Already connected, please disconnect before hosting or connecting to a new client");
+            this->error("Already connected, please disconnect before hosting or connecting to a "
+                        "new client");
         }
     };
 
@@ -73,8 +78,9 @@ namespace obe::network::exceptions
     {
     public:
         using Exception::Exception;
-        EventGroupNotInSpec(std::string_view event_group_name, DebugInfo info)
-            : Exception(info)
+        EventGroupNotInSpec(std::string_view event_group_name,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("EventGroup '{}' is not in NetworkEvent spec", event_group_name);
         }
@@ -84,8 +90,9 @@ namespace obe::network::exceptions
     {
     public:
         using Exception::Exception;
-        EventNotInSpec(std::string_view event_name, DebugInfo info)
-            : Exception(info)
+        EventNotInSpec(std::string_view event_name,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Event '{}' is not in NetworkEvent spec", event_name);
         }
@@ -95,8 +102,9 @@ namespace obe::network::exceptions
     {
     public:
         using Exception::Exception;
-        CannotConnectToHost(std::string_view host, const unsigned short port, DebugInfo info)
-            : Exception(info)
+        CannotConnectToHost(std::string_view host, const unsigned short port,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to connect to host at '{}:{}'", host, port);
         }

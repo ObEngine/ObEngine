@@ -95,19 +95,16 @@ namespace obe::collision
 
     vili::node ColliderComponent::schema() const
     {
-        return vili::object {
-            { "x", vili::object { { "type", vili::number_typename } } },
+        return vili::object { { "x", vili::object { { "type", vili::number_typename } } },
             { "y", vili::object { { "type", vili::number_typename } } },
-            { "unit", vili::object {
-                { "type", vili::number_typename },
-                { "values", vili::array { "SceneUnits", "ScenePixels" } } 
-            }},
-            { "type", vili::object {
-                { "type", vili::string_typename },
+            { "unit",
+                vili::object { { "type", vili::number_typename },
+                    { "values", vili::array { "SceneUnits", "ScenePixels" } } } },
+            { "type",
+                vili::object { { "type", vili::string_typename },
                     { "values",
-                        vili::array { "Capsule", "Circle", "Polygon", "Rectangle", "ComplexPolygon" } } 
-            }}
-        };
+                        vili::array {
+                            "Capsule", "Circle", "Polygon", "Rectangle", "ComplexPolygon" } } } } };
     }
 
     ColliderComponent::ColliderComponent(const std::string& id)
@@ -136,12 +133,11 @@ namespace obe::collision
         }
         else
         {
-            throw exceptions::InvalidColliderComponentType(m_id, "?", EXC_INFO);
+            throw exceptions::InvalidColliderComponentType(m_id, "?");
         }
 
         std::visit(
-            [&collider_dump](auto&& collider)
-            {
+            [&collider_dump](auto&& collider) {
                 const auto& position = collider.get_position();
                 const std::string& tag = collider.get_tag();
                 collider_dump.insert("x", position.x);
@@ -184,11 +180,10 @@ namespace obe::collision
             load_polygon(data);
             break;
         case ColliderType::Collider:
-            throw exceptions::InvalidColliderComponentType(m_id, collider_type_str, EXC_INFO);
+            throw exceptions::InvalidColliderComponentType(m_id, collider_type_str);
         }
         std::visit(
-            [this, x, y, tag](auto&& collider)
-            {
+            [this, x, y, tag](auto&& collider) {
                 collider.set_position(transform::UnitVector(x, y, m_unit));
                 collider.set_tag(tag);
             },
@@ -230,8 +225,8 @@ namespace obe::collision
 
     const Collider* ColliderComponent::get_inner_collider() const
     {
-        const Collider* collider = std::visit([](auto& collider_variant) -> const Collider*
-            { return &collider_variant; },
+        const Collider* collider = std::visit(
+            [](auto& collider_variant) -> const Collider* { return &collider_variant; },
             m_collider);
         return collider;
     }

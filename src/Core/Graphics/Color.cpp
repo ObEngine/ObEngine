@@ -308,8 +308,7 @@ namespace obe::graphics
         }
         else
         {
-            throw exceptions::InvalidSpriteColorType(
-                vili::to_string(data.type()), data.dump(), EXC_INFO);
+            throw exceptions::InvalidSpriteColorType(vili::to_string(data.type()), data.dump());
         }
     }
 
@@ -335,14 +334,14 @@ namespace obe::graphics
         }
         if (!strict)
             return false;
-        throw exceptions::InvalidColorName(name, EXC_INFO);
+        throw exceptions::InvalidColorName(name);
     }
 
     void Color::from_rgb(const double r, const double g, const double b, const double a)
     {
         if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255 || a < 0 || a > 255)
         {
-            throw exceptions::InvalidRgbFormat(r, g, b, a, EXC_INFO);
+            throw exceptions::InvalidRgbFormat(r, g, b, a);
         }
         this->r = r;
         this->g = g;
@@ -356,7 +355,7 @@ namespace obe::graphics
 
         if (H < 0 || H > 360 || S < 0.0 || S > 1.0 || V < 0.0 || V > 1.0)
         {
-            throw exceptions::InvalidHsvFormat(H, S, V, EXC_INFO);
+            throw exceptions::InvalidHsvFormat(H, S, V);
         }
 
         const double C = S * V;
@@ -429,7 +428,7 @@ namespace obe::graphics
         if (size != 3 && size != 4 && size != 6 && size != 8
             || hex_code.find_first_not_of("AaBbCcDdEeFf0123456789") != std::string::npos)
         {
-            throw exceptions::InvalidHexFormat(hex_code, EXC_INFO);
+            throw exceptions::InvalidHexFormat(hex_code);
         }
 
         for (unsigned int i = 0; i < (3 + (size % 3 ? 1 : 0)); i++)

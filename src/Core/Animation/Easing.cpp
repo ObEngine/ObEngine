@@ -279,7 +279,7 @@ namespace obe::animation::easing
             return function->second;
         }
         const int enum_value = static_cast<std::underlying_type_t<EasingType>>(easing);
-        throw exceptions::UnknownEasingFromEnum(enum_value, EXC_INFO);
+        throw exceptions::UnknownEasingFromEnum(enum_value);
     }
 
     static std::unordered_map<std::string, EasingFunction> EASING_STRING_TO_FUNCTIONS = {
@@ -329,6 +329,6 @@ namespace obe::animation::easing
         {
             easings_names.push_back(easing_name);
         }
-        throw exceptions::UnknownEasingFromString(easing, easings_names, EXC_INFO);
+        throw exceptions::UnknownEasingFromString(easing, easings_names);
     }
 }

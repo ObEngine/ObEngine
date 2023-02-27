@@ -48,7 +48,7 @@ namespace obe::event
                 event_namespace, std::make_unique<EventNamespace>(event_namespace));
             return *insertion_result.first->second;
         }
-        throw exceptions::EventNamespaceAlreadyExists(event_namespace, EXC_INFO);
+        throw exceptions::EventNamespaceAlreadyExists(event_namespace);
     }
 
     EventNamespace& EventManager::join_namespace(const std::string& event_namespace)
@@ -61,11 +61,10 @@ namespace obe::event
             {
                 return *namespace_ptr->second;
             }
-            throw exceptions::EventNamespaceNotJoinable(event_namespace, EXC_INFO);
+            throw exceptions::EventNamespaceNotJoinable(event_namespace);
         }
 
-        throw exceptions::UnknownEventNamespace(
-            event_namespace, this->get_all_namespaces_names(), EXC_INFO);
+        throw exceptions::UnknownEventNamespace(event_namespace, this->get_all_namespaces_names());
     }
 
     EventNamespaceView EventManager::get_namespace(const std::string& event_namespace)
@@ -75,8 +74,7 @@ namespace obe::event
         {
             return namespace_ptr->second->get_view();
         }
-        throw exceptions::UnknownEventNamespace(
-            event_namespace, this->get_all_namespaces_names(), EXC_INFO);
+        throw exceptions::UnknownEventNamespace(event_namespace, this->get_all_namespaces_names());
     }
 
     std::vector<std::string> EventManager::get_all_namespaces_names() const

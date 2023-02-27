@@ -349,7 +349,7 @@ namespace obe::graphics::canvas
             {
                 throw exceptions::CanvasElementAlreadyExists(id,
                     CanvasElementTypeMeta::to_string(T::Type),
-                    CanvasElementTypeMeta::to_string(existing_element->type), EXC_INFO);
+                    CanvasElementTypeMeta::to_string(existing_element->type));
             }
         }
         else

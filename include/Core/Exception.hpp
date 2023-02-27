@@ -1,61 +1,16 @@
 #pragma once
 
+#include <exception>
+#include <source_location>
+#include <string>
+
 #include <fmt/core.h>
 
 #include <Utils/StringUtils.hpp>
-#include <exception>
-#include <string>
+#include <Utils/TypeUtils.hpp>
 
 namespace obe
 {
-    /**
-     * \brief wrapper class containing informations about the place that threw an exception
-     */
-    class DebugInfo
-    {
-    public:
-        std::string_view file;
-        int line;
-        std::string_view function;
-        /**
-         * \paramrename{function,funcname}
-         */
-        DebugInfo(std::string_view file, int line, std::string_view function)
-            : file(file)
-            , line(line)
-            , function(function)
-        {
-        }
-    };
-#define EXC_INFO_WRAPPER() DebugInfo(__FILE__, __LINE__, __func__)
-#define EXC_INFO EXC_INFO_WRAPPER()
-
-    template <typename T>
-    constexpr auto get_type_name() -> std::string_view
-    {
-#if defined(__clang__)
-        constexpr auto prefix = std::string_view { "[T = " };
-        constexpr auto suffix = "]";
-        constexpr auto function = std::string_view { __PRETTY_FUNCTION__ };
-#elif defined(__GNUC__)
-        constexpr auto prefix = std::string_view { "with T = " };
-        constexpr auto suffix = "; ";
-        constexpr auto function = std::string_view { __PRETTY_FUNCTION__ };
-#elif defined(_MSC_VER)
-        constexpr auto prefix = std::string_view { "get_type_name<" };
-        constexpr auto suffix = ">(void)";
-        constexpr auto function = std::string_view { __FUNCSIG__ };
-#else
-#error Unsupported compiler
-#endif
-
-        const auto start = function.find(prefix) + prefix.size();
-        const auto end = function.find(suffix);
-        const auto size = end - start;
-
-        return function.substr(start, size);
-    }
-
     class BaseException : public std::exception
     {
     protected:
@@ -90,7 +45,7 @@ namespace obe
     {
     public:
         using BaseException::BaseException;
-        explicit Exception(DebugInfo info);
+        explicit Exception(std::source_location location);
         ExceptionType nest(const std::exception& exception);
         ExceptionType nest(const BaseException& exception);
     };
@@ -121,12 +76,13 @@ namespace obe
     }
 
     template <class ExceptionType>
-    Exception<ExceptionType>::Exception(DebugInfo info)
+    Exception<ExceptionType>::Exception(std::source_location location)
     {
-        m_message = fmt::format("Exception [{}] occured\n", get_type_name<ExceptionType>());
+        m_message = fmt::format("Exception [{}] occured\n", obe::utils::types::get_type_name<ExceptionType>());
 #if defined _DEBUG
-        m_message += fmt::format("  In file: '{}' (line {})\n", info.file, info.line);
-        m_message += fmt::format("  In function: {}\n", info.function);
+        m_message
+            += fmt::format("  In file: '{}' (line {})\n", location.file_name(), location.line());
+        m_message += fmt::format("  In function: {}\n", location.function_name());
 #endif
     }
 

@@ -114,8 +114,7 @@ namespace obe::tiles
             }
 
             m_layers.push_back(std::make_unique<TileLayer>(*this, layer_id, layer["layer"],
-                sublayer,
-                layer["x"], layer["y"], layer["width"], layer["height"], tiles, visible));
+                sublayer, layer["x"], layer["y"], layer["width"], layer["height"], tiles, visible));
         }
 
         this->build();
@@ -175,7 +174,7 @@ namespace obe::tiles
             }
         }
 
-        throw exceptions::UnknownTileLayer(id, this->get_layers_ids(), EXC_INFO);
+        throw exceptions::UnknownTileLayer(id, this->get_layers_ids());
     }
 
     AnimatedTiles TileScene::get_animated_tiles() const

@@ -49,7 +49,7 @@ namespace obe::animation
         if (const auto group = m_groups.find(group_name); group != m_groups.end())
             return *group->second;
         throw exceptions::UnknownAnimationGroup(
-            m_parent.get_name(), group_name, m_parent.get_all_animation_groups_names(), EXC_INFO);
+            m_parent.get_name(), group_name, m_parent.get_all_animation_groups_names());
     }
 
     AnimationGroup& Animation::get_animation_group(const std::string& group_name)
@@ -187,7 +187,7 @@ namespace obe::animation
             m_current_group = &get_animation_group(group_name);
         }
         throw exceptions::UnknownAnimationGroup(
-            m_parent.m_name, group_name, m_parent.get_all_animation_groups_names(), EXC_INFO);
+            m_parent.m_name, group_name, m_parent.get_all_animation_groups_names());
     }
 
     void Animation::load_source(const vili::node& source)
@@ -207,14 +207,15 @@ namespace obe::animation
             for (const vili::node& frame : spritesheet.at("frames"))
             {
                 transform::UnitVector frame_texture_rect_position(frame.at("x"), frame.at("y"));
-                transform::UnitVector frame_texture_rect_size(frame.at("width"), frame.at("height"));
+                transform::UnitVector frame_texture_rect_size(
+                    frame.at("width"), frame.at("height"));
                 m_frames.emplace_back(
                     texture, transform::AABB(frame_texture_rect_position, frame_texture_rect_size));
             }
         }
         else
         {
-            throw exceptions::UnknownAnimationSource(EXC_INFO);
+            throw exceptions::UnknownAnimationSource();
         }
     }
 
@@ -224,12 +225,12 @@ namespace obe::animation
         {
             if (!frame_name.starts_with("frame_"))
             {
-                throw exceptions::InvalidFrameMetadataId(frame_name, EXC_INFO);
+                throw exceptions::InvalidFrameMetadataId(frame_name);
             }
             const std::string frame_index_str = frame_name.substr(6);
             if (!utils::string::is_string_int(frame_index_str))
             {
-                throw exceptions::InvalidFrameMetadataId(frame_name, EXC_INFO);
+                throw exceptions::InvalidFrameMetadataId(frame_name);
             }
             uint32_t frame_index = std::stoi(frame_index_str);
             m_frames_metadata[frame_index] = frame_metadata;
@@ -345,7 +346,7 @@ namespace obe::animation
         {
             return m_current_group->get_frame_index();
         }
-        return 0;
+        return 0u;
     }
 
     void Animation::set_anti_aliasing(bool anti_aliasing) noexcept
@@ -469,7 +470,7 @@ namespace obe::animation
         }
         catch (const std::exception& e)
         {
-            throw exceptions::InvalidAnimationFile(m_path.to_string(), EXC_INFO).nest(e);
+            throw exceptions::InvalidAnimationFile(m_path.to_string()).nest(e);
         }
     }
 
@@ -498,14 +499,14 @@ namespace obe::animation
     {
         if (index < m_frames.size())
             return m_frames[index];
-        throw exceptions::AnimationFrameIndexOverflow(m_name, index, m_textures.size(), EXC_INFO);
+        throw exceptions::AnimationFrameIndexOverflow(m_name, index, m_textures.size());
     }
 
     const graphics::TexturePart& AnimationState::get_current_texture() const
     {
         if (m_current_group != nullptr)
             return m_parent.m_frames[m_current_group->get_frame_index()];
-        throw exceptions::NoSelectedAnimationGroup(m_parent.m_name, EXC_INFO);
+        throw exceptions::NoSelectedAnimationGroup(m_parent.m_name);
     }
 
     const graphics::TexturePart& Animation::get_current_texture() const

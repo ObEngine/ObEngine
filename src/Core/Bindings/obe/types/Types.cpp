@@ -78,7 +78,7 @@ namespace obe::types::bindings
             = types_namespace.new_usertype<obe::types::UnknownEnumEntry>("UnknownEnumEntry",
                 sol::call_constructor,
                 sol::constructors<obe::types::UnknownEnumEntry(std::string_view, std::string_view,
-                    const std::vector<std::string>&, obe::DebugInfo)>(),
+                    const std::vector<std::string>&, std::source_location)>(),
                 sol::base_classes,
                 sol::bases<obe::Exception<obe::types::UnknownEnumEntry>, obe::BaseException>());
     }

@@ -17,11 +17,11 @@ namespace obe::utils::argparser
                     [](const char c) { return std::isalpha(c) || c == '-' || c == '_'; });
             if (!valid_arg_format)
             {
-                throw exceptions::InvalidArgumentFormat(argument_name, EXC_INFO);
+                throw exceptions::InvalidArgumentFormat(argument_name);
             }
             if (idx + 1 >= argv.size())
             {
-                throw exceptions::InvalidArgumentFormat(argument_name, EXC_INFO);
+                throw exceptions::InvalidArgumentFormat(argument_name);
             }
             vili::node argument_value = argv[idx + 1];
             argstore.insert(argument_name_strip, argument_value);

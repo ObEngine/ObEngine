@@ -15,8 +15,9 @@ namespace obe::types
     public:
         using Exception::Exception;
         UnknownEnumEntry(std::string_view enum_name, std::string_view entry_name,
-            const std::vector<std::string>& all_entries, DebugInfo info)
-            : Exception(info)
+            const std::vector<std::string>& all_entries,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Enum '{}' does not have entry '{}'", enum_name, entry_name);
             std::vector<std::string> suggestions
@@ -67,7 +68,7 @@ namespace obe::types
         }
 
         throw UnknownEnumEntry(
-            magic_enum::enum_type_name<Enum>(), value, SmartEnum<Enum>::entries(), EXC_INFO);
+            magic_enum::enum_type_name<Enum>(), value, SmartEnum<Enum>::entries());
     }
 
     template <class Enum>

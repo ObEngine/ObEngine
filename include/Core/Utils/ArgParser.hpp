@@ -15,10 +15,12 @@ namespace obe::utils::argparser
         {
         public:
             using Exception::Exception;
-            InvalidArgumentFormat(const std::string& argument, DebugInfo info)
-                : Exception(info)
+            InvalidArgumentFormat(const std::string& argument,
+                std::source_location location = std::source_location::current())
+                : Exception(location)
             {
-                this->error("Invalid argument format '{}', expects all arguments to be '--argument-name argument-value'",
+                this->error("Invalid argument format '{}', expects all arguments to be "
+                            "'--argument-name argument-value'",
                     argument);
             }
         };

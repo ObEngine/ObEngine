@@ -107,7 +107,7 @@ namespace obe::tiles
         {
             tilesets_ids.push_back(tileset->get_id());
         }
-        throw exceptions::UnknownTileset(id, tilesets_ids, EXC_INFO);
+        throw exceptions::UnknownTileset(id, tilesets_ids);
     }
 
     const Tileset& TilesetCollection::tileset_from_tile_id(uint32_t tile_id) const
@@ -132,7 +132,7 @@ namespace obe::tiles
             tileset_ids[tileset->get_id()]
                 = std::make_pair(tileset->get_first_tile_id(), tileset->get_last_tile_id());
         }
-        throw exceptions::UnknownTileId(tile_id, max_tile_id, tileset_ids, EXC_INFO);
+        throw exceptions::UnknownTileId(tile_id, max_tile_id, tileset_ids);
     }
 
     size_t TilesetCollection::size() const

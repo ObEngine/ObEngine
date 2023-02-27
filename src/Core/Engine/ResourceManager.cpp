@@ -35,7 +35,7 @@ namespace obe::engine
                 }
             }
             else
-                throw exceptions::TextureNotFound(texture_path, EXC_INFO);
+                throw exceptions::TextureNotFound(texture_path);
         }
         else
         {
@@ -91,8 +91,7 @@ namespace obe::engine
                 m_fonts[path] = move(new_font);
             }
             else
-                throw exceptions::FontNotFound(
-                    path, system::MountablePath::string_paths(), EXC_INFO);
+                throw exceptions::FontNotFound(path, system::MountablePath::string_paths());
         }
         return m_fonts[path];
     }

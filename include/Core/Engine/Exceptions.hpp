@@ -12,8 +12,9 @@ namespace obe::engine::exceptions
     {
     public:
         using Exception::Exception;
-        BootScriptMissing(const std::vector<std::string>& mounted_paths, DebugInfo info)
-            : Exception(info)
+        BootScriptMissing(const std::vector<std::string>& mounted_paths,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Unable to find a 'boot.lua' file which is required to start the engine");
             this->hint("ObEngine tried to fetch the 'boot.lua' file from the following "
@@ -26,8 +27,9 @@ namespace obe::engine::exceptions
     {
     public:
         using Exception::Exception;
-        BootScriptLoadingError(std::string_view error_message, DebugInfo info)
-            : Exception(info)
+        BootScriptLoadingError(std::string_view error_message,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Lua error while loading 'boot.lua' script file :\n{}", error_message);
         }
@@ -37,8 +39,8 @@ namespace obe::engine::exceptions
     {
     public:
         using Exception::Exception;
-        BootScriptExecutionError(DebugInfo info)
-            : Exception(info)
+        BootScriptExecutionError(std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Lua error occured while running 'boot.lua'");
         }
@@ -48,8 +50,9 @@ namespace obe::engine::exceptions
     {
     public:
         using Exception::Exception;
-        TextureNotFound(std::string_view path, DebugInfo info)
-            : Exception(info)
+        TextureNotFound(
+            std::string_view path, std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Could not load Texture with path '{}'", path);
         }
@@ -59,8 +62,9 @@ namespace obe::engine::exceptions
     {
     public:
         using Exception::Exception;
-        FontNotFound(std::string_view path, std::vector<std::string> mounts, DebugInfo info)
-            : Exception(info)
+        FontNotFound(std::string_view path, std::vector<std::string> mounts,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Could not find Font with path '{}'", path);
             this->hint("The following paths were used to search for the Font ({})",
@@ -72,8 +76,8 @@ namespace obe::engine::exceptions
     {
     public:
         using Exception::Exception;
-        UnitializedEngine(DebugInfo info)
-            : Exception(info)
+        UnitializedEngine(std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to run Engine if not initialized beforehand");
         }

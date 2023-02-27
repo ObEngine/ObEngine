@@ -114,9 +114,7 @@ namespace obe::graphics
                                                           return texture;
                                                       },
             [](std::shared_ptr<sf::Texture>& texture) -> sf::Texture& { return *texture; },
-            [](const sf::Texture*) -> sf::Texture& {
-                throw exceptions::ReadOnlyTexture("create", EXC_INFO);
-            },
+            [](const sf::Texture*) -> sf::Texture& { throw exceptions::ReadOnlyTexture("create"); },
             [](SvgTexture& texture) -> sf::Texture& { return texture.get_texture(); } };
         return std::visit(visitor, m_texture);
     }
@@ -346,7 +344,7 @@ namespace obe::graphics
         const auto image_size = m_pixels->getSize();
         if (x >= image_size.x || y >= image_size.y)
         {
-            throw exceptions::InvalidTexturePixelCoord(x, y, image_size.x, image_size.y, EXC_INFO);
+            throw exceptions::InvalidTexturePixelCoord(x, y, image_size.x, image_size.y);
         }
         sf::Color pixel = m_pixels.value().getPixel(x, y);
         return Color(pixel);

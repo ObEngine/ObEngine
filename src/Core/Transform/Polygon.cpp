@@ -107,8 +107,8 @@ namespace obe::transform
             m_points.push_back(PolygonPoint(*this, m_points.size(), p_vec));
         else if (point_index >= 0 && point_index < m_points.size())
         {
-            m_points.insert(m_points.begin() + point_index,
-                PolygonPoint(*this, point_index, p_vec));
+            m_points.insert(
+                m_points.begin() + point_index, PolygonPoint(*this, point_index, p_vec));
             for (point_index_t i = point_index; i < m_points.size(); i++)
                 m_points[i].rw_index = i;
         }
@@ -151,7 +151,7 @@ namespace obe::transform
             }
             return m_points[closest_point];
         }
-        throw exceptions::PolygonNotEnoughPoints(this, m_points.size(), EXC_INFO);
+        throw exceptions::PolygonNotEnoughPoints(this, m_points.size());
     }
 
     PolygonPath& Polygon::get_all_points()
@@ -276,8 +276,7 @@ namespace obe::transform
         point_index_t i = 0;
         for (auto& point : m_points)
         {
-            if (utils::math::is_between(
-                    p_vec.x, point.x - p_tolerance.x, point.x + p_tolerance.x))
+            if (utils::math::is_between(p_vec.x, point.x - p_tolerance.x, point.x + p_tolerance.x))
             {
                 if (utils::math::is_between(
                         p_vec.y, point.y - p_tolerance.y, point.y + p_tolerance.y))
@@ -389,7 +388,7 @@ namespace obe::transform
         if (i < m_points.size())
             return m_points[i];
         else
-            throw exceptions::PolygonPointIndexOverflow(this, i, m_points.size(), EXC_INFO);
+            throw exceptions::PolygonPointIndexOverflow(this, i, m_points.size());
     }
 
     const PolygonPoint& Polygon::get(point_index_t i) const
@@ -397,7 +396,7 @@ namespace obe::transform
         if (i < m_points.size())
             return m_points[i];
         else
-            throw exceptions::PolygonPointIndexOverflow(this, i, m_points.size(), EXC_INFO);
+            throw exceptions::PolygonPointIndexOverflow(this, i, m_points.size());
     }
 
     AABB Polygon::get_bounding_box() const
@@ -408,7 +407,7 @@ namespace obe::transform
             [](auto& point1, auto& point2) { return point1.y < point2.y; });
         const double width = max_x->x - min_x->x;
         const double height = max_y->y - min_y->y;
-        return AABB(transform::UnitVector(min_x->x, min_y->y),
-            transform::UnitVector(width, height));
+        return AABB(
+            transform::UnitVector(min_x->x, min_y->y), transform::UnitVector(width, height));
     }
 } // namespace obe::transform

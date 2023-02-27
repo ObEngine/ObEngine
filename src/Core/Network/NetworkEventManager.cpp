@@ -96,17 +96,17 @@ namespace obe::network
             if (status == sf::Socket::Done)
             {
                 vili::node message;
-                debug::Log->trace("Received NetworkEvent content (base64) '{}'", utils::base64::encode(content));
+                debug::Log->trace(
+                    "Received NetworkEvent content (base64) '{}'", utils::base64::encode(content));
                 try
                 {
                     message = vili::msgpack::from_string(content);
                 }
                 catch (const std::exception& e)
                 {
-                    throw exceptions::InvalidNetworkMessage(content, EXC_INFO).nest(e);
+                    throw exceptions::InvalidNetworkMessage(content).nest(e);
                 }
-                debug::Log->debug(
-                    "Received NetworkEvent content '{}'", message.dump());
+                debug::Log->debug("Received NetworkEvent content '{}'", message.dump());
 
                 std::string event_group_name;
                 std::string event_name;
@@ -144,7 +144,7 @@ namespace obe::network
     {
         if (message.event_group_name.empty() || message.event_name.empty())
         {
-            throw exceptions::NetworkMessageMissingEventFields(message.data.dump(true), EXC_INFO);
+            throw exceptions::NetworkMessageMissingEventFields(message.data.dump(true));
         }
         if (m_is_host && FORBIDDEN_NETWORK_EVENT_GROUPS.contains(message.event_group_name))
         {
@@ -157,12 +157,12 @@ namespace obe::network
         e_client->trigger(message);
         if (!m_namespace->does_group_exists(message.event_group_name))
         {
-            throw exceptions::EventGroupNotInSpec(message.event_group_name, EXC_INFO);
+            throw exceptions::EventGroupNotInSpec(message.event_group_name);
         }
         const event::EventGroupPtr event_group = m_event_groups.at(message.event_group_name);
         if (!event_group->contains(message.event_name))
         {
-            throw exceptions::EventNotInSpec(message.event_name, EXC_INFO);
+            throw exceptions::EventNotInSpec(message.event_name);
         }
         event_group->trigger(message.event_name, message);
     }
@@ -188,7 +188,7 @@ namespace obe::network
     {
         if (check_for_forbidden_groups && FORBIDDEN_NETWORK_EVENT_GROUPS.contains(event_group_name))
         {
-            throw exceptions::ReservedEventGroup(event_group_name, EXC_INFO);
+            throw exceptions::ReservedEventGroup(event_group_name);
         }
         const vili::node message
             = vili::object { { "g", event_group_name }, { "e", event_name }, { "d", data } };
@@ -215,13 +215,13 @@ namespace obe::network
     {
         if (!m_clients.contains(current_name))
         {
-            throw exceptions::ClientNotFound(current_name, EXC_INFO);
+            throw exceptions::ClientNotFound(current_name);
         }
         auto client = m_clients.extract(current_name);
         client.key() = new_name;
         client.mapped().rename(new_name);
-        const std::string client_rename_msg
-            = _build_message("Client", "ClientRename", vili::object { { "name", new_name } }, false);
+        const std::string client_rename_msg = _build_message(
+            "Client", "ClientRename", vili::object { { "name", new_name } }, false);
         sf::Packet packet;
         packet << client_rename_msg;
         client.mapped().socket().send(packet);
@@ -232,7 +232,7 @@ namespace obe::network
     {
         if (!m_client_name.empty())
         {
-            throw exceptions::AlreadyConnected(EXC_INFO);
+            throw exceptions::AlreadyConnected();
         }
         if (m_tcp_listener.listen(port) != sf::Socket::Done)
         {
@@ -250,7 +250,7 @@ namespace obe::network
         const sf::Socket::Status status = new_socket->connect(host, port);
         if (status != sf::Socket::Done)
         {
-            throw exceptions::CannotConnectToHost(host, port, EXC_INFO);
+            throw exceptions::CannotConnectToHost(host, port);
         }
         new_socket->setBlocking(false);
         m_clients.emplace("host", NetworkClient("host", std::move(new_socket)));
@@ -274,7 +274,7 @@ namespace obe::network
     {
         if (!m_clients.contains(recipient))
         {
-            throw exceptions::ClientNotFound(recipient, EXC_INFO);
+            throw exceptions::ClientNotFound(recipient);
         }
         const std::string message_dump = _build_message(event_group_name, event_name, data);
         sf::Packet packet;

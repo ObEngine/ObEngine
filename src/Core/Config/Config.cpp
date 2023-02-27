@@ -49,7 +49,7 @@ namespace obe::config
             {
                 config_files.push_back(path.path());
             }
-            throw exceptions::ConfigError(config_files, EXC_INFO).nest(e);
+            throw exceptions::ConfigError(config_files).nest(e);
         }
     }
 } // namespace obe::system

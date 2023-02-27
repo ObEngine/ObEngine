@@ -19,14 +19,14 @@ namespace obe::script
                 = m_outer_environment["__WRAP_GET_STORAGE"].get<sol::protected_function>();
             return safe_lua_call<sol::table>(get_storage_wrapper);
         }
-        throw exceptions::NoSuchComponent("Script", m_type, m_id, EXC_INFO);
+        throw exceptions::NoSuchComponent("Script", m_type, m_id);
     }
 
     sol::protected_function GameObject::get_constructor() const
     {
         if (m_has_script_engine)
             return m_outer_environment["__WRAP_CALL_INIT"].get<sol::protected_function>();
-        throw exceptions::NoSuchComponent("Script", m_type, m_id, EXC_INFO);
+        throw exceptions::NoSuchComponent("Script", m_type, m_id);
     }
 
     vili::node GameObjectDatabase::AllDefinitions = vili::object {};
@@ -57,7 +57,7 @@ namespace obe::script
                       .add(type + ".obj.vili")
                       .find();
             if (object_definition_path.empty())
-                throw exceptions::ObjectDefinitionNotFound(type, EXC_INFO);
+                throw exceptions::ObjectDefinitionNotFound(type);
 
             vili::node definition_data = vili::parser::from_file(object_definition_path);
 
@@ -97,8 +97,7 @@ namespace obe::script
                 }
                 catch (const BaseException& e)
                 {
-                    throw exceptions::GameObjectScriptError(
-                        m_type, m_id, "GameObject:init", EXC_INFO)
+                    throw exceptions::GameObjectScriptError(m_type, m_id, "GameObject:init")
                         .nest(e);
                 }
             }
@@ -153,7 +152,7 @@ namespace obe::script
                 else
                 {
                     throw exceptions::WrongSourceAttributeType(m_type, "source",
-                        vili::string_typename, vili::to_string(source_node.type()), EXC_INFO);
+                        vili::string_typename, vili::to_string(source_node.type()));
                 }
             }
             else if (script.contains("sources"))
@@ -169,7 +168,7 @@ namespace obe::script
                 else
                 {
                     throw exceptions::WrongSourceAttributeType(m_type, "sources",
-                        vili::array_typename, vili::to_string(source_node.type()), EXC_INFO);
+                        vili::array_typename, vili::to_string(source_node.type()));
                 }
             }
         }
@@ -282,7 +281,7 @@ namespace obe::script
     {
         if (m_sprite)
             return *m_sprite;
-        throw exceptions::NoSuchComponent("Sprite", m_type, m_id, EXC_INFO);
+        throw exceptions::NoSuchComponent("Sprite", m_type, m_id);
     }
 
     scene::SceneNode& GameObject::get_scene_node()
@@ -294,14 +293,14 @@ namespace obe::script
     {
         if (m_collider)
             return *m_collider;
-        throw exceptions::NoSuchComponent("Collider", m_type, m_id, EXC_INFO);
+        throw exceptions::NoSuchComponent("Collider", m_type, m_id);
     }
 
     animation::Animator& GameObject::get_animator() const
     {
         if (m_animator)
             return *m_animator;
-        throw exceptions::NoSuchComponent("Animator", m_type, m_id, EXC_INFO);
+        throw exceptions::NoSuchComponent("Animator", m_type, m_id);
     }
 
     void GameObject::exec(const std::string& query)
@@ -331,8 +330,7 @@ namespace obe::script
                 }
                 catch (const BaseException& e)
                 {
-                    throw exceptions::GameObjectScriptError(
-                        m_type, m_id, "GameObject:destroy", EXC_INFO)
+                    throw exceptions::GameObjectScriptError(m_type, m_id, "GameObject:destroy")
                         .nest(e);
                 }
             }
@@ -406,15 +404,14 @@ namespace obe::script
         const std::string full_path = m_filesystem_context(path).find();
         if (full_path.empty())
         {
-            throw exceptions::ScriptFileNotFound(m_type, m_id, path, EXC_INFO);
+            throw exceptions::ScriptFileNotFound(m_type, m_id, path);
         }
         if (!ScriptCache.contains(full_path))
         {
             const sol::load_result target = m_lua.load_file(full_path);
             if (!target.valid())
             {
-                throw exceptions::InvalidScript(
-                    full_path, target.get<sol::error>().what(), EXC_INFO);
+                throw exceptions::InvalidScript(full_path, target.get<sol::error>().what());
             }
             const sol::protected_function bytecode = target.get<sol::protected_function>();
             ScriptCache.emplace(full_path, bytecode.dump());
@@ -424,8 +421,7 @@ namespace obe::script
             = m_lua.safe_script(source, environment);
             !load_result.valid())
         {
-            throw exceptions::InvalidScript(
-                full_path, load_result.get<sol::error>().what(), EXC_INFO);
+            throw exceptions::InvalidScript(full_path, load_result.get<sol::error>().what());
         }
     }
 

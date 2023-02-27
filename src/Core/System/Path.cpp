@@ -41,7 +41,7 @@ namespace obe::system
             all_prefixes.reserve(mounts.size());
             std::transform(mounts.begin(), mounts.end(), std::back_inserter(all_prefixes),
                 [](const auto& mount) { return mount->prefix; });
-            throw exceptions::UnknownPathPrefix(prefix, all_prefixes, EXC_INFO);
+            throw exceptions::UnknownPathPrefix(prefix, all_prefixes);
         }
         return valid_mounts;
     }
@@ -66,7 +66,7 @@ namespace obe::system
             {
                 path_type = PathTypeMeta::to_string(m_type);
             }
-            throw exceptions::ResourceNotFound(m_path, path_type, mounts_as_strings, EXC_INFO);
+            throw exceptions::ResourceNotFound(m_path, path_type, mounts_as_strings);
         }
     }
 
@@ -247,8 +247,7 @@ namespace obe::system
         {
             mount_names.push_back(mount->base_path);
         }
-        throw exceptions::MountablePathIndexOverflow(
-            index, m_mounts->size(), mount_names, EXC_INFO);
+        throw exceptions::MountablePathIndexOverflow(index, m_mounts->size(), mount_names);
     }
 
     std::vector<FindResult> Path::list(PathType path_type) const
@@ -301,7 +300,7 @@ namespace obe::system
         }
         catch (const exceptions::UnknownPathPrefix& exc)
         {
-            throw exceptions::PathError(m_prefix, m_path, EXC_INFO).nest(exc);
+            throw exceptions::PathError(m_prefix, m_path).nest(exc);
         }
 
         for (const auto& mounted_path : valid_mounts)

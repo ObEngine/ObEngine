@@ -15,8 +15,9 @@ namespace obe::system::exceptions
     public:
         using Exception::Exception;
         ResourceNotFound(std::string_view path, std::string_view path_type,
-            std::vector<std::string> mounts, DebugInfo info)
-            : Exception(info)
+            std::vector<std::string> mounts,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("{} at path '{}' not found", path_type, path);
             this->hint("The following paths were used to search for the resource : ({})",
@@ -28,8 +29,9 @@ namespace obe::system::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidMouseButtonEnumValue(int enum_value, DebugInfo info)
-            : Exception(info)
+        InvalidMouseButtonEnumValue(
+            int enum_value, std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("MouseButton enum should not have the following value : {}", enum_value);
         }
@@ -39,8 +41,9 @@ namespace obe::system::exceptions
     {
     public:
         using Exception::Exception;
-        MountFileMissing(std::string_view current_path, DebugInfo info)
-            : Exception(info)
+        MountFileMissing(std::string_view current_path,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error(
                 "Could not find mount.vili file in the execution directory : '{}'", current_path);
@@ -51,8 +54,9 @@ namespace obe::system::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidMountFile(std::string_view mount_file_path, DebugInfo info)
-            : Exception(info)
+        InvalidMountFile(std::string_view mount_file_path,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("An error occured while parsing 'mount.vili' file located at '{}'",
                 mount_file_path);
@@ -64,8 +68,9 @@ namespace obe::system::exceptions
     public:
         using Exception::Exception;
         MountablePathIndexOverflow(std::size_t index, std::size_t maximum,
-            const std::vector<std::string>& mounts, DebugInfo info)
-            : Exception(info)
+            const std::vector<std::string>& mounts,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to get MountablePath at index {} when there is only {} Paths",
                 index, maximum);
@@ -77,9 +82,9 @@ namespace obe::system::exceptions
     {
     public:
         using Exception::Exception;
-        UnknownPackage(
-            std::string_view package, const std::vector<std::string>& all_packages, DebugInfo info)
-            : Exception(info)
+        UnknownPackage(std::string_view package, const std::vector<std::string>& all_packages,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error(
                 "Impossible to get Package '{}', please check it is correctly installed", package);
@@ -96,8 +101,9 @@ namespace obe::system::exceptions
     {
     public:
         using Exception::Exception;
-        PackageFileNotFound(std::string_view path, DebugInfo info)
-            : Exception(info)
+        PackageFileNotFound(
+            std::string_view path, std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to find a Package file at following path : '{}'", path);
         }
@@ -107,8 +113,9 @@ namespace obe::system::exceptions
     {
     public:
         using Exception::Exception;
-        PackageAlreadyInstalled(std::string_view package, DebugInfo info)
-            : Exception(info)
+        PackageAlreadyInstalled(std::string_view package,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("A Package named '{}' is already installed", package);
         }
@@ -118,9 +125,9 @@ namespace obe::system::exceptions
     {
     public:
         using Exception::Exception;
-        UnknownProject(
-            std::string_view project, const std::vector<std::string>& all_projects, DebugInfo info)
-            : Exception(info)
+        UnknownProject(std::string_view project, const std::vector<std::string>& all_projects,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Impossible to find Project '{}', please check it is correctly "
                         "indexed",
@@ -138,9 +145,9 @@ namespace obe::system::exceptions
     {
     public:
         using Exception::Exception;
-        UnknownPathPrefix(
-            std::string_view prefix, const std::vector<std::string>& all_prefixes, DebugInfo info)
-            : Exception(info)
+        UnknownPathPrefix(std::string_view prefix, const std::vector<std::string>& all_prefixes,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Path prefix '{}' does not exist", prefix);
             std::vector<std::string> suggestions
@@ -156,8 +163,9 @@ namespace obe::system::exceptions
     {
     public:
         using Exception::Exception;
-        explicit MissingDefaultMountPoint(DebugInfo info)
-            : Exception(info)
+        explicit MissingDefaultMountPoint(
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Must at least choose cwd or executable path as default mount point");
         }
@@ -167,8 +175,9 @@ namespace obe::system::exceptions
     {
     public:
         using Exception::Exception;
-        PathError(std::string_view prefix, std::string_view path, DebugInfo info)
-            : Exception(info)
+        PathError(std::string_view prefix, std::string_view path,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("An error occurred while loading path '{}://{}'", prefix, path);
         }
@@ -178,8 +187,9 @@ namespace obe::system::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidProjectFile(std::string_view project_file_path, DebugInfo info)
-            : Exception(info)
+        InvalidProjectFile(std::string_view project_file_path,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("An error occurred while parsing 'project.vili' file located at '{}'",
                 project_file_path);
@@ -190,8 +200,9 @@ namespace obe::system::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidDeferredMountablePath(std::string_view prefix, DebugInfo info)
-            : Exception(info)
+        InvalidDeferredMountablePath(std::string_view prefix,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error(
                 "MountablePath with prefix '{}' can not be mounted as the base_path has not "

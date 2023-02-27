@@ -40,11 +40,11 @@ namespace obe::script
                 try
                 {
                     const auto err_obj = result.get<sol::error>();
-                    throw exceptions::LuaExecutionError(err_obj, EXC_INFO);
+                    throw exceptions::LuaExecutionError(err_obj);
                 }
                 catch (const sol::error& err)
                 {
-                    throw exceptions::LuaNestedExceptionError(err, EXC_INFO);
+                    throw exceptions::LuaNestedExceptionError(err);
                 }
             }
             else
@@ -52,7 +52,7 @@ namespace obe::script
                 const sol::call_status status = result.status();
                 const std::string status_str = sol_call_status_to_string(status);
                 const std::string error_str = fmt::format("No error, status : '{}'", status_str);
-                throw exceptions::LuaExecutionError(std::runtime_error(error_str), EXC_INFO);
+                throw exceptions::LuaExecutionError(std::runtime_error(error_str));
             }
         }
         if constexpr (!std::is_same_v<ReturnType, void>)

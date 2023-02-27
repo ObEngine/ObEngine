@@ -6,7 +6,6 @@
 #include <Script/LuaHelpers.hpp>
 #include <Utils/FileUtils.hpp>
 
-
 int lua_exception_handler(lua_State* L, sol::optional<const std::exception&> maybe_exception,
     sol::string_view description)
 {
@@ -310,17 +309,17 @@ namespace obe::engine
     void Engine::run() const
     {
         if (!m_initialized)
-            throw exceptions::UnitializedEngine(EXC_INFO);
+            throw exceptions::UnitializedEngine();
 
         const std::string boot_script = "*://boot.lua"_fs;
         if (boot_script.empty())
-            throw exceptions::BootScriptMissing(system::MountablePath::string_paths(), EXC_INFO);
+            throw exceptions::BootScriptMissing(system::MountablePath::string_paths());
         const sol::protected_function_result load_result = m_lua->safe_script_file(boot_script);
 
         if (!load_result.valid())
         {
             const auto err_obj = load_result.get<sol::error>();
-            throw exceptions::BootScriptLoadingError(err_obj.what(), EXC_INFO);
+            throw exceptions::BootScriptLoadingError(err_obj.what());
         }
         m_window->create();
         const sol::protected_function boot_function
@@ -331,7 +330,7 @@ namespace obe::engine
         }
         catch (const BaseException& exc)
         {
-            throw exceptions::BootScriptExecutionError(EXC_INFO).nest(exc);
+            throw exceptions::BootScriptExecutionError().nest(exc);
         }
 
         m_framerate->start();

@@ -12,8 +12,9 @@ namespace obe::collision::exceptions
     public:
         using Exception::Exception;
         InvalidTagFormat(std::string_view collider_id, std::string_view tag_type,
-            std::string_view data_type, DebugInfo info)
-            : Exception(info)
+            std::string_view data_type,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Tried to set '{}' tags field with value of type '{}' on collider '{}'",
                 tag_type, data_type, collider_id);
@@ -27,8 +28,9 @@ namespace obe::collision::exceptions
     public:
         using Exception::Exception;
         TooManyPolygonColliderPoints(std::string_view collider_id, std::string_view tag_type,
-            std::string_view data_type, DebugInfo info)
-            : Exception(info)
+            std::string_view data_type,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
             this->error("Tried to set '{}' tags field with value of type '{}' on collider '{}'",
                 tag_type, data_type, collider_id);
@@ -41,10 +43,12 @@ namespace obe::collision::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidColliderComponentType(std::string_view component_id, std::string_view collider_type, DebugInfo info)
-            : Exception(info)
+        InvalidColliderComponentType(std::string_view component_id, std::string_view collider_type,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
-            this->error("Tried to use incompatible ColliderType '{}' for Component '{}'", collider_type, component_id);
+            this->error("Tried to use incompatible ColliderType '{}' for Component '{}'",
+                collider_type, component_id);
         }
     };
 
@@ -52,12 +56,11 @@ namespace obe::collision::exceptions
     {
     public:
         using Exception::Exception;
-        InvalidColliderType(
-            std::string_view collider_type, DebugInfo info)
-            : Exception(info)
+        InvalidColliderType(std::string_view collider_type,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
-            this->error("Tried to use incompatible ColliderType '{}'",
-                collider_type);
+            this->error("Tried to use incompatible ColliderType '{}'", collider_type);
         }
     };
 
@@ -65,12 +68,11 @@ namespace obe::collision::exceptions
     {
     public:
         using Exception::Exception;
-        TrajectoryAlreadyExists(
-            std::string_view trajectory_name, DebugInfo info)
-            : Exception(info)
+        TrajectoryAlreadyExists(std::string_view trajectory_name,
+            std::source_location location = std::source_location::current())
+            : Exception(location)
         {
-            this->error("Trajectory with name '{}' already exists",
-                trajectory_name);
+            this->error("Trajectory with name '{}' already exists", trajectory_name);
         }
     };
 } // namespace obe::collision::exceptions
