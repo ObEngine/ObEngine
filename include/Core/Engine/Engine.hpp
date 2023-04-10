@@ -33,6 +33,12 @@ namespace obe::events
             double dt;
         };
 
+        struct FixedUpdate
+        {
+            static constexpr std::string_view id = "FixedUpdate";
+            double fixed_dt;
+        };
+
         struct End
         {
             static constexpr std::string_view id = "End";
@@ -66,7 +72,6 @@ namespace obe::engine
         config::ConfigurationManager m_config {};
         std::unique_ptr<ResourceManager> m_resources {};
         std::unique_ptr<input::InputManager> m_input {};
-        std::unique_ptr<time::FramerateManager> m_framerate;
         std::unique_ptr<event::EventManager> m_events;
         event::EventNamespace* m_event_namespace;
         event::EventNamespace* m_user_event_namespace;
@@ -81,7 +86,6 @@ namespace obe::engine
         void init_script();
         void init_events();
         void init_input();
-        void init_framerate();
         void init_resources();
         void init_window();
         void init_cursor();
@@ -127,11 +131,6 @@ namespace obe::engine
          * \asproperty
          */
         input::InputManager& get_input_manager() const;
-        /**
-         * \rename{Framerate}
-         * \asproperty
-         */
-        time::FramerateManager& get_framerate_manager() const;
         /**
          * \rename{Events}
          * \asproperty

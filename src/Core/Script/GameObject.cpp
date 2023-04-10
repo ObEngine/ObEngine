@@ -35,8 +35,10 @@ namespace obe::script
     {
         if (!AllRequires.contains(type))
         {
-            vili::node get_game_object_file = vili::parser::from_file(
-                system::Path("Data/GameObjects/").add(type).add(type + ".obj.vili").find());
+            vili::node get_game_object_file = vili::parser::from_file(system::Path(system::project::Prefixes::objects)
+                                              .add(type)
+                                              .add(type + ".obj.vili")
+                                              .find());
             if (get_game_object_file.contains("Requires"))
             {
                 vili::node& requires_data = get_game_object_file.at("Requires");

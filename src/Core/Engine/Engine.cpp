@@ -38,12 +38,6 @@ namespace obe::engine
         m_input->add_context("game");
     }
 
-    void Engine::init_framerate()
-    {
-        m_framerate = std::make_unique<time::FramerateManager>(*m_window);
-        m_framerate->configure(m_config.at("Framerate"));
-    }
-
     void Engine::init_script()
     {
         m_lua = std::make_unique<script::LuaState>();
@@ -199,8 +193,6 @@ namespace obe::engine
         m_window.reset();
         debug::Log->debug("Cleaning Cursor");
         m_cursor.reset();
-        debug::Log->debug("Cleaning Framerate");
-        m_framerate.reset();
         debug::Log->debug("Cleaning Scene");
         m_scene.reset();
         debug::Log->debug("Running Lua State Garbage Collection");
@@ -299,7 +291,6 @@ namespace obe::engine
         this->init_input();
         this->init_window();
         this->init_cursor();
-        this->init_framerate();
         // this->init_plugins();
         this->init_resources();
         this->init_scene();
@@ -333,29 +324,47 @@ namespace obe::engine
             throw exceptions::BootScriptExecutionError().nest(exc);
         }
 
-        m_framerate->start();
         const time::TimeUnit start = time::epoch();
+
+        uint32_t simulations_per_second = 60;
+        uint32_t frames_per_second = 60;
+        if (m_config.contains("GameLoop"))
+        {
+            const vili::node& game_loop_config = m_config.at("GameLoop");
+            if (game_loop_config.contains("simulations_per_second"))
+            {
+                simulations_per_second = game_loop_config.at("simulations_per_second");
+            }
+            if (game_loop_config.contains("frames_per_second"))
+            {
+                frames_per_second = game_loop_config.at("frames_per_second");
+            }
+        }
+
+        time::TimeUnit previous_frame_time = time::epoch();
+        time::TimeUnit simulation_available_time = 0;
+        time::TimeUnit simulation_frame_time = 1.0 / simulations_per_second;
         while (m_window->is_open())
         {
-            m_framerate->update();
+            time::TimeUnit current_frame_time = time::epoch();
+            time::TimeUnit frame_delta = current_frame_time - previous_frame_time;
 
-            if (m_framerate->should_update())
+            simulation_available_time += frame_delta;
+            while (simulation_available_time >= simulation_frame_time)
             {
-                e_game->trigger(events::Game::Update { m_framerate->get_delta_time() });
-                this->update();
+                e_game->trigger(events::Game::FixedUpdate { simulation_frame_time });
+                simulation_available_time -= simulation_frame_time;
             }
 
-            if (m_framerate->should_render())
-            {
-                e_game->trigger(events::Game::Render {});
-                this->render();
-                m_framerate->reset();
-            }
-            else
-            {
-                // m_lua->collect_garbage();
-                // m_lua->collect_garbage();
-            }
+            // TODO: perform sleep ?
+
+            e_game->trigger(events::Game::Update { frame_delta });
+            this->update();
+
+            e_game->trigger(events::Game::Render {});
+            this->render();
+
+            previous_frame_time = current_frame_time;
         }
         time::TimeUnit total_time = time::epoch() - start;
         debug::Log->info("Execution completed in {} seconds", total_time);
@@ -379,11 +388,6 @@ namespace obe::engine
     input::InputManager& Engine::get_input_manager() const
     {
         return *m_input;
-    }
-
-    time::FramerateManager& Engine::get_framerate_manager() const
-    {
-        return *m_framerate;
     }
 
     event::EventManager& Engine::get_event_manager() const
@@ -434,11 +438,8 @@ namespace obe::engine
 
     void Engine::render() const
     {
-        if (m_framerate->should_render())
-        {
-            m_window->clear();
-            m_scene->draw(m_window->get_target());
-            m_window->display();
-        }
+        m_window->clear();
+        m_scene->draw(m_window->get_target());
+        m_window->display();
     }
 }
