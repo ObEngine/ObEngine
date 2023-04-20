@@ -42,7 +42,9 @@ local function _from_json_(json_filepath)
     end
     local json_content = json_fd:read("*a");
     local data = json.decode(json_content);
-    local vili_content = vili.to_string(data);
+    local vili_node = vili.from_lua(data);
+    local dump_options = vili.writer.dump_options();
+    local vili_content = vili.writer.dump(vili_node, dump_options);
     print(vili_content);
 end
 
