@@ -1,5 +1,6 @@
 #include <unordered_set>
 
+#include <cppnet/packet.hpp>
 #include <fmt/core.h>
 #include <vili-msgpack/msgpack.hpp>
 #include <vili/parser.hpp>
@@ -12,7 +13,7 @@ namespace obe::network
 {
     std::unordered_set<std::string_view> FORBIDDEN_NETWORK_EVENT_GROUPS = { "Client" };
 
-    NetworkClient::NetworkClient(const std::string& name, std::unique_ptr<sf::TcpSocket>&& socket)
+    NetworkClient::NetworkClient(const std::string& name, std::unique_ptr<cppnet::TcpSocket>&& socket)
         : m_name(name)
         , m_socket(std::move(socket))
     {
@@ -30,10 +31,11 @@ namespace obe::network
 
     std::string NetworkClient::host() const
     {
-        return m_socket->getRemoteAddress().toString();
+        cppnet::IpAddress remote_address = m_socket->get_remote_address().value_or(cppnet::IpAddress::Any);
+        return remote_address.to_string();
     }
 
-    sf::TcpSocket& NetworkClient::socket() const
+    cppnet::TcpSocket& NetworkClient::socket() const
     {
         return *m_socket;
     }
@@ -60,23 +62,25 @@ namespace obe::network
 
     void NetworkEventManager::_accept_new_clients()
     {
-        std::unique_ptr<sf::TcpSocket> new_socket = std::make_unique<sf::TcpSocket>();
+        std::unique_ptr<cppnet::TcpSocket> new_socket = std::make_unique<cppnet::TcpSocket>();
 
-        const sf::Socket::Status status = m_tcp_listener.accept(*new_socket);
-        if (status == sf::Socket::Status::Done)
+        const cppnet::Socket::Status status = m_tcp_listener.accept(*new_socket);
+        if (status == cppnet::Socket::Status::Done)
         {
-            new_socket->setBlocking(false);
+            new_socket->set_blocking(false);
             const std::string random_client_name
                 = utils::string::get_random_key(utils::string::Alphabet, 16);
+            cppnet::IpAddress remote_address = new_socket->get_remote_address().value_or(cppnet::IpAddress::Any);
             // Prepare "Connected" event
-            const auto evt = events::Network::Connected { new_socket->getRemoteAddress().toString(),
-                new_socket->getLocalPort(), new_socket->getRemotePort(), random_client_name };
+            const auto evt = events::Network::Connected { remote_address.to_string(),
+                new_socket->get_local_port(), new_socket->get_remote_port(), random_client_name };
             // Trigger "ClientRename" event
             const std::string client_rename_msg = _build_message(
                 "Client", "ClientRename", vili::object { { "name", random_client_name } }, false);
-            sf::Packet packet;
+            cppnet::Packet packet;
             packet << client_rename_msg;
-            new_socket->send(packet);
+            // TODO: handle error
+            cppnet::Socket::Status _send_status = new_socket->send(packet);
             m_clients.emplace(
                 random_client_name, NetworkClient(random_client_name, std::move(new_socket)));
             // Trigger "Connected" event
@@ -89,11 +93,11 @@ namespace obe::network
         std::vector<std::string> clients_to_remove;
         for (auto& [client_name, client] : m_clients)
         {
-            sf::Packet packet;
+            cppnet::Packet packet;
             std::string content;
-            sf::Socket::Status status = client.socket().receive(packet);
+            cppnet::Socket::Status status = client.socket().receive(packet);
             packet >> content;
-            if (status == sf::Socket::Done)
+            if (status == cppnet::Socket::Status::Done)
             {
                 vili::node message;
                 debug::Log->trace(
@@ -127,7 +131,7 @@ namespace obe::network
                     event_group_name, event_name, message_data };
                 _handle_message(message_event);
             }
-            else if (status == sf::Socket::Disconnected)
+            else if (status == cppnet::Socket::Status::Disconnected)
             {
                 e_client->trigger(events::Network::Disconnected { client.name() });
                 clients_to_remove.push_back(client_name);
@@ -207,7 +211,7 @@ namespace obe::network
 
         _build_events_from_spec();
 
-        m_tcp_listener.setBlocking(false);
+        m_tcp_listener.set_blocking(false);
     }
 
     void NetworkEventManager::rename_client(
@@ -222,9 +226,10 @@ namespace obe::network
         client.mapped().rename(new_name);
         const std::string client_rename_msg = _build_message(
             "Client", "ClientRename", vili::object { { "name", new_name } }, false);
-        sf::Packet packet;
+        cppnet::Packet packet;
         packet << client_rename_msg;
-        client.mapped().socket().send(packet);
+        // TODO: handle error
+        cppnet::Socket::Status _send_status = client.mapped().socket().send(packet);
         m_clients.insert(std::move(client));
     }
 
@@ -234,7 +239,7 @@ namespace obe::network
         {
             throw exceptions::AlreadyConnected();
         }
-        if (m_tcp_listener.listen(port) != sf::Socket::Done)
+        if (m_tcp_listener.listen(port) != cppnet::Socket::Status::Done)
         {
             throw std::runtime_error(fmt::format("impossible to listen on port '{}'", port));
         }
@@ -246,14 +251,21 @@ namespace obe::network
     void NetworkEventManager::connect(const std::string& host, unsigned short port)
     {
         m_is_host = false;
-        std::unique_ptr<sf::TcpSocket> new_socket = std::make_unique<sf::TcpSocket>();
-        const sf::Socket::Status status = new_socket->connect(host, port);
-        if (status != sf::Socket::Done)
+        std::unique_ptr<cppnet::TcpSocket> new_socket = std::make_unique<cppnet::TcpSocket>();
+        if (auto host_ip = cppnet::IpAddress::resolve(host); host_ip)
+        {
+            const cppnet::Socket::Status status = new_socket->connect(*host_ip, port);
+            if (status != cppnet::Socket::Status::Done)
+            {
+                throw exceptions::CannotConnectToHost(host, port);
+            }
+            new_socket->set_blocking(false);
+            m_clients.emplace("host", NetworkClient("host", std::move(new_socket)));
+        }
+        else
         {
             throw exceptions::CannotConnectToHost(host, port);
         }
-        new_socket->setBlocking(false);
-        m_clients.emplace("host", NetworkClient("host", std::move(new_socket)));
     }
 
     void NetworkEventManager::emit(
@@ -262,9 +274,10 @@ namespace obe::network
         const std::string message_dump = _build_message(event_group_name, event_name, data);
         for (const auto& [client_name, client] : m_clients)
         {
-            sf::Packet packet;
+            cppnet::Packet packet;
             packet << message_dump;
-            client.socket().send(packet);
+            // TODO: Handle error
+            cppnet::Socket::Status _send_status = client.socket().send(packet);
         }
     }
 
@@ -277,9 +290,10 @@ namespace obe::network
             throw exceptions::ClientNotFound(recipient);
         }
         const std::string message_dump = _build_message(event_group_name, event_name, data);
-        sf::Packet packet;
+        cppnet::Packet packet;
         packet << message_dump;
-        m_clients.at(recipient).socket().send(packet);
+        // TODO: Handle error
+        cppnet::Socket::Status _send_status = m_clients.at(recipient).socket().send(packet);
     }
 
     void NetworkEventManager::handle_events()

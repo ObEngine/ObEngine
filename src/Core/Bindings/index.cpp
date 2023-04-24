@@ -243,11 +243,8 @@ namespace obe::bindings
         obe::input::bindings::load_enum_mouse_wheel_scroll_direction(state);
         obe::input::bindings::load_enum_input_source_state(state);
         obe::input::bindings::load_enum_input_type(state);
-        obe::network::bindings::load_class_lua_packet(state);
         obe::network::bindings::load_class_network_client(state);
         obe::network::bindings::load_class_network_event_manager(state);
-        obe::network::bindings::load_class_tcp_server(state);
-        obe::network::bindings::load_class_tcp_socket(state);
         obe::scene::bindings::load_class_camera(state);
         obe::scene::bindings::load_class_scene(state);
         obe::scene::bindings::load_class_scene_node(state);

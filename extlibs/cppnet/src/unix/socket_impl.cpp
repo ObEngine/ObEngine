@@ -4,7 +4,7 @@
 #include <ostream>
 
 #include <cppnet/log.hpp>
-#include <cppnet/unix/socket_impl.hpp>
+#include <unix/socket_impl.hpp>
 
 namespace cppnet::priv
 {
