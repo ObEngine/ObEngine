@@ -30,6 +30,7 @@ target_include_directories(ObEngineCore
 add_dependencies(ObEngineCore ConfigureObEngineGit)
 
 target_link_libraries(ObEngineCore bezier)
+target_link_libraries(ObEngineCore cppnet)
 target_link_libraries(ObEngineCore cute::c2)
 target_link_libraries(ObEngineCore elzip)
 target_link_libraries(ObEngineCore lua)
@@ -53,7 +54,7 @@ target_link_libraries(ObEngineCore Catch2::Catch2)
 target_link_libraries(ObEngineCore sol2::sol2)
 
 # SFML
-target_link_libraries(ObEngineCore sfml-graphics sfml-system sfml-network)
+target_link_libraries(ObEngineCore sfml-graphics sfml-system)
 
 if(OBE_USE_VCPKG)
     target_include_directories(ObEngineCore PUBLIC

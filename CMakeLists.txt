@@ -10,9 +10,6 @@ project(ObEngine)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 
-add_subdirectory(extlibs/bezier)
-add_subdirectory(extlibs/cute_c2)
-
 if(OBE_USE_VCPKG)
     find_package(fmt CONFIG REQUIRED)
     find_package(spdlog CONFIG REQUIRED)
@@ -35,9 +32,13 @@ else()
     endif()
 endif()
 
-add_subdirectory(extlibs/platformfolders)
-add_subdirectory(extlibs/dynamicLinker)
+# Filesystem libraries
 add_subdirectory(extlibs/fswrapper)
+add_subdirectory(extlibs/platformfolders)
+add_subdirectory(extlibs/whereami)
+if(APPLE OR USE_FILESYSTEM_FALLBACK)
+    set(USE_FILESYSTEM_FALLBACK TRUE CACHE BOOL "Use filesystem fallback" FORCE)
+endif()
 
 # vili is required by vili-d8
 add_subdirectory(extlibs/vili)
@@ -46,26 +47,25 @@ add_subdirectory(extlibs/vili-msgpack)
 
 # Audio library
 add_subdirectory(extlibs/soloud)
-add_subdirectory(extlibs/lunasvg)
 
-# Magic enum
-add_subdirectory(extlibs/magic_enum)
-
-if(APPLE OR USE_FILESYSTEM_FALLBACK)
-    set(USE_FILESYSTEM_FALLBACK TRUE CACHE BOOL "Use filesystem fallback" FORCE)
-endif()
+# Network library
+add_subdirectory(extlibs/cppnet)
 
 # minizip is required by elzip
 add_subdirectory(extlibs/minizip)
 add_subdirectory(extlibs/elzip)
 
-find_package(SFML 2.5 COMPONENTS system window graphics network audio REQUIRED)
+find_package(SFML 2.5 COMPONENTS system window graphics REQUIRED)
 
 # SFML is required by sfe (SFml Extensions)
 add_subdirectory(extlibs/sfe)
 
 # Other libraries
-add_subdirectory(extlibs/whereami)
+add_subdirectory(extlibs/bezier)
+add_subdirectory(extlibs/cute_c2)
+add_subdirectory(extlibs/dynamicLinker)
+add_subdirectory(extlibs/lunasvg)
+add_subdirectory(extlibs/magic_enum)
 add_subdirectory(extlibs/pcg)
 
 # Find git installation

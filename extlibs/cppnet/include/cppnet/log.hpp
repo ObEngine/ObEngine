@@ -4,7 +4,7 @@
 
 namespace cppnet
 {
-    constexpr bool LOG_ERRORS = false;
+    constexpr bool LOG_ERRORS = true;
 
     namespace
     {
@@ -18,15 +18,5 @@ namespace cppnet
         static inline std::ostream NULL_STREAM(&NULL_BUFFER);
     }
 
-    std::ostream& err()
-    {
-        if constexpr (LOG_ERRORS)
-        {
-            return std::cerr;
-        }
-        else
-        {
-            return NULL_STREAM;
-        }
-    }
+    std::ostream& err();
 } // namespace cppnet
