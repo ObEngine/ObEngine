@@ -7,3 +7,4 @@ Fork of sfml-network with a few differences :
 - Removed FTP support
 - Planned Python's Request-like interface
 - Planned event-driven wrapper
+- Embeds https://github.com/dropbox/json11
