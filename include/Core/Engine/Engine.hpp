@@ -164,11 +164,10 @@ namespace obe::engine
 
         [[nodiscard]] const vili::node& get_arguments() const;
 
-        /**
-         * \proxy{obe::engine::Engine::get_args}
-         * \rename{Args}
-         * \asproperty
-         */
-        sol::lua_value engine_get_args_proxy(const Engine* self) const;
     };
+
+    /**
+    * \proxy{obe::engine::Engine::get_args}
+    */
+    sol::lua_value engine_get_args_proxy(const Engine* self);
 } // namespace obe::engine
