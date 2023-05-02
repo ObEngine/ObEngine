@@ -167,7 +167,7 @@ namespace obe::engine
     };
 
     /**
-    * \proxy{obe::engine::Engine::get_args}
+    * \proxy{obe::engine::get_args}
     */
     sol::lua_value engine_get_args_proxy(const Engine* self);
 } // namespace obe::engine
