@@ -4,25 +4,22 @@
 
 namespace obe::utils::argparser
 {
-    /// @brief Test string to see if it is a bool value
-    /// @param str string value to test
-    /// @return true if is a bool, false if not
     bool is_bool(std::string str)
     {
         bool b = false;
         std::transform(str.begin(), str.end(), str.begin(),
-        [](unsigned char c){ return std::tolower(c); });
-        if (str.rfind("true", 0) == 0 || str.rfind("false", 0) == 0) {
+        [](unsigned char c)
+        {
+            return std::tolower(c);
+        });
+        if (str.rfind("true", 0) == 0 || str.rfind("false", 0) == 0)
+        {
             b = true;
         }
 
         return b;
     }
 
-    /// @brief Determines if a string value contains a numeric value
-    /// @tparam Numeric type of numeric to test for (int,float, etc.)
-    /// @param str string value to test
-    /// @return true if is numeric type, false if not
     template<typename Numeric>
     bool is_numeric(const std::string& str)
     {
@@ -30,10 +27,8 @@ namespace obe::utils::argparser
         return((std::istringstream(str) >> n >> std::ws).eof());
     }
 
-    /// @brief Converts string value to bool value
-    /// @param str string to be converted
-    /// @return boolean value converted from string
-    bool to_bool(std::string str) {
+    bool to_bool(std::string str)
+    {
         std::transform(str.begin(), str.end(), str.begin(), ::tolower);
         std::istringstream is(str);
         bool b;
@@ -41,16 +36,15 @@ namespace obe::utils::argparser
         return b;
     }
 
-    /// @brief Converts string value representing argv[idx] into expected C-type, before converting to vili type
-    /// @param argvalue string value representing arguvment value to-be converted
-    /// @return vili::node representing converted value from string to C-type/vili type
     vili::node smart_argument_value(std::string argvalue)
     {
         vili::node ret = argvalue;
 
-        if(std::isalpha(argvalue[0])) {
+        if(std::isalpha(argvalue[0]))
+        {
             // bool:
-            if(is_bool(argvalue)) {
+            if(is_bool(argvalue))
+            {
                 bool bv = to_bool(argvalue);
                 ret = bv;
             }
