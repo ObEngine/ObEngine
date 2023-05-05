@@ -253,7 +253,7 @@ function vili._node:erase(index) end
 
 ---@param begin number #
 ---@param end number #
-function vili._node:erase(begin, end) end
+function vili._node:erase(begin, _end) end
 
 ---@param key string #
 function vili._node:erase(key) end
@@ -271,10 +271,10 @@ function vili._node:begin() end
 function vili._node:begin() end
 
 ---@return vili.node_iterator
-function vili._node:end() end
+function vili._node:_end() end
 
 ---@return vili.const_node_iterator
-function vili._node:end() end
+function vili._node:_end() end
 
 ---@return vili.object
 function vili._node:items() end

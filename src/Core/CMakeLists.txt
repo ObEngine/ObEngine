@@ -30,6 +30,7 @@ target_include_directories(ObEngineCore
 add_dependencies(ObEngineCore ConfigureObEngineGit)
 
 target_link_libraries(ObEngineCore bezier)
+target_link_libraries(ObEngineCore brynet)
 target_link_libraries(ObEngineCore cute::c2)
 target_link_libraries(ObEngineCore elzip)
 target_link_libraries(ObEngineCore lua)

@@ -1,9 +1,13 @@
 #pragma once
 
+#include <brynet/net/EventLoop.hpp>
+#include <brynet/net/TcpConnection.hpp>
+#include <brynet/net/TcpService.hpp>
+#include <brynet/net/wrapper/ServiceBuilder.hpp>
+
 #include <Event/EventGroup.hpp>
 #include <Event/EventManager.hpp>
 #include <Event/EventNamespace.hpp>
-#include <SFML/Network.hpp>
 
 namespace obe::events
 {
@@ -46,21 +50,24 @@ namespace obe::network
     class NetworkClient
     {
     private:
+        brynet::net::TcpConnection::Ptr m_socket;
         std::string m_name;
-        std::unique_ptr<sf::TcpSocket> m_socket;
 
     public:
-        NetworkClient(const std::string& name, std::unique_ptr<sf::TcpSocket>&& socket);
+        NetworkClient(const std::string& name, brynet::net::TcpConnection::Ptr socket);
         void rename(const std::string& name);
         [[nodiscard]] std::string name() const;
         [[nodiscard]] std::string host() const;
-        sf::TcpSocket& socket() const;
+        brynet::net::TcpConnection::Ptr socket() const;
     };
 
     class NetworkEventManager
     {
     private:
-        sf::TcpListener m_tcp_listener;
+        brynet::net::EventLoop::Ptr m_event_loop;
+        brynet::net::ITcpService::Ptr m_net_service;
+        brynet::net::wrapper::ListenerBuilder m_listener;
+
         std::unordered_map<std::string, NetworkClient> m_clients;
 
         event::EventNamespace* m_namespace;
@@ -72,8 +79,10 @@ namespace obe::network
 
         vili::node m_spec;
 
+        void _build_client_listener(unsigned short port);
         void _build_events_from_spec();
-        void _accept_new_clients();
+        void _handle_new_connection(const brynet::net::TcpConnection::Ptr& session);
+
         void _receive_messages();
         void _handle_message(const events::Network::Message& message);
         bool _handle_special_message(const events::Network::Message& message);

@@ -13,10 +13,15 @@
 
 #include <Transform/AABB.hpp>
 
+#include <Network/SimpleTcp.hpp>
+
 using namespace obe;
 
 int main(int argc, char** argv)
 {
+
+    run_server();
+
     const unsigned int surface_width = sf::VideoMode::getDesktopMode().width;
     const unsigned int surface_height = sf::VideoMode::getDesktopMode().height;
 

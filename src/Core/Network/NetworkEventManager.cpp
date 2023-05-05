@@ -12,7 +12,8 @@ namespace obe::network
 {
     std::unordered_set<std::string_view> FORBIDDEN_NETWORK_EVENT_GROUPS = { "Client" };
 
-    NetworkClient::NetworkClient(const std::string& name, std::unique_ptr<sf::TcpSocket>&& socket)
+    NetworkClient::NetworkClient(
+        const std::string& name, brynet::net::TcpConnection::Ptr socket)
         : m_name(name)
         , m_socket(std::move(socket))
     {
@@ -30,12 +31,25 @@ namespace obe::network
 
     std::string NetworkClient::host() const
     {
-        return m_socket->getRemoteAddress().toString();
+        return m_socket->getIP();
     }
 
-    sf::TcpSocket& NetworkClient::socket() const
+    brynet::net::TcpConnection::Ptr NetworkClient::socket() const
     {
-        return *m_socket;
+        return m_socket;
+    }
+
+    void NetworkEventManager::_build_client_listener(unsigned short port)
+    {
+        m_listener.WithService(m_net_service)
+            .AddSocketProcess({ [](brynet::net::TcpSocket& socket) { socket.setNodelay(); } })
+            .WithMaxRecvBufferSize(1024)
+            .AddEnterCallback(
+                [this](const brynet::net::TcpConnection::Ptr& session) { _handle_new_connection(session);
+                })
+            .WithAddr(false, "0.0.0.0", port)
+            .asyncRun();
+
     }
 
     void NetworkEventManager::_build_events_from_spec()
@@ -58,30 +72,20 @@ namespace obe::network
         }
     }
 
-    void NetworkEventManager::_accept_new_clients()
+    void NetworkEventManager::_handle_new_connection(const brynet::net::TcpConnection::Ptr& session)
     {
-        std::unique_ptr<sf::TcpSocket> new_socket = std::make_unique<sf::TcpSocket>();
-
-        const sf::Socket::Status status = m_tcp_listener.accept(*new_socket);
-        if (status == sf::Socket::Status::Done)
-        {
-            new_socket->setBlocking(false);
-            const std::string random_client_name
-                = utils::string::get_random_key(utils::string::Alphabet, 16);
-            // Prepare "Connected" event
-            const auto evt = events::Network::Connected { new_socket->getRemoteAddress().toString(),
-                new_socket->getLocalPort(), new_socket->getRemotePort(), random_client_name };
-            // Trigger "ClientRename" event
-            const std::string client_rename_msg = _build_message(
-                "Client", "ClientRename", vili::object { { "name", random_client_name } }, false);
-            sf::Packet packet;
-            packet << client_rename_msg;
-            new_socket->send(packet);
-            m_clients.emplace(
-                random_client_name, NetworkClient(random_client_name, std::move(new_socket)));
-            // Trigger "Connected" event
-            e_client->trigger(evt);
-        }
+        const std::string random_client_name
+            = utils::string::get_random_key(utils::string::Alphabet, 16);
+        // Prepare "Connected" event
+        const auto evt = events::Network::Connected { session->getIP(), 0, 0, random_client_name };
+        // Trigger "ClientRename" event
+        const std::string client_rename_msg = _build_message(
+            "Client", "ClientRename", vili::object { { "name", random_client_name } }, false);
+        session->send(client_rename_msg);
+        m_clients.emplace(
+            random_client_name, NetworkClient(random_client_name, std::move(session)));
+        // Trigger "Connected" event
+        e_client->trigger(evt);
     }
 
     void NetworkEventManager::_receive_messages()
@@ -197,7 +201,9 @@ namespace obe::network
 
     NetworkEventManager::NetworkEventManager(
         event::EventNamespace::Ptr event_namespace, const vili::node& spec)
-        : m_spec(spec)
+        : m_event_loop(std::make_shared<brynet::net::EventLoop>())
+        , m_net_service(std::make_shared<brynet::net::EventLoopTcpService>(m_event_loop))
+        , m_spec(spec)
         , m_namespace(event_namespace)
     {
         e_client = m_namespace->create_group("Client");
@@ -206,8 +212,6 @@ namespace obe::network
         e_client->add<events::Network::Message>();
 
         _build_events_from_spec();
-
-        m_tcp_listener.setBlocking(false);
     }
 
     void NetworkEventManager::rename_client(
@@ -222,9 +226,7 @@ namespace obe::network
         client.mapped().rename(new_name);
         const std::string client_rename_msg = _build_message(
             "Client", "ClientRename", vili::object { { "name", new_name } }, false);
-        sf::Packet packet;
-        packet << client_rename_msg;
-        client.mapped().socket().send(packet);
+        client.mapped().socket()->send(client_rename_msg);
         m_clients.insert(std::move(client));
     }
 
@@ -234,10 +236,7 @@ namespace obe::network
         {
             throw exceptions::AlreadyConnected();
         }
-        if (m_tcp_listener.listen(port) != sf::Socket::Done)
-        {
-            throw std::runtime_error(fmt::format("impossible to listen on port '{}'", port));
-        }
+        _build_client_listener(port);
         m_client_name = "host";
         m_is_host = true;
         debug::Log->debug("<NetworkEventManager> Listening on port {}", port);
@@ -262,9 +261,7 @@ namespace obe::network
         const std::string message_dump = _build_message(event_group_name, event_name, data);
         for (const auto& [client_name, client] : m_clients)
         {
-            sf::Packet packet;
-            packet << message_dump;
-            client.socket().send(packet);
+            client.socket()->send(message_dump);
         }
     }
 
@@ -277,17 +274,13 @@ namespace obe::network
             throw exceptions::ClientNotFound(recipient);
         }
         const std::string message_dump = _build_message(event_group_name, event_name, data);
-        sf::Packet packet;
-        packet << message_dump;
-        m_clients.at(recipient).socket().send(packet);
+        m_clients.at(recipient).socket()->send(message_dump);
     }
 
     void NetworkEventManager::handle_events()
     {
-        if (m_is_host)
-        {
-            _accept_new_clients();
-        }
+        m_event_loop->loop(0);
+
         _receive_messages();
     }
 
