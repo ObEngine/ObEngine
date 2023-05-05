@@ -11,6 +11,7 @@ obe.engine = {};
 ---@field Scene obe.scene.Scene #
 ---@field Cursor obe.system.Cursor #
 ---@field Window obe.system.Window #
+---@field Args obe.engine.Args #
 obe.engine._Engine = {};
 
 --- obe.engine.Engine constructor
