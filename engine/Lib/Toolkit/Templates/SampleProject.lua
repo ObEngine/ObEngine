@@ -1,13 +1,13 @@
 HELLO_WORLD_GO_SCRIPT = [[---@class SampleObject : GameObjectCls
 local SampleObject = GameObject();
 
-local canvas;
+local _canvas;
 
 function SampleObject:init()
     local screen_size = Engine.Window:get_size();
-    canvas = obe.canvas.Canvas(screen_size.x, screen_size.y);
+    _canvas = obe.canvas.Canvas(screen_size.x, screen_size.y);
 
-    canvas:Text "hello" {
+    _canvas:Text "hello" {
         text = "Hello, world!",
         size = 128,
         color = obe.graphics.Color.White,
@@ -22,7 +22,7 @@ function SampleObject:init()
 end
 
 function Event.Game.Render()
-    canvas:render(SampleObject.components.Sprite);
+    SampleObject.components.Sprite:set_texture(_canvas:render());
 end
 ]]
 
@@ -46,8 +46,8 @@ View:
     position:
         x: 0.0
         y: 0.0
-        unit: SceneUnits
-    referential: TopLeft
+        unit: "SceneUnits"
+    referential: "TopLeft"
 
 GameObjects:
     sampleGameObject:
@@ -55,7 +55,7 @@ GameObjects:
 ]]
 
 HELLO_WORLD_BOOT = [[function Game.Start()
-    Engine.Scene:loadFromFile("scenes://sample.map.vili");
+    Engine.Scene:load_from_file("scenes://sample.map.vili");
 end
 ]]
 

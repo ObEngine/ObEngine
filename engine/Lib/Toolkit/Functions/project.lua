@@ -88,7 +88,7 @@ local function _mount_(project_name)
                 {text = "' has  been successfully mounted !", color = Style.Success}
             }, 2
         );
-        obe.system.MountablePath.LoadMountFile();
+        obe.system.MountablePath.load_mount_file();
     else
         Color.print(
             {
@@ -132,17 +132,16 @@ local function _create_(project_name)
 
     -- Creating the whole project default file structure
     fs.create_directory(path);
-    fs.create_directory(path .. "/Data");
-    fs.create_directory(path .. "/Data/GameObjects");
-    fs.create_directory(path .. "/Data/GameObjects/SampleObject");
+    fs.create_directory(path .. "/GameObjects");
+    fs.create_directory(path .. "/GameObjects/SampleObject");
     fs.create_directory(path .. "/Scenes");
     fs.create_directory(path .. "/Sprites");
     write_to_file(
-        path .. "/Data/GameObjects/SampleObject/SampleObject.lua",
+        path .. "/GameObjects/SampleObject/SampleObject.lua",
             SampleProjectTemplate.HELLO_WORLD_GO_SCRIPT
     );
     write_to_file(
-        path .. "/Data/GameObjects/SampleObject/SampleObject.obj.vili",
+        path .. "/GameObjects/SampleObject/SampleObject.obj.vili",
             SampleProjectTemplate.HELLO_WORLD_GO_DEF
     );
     write_to_file(path .. "/Scenes/sample.map.vili", SampleProjectTemplate.HELLO_WORLD_SCENE);
@@ -160,7 +159,7 @@ local function _create_(project_name)
         version = "0.1.0",
         obengine_version = "0.5.0",
         source = "",
-        mounts = {scenes = "game://Scenes", sprites = "game://Sprites"}
+        mounts = {scenes = "game://Scenes", sprites = "game://Sprites", objects = "game://GameObjects"}
     };
     local project_file_content = vili.writer.dump(
         vili.from_lua(project_file), vili.writer.dump_options()
