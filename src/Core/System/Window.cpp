@@ -193,6 +193,14 @@ namespace obe::system
         std::string title = "ObEngine";
         if (configuration.contains("title"))
             m_title = configuration.at("title");
+
+        event::EventNamespace event_namespace = event::EventNamespace("obe::system");
+        e_window = event_namespace.create_group("Window");
+        e_window->add<events::Window::Moved>();
+        e_window->add<events::Window::Resized>();
+        e_window->add<events::Window::Closed>();
+        e_window->add<events::Window::Minimized>();
+        e_window->add<events::Window::Maximized>();
     }
 
     void Window::create()
@@ -202,6 +210,10 @@ namespace obe::system
         m_window.setKeyRepeatEnabled(false);
 
         this->apply_view();
+        events::Window::Size new_size { m_width, m_height };
+        events::Window::Size previous_size { 0, 0 };
+        e_window->trigger(
+            events::Window::Resized { new_size, previous_size });
     }
 
     void Window::clear()
