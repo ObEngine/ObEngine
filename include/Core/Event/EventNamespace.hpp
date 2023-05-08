@@ -40,10 +40,23 @@ namespace obe::event
         std::map<std::string, std::weak_ptr<EventGroup>> m_groups;
         bool m_joinable = false;
 
-        explicit EventNamespace(const std::string& name);
-        friend class EventManager;
-
     public:
+        /**
+         * \nobind
+         */
+        struct ConstructorKey
+        {
+            friend EventManager;
+
+        private:
+            explicit ConstructorKey() = default;
+        };
+
+        /**
+         * \param event_manager not used for now, just makes sure that a user will not
+         */
+        explicit EventNamespace(const std::string& name, ConstructorKey);
+
         /**
          * \brief Creates a new EventGroup (Throws an error if the
          *        EventGroup already exists)

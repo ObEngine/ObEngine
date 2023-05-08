@@ -16,10 +16,6 @@ namespace obe::bindings
         bind_base_exception["what"] = &obe::BaseException::what;
         bind_base_exception["traceback"] = &obe::BaseException::traceback;
     }
-    void load_function_get_type_name(sol::state_view state)
-    {
-        sol::table obe_namespace = state["obe"].get<sol::table>();
-    }
     void load_function_init_engine(sol::state_view state)
     {
         sol::table obe_namespace = state["obe"].get<sol::table>();

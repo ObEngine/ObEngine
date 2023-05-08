@@ -57,9 +57,8 @@ namespace obe::event::bindings
     void load_class_event_group(sol::state_view state)
     {
         sol::table event_namespace = state["obe"]["event"].get<sol::table>();
-        sol::usertype<obe::event::EventGroup> bind_event_group = event_namespace.new_usertype<
-            obe::event::EventGroup>("EventGroup", sol::call_constructor,
-            sol::constructors<obe::event::EventGroup(const std::string&, const std::string&)>());
+        sol::usertype<obe::event::EventGroup> bind_event_group
+            = event_namespace.new_usertype<obe::event::EventGroup>("EventGroup");
         bind_event_group["get_view"] = &obe::event::EventGroup::get_view;
         bind_event_group["set_joinable"] = &obe::event::EventGroup::set_joinable;
         bind_event_group["is_joinable"] = &obe::event::EventGroup::is_joinable;
@@ -120,7 +119,8 @@ namespace obe::event::bindings
         sol::usertype<obe::event::EventNamespace> bind_event_namespace
             = event_namespace.new_usertype<obe::event::EventNamespace>("EventNamespace",
                 sol::call_constructor,
-                sol::constructors<obe::event::EventNamespace(const std::string&)>());
+                sol::constructors<obe::event::EventNamespace(
+                    const std::string&, obe::event::EventNamespace::ConstructorKey)>());
         bind_event_namespace["create_group"] = &obe::event::EventNamespace::create_group;
         bind_event_namespace["join_group"] = &obe::event::EventNamespace::join_group;
         bind_event_namespace["get_group"] = &obe::event::EventNamespace::get_group;

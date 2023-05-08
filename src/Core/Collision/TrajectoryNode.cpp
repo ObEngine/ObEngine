@@ -94,7 +94,7 @@ namespace obe::collision
                         {
                             if (!trajectory_reachable_collider_acceptor
                                 || trajectory_reachable_collider_acceptor(
-                                    *trajectory.second, reachable_collider.first))
+                                    *trajectory.second, reachable_collider.collider))
                             {
                                 reachable_and_validated_colliders.push_back(reachable_collider);
                             }

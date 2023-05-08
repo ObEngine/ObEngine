@@ -27,6 +27,7 @@ namespace obe::types::bindings
         sol::usertype<obe::types::ProtectedIdentifiable> bind_protected_identifiable
             = types_namespace.new_usertype<obe::types::ProtectedIdentifiable>(
                 "ProtectedIdentifiable", sol::base_classes, sol::bases<obe::types::Identifiable>());
+        bind_protected_identifiable["get_id"] = &obe::types::ProtectedIdentifiable::get_id;
     }
     void load_class_selectable(sol::state_view state)
     {
@@ -78,7 +79,9 @@ namespace obe::types::bindings
             = types_namespace.new_usertype<obe::types::UnknownEnumEntry>("UnknownEnumEntry",
                 sol::call_constructor,
                 sol::constructors<obe::types::UnknownEnumEntry(std::string_view, std::string_view,
-                    const std::vector<std::string>&, std::source_location)>(),
+                                      const std::vector<std::string>&),
+                    obe::types::UnknownEnumEntry(std::string_view, std::string_view,
+                        const std::vector<std::string>&, std::source_location)>(),
                 sol::base_classes,
                 sol::bases<obe::Exception<obe::types::UnknownEnumEntry>, obe::BaseException>());
     }

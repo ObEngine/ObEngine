@@ -114,7 +114,13 @@ namespace obe::utils::math
      */
     double normalize(double value, double start, double end);
 
+    /**
+     * \nobind
+     */
     extern pcg_extras::seed_seq_from<std::random_device> seed_source;
+    /**
+     * \nobind
+     */
     extern pcg64 rng;
 
     template <class N>

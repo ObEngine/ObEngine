@@ -15,7 +15,9 @@ namespace obe::utils::argparser::exceptions::bindings
                 obe::utils::argparser::exceptions::InvalidArgumentFormat>("InvalidArgumentFormat",
                 sol::call_constructor,
                 sol::constructors<obe::utils::argparser::exceptions::InvalidArgumentFormat(
-                    const std::string&, std::source_location)>(),
+                                      const std::string&),
+                    obe::utils::argparser::exceptions::InvalidArgumentFormat(
+                        const std::string&, std::source_location)>(),
                 sol::base_classes,
                 sol::bases<obe::Exception<obe::utils::argparser::exceptions::InvalidArgumentFormat>,
                     obe::BaseException>());

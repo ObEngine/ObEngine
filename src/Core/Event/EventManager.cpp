@@ -44,8 +44,9 @@ namespace obe::event
         debug::Log->debug("<EventNamespace> Creating EventNamespace '{}'", event_namespace);
         if (!m_namespaces.contains(event_namespace))
         {
-            const auto insertion_result = m_namespaces.emplace(
-                event_namespace, std::make_unique<EventNamespace>(event_namespace));
+            const auto insertion_result = m_namespaces.emplace(event_namespace,
+                std::make_unique<EventNamespace>(
+                    event_namespace, EventNamespace::ConstructorKey {}));
             return *insertion_result.first->second;
         }
         throw exceptions::EventNamespaceAlreadyExists(event_namespace);

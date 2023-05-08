@@ -62,11 +62,11 @@ namespace obe::animation // namespaces are snake_case::snake_case::...
         Play, // enum elements are PascalCase
         Call
     };
-    
+
     // use using instead of typedef
     // type aliases are PascalCase
     using AnimationStatusMeta = Types::SmartEnum<AnimationStatus>;
-    
+
 
     struct AnimationConfiguration // struct are used for data-only classes exclusively
     {
@@ -99,13 +99,13 @@ namespace obe::animation // namespaces are snake_case::snake_case::...
                                                                 // also notice that the ampersand is on the type side
                                                                 // BAD: const std::string &group_id
                                                                 // GOOD: const std::string& group_id
-        
+
         [[nodiscard]] bool is_paused() const; // methods returning booleans should be named is_xxx rather than get_xxx
-        
+
         void set_static(bool static_); // when a variable name clashes with a C++ keywork
                                        // add a trailing underscore to fix the collision
     };
-    
+
     Animation make_animation_from_directory(System::Path path); // functions are snake_case
 }
 

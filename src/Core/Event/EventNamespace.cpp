@@ -32,11 +32,6 @@ namespace obe::event
         return m_namespace.get_name();
     }
 
-    EventNamespace::EventNamespace(const std::string& name)
-        : m_name(name)
-    {
-    }
-
     class EventGroupPtrDeleter
     {
     private:
@@ -55,6 +50,11 @@ namespace obe::event
 
     EventGroupPtrDeleter::EventGroupPtrDeleter(EventNamespace* event_namespace)
         : m_eventNamespace(event_namespace)
+    {
+    }
+
+    EventNamespace::EventNamespace(const std::string& name, ConstructorKey)
+        : m_name(name)
     {
     }
 

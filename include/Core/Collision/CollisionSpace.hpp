@@ -18,7 +18,11 @@ namespace obe::collision
         }
     };
 
-    using ReachableCollider = std::pair<const Collider*, transform::UnitVector>;
+    struct ReachableCollider
+    {
+        const Collider* collider;
+        transform::UnitVector offset;
+    };
 
     class CollisionSpace
     {

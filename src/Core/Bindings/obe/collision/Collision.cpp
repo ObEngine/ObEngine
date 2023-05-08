@@ -181,7 +181,7 @@ namespace obe::collision::bindings
                 const obe::transform::UnitVector& offset) -> obe::transform::UnitVector {
                 return self->get_offset_before_collision(collider, reachable_colliders, offset);
             });
-        /* bind_collision_space["get_reachable_colliders"] = sol::overload(
+        bind_collision_space["get_reachable_colliders"] = sol::overload(
             [](obe::collision::CollisionSpace* self, const obe::collision::Collider& collider)
                 -> std::vector<obe::collision::ReachableCollider> {
                 return self->get_reachable_colliders(collider);
@@ -190,7 +190,7 @@ namespace obe::collision::bindings
                 const obe::transform::UnitVector& offset)
                 -> std::vector<obe::collision::ReachableCollider> {
                 return self->get_reachable_colliders(collider, offset);
-            });*/
+            });
         bind_collision_space["add_tag_to_blacklist"]
             = &obe::collision::CollisionSpace::add_tag_to_blacklist;
         bind_collision_space["remove_tag_to_blacklist"]
@@ -375,6 +375,15 @@ namespace obe::collision::bindings
             = &obe::collision::CollisionRejectionPair::collider1;
         bind_collision_rejection_pair["collider2"]
             = &obe::collision::CollisionRejectionPair::collider2;
+    }
+    void load_class_reachable_collider(sol::state_view state)
+    {
+        sol::table collision_namespace = state["obe"]["collision"].get<sol::table>();
+        sol::usertype<obe::collision::ReachableCollider> bind_reachable_collider
+            = collision_namespace.new_usertype<obe::collision::ReachableCollider>(
+                "ReachableCollider", sol::call_constructor, sol::default_constructor);
+        bind_reachable_collider["collider"] = &obe::collision::ReachableCollider::collider;
+        bind_reachable_collider["offset"] = &obe::collision::ReachableCollider::offset;
     }
     void load_function_collider_type_to_c2type(sol::state_view state)
     {

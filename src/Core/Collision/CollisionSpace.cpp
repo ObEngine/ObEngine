@@ -120,10 +120,10 @@ namespace obe::collision
             // Get lowest offset between this collider and a reachable collider
             for (auto& reachable : reachable_colliders)
             {
-                if (reachable.second.magnitude()
+                if (reachable.offset.magnitude()
                     < max_offset.to(transform::Units::ScenePixels).magnitude())
                 {
-                    max_offset = reachable.second;
+                    max_offset = reachable.offset;
                 }
             }
         }

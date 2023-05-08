@@ -52,6 +52,7 @@
 #include <Bindings/obe/utils/file/File.hpp>
 #include <Bindings/obe/utils/math/Math.hpp>
 #include <Bindings/obe/utils/string/String.hpp>
+#include <Bindings/obe/utils/types/Types.hpp>
 #include <Bindings/obe/utils/vector/Vector.hpp>
 #include <Bindings/vili/Vili.hpp>
 #include <Bindings/vili/msgpack/Msgpack.hpp>
@@ -118,6 +119,7 @@ namespace obe::bindings
         state["obe"]["utils"]["file"].get_or_create<sol::table>();
         state["obe"]["utils"]["math"].get_or_create<sol::table>();
         state["obe"]["utils"]["string"].get_or_create<sol::table>();
+        state["obe"]["utils"]["types"].get_or_create<sol::table>();
         state["obe"]["utils"]["vector"].get_or_create<sol::table>();
         state["vili"]["utils"]["string"].get_or_create<sol::table>();
         state["obe"]["animation"]["schemas"].get_or_create<sol::table>();
@@ -131,7 +133,6 @@ namespace obe::bindings
         obe::system::bindings::load_class_find_result(state);
         obe::system::bindings::load_class_path(state);
         obe::bindings::load_class_base_exception(state);
-        obe::bindings::load_function_get_type_name(state);
         obe::bindings::load_function_init_engine(state);
         obe::animation::bindings::load_class_animation(state);
         obe::animation::bindings::load_class_animation_group(state);
@@ -168,6 +169,7 @@ namespace obe::bindings
         obe::collision::bindings::load_class_trajectory(state);
         obe::collision::bindings::load_class_trajectory_node(state);
         obe::collision::bindings::load_class_collision_rejection_pair(state);
+        obe::collision::bindings::load_class_reachable_collider(state);
         obe::collision::bindings::load_enum_collider_type(state);
         obe::collision::bindings::load_function_collider_type_to_c2type(state);
         obe::component::bindings::load_class_component_base(state);
@@ -551,6 +553,7 @@ namespace obe::bindings
         obe::utils::string::bindings::load_function_titleize(state);
         obe::utils::string::bindings::load_global_alphabet(state);
         obe::utils::string::bindings::load_global_numbers(state);
+        obe::utils::types::bindings::load_function_get_type_name(state);
         obe::utils::vector::bindings::load_function_contains(state);
         obe::utils::vector::bindings::load_function_join(state);
         vili::msgpack::bindings::load_function_from_string(state);
