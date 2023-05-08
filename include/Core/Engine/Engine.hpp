@@ -161,13 +161,15 @@ namespace obe::engine
          * \nobind
          */
         debug::Logger get_logger() const;
-
+        /**
+         * \rename{Args}
+         * \asproperty
+         */
         [[nodiscard]] const vili::node& get_arguments() const;
-
     };
 
     /**
-    * \proxy{obe::engine::get_args}
+    * \proxy{obe::engine::Engine::get_arguments}
     */
-    sol::lua_value engine_get_args_proxy(const Engine* self);
+    sol::lua_value engine_get_arguments_proxy(const Engine* self);
 } // namespace obe::engine

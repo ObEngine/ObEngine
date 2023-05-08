@@ -1,5 +1,6 @@
 #include <Debug/Logger.hpp>
 #include <Event/EventGroup.hpp>
+#include <Event/EventNamespace.hpp>
 
 namespace obe::event
 {
@@ -43,9 +44,9 @@ namespace obe::event
         return m_group.contains(event_name);
     }
 
-    EventGroup::EventGroup(const std::string& event_namespace, const std::string& name)
+    EventGroup::EventGroup(const EventNamespace& event_namespace, const std::string& name)
     {
-        m_identifier = event_namespace + "." + name;
+        m_identifier = event_namespace.get_name() + "." + name;
         m_name = name;
     }
 

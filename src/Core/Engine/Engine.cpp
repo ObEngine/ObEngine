@@ -443,7 +443,7 @@ namespace obe::engine
     }
 
     // Proxy functions
-    sol::lua_value engine_get_args_proxy(const Engine* self)
+    sol::lua_value engine_get_arguments_proxy(const Engine* self)
     {
         return obe::script::vili_lua_bridge::vili_to_lua(self->get_arguments());
     }

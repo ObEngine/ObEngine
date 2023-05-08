@@ -31,6 +31,8 @@ namespace obe::event
         [[nodiscard]] std::string get_name() const;
     };
 
+    class EventManager;
+
     class EventNamespace
     {
     private:
@@ -38,8 +40,10 @@ namespace obe::event
         std::map<std::string, std::weak_ptr<EventGroup>> m_groups;
         bool m_joinable = false;
 
-    public:
         explicit EventNamespace(const std::string& name);
+        friend class EventManager;
+
+    public:
         /**
          * \brief Creates a new EventGroup (Throws an error if the
          *        EventGroup already exists)

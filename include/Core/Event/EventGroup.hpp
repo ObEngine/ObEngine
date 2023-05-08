@@ -74,6 +74,8 @@ namespace obe::event
         Event<EventType>& get() const;
     };
 
+    class EventNamespace;
+
     /**
      * \brief Class used to manage multiple Events
      */
@@ -85,14 +87,17 @@ namespace obe::event
         std::map<std::string, std::unique_ptr<EventBase>> m_events;
         bool m_joinable = false;
 
-    public:
         /**
          * \brief Creates a new EventGroup
          * \param event_namespace Name of the Namespace the EventGroup
          *        is in
          * \param name Name of the EventGroup
          */
-        explicit EventGroup(const std::string& event_namespace, const std::string& name);
+        explicit EventGroup(const EventNamespace& event_namespace, const std::string& name);
+
+        friend class EventNamespace;
+
+    public:
         [[nodiscard]] EventGroupView get_view() const;
         /**
          * \brief Sets if the EventGroup is joinable or not

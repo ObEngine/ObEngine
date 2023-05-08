@@ -64,7 +64,7 @@ namespace obe::event
             "<EventNamespace> Creating EventGroup '{}' in Namespace '{}'", group, m_name);
         if (!m_groups.contains(group))
         {
-            EventGroupPtr new_group(new EventGroup(m_name, group), EventGroupPtrDeleter(this));
+            EventGroupPtr new_group(new EventGroup(*this, group), EventGroupPtrDeleter(this));
             m_groups.emplace(group, new_group);
             return new_group;
         }
