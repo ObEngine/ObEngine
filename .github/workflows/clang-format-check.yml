@@ -1,8 +1,8 @@
-name: clang-format Check
+name: Formatting Check
 on: [pull_request]
 jobs:
   formatting-check:
-    name: Formatting Check
+    name: clang-format
     runs-on: ubuntu-latest
     strategy:
       matrix:
