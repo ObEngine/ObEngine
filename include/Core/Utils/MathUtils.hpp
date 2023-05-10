@@ -11,6 +11,8 @@ namespace obe::utils::math
 {
     constexpr static double pi = 3.14159265359;
 
+    bool randbool();
+
     /**
      * \brief Get a random integer between the given bound
      * \param min Min bound
