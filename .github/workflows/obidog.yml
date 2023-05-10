@@ -38,7 +38,7 @@ jobs:
 
       - name: Configure commit owner
         run: |
-          export ci_user_infos = $(curl -s https://${{ inputs.pat }}:@api.github.com/user)
+          export ci_user_infos=$(curl -s https://${{ inputs.pat }}:@api.github.com/user)
           export ci_pat_user=$($ci_user_infos | jq -r .name)
           export ci_pat_id=$($ci_user_infos | jq -r .id)
           git config --global user.email "$ci_pat_id+$ci_pat_user@users.noreply.github.com"
