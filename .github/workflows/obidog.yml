@@ -23,7 +23,7 @@ jobs:
       - name: Checkout PR
         env:
           GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
-        run: gh pr checkout ${{ github.event.pull_request.number }}
+        run: gh pr checkout ${{ github.event.issue.number }}
 
       - run: docker run -e OBENGINE_GIT_DIRECTORY=/obengine -v ${PWD}:/obengine --user $(id -u):$(id -u) ghcr.io/obengine/obidog:1.0.0 bindings
         if: steps.check.outputs.triggered == 'true'
