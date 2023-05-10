@@ -20,7 +20,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: docker run -e OBENGINE_GIT_DIRECTORY=/obengine -v ${PWD}:/obengine --user ${id -u}:${id -u} ghcr.io/obengine/obidog:1.0.0 bindings
+      - run: docker run -e OBENGINE_GIT_DIRECTORY=/obengine -v ${PWD}:/obengine --user $(id -u):$(id -u) ghcr.io/obengine/obidog:1.0.0 bindings
         if: steps.check.outputs.triggered == 'true'
 
       - uses: actions/github-script@v5
