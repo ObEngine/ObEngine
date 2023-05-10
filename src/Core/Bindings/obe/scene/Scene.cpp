@@ -17,21 +17,35 @@ namespace obe::scene::bindings
                 sol::bases<obe::transform::AABB, obe::transform::Movable>());
         bind_camera["move"] = &obe::scene::Camera::move;
         bind_camera["scale"] = sol::overload(
-            [](obe::scene::Camera* self, double scale_) -> void { return self->scale(scale_); },
-            [](obe::scene::Camera* self, double scale_, const obe::transform::Referential& ref)
-                -> void { return self->scale(scale_, ref); });
+            [](obe::scene::Camera* self, double scale_) -> void
+            {
+                return self->scale(scale_);
+            },
+            [](obe::scene::Camera* self, double scale_,
+                const obe::transform::Referential& ref) -> void
+            {
+                return self->scale(scale_, ref);
+            });
         bind_camera["set_position"] = sol::overload(
-            [](obe::scene::Camera* self, const obe::transform::UnitVector& position) -> void {
+            [](obe::scene::Camera* self, const obe::transform::UnitVector& position) -> void
+            {
                 return self->set_position(position);
             },
             [](obe::scene::Camera* self, const obe::transform::UnitVector& position,
-                const obe::transform::Referential& ref) -> void {
+                const obe::transform::Referential& ref) -> void
+            {
                 return self->set_position(position, ref);
             });
         bind_camera["set_size"] = sol::overload(
-            [](obe::scene::Camera* self, double size) -> void { return self->set_size(size); },
-            [](obe::scene::Camera* self, double size, const obe::transform::Referential& ref)
-                -> void { return self->set_size(size, ref); });
+            [](obe::scene::Camera* self, double size) -> void
+            {
+                return self->set_size(size);
+            },
+            [](obe::scene::Camera* self, double size,
+                const obe::transform::Referential& ref) -> void
+            {
+                return self->set_size(size, ref);
+            });
     }
     void load_class_scene(sol::state_view state)
     {
@@ -59,20 +73,24 @@ namespace obe::scene::bindings
         bind_scene["set_level_name"] = &obe::scene::Scene::set_level_name;
         bind_scene["set_update_state"] = &obe::scene::Scene::set_update_state;
         bind_scene["create_game_object"] = sol::overload(
-            [](obe::scene::Scene* self, const std::string& object_type) -> sol::function {
+            [](obe::scene::Scene* self, const std::string& object_type) -> sol::function
+            {
                 return obe::scene::scene_create_game_object_proxy(self, object_type);
             },
             [](obe::scene::Scene* self, const std::string& object_type,
-                const std::string& id) -> sol::function {
+                const std::string& id) -> sol::function
+            {
                 return obe::scene::scene_create_game_object_proxy(self, object_type, id);
             });
         bind_scene["get_game_object_amount"] = &obe::scene::Scene::get_game_object_amount;
         bind_scene["get_all_game_objects"] = sol::overload(
-            [](const obe::scene::Scene* self) -> sol::nested<std::vector<sol::table>> {
+            [](const obe::scene::Scene* self) -> sol::nested<std::vector<sol::table>>
+            {
                 return obe::scene::scene_get_all_game_objects_proxy(self);
             },
             [](const obe::scene::Scene* self,
-                const std::string& object_type) -> sol::nested<std::vector<sol::table>> {
+                const std::string& object_type) -> sol::nested<std::vector<sol::table>>
+            {
                 return obe::scene::scene_get_all_game_objects_proxy(self, object_type);
             });
         bind_scene["get_game_object"] = &obe::scene::scene_get_game_object_proxy;
@@ -81,12 +99,19 @@ namespace obe::scene::bindings
         bind_scene["get_camera"] = &obe::scene::Scene::get_camera;
         bind_scene["reorganize_layers"] = &obe::scene::Scene::reorganize_layers;
         bind_scene["create_sprite"] = sol::overload(
-            [](obe::scene::Scene* self) -> obe::graphics::Sprite& { return self->create_sprite(); },
-            [](obe::scene::Scene* self, const std::string& id) -> obe::graphics::Sprite& {
+            [](obe::scene::Scene* self) -> obe::graphics::Sprite&
+            {
+                return self->create_sprite();
+            },
+            [](obe::scene::Scene* self, const std::string& id) -> obe::graphics::Sprite&
+            {
                 return self->create_sprite(id);
             },
-            [](obe::scene::Scene* self, const std::string& id, bool add_to_scene_root)
-                -> obe::graphics::Sprite& { return self->create_sprite(id, add_to_scene_root); });
+            [](obe::scene::Scene* self, const std::string& id,
+                bool add_to_scene_root) -> obe::graphics::Sprite&
+            {
+                return self->create_sprite(id, add_to_scene_root);
+            });
         bind_scene["get_sprite_amount"] = &obe::scene::Scene::get_sprite_amount;
         bind_scene["get_all_sprites"] = &obe::scene::Scene::get_all_sprites;
         bind_scene["get_sprites_by_layer"] = &obe::scene::Scene::get_sprites_by_layer;
@@ -95,13 +120,17 @@ namespace obe::scene::bindings
         bind_scene["does_sprite_exists"] = &obe::scene::Scene::does_sprite_exists;
         bind_scene["remove_sprite"] = &obe::scene::Scene::remove_sprite;
         bind_scene["create_collider"] = sol::overload(
-            [](obe::scene::Scene* self) -> obe::collision::ColliderComponent& {
+            [](obe::scene::Scene* self) -> obe::collision::ColliderComponent&
+            {
                 return self->create_collider();
             },
-            [](obe::scene::Scene* self, const std::string& id)
-                -> obe::collision::ColliderComponent& { return self->create_collider(id); },
+            [](obe::scene::Scene* self, const std::string& id) -> obe::collision::ColliderComponent&
+            {
+                return self->create_collider(id);
+            },
             [](obe::scene::Scene* self, const std::string& id,
-                bool add_to_scene_root) -> obe::collision::ColliderComponent& {
+                bool add_to_scene_root) -> obe::collision::ColliderComponent&
+            {
                 return self->create_collider(id, add_to_scene_root);
             });
         bind_scene["get_collider_amount"] = &obe::scene::Scene::get_collider_amount;
@@ -119,7 +148,8 @@ namespace obe::scene::bindings
         bind_scene["get_level_file"] = &obe::scene::Scene::get_level_file;
         bind_scene["get_scene_node_by_position"] = &obe::scene::Scene::get_scene_node_by_position;
         bind_scene["has_tiles"] = &obe::scene::Scene::has_tiles;
-        bind_scene["get_tiles"] = [](obe::scene::Scene* self) -> const obe::tiles::TileScene* {
+        bind_scene["get_tiles"] = [](obe::scene::Scene* self) -> const obe::tiles::TileScene*
+        {
             return &self->get_tiles();
         };
         bind_scene["get_render_options"] = &obe::scene::Scene::get_render_options;

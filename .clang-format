@@ -18,3 +18,4 @@ AllowShortFunctionsOnASingleLine: false
 BinPackParameters: true
 ReflowComments: false
 AlwaysBreakTemplateDeclarations: true
+AllowShortLambdasOnASingleLine: Empty

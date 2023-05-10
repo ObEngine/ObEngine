@@ -75,16 +75,19 @@ namespace obe::collision::bindings
         bind_collider["collides"] = &obe::collision::Collider::collides;
         bind_collider["get_offset_before_collision"] = sol::overload(
             [](obe::collision::Collider* self,
-                const obe::collision::Collider& collider) -> obe::transform::UnitVector {
+                const obe::collision::Collider& collider) -> obe::transform::UnitVector
+            {
                 return self->get_offset_before_collision(collider);
             },
             [](obe::collision::Collider* self, const obe::collision::Collider& collider,
-                const obe::transform::UnitVector& self_offset) -> obe::transform::UnitVector {
+                const obe::transform::UnitVector& self_offset) -> obe::transform::UnitVector
+            {
                 return self->get_offset_before_collision(collider, self_offset);
             },
             [](obe::collision::Collider* self, const obe::collision::Collider& collider,
                 const obe::transform::UnitVector& self_offset,
-                const obe::transform::UnitVector& other_offset) -> obe::transform::UnitVector {
+                const obe::transform::UnitVector& other_offset) -> obe::transform::UnitVector
+            {
                 return self->get_offset_before_collision(collider, self_offset, other_offset);
             });
         bind_collider["get_bounding_box"] = &obe::collision::Collider::get_bounding_box;
@@ -164,31 +167,37 @@ namespace obe::collision::bindings
         bind_collision_space["collides"] = &obe::collision::CollisionSpace::collides;
         bind_collision_space["get_offset_before_collision"] = sol::overload(
             [](obe::collision::CollisionSpace* self,
-                const obe::collision::Collider& collider) -> obe::transform::UnitVector {
+                const obe::collision::Collider& collider) -> obe::transform::UnitVector
+            {
                 return self->get_offset_before_collision(collider);
             },
             [](obe::collision::CollisionSpace* self, const obe::collision::Collider& collider,
-                const obe::transform::UnitVector& offset) -> obe::transform::UnitVector {
+                const obe::transform::UnitVector& offset) -> obe::transform::UnitVector
+            {
                 return self->get_offset_before_collision(collider, offset);
             },
             [](obe::collision::CollisionSpace* self, const obe::collision::Collider& collider,
                 const std::vector<obe::collision::ReachableCollider>& reachable_colliders)
-                -> obe::transform::UnitVector {
+                -> obe::transform::UnitVector
+            {
                 return self->get_offset_before_collision(collider, reachable_colliders);
             },
             [](obe::collision::CollisionSpace* self, const obe::collision::Collider& collider,
                 const std::vector<obe::collision::ReachableCollider>& reachable_colliders,
-                const obe::transform::UnitVector& offset) -> obe::transform::UnitVector {
+                const obe::transform::UnitVector& offset) -> obe::transform::UnitVector
+            {
                 return self->get_offset_before_collision(collider, reachable_colliders, offset);
             });
         bind_collision_space["get_reachable_colliders"] = sol::overload(
             [](obe::collision::CollisionSpace* self, const obe::collision::Collider& collider)
-                -> std::vector<obe::collision::ReachableCollider> {
+                -> std::vector<obe::collision::ReachableCollider>
+            {
                 return self->get_reachable_colliders(collider);
             },
             [](obe::collision::CollisionSpace* self, const obe::collision::Collider& collider,
                 const obe::transform::UnitVector& offset)
-                -> std::vector<obe::collision::ReachableCollider> {
+                -> std::vector<obe::collision::ReachableCollider>
+            {
                 return self->get_reachable_colliders(collider, offset);
             });
         bind_collision_space["add_tag_to_blacklist"]
@@ -215,30 +224,36 @@ namespace obe::collision::bindings
         bind_complex_polygon_collider["move"] = &obe::collision::ComplexPolygonCollider::move;
         bind_complex_polygon_collider["add_point"] = sol::overload(
             [](obe::collision::ComplexPolygonCollider* self,
-                const obe::transform::UnitVector& position) -> void {
+                const obe::transform::UnitVector& position) -> void
+            {
                 return self->add_point(position);
             },
             [](obe::collision::ComplexPolygonCollider* self,
-                const obe::transform::UnitVector& position,
-                int point_index) -> void { return self->add_point(position, point_index); });
+                const obe::transform::UnitVector& position, int point_index) -> void
+            {
+                return self->add_point(position, point_index);
+            });
         bind_complex_polygon_collider["get_points_amount"]
             = &obe::collision::ComplexPolygonCollider::get_points_amount;
         bind_complex_polygon_collider["collides"]
             = &obe::collision::ComplexPolygonCollider::collides;
         bind_complex_polygon_collider["get_offset_before_collision"] = sol::overload(
             [](obe::collision::ComplexPolygonCollider* self,
-                const obe::collision::Collider& collider) -> obe::transform::UnitVector {
+                const obe::collision::Collider& collider) -> obe::transform::UnitVector
+            {
                 return self->get_offset_before_collision(collider);
             },
             [](obe::collision::ComplexPolygonCollider* self,
                 const obe::collision::Collider& collider,
-                const obe::transform::UnitVector& self_offset) -> obe::transform::UnitVector {
+                const obe::transform::UnitVector& self_offset) -> obe::transform::UnitVector
+            {
                 return self->get_offset_before_collision(collider, self_offset);
             },
             [](obe::collision::ComplexPolygonCollider* self,
                 const obe::collision::Collider& collider,
                 const obe::transform::UnitVector& self_offset,
-                const obe::transform::UnitVector& other_offset) -> obe::transform::UnitVector {
+                const obe::transform::UnitVector& other_offset) -> obe::transform::UnitVector
+            {
                 return self->get_offset_before_collision(collider, self_offset, other_offset);
             });
         bind_complex_polygon_collider["get_bounding_box"]
@@ -263,10 +278,16 @@ namespace obe::collision::bindings
         bind_polygon_collider["set_position"] = &obe::collision::PolygonCollider::set_position;
         bind_polygon_collider["move"] = &obe::collision::PolygonCollider::move;
         bind_polygon_collider["add_point"] = sol::overload(
-            [](obe::collision::PolygonCollider* self, const obe::transform::UnitVector& position)
-                -> void { return self->add_point(position); },
+            [](obe::collision::PolygonCollider* self,
+                const obe::transform::UnitVector& position) -> void
+            {
+                return self->add_point(position);
+            },
             [](obe::collision::PolygonCollider* self, const obe::transform::UnitVector& position,
-                int point_index) -> void { return self->add_point(position, point_index); });
+                int point_index) -> void
+            {
+                return self->add_point(position, point_index);
+            });
         bind_polygon_collider["get_points_amount"]
             = &obe::collision::PolygonCollider::get_points_amount;
         bind_polygon_collider["get_polygon"] = &obe::collision::PolygonCollider::get_polygon;
@@ -349,13 +370,17 @@ namespace obe::collision::bindings
             = collision_namespace.new_usertype<obe::collision::TrajectoryNode>("TrajectoryNode",
                 sol::call_constructor,
                 sol::constructors<obe::collision::TrajectoryNode(obe::scene::SceneNode&)>());
-        bind_trajectory_node["add_trajectory"]
-            = sol::overload([](obe::collision::TrajectoryNode* self, const std::string& id)
-                                -> obe::collision::Trajectory& { return self->add_trajectory(id); },
-                [](obe::collision::TrajectoryNode* self, const std::string& id,
-                    obe::transform::Units unit) -> obe::collision::Trajectory& {
-                    return self->add_trajectory(id, unit);
-                });
+        bind_trajectory_node["add_trajectory"] = sol::overload(
+            [](obe::collision::TrajectoryNode* self,
+                const std::string& id) -> obe::collision::Trajectory&
+            {
+                return self->add_trajectory(id);
+            },
+            [](obe::collision::TrajectoryNode* self, const std::string& id,
+                obe::transform::Units unit) -> obe::collision::Trajectory&
+            {
+                return self->add_trajectory(id, unit);
+            });
         bind_trajectory_node["get_scene_node"] = &obe::collision::TrajectoryNode::get_scene_node;
         bind_trajectory_node["get_trajectory"] = &obe::collision::TrajectoryNode::get_trajectory;
         bind_trajectory_node["remove_trajectory"]

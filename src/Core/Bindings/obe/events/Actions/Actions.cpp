@@ -11,13 +11,15 @@ namespace obe::events::Actions::bindings
         sol::table Actions_namespace = state["obe"]["events"]["Actions"].get<sol::table>();
         sol::usertype<obe::events::Actions::Action> bind_action
             = Actions_namespace.new_usertype<obe::events::Actions::Action>("Action");
-        bind_action["action"]
-            = sol::property([](obe::events::Actions::Action* self) -> obe::input::InputAction* {
-                  return &self->action;
-              });
-        bind_action["condition"]
-            = sol::property([](obe::events::Actions::Action* self) -> obe::input::InputCondition* {
-                  return &self->condition;
-              });
+        bind_action["action"] = sol::property(
+            [](obe::events::Actions::Action* self) -> obe::input::InputAction*
+            {
+                return &self->action;
+            });
+        bind_action["condition"] = sol::property(
+            [](obe::events::Actions::Action* self) -> obe::input::InputCondition*
+            {
+                return &self->condition;
+            });
     }
 };

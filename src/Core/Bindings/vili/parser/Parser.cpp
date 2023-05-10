@@ -41,8 +41,12 @@ namespace vili::parser::bindings
         sol::table parser_namespace = state["vili"]["parser"].get<sol::table>();
         parser_namespace.set_function("from_string",
             sol::overload(
-                [](std::string_view data) -> vili::node { return vili::parser::from_string(data); },
-                [](std::string_view data, vili::parser::state parser_state) -> vili::node {
+                [](std::string_view data) -> vili::node
+                {
+                    return vili::parser::from_string(data);
+                },
+                [](std::string_view data, vili::parser::state parser_state) -> vili::node
+                {
                     return vili::parser::from_string(data, parser_state);
                 }));
     }

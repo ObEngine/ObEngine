@@ -51,10 +51,14 @@ namespace obe::system::project::bindings
     {
         sol::table project_namespace = state["obe"]["system"]["project"].get<sol::table>();
         project_namespace.set_function("load",
-            sol::overload([](const std::string& project_name, const std::string& prefix)
-                              -> bool { return obe::system::project::load(project_name, prefix); },
+            sol::overload(
+                [](const std::string& project_name, const std::string& prefix) -> bool
+                {
+                    return obe::system::project::load(project_name, prefix);
+                },
                 [](const std::string& project_name, const std::string& prefix,
-                    unsigned int priority) -> bool {
+                    unsigned int priority) -> bool
+                {
                     return obe::system::project::load(project_name, prefix, priority);
                 }));
     }
