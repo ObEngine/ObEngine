@@ -6,6 +6,7 @@ namespace sol
 };
 namespace obe::utils::math::bindings
 {
+    void load_function_randbool(sol::state_view state);
     void load_function_randint(sol::state_view state);
     void load_function_randfloat(sol::state_view state);
     void load_function_get_min(sol::state_view state);

@@ -6,6 +6,11 @@
 
 namespace obe::utils::math::bindings
 {
+    void load_function_randbool(sol::state_view state)
+    {
+        sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
+        math_namespace.set_function("randbool", &obe::utils::math::randbool);
+    }
     void load_function_randint(sol::state_view state)
     {
         sol::table math_namespace = state["obe"]["utils"]["math"].get<sol::table>();
