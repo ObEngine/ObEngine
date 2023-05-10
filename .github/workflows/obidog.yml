@@ -1,0 +1,28 @@
+name: Obidog
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check for command
+      env:
+        GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
+      run: |
+        echo "Comment: ${{ github.event.comment.body }}"
+        if [[ "${{ github.event.comment.body }}" == "!obidog" ]]; then
+          echo "Command detected!"
+          echo "PR: ${{ github.event.issue.pull_request.url }}"
+          if [[ -n "${{ github.event.issue.pull_request.url }}" ]]; then
+            echo "This is a PR!"
+            # Add the steps you want to perform on detection of the command in PR comments.
+
+            # Create a reply
+            REPLY="Your command was executed!"
+            # Post the reply
+            curl -s -H "Authorization: token $GHCR_TOKEN" -X POST -d "{\"body\": \"$REPLY\"}" https://api.github.com/repos/${{ github.repository }}/issues/${{ github.event.issue.number }}/comments
+          fi
+        fi
+      shell: bash
