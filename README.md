@@ -9,7 +9,7 @@
 
 | CI/CD name  | Build status |
 | ----------- | ------------ |
-| GitHub Actions | [![Build Status](https://img.shields.io/github/workflow/status/ObEngine/ObEngine/build/v0.5?logo=github&style=for-the-badge)](https://github.com/ObEngine/ObEngine/actions?query=workflow%3Abuild) |
+| GitHub Actions | [![Build Status](https://img.shields.io/github/actions/workflow/status/ObEngine/ObEngine/build.yml?branch=v0.5&logo=github&style=for-the-badge)](https://github.com/ObEngine/ObEngine/actions?query=workflow%3Abuild) |
 | Azure Pipelines | [![Build Status](https://img.shields.io/azure-devops/build/obengine/bb2943ed-4d02-4bdf-97d6-dac42bdb2232/2/v0.5?style=for-the-badge&logo=microsoft-azure)](https://dev.azure.com/obengine/ObEngine) |
 
 ## Useful links
