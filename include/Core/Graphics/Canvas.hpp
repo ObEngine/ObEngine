@@ -357,8 +357,10 @@ namespace obe::graphics::canvas
             m_sort_required = true;
             std::unique_ptr<T> new_element = std::make_unique<T>(*this, id);
             auto insert_it = std::find_if(m_elements.begin(), m_elements.end(),
-                [&new_element](
-                    const CanvasElement::Ptr& elem) { return new_element->layer <= elem->layer; });
+                [&new_element](const CanvasElement::Ptr& elem)
+                {
+                    return new_element->layer <= elem->layer;
+                });
             auto elem_it = m_elements.insert(insert_it, std::move(new_element));
             return *static_cast<T*>(elem_it->get());
         }

@@ -8,7 +8,6 @@
 #include <Types/Serializable.hpp>
 #include <Types/SmartEnum.hpp>
 
-
 namespace obe
 {
     namespace engine
@@ -331,7 +330,7 @@ namespace obe::animation
         [[nodiscard]] bool is_anti_aliased() const noexcept;
         [[nodiscard]] AnimationState make_state() const;
 
-        [[nodiscard]] vili::node get_frame_metadata(uint32_t frame_index) const; 
+        [[nodiscard]] vili::node get_frame_metadata(uint32_t frame_index) const;
         [[nodiscard]] uint32_t get_frames_amount() const;
         [[nodiscard]] uint32_t get_current_frame_index() const;
 

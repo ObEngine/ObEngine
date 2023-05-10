@@ -9,10 +9,11 @@
 #include <Types/Serializable.hpp>
 #include <Types/UniqueIdentifiable.hpp>
 
-
 namespace obe::component
 {
-    class ComponentBase : public types::Identifiable, public types::Serializable, public types::UniqueIdentifiable
+    class ComponentBase : public types::Identifiable,
+                          public types::Serializable,
+                          public types::UniqueIdentifiable
     {
     public:
         using Caster = std::function<sol::lua_value(ComponentBase*)>;
@@ -64,7 +65,8 @@ namespace obe::component
     void Component<DerivedComponent>::Register()
     {
         ComponentCasters[DerivedComponent::ComponentType]
-            = [](ComponentBase* component) -> sol::lua_value {
+            = [](ComponentBase* component) -> sol::lua_value
+        {
             return static_cast<DerivedComponent*>(component);
         };
     }
@@ -80,7 +82,10 @@ namespace obe::component
     Component<DerivedComponent>::~Component()
     {
         Pool.erase(std::remove_if(Pool.begin(), Pool.end(),
-                       [&](DerivedComponent* ptr) -> bool { return (this == ptr); }),
+                       [&](DerivedComponent* ptr) -> bool
+                       {
+                           return (this == ptr);
+                       }),
             Pool.end());
     }
 
@@ -90,7 +95,10 @@ namespace obe::component
         RemoveComponent(this);
         DerivedComponent::Pool.erase(
             std::remove_if(DerivedComponent::Pool.begin(), DerivedComponent::Pool.end(),
-                [&](auto& elem) { return (this == elem); }),
+                [&](auto& elem)
+                {
+                    return (this == elem);
+                }),
             DerivedComponent::Pool.end());
     }
 

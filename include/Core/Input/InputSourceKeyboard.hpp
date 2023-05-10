@@ -17,16 +17,15 @@ namespace obe::input
          * \param printable_char The character printed when the key is pressed
 
          */
-        InputSourceKeyboardKey(
-            sf::Keyboard::Key key, const std::string& printable_char);
+        InputSourceKeyboardKey(sf::Keyboard::Key key, const std::string& printable_char);
         /**
          * \brief Creates a new InputSource representing a Keyboard key
          * \param key SFML Keyboard Key
          * \param name Name of the Key
          * \param printable_char The character printed when the key is pressed
          */
-        InputSourceKeyboardKey(sf::Keyboard::Key key, const std::string& name,
-            const std::string& printable_char);
+        InputSourceKeyboardKey(
+            sf::Keyboard::Key key, const std::string& name, const std::string& printable_char);
         /**
          * \brief Get the SFML Keyboard Key
          * \return SFML Keyboard Key

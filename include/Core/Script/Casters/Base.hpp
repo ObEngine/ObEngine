@@ -14,7 +14,6 @@ namespace obe::script
 {
     class DummyCast
     {
-        
     };
 
     /**

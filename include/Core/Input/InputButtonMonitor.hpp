@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Event/EventGroup.hpp>
-#include <Input/InputSourceState.hpp>
 #include <Input/InputSource.hpp>
+#include <Input/InputSourceState.hpp>
 #include <memory>
 
 namespace obe::events

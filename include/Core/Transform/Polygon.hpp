@@ -9,7 +9,6 @@
 #include <Transform/UnitBasedObject.hpp>
 #include <Transform/UnitVector.hpp>
 
-
 namespace obe::transform
 {
     class Polygon;
@@ -30,7 +29,8 @@ namespace obe::transform
         };
 
         explicit PolygonPoint(Polygon& parent, point_index_t index);
-        explicit PolygonPoint(Polygon& parent, point_index_t index, const transform::UnitVector& position);
+        explicit PolygonPoint(
+            Polygon& parent, point_index_t index, const transform::UnitVector& position);
 
         PolygonPoint& operator=(const PolygonPoint& point);
 

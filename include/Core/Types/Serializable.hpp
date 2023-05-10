@@ -19,6 +19,7 @@ namespace obe::types
          * \return vili::node that contains the validation schema
          */
         [[nodiscard]] virtual vili::node schema() const = 0;
+
     public:
         virtual ~Serializable() = default;
         /**

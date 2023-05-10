@@ -1,8 +1,8 @@
 #pragma once
 
 #include <Input/InputButtonMonitor.hpp>
-#include <Input/InputSourceState.hpp>
 #include <Input/InputSource.hpp>
+#include <Input/InputSourceState.hpp>
 #include <Types/FlagSet.hpp>
 #include <Types/Togglable.hpp>
 #include <vector>

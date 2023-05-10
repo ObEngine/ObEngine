@@ -93,7 +93,8 @@ namespace obe::collision
          * \param offset Distance the Collider should move to (if nothing collides)
          * \return The maximum distance the Collider can travel before colliding
          */
-        [[nodiscard]] virtual transform::UnitVector get_offset_before_collision(const Collider& collider,
+        [[nodiscard]] virtual transform::UnitVector get_offset_before_collision(
+            const Collider& collider,
             const transform::UnitVector& self_offset = transform::UnitVector(0, 0),
             const transform::UnitVector& other_offset = transform::UnitVector(0, 0)) const;
 

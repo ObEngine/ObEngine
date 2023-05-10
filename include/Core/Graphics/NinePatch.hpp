@@ -30,7 +30,8 @@ namespace obe::graphics
     public:
         NinePatch();
 
-        void set_texture(const sf::Texture& texture, bool reset_size = true, bool reset_rect = true);
+        void set_texture(
+            const sf::Texture& texture, bool reset_size = true, bool reset_rect = true);
         void set_texture();
 
         [[nodiscard]] sf::Vector2f get_size() const;

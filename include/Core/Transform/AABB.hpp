@@ -29,7 +29,7 @@ namespace obe::transform
         using Movable::get_position;
         using Movable::move;
         using Movable::set_position;
-        
+
         AABB() = default;
         AABB(const transform::UnitVector& position, const transform::UnitVector& size);
 

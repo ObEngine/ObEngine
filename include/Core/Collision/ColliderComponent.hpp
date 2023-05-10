@@ -2,9 +2,9 @@
 
 #include <Collision/CapsuleCollider.hpp>
 #include <Collision/CircleCollider.hpp>
+#include <Collision/ComplexPolygonCollider.hpp>
 #include <Collision/PolygonCollider.hpp>
 #include <Collision/RectangleCollider.hpp>
-#include <Collision/ComplexPolygonCollider.hpp>
 #include <Component/Component.hpp>
 
 #include <variant>
@@ -53,8 +53,8 @@ namespace obe::collision
     {
     };
 
-    using ColliderTypes
-        = std::variant<CapsuleCollider, CircleCollider, PolygonCollider, RectangleCollider, ComplexPolygonCollider>;
+    using ColliderTypes = std::variant<CapsuleCollider, CircleCollider, PolygonCollider,
+        RectangleCollider, ComplexPolygonCollider>;
     template <typename ColliderClass>
     concept IsValidColliderClass = is_variant_member<ColliderClass, ColliderTypes>::value;
 

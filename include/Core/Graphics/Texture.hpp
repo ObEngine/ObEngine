@@ -5,8 +5,8 @@
 #include <tuple>
 #include <variant>
 
-#include <lunasvg.h>
 #include <SFML/Graphics/Texture.hpp>
+#include <lunasvg.h>
 
 #include <Graphics/Color.hpp>
 #include <Transform/AABB.hpp>

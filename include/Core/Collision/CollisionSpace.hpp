@@ -30,10 +30,13 @@ namespace obe::collision
         std::unordered_set<const Collider*> m_colliders;
         std::unordered_map<std::string, std::unordered_set<std::string>> m_tags_blacklists;
         Quadtree m_quadtree;
+
     protected:
         static bool matches_any_tag(const std::unordered_set<std::string>& input_tags,
             const std::unordered_set<std::string>& whitelist_or_blacklist);
-        bool can_collide_with(const Collider& collider1, const Collider& collider2, bool check_both_directions = true) const;
+        bool can_collide_with(const Collider& collider1, const Collider& collider2,
+            bool check_both_directions = true) const;
+
     public:
         CollisionSpace();
 
@@ -67,8 +70,7 @@ namespace obe::collision
             const transform::UnitVector& offset = transform::UnitVector(0, 0)) const;
         [[nodiscard]] transform::UnitVector get_offset_before_collision(const Collider& collider,
             const std::vector<ReachableCollider>& reachable_colliders,
-            const transform::UnitVector& offset
-            = transform::UnitVector(0, 0)) const;
+            const transform::UnitVector& offset = transform::UnitVector(0, 0)) const;
         std::vector<ReachableCollider> get_reachable_colliders(const Collider& collider,
             const transform::UnitVector& offset = transform::UnitVector(0, 0)) const;
 

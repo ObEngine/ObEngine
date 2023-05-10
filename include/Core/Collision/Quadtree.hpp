@@ -28,13 +28,16 @@ namespace obe::collision
         bool is_leaf(const Node* node) const;
         transform::AABB compute_box(const transform::AABB& box, int i) const;
         int get_quadrant(const transform::AABB& nodeBox, const transform::AABB& valueBox) const;
-        void add_internal(Node* node, std::size_t depth, const transform::AABB& box, const Collider* value);
+        void add_internal(
+            Node* node, std::size_t depth, const transform::AABB& box, const Collider* value);
         void split(Node* node, const transform::AABB& box);
         bool remove_internal(Node* node, const transform::AABB& box, const Collider* value);
         void remove_value(Node* node, const Collider* value);
         bool try_merge(Node* node);
-        void query_internal(Node* node, const transform::AABB& box, const transform::AABB& query_box, std::vector<const Collider*>& values) const;
-        void find_all_intersections_internal(Node* node, std::vector<std::pair<const Collider*, const Collider*>>& intersections) const;
+        void query_internal(Node* node, const transform::AABB& box,
+            const transform::AABB& query_box, std::vector<const Collider*>& values) const;
+        void find_all_intersections_internal(Node* node,
+            std::vector<std::pair<const Collider*, const Collider*>>& intersections) const;
         void find_intersections_in_descendants(Node* node, const Collider* value,
             std::vector<std::pair<const Collider*, const Collider*>>& intersections) const;
 
@@ -46,6 +49,5 @@ namespace obe::collision
         std::vector<const Collider*> query(const transform::AABB& box) const;
         std::vector<std::pair<const Collider*, const Collider*>> find_all_intersections() const;
     };
-
 
 }

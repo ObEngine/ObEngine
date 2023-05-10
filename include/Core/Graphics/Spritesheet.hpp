@@ -15,6 +15,7 @@ namespace obe::graphics
         std::vector<transform::AABB> m_frames;
 
         graphics::Texture load_texture(const std::string& texture_path) const;
+
     public:
         Spritesheet(engine::ResourceManager* resources = nullptr);
 

@@ -17,5 +17,6 @@ namespace obe::debug::render
         const graphics::Color color = graphics::Color(255, 0, 0, 150);
     };
 
-    void draw_collider(const graphics::RenderTarget target, const collision::ColliderComponent& collider, const ColliderRenderOptions& render_options);
+    void draw_collider(const graphics::RenderTarget target,
+        const collision::ColliderComponent& collider, const ColliderRenderOptions& render_options);
 }

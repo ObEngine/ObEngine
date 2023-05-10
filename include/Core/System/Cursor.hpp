@@ -196,7 +196,11 @@ namespace obe::system
          */
         void set_constraint(
             const PositionConstraint& constraint,
-            ConstraintCondition condition = []() { return true; });
+            ConstraintCondition condition =
+                []()
+            {
+                return true;
+            });
         bool is_pressed(sf::Mouse::Button button) const;
         /**
          * \brief Change the cursor
