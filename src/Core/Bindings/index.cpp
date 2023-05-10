@@ -523,6 +523,7 @@ namespace obe::bindings
         obe::utils::file::bindings::load_function_normalize_path(state);
         obe::utils::file::bindings::load_function_canonical_path(state);
         obe::utils::file::bindings::load_function_join(state);
+        obe::utils::math::bindings::load_function_randbool(state);
         obe::utils::math::bindings::load_function_randint(state);
         obe::utils::math::bindings::load_function_randfloat(state);
         obe::utils::math::bindings::load_function_get_min(state);
