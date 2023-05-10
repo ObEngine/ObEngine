@@ -90,7 +90,10 @@ namespace obe::collision
         return m_reachable_collider_acceptor;
     }
 
-    void Trajectory::set_reachable_collider_acceptor(const ReachableColliderAcceptor& acceptor)
+    void Trajectory::set_reachable_collider_acceptor(
+        const ReachableColliderAcceptor& 
+        acceptor
+        )
     {
         m_reachable_collider_acceptor = acceptor;
     }
