@@ -4,7 +4,7 @@ on:
     types: [created, edited]
 
 jobs:
-  check:
+  obidog:
     runs-on: ubuntu-latest
     steps:
       - uses: khan/pull-request-comment-trigger@v1.1.0
@@ -30,7 +30,7 @@ jobs:
 
       - name: Check status
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
         run: git status
 
       - name: Configure commit owner
@@ -52,5 +52,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: 'Obidog running...'
+              body: 'Bindings successfully regenerated using Obidog 🐶'
             })
