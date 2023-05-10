@@ -21,5 +21,7 @@ jobs:
             echo "ObEngine bindings are up to date"
           else
             echo "ObEngine bindings are outdated, please regenerate by commenting '!obidog'"
+            echo "Outdated files :"
+            git status -s
             exit 1
           fi
