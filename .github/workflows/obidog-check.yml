@@ -1,0 +1,25 @@
+name: Obidog Check
+on: [pull_request]
+
+jobs:
+  obidog-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Run Obidog
+        run: docker run -e OBENGINE_GIT_DIRECTORY=/obengine -v ${PWD}:/obengine --user $(id -u):$(id -u) ghcr.io/obengine/obidog:1.0.0 bindings
+
+      - name: Check status
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
+        run: |
+          if [[ -z $(git status -s) ]]
+          then
+            echo "ObEngine bindings are up to date"
+          else
+            echo "ObEngine bindings are outdated, please regenerate by commenting '!obidog'"
+            exit 1
+          fi
