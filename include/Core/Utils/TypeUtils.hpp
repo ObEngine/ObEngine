@@ -1,19 +1,8 @@
 #pragma once
 
-#ifdef __clang__
-#include <experimental/source_location>
-#else
 #include <source_location>
-#endif
 #include <string>
 #include <string_view>
-
-#ifdef __clang__
-namespace std
-{
-    using source_location = experimental::source_location;
-}
-#endif
 
 namespace obe::utils::types
 {
