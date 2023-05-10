@@ -16,14 +16,15 @@ jobs:
           GITHUB_TOKEN: '${{ secrets.GHCR_TOKEN }}'
 
       - uses: actions/checkout@v2
-        if: steps.check.outputs.triggered == 'true'
         with:
           fetch-depth: 0
+        if: steps.check.outputs.triggered == 'true'
 
       - name: Checkout PR
         env:
           GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
         run: gh pr checkout ${{ github.event.issue.number }}
+        if: steps.check.outputs.triggered == 'true'
 
       - run: docker run -e OBENGINE_GIT_DIRECTORY=/obengine -v ${PWD}:/obengine --user $(id -u):$(id -u) ghcr.io/obengine/obidog:1.0.0 bindings
         if: steps.check.outputs.triggered == 'true'
@@ -32,21 +33,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
         run: git status
+        if: steps.check.outputs.triggered == 'true'
 
       - name: Configure commit owner
         run: |
           git config --global user.email "133067964+AngryAubergine@users.noreply.github.com"
           git config --global user.name "AngryAubergine"
+        if: steps.check.outputs.triggered == 'true'
 
       - name: Push changes
         env:
           GITHUB_TOKEN: ${{ secrets.GHCR_TOKEN }}
         run: 'git add . && git commit -m "chore: regenerated bindings (automated)" && git push'
+        if: steps.check.outputs.triggered == 'true'
 
-      - uses: actions/github-script@v5
+      - name: Send completion comment
+        uses: actions/github-script@v5
         if: steps.check.outputs.triggered == 'true'
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{secrets.GHCR_TOKEN}}
           script: |
             github.rest.issues.createComment({
               issue_number: context.issue.number,
