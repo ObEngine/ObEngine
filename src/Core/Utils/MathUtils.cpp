@@ -8,6 +8,11 @@ namespace obe::utils::math
     pcg_extras::seed_seq_from<std::random_device> seed_source;
     pcg64 rng(seed_source);
 
+    bool randbool()
+    {
+        return randfloat() >= 0.5;
+    }
+
     double randfloat()
     {
         // do not put const, might fail depending on libc++

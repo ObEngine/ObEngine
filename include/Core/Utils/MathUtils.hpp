@@ -12,6 +12,12 @@ namespace obe::utils::math
     constexpr static double pi = 3.14159265359;
 
     /**
+     * \brief Get a random bool
+     * \return A random bool between false and true
+     */
+    bool randbool();
+
+    /**
      * \brief Get a random integer between the given bound
      * \param min Min bound
      * \param max Max bound
