@@ -147,8 +147,8 @@ namespace obe::collision
             auto i = get_quadrant(box, value->get_bounding_box());
             if (i != -1)
             {
-                if (remove_internal(node->children[static_cast<std::size_t>(i)].get(), compute_box(box, i),
-                        value))
+                if (remove_internal(node->children[static_cast<std::size_t>(i)].get(),
+                        compute_box(box, i), value))
                     return try_merge(node);
             }
             // Otherwise, we remove the value from the current node
@@ -162,7 +162,10 @@ namespace obe::collision
     {
         // Find the value in node->values
         auto it = std::find_if(std::begin(node->values), std::end(node->values),
-            [this, &value](const auto& rhs) { return value == rhs; });
+            [this, &value](const auto& rhs)
+            {
+                return value == rhs;
+            });
         assert(it != std::end(node->values)
             && "Trying to remove a value that is not present in the node");
         // Swap with the last element and pop back

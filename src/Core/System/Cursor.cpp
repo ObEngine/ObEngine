@@ -7,8 +7,10 @@ namespace obe::system
 {
     namespace constraints
     {
-        std::function<std::pair<int, int>(Cursor*)> Default
-            = [](Cursor* cursor) { return std::pair<int, int>(cursor->get_x(), cursor->get_y()); };
+        std::function<std::pair<int, int>(Cursor*)> Default = [](Cursor* cursor)
+        {
+            return std::pair<int, int>(cursor->get_x(), cursor->get_y());
+        };
     }
 
     std::string MouseButtonToString(const sf::Mouse::Button button)
@@ -28,7 +30,10 @@ namespace obe::system
         , e_cursor(event_namespace.create_group("Cursor"))
         , m_constraint(constraints::Default)
     {
-        m_constraint_condition = []() { return true; };
+        m_constraint_condition = []()
+        {
+            return true;
+        };
 
         m_button_state[sf::Mouse::Button::Left]
             = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);

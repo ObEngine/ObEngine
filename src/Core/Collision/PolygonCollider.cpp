@@ -55,10 +55,16 @@ namespace obe::collision
         const auto verts_span = std::span { m_shape.verts };
         auto [min_x, max_x]
             = std::minmax_element(verts_span.begin(), verts_span.begin() + m_shape.count,
-                [](auto& point1, auto& point2) { return point1.x < point2.x; });
+                [](auto& point1, auto& point2)
+                {
+                    return point1.x < point2.x;
+                });
         auto [min_y, max_y]
             = std::minmax_element(verts_span.begin(), verts_span.begin() + m_shape.count,
-                [](auto& point1, auto& point2) { return point1.y < point2.y; });
+                [](auto& point1, auto& point2)
+                {
+                    return point1.y < point2.y;
+                });
         const double width = max_x->x - min_x->x;
         const double height = max_y->y - min_y->y;
         return transform::AABB(

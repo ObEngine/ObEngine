@@ -10,7 +10,11 @@ namespace obe::input
     void InputManager::create_input_map()
     {
         // Gamepad
-        std::thread gamepad_loader_thr([this]() { this->initialize_gamepads(); });
+        std::thread gamepad_loader_thr(
+            [this]()
+            {
+                this->initialize_gamepads();
+            });
 
         // Letters
         m_inputs["A"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::A, "A");
@@ -88,24 +92,27 @@ namespace obe::input
         m_inputs["MouseButtonLeft"] = std::make_unique<InputSourceMouseButton>(sf::Mouse::Left);
         m_inputs["MouseButtonRight"] = std::make_unique<InputSourceMouseButton>(sf::Mouse::Right);
         m_inputs["MouseButtonMiddle"] = std::make_unique<InputSourceMouseButton>(sf::Mouse::Middle);
-        m_inputs["MouseButtonXButton1"] = std::make_unique<InputSourceMouseButton>(sf::Mouse::XButton1);
-        m_inputs["MouseButtonXButton2"] = std::make_unique<InputSourceMouseButton>(sf::Mouse::XButton2);
+        m_inputs["MouseButtonXButton1"]
+            = std::make_unique<InputSourceMouseButton>(sf::Mouse::XButton1);
+        m_inputs["MouseButtonXButton2"]
+            = std::make_unique<InputSourceMouseButton>(sf::Mouse::XButton2);
 
         // Scroll Wheel
-        m_inputs["MouseWheelScrollLeft"] = std::make_unique<InputSourceMouseWheelScroll>(
-            input::MouseWheelScrollDirection::Left);
-        m_inputs["MouseWheelScrollRight"]
-            = std::make_unique<InputSourceMouseWheelScroll>(
+        m_inputs["MouseWheelScrollLeft"]
+            = std::make_unique<InputSourceMouseWheelScroll>(input::MouseWheelScrollDirection::Left);
+        m_inputs["MouseWheelScrollRight"] = std::make_unique<InputSourceMouseWheelScroll>(
             input::MouseWheelScrollDirection::Right);
-        m_inputs["MouseWheelScrollUp"] = std::make_unique<InputSourceMouseWheelScroll>(
-            input::MouseWheelScrollDirection::Up);
-        m_inputs["MouseWheelScrollDown"] = std::make_unique<InputSourceMouseWheelScroll>(
-            input::MouseWheelScrollDirection::Down);
+        m_inputs["MouseWheelScrollUp"]
+            = std::make_unique<InputSourceMouseWheelScroll>(input::MouseWheelScrollDirection::Up);
+        m_inputs["MouseWheelScrollDown"]
+            = std::make_unique<InputSourceMouseWheelScroll>(input::MouseWheelScrollDirection::Down);
 
         // Others
         m_inputs["Add"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Add, "+");
-        m_inputs["Backslash"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::BackSlash, "\\");
-        m_inputs["Backspace"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::BackSpace, "");
+        m_inputs["Backslash"]
+            = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::BackSlash, "\\");
+        m_inputs["Backspace"]
+            = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::BackSpace, "");
         m_inputs["Comma"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Comma, ",");
         m_inputs["Dash"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Dash, "-");
         m_inputs["Delete"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Delete, "");
@@ -116,26 +123,31 @@ namespace obe::input
         m_inputs["Home"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Home, "");
         m_inputs["Insert"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Insert, "");
         m_inputs["LAlt"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::LAlt, "");
-        m_inputs["LBracket"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::LBracket, "[");
+        m_inputs["LBracket"]
+            = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::LBracket, "[");
         m_inputs["LControl"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::LControl, "");
         m_inputs["LShift"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::LShift, "");
         m_inputs["Menu"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Menu, "");
-        m_inputs["Multiply"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Multiply, "*");
+        m_inputs["Multiply"]
+            = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Multiply, "*");
         m_inputs["PageDown"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::PageDown, "");
         m_inputs["PageUp"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::PageUp, "");
         m_inputs["Pause"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Pause, "");
         m_inputs["Period"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Period, ".");
         m_inputs["Quote"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Quote, "");
         m_inputs["RAlt"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::RAlt, "");
-        m_inputs["RBracket"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::RBracket, "]");
+        m_inputs["RBracket"]
+            = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::RBracket, "]");
         m_inputs["RControl"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::RControl, "");
         m_inputs["Return"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Return, "");
         m_inputs["RShift"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::RShift, "");
         m_inputs["RSystem"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::RSystem, "");
-        m_inputs["Semicolon"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::SemiColon, ";");
+        m_inputs["Semicolon"]
+            = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::SemiColon, ";");
         m_inputs["Slash"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Slash, "/");
         m_inputs["Space"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Space, " ");
-        m_inputs["Subtract"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Subtract, "-");
+        m_inputs["Subtract"]
+            = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Subtract, "-");
         m_inputs["Tab"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Tab, "    ");
         m_inputs["Tilde"] = std::make_unique<InputSourceKeyboardKey>(sf::Keyboard::Tilde, "~");
         gamepad_loader_thr.join();
@@ -154,7 +166,9 @@ namespace obe::input
             button_count = sf::Joystick::getButtonCount(gamepad_index);
         }
 
-        auto set_or_reset_button = [this] (const std::string& name, const InputSourceGamepadButton& button) {
+        auto set_or_reset_button
+            = [this](const std::string& name, const InputSourceGamepadButton& button)
+        {
             if (!m_inputs.contains(name))
             {
                 m_inputs[name] = std::make_unique<InputSourceGamepadButton>(button);
@@ -164,8 +178,7 @@ namespace obe::input
                 *m_inputs.at(name) = button;
             }
         };
-        auto set_or_reset_axis
-            = [this](const std::string& name, const InputSourceGamepadAxis& axis)
+        auto set_or_reset_axis = [this](const std::string& name, const InputSourceGamepadAxis& axis)
         {
             if (!m_inputs.contains(name))
             {
@@ -187,8 +200,8 @@ namespace obe::input
 
         auto add_horizontal_axis
             = [&gamepad_index, use_every_axis, set_or_reset_axis, this](
-                                       sf::Joystick::Axis axis, const std::string& axis_name,
-                                       bool invert_axis = false) {
+                  sf::Joystick::Axis axis, const std::string& axis_name, bool invert_axis = false)
+        {
             if (use_every_axis || sf::Joystick::hasAxis(gamepad_index, axis))
             {
                 const std::string gamepad_axis_name
@@ -199,16 +212,16 @@ namespace obe::input
                     = (!invert_axis) ? gamepad_axis_name + "_LEFT" : gamepad_axis_name + "_RIGHT";
                 const std::string right_axis_name
                     = (!invert_axis) ? gamepad_axis_name + "_RIGHT" : gamepad_axis_name + "_LEFT";
-                set_or_reset_axis(
-                    left_axis_name, InputSourceGamepadAxis(gamepad_index, axis, left_x, left_axis_name));
-                set_or_reset_axis(
-                    right_axis_name, InputSourceGamepadAxis(gamepad_index, axis, right_x, right_axis_name));
+                set_or_reset_axis(left_axis_name,
+                    InputSourceGamepadAxis(gamepad_index, axis, left_x, left_axis_name));
+                set_or_reset_axis(right_axis_name,
+                    InputSourceGamepadAxis(gamepad_index, axis, right_x, right_axis_name));
             }
         };
         auto add_vertical_axis
             = [&gamepad_index, use_every_axis, set_or_reset_axis, this](
-                                     sf::Joystick::Axis axis, const std::string& axis_name,
-                                     bool invert_axis = false) {
+                  sf::Joystick::Axis axis, const std::string& axis_name, bool invert_axis = false)
+        {
             if (use_every_axis || sf::Joystick::hasAxis(gamepad_index, axis))
             {
                 const std::string gamepad_axis_name

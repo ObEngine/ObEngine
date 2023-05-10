@@ -45,11 +45,13 @@ namespace obe::graphics
         {
             m_sprite.setTextureRect(sf::IntRect(0, 0, px_size.x, px_size.y));
             const auto [min_vx, max_vx] = std::minmax_element(vertices.begin(), vertices.end(),
-                [](const sf::Vertex& vert1, const sf::Vertex& vert2) -> float {
+                [](const sf::Vertex& vert1, const sf::Vertex& vert2) -> float
+                {
                     return vert1.position.x < vert2.position.x;
                 });
             const auto [min_vy, max_vy] = std::minmax_element(vertices.begin(), vertices.end(),
-                [](const sf::Vertex& vert1, const sf::Vertex& vert2) -> float {
+                [](const sf::Vertex& vert1, const sf::Vertex& vert2) -> float
+                {
                     return vert1.position.y < vert2.position.y;
                 });
             const float min_x = min_vx->position.x;
@@ -156,11 +158,12 @@ namespace obe::graphics
         m_horizontal_flip = horizontally;
         m_vertical_flip = vertically;
         sf::IntRect texture_rect = m_sprite.getTextureRect();
-        sf::IntRect normalized_texture_rect(
-            texture_rect.width < 0 ? texture_rect.left - std::abs(texture_rect.width) : texture_rect.left,
-            texture_rect.height < 0 ? texture_rect.top - std::abs(texture_rect.height) : texture_rect.top,
-            std::abs(texture_rect.width), std::abs(texture_rect.height)
-        );
+        sf::IntRect normalized_texture_rect(texture_rect.width < 0
+                ? texture_rect.left - std::abs(texture_rect.width)
+                : texture_rect.left,
+            texture_rect.height < 0 ? texture_rect.top - std::abs(texture_rect.height)
+                                    : texture_rect.top,
+            std::abs(texture_rect.width), std::abs(texture_rect.height));
         this->set_texture_rect(normalized_texture_rect.left, normalized_texture_rect.top,
             normalized_texture_rect.width, normalized_texture_rect.height);
     }
@@ -203,13 +206,8 @@ namespace obe::graphics
         unsigned int x, unsigned int y, unsigned int width, unsigned int height)
     {
         m_sprite.setTextureRect(
-            sf::IntRect(
-                m_horizontal_flip ? x + width : x,
-                m_vertical_flip ? y + height : y,
-                m_horizontal_flip ? -width : width,
-                m_vertical_flip ? -height : height
-            )
-        );
+            sf::IntRect(m_horizontal_flip ? x + width : x, m_vertical_flip ? y + height : y,
+                m_horizontal_flip ? -width : width, m_vertical_flip ? -height : height));
     }
 
     void Sprite::set_texture(const TexturePart& texture)

@@ -40,7 +40,10 @@ namespace obe::system
             std::vector<std::string> all_prefixes;
             all_prefixes.reserve(mounts.size());
             std::transform(mounts.begin(), mounts.end(), std::back_inserter(all_prefixes),
-                [](const auto& mount) { return mount->prefix; });
+                [](const auto& mount)
+                {
+                    return mount->prefix;
+                });
             throw exceptions::UnknownPathPrefix(prefix, all_prefixes);
         }
         return valid_mounts;
@@ -54,7 +57,8 @@ namespace obe::system
         {
             std::vector<std::string> mounts_as_strings;
             std::transform(m_mounts.begin(), m_mounts.end(), std::back_inserter(mounts_as_strings),
-                [](const auto& mount) {
+                [](const auto& mount)
+                {
                     return fmt::format("\"{}:// = {}\"", mount->prefix, mount->base_path);
                 });
             std::string path_type;

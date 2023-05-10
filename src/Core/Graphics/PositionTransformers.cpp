@@ -4,13 +4,18 @@ namespace obe::graphics
 {
     std::map<std::string, CoordinateTransformer> Transformers;
 
-    CoordinateTransformer Parallax = [](double pos, double cam, int layer) -> double {
+    CoordinateTransformer Parallax = [](double pos, double cam, int layer) -> double
+    {
         return (pos * layer - cam) / static_cast<double>(layer);
     };
-    CoordinateTransformer Camera
-        = [](double pos, double cam, int layer) -> double { return pos - cam; };
-    CoordinateTransformer Position
-        = [](double pos, double cam, int layer) -> double { return pos; };
+    CoordinateTransformer Camera = [](double pos, double cam, int layer) -> double
+    {
+        return pos - cam;
+    };
+    CoordinateTransformer Position = [](double pos, double cam, int layer) -> double
+    {
+        return pos;
+    };
 
     PositionTransformer::PositionTransformer()
     {

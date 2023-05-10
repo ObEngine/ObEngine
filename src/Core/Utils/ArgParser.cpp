@@ -8,10 +8,10 @@ namespace obe::utils::argparser
     {
         bool b = false;
         std::transform(str.begin(), str.end(), str.begin(),
-        [](unsigned char c)
-        {
-            return std::tolower(c);
-        });
+            [](unsigned char c)
+            {
+                return std::tolower(c);
+            });
         if (str.rfind("true", 0) == 0 || str.rfind("false", 0) == 0)
         {
             b = true;
@@ -20,11 +20,11 @@ namespace obe::utils::argparser
         return b;
     }
 
-    template<typename Numeric>
+    template <typename Numeric>
     bool is_numeric(const std::string& str)
     {
         Numeric n;
-        return((std::istringstream(str) >> n >> std::ws).eof());
+        return ((std::istringstream(str) >> n >> std::ws).eof());
     }
 
     bool to_bool(std::string str)
@@ -40,22 +40,23 @@ namespace obe::utils::argparser
     {
         vili::node ret = argvalue;
 
-        if(std::isalpha(argvalue[0]))
+        if (std::isalpha(argvalue[0]))
         {
             // bool:
-            if(is_bool(argvalue))
+            if (is_bool(argvalue))
             {
                 bool bv = to_bool(argvalue);
                 ret = bv;
             }
         }
-        else {
+        else
+        {
             // int or float
-            if(is_numeric<int>(argvalue))
+            if (is_numeric<int>(argvalue))
             {
                 ret = atoi(argvalue.c_str());
             }
-            else if(is_numeric<float>(argvalue))
+            else if (is_numeric<float>(argvalue))
             {
                 ret = atof(argvalue.c_str());
             }
@@ -74,7 +75,10 @@ namespace obe::utils::argparser
             const bool valid_arg_format = argument_name.starts_with("--")
                 && argument_name.size() > 2 && std::isalpha(argument_name[2])
                 && std::all_of(argument_name_strip.begin(), argument_name_strip.end(),
-                    [](const char c) { return std::isalpha(c) || c == '-' || c == '_'; });
+                    [](const char c)
+                    {
+                        return std::isalpha(c) || c == '-' || c == '_';
+                    });
             if (!valid_arg_format)
             {
                 throw exceptions::InvalidArgumentFormat(argument_name);

@@ -15,7 +15,9 @@ namespace obe::system
         const float f_render_height = static_cast<float>(m_render_height);
         if (m_width != m_render_width || m_height != m_render_height)
         {
-            if (m_stretch == StretchMode::None) { }
+            if (m_stretch == StretchMode::None)
+            {
+            }
             else if (m_stretch == StretchMode::Center)
             {
                 m_view.setSize(f_render_width, f_render_height);

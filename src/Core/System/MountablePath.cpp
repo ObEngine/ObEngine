@@ -226,7 +226,10 @@ namespace obe::system
         {
             throw exceptions::InvalidDeferredMountablePath(path.prefix);
         }
-        auto path_cmp = [&path](const auto& mounted_path) { return path == *mounted_path; };
+        auto path_cmp = [&path](const auto& mounted_path)
+        {
+            return path == *mounted_path;
+        };
         const bool path_already_exists
             = std::find_if(MountedPaths.begin(), MountedPaths.end(), path_cmp)
             != MountedPaths.end();
@@ -239,9 +242,11 @@ namespace obe::system
         }
         if (same_prefix_policy == SamePrefixPolicy::Replace)
         {
-            std::erase_if(MountedPaths, [path](const auto& mountable_path) {
-                return mountable_path->prefix == path.prefix;
-            });
+            std::erase_if(MountedPaths,
+                [path](const auto& mountable_path)
+                {
+                    return mountable_path->prefix == path.prefix;
+                });
             MountedPaths.push_back(std::make_shared<MountablePath>(path));
         }
         if (same_prefix_policy != SamePrefixPolicy::Skip)
@@ -250,8 +255,9 @@ namespace obe::system
         }
         else
         {
-            const auto existing_prefix_it = std::find_if(
-                MountedPaths.begin(), MountedPaths.end(), [path](const auto& mountable_path) {
+            const auto existing_prefix_it = std::find_if(MountedPaths.begin(), MountedPaths.end(),
+                [path](const auto& mountable_path)
+                {
                     return mountable_path->prefix == path.prefix;
                 });
             if (existing_prefix_it == MountedPaths.end())
@@ -264,8 +270,11 @@ namespace obe::system
 
     void MountablePath::unmount(const MountablePath path)
     {
-        std::erase_if(
-            MountedPaths, [path](const auto& mountable_path) { return *mountable_path == path; });
+        std::erase_if(MountedPaths,
+            [path](const auto& mountable_path)
+            {
+                return *mountable_path == path;
+            });
     }
 
     void MountablePath::unmount_all()
@@ -291,8 +300,9 @@ namespace obe::system
 
     void MountablePath::sort()
     {
-        std::sort(
-            MountedPaths.begin(), MountedPaths.end(), [](const auto& first, const auto& second) {
+        std::sort(MountedPaths.begin(), MountedPaths.end(),
+            [](const auto& first, const auto& second)
+            {
                 return first->priority > second->priority;
             });
     }
@@ -315,7 +325,10 @@ namespace obe::system
         std::vector<std::string> all_prefixes;
         all_prefixes.reserve(mounts.size());
         std::transform(mounts.begin(), mounts.end(), std::back_inserter(all_prefixes),
-            [](const auto& mount) { return mount->prefix; });
+            [](const auto& mount)
+            {
+                return mount->prefix;
+            });
         return all_prefixes;
     }
 

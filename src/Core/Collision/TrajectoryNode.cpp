@@ -57,7 +57,8 @@ namespace obe::collision
 
     void TrajectoryNode::update(const double dt) const
     {
-        auto get_offset = [&dt](const Trajectory& trajectory) {
+        auto get_offset = [&dt](const Trajectory& trajectory)
+        {
             const double speed = trajectory.get_speed() + trajectory.get_acceleration() * dt;
             const double rad_angle = (utils::math::pi / 180.0) * -trajectory.get_angle();
             const double x_offset = std::cos(rad_angle) * (speed * dt);

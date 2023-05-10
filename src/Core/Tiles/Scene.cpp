@@ -149,7 +149,10 @@ namespace obe::tiles
     {
         std::vector<TileLayer*> layers;
         std::transform(m_layers.begin(), m_layers.end(), std::back_inserter(layers),
-            [](const auto& layer) { return layer.get(); });
+            [](const auto& layer)
+            {
+                return layer.get();
+            });
         return layers;
     }
 

@@ -18,8 +18,7 @@ namespace obe::graphics
         {
             if (!found_start)
             {
-                if (image.getPixel(texture_rect.left + x, texture_rect.top)
-                    == sf::Color::Black)
+                if (image.getPixel(texture_rect.left + x, texture_rect.top) == sf::Color::Black)
                 {
                     found_start = true;
                     top_left.x = x - 1.f;
@@ -29,8 +28,7 @@ namespace obe::graphics
             }
             if (found_start)
             {
-                if (image.getPixel(texture_rect.left + x, texture_rect.top)
-                    == sf::Color::Black)
+                if (image.getPixel(texture_rect.left + x, texture_rect.top) == sf::Color::Black)
                     bottom_right.x = x - 1.f;
                 else
                     break;
@@ -42,8 +40,7 @@ namespace obe::graphics
         {
             if (!found_start)
             {
-                if (image.getPixel(texture_rect.left, texture_rect.top + y)
-                    == sf::Color::Black)
+                if (image.getPixel(texture_rect.left, texture_rect.top + y) == sf::Color::Black)
                 {
                     found_start = true;
                     top_left.y = y - 1.f;
@@ -53,8 +50,7 @@ namespace obe::graphics
             }
             if (found_start)
             {
-                if (image.getPixel(texture_rect.left, texture_rect.top + y)
-                    == sf::Color::Black)
+                if (image.getPixel(texture_rect.left, texture_rect.top + y) == sf::Color::Black)
                     bottom_right.y = y - 1.f;
                 else
                     break;
@@ -120,7 +116,6 @@ namespace obe::graphics
         }
     }
 
-
     NinePatch::NinePatch()
         : m_vertices(36, sf::Vertex({ 0.f, 0.f }))
         , m_texture { nullptr }
@@ -140,9 +135,9 @@ namespace obe::graphics
         m_texture = &texture;
         if (reset_rect)
             m_texture_rect = { { 0, 0 }, sf::Vector2i(m_texture->getSize()) };
-        m_trimmed_size = sf::Vector2f { static_cast<float>(m_texture_rect.width),
-            static_cast<float>(m_texture_rect.height) }
-            - trim_amount * 2.f;
+        m_trimmed_size = sf::Vector2f {
+            static_cast<float>(m_texture_rect.width), static_cast<float>(m_texture_rect.height)
+        } - trim_amount * 2.f;
         if (reset_size)
             m_size = m_trimmed_size;
         extract_scale_positions_and_content_area_from_texture(m_texture, m_texture_rect,
@@ -158,7 +153,8 @@ namespace obe::graphics
     void NinePatch::set_size(sf::Vector2f size)
     {
         m_size = size;
-        const sf::Vector2f minimum_size { m_scale_top_left + (m_trimmed_size - m_scale_bottom_right) };
+        const sf::Vector2f minimum_size { m_scale_top_left
+            + (m_trimmed_size - m_scale_bottom_right) };
         if (m_size.x < minimum_size.x)
             m_size.x = minimum_size.x;
         if (m_size.y < minimum_size.y)
@@ -174,9 +170,9 @@ namespace obe::graphics
     void NinePatch::set_texture_rect(const sf::IntRect texture_rectangle, const bool reset_size)
     {
         m_texture_rect = texture_rectangle;
-        m_trimmed_size = sf::Vector2f { static_cast<float>(m_texture_rect.width),
-            static_cast<float>(m_texture_rect.height) }
-            - trim_amount * 2.f;
+        m_trimmed_size = sf::Vector2f {
+            static_cast<float>(m_texture_rect.width), static_cast<float>(m_texture_rect.height)
+        } - trim_amount * 2.f;
         if (reset_size)
             m_size = m_trimmed_size;
         if (m_texture != nullptr)
@@ -202,7 +198,6 @@ namespace obe::graphics
     {
         return m_size;
     }
-
 
     sf::FloatRect NinePatch::getLocalBounds() const
     {
@@ -249,7 +244,8 @@ namespace obe::graphics
 
     void NinePatch::update_vertices_positions()
     {
-        const sf::Vector2f new_bottom_right_scaled { m_size - (m_trimmed_size - m_scale_bottom_right) };
+        const sf::Vector2f new_bottom_right_scaled { m_size
+            - (m_trimmed_size - m_scale_bottom_right) };
 
         // top row
         m_vertices[0].position = { 0.f, 0.f };
@@ -359,27 +355,27 @@ namespace obe::graphics
             vertex.texCoords += texture_rectangle_offset + trim_amount;
     }
 
-    sf::Vector2f NinePatch::get_resulting_position_of_texture_coord(sf::Vector2f texture_coord) const
+    sf::Vector2f NinePatch::get_resulting_position_of_texture_coord(
+        sf::Vector2f texture_coord) const
     {
         sf::Vector2f result;
 
-        const sf::Vector2f new_bottom_right_scaled { m_size - (m_trimmed_size - m_scale_bottom_right) };
+        const sf::Vector2f new_bottom_right_scaled { m_size
+            - (m_trimmed_size - m_scale_bottom_right) };
         const sf::Vector2f scale_size { m_scale_bottom_right - m_scale_top_left };
         const sf::Vector2f new_scale_size { new_bottom_right_scaled - m_scale_top_left };
 
         if (texture_coord.x <= m_scale_top_left.x)
             result.x = texture_coord.x;
         else if (texture_coord.x >= m_scale_bottom_right.x)
-            result.x = new_bottom_right_scaled.x
-                + (texture_coord.x - m_scale_bottom_right.x);
+            result.x = new_bottom_right_scaled.x + (texture_coord.x - m_scale_bottom_right.x);
         else
             result.x = ((texture_coord.x - m_scale_top_left.x) / scale_size.x) * new_scale_size.x
                 + m_scale_top_left.x;
         if (texture_coord.y <= m_scale_top_left.y)
             result.y = texture_coord.y;
         else if (texture_coord.y >= m_scale_bottom_right.y)
-            result.y = new_bottom_right_scaled.y
-                + (texture_coord.y - m_scale_bottom_right.y);
+            result.y = new_bottom_right_scaled.y + (texture_coord.y - m_scale_bottom_right.y);
         else
             result.y = ((texture_coord.y - m_scale_top_left.y) / (scale_size.y)) * new_scale_size.y
                 + m_scale_top_left.y;

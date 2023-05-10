@@ -185,7 +185,10 @@ namespace obe::graphics::canvas
     void Canvas::sort_elements()
     {
         std::sort(m_elements.begin(), m_elements.end(),
-            [](const auto& elem1, const auto& elem2) { return elem1->layer > elem2->layer; });
+            [](const auto& elem1, const auto& elem2)
+            {
+                return elem1->layer > elem2->layer;
+            });
     }
 
     Canvas::Canvas(unsigned int width, unsigned int height)
@@ -230,7 +233,11 @@ namespace obe::graphics::canvas
 
     void Canvas::remove(const std::string& id)
     {
-        std::erase_if(m_elements, [&id](auto& elem) { return elem->get_id() == id; });
+        std::erase_if(m_elements,
+            [&id](auto& elem)
+            {
+                return elem->get_id() == id;
+            });
     }
 
     Texture Canvas::get_texture() const

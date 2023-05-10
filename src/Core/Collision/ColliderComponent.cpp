@@ -137,7 +137,8 @@ namespace obe::collision
         }
 
         std::visit(
-            [&collider_dump](auto&& collider) {
+            [&collider_dump](auto&& collider)
+            {
                 const auto& position = collider.get_position();
                 const std::string& tag = collider.get_tag();
                 collider_dump.insert("x", position.x);
@@ -183,7 +184,8 @@ namespace obe::collision
             throw exceptions::InvalidColliderComponentType(m_id, collider_type_str);
         }
         std::visit(
-            [this, x, y, tag](auto&& collider) {
+            [this, x, y, tag](auto&& collider)
+            {
                 collider.set_position(transform::UnitVector(x, y, m_unit));
                 collider.set_tag(tag);
             },
@@ -219,14 +221,21 @@ namespace obe::collision
     Collider* ColliderComponent::get_inner_collider()
     {
         Collider* collider = std::visit(
-            [](auto& collider_variant) -> Collider* { return &collider_variant; }, m_collider);
+            [](auto& collider_variant) -> Collider*
+            {
+                return &collider_variant;
+            },
+            m_collider);
         return collider;
     }
 
     const Collider* ColliderComponent::get_inner_collider() const
     {
         const Collider* collider = std::visit(
-            [](auto& collider_variant) -> const Collider* { return &collider_variant; },
+            [](auto& collider_variant) -> const Collider*
+            {
+                return &collider_variant;
+            },
             m_collider);
         return collider;
     }

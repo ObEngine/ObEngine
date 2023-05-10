@@ -9,7 +9,8 @@
 
 namespace obe
 {
-    void init_engine(unsigned int surface_width, unsigned int surface_height, const vili::node& arguments)
+    void init_engine(
+        unsigned int surface_width, unsigned int surface_height, const vili::node& arguments)
     {
         debug::Log->info("Using ObEngineCore (Version : {} ({}:{}))", config::OBENGINE_VERSION,
             config::OBENGINE_GIT_BRANCH, config::OBENGINE_GIT_HASH);

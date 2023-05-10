@@ -322,7 +322,11 @@ namespace obe::graphics
 
     bool Color::from_name(std::string name, bool strict)
     {
-        std::for_each(name.begin(), name.end(), [](char& c) { c = std::tolower(c); });
+        std::for_each(name.begin(), name.end(),
+            [](char& c)
+            {
+                c = std::tolower(c);
+            });
         if (const auto& color = ColorNames.find(name); color != ColorNames.end())
         {
             this->r = color->second.r;
@@ -512,7 +516,10 @@ namespace obe::graphics
     std::optional<std::string> Color::to_name() const
     {
         auto it = std::find_if(ColorNames.begin(), ColorNames.end(),
-            [this](const std::pair<std::string, Color>& color) { return color.second == *this; });
+            [this](const std::pair<std::string, Color>& color)
+            {
+                return color.second == *this;
+            });
         if (it != ColorNames.end())
         {
             return it->first;

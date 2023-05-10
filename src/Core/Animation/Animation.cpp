@@ -72,7 +72,10 @@ namespace obe::animation
         std::vector<std::string> group_keys;
         group_keys.reserve(m_groups.size());
         std::transform(m_groups.cbegin(), m_groups.cend(), group_keys.begin(),
-            [](const auto& pair) { return pair.first; });
+            [](const auto& pair)
+            {
+                return pair.first;
+            });
         return group_keys;
     }
 

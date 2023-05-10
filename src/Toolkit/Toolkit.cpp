@@ -93,20 +93,22 @@ void run(std::string command)
     lua.set_exception_handler(&lua_exception_handler2);
 
     lua["_term_display"]
-        = [](std::vector<std::string> texts, std::vector<obe::graphics::Color> colors) {
-              for (size_t i = 0; i < texts.size(); i++)
-              {
-                  const std::string_view text = texts[i];
-                  const graphics::Color color = colors[i];
-                  std::cout << convert_color(color) << text;
-              }
-              std::cout << std::endl;
-          };
+        = [](std::vector<std::string> texts, std::vector<obe::graphics::Color> colors)
+    {
+        for (size_t i = 0; i < texts.size(); i++)
+        {
+            const std::string_view text = texts[i];
+            const graphics::Color color = colors[i];
+            std::cout << convert_color(color) << text;
+        }
+        std::cout << std::endl;
+    };
 
     lua.safe_script_file("obe://Lib/Toolkit/Toolkit.lua"_fs);
     lua["TOOLKIT_CONTEXTS"] = std::map<std::string, bool> { { "terminal", true } };
 
-    auto is_interactive = [&lua]() {
+    auto is_interactive = [&lua]()
+    {
         std::map<std::string, bool> contexts
             = lua["TOOLKIT_CONTEXTS"].get<std::map<std::string, bool>>();
         if (contexts.find("interactive") == contexts.end() || !contexts.at("interactive"))
@@ -128,8 +130,11 @@ int main(int argc, char** argv)
     using namespace obe;
 
     std::string command;
-    std::for_each(
-        argv + 1, argv + argc, [&](const char* c_str) { command += std::string(c_str) + " "; });
+    std::for_each(argv + 1, argv + argc,
+        [&](const char* c_str)
+        {
+            command += std::string(c_str) + " ";
+        });
 
 #if defined _DEBUG
     run(command);

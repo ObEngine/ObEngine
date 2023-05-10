@@ -118,7 +118,8 @@ namespace obe::audio
         }
         else
         {
-            m_handle = m_sound.m_manager.play(*m_sound.m_source, m_sound.m_source->mVolume, 0, true);
+            m_handle
+                = m_sound.m_manager.play(*m_sound.m_source, m_sound.m_source->mVolume, 0, true);
             this->apply_changes();
             m_sound.m_manager.setPause(m_handle, false);
         }

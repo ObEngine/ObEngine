@@ -8,7 +8,6 @@ namespace obe::input
         : InputSource(fmt::format("MouseButton{}", magic_enum::enum_name(button).data()), "")
         , m_button(button)
     {
-        
     }
 
     sf::Mouse::Button InputSourceMouseButton::get_mouse_button() const
@@ -28,7 +27,8 @@ namespace obe::input
 
     InputSourceMouseWheelScroll::InputSourceMouseWheelScroll(
         MouseWheelScrollDirection direction, float threshold)
-        : InputSource(fmt::format("MouseWheelScroll{}", magic_enum::enum_name(direction).data()), "")
+        : InputSource(
+            fmt::format("MouseWheelScroll{}", magic_enum::enum_name(direction).data()), "")
         , m_direction(direction)
         , m_threshold(threshold)
     {

@@ -21,7 +21,8 @@ namespace obe::scene
         }
 
         std::sort(m_render_cache.begin(), m_render_cache.end(),
-            [](const auto& renderable1, const auto& renderable2) {
+            [](const auto& renderable1, const auto& renderable2)
+            {
                 if (renderable1->get_layer() == renderable2->get_layer())
                 {
                     return renderable1->get_sublayer() > renderable2->get_sublayer();
@@ -205,19 +206,25 @@ namespace obe::scene
         }
         debug::Log->debug("<Scene> Cleaning GameObject Array");
         std::erase_if(m_game_object_array,
-            [](const std::unique_ptr<script::GameObject>& ptr) { return (!ptr->is_permanent()); });
+            [](const std::unique_ptr<script::GameObject>& ptr)
+            {
+                return (!ptr->is_permanent());
+            });
         // Required for the next does_game_object_exists
         this->_rebuild_ids();
         debug::Log->debug("<Scene> Cleaning Sprite Array");
-        std::erase_if(m_sprite_array, [this](const std::unique_ptr<graphics::Sprite>& ptr) {
-            if (!ptr->get_parent_id().empty()
-                && this->does_game_object_exists(ptr->get_parent_id()))
-                return false;
-            return true;
-        });
+        std::erase_if(m_sprite_array,
+            [this](const std::unique_ptr<graphics::Sprite>& ptr)
+            {
+                if (!ptr->get_parent_id().empty()
+                    && this->does_game_object_exists(ptr->get_parent_id()))
+                    return false;
+                return true;
+            });
         debug::Log->debug("<Scene> Cleaning Collider Array");
-        std::erase_if(
-            m_collider_array, [this](const std::unique_ptr<collision::ColliderComponent>& ptr) {
+        std::erase_if(m_collider_array,
+            [this](const std::unique_ptr<collision::ColliderComponent>& ptr)
+            {
                 for (const auto& game_object : m_game_object_array)
                 {
                     if (game_object->is_parent_of_component(ptr->get_unique_id()))
@@ -489,8 +496,9 @@ namespace obe::scene
                 if (!game_object.deletable)
                     game_object.update();
             }
-            std::erase_if(
-                m_game_object_array, [this](const std::unique_ptr<script::GameObject>& ptr) {
+            std::erase_if(m_game_object_array,
+                [this](const std::unique_ptr<script::GameObject>& ptr)
+                {
                     if (ptr->deletable)
                     {
                         m_game_object_ids.erase(ptr->get_id());
@@ -613,9 +621,11 @@ namespace obe::scene
 
     void Scene::remove_game_object(const std::string& id)
     {
-        std::erase_if(m_game_object_array, [&id](const std::unique_ptr<script::GameObject>& ptr) {
-            return (ptr->get_id() == id);
-        });
+        std::erase_if(m_game_object_array,
+            [&id](const std::unique_ptr<script::GameObject>& ptr)
+            {
+                return (ptr->get_id() == id);
+            });
         m_game_object_ids.erase(id);
     }
 
@@ -755,9 +765,11 @@ namespace obe::scene
     void Scene::remove_sprite(const std::string& id)
     {
         debug::Log->debug("<Scene> Removing Sprite {0}", id);
-        std::erase_if(m_sprite_array, [&id](const std::unique_ptr<graphics::Sprite>& sprite) {
-            return (sprite->get_id() == id);
-        });
+        std::erase_if(m_sprite_array,
+            [&id](const std::unique_ptr<graphics::Sprite>& sprite)
+            {
+                return (sprite->get_id() == id);
+            });
         m_sprite_ids.erase(id);
     }
 
@@ -834,7 +846,8 @@ namespace obe::scene
     void Scene::remove_collider(const std::string& id)
     {
         const auto collider_it = std::find_if(m_collider_array.begin(), m_collider_array.end(),
-            [&id](const std::unique_ptr<collision::ColliderComponent>& collider) {
+            [&id](const std::unique_ptr<collision::ColliderComponent>& collider)
+            {
                 return (collider->get_id() == id);
             });
         m_collision_space.remove_collider(collider_it->get()->get_inner_collider());

@@ -7,9 +7,9 @@
 #include <Transform/UnitVector.hpp>
 #include <Utils/ArgParser.hpp>
 
+#include <vili-msgpack/msgpack.hpp>
 #include <vili/parser.hpp>
 #include <vili/writer.hpp>
-#include <vili-msgpack/msgpack.hpp>
 
 #include <Transform/AABB.hpp>
 
@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     vili::node arguments;
     try
     {
-       arguments = utils::argparser::parse_args(argvector);
+        arguments = utils::argparser::parse_args(argvector);
     }
     catch (const std::exception& e)
     {

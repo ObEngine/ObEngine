@@ -5,7 +5,8 @@
 
 namespace obe::types
 {
-    constexpr std::string_view BASE58_ALPHABET = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
+    constexpr std::string_view BASE58_ALPHABET
+        = "123456789abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNPQRSTUVWXYZ";
     // uint64_t::max / 42 still makes 11 chars identifiers
     constexpr uint64_t RANDOM_U64_LOWER_BOUND = std::numeric_limits<uint64_t>::max() / 42;
     constexpr uint64_t RANDOM_U64_UPPER_BOUND = std::numeric_limits<uint64_t>::max();

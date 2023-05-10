@@ -32,7 +32,6 @@ namespace obe::collision
         const bool is_valid
             = (!check_both_directions || can_collide_with(collider2, collider1, false));
 
-            
         // if true, check if we need to check for tags on collider2 -> collider1
         return is_valid;
     }
@@ -41,11 +40,8 @@ namespace obe::collision
 
     CollisionSpace::CollisionSpace()
         : m_quadtree(
-            transform::AABB(
-                transform::UnitVector(-COLLISION_SPACE_SIZE, -COLLISION_SPACE_SIZE),
-                transform::UnitVector(2 * COLLISION_SPACE_SIZE, 2 * COLLISION_SPACE_SIZE)
-            )
-        )
+            transform::AABB(transform::UnitVector(-COLLISION_SPACE_SIZE, -COLLISION_SPACE_SIZE),
+                transform::UnitVector(2 * COLLISION_SPACE_SIZE, 2 * COLLISION_SPACE_SIZE)))
     {
     }
 
@@ -102,10 +98,11 @@ namespace obe::collision
         return false;
     }
 
-    transform::UnitVector CollisionSpace::get_offset_before_collision(const Collider& collider,
-        const transform::UnitVector& offset) const
+    transform::UnitVector CollisionSpace::get_offset_before_collision(
+        const Collider& collider, const transform::UnitVector& offset) const
     {
-        const std::vector<ReachableCollider> reachable_colliders = this->get_reachable_colliders(collider, offset);
+        const std::vector<ReachableCollider> reachable_colliders
+            = this->get_reachable_colliders(collider, offset);
         return this->get_offset_before_collision(collider, reachable_colliders, offset);
     }
 
@@ -166,8 +163,8 @@ namespace obe::collision
         return reachable_colliders;
     }
 
-    void CollisionSpace::add_tag_to_blacklist(const std::string& source_tag,
-        const std::string& rejected_tag)
+    void CollisionSpace::add_tag_to_blacklist(
+        const std::string& source_tag, const std::string& rejected_tag)
     {
         if (!m_tags_blacklists.contains(source_tag))
         {
@@ -176,8 +173,8 @@ namespace obe::collision
         m_tags_blacklists.at(source_tag).insert(rejected_tag);
     }
 
-    void CollisionSpace::remove_tag_to_blacklist(const std::string& source_tag,
-        const std::string& rejected_tag)
+    void CollisionSpace::remove_tag_to_blacklist(
+        const std::string& source_tag, const std::string& rejected_tag)
     {
         if (m_tags_blacklists.contains(source_tag))
         {

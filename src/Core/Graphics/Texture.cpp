@@ -110,24 +110,44 @@ namespace obe::graphics
 
     sf::Texture& Texture::get_mutable_texture()
     {
-        constexpr static obe::utils::Visitor visitor { [](sf::Texture& texture) -> sf::Texture& {
-                                                          return texture;
-                                                      },
-            [](std::shared_ptr<sf::Texture>& texture) -> sf::Texture& { return *texture; },
-            [](const sf::Texture*) -> sf::Texture& { throw exceptions::ReadOnlyTexture("create"); },
-            [](SvgTexture& texture) -> sf::Texture& { return texture.get_texture(); } };
+        constexpr static obe::utils::Visitor visitor { [](sf::Texture& texture) -> sf::Texture&
+            {
+                return texture;
+            },
+            [](std::shared_ptr<sf::Texture>& texture) -> sf::Texture&
+            {
+                return *texture;
+            },
+            [](const sf::Texture*) -> sf::Texture&
+            {
+                throw exceptions::ReadOnlyTexture("create");
+            },
+            [](SvgTexture& texture) -> sf::Texture&
+            {
+                return texture.get_texture();
+            } };
         return std::visit(visitor, m_texture);
     }
 
     const sf::Texture& Texture::get_texture() const
     {
         constexpr static obe::utils::Visitor visitor {
-            [](const sf::Texture& texture) -> const sf::Texture& { return texture; },
-            [](const std::shared_ptr<sf::Texture>& texture) -> const sf::Texture& {
+            [](const sf::Texture& texture) -> const sf::Texture&
+            {
+                return texture;
+            },
+            [](const std::shared_ptr<sf::Texture>& texture) -> const sf::Texture&
+            {
                 return *texture;
             },
-            [](const sf::Texture* texture) -> const sf::Texture& { return *texture; },
-            [](const SvgTexture& texture) -> const sf::Texture& { return texture.get_texture(); }
+            [](const sf::Texture* texture) -> const sf::Texture&
+            {
+                return *texture;
+            },
+            [](const SvgTexture& texture) -> const sf::Texture&
+            {
+                return texture.get_texture();
+            }
         };
         return std::visit(visitor, m_texture);
     }

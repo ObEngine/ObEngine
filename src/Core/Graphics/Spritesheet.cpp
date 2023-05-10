@@ -14,6 +14,7 @@ namespace obe::graphics
 
     const vili::node& Spritesheet::Schema()
     {
+        // clang-format off
         static const vili::node schema = vili::object {
             { "type", vili::object_typename },
             { "properties", vili::object {
@@ -42,6 +43,7 @@ namespace obe::graphics
                 }}
             }}
         };
+        // clang-format on
         return schema;
     }
 
@@ -62,7 +64,8 @@ namespace obe::graphics
         {
             transform::UnitVector frame_texture_rect_position(frame.at("x"), frame.at("y"));
             transform::UnitVector frame_texture_rect_size(frame.at("width"), frame.at("height"));
-            m_frames.push_back(transform::AABB(frame_texture_rect_position, frame_texture_rect_size));
+            m_frames.push_back(
+                transform::AABB(frame_texture_rect_position, frame_texture_rect_size));
         }
     }
 

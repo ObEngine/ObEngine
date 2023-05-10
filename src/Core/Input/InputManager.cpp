@@ -82,9 +82,11 @@ namespace obe::input
                         break;
                     }
                 }
-                std::erase_if(m_monitors, [this](const std::weak_ptr<InputButtonMonitor>& element) {
-                    return update_or_clean_monitor(e_keys, element);
-                });
+                std::erase_if(m_monitors,
+                    [this](const std::weak_ptr<InputButtonMonitor>& element)
+                    {
+                        return update_or_clean_monitor(e_keys, element);
+                    });
                 for (const auto& monitor_ptr : m_monitors)
                 {
                     if (const auto& monitor = monitor_ptr.lock())
@@ -138,7 +140,8 @@ namespace obe::input
                     this->get_action(action_name).clear_conditions();
                 }
                 auto input_condition = [this](const InputManager* input_manager,
-                                           const std::string& action, vili::node& condition) {
+                                           const std::string& action, vili::node& condition)
+                {
                     InputCondition action_condition;
                     InputCombination combination;
                     try
@@ -210,7 +213,8 @@ namespace obe::input
         //<REVISION> Multiple context, keep which one, remove keys of wrong
         // context
         m_current_actions.erase(std::remove_if(m_current_actions.begin(), m_current_actions.end(),
-                                    [&context](auto& action) -> bool {
+                                    [&context](auto& action) -> bool
+                                    {
                                         const auto& contexts = action->get_contexts();
                                         auto is_action_in_context
                                             = std::find(contexts.begin(), contexts.end(), context)
@@ -422,15 +426,19 @@ namespace obe::input
             {
                 e_keys->add<events::Keys::StateChanged>(input_source->get_name());
                 e_keys->on_add_listener(input_source->get_name(),
-                    [input_source, this](event::ListenerChangeState, const std::string&) {
+                    [input_source, this](event::ListenerChangeState, const std::string&)
+                    {
                         m_key_monitors.push_back(this->monitor(*input_source));
                     });
                 e_keys->on_remove_listener(input_source->get_name(),
-                    [input_source, this](event::ListenerChangeState, const std::string&) {
-                        const auto position = std::find_if(m_key_monitors.begin(),
-                            m_key_monitors.end(), [input_source](const auto& monitor) {
-                                return &monitor->get_input_source() == input_source;
-                            });
+                    [input_source, this](event::ListenerChangeState, const std::string&)
+                    {
+                        const auto position
+                            = std::find_if(m_key_monitors.begin(), m_key_monitors.end(),
+                                [input_source](const auto& monitor)
+                                {
+                                    return &monitor->get_input_source() == input_source;
+                                });
                         if (position != m_key_monitors.end())
                             m_key_monitors.erase(position);
                     });

@@ -27,7 +27,8 @@ namespace obe::script::vili_lua_bridge
             vili::integer expect = 1;
             for (auto& [k, _] : convert.as<sol::table>())
             {
-                if (!k.is<vili::integer>() || (k.is<vili::integer>() && (k.as<vili::integer>() != expect++)))
+                if (!k.is<vili::integer>()
+                    || (k.is<vili::integer>() && (k.as<vili::integer>() != expect++)))
                 {
                     return lua_table_to_vili_object(convert);
                 }

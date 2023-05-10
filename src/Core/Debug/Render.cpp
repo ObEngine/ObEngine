@@ -29,7 +29,10 @@ namespace obe::debug::render
 
             std::transform(polygon_points.begin(), polygon_points.end(),
                 std::back_inserter(pixel_points),
-                [](const auto& point) { return point.to(transform::Units::ScenePixels); });
+                [](const auto& point)
+                {
+                    return point.to(transform::Units::ScenePixels);
+                });
 
             for (const transform::UnitVector& point : pixel_points)
             {
@@ -110,8 +113,8 @@ namespace obe::debug::render
         target.draw(shape);
     }
 
-    void draw_collider(const graphics::RenderTarget target, const collision::ColliderComponent& collider,
-        const ColliderRenderOptions& render_options)
+    void draw_collider(const graphics::RenderTarget target,
+        const collision::ColliderComponent& collider, const ColliderRenderOptions& render_options)
     {
         switch (collider.get_collider_type())
         {
@@ -119,7 +122,8 @@ namespace obe::debug::render
             break;
         case collision::ColliderType::Circle:
             draw_circle_collider(target,
-                *static_cast<const collision::CircleCollider*>(collider.get_inner_collider()), render_options);
+                *static_cast<const collision::CircleCollider*>(collider.get_inner_collider()),
+                render_options);
             break;
         case collision::ColliderType::Rectangle:
             draw_rectangle_collider(target,
@@ -136,7 +140,7 @@ namespace obe::debug::render
                 *static_cast<const collision::PolygonCollider*>(collider.get_inner_collider()),
                 render_options);
             break;
-        default: ;
+        default:;
         }
     }
 }

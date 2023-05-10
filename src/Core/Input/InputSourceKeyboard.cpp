@@ -9,8 +9,8 @@ namespace obe::input
     {
     }
 
-    InputSourceKeyboardKey::InputSourceKeyboardKey(sf::Keyboard::Key key, const std::string& name,
-        const std::string& printable_char)
+    InputSourceKeyboardKey::InputSourceKeyboardKey(
+        sf::Keyboard::Key key, const std::string& name, const std::string& printable_char)
         : InputSource(name, printable_char)
         , m_key(key)
     {

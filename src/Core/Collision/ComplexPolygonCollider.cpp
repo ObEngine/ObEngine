@@ -166,7 +166,7 @@ namespace obe::collision
         transform::UnitVector min_dep;
         const auto calc_min_distance_dep = [this](const std::vector<transform::UnitVector>& sol1,
                                                const std::vector<transform::UnitVector>& sol2,
-                  const transform::UnitVector& t_offset)
+                                               const transform::UnitVector& t_offset)
             -> std::tuple<double, transform::UnitVector, bool>
         {
             double min_distance = -1;
@@ -256,10 +256,15 @@ namespace obe::collision
     {
         // TODO: handle rotation
         auto [min_x, max_x] = std::minmax_element(m_points.begin(), m_points.end(),
-                [](auto& point1, auto& point2) { return point1.x < point2.x; });
-        auto [min_y, max_y]
-            = std::minmax_element(m_points.begin(), m_points.end(),
-                [](auto& point1, auto& point2) { return point1.y < point2.y; });
+            [](auto& point1, auto& point2)
+            {
+                return point1.x < point2.x;
+            });
+        auto [min_y, max_y] = std::minmax_element(m_points.begin(), m_points.end(),
+            [](auto& point1, auto& point2)
+            {
+                return point1.y < point2.y;
+            });
         const double width = max_x->x - min_x->x;
         const double height = max_y->y - min_y->y;
         return transform::AABB(

@@ -52,7 +52,10 @@ namespace obe::tiles
     void AnimatedTile::detach_quad(sf::Vertex* quad)
     {
         std::erase_if(m_quads,
-            [&quad](const std::pair<sf::Vertex*, TileInfo>& item) { return item.first == quad; });
+            [&quad](const std::pair<sf::Vertex*, TileInfo>& item)
+            {
+                return item.first == quad;
+            });
     }
 
     void AnimatedTile::start()

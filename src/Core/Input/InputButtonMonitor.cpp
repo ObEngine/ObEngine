@@ -53,8 +53,8 @@ namespace obe::input
         if (old_state != m_button_state)
         {
             m_should_refresh = true;
-            events->trigger(
-                m_input_source.get_name(), events::Keys::StateChanged { m_button_state, old_state, m_input_source });
+            events->trigger(m_input_source.get_name(),
+                events::Keys::StateChanged { m_button_state, old_state, m_input_source });
         }
     }
 
