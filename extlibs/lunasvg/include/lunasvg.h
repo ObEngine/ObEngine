@@ -23,6 +23,7 @@
 #ifndef LUNASVG_H
 #define LUNASVG_H
 
+#include <cstdint>
 #include <memory>
 #include <string>
 
@@ -77,16 +78,16 @@ public:
      * @note Default bitmap format is RGBA (non-premultiplied).
      */
     Bitmap();
-    Bitmap(std::uint8_t* data, std::uint32_t width, std::uint32_t height, std::uint32_t stride);
-    Bitmap(std::uint32_t width, std::uint32_t height);
+    Bitmap(uint8_t* data, uint32_t width, uint32_t height, uint32_t stride);
+    Bitmap(uint32_t width, uint32_t height);
 
-    void reset(std::uint8_t* data, std::uint32_t width, std::uint32_t height, std::uint32_t stride);
-    void reset(std::uint32_t width, std::uint32_t height);
+    void reset(uint8_t* data, uint32_t width, uint32_t height, uint32_t stride);
+    void reset(uint32_t width, uint32_t height);
 
-    std::uint8_t* data() const;
-    std::uint32_t width() const;
-    std::uint32_t height() const;
-    std::uint32_t stride() const;
+    uint8_t* data() const;
+    uint32_t width() const;
+    uint32_t height() const;
+    uint32_t stride() const;
     bool valid() const;
 
 private:
@@ -216,7 +217,7 @@ public:
      * @param bitmap - target image on which the content will be drawn
      * @param backgroundColor - background color in 0xRRGGBBAA format
      */
-    void render(Bitmap bitmap, const Matrix& matrix = Matrix{}, std::uint32_t backgroundColor = 0x00000000) const;
+    void render(Bitmap bitmap, const Matrix& matrix = Matrix{}, uint32_t backgroundColor = 0x00000000) const;
 
     /**
      * @brief Renders the document to a bitmap
@@ -225,7 +226,7 @@ public:
      * @param backgroundColor - background color in 0xRRGGBBAA format
      * @return the raster representation of the document
      */
-    Bitmap renderToBitmap(std::uint32_t width = 0, std::uint32_t height = 0, std::uint32_t backgroundColor = 0x00000000) const;
+    Bitmap renderToBitmap(uint32_t width = 0, uint32_t height = 0, uint32_t backgroundColor = 0x00000000) const;
 
     ~Document();
 private:

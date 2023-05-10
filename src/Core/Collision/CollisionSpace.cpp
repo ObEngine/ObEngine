@@ -156,7 +156,7 @@ namespace obe::collision
                 const transform::UnitVector max_distance
                     = collider.get_offset_before_collision(*space_collider, offset);
                 if (max_distance != offset)
-                    reachable_colliders.emplace_back(space_collider, max_distance);
+                    reachable_colliders.emplace_back(ReachableCollider { space_collider, max_distance });
             }
         }
 
