@@ -83,7 +83,7 @@ namespace obe::scene
                 new_sprite->attach_resource_manager(*m_resources);
 
             graphics::Sprite* return_sprite = new_sprite.get();
-            m_sprite_array.push_back(move(new_sprite));
+            m_sprite_array.push_back(std::move(new_sprite));
             m_sprite_ids.insert(create_id);
             m_components[create_id] = return_sprite;
 
@@ -677,7 +677,7 @@ namespace obe::scene
             // new_game_object->get_collider().set_parent_id(use_id);
         }
 
-        m_game_object_array.push_back(move(new_game_object));
+        m_game_object_array.push_back(std::move(new_game_object));
         m_game_object_ids.insert(use_id);
 
         return *m_game_object_array.back();

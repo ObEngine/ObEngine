@@ -10,23 +10,23 @@ namespace lunasvg {
 
 struct Bitmap::Impl
 {
-    Impl(std::uint8_t* data, std::uint32_t width, std::uint32_t height, std::uint32_t stride);
-    Impl(std::uint32_t width, std::uint32_t height);
+    Impl(uint8_t* data, uint32_t width, uint32_t height, uint32_t stride);
+    Impl(uint32_t width, uint32_t height);
 
-    std::unique_ptr<std::uint8_t[]> ownData;
-    std::uint8_t* data;
-    std::uint32_t width;
-    std::uint32_t height;
-    std::uint32_t stride;
+    std::unique_ptr<uint8_t[]> ownData;
+    uint8_t* data;
+    uint32_t width;
+    uint32_t height;
+    uint32_t stride;
 };
 
-Bitmap::Impl::Impl(std::uint8_t* data, std::uint32_t width, std::uint32_t height, std::uint32_t stride)
+Bitmap::Impl::Impl(uint8_t* data, uint32_t width, uint32_t height, uint32_t stride)
     : data(data), width(width), height(height), stride(stride)
 {
 }
 
-Bitmap::Impl::Impl(std::uint32_t width, std::uint32_t height)
-    : ownData(new std::uint8_t[width*height*4]), data(nullptr), width(width), height(height), stride(width * 4)
+Bitmap::Impl::Impl(uint32_t width, uint32_t height)
+    : ownData(new uint8_t[width*height*4]), data(nullptr), width(width), height(height), stride(width * 4)
 {
 }
 
@@ -34,42 +34,42 @@ Bitmap::Bitmap()
 {
 }
 
-Bitmap::Bitmap(std::uint8_t* data, std::uint32_t width, std::uint32_t height, std::uint32_t stride)
+Bitmap::Bitmap(uint8_t* data, uint32_t width, uint32_t height, uint32_t stride)
     : m_impl(new Impl(data, width, height, stride))
 {
 }
 
-Bitmap::Bitmap(std::uint32_t width, std::uint32_t height)
+Bitmap::Bitmap(uint32_t width, uint32_t height)
     : m_impl(new Impl(width, height))
 {
 }
 
-void Bitmap::reset(std::uint8_t* data, std::uint32_t width, std::uint32_t height, std::uint32_t stride)
+void Bitmap::reset(uint8_t* data, uint32_t width, uint32_t height, uint32_t stride)
 {
     m_impl.reset(new Impl(data, width, height, stride));
 }
 
-void Bitmap::reset(std::uint32_t width, std::uint32_t height)
+void Bitmap::reset(uint32_t width, uint32_t height)
 {
     m_impl.reset(new Impl(width, height));
 }
 
-std::uint8_t* Bitmap::data() const
+uint8_t* Bitmap::data() const
 {
     return m_impl ? m_impl->data ? m_impl->data : m_impl->ownData.get() : nullptr;
 }
 
-std::uint32_t Bitmap::width() const
+uint32_t Bitmap::width() const
 {
     return m_impl ? m_impl->width : 0;
 }
 
-std::uint32_t Bitmap::height() const
+uint32_t Bitmap::height() const
 {
     return m_impl ? m_impl->height : 0;
 }
 
-std::uint32_t Bitmap::stride() const
+uint32_t Bitmap::stride() const
 {
     return m_impl ? m_impl->stride : 0;
 }
@@ -188,7 +188,7 @@ double Document::height() const
     return root->height;
 }
 
-void Document::render(Bitmap bitmap, const Matrix& matrix, std::uint32_t backgroundColor) const
+void Document::render(Bitmap bitmap, const Matrix& matrix, uint32_t backgroundColor) const
 {
     RenderState state(nullptr, RenderMode::Display);
     state.canvas = Canvas::create(bitmap.data(), bitmap.width(), bitmap.height(), bitmap.stride());
@@ -198,23 +198,23 @@ void Document::render(Bitmap bitmap, const Matrix& matrix, std::uint32_t backgro
     state.canvas->rgba();
 }
 
-Bitmap Document::renderToBitmap(std::uint32_t width, std::uint32_t height, std::uint32_t backgroundColor) const
+Bitmap Document::renderToBitmap(uint32_t width, uint32_t height, uint32_t backgroundColor) const
 {
     if(root->width == 0.0 || root->height == 0.0)
         return Bitmap{};
 
     if(width == 0 && height == 0)
     {
-        width = static_cast<std::uint32_t>(std::ceil(root->width));
-        height = static_cast<std::uint32_t>(std::ceil(root->height));
+        width = static_cast<uint32_t>(std::ceil(root->width));
+        height = static_cast<uint32_t>(std::ceil(root->height));
     }
     else if(width != 0 && height == 0)
     {
-        height = static_cast<std::uint32_t>(std::ceil(width * root->height / root->width));
+        height = static_cast<uint32_t>(std::ceil(width * root->height / root->width));
     }
     else if(height != 0 && width == 0)
     {
-        width = static_cast<std::uint32_t>(std::ceil(height * root->width / root->height));
+        width = static_cast<uint32_t>(std::ceil(height * root->width / root->height));
     }
 
     Bitmap bitmap{width, height};

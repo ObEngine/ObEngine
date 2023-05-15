@@ -88,7 +88,7 @@ namespace obe::engine
             {
                 debug::Log->debug(
                     "[ResourceManager] Loading <Font> {} from {}", path, search_result.path());
-                m_fonts[path] = move(new_font);
+                m_fonts[path] = std::move(new_font);
             }
             else
                 throw exceptions::FontNotFound(path, system::MountablePath::string_paths());
