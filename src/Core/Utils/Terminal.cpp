@@ -237,8 +237,7 @@ namespace obe::utils::terminal
                     }
                     else if (fmt_color_mapping.contains(style_part))
                     {
-                        text_style
-                            |= fmt::fg(fmt_color_mapping.at(style_part));
+                        text_style |= fmt::fg(fmt_color_mapping.at(style_part));
                     }
                     else if (contains_enum_value<fmt::emphasis>(style_part))
                     {
