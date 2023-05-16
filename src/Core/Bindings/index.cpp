@@ -52,6 +52,7 @@
 #include <Bindings/obe/utils/file/File.hpp>
 #include <Bindings/obe/utils/math/Math.hpp>
 #include <Bindings/obe/utils/string/String.hpp>
+#include <Bindings/obe/utils/terminal/Terminal.hpp>
 #include <Bindings/obe/utils/types/Types.hpp>
 #include <Bindings/obe/utils/vector/Vector.hpp>
 #include <Bindings/vili/Vili.hpp>
@@ -119,6 +120,7 @@ namespace obe::bindings
         state["obe"]["utils"]["file"].get_or_create<sol::table>();
         state["obe"]["utils"]["math"].get_or_create<sol::table>();
         state["obe"]["utils"]["string"].get_or_create<sol::table>();
+        state["obe"]["utils"]["terminal"].get_or_create<sol::table>();
         state["obe"]["utils"]["types"].get_or_create<sol::table>();
         state["obe"]["utils"]["vector"].get_or_create<sol::table>();
         state["vili"]["utils"]["string"].get_or_create<sol::table>();
@@ -553,6 +555,7 @@ namespace obe::bindings
         obe::utils::string::bindings::load_function_titleize(state);
         obe::utils::string::bindings::load_global_alphabet(state);
         obe::utils::string::bindings::load_global_numbers(state);
+        obe::utils::terminal::bindings::load_function_styled_print(state);
         obe::utils::types::bindings::load_function_get_type_name(state);
         obe::utils::vector::bindings::load_function_contains(state);
         obe::utils::vector::bindings::load_function_join(state);
