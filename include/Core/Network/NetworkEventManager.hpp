@@ -1,9 +1,11 @@
 #pragma once
 
+#include <cppnet/tcp_listener.hpp>
+#include <cppnet/tcp_socket.hpp>
+
 #include <Event/EventGroup.hpp>
 #include <Event/EventManager.hpp>
 #include <Event/EventNamespace.hpp>
-#include <SFML/Network.hpp>
 
 namespace obe::events
 {
@@ -47,20 +49,20 @@ namespace obe::network
     {
     private:
         std::string m_name;
-        std::unique_ptr<sf::TcpSocket> m_socket;
+        std::unique_ptr<cppnet::TcpSocket> m_socket;
 
     public:
-        NetworkClient(const std::string& name, std::unique_ptr<sf::TcpSocket>&& socket);
+        NetworkClient(const std::string& name, std::unique_ptr<cppnet::TcpSocket>&& socket);
         void rename(const std::string& name);
         [[nodiscard]] std::string name() const;
         [[nodiscard]] std::string host() const;
-        sf::TcpSocket& socket() const;
+        cppnet::TcpSocket& socket() const;
     };
 
     class NetworkEventManager
     {
     private:
-        sf::TcpListener m_tcp_listener;
+        cppnet::TcpListener m_tcp_listener;
         std::unordered_map<std::string, NetworkClient> m_clients;
 
         event::EventNamespace* m_namespace;

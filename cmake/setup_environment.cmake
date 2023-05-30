@@ -5,11 +5,6 @@ function (copy_required_dlls TARGET)
     get_target_property(dlls-sfml-graphics-rel sfml-graphics IMPORTED_LOCATION_RELEASE)
     get_target_property(dlls-sfml-graphics-msr sfml-graphics IMPORTED_LOCATION_MINSIZEREL)
     get_target_property(dlls-sfml-graphics-rwd sfml-graphics IMPORTED_LOCATION_RELWITHDEBINFO)
-    # SFML Network DLL
-    get_target_property(dlls-sfml-network-dbg sfml-network IMPORTED_LOCATION_DEBUG)
-    get_target_property(dlls-sfml-network-rel sfml-network IMPORTED_LOCATION_RELEASE)
-    get_target_property(dlls-sfml-network-msr sfml-network IMPORTED_LOCATION_MINSIZEREL)
-    get_target_property(dlls-sfml-network-rwd sfml-network IMPORTED_LOCATION_RELWITHDEBINFO)
     # SFML System DLL
     get_target_property(dlls-sfml-system-dbg sfml-system IMPORTED_LOCATION_DEBUG)
     get_target_property(dlls-sfml-system-rel sfml-system IMPORTED_LOCATION_RELEASE)
@@ -28,13 +23,6 @@ function (copy_required_dlls TARGET)
                 $<$<CONFIG:Release>:"${dlls-sfml-graphics-rel}">
                 $<$<CONFIG:MinSizeRel>:"${dlls-sfml-graphics-msr}">
                 $<$<CONFIG:RelWithDebInfo>:"${dlls-sfml-graphics-rwd}">
-                $<TARGET_FILE_DIR:${TARGET}>
-            )
-            COMMAND ("${CMAKE_COMMAND}" -E copy_if_different
-                $<$<CONFIG:Debug>:"${dlls-sfml-network-dbg}">
-                $<$<CONFIG:Release>:"${dlls-sfml-network-rel}">
-                $<$<CONFIG:MinSizeRel>:"${dlls-sfml-network-msr}">
-                $<$<CONFIG:RelWithDebInfo>:"${dlls-sfml-network-rwd}">
                 $<TARGET_FILE_DIR:${TARGET}>
             )
             COMMAND ("${CMAKE_COMMAND}" -E copy_if_different
