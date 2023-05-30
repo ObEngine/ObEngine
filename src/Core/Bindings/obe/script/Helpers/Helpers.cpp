@@ -32,4 +32,9 @@ namespace obe::script::Helpers::bindings
         sol::table Helpers_namespace = state["obe"]["script"]["Helpers"].get<sol::table>();
         Helpers_namespace.set_function("pairs_from", &obe::script::Helpers::pairs_from);
     }
+    void load_function_ordered_table(sol::state_view state)
+    {
+        sol::table Helpers_namespace = state["obe"]["script"]["Helpers"].get<sol::table>();
+        Helpers_namespace.set_function("ordered_table", &obe::script::Helpers::ordered_table);
+    }
 };
