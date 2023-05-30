@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include <fmt/color.h>
 #include <fmt/core.h>
 
@@ -268,6 +270,7 @@ namespace obe::utils::terminal
             }
         }
         fmt::print(text_style, str.substr(previous_tag_end, str.size() - previous_tag_end));
+        std::cout << std::flush;
     }
 
 #ifdef _WIN32
