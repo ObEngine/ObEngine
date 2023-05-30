@@ -12,6 +12,11 @@ namespace obe::script::vili_lua_bridge::bindings
             = state["obe"]["script"]["vili_lua_bridge"].get<sol::table>();
         vili_lua_bridge_namespace.set_function(
             "vili_to_lua", &obe::script::vili_lua_bridge::vili_to_lua);
+        vili_lua_bridge_namespace.set_function("vili_to_lua_keep_order",
+            [](sol::this_state state, const vili::node& convert)
+            {
+                return obe::script::vili_lua_bridge::vili_to_lua_keep_order(state, convert);
+            });
     }
     void load_function_lua_to_vili(sol::state_view state)
     {

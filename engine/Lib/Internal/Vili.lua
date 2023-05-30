@@ -18,8 +18,15 @@ function vili.from_lua(t)
     return obe.script.vili_lua_bridge.lua_to_vili(t);
 end
 
-function vili.to_lua(t)
-    return obe.script.vili_lua_bridge.vili_to_lua(t);
+function vili.to_lua(t, flags)
+    flags = flags or {
+        keep_order = true
+    };
+    if flags.keep_order then
+        return obe.script.vili_lua_bridge.vili_to_lua_keep_order(t);
+    else
+        return obe.script.vili_lua_bridge.vili_to_lua(t);
+    end
 end
 
 local function realpath(path)

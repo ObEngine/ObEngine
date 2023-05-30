@@ -7,8 +7,10 @@
 
 #include <Debug/Logger.hpp>
 #include <Graphics/Color.hpp>
+#include <Script/LuaHelpers.hpp>
 #include <Script/Scripting.hpp>
 #include <System/Path.hpp>
+#include <Utils/Terminal.hpp>
 
 namespace obe::bindings
 {
@@ -91,6 +93,11 @@ void run(std::string command)
     lua.safe_script_file("obe://Lib/Internal/Helpers.lua"_fs);
     lua.safe_script_file("obe://Lib/Internal/Logger.lua"_fs);
     lua.set_exception_handler(&lua_exception_handler2);
+    lua["Helpers"] = sol::new_table();
+    for (const auto& [helper_name, helper] : script::Helpers::make_all_helpers(lua))
+    {
+        lua["Helpers"][helper_name] = helper;
+    }
 
     lua["_term_display"]
         = [](std::vector<std::string> texts, std::vector<obe::graphics::Color> colors)
@@ -128,6 +135,8 @@ void run(std::string command)
 int main(int argc, char** argv)
 {
     using namespace obe;
+
+    utils::terminal::set_terminal_mode_to_utf8();
 
     std::string command;
     std::for_each(argv + 1, argv + argc,

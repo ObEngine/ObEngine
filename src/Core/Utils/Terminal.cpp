@@ -269,4 +269,63 @@ namespace obe::utils::terminal
         }
         fmt::print(text_style, str.substr(previous_tag_end, str.size() - previous_tag_end));
     }
+
+#ifdef _WIN32
+#define WIN32_LEAN_AND_MEAN
+#define NOMINMAX
+#include <windows.h>
+#elif __unix__
+#include <stdio.h>
+#include <termios.h>
+#include <unistd.h>
+#endif
+
+    CursorPosition get_cursor_position()
+    {
+        CursorPosition position;
+#ifdef _WIN32
+        CONSOLE_SCREEN_BUFFER_INFO csbi;
+        GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbi);
+        position.x = csbi.dwCursorPosition.X;
+        position.y = csbi.dwCursorPosition.Y;
+#elif __unix__
+        printf("\033[6n");
+        scanf("\033[%d;%dR", &position.y, &position.x);
+        // Restore standard input settings
+        struct termios original_ts, raw_ts;
+        tcgetattr(STDIN_FILENO, &original_ts);
+        raw_ts = original_ts;
+        raw_ts.c_lflag &= ~(ICANON | ECHO);
+        tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw_ts);
+        while ((x = getchar()) != EOF && x != 'R')
+            ;
+        tcsetattr(STDIN_FILENO, TCSAFLUSH, &original_ts);
+#else
+        #error "OS not supported!"
+#endif
+        return position;
+    }
+
+    void set_cursor_position(CursorPosition position)
+    {
+#ifdef _WIN32
+        COORD coord = { position.x, position.y };
+        SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
+#elif __unix__
+        printf("\033[%d;%dH", y, x);
+#else
+#error "OS not supported!"
+#endif
+    }
+
+    void set_terminal_mode_to_utf8()
+    {
+#ifdef _WIN32
+        // Set the console code page to UTF-8
+        SetConsoleOutputCP(CP_UTF8);
+
+        // Enable buffering to prevent VS from chopping up UTF-8 byte sequences
+        setvbuf(stdout, nullptr, _IOFBF, 1000);
+#endif
+    }
 }
