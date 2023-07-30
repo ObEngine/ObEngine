@@ -9,9 +9,7 @@
 namespace obe::script::vili_lua_bridge
 {
     sol::lua_value vili_to_lua(const vili::node& convert);
-    /**
-     * \proxy{obe::script::vili_lua_bridge::vili_to_lua_keep_order_proxy}
-     */
+
     sol::lua_value vili_to_lua_keep_order(sol::state_view state, const vili::node& convert);
 
     vili::node lua_to_vili(const sol::object& convert);
@@ -70,6 +68,8 @@ namespace obe::script::vili_lua_bridge
      * \return The converted Lua Table in ListAttribute form
      */
     vili::node lua_table_to_vili_array(const sol::table& convert);
-
+    /**
+     * \proxy{obe::script::vili_lua_bridge::vili_to_lua_keep_order}
+     */
     sol::lua_value vili_to_lua_keep_order_proxy(sol::this_state state, const vili::node& convert);
 } // namespace obe::script::vili_lua_bridge

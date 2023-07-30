@@ -697,6 +697,7 @@ namespace vili::msgpack
                         StackFrameState { static_cast<uint32_t>(object_length), true });
                     idx += size_header_length;
                 }
+                break;
             default:
                 found_code = false;
                 break;
@@ -761,7 +762,7 @@ namespace vili::msgpack
                 }
                 else
                 {
-                    throw std::runtime_error("unknown instruction code");
+                    throw std::runtime_error(fmt::format("unknown instruction code '{}'", code));
                 }
             }
             if (first_element)

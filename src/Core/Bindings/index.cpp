@@ -499,6 +499,7 @@ namespace obe::bindings
         obe::script::Helpers::bindings::load_function_pairs_from(state);
         obe::script::Helpers::bindings::load_function_ordered_table(state);
         obe::script::vili_lua_bridge::bindings::load_function_vili_to_lua(state);
+        obe::script::vili_lua_bridge::bindings::load_function_vili_to_lua_keep_order(state);
         obe::script::vili_lua_bridge::bindings::load_function_lua_to_vili(state);
         obe::script::vili_lua_bridge::bindings::load_function_vili_object_to_lua_table(state);
         obe::script::vili_lua_bridge::bindings::load_function_vili_object_to_lua_table_keep_order(
@@ -508,7 +509,6 @@ namespace obe::bindings
         obe::script::vili_lua_bridge::bindings::load_function_lua_table_to_vili_object(state);
         obe::script::vili_lua_bridge::bindings::load_function_lua_value_to_vili_primitive(state);
         obe::script::vili_lua_bridge::bindings::load_function_lua_table_to_vili_array(state);
-        obe::script::vili_lua_bridge::bindings::load_function_vili_to_lua_keep_order_proxy(state);
         obe::system::package::bindings::load_function_get_package_location(state);
         obe::system::package::bindings::load_function_package_exists(state);
         obe::system::package::bindings::load_function_list_packages(state);

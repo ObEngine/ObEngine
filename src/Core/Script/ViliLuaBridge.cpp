@@ -101,7 +101,7 @@ namespace obe::script::vili_lua_bridge
             }
             ordered_keys.push_back(key);
         }
-        std::cout << "Applying ordered_table" << std::endl;
+
         script::safe_lua_call(state["Helpers"]["ordered_table"], result, ordered_keys);
 
         return result;

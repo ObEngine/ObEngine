@@ -43,12 +43,10 @@ namespace vili::bindings
                     vili::node(const vili::object&), vili::node(const vili::node&)>());
         bind_node["type"] = &vili::node::type;
         bind_node["dump"] = sol::overload(
-            [](vili::node* self) -> std::string
-            {
+            [](vili::node* self) -> std::string {
                 return self->dump();
             },
-            [](vili::node* self, bool root) -> std::string
-            {
+            [](vili::node* self, bool root) -> std::string {
                 return self->dump(root);
             });
         bind_node["is_primitive"] = &vili::node::is_primitive;
