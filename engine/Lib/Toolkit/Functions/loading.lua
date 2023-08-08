@@ -203,16 +203,23 @@ end
 local function _loading_()
     local total_size = 14.8;
 
-    for _, color in pairs(color_list) do
-        -- obe.utils.terminal.styled_print(("{{blink|bold|italic|%s}}%s{{italic}}text\n"):format(color, color));
-    end
-
     local pbar = progress_bar_widget {
         color = "deep_pink",
         total = 50
     };
     pad(1);
     local utext = text_widget();
+    print("Start download")
+    -- Can't do threading in single Lua state
+    local download_thread = obe.utils.threading.Thread(function()
+        print("Inside thread");
+        obe.utils.network.download_file("https://assets.obengine.io/packages/libpff-python.zip", "C:/Data/Sandbox/output.zip");
+        return true;
+    end);
+    download_thread:on_complete(function(success)
+        print("Download complete", success);
+    end);
+    print("End download launch");
     for i = 0, 50 do
         pbar(i);
         local current_size = i * (total_size / 50);

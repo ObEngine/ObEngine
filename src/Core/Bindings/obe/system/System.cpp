@@ -261,8 +261,8 @@ namespace obe::system::bindings
                 return self->find_all(path_type);
             });
         bind_path["to_string"] = &obe::system::Path::to_string;
-        state.script_file("obe://Lib/Internal/Require.lua"_fs);
-        state.script_file("obe://Lib/Internal/Filesystem.lua"_fs);
+        state.script_file("intlibs://Require.lua"_fs);
+        state.script_file("intlibs://Filesystem.lua"_fs);
     }
     void load_class_plugin(sol::state_view state)
     {

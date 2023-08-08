@@ -103,7 +103,7 @@ namespace obe::script::bindings
             sol::overload(
                 static_cast<sol::lua_value (*)(obe::script::DummyCast*)>(&obe::script::cast),
                 static_cast<sol::lua_value (*)(obe::input::InputSource*)>(&obe::script::cast)));
-        state.script_file("obe://Lib/Internal/Cast.lua"_fs);
+        state.script_file("intlibs://Cast.lua"_fs);
     }
     void load_function_sol_call_status_to_string(sol::state_view state)
     {

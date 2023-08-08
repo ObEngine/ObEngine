@@ -66,10 +66,10 @@ namespace obe::engine
 
         m_lua->load_config(m_config.at("Script").at("Lua"));
 
-        m_lua->safe_script_file("obe://Lib/Internal/Helpers.lua"_fs);
-        m_lua->safe_script_file("obe://Lib/Internal/Events.lua"_fs);
-        m_lua->safe_script_file("obe://Lib/Internal/GameInit.lua"_fs);
-        m_lua->safe_script_file("obe://Lib/Internal/Logger.lua"_fs);
+        m_lua->safe_script_file("intlibs://Helpers.lua"_fs);
+        m_lua->safe_script_file("intlibs://Events.lua"_fs);
+        m_lua->safe_script_file("intlibs://GameInit.lua"_fs);
+        m_lua->safe_script_file("intlibs://Logger.lua"_fs);
         m_lua->set_exception_handler(&lua_exception_handler);
         m_lua->safe_script("collectgarbage(\"generational\");");
 
@@ -101,9 +101,9 @@ namespace obe::engine
         if (m_config.contains("GameConfig"))
         {
             const vili::node& game_config = m_config.at("GameConfig");
-            if (game_config.contains("antiAliasing"))
+            if (game_config.contains("anti_aliasing"))
             {
-                m_resources->default_anti_aliasing = game_config.at("antiAliasing");
+                m_resources->default_anti_aliasing = game_config.at("anti_aliasing");
                 debug::Log->debug("<ResourceManager> AntiAliasing Default is {}",
                     m_resources->default_anti_aliasing);
             }

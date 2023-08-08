@@ -18,8 +18,13 @@ namespace obe::system
 
     void MountablePath::mount_additional_prefixes()
     {
-        // If obe prefix has been redefined, extlibs will change accordingly
+        // If obe prefix has been redefined, intlibs / extlibs will change accordingly
         std::string obe_path = MountablePath::from_prefix(prefixes::obe.data()).base_path;
+
+        MountablePath intlibs_path(MountablePathType::Path, obe_path + "Lib/Internal",
+            prefixes::intlibs, priorities::defaults, false);
+        MountablePath::mount(intlibs_path);
+
         MountablePath extlibs_path(MountablePathType::Path, obe_path + "/Lib/Extlibs",
             prefixes::extlibs, priorities::defaults, false);
         MountablePath::mount(extlibs_path);

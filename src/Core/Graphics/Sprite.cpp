@@ -175,13 +175,13 @@ namespace obe::graphics
             m_path = path;
             if (m_resources)
             {
-                m_texture = m_resources->get_texture(system::Path(path), m_antiAliasing);
+                m_texture = m_resources->get_texture(system::Path(path), m_anti_aliasing);
             }
             else
             {
                 m_texture.reset();
                 m_texture.load_from_file(system::Path(path).find());
-                m_texture.set_anti_aliasing(m_antiAliasing);
+                m_texture.set_anti_aliasing(m_anti_aliasing);
             }
 
             m_sprite.setTexture(m_texture);
@@ -229,14 +229,14 @@ namespace obe::graphics
 
     void Sprite::set_anti_aliasing(bool anti_aliasing)
     {
-        if (anti_aliasing != m_antiAliasing && !m_path.empty())
+        if (anti_aliasing != m_anti_aliasing && !m_path.empty())
         {
-            m_antiAliasing = anti_aliasing;
+            m_anti_aliasing = anti_aliasing;
             this->load_texture(m_path);
         }
         else
         {
-            m_antiAliasing = anti_aliasing;
+            m_anti_aliasing = anti_aliasing;
         }
     }
 
@@ -302,7 +302,7 @@ namespace obe::graphics
 
     bool Sprite::is_anti_aliased() const
     {
-        return m_antiAliasing;
+        return m_anti_aliasing;
     }
 
     std::string Sprite::get_filesystem_path() const
@@ -517,9 +517,9 @@ namespace obe::graphics
             this->set_sublayer(data.at("sublayer"));
         }
 
-        if (data.contains("antiAliasing"))
+        if (data.contains("anti_aliasing"))
         {
-            this->set_anti_aliasing(data.at("antiAliasing"));
+            this->set_anti_aliasing(data.at("anti_aliasing"));
         }
 
         if (data.contains("transform"))

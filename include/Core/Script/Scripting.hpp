@@ -5,29 +5,8 @@
 
 namespace obe::script
 {
-    inline std::string sol_call_status_to_string(sol::call_status status)
-    {
-        switch (status)
-        {
-        case sol::call_status::ok:
-            return "ok";
-        case sol::call_status::yielded:
-            return "yielded";
-        case sol::call_status::runtime:
-            return "runtime_error";
-        case sol::call_status::memory:
-            return "memory_error";
-        case sol::call_status::handler:
-            return "handler_error";
-        case sol::call_status::gc:
-            return "gc_error";
-        case sol::call_status::syntax:
-            return "syntax_error";
-        case sol::call_status::file:
-            return "file_error";
-        }
-        return "?";
-    }
+    std::unique_ptr<sol::state> make_lua_state();
+    std::string sol_call_status_to_string(sol::call_status status);
 
     template <class ReturnType = void, class... Args>
     ReturnType safe_lua_call(sol::protected_function callback, Args&&... args)

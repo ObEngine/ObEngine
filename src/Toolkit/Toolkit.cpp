@@ -72,6 +72,8 @@ styler::Foreground convert_color(obe::graphics::Color color)
     }
 }
 
+#include <Network/Downloader.hpp>
+
 void run(std::string command)
 {
     using namespace obe;
@@ -89,9 +91,9 @@ void run(std::string command)
     lua["Global"] = sol::new_table();
 
     bindings::index_core_bindings(lua);
-    lua.safe_script_file("obe://Lib/Internal/Require.lua"_fs);
-    lua.safe_script_file("obe://Lib/Internal/Helpers.lua"_fs);
-    lua.safe_script_file("obe://Lib/Internal/Logger.lua"_fs);
+    lua.safe_script_file("intlibs://Require.lua"_fs);
+    lua.safe_script_file("intlibs://Helpers.lua"_fs);
+    lua.safe_script_file("intlibs://Logger.lua"_fs);
     lua.set_exception_handler(&lua_exception_handler2);
     lua["Helpers"] = sol::new_table();
     for (const auto& [helper_name, helper] : script::Helpers::make_all_helpers(lua))

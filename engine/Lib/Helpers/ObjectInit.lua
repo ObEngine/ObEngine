@@ -1,7 +1,7 @@
-local GameObjectHandle = require("obe://Lib/Internal/GameObject");
-local wrap_events = require("obe://Lib/Internal/EventsWrappers").wrap_events;
+local GameObjectHandle = require("intlibs://GameObject");
+local wrap_events = require("intlibs://EventsWrappers").wrap_events;
 ---@ Lib.Internal.Network
-local Network = require("obe://Lib/Internal/Network");
+local Network = require("intlibs://Network");
 
 local __GAME_OBJECT = GameObjectHandle:new(This);
 
