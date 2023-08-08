@@ -1,5 +1,6 @@
 #include <Bindings/obe/network/Network.hpp>
 
+#include <Network/Downloader.hpp>
 #include <Network/NetworkEventManager.hpp>
 
 #include <Bindings/Config.hpp>
@@ -40,5 +41,10 @@ namespace obe::network::bindings
             = &obe::network::NetworkEventManager::get_event_namespace;
         bind_network_event_manager["get_client_name"]
             = &obe::network::NetworkEventManager::get_client_name;
+    }
+    void load_function_download_file(sol::state_view state)
+    {
+        sol::table network_namespace = state["obe"]["network"].get<sol::table>();
+        network_namespace.set_function("download_file", &obe::network::download_file);
     }
 };

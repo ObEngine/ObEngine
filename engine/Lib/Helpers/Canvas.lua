@@ -1,5 +1,5 @@
 local class = require("extlibs://pl.class"); -- NOTE: we are not using the global class() since it is not loaded yet
-local make_reactive = require("obe://Lib/Internal/Reactive").make_reactive;
+local make_reactive = require("intlibs://Reactive").make_reactive;
 
 obe.canvas = {};
 

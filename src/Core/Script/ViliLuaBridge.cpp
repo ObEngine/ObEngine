@@ -1,5 +1,6 @@
 #include <sol/sol.hpp>
 
+#include <Script/Scripting.hpp>
 #include <Script/ViliLuaBridge.hpp>
 
 namespace obe::script::vili_lua_bridge
@@ -13,6 +14,22 @@ namespace obe::script::vili_lua_bridge
         else if (convert.is<vili::object>())
         {
             return vili_object_to_lua_table(convert);
+        }
+        else if (convert.is_primitive())
+        {
+            return vili_primitive_to_lua_value(convert);
+        }
+    }
+
+    sol::lua_value vili_to_lua_keep_order(sol::state_view state, const vili::node& convert)
+    {
+        if (convert.is<vili::array>())
+        {
+            return vili_array_to_lua_table(convert);
+        }
+        else if (convert.is<vili::object>())
+        {
+            return vili_object_to_lua_table_keep_order(state, convert);
         }
         else if (convert.is_primitive())
         {
@@ -59,7 +76,35 @@ namespace obe::script::vili_lua_bridge
                 result.emplace(key, vili_array_to_lua_table(value));
             }
         }
+
         return sol::as_table(result);
+    }
+
+    sol::lua_value vili_object_to_lua_table_keep_order(
+        sol::state_view state, const vili::node& convert)
+    {
+        sol::table result = state.create_table();
+        std::vector<std::string> ordered_keys;
+        for (auto [key, value] : convert.items())
+        {
+            if (value.is_primitive())
+            {
+                result[key] = vili_primitive_to_lua_value(value);
+            }
+            else if (value.is<vili::object>())
+            {
+                result[key] = vili_object_to_lua_table_keep_order(state, value);
+            }
+            else if (value.is<vili::array>())
+            {
+                result[key] = vili_array_to_lua_table(value);
+            }
+            ordered_keys.push_back(key);
+        }
+
+        script::safe_lua_call(state["Helpers"]["ordered_table"], result, ordered_keys);
+
+        return result;
     }
 
     sol::lua_value vili_primitive_to_lua_value(const vili::node& convert)
@@ -130,5 +175,10 @@ namespace obe::script::vili_lua_bridge
             result.push(lua_to_vili(value));
         }
         return result;
+    }
+
+    sol::lua_value vili_to_lua_keep_order_proxy(sol::this_state state, const vili::node& convert)
+    {
+        return vili_to_lua_keep_order(state, convert);
     }
 } // namespace obe::script::DataBridge

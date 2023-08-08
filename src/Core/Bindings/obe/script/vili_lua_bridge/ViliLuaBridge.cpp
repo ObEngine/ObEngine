@@ -13,6 +13,13 @@ namespace obe::script::vili_lua_bridge::bindings
         vili_lua_bridge_namespace.set_function(
             "vili_to_lua", &obe::script::vili_lua_bridge::vili_to_lua);
     }
+    void load_function_vili_to_lua_keep_order(sol::state_view state)
+    {
+        sol::table vili_lua_bridge_namespace
+            = state["obe"]["script"]["vili_lua_bridge"].get<sol::table>();
+        vili_lua_bridge_namespace.set_function(
+            "vili_to_lua_keep_order", &obe::script::vili_lua_bridge::vili_to_lua_keep_order_proxy);
+    }
     void load_function_lua_to_vili(sol::state_view state)
     {
         sol::table vili_lua_bridge_namespace
@@ -26,6 +33,13 @@ namespace obe::script::vili_lua_bridge::bindings
             = state["obe"]["script"]["vili_lua_bridge"].get<sol::table>();
         vili_lua_bridge_namespace.set_function(
             "vili_object_to_lua_table", &obe::script::vili_lua_bridge::vili_object_to_lua_table);
+    }
+    void load_function_vili_object_to_lua_table_keep_order(sol::state_view state)
+    {
+        sol::table vili_lua_bridge_namespace
+            = state["obe"]["script"]["vili_lua_bridge"].get<sol::table>();
+        vili_lua_bridge_namespace.set_function("vili_object_to_lua_table_keep_order",
+            &obe::script::vili_lua_bridge::vili_object_to_lua_table_keep_order);
     }
     void load_function_vili_primitive_to_lua_value(sol::state_view state)
     {

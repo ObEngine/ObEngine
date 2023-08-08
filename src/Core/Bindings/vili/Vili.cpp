@@ -43,12 +43,10 @@ namespace vili::bindings
                     vili::node(const vili::object&), vili::node(const vili::node&)>());
         bind_node["type"] = &vili::node::type;
         bind_node["dump"] = sol::overload(
-            [](vili::node* self) -> std::string
-            {
+            [](vili::node* self) -> std::string {
                 return self->dump();
             },
-            [](vili::node* self, bool root) -> std::string
-            {
+            [](vili::node* self, bool root) -> std::string {
                 return self->dump(root);
             });
         bind_node["is_primitive"] = &vili::node::is_primitive;
@@ -110,7 +108,7 @@ namespace vili::bindings
         bind_node["clear"] = &vili::node::clear;
         bind_node[sol::meta_function::equal_to] = &vili::node::operator==;
         bind_node["from_type"] = &vili::node::from_type;
-        state.script_file("obe://Lib/Internal/Vili.lua"_fs);
+        state.script_file("obe://Lib/Helpers/Vili.lua"_fs);
     }
     void load_class_node_iterator(sol::state_view state)
     {

@@ -53,6 +53,7 @@
 #include <Bindings/obe/utils/math/Math.hpp>
 #include <Bindings/obe/utils/string/String.hpp>
 #include <Bindings/obe/utils/terminal/Terminal.hpp>
+#include <Bindings/obe/utils/threading/Threading.hpp>
 #include <Bindings/obe/utils/types/Types.hpp>
 #include <Bindings/obe/utils/vector/Vector.hpp>
 #include <Bindings/vili/Vili.hpp>
@@ -99,6 +100,7 @@ namespace obe::bindings
         state["obe"]["graphics"]["shapes"].get_or_create<sol::table>();
         state["obe"]["system"]["project"].get_or_create<sol::table>();
         state["obe"]["utils"]["exec"].get_or_create<sol::table>();
+        state["obe"]["utils"]["threading"].get_or_create<sol::table>();
         state["vili"]["msgpack"]["exceptions"].get_or_create<sol::table>();
         state["obe"]["debug"]["render"].get_or_create<sol::table>();
         state["obe"]["events"]["Actions"].get_or_create<sol::table>();
@@ -109,6 +111,7 @@ namespace obe::bindings
         state["obe"]["events"]["Network"].get_or_create<sol::table>();
         state["obe"]["events"]["Scene"].get_or_create<sol::table>();
         state["obe"]["graphics"]["utils"].get_or_create<sol::table>();
+        state["obe"]["utils"]["terminal"].get_or_create<sol::table>();
         state["vili"]["parser"]["rules"].get_or_create<sol::table>();
         state["obe"]["animation"]["easing"].get_or_create<sol::table>();
         state["obe"]["config"]["validators"].get_or_create<sol::table>();
@@ -120,7 +123,6 @@ namespace obe::bindings
         state["obe"]["utils"]["file"].get_or_create<sol::table>();
         state["obe"]["utils"]["math"].get_or_create<sol::table>();
         state["obe"]["utils"]["string"].get_or_create<sol::table>();
-        state["obe"]["utils"]["terminal"].get_or_create<sol::table>();
         state["obe"]["utils"]["types"].get_or_create<sol::table>();
         state["obe"]["utils"]["vector"].get_or_create<sol::table>();
         state["vili"]["utils"]["string"].get_or_create<sol::table>();
@@ -249,6 +251,7 @@ namespace obe::bindings
         obe::input::bindings::load_enum_input_type(state);
         obe::network::bindings::load_class_network_client(state);
         obe::network::bindings::load_class_network_event_manager(state);
+        obe::network::bindings::load_function_download_file(state);
         obe::scene::bindings::load_class_camera(state);
         obe::scene::bindings::load_class_scene(state);
         obe::scene::bindings::load_class_scene_node(state);
@@ -327,9 +330,10 @@ namespace obe::bindings
         obe::types::bindings::load_class_unknown_enum_entry(state);
         obe::utils::argparser::exceptions::bindings::load_class_invalid_argument_format(state);
         obe::utils::exec::bindings::load_class_run_args_parser(state);
+        obe::utils::threading::bindings::load_class_thread(state);
         vili::bindings::load_class_const_node_iterator(state);
-        vili::bindings::load_class_node(state);
         vili::bindings::load_class_node_iterator(state);
+        vili::bindings::load_class_node(state);
         vili::bindings::load_enum_node_type(state);
         vili::bindings::load_function_from_string(state);
         vili::bindings::load_function_to_string(state);
@@ -374,6 +378,11 @@ namespace obe::bindings
         obe::graphics::utils::bindings::load_function_draw_point(state);
         obe::graphics::utils::bindings::load_function_draw_line(state);
         obe::graphics::utils::bindings::load_function_draw_polygon(state);
+        obe::utils::terminal::bindings::load_class_cursor_position(state);
+        obe::utils::terminal::bindings::load_function_styled_print(state);
+        obe::utils::terminal::bindings::load_function_get_cursor_position(state);
+        obe::utils::terminal::bindings::load_function_set_cursor_position(state);
+        obe::utils::terminal::bindings::load_function_set_terminal_mode_to_utf8(state);
         vili::parser::rules::bindings::load_class_affectation(state);
         vili::parser::rules::bindings::load_class_affectation_separator(state);
         vili::parser::rules::bindings::load_class_array(state);
@@ -489,9 +498,13 @@ namespace obe::bindings
         obe::script::Helpers::bindings::load_function_rawget_from(state);
         obe::script::Helpers::bindings::load_function_len_from(state);
         obe::script::Helpers::bindings::load_function_pairs_from(state);
+        obe::script::Helpers::bindings::load_function_ordered_table(state);
         obe::script::vili_lua_bridge::bindings::load_function_vili_to_lua(state);
+        obe::script::vili_lua_bridge::bindings::load_function_vili_to_lua_keep_order(state);
         obe::script::vili_lua_bridge::bindings::load_function_lua_to_vili(state);
         obe::script::vili_lua_bridge::bindings::load_function_vili_object_to_lua_table(state);
+        obe::script::vili_lua_bridge::bindings::load_function_vili_object_to_lua_table_keep_order(
+            state);
         obe::script::vili_lua_bridge::bindings::load_function_vili_primitive_to_lua_value(state);
         obe::script::vili_lua_bridge::bindings::load_function_vili_array_to_lua_table(state);
         obe::script::vili_lua_bridge::bindings::load_function_lua_table_to_vili_object(state);
@@ -552,7 +565,6 @@ namespace obe::bindings
         obe::utils::string::bindings::load_function_titleize(state);
         obe::utils::string::bindings::load_global_alphabet(state);
         obe::utils::string::bindings::load_global_numbers(state);
-        obe::utils::terminal::bindings::load_function_styled_print(state);
         obe::utils::types::bindings::load_function_get_type_name(state);
         obe::utils::vector::bindings::load_function_contains(state);
         obe::utils::vector::bindings::load_function_join(state);

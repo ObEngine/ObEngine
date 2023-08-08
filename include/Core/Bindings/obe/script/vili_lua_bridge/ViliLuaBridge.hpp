@@ -7,8 +7,10 @@ namespace sol
 namespace obe::script::vili_lua_bridge::bindings
 {
     void load_function_vili_to_lua(sol::state_view state);
+    void load_function_vili_to_lua_keep_order(sol::state_view state);
     void load_function_lua_to_vili(sol::state_view state);
     void load_function_vili_object_to_lua_table(sol::state_view state);
+    void load_function_vili_object_to_lua_table_keep_order(sol::state_view state);
     void load_function_vili_primitive_to_lua_value(sol::state_view state);
     void load_function_vili_array_to_lua_table(sol::state_view state);
     void load_function_lua_table_to_vili_object(sol::state_view state);

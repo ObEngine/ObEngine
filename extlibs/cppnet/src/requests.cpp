@@ -1,49 +1,14 @@
 #include <stdexcept>
 
 #include <cppnet/requests.hpp>
+#include <cppnet/utils.hpp>
 
 namespace cppnet::requests
 {
-    std::string Request::_get_host_from_url(const std::string& url)
-    {
-        std::string host = url;
-
-        if (url.compare(0, 7, "http://") == 0)
-        {
-            m_port = 80;
-        }
-        else if (url.compare(0, 8, "https://") == 0)
-        {
-            m_port = 443;
-        }
-        else
-        {
-            throw std::runtime_error("unknown protocol"); // TODO: throw proper exception
-        }
-
-        size_t path_pos = host.find("/");
-        if (path_pos != std::string::npos) {
-            host = host.substr(0, path_pos);
-        }
-
-        return host;
-    }
-
-    std::string Request::_get_route_from_url(const std::string& url)
-    {
-        std::string route = "/";
-
-        size_t path_pos = url.find("/");
-        if (path_pos != std::string::npos) {
-            route = url.substr(path_pos);
-        }
-
-        return route;
-    }
-
     Request::Request(Method method, const std::string& url)
-        : m_host(_get_host_from_url(url))
-        , m_request(_get_route_from_url(url), method)
+        : m_host(get_host_and_port_from_url(url).host)
+        , m_port(get_host_and_port_from_url(url).port)
+        , m_request(get_route_from_url(url), method)
     {
     }
 

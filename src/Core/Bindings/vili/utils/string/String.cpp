@@ -46,17 +46,14 @@ namespace vili::utils::string::bindings
         sol::table string_namespace = state["vili"]["utils"]["string"].get<sol::table>();
         string_namespace.set_function("indent",
             sol::overload(
-                [](const std::string& input) -> std::string
-                {
+                [](const std::string& input) -> std::string {
                     return vili::utils::string::indent(input);
                 },
-                [](const std::string& input, unsigned int indent_level) -> std::string
-                {
+                [](const std::string& input, unsigned int indent_level) -> std::string {
                     return vili::utils::string::indent(input, indent_level);
                 },
                 [](const std::string& input, unsigned int indent_level,
-                    bool pad_left) -> std::string
-                {
+                    bool pad_left) -> std::string {
                     return vili::utils::string::indent(input, indent_level, pad_left);
                 }));
     }

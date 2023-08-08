@@ -17,7 +17,7 @@ namespace obe::script
     };
 
     /**
-     * \helper{obe://Lib/Internal/Cast.lua}
+     * \helper{intlibs://Cast.lua}
      */
     inline sol::lua_value cast(DummyCast* ptr)
     {

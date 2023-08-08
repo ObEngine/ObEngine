@@ -1,5 +1,5 @@
 local Commands = require("obe://Lib/Toolkit/Commands");
-local dot_access = require("obe://Lib/StdLib/DotAccess").dot_access;
+local dot_access = require("obe://Lib/StdLib/DotAccess");
 ---@module "Lib.Extlibs.json"
 local json = require("extlibs://json");
 local Color = require("Lib/StdLib/ConsoleColor");

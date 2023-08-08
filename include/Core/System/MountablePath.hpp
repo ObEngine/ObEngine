@@ -14,6 +14,7 @@ namespace obe::system
         constexpr std::string_view cfg = "cfg";
         constexpr std::string_view mount = "mount";
         constexpr std::string_view extlibs = "extlibs";
+        constexpr std::string_view intlibs = "intlibs";
         constexpr std::string_view root = "root";
         constexpr std::string_view game = "game";
     } // namespace prefixes

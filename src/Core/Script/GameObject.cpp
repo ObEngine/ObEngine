@@ -140,7 +140,7 @@ namespace obe::script
 
             m_outer_environment["This"] = this;
 
-            load_source("obe://Lib/Internal/ObjectInit.lua", EnvironmentTarget::Outer);
+            load_source("intlibs://ObjectInit.lua", EnvironmentTarget::Outer);
 
             if (script.contains("source"))
             {

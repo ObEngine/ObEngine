@@ -20,13 +20,11 @@ namespace obe::tiles::bindings
                 sol::constructors<obe::tiles::AnimatedTile(const obe::tiles::Tileset&,
                     std::vector<uint32_t>, std::vector<obe::time::TimeUnit>)>());
         bind_animated_tile["attach_quad"] = sol::overload(
-            [](obe::tiles::AnimatedTile* self, sf::Vertex* quad) -> void
-            {
+            [](obe::tiles::AnimatedTile* self, sf::Vertex* quad) -> void {
                 return self->attach_quad(quad);
             },
             [](obe::tiles::AnimatedTile* self, sf::Vertex* quad,
-                obe::tiles::TileInfo tile_info) -> void
-            {
+                obe::tiles::TileInfo tile_info) -> void {
                 return self->attach_quad(quad, tile_info);
             });
         bind_animated_tile["detach_quad"] = &obe::tiles::AnimatedTile::detach_quad;
@@ -69,8 +67,7 @@ namespace obe::tiles::bindings
         bind_tile_scene["get_layer"] = &obe::tiles::TileScene::get_layer;
         bind_tile_scene["get_animated_tiles"] = &obe::tiles::TileScene::get_animated_tiles;
         bind_tile_scene["get_tilesets"]
-            = [](obe::tiles::TileScene* self) -> const obe::tiles::TilesetCollection*
-        {
+            = [](obe::tiles::TileScene* self) -> const obe::tiles::TilesetCollection* {
             return &self->get_tilesets();
         };
         bind_tile_scene["get_renderables"] = &obe::tiles::TileScene::get_renderables;

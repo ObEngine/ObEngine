@@ -332,6 +332,9 @@ namespace vili
         [[nodiscard]] const node& at(const std::string& key) const;
         [[nodiscard]] const node& at(size_t index) const;
 
+        template <class T> 
+        [[nodiscard]] T get_or(const std::string& key, T default_value) const;
+
         /**
          * \brief Directly access underlying variant
          * \return reference to the underlying variant
@@ -432,6 +435,19 @@ namespace vili
             return std::get<T>(m_data);
         throw exceptions::invalid_cast(
             typeid(T).name(), to_string(type()), VILI_EXC_INFO);
+    }
+
+    template <class T>
+    T node::get_or(const std::string& key, T default_value) const
+    {
+        if (this->contains(key))
+        {
+            return this->at(key)->as<T>();
+        }
+        else
+        {
+            return default_value;
+        }
     }
 
     std::ostream& operator<<(std::ostream& os, const node& elem);

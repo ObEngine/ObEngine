@@ -21,7 +21,7 @@ namespace vili::parser
     void state_push_proxy(state* self, node value);
     /**
      * \flagsurrogate{vili::node}
-     * \helper{obe://Lib/Internal/Vili.lua}
+     * \helper{obe://Lib/Helpers/Vili.lua}
      */
     class _PatchNode
     {

@@ -21,8 +21,7 @@ namespace obe::events::Keys::bindings
         bind_state_changed["state"] = &obe::events::Keys::StateChanged::state;
         bind_state_changed["previous_state"] = &obe::events::Keys::StateChanged::previous_state;
         bind_state_changed["input_source"] = sol::property(
-            [](obe::events::Keys::StateChanged* self) -> const obe::input::InputSource*
-            {
+            [](obe::events::Keys::StateChanged* self) -> const obe::input::InputSource* {
                 return &self->input_source;
             });
     }
