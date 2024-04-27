@@ -3,8 +3,6 @@
 #include <algorithm>
 #include <vector>
 
-#include <sol/sol.hpp>
-
 #include <Types/Identifiable.hpp>
 #include <Types/Serializable.hpp>
 #include <Types/UniqueIdentifiable.hpp>
@@ -16,11 +14,9 @@ namespace obe::component
                           public types::UniqueIdentifiable
     {
     public:
-        using Caster = std::function<sol::lua_value(ComponentBase*)>;
 
     protected:
         static std::vector<ComponentBase*> Components;
-        static std::unordered_map<std::string_view, Caster> ComponentCasters;
         static void AddComponent(ComponentBase* component);
         static void RemoveComponent(ComponentBase* component);
 
@@ -34,7 +30,6 @@ namespace obe::component
         void load(const vili::node& data) override = 0;
 
         [[nodiscard]] virtual std::string_view type() const = 0;
-        [[nodiscard]] sol::lua_value cast();
     };
 
     /**
@@ -64,11 +59,6 @@ namespace obe::component
     template <class DerivedComponent>
     void Component<DerivedComponent>::Register()
     {
-        ComponentCasters[DerivedComponent::ComponentType]
-            = [](ComponentBase* component) -> sol::lua_value
-        {
-            return static_cast<DerivedComponent*>(component);
-        };
     }
 
     template <class DerivedComponent>

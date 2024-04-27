@@ -12,7 +12,6 @@
         "spdlog",
         "fmt",
         "tinydir",
-        "sol2",
         "catch2"
     ]
 }

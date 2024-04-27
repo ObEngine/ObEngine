@@ -20,7 +20,6 @@ namespace obe::event
         for (const std::string& listener_id : m_garbage_collector)
         {
             debug::Log->trace("  - Garbage Collecting listener {}", listener_id);
-            m_listeners.erase(listener_id);
         }
         m_garbage_collector.clear();
     }
@@ -51,10 +50,9 @@ namespace obe::event
     }
 
     void EventBase::add_external_listener(
-        const std::string& id, const ExternalEventListener& listener)
+        const std::string& id)
     {
         debug::Log->trace("<Event> Adding new listener '{}' to Event '{}'", id, m_identifier);
-        m_listeners.emplace(id, listener);
         if (m_on_add_listener)
         {
             m_on_add_listener(ListenerChangeState::Added, id);
@@ -66,8 +64,6 @@ namespace obe::event
         debug::Log->trace("<Event> Removing listener '{}' from Event '{}'", id, m_identifier);
         if (m_garbage_lock)
             m_garbage_collector.push_back(id);
-        else
-            m_listeners.erase(id);
         if (m_on_remove_listener)
         {
             m_on_remove_listener(ListenerChangeState::Removed, id);

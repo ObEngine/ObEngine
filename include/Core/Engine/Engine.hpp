@@ -13,10 +13,6 @@
 #include <System/Window.hpp>
 #include <Time/FramerateManager.hpp>
 
-namespace obe::bindings
-{
-    void index_core_bindings(sol::state_view state);
-}
 
 namespace obe::events
 {
@@ -52,7 +48,6 @@ namespace obe::engine
     protected:
         bool m_initialized = false;
         std::vector<std::unique_ptr<system::Plugin>> m_plugins;
-        std::unique_ptr<script::LuaState> m_lua;
         std::unique_ptr<scene::Scene> m_scene;
         std::unique_ptr<system::Cursor> m_cursor;
         std::unique_ptr<system::Window> m_window;
@@ -156,10 +151,6 @@ namespace obe::engine
         /**
          * \nobind
          */
-        script::LuaState& get_lua_state() const;
-        /**
-         * \nobind
-         */
         debug::Logger get_logger() const;
         /**
          * \rename{Args}
@@ -167,9 +158,4 @@ namespace obe::engine
          */
         [[nodiscard]] const vili::node& get_arguments() const;
     };
-
-    /**
-    * \proxy{obe::engine::Engine::get_arguments}
-    */
-    sol::lua_value engine_get_arguments_proxy(const Engine* self);
 } // namespace obe::engine

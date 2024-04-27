@@ -6,7 +6,6 @@
 namespace obe::component
 {
     std::vector<ComponentBase*> ComponentBase::Components;
-    std::unordered_map<std::string_view, ComponentBase::Caster> ComponentBase::ComponentCasters;
 
     void ComponentBase::AddComponent(ComponentBase* component)
     {
@@ -39,14 +38,5 @@ namespace obe::component
     ComponentBase& ComponentBase::operator=(const ComponentBase& other)
     {
         return *this;
-    }
-
-    sol::lua_value ComponentBase::cast()
-    {
-        if (!ComponentCasters.contains(this->type()))
-        {
-            throw exceptions::UnknownComponentType(this->type());
-        }
-        return ComponentCasters.at(this->type())(this);
     }
 } // namespace obe::component

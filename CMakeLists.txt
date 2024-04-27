@@ -13,8 +13,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake)
 if(OBE_USE_VCPKG)
     find_package(fmt CONFIG REQUIRED)
     find_package(spdlog CONFIG REQUIRED)
-    find_package(lua CONFIG REQUIRED)
-    find_package(sol2 CONFIG REQUIRED)
     find_package(Catch2 CONFIG REQUIRED)
 else()
     add_subdirectory(extlibs/catch)
@@ -22,10 +20,6 @@ else()
     # fmtlib is required by spdlog
     add_subdirectory(extlibs/fmt)
     add_subdirectory(extlibs/spdlog)
-
-    # lua is required by sol
-    add_subdirectory(extlibs/lua)
-    add_subdirectory(extlibs/sol3)
 
     if(APPLE OR USE_FILESYSTEM_FALLBACK)
         add_subdirectory(extlibs/tinydir)

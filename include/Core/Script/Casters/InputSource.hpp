@@ -6,9 +6,4 @@
 
 namespace obe::script
 {
-    // InputSource
-    inline sol::lua_value cast(input::InputSource* ptr)
-    {
-        return AutoCastManager<input::InputSource>::Cast(ptr);
-    }
 }

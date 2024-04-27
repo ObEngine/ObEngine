@@ -6,7 +6,6 @@
 #include <Graphics/Sprite.hpp>
 #include <Scene/SceneNode.hpp>
 #include <Types/Serializable.hpp>
-#include <sol/sol.hpp>
 #include <vili/node.hpp>
 
 namespace obe::scene
@@ -66,9 +65,6 @@ namespace obe::script
         graphics::Sprite* m_sprite = nullptr;
         collision::ColliderComponent* m_collider = nullptr;
         scene::SceneNode m_object_node;
-        sol::state_view m_lua;
-        sol::environment m_outer_environment;
-        sol::environment m_inner_environment;
         std::unordered_set<std::string> m_component_ids;
 
         std::string m_type;
@@ -88,7 +84,7 @@ namespace obe::script
          * \param type Type of the GameObject
          * \param id Id of the GameObject you want to create
          */
-        explicit GameObject(sol::state_view lua, const std::string& type, const std::string& id);
+        explicit GameObject(const std::string& type, const std::string& id);
         /**
          * \brief Destructor of the GameObject
          */
@@ -193,17 +189,6 @@ namespace obe::script
          */
         bool deletable = false;
         /**
-         * \brief Access the exposition table of the GameObject
-         * \return A reference to the exposition table of the GameObject
-         */
-        [[nodiscard]] sol::table access() const;
-        /**
-         * \brief Gets a reference to the Lua function used to build the
-         *        GameObject (GameObject:init proxy)
-         * \return A reference to the Lua function used to build the GameObject
-         */
-        [[nodiscard]] sol::protected_function get_constructor() const;
-        /**
          * \brief Calls the GameObject constructor
          */
         void initialize();
@@ -219,8 +204,6 @@ namespace obe::script
          * \return true if the GameObject is permanent, false otherwise
          */
         [[nodiscard]] bool is_permanent() const;
-
-        [[nodiscard]] sol::environment get_outer_environment() const;
         void set_state(bool state);
 
         [[nodiscard]] vili::node schema() const override;

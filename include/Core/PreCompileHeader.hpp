@@ -16,7 +16,6 @@
 #include <map>
 #include <memory>
 #include <optional>
-#include <sol/sol.hpp>
 #include <string>
 #include <string_view>
 #include <tuple>

@@ -10,7 +10,6 @@
 #include <Scene/SceneNode.hpp>
 #include <Script/GameObject.hpp>
 #include <Tiles/Scene.hpp>
-#include <sol/sol.hpp>
 #include <unordered_set>
 #include <vili/node.hpp>
 
@@ -36,8 +35,6 @@ namespace obe::events
 
 namespace obe::scene
 {
-    using OnSceneLoadCallback = sol::protected_function;
-
     struct SceneRenderOptions
     {
         bool sprites = true;
@@ -78,9 +75,7 @@ namespace obe::scene
 
         std::string m_level_file_name;
         SceneRenderOptions m_render_options;
-        OnSceneLoadCallback m_on_load_callback;
         event::EventGroupPtr e_scene;
-        sol::state_view m_lua;
 
         std::unordered_map<std::string, component::ComponentBase*> m_components;
 
@@ -93,7 +88,7 @@ namespace obe::scene
         /**
          * \brief Creates a new Scene
          */
-        Scene(event::EventNamespace& events, sol::state_view lua);
+        Scene(event::EventNamespace& events);
         /**
          * \nobind
          * \brief Loads the Scene from a .map.vili file
@@ -107,16 +102,6 @@ namespace obe::scene
          * \param path Path to the Scene file
          */
         void set_future_load_from_file(const std::string& path);
-        /**
-         * \rename{load_from_file}
-         * \brief Same that load_from_file excepts the map will load at the next
-         * update
-         * \param path Path to the Scene file
-         * \param callback Lua Function called when new map has
-         *        been loaded
-         */
-        void set_future_load_from_file(
-            const std::string& path, const OnSceneLoadCallback& callback);
         /**
          * \brief Removes all elements in the Scene
          */
@@ -310,11 +295,6 @@ namespace obe::scene
          */
         void reload();
         /**
-         * \brief Reloads the Scene from the level file
-         * \param callback Lua Function called when the map has been reloaded
-         */
-        void reload(const OnSceneLoadCallback& callback);
-        /**
          * \brief Name of the last loaded map file with load_from_file method
          * \return A std::string containing the name of the last loaded map file
          *         with load_from_file method
@@ -330,19 +310,4 @@ namespace obe::scene
         // Components
         component::ComponentBase* get_component(const std::string& id) const;
     };
-
-    /**
-     * \proxy{obe::scene::Scene::get_game_object}
-     */
-    sol::table scene_get_game_object_proxy(const Scene* self, const std::string& id);
-    /**
-     * \proxy{obe::scene::Scene::create_game_object}
-     */
-    sol::function scene_create_game_object_proxy(
-        Scene* self, const std::string& object_type, const std::string& id = "");
-    /**
-    * \proxy{obe::scene::Scene::get_all_game_objects}
-    */
-    sol::nested<std::vector<sol::table>> scene_get_all_game_objects_proxy(
-        const Scene* self, const std::string& object_type = "");
 } // namespace obe::scene

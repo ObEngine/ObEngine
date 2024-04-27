@@ -54,9 +54,8 @@ namespace obe::scene
         }
     }
 
-    Scene::Scene(event::EventNamespace& event_namespace, sol::state_view lua)
-        : m_lua(lua)
-        , e_scene(event_namespace.create_group("Scene"))
+    Scene::Scene(event::EventNamespace& event_namespace)
+        : e_scene(event_namespace.create_group("Scene"))
 
     {
         e_scene->add<events::Scene::Loaded>();
@@ -150,13 +149,6 @@ namespace obe::scene
         m_deferred_scene_load = m_level_file_name;
     }
 
-    void Scene::reload(const OnSceneLoadCallback& callback)
-    {
-        debug::Log->debug("<Scene> Reloading Scene");
-        m_deferred_scene_load = m_level_file_name;
-        m_on_load_callback = callback;
-    }
-
     void Scene::load_from_file(const std::string& path)
     {
         debug::Log->debug("<Scene> Loading Scene from map file : '{0}'", path);
@@ -180,13 +172,6 @@ namespace obe::scene
     void Scene::set_future_load_from_file(const std::string& path)
     {
         m_deferred_scene_load = path;
-    }
-
-    void Scene::set_future_load_from_file(
-        const std::string& path, const OnSceneLoadCallback& callback)
-    {
-        m_deferred_scene_load = path;
-        m_on_load_callback = callback;
     }
 
     void Scene::clear()
@@ -426,23 +411,13 @@ namespace obe::scene
             if (script.contains("source"))
             {
                 std::string source = system::Path(script.at("source")).find();
-                const sol::protected_function_result result
-                    = m_lua.safe_script_file(source, &sol::script_pass_on_error);
                 // TODO: wrap into helper
-                if (!result.valid())
-                {
-                    const auto err_obj = result.get<sol::error>();
-                    const std::string err_msg = err_obj.what();
-                    throw exceptions::SceneScriptLoadingError(m_level_file_name, source,
-                        utils::string::replace(err_msg, "\n", "\n        "));
-                }
                 m_script_array.push_back(script.at("source"));
             }
             else if (script.contains("sources"))
             {
                 for (const vili::node& script_name : script.at("sources"))
                 {
-                    m_lua.safe_script_file(system::Path(script_name).find());
                     m_script_array.push_back(script_name);
                 }
             }
@@ -462,23 +437,9 @@ namespace obe::scene
     {
         if (!m_deferred_scene_load.empty())
         {
-            const sol::protected_function on_load_callback = std::move(m_on_load_callback);
             const std::string future_load_buffer = std::move(m_deferred_scene_load);
             const std::string current_scene = m_level_file_name;
             this->load_from_file(future_load_buffer);
-            if (on_load_callback)
-            {
-                const sol::protected_function_result result = on_load_callback(future_load_buffer);
-                if (!result.valid())
-                {
-                    const auto error = result.get<sol::error>();
-                    const std::string err_msg = "\n        \""
-                        + utils::string::replace(error.what(), "\n", "\n        ") + "\"";
-                    // TODO: Replace with nest
-                    throw exceptions::SceneOnLoadCallbackError(
-                        current_scene, future_load_buffer, err_msg);
-                }
-            }
         }
         if (m_deferred_scene_load_node)
         {
@@ -662,7 +623,7 @@ namespace obe::scene
         }
 
         std::unique_ptr<script::GameObject> new_game_object
-            = std::make_unique<script::GameObject>(m_lua, object_type, use_id);
+            = std::make_unique<script::GameObject>(object_type, use_id);
         vili::node game_object_data
             = script::GameObjectDatabase::get_definition_for_game_object(object_type);
         new_game_object->load_game_object(*this, game_object_data, m_resources);
@@ -868,29 +829,5 @@ namespace obe::scene
     std::string Scene::get_level_file() const
     {
         return m_level_file_name;
-    }
-
-    // Proxy functions
-    sol::table scene_get_game_object_proxy(const Scene* self, const std::string& id)
-    {
-        return self->get_game_object(id).access();
-    }
-
-    sol::function scene_create_game_object_proxy(
-        Scene* self, const std::string& object_type, const std::string& id)
-    {
-        return self->create_game_object(object_type, id).get_constructor();
-    }
-
-    sol::nested<std::vector<sol::table>> scene_get_all_game_objects_proxy(
-        const Scene* self, const std::string& object_type)
-    {
-        std::vector<sol::table> game_objects;
-
-        for (const auto& game_object : self->get_all_game_objects(object_type))
-        {
-            game_objects.push_back(game_object->access());
-        }
-        return game_objects;
     }
 } // namespace obe::scene

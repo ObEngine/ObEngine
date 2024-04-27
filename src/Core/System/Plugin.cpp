@@ -1,5 +1,3 @@
-#include <sol/sol.hpp>
-
 #include <Debug/Logger.hpp>
 #include <Engine/Engine.hpp>
 #include <System/Plugin.hpp>

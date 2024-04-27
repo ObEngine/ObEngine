@@ -3,23 +3,8 @@
 #include <Engine/Engine.hpp>
 #include <Engine/Exceptions.hpp>
 #include <Input/InputSourceMouse.hpp>
-#include <Script/LuaHelpers.hpp>
 #include <Utils/FileUtils.hpp>
 
-int lua_exception_handler(lua_State* L, sol::optional<const std::exception&> maybe_exception,
-    sol::string_view description)
-{
-    if (maybe_exception)
-    {
-        const std::exception& ex = *maybe_exception;
-        obe::debug::Log->error("<LuaError>[Exception] : {}", ex.what());
-    }
-    else
-    {
-        obe::debug::Log->error("<LuaError>[Error] : {}", description);
-    }
-    return sol::stack::push(L, description);
-}
 
 namespace obe::engine
 {
@@ -46,34 +31,7 @@ namespace obe::engine
 
     void Engine::init_script()
     {
-        m_lua = std::make_unique<script::LuaState>();
-        m_lua->open_libraries(sol::lib::base, sol::lib::string, sol::lib::table, sol::lib::package,
-            sol::lib::os, sol::lib::coroutine, sol::lib::math, sol::lib::count, sol::lib::debug,
-            sol::lib::io, sol::lib::bit32);
-        (*m_lua)["__ENV_ID"] = "[Global Environment]";
-        // Table shared across all environments, for easy value sharing
-        (*m_lua)["Global"] = sol::new_table();
-
-        (*m_lua)["Helpers"] = sol::new_table();
-        for (const auto& [helper_name, helper] : script::Helpers::make_all_helpers(*m_lua))
-        {
-            (*m_lua)["Helpers"][helper_name] = helper;
-        }
-
         this->init_plugins();
-
-        bindings::index_core_bindings(*m_lua);
-
-        m_lua->load_config(m_config.at("Script").at("Lua"));
-
-        m_lua->safe_script_file("obe://Lib/Internal/Helpers.lua"_fs);
-        m_lua->safe_script_file("obe://Lib/Internal/Events.lua"_fs);
-        m_lua->safe_script_file("obe://Lib/Internal/GameInit.lua"_fs);
-        m_lua->safe_script_file("obe://Lib/Internal/Logger.lua"_fs);
-        m_lua->set_exception_handler(&lua_exception_handler);
-        m_lua->safe_script("collectgarbage(\"generational\");");
-
-        (*m_lua)["Engine"] = this;
     }
 
     void Engine::init_events()
@@ -150,7 +108,7 @@ namespace obe::engine
 
     void Engine::init_scene()
     {
-        m_scene = std::make_unique<scene::Scene>(*m_event_namespace, *m_lua);
+        m_scene = std::make_unique<scene::Scene>(*m_event_namespace);
         m_scene->attach_resource_manager(*m_resources);
     }
 
@@ -190,7 +148,6 @@ namespace obe::engine
         if (m_window)
             m_window->close();
 
-        // m_lua->clear();
     }
 
     void Engine::purge()
@@ -203,12 +160,6 @@ namespace obe::engine
         m_framerate.reset();
         debug::Log->debug("Cleaning Scene");
         m_scene.reset();
-        debug::Log->debug("Running Lua State Garbage Collection");
-        if (m_lua)
-        {
-            m_lua->collect_garbage();
-            m_lua->collect_garbage();
-        }
         debug::Log->debug("Cleaning ResourceManager");
         m_resources.reset();
         debug::Log->debug("Cleaning Game Events");
@@ -216,8 +167,6 @@ namespace obe::engine
         e_custom.reset();
         debug::Log->debug("Cleaning InputManager");
         m_input.reset();
-        debug::Log->debug("Cleaning Lua State");
-        m_lua.reset();
         debug::Log->debug("Cleaning Events");
         if (m_events)
         {
@@ -311,27 +260,7 @@ namespace obe::engine
         if (!m_initialized)
             throw exceptions::UnitializedEngine();
 
-        const std::string boot_script = "*://boot.lua"_fs;
-        if (boot_script.empty())
-            throw exceptions::BootScriptMissing(system::MountablePath::string_paths());
-        const sol::protected_function_result load_result = m_lua->safe_script_file(boot_script);
-
-        if (!load_result.valid())
-        {
-            const auto err_obj = load_result.get<sol::error>();
-            throw exceptions::BootScriptLoadingError(err_obj.what());
-        }
         m_window->create();
-        const sol::protected_function boot_function
-            = (*m_lua)["Game"]["Start"].get<sol::protected_function>();
-        try
-        {
-            script::safe_lua_call(boot_function);
-        }
-        catch (const BaseException& exc)
-        {
-            throw exceptions::BootScriptExecutionError().nest(exc);
-        }
 
         m_framerate->start();
         const time::TimeUnit start = time::epoch();
@@ -350,11 +279,6 @@ namespace obe::engine
                 e_game->trigger(events::Game::Render {});
                 this->render();
                 m_framerate->reset();
-            }
-            else
-            {
-                // m_lua->collect_garbage();
-                // m_lua->collect_garbage();
             }
         }
         time::TimeUnit total_time = time::epoch() - start;
@@ -406,11 +330,6 @@ namespace obe::engine
         return *m_window;
     }
 
-    script::LuaState& Engine::get_lua_state() const
-    {
-        return *m_lua;
-    }
-
     debug::Logger Engine::get_logger() const
     {
         return m_log.lock();
@@ -440,11 +359,5 @@ namespace obe::engine
             m_scene->draw(m_window->get_target());
             m_window->display();
         }
-    }
-
-    // Proxy functions
-    sol::lua_value engine_get_arguments_proxy(const Engine* self)
-    {
-        return obe::script::vili_lua_bridge::vili_to_lua(self->get_arguments());
     }
 }

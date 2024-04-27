@@ -13,7 +13,6 @@ namespace obe::event
     class EventBase
     {
     private:
-        std::map<std::string, ExternalEventListener> m_listeners;
         std::vector<std::string> m_garbage_collector;
 
     protected:
@@ -67,7 +66,7 @@ namespace obe::event
          * \param id of the listener being added
          * \param listener Listener to register
          */
-        void add_external_listener(const std::string& id, const ExternalEventListener& listener);
+        void add_external_listener(const std::string& id);
         /**
          * \brief Removes a Listener from the Event
          * \param id id of the Listener to unregister
@@ -121,16 +120,6 @@ namespace obe::event
     template <class EventType>
     void EventBase::trigger(const EventType& event)
     {
-        for (const auto& listener : m_listeners)
-        {
-            debug::Log->trace("<Event> Calling Event Listener '{}' from Event '{}'", listener.first,
-                m_identifier);
-            if (std::holds_alternative<LuaEventListener>(listener.second))
-            {
-                this->call_listener(
-                    listener.first, std::get<LuaEventListener>(listener.second), event);
-            }
-        }
     }
 
     template <class EventType, class ListenerType>
