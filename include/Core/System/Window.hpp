@@ -2,6 +2,9 @@
 
 #include <Graphics/Color.hpp>
 #include <Graphics/RenderTarget.hpp>
+#include <Event/EventManager.hpp>
+#include <Event/EventGroup.hpp>
+#include <Event/EventNamespace.hpp>
 #include <SFML/Graphics/Image.hpp>
 #include <SFML/Graphics/RenderTexture.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -9,6 +12,56 @@
 #include <Transform/UnitVector.hpp>
 #include <string>
 #include <vili/node.hpp>
+
+namespace obe::events
+{
+    namespace Window
+    {
+        struct Position
+        {
+            unsigned int x;
+            unsigned int y;
+        };
+
+        struct Size
+        {
+            unsigned int width;
+            unsigned int height;
+        };
+
+        struct Moved
+        {
+            static constexpr std::string_view id = "Moved";
+            Position new_pos;
+            Position previous_pos;
+        };
+
+        struct Resized
+        {
+            static constexpr std::string_view id = "Resized";
+            Size new_size;
+            Size previous_size;
+        };
+
+        struct Closed
+        {
+            static constexpr std::string_view id = "Closed";
+            bool is_closed;
+        };
+
+        struct Minimized
+        {
+            static constexpr std::string_view id = "Minimized";
+            bool is_minimized;
+        };
+
+        struct Maximized
+        {
+            static constexpr std::string_view id = "Maximized";
+            bool is_maximized;
+        };
+    }
+}
 
 namespace obe::system
 {
@@ -57,7 +110,7 @@ namespace obe::system
         sf::View m_view;
         sf::Image m_icon;
         graphics::Color m_background = graphics::Color(0, 0, 0);
-
+        event::EventGroupPtr e_window;
         void apply_view();
 
     public:
