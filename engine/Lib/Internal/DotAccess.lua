@@ -10,4 +10,4 @@ local function dot_access(tbl, key)
     return current_node;
 end
 
-return {dot_access = dot_access};
+return dot_access;

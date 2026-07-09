@@ -1,11 +1,8 @@
-GameConfig:
-    scrollSensibility: 1
-
 Graphics:
-    antiAliasing: true
+    anti_aliasing: true
 
 Framerate:
-    framerateTarget: 60
+    framerate: 60
     vsync: true
 
 Window:
@@ -30,5 +27,12 @@ Debug:
 
 Script:
     Lua:
-        patchIO: true
-        garbageCollector: "generational"
+        features:
+            logger: true
+            ordered: true
+            try: true
+            class: true
+            debugger: true
+            inspect: true
+            stringx: true
+        gc: "generational"

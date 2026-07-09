@@ -1,6 +1,6 @@
-local ArgMirror = require('obe://Lib/Internal/ArgMirror');
-local Events = require('obe://Lib/Internal/Events');
-local TaskManager = require("obe://Lib/Internal/Tasks").TaskManager;
+local ArgMirror = require("intlibs://ArgMirror");
+local Events = require("intlibs://Events");
+local TaskManager = require("intlibs://Tasks").TaskManager;
 
 local ComponentsMT = {
     __index = function(tbl, key)

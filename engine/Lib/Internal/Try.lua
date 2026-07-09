@@ -1,4 +1,4 @@
-function try(t)
+local function try(t)
     local code = t[1];
     local result, err = pcall(code);
     if err ~= nil then

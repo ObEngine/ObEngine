@@ -48,22 +48,18 @@ namespace obe::graphics::bindings
         bind_color["load"] = &obe::graphics::Color::load;
         bind_color["from_string"] = &obe::graphics::Color::from_string;
         bind_color["from_name"] = sol::overload(
-            [](obe::graphics::Color* self, std::string name) -> bool
-            {
+            [](obe::graphics::Color* self, std::string name) -> bool {
                 return self->from_name(name);
             },
-            [](obe::graphics::Color* self, std::string name, bool strict) -> bool
-            {
+            [](obe::graphics::Color* self, std::string name, bool strict) -> bool {
                 return self->from_name(name, strict);
             });
         bind_color["from_hex"] = &obe::graphics::Color::from_hex;
         bind_color["from_rgb"] = sol::overload(
-            [](obe::graphics::Color* self, double r, double g, double b) -> void
-            {
+            [](obe::graphics::Color* self, double r, double g, double b) -> void {
                 return self->from_rgb(r, g, b);
             },
-            [](obe::graphics::Color* self, double r, double g, double b, double a) -> void
-            {
+            [](obe::graphics::Color* self, double r, double g, double b, double a) -> void {
                 return self->from_rgb(r, g, b, a);
             });
         bind_color["from_hsv"] = &obe::graphics::Color::from_hsv;
@@ -91,12 +87,10 @@ namespace obe::graphics::bindings
             static_cast<obe::graphics::Color (obe::graphics::Color::*)(double) const>(
                 &obe::graphics::Color::operator/));
         bind_color["Random"] = sol::overload(
-            []() -> obe::graphics::Color
-            {
+            []() -> obe::graphics::Color {
                 return obe::graphics::Color::Random();
             },
-            [](bool random_alpha) -> obe::graphics::Color
-            {
+            [](bool random_alpha) -> obe::graphics::Color {
                 return obe::graphics::Color::Random(random_alpha);
             });
         bind_color["r"] = &obe::graphics::Color::r;
@@ -277,17 +271,15 @@ namespace obe::graphics::bindings
             = graphics_namespace.new_usertype<obe::graphics::NinePatch>("NinePatch",
                 sol::call_constructor, sol::constructors<obe::graphics::NinePatch()>());
         bind_nine_patch["set_texture"] = sol::overload(
-            [](obe::graphics::NinePatch* self, const sf::Texture& texture) -> void
-            {
+            [](obe::graphics::NinePatch* self, const sf::Texture& texture) -> void {
                 return self->set_texture(texture);
             },
-            [](obe::graphics::NinePatch* self, const sf::Texture& texture, bool reset_size) -> void
-            {
+            [](obe::graphics::NinePatch* self, const sf::Texture& texture,
+                bool reset_size) -> void {
                 return self->set_texture(texture, reset_size);
             },
             [](obe::graphics::NinePatch* self, const sf::Texture& texture, bool reset_size,
-                bool reset_rect) -> void
-            {
+                bool reset_rect) -> void {
                 return self->set_texture(texture, reset_size, reset_rect);
             },
             static_cast<void (obe::graphics::NinePatch::*)()>(
@@ -296,13 +288,11 @@ namespace obe::graphics::bindings
         bind_nine_patch["set_size"] = &obe::graphics::NinePatch::set_size;
         bind_nine_patch["reset_size"] = &obe::graphics::NinePatch::reset_size;
         bind_nine_patch["set_texture_rect"] = sol::overload(
-            [](obe::graphics::NinePatch* self, sf::IntRect texture_rectangle) -> void
-            {
+            [](obe::graphics::NinePatch* self, sf::IntRect texture_rectangle) -> void {
                 return self->set_texture_rect(texture_rectangle);
             },
             [](obe::graphics::NinePatch* self, sf::IntRect texture_rectangle,
-                bool reset_size) -> void
-            {
+                bool reset_size) -> void {
                 return self->set_texture_rect(texture_rectangle, reset_size);
             });
         bind_nine_patch["set_color"] = &obe::graphics::NinePatch::set_color;
@@ -345,24 +335,20 @@ namespace obe::graphics::bindings
                     obe::graphics::RenderTarget(sf::RenderWindow&)>());
         bind_render_target["clear"] = &obe::graphics::RenderTarget::clear;
         bind_render_target["draw"] = sol::overload(
-            [](obe::graphics::RenderTarget* self, const sf::Drawable& drawable) -> void
-            {
+            [](obe::graphics::RenderTarget* self, const sf::Drawable& drawable) -> void {
                 return self->draw(drawable);
             },
             [](obe::graphics::RenderTarget* self, const sf::Drawable& drawable,
-                const sf::RenderStates& states) -> void
-            {
+                const sf::RenderStates& states) -> void {
                 return self->draw(drawable, states);
             },
             [](obe::graphics::RenderTarget* self, const sf::Vertex* vertices,
-                std::size_t vertex_count, sf::PrimitiveType type) -> void
-            {
+                std::size_t vertex_count, sf::PrimitiveType type) -> void {
                 return self->draw(vertices, vertex_count, type);
             },
             [](obe::graphics::RenderTarget* self, const sf::Vertex* vertices,
                 std::size_t vertex_count, sf::PrimitiveType type,
-                const sf::RenderStates& states) -> void
-            {
+                const sf::RenderStates& states) -> void {
                 return self->draw(vertices, vertex_count, type, states);
             });
         bind_render_target["get_size"] = &obe::graphics::RenderTarget::get_size;

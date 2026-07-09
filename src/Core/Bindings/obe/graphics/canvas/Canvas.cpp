@@ -94,7 +94,7 @@ namespace obe::graphics::canvas::bindings
         bind_canvas["remove"] = &obe::graphics::canvas::Canvas::remove;
         bind_canvas["get_texture"] = &obe::graphics::canvas::Canvas::get_texture;
         bind_canvas["requires_sort"] = &obe::graphics::canvas::Canvas::requires_sort;
-        state.script_file("obe://Lib/Internal/Canvas.lua"_fs);
+        state.script_file("intlibs://Canvas.lua"_fs);
     }
     void load_class_canvas_element(sol::state_view state)
     {

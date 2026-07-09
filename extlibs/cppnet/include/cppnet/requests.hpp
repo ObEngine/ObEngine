@@ -36,9 +36,6 @@ namespace cppnet::requests
         std::string m_host;
         uint16_t m_port;
         Http::Request m_request;
-
-        std::string _get_host_from_url(const std::string& url);
-        std::string _get_route_from_url(const std::string& url);
     public:
         Request(Method method, const std::string& url);
 

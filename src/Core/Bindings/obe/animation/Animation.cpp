@@ -97,21 +97,17 @@ namespace obe::animation::bindings
         bind_animation_group["get_size"] = &obe::animation::AnimationGroup::get_size;
         bind_animation_group["is_over"] = &obe::animation::AnimationGroup::is_over;
         bind_animation_group["next"] = sol::overload(
-            [](obe::animation::AnimationGroup* self) -> void
-            {
+            [](obe::animation::AnimationGroup* self) -> void {
                 return self->next();
             },
-            [](obe::animation::AnimationGroup* self, bool force) -> void
-            {
+            [](obe::animation::AnimationGroup* self, bool force) -> void {
                 return self->next(force);
             });
         bind_animation_group["previous"] = sol::overload(
-            [](obe::animation::AnimationGroup* self) -> void
-            {
+            [](obe::animation::AnimationGroup* self) -> void {
                 return self->previous();
             },
-            [](obe::animation::AnimationGroup* self, bool force) -> void
-            {
+            [](obe::animation::AnimationGroup* self, bool force) -> void {
                 return self->previous(force);
             });
         bind_animation_group["push_frame_index"]
@@ -142,8 +138,7 @@ namespace obe::animation::bindings
         bind_animation_state["reset"] = &obe::animation::AnimationState::reset;
         bind_animation_state["update"] = &obe::animation::AnimationState::update;
         bind_animation_state["get_animation"]
-            = [](obe::animation::AnimationState* self) -> const obe::animation::Animation*
-        {
+            = [](obe::animation::AnimationState* self) -> const obe::animation::Animation* {
             return &self->get_animation();
         };
         bind_animation_state["get_current_frame_index"]
@@ -164,26 +159,22 @@ namespace obe::animation::bindings
         bind_animator["get_current_animation"] = &obe::animation::Animator::get_current_animation;
         bind_animator["get_current_texture"] = &obe::animation::Animator::get_current_texture;
         bind_animator["load"] = sol::overload(
-            [](obe::animation::Animator* self, obe::system::Path path) -> void
-            {
+            [](obe::animation::Animator* self, obe::system::Path path) -> void {
                 return self->load(path);
             },
             [](obe::animation::Animator* self, obe::system::Path path,
-                obe::engine::ResourceManager* resources) -> void
-            {
+                obe::engine::ResourceManager* resources) -> void {
                 return self->load(path, resources);
             });
         bind_animator["set_animation"] = &obe::animation::Animator::set_animation;
         bind_animator["set_paused"] = &obe::animation::Animator::set_paused;
         bind_animator["update"] = &obe::animation::Animator::update;
         bind_animator["set_target"] = sol::overload(
-            [](obe::animation::Animator* self, obe::graphics::Sprite& sprite) -> void
-            {
+            [](obe::animation::Animator* self, obe::graphics::Sprite& sprite) -> void {
                 return self->set_target(sprite);
             },
             [](obe::animation::Animator* self, obe::graphics::Sprite& sprite,
-                obe::animation::AnimatorTargetScaleMode target_scale_mode) -> void
-            {
+                obe::animation::AnimatorTargetScaleMode target_scale_mode) -> void {
                 return self->set_target(sprite, target_scale_mode);
             });
         bind_animator["get_filesystem_path"] = &obe::animation::Animator::get_filesystem_path;
@@ -204,13 +195,11 @@ namespace obe::animation::bindings
         bind_animator_state["set_paused"] = &obe::animation::AnimatorState::set_paused;
         bind_animator_state["update"] = &obe::animation::AnimatorState::update;
         bind_animator_state["set_target"] = sol::overload(
-            [](obe::animation::AnimatorState* self, obe::graphics::Sprite& sprite) -> void
-            {
+            [](obe::animation::AnimatorState* self, obe::graphics::Sprite& sprite) -> void {
                 return self->set_target(sprite);
             },
             [](obe::animation::AnimatorState* self, obe::graphics::Sprite& sprite,
-                obe::animation::AnimatorTargetScaleMode target_scale_mode) -> void
-            {
+                obe::animation::AnimatorTargetScaleMode target_scale_mode) -> void {
                 return self->set_target(sprite, target_scale_mode);
             });
         bind_animator_state["reset"] = &obe::animation::AnimatorState::reset;
@@ -220,8 +209,7 @@ namespace obe::animation::bindings
         bind_animator_state["get_current_texture"]
             = &obe::animation::AnimatorState::get_current_texture;
         bind_animator_state["get_animator"]
-            = [](obe::animation::AnimatorState* self) -> const obe::animation::Animator*
-        {
+            = [](obe::animation::AnimatorState* self) -> const obe::animation::Animator* {
             return &self->get_animator();
         };
     }
@@ -411,71 +399,59 @@ namespace obe::animation::bindings
         sol::table animation_namespace = state["obe"]["animation"].get<sol::table>();
         animation_namespace["Tween"] = sol::overload(
             [](obe::graphics::Color from, obe::graphics::Color to,
-                obe::time::TimeUnit duration) -> ValueTweening<obe::graphics::Color>
-            {
+                obe::time::TimeUnit duration) -> ValueTweening<obe::graphics::Color> {
                 return obe::animation::ValueTweening<obe::graphics::Color>(from, to, duration);
             },
             [](obe::graphics::Color from, obe::graphics::Color to, obe::time::TimeUnit duration,
                 obe::animation::easing::EasingFunction easing)
-                -> ValueTweening<obe::graphics::Color>
-            {
+                -> ValueTweening<obe::graphics::Color> {
                 return obe::animation::ValueTweening<obe::graphics::Color>(
                     from, to, duration, easing);
             },
             [](obe::transform::UnitVector from, obe::transform::UnitVector to,
-                obe::time::TimeUnit duration) -> ValueTweening<obe::transform::UnitVector>
-            {
+                obe::time::TimeUnit duration) -> ValueTweening<obe::transform::UnitVector> {
                 return obe::animation::ValueTweening<obe::transform::UnitVector>(
                     from, to, duration);
             },
             [](obe::transform::UnitVector from, obe::transform::UnitVector to,
                 obe::time::TimeUnit duration, obe::animation::easing::EasingFunction easing)
-                -> ValueTweening<obe::transform::UnitVector>
-            {
+                -> ValueTweening<obe::transform::UnitVector> {
                 return obe::animation::ValueTweening<obe::transform::UnitVector>(
                     from, to, duration, easing);
             },
             [](obe::transform::Rect from, obe::transform::Rect to,
-                obe::time::TimeUnit duration) -> ValueTweening<obe::transform::Rect>
-            {
+                obe::time::TimeUnit duration) -> ValueTweening<obe::transform::Rect> {
                 return obe::animation::ValueTweening<obe::transform::Rect>(from, to, duration);
             },
             [](obe::transform::Rect from, obe::transform::Rect to, obe::time::TimeUnit duration,
                 obe::animation::easing::EasingFunction easing)
-                -> ValueTweening<obe::transform::Rect>
-            {
+                -> ValueTweening<obe::transform::Rect> {
                 return obe::animation::ValueTweening<obe::transform::Rect>(
                     from, to, duration, easing);
             },
             [](obe::collision::Trajectory from, obe::collision::Trajectory to,
-                obe::time::TimeUnit duration) -> ValueTweening<obe::collision::Trajectory>
-            {
+                obe::time::TimeUnit duration) -> ValueTweening<obe::collision::Trajectory> {
                 return obe::animation::ValueTweening<obe::collision::Trajectory>(
                     from, to, duration);
             },
             [](obe::collision::Trajectory from, obe::collision::Trajectory to,
                 obe::time::TimeUnit duration, obe::animation::easing::EasingFunction easing)
-                -> ValueTweening<obe::collision::Trajectory>
-            {
+                -> ValueTweening<obe::collision::Trajectory> {
                 return obe::animation::ValueTweening<obe::collision::Trajectory>(
                     from, to, duration, easing);
             },
-            [](int from, int to, obe::time::TimeUnit duration) -> ValueTweening<int>
-            {
+            [](int from, int to, obe::time::TimeUnit duration) -> ValueTweening<int> {
                 return obe::animation::ValueTweening<int>(from, to, duration);
             },
             [](int from, int to, obe::time::TimeUnit duration,
-                obe::animation::easing::EasingFunction easing) -> ValueTweening<int>
-            {
+                obe::animation::easing::EasingFunction easing) -> ValueTweening<int> {
                 return obe::animation::ValueTweening<int>(from, to, duration, easing);
             },
-            [](double from, double to, obe::time::TimeUnit duration) -> ValueTweening<double>
-            {
+            [](double from, double to, obe::time::TimeUnit duration) -> ValueTweening<double> {
                 return obe::animation::ValueTweening<double>(from, to, duration);
             },
             [](double from, double to, obe::time::TimeUnit duration,
-                obe::animation::easing::EasingFunction easing) -> ValueTweening<double>
-            {
+                obe::animation::easing::EasingFunction easing) -> ValueTweening<double> {
                 return obe::animation::ValueTweening<double>(from, to, duration, easing);
             });
     }

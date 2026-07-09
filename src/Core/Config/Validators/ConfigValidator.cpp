@@ -145,7 +145,7 @@ namespace obe::config::validators
                     {
                         "properties", vili::object {
                             {
-                                "framerateTarget", vili::object {
+                                "framerate", vili::object {
                                     {"type", vili::integer_typename},
                                     {"min", 0},
                                     {"optional", true}
@@ -173,7 +173,7 @@ namespace obe::config::validators
                     {
                         "properties", vili::object {
                             {
-                                "antiAliasing", vili::object {
+                                "anti_aliasing", vili::object {
                                     {"type", vili::boolean_typename},
                                     {"optional", true}
                                 }

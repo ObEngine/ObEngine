@@ -7,4 +7,5 @@ namespace obe::script::Helpers
     sol::protected_function rawget_from(sol::state_view lua);
     sol::protected_function len_from(sol::state_view lua);
     sol::protected_function pairs_from(sol::state_view lua);
+    sol::protected_function ordered_table(sol::state_view lua);
 } // namespace obe::script::Helpers

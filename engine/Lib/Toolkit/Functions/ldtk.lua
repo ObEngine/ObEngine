@@ -1,7 +1,7 @@
 local Color = require("Lib/StdLib/ConsoleColor");
 local Commands = require("Lib/Toolkit/Commands");
 local Style = require("Lib/Toolkit/Stylesheet");
-local ordered = require("Lib/StdLib/Ordered");
+local ordered = require("Lib/Internal/Ordered");
 ---@module "Lib.Extlibs.json"
 local json = require("extlibs://json");
 

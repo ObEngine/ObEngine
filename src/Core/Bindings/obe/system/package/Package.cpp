@@ -32,13 +32,11 @@ namespace obe::system::package::bindings
         sol::table package_namespace = state["obe"]["system"]["package"].get<sol::table>();
         package_namespace.set_function("load",
             sol::overload(
-                [](const std::string& package_name, const std::string& prefix) -> bool
-                {
+                [](const std::string& package_name, const std::string& prefix) -> bool {
                     return obe::system::package::load(package_name, prefix);
                 },
                 [](const std::string& package_name, const std::string& prefix,
-                    unsigned int priority) -> bool
-                {
+                    unsigned int priority) -> bool {
                     return obe::system::package::load(package_name, prefix, priority);
                 }));
     }

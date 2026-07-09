@@ -1,6 +1,6 @@
 -- Dependancies
 local Color = require("Lib/StdLib/ConsoleColor");
-local copy = require("Lib/StdLib/Copy");
+local copy = require("Lib/Internal/Copy");
 local Style = require("Lib/Toolkit/Stylesheet");
 local tablex = require("extlibs://pl.tablex");
 
@@ -166,7 +166,7 @@ local function buildCommandExecution(func, args)
         value = {func = function() print("Called autocomplete"); end}
     };
     args["autocomplete"] = autocomplete;
-    local argmirror = require('obe://Lib/Internal/ArgMirror');
+    local argmirror = require('intlibs://ArgMirror');
     -- Getting arguments names of the function
     local argList = argmirror.get_args(func);
     local callArgs = {};

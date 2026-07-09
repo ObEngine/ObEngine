@@ -34,7 +34,7 @@ namespace obe::graphics
         Shader* m_shader = nullptr;
         sfe::ComplexSprite m_sprite;
         graphics::Texture m_texture;
-        bool m_antiAliasing = true;
+        bool m_anti_aliasing = true;
         bool m_horizontal_flip = false;
         bool m_vertical_flip = false;
 

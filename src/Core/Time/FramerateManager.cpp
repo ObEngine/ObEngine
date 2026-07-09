@@ -16,17 +16,17 @@ namespace obe::time
 
     void FramerateManager::configure(vili::node& config)
     {
-        if (config.contains("framerateTarget"))
+        if (config.contains("framerate"))
         {
-            m_framerate_target = config["framerateTarget"];
+            m_framerate_target = config["framerate"];
         }
         if (config.contains("vsync"))
         {
             m_vsync_enabled = config["vsync"];
         }
-        if (config.contains("syncUpdateToRender"))
+        if (config.contains("sync_update_to_render"))
         {
-            m_sync_update_render = config["syncUpdateToRender"];
+            m_sync_update_render = config["sync_update_to_render"];
         }
         debug::Log->info("Framerate parameters : {} FPS {}, V-sync {}, Update Lock {}",
             m_framerate_target.value_or(0),
